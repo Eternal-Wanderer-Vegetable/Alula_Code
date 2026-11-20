@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
-- 2026-11-20 P05.104 / feat-156 实现清除通知原生辅助提示。键位、通知中心单条按钮和批量清除成功后播报并响铃，批量取实际清除数，Linux 额外读取 AT-SPI 屏幕阅读器状态。专项 103/103，本地完整 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。Linux Release 原生探针收到 AT-SPI 批量播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。待登记产品 SHA 托管结果。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。
+- 2026-11-20 完成 P05.104 / feat-156。产品 `c2bf107774188446848d651b98eeef2512903ac6` 已推 PR #3。成功的键位、通知中心单条按钮和批量清除会播报并调用系统提示音。批量播报一次并使用实际清除数，活动进度保留。Linux Release 原生探针收到批量 AT-SPI 播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。专项 103/103，本地 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44656072778 四项和 Platform Availability 44656065738 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。
 
 - 2026-11-20 完成 P05.103 / feat-155。产品 `a1f82b1455ee1886e952a5c8a6884905909ee23b` 已推 PR #3。鼠标中键在 toast 或通知中心行内释放时清除当前位置的单条通知。保留活动进度和其他通知。中键与快捷键共用模型校验，同步检查当前条目身份及活动进度。专项 97/97，本地 Flutter 1,579 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44648381359 四项和 Platform Availability 44648372041 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。 macOS 实机验收暂缓。最终 staged all-scope 为 MEDIUM，9 个文件、27 个映射符号、2 个流程，无 partial/truncated。两个流程均经过 clearNotification，分别通往 ById 和 Dismiss。累计 compare-main 为 CRITICAL，767 个文件、2,705 个映射符号、80 个流程，重跑仍有列表截断。 证据：docs/diagnostics/2026-11-20-p05/p05.103-notification-middle-click.md。
 
