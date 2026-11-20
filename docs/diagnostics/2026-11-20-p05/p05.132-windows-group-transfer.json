@@ -1,0 +1,713 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "baseline": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "parent": "d5bd808738d3de46719b7c98ba9c591765795bae",
+    "sha256": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "eaed0fcbcce33ccc13552e8ae257bf9c074501750cab417f07dcfb53f59db60e",
+      "app/lib/workbench/layout_controller.dart": "a6435f6c9ce11773d4bbd508f39728699291821d21f2557011d933e985da6323",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "ebaefe99bd6e8296d8671e05d60326e19b5040c590cb072c1cd8368c9ec0c4d7",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "febaf59d01470fdec178ab5e22b0e37d291ab1a834a9a524fcf9f505dfe2134c",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    }
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "6081a4799b68d1fa5f3470a1d096a4a513cc386dc019b6731f84a8874abb9bce",
+  "fixtureSha256": "ca69122de2092d93e834fb136f5374a4b0f0c1200913c9605bfbb142b4d3f574",
+  "trace": {
+    "original": {
+      "request": "original",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          191.0,
+          272.448,
+          213.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          213.0,
+          272.448,
+          235.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "54acd6c71e2f9ad83d7d7df06a7a3f48ce2d325b781e3d7883c5b29f195a2deb"
+    },
+    "duplicated-right": {
+      "request": "duplicated-right",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          255.0,
+          272.448,
+          277.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          277.0,
+          272.448,
+          299.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 916321317,
+          "focusNode": 507495984,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3",
+      "groupStateSha256": "e9408d58fc91727e1a91b8979cb681705ddcab342e448e1d5eed65cef7b83d3f"
+    },
+    "moved-left": {
+      "request": "moved-left",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          255.0,
+          272.448,
+          277.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          277.0,
+          272.448,
+          299.0
+        ],
+        "editor-2": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 916321317,
+          "focusNode": 507495984,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 800.0
+        },
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "a03cf22dddad417e8c57e8d4480c213800ab890926b048db989747963c26c7c2",
+      "groupStateSha256": "e9408d58fc91727e1a91b8979cb681705ddcab342e448e1d5eed65cef7b83d3f"
+    },
+    "moved-up": {
+      "request": "moved-up",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          255.0,
+          272.448,
+          277.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          277.0,
+          272.448,
+          299.0
+        ],
+        "editor-2": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          335.9
+        ],
+        "editor": [
+          276.448,
+          339.9,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 916321317,
+          "focusNode": 507495984,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 800.0
+        },
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "c4199d0430039270008bd48b70251f7292f5a69d11e335de23f507b72bbeea7b",
+      "groupStateSha256": "e9408d58fc91727e1a91b8979cb681705ddcab342e448e1d5eed65cef7b83d3f"
+    },
+    "moved-down": {
+      "request": "moved-down",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          255.0,
+          272.448,
+          277.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          277.0,
+          272.448,
+          299.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          335.9
+        ],
+        "editor-2": [
+          276.448,
+          339.9,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 916321317,
+          "focusNode": 507495984,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "e0c03e1970a881b2dbab700648ea85dc2390a152db1b7f2e2ce2042becfd28c3",
+      "groupStateSha256": "e9408d58fc91727e1a91b8979cb681705ddcab342e448e1d5eed65cef7b83d3f"
+    },
+    "moved-right": {
+      "request": "moved-right",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          255.0,
+          272.448,
+          277.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          277.0,
+          272.448,
+          299.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 800.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 916321317,
+          "focusNode": 507495984,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 800.0
+        }
+      },
+      "layoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3",
+      "groupStateSha256": "e9408d58fc91727e1a91b8979cb681705ddcab342e448e1d5eed65cef7b83d3f"
+    },
+    "closed-copy-group": {
+      "request": "closed-copy-group",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          191.0,
+          272.448,
+          213.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          213.0,
+          272.448,
+          235.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 42.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "54acd6c71e2f9ad83d7d7df06a7a3f48ce2d325b781e3d7883c5b29f195a2deb"
+    },
+    "saved": {
+      "request": "saved",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "file:source-a.txt": [
+          48.0,
+          191.0,
+          272.448,
+          213.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          213.0,
+          272.448,
+          235.0
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 218811045,
+          "focusNode": 910292172,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "54acd6c71e2f9ad83d7d7df06a7a3f48ce2d325b781e3d7883c5b29f195a2deb"
+    }
+  },
+  "screenshots": {
+    "duplicated": {
+      "name": "windows-editor-group-duplicated.png",
+      "sha256": "f8283210b8a4d705f220068e465c3aeb4d40167e5e8db10e3a37ed2ac2a244d2"
+    },
+    "moved-up": {
+      "name": "windows-editor-group-moved-up.png",
+      "sha256": "07392a3dde4e55b88083aae7dc04606e12acf0c1b270817fa3c7ceca90c3a929"
+    }
+  },
+  "memorySamples": {
+    "original": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 290324480,
+          "pid": 51016,
+          "ppid": 64972,
+          "private": 211820544,
+          "pss": 211820544,
+          "working_set": 158728192
+        }
+      ],
+      "root_pid": 51016,
+      "total_private_bytes": 211820544,
+      "total_private_mib": 202.0,
+      "total_working_set_bytes": 158728192
+    },
+    "duplicated": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 290324480,
+          "pid": 51016,
+          "ppid": 64972,
+          "private": 219901952,
+          "pss": 219901952,
+          "working_set": 166440960
+        }
+      ],
+      "root_pid": 51016,
+      "total_private_bytes": 219901952,
+      "total_private_mib": 209.7,
+      "total_working_set_bytes": 166440960
+    },
+    "after-close": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 290324480,
+          "pid": 51016,
+          "ppid": 64972,
+          "private": 221298688,
+          "pss": 221298688,
+          "working_set": 168615936
+        }
+      ],
+      "root_pid": 51016,
+      "total_private_bytes": 221298688,
+      "total_private_mib": 211.0,
+      "total_working_set_bytes": 168615936
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "verification": {
+    "scrollPixels": 800.0,
+    "initialFileSha256": "3c66d6c966001a8ad5ba1c26a274afde8b85d990a8fd2cda7ffeb8bc2897d203",
+    "savedFileSha256": "097e683620f75c38e65d35c1fc67c7c7e97bc1223c1b05f9350d8d77e63ffb6e"
+  },
+  "checksPassed": true,
+  "exitCode": 0,
+  "persistedLayoutAfterMoves": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.5,
+                "min": 180.0
+              },
+              {
+                "t": "leaf",
+                "region": "editor-2",
+                "weight": 0.5,
+                "min": 180.0
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "persistedGroupsAfterMoves": [
+    {
+      "region": "editor",
+      "active": 3,
+      "sticky": [],
+      "docs": [
+        {
+          "id": 3,
+          "path": "E:\\temp\\alula-p05-132-group-transfer-reference\\windows-1795188729491581100/workspace\\source-b.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        },
+        {
+          "id": 2,
+          "path": "E:\\temp\\alula-p05-132-group-transfer-reference\\windows-1795188729491581100/workspace\\source-a.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        }
+      ]
+    },
+    {
+      "region": "editor-2",
+      "active": 3,
+      "sticky": [],
+      "docs": [
+        {
+          "id": 3,
+          "path": "E:\\temp\\alula-p05-132-group-transfer-reference\\windows-1795188729491581100/workspace\\source-b.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        },
+        {
+          "id": 2,
+          "path": "E:\\temp\\alula-p05-132-group-transfer-reference\\windows-1795188729491581100/workspace\\source-a.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        }
+      ]
+    }
+  ],
+  "productCommit": "cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+  "productTree": "6bfba6640c45d1794367f8d07acb3f3c6adf1ace"
+}

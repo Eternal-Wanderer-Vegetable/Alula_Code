@@ -2277,8 +2277,22 @@
         "feat-095",
         "feat-183"
       ],
+      "status": "done",
+      "evidence": "产品 `cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 已验证整组移动与复制、活动文档和视图身份、滚动恢复与实际保存。专项 61/61，Flutter 1,651 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44764891062 四项及 Platform Availability 44764880915 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.132-editor-group-transfer.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-185",
+      "name": "P05.133 LAY-07 编辑器组锁定与隐式打开路由",
+      "description": "锁定、解锁和会话恢复，隐式打开已有文档、最近可用组和新建邻组路径，对照固定版保留编辑器状态。",
+      "dependencies": [
+        "feat-080",
+        "feat-183",
+        "feat-184"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 隔离渲染器已验证两标签整组复制、键位左移、横向邻组回退后上移与向下重排，源组与活动标签身份保留。待产品实现和验收。",
+      "evidence": "固定版 Windows 隔离渲染器已验证单锁新建邻组、最近未锁组回退、打开既有锁组文档、全部锁定后创建第三组，以及解锁后恢复默认路由。待产品实现和验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

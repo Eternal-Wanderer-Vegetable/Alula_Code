@@ -1,0 +1,677 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "f14527e65f2b40d53fc376b1ac4d4fc726b54f5d0b97df85b7c2c27f327789ab",
+  "observations": {
+    "original": {
+      "request": "original",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          184.0,
+          325.92,
+          206.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          206.0,
+          325.92,
+          228.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "e7632287cb942e9b51b26a2f1f965176a4202f8ab86bb304be0bc7c61a8cadf1"
+    },
+    "duplicated-right": {
+      "request": "duplicated-right",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          243.0,
+          325.92,
+          265.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          265.0,
+          325.92,
+          287.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 842123424,
+          "focusNode": 156792313,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3",
+      "groupStateSha256": "012e1c1a9fb98e719576922cb36bcd285c3614fd1526aa07dd6a4254ce73964b"
+    },
+    "moved-left": {
+      "request": "moved-left",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          243.0,
+          325.92,
+          265.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          265.0,
+          325.92,
+          287.0
+        ],
+        "editor-2": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 842123424,
+          "focusNode": 156792313,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 636.0
+        },
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "a03cf22dddad417e8c57e8d4480c213800ab890926b048db989747963c26c7c2",
+      "groupStateSha256": "012e1c1a9fb98e719576922cb36bcd285c3614fd1526aa07dd6a4254ce73964b"
+    },
+    "moved-up": {
+      "request": "moved-up",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          243.0,
+          325.92,
+          265.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          265.0,
+          325.92,
+          287.0
+        ],
+        "editor-2": [
+          329.92,
+          35.0,
+          1210.0,
+          398.5
+        ],
+        "editor": [
+          329.92,
+          402.5,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 842123424,
+          "focusNode": 156792313,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 636.0
+        },
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "c4199d0430039270008bd48b70251f7292f5a69d11e335de23f507b72bbeea7b",
+      "groupStateSha256": "012e1c1a9fb98e719576922cb36bcd285c3614fd1526aa07dd6a4254ce73964b"
+    },
+    "moved-down": {
+      "request": "moved-down",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          243.0,
+          325.92,
+          265.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          265.0,
+          325.92,
+          287.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          398.5
+        ],
+        "editor-2": [
+          329.92,
+          402.5,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 842123424,
+          "focusNode": 156792313,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "e0c03e1970a881b2dbab700648ea85dc2390a152db1b7f2e2ce2042becfd28c3",
+      "groupStateSha256": "012e1c1a9fb98e719576922cb36bcd285c3614fd1526aa07dd6a4254ce73964b"
+    },
+    "moved-right": {
+      "request": "moved-right",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          243.0,
+          325.92,
+          265.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          265.0,
+          325.92,
+          287.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 636.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 842123424,
+          "focusNode": 156792313,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 636.0
+        }
+      },
+      "layoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3",
+      "groupStateSha256": "012e1c1a9fb98e719576922cb36bcd285c3614fd1526aa07dd6a4254ce73964b"
+    },
+    "closed-copy-group": {
+      "request": "closed-copy-group",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          184.0,
+          325.92,
+          206.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          206.0,
+          325.92,
+          228.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 42.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "e7632287cb942e9b51b26a2f1f965176a4202f8ab86bb304be0bc7c61a8cadf1"
+    },
+    "saved": {
+      "request": "saved",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "file:source-a.txt": [
+          48.0,
+          184.0,
+          325.92,
+          206.0
+        ],
+        "file:source-b.txt": [
+          48.0,
+          206.0,
+          325.92,
+          228.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 3,
+          "inputWindow": 400497048,
+          "focusNode": 293606556,
+          "focused": true,
+          "hidden": false,
+          "label": "source-b.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "layoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1",
+      "groupStateSha256": "e7632287cb942e9b51b26a2f1f965176a4202f8ab86bb304be0bc7c61a8cadf1"
+    }
+  },
+  "memorySamples": {
+    "original": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1528074,
+          "ppid": 1528060,
+          "private": 242159616,
+          "pss": 258369536,
+          "working_set": 335663104
+        }
+      ],
+      "root_pid": 1528074,
+      "total_private_bytes": 242159616,
+      "total_private_mib": 230.9,
+      "total_working_set_bytes": 335663104
+    },
+    "duplicated": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1528074,
+          "ppid": 1528060,
+          "private": 249434112,
+          "pss": 265644032,
+          "working_set": 342937600
+        }
+      ],
+      "root_pid": 1528074,
+      "total_private_bytes": 249434112,
+      "total_private_mib": 237.9,
+      "total_working_set_bytes": 342937600
+    },
+    "after-close": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1528074,
+          "ppid": 1528060,
+          "private": 243273728,
+          "pss": 259483648,
+          "working_set": 336777216
+        }
+      ],
+      "root_pid": 1528074,
+      "total_private_bytes": 243273728,
+      "total_private_mib": 232.0,
+      "total_working_set_bytes": 336777216
+    }
+  },
+  "fixtureSha256": "ca69122de2092d93e834fb136f5374a4b0f0c1200913c9605bfbb142b4d3f574",
+  "verification": {
+    "scrollPixels": 636.0,
+    "initialFileSha256": "3c66d6c966001a8ad5ba1c26a274afde8b85d990a8fd2cda7ffeb8bc2897d203",
+    "savedFileSha256": "097e683620f75c38e65d35c1fc67c7c7e97bc1223c1b05f9350d8d77e63ffb6e"
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "parentAtCapture": "d5bd808738d3de46719b7c98ba9c591765795bae",
+  "persistedLayoutAfterMoves": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.5,
+                "min": 180.0
+              },
+              {
+                "t": "leaf",
+                "region": "editor-2",
+                "weight": 0.5,
+                "min": 180.0
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "persistedGroupsAfterMoves": [
+    {
+      "region": "editor",
+      "active": 3,
+      "sticky": [],
+      "docs": [
+        {
+          "id": 3,
+          "path": "/tmp/alula-p05-132-xvfb-4c_nib8l/workspace/source-b.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        },
+        {
+          "id": 2,
+          "path": "/tmp/alula-p05-132-xvfb-4c_nib8l/workspace/source-a.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        }
+      ]
+    },
+    {
+      "region": "editor-2",
+      "active": 3,
+      "sticky": [],
+      "docs": [
+        {
+          "id": 3,
+          "path": "/tmp/alula-p05-132-xvfb-4c_nib8l/workspace/source-b.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        },
+        {
+          "id": 2,
+          "path": "/tmp/alula-p05-132-xvfb-4c_nib8l/workspace/source-a.txt",
+          "fileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          },
+          "savedFileOptions": {
+            "encoding": "utf-8",
+            "bom": false,
+            "lineEnding": "lf"
+          }
+        }
+      ]
+    }
+  ],
+  "productCommit": "cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+  "productTree": "6bfba6640c45d1794367f8d07acb3f3c6adf1ace"
+}
