@@ -1,0 +1,28 @@
+{
+  "off": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 1444,
+      "height": 907
+    },
+    "driver": "Owned Code-OSS renderer keyboard event",
+    "editorAccessibilitySupport": "off",
+    "firstActionExecuted": false,
+    "newestNoticeVisible": true,
+    "exitCode": 0
+  },
+  "on": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 1444,
+      "height": 907
+    },
+    "driver": "Owned Code-OSS renderer keyboard event",
+    "editorAccessibilitySupport": "on",
+    "firstActionExecuted": true,
+    "newestNoticeVisible": false,
+    "exitCode": 0
+  }
+}

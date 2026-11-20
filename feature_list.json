@@ -2164,13 +2164,14 @@
     },
     {
       "id": "feat-176",
-      "name": "P05.124 LAY-18 Windows 实机首个主操作自定义键位验证",
-      "description": "Windows 普通桌面输入可用后，在固定产品 Release 验证无通知焦点时的最新条目回退及通知中心已有焦点时的首个主操作。",
+      "name": "P05.124 LAY-18 Windows 实机通知首个主操作键位验证",
+      "description": "Windows 普通桌面输入可用后复验两条自定义键位路径、Narrator 开启和退出后默认键位的状态门控。",
       "dependencies": [
-        "feat-175"
+        "feat-175",
+        "feat-177"
       ],
       "status": "not-started",
-      "evidence": "Windows Release 命令服务调用通过。Win32 前景激活和鼠标定位失败，computer-use 激活返回 failed to activate captured window。Windows Sandbox 被 App Control 0x800711C7 阻止。留待可正常输入的 Windows 桌面实测，见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。",
+      "evidence": "Windows Release 命令服务调用通过。Win32 前景激活和鼠标定位失败，computer-use 激活返回 failed to activate captured window。Windows Sandbox 被 App Control 0x800711C7 阻止。留待可正常输入的 Windows 桌面实测，见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。 P05.125 Windows Release 已核对原生状态关闭读数，默认键位与 Narrator 实机组合仍待验证。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2181,8 +2182,20 @@
       "dependencies": [
         "feat-175"
       ],
+      "status": "done",
+      "evidence": "产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关留在 P05.124，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-178",
+      "name": "P05.126 LAY-18 通知中心滚动条",
+      "description": "校准通知中心长列表垂直滚动条的显隐和拖动，保持视口、短列表及其他表面的滚动行为。",
+      "dependencies": [
+        "feat-177"
+      ],
       "status": "not-started",
-      "evidence": "待固定版、命令图谱、平台状态查询、键位优先级、组合键及托管验证。Windows 桌面键鼠路径按输入可用性继续验收。",
+      "evidence": "P05.121 已对照列表密度和溢出，闲置滚动条仍有差异。待复验固定版显隐、拖动及 Alula 行为。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
