@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制的前置依赖已满足。
 
 ## Current State
 
+- 产品 `9713bfe7171b2f5565eea6d4610bac0370c3cfd5` 已推草稿 PR #3。固定版、Windows 11 实机及 Linux Xvfb 已验证分组双向跳转、环回、焦点与接受。过滤后按首尾回退，未构建组首正确滚入视口。专项 126/126，Flutter 1,646 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44750425700 四项及 Platform Availability 44750415925 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.129-quick-input-groups.md。
 - 产品 `8b016160e8125931456dae77999ca94bc72a1da8` 已推草稿 PR #3。固定版、Windows 11 125% DPI 和 Linux Xvfb 对照响应式宽高、普通行 22 与 detail 行 44。小窗视口 560×340 调整为 493.52×233，高窗为 551.55×321。专项 124/124，Flutter 1,644 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44746980907 四项及 Platform Availability 44746970668 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.128-quick-input-density.md。
 - 产品 `3e79a3bce0f1abe1e2d4243ff8dc217c7be63b7f` 已推草稿 PR #3。固定版与 Linux Xvfb 验证分页、首尾、输入焦点和接受。专项 123/123，Flutter 1,643 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44741974110 四项及 Platform Availability 44741963739 Windows/Linux 通过。Windows 11 125% DPI 的原生键位亦通过，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.127-quick-input-page.md。
 - Windows 11 build 26200、125% DPI 的真实桌面键位已验证。P05.123 Release 的 Ctrl+Shift+F8 与 P05.125 Release 的 Ctrl+Shift+A 均验证最新回退、旧行聚焦优先和仅执行首个主操作。默认键在同一进程内由真实 Narrator 状态门控，未启动与正常退出后均保留通知。两个进程均退出码 0。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.124-windows-notification-keys.md。
@@ -45,4 +46,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.128 文档收尾 CI。按 docs/03 推进 P05.129 QuickInput 分组键盘跳转。
+确认 P05.129 文档收尾 CI。按 docs/03 推进 P05.130 QuickInput 多选批量控制与确认。

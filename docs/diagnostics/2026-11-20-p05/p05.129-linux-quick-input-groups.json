@@ -1,0 +1,241 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "9713bfe7171b2f5565eea6d4610bac0370c3cfd5",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "41d1ba961a272f50c69b22f6755e5fa027dcd057ac6721d9fba766d028e9a74b",
+  "observations": {
+    "initial": {
+      "request": "initial",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        123.0,
+        800.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "next-group": {
+      "request": "next-group",
+      "active": 17,
+      "revision": 2,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        94.0,
+        800.0,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    },
+    "wrap-next": {
+      "request": "wrap-next",
+      "active": 1,
+      "revision": 3,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        123.0,
+        800.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wrap-previous": {
+      "request": "wrap-previous",
+      "active": 17,
+      "revision": 4,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        94.0,
+        800.0,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    },
+    "advance-within": {
+      "request": "advance-within",
+      "active": 18,
+      "revision": 5,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        220.5,
+        800.0,
+        242.5
+      ],
+      "scroll": 456.5,
+      "inputFocused": true
+    },
+    "start-of-group": {
+      "request": "start-of-group",
+      "active": 17,
+      "revision": 6,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        176.5,
+        800.0,
+        220.5
+      ],
+      "scroll": 456.5,
+      "inputFocused": true
+    },
+    "previous-group": {
+      "request": "previous-group",
+      "active": 1,
+      "revision": 7,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        123.0,
+        800.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "explicit-next": {
+      "request": "explicit-next",
+      "active": 17,
+      "revision": 8,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        94.0,
+        800.0,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    },
+    "filtered": {
+      "request": "filtered",
+      "active": 1,
+      "revision": 19,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        97.0,
+        800.0,
+        141.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "filtered-next": {
+      "request": "filtered-next",
+      "active": 40,
+      "revision": 20,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        345.0,
+        800.0,
+        367.0
+      ],
+      "scroll": 1006.0,
+      "inputFocused": true
+    },
+    "filtered-wrap": {
+      "request": "filtered-wrap",
+      "active": 1,
+      "revision": 21,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        97.0,
+        800.0,
+        141.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "filtered-previous": {
+      "request": "filtered-previous",
+      "active": 1,
+      "revision": 21,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        97.0,
+        800.0,
+        141.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    }
+  },
+  "fixtureSha256": "28836bdea6f445162c2d0d20e79df43a9efb4ca22f3ef0393278a8956c046140",
+  "accepted": 40,
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

@@ -2234,8 +2234,22 @@
         "feat-107",
         "feat-180"
       ],
+      "status": "done",
+      "evidence": "产品 `9713bfe7171b2f5565eea6d4610bac0370c3cfd5` 已推草稿 PR #3。固定版、Windows 11 实机及 Linux Xvfb 已验证分组双向跳转、环回、焦点与接受。过滤后按首尾回退，未构建组首正确滚入视口。专项 126/126，Flutter 1,646 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44750425700 四项及 Platform Availability 44750415925 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.129-quick-input-groups.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-182",
+      "name": "P05.130 LAY-17 QuickInput 多选批量控制与确认",
+      "description": "验证过滤命中批量选择和清除、隐藏已选保留、全局已选计数、焦点和鼠标确认，覆盖无匹配时的选中状态。",
+      "dependencies": [
+        "feat-107",
+        "feat-124",
+        "feat-181"
+      ],
       "status": "not-started",
-      "evidence": "在固定版 Windows 渲染器核对两组、当前组起点、环回、过滤后无分组、输入焦点。待产品实现与验证。",
+      "evidence": "固定版 Windows 隔离渲染器已核对筛选后 2→3→1 个已选、无匹配时隐藏项保留、输入焦点和确认按钮。待产品实现与验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
