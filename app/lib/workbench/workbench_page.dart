@@ -472,6 +472,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(null);
   // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
   String? _tabDragSourceRegion;
+  ({List<int> ids, bool replaceSelection})? _tabDragSelection;
   ({
     String region,
     int draggedId,
@@ -24306,15 +24307,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               final sourceRegion = _tabDragSourceRegion;
               final source =
                   sourceRegion == null ? null : _groups[sourceRegion];
-              if (source == null || identical(source, g)) {
-                _moveDoc(g, draggedId, d.id);
-                return;
-              }
               var insertAfter = true;
               final box = tabContext.findRenderObject();
               if (box is RenderBox && box.hasSize) {
                 insertAfter = box.globalToLocal(details.offset).dx >=
                     box.size.width / 2;
+              }
+              if (source == null || identical(source, g)) {
+                final dragSelection = _tabDragSelection;
+                final docsById = {for (final doc in g.docs) doc.id: doc};
+                final selected = <OpenDoc>[
+                  for (final id in dragSelection?.ids ?? const <int>[])
+                    if (docsById[id] case final doc?) doc,
+                ];
+                if (selected.length > 1 && docsById.containsKey(draggedId)) {
+                  _moveSelectedTabsInGroup(
+                    g,
+                    selected,
+                    draggedId,
+                    d.id,
+                    insertAfter: insertAfter,
+                  );
+                } else {
+                  _moveDoc(g, draggedId, d.id);
+                  if (dragSelection?.replaceSelection == true) {
+                    _activateEditorFromOverflow(g, draggedId);
+                  }
+                }
+                return;
               }
               // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；
               // 未命名文档（上游 Singleton）不可复制，回退为移动。
@@ -24337,7 +24357,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             builder: (context, candidateData, __) => Draggable<int>(
               data: d.id,
               dragAnchorStrategy: pointerDragAnchorStrategy,
-              onDragStarted: () => _startEditorTabDrag(g.region),
+              onDragStarted: () => _startEditorTabDrag(g, d.id),
               onDragEnd: (details) {
                 _endEditorTabDrag();
                 if (!details.wasAccepted) {
@@ -24383,6 +24403,86 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       ),
     );
+  }
+
+  void _moveSelectedTabsInGroup(
+    EditorGroup group,
+    List<OpenDoc> selection,
+    int draggedId,
+    int targetId, {
+    required bool insertAfter,
+  }) {
+    final reordered = List<OpenDoc>.of(group.docs);
+    final target = reordered.indexWhere((doc) => doc.id == targetId);
+    if (target < 0) return;
+    final dragged = selection.firstWhere((doc) => doc.id == draggedId);
+    var insertion = target + (insertAfter ? 1 : 0);
+    var stickyCount = reordered
+        .takeWhile((doc) => group.stickyDocIds.contains(doc.id))
+        .length;
+    final separateRows = _editorTabMode.value == EditorTabMode.multiple &&
+        _pinnedTabsOnSeparateRow.value &&
+        stickyCount > 0 &&
+        stickyCount < reordered.length;
+    final stickAtRowEnd =
+        separateRows && target < stickyCount && insertion == stickyCount;
+    final dropInOrdinaryRow = separateRows && target >= stickyCount;
+    var preview = group.previewDocId;
+
+    // Apply the moves to one list in tab-strip order. Earlier source removals
+    // can change where the next member belongs relative to the drop target.
+    for (final doc in selection) {
+      final from = reordered.indexOf(doc);
+      if (from < insertion) insertion--;
+      final to = insertion.clamp(0, reordered.length - 1);
+      if (from != to) {
+        if (from < stickyCount && to >= stickyCount) {
+          stickyCount--;
+        } else if (from >= stickyCount && to < stickyCount) {
+          stickyCount++;
+        }
+        reordered.removeAt(from);
+        reordered.insert(to, doc);
+        if (preview == doc.id) preview = null;
+      }
+      if (stickAtRowEnd && to >= stickyCount) {
+        reordered.removeAt(to);
+        reordered.insert(stickyCount, doc);
+        stickyCount++;
+        if (preview == doc.id) preview = null;
+      } else if (dropInOrdinaryRow && to < stickyCount) {
+        reordered.removeAt(to);
+        stickyCount--;
+        reordered.insert(stickyCount, doc);
+      }
+      insertion++;
+    }
+
+    final previous = _active;
+    if (previous != null && !identical(previous, dragged)) {
+      _flushInput(previous, commitComposition: true);
+    }
+    final anchor = group._tabSelectionAnchorId;
+    setState(() {
+      group.docs
+        ..clear()
+        ..addAll(reordered);
+      group.stickyDocIds
+        ..clear()
+        ..addAll(reordered.take(stickyCount).map((doc) => doc.id));
+      group.previewDocId = preview;
+      group.activeDocId = draggedId;
+      group._inactiveSelectedTabIds.addAll(
+        selection.where((doc) => doc.id != draggedId).map((doc) => doc.id),
+      );
+      group._tabSelectionAnchorId = anchor;
+      _focusedRegion = group.region;
+      _noteActiveDocument(group, draggedId);
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(group, dragged,
+        scrollOffset: dragged._scrollOffset);
   }
 
   /// 拖动排序：把被拖标签移到目标标签的位置。
@@ -24756,8 +24856,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _editorTabDropHover = null);
   }
 
-  void _startEditorTabDrag(String region) {
-    _tabDragSourceRegion = region;
+  void _startEditorTabDrag(EditorGroup group, int draggedId) {
+    _tabDragSourceRegion = group.region;
+    final ids = [
+      for (final doc in group.docs)
+        if (group._isTabSelected(doc.id)) doc.id,
+    ];
+    _tabDragSelection = ids.length < 2
+        ? null
+        : ids.contains(draggedId)
+            ? (ids: ids, replaceSelection: false)
+            : (ids: const [], replaceSelection: true);
     if (_editorDragModifierHandlerRegistered) return;
     HardwareKeyboard.instance.addHandler(_onEditorDragModifierKeyEvent);
     _editorDragModifierHandlerRegistered = true;
@@ -24765,6 +24874,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _endEditorTabDrag() {
     _tabDragSourceRegion = null;
+    _tabDragSelection = null;
     if (_editorDragModifierHandlerRegistered) {
       HardwareKeyboard.instance.removeHandler(_onEditorDragModifierKeyEvent);
       _editorDragModifierHandlerRegistered = false;

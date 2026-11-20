@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_model.dart';
@@ -521,6 +522,113 @@ void main() {
       expectHighlighted('alpha');
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await confirmEditor('editor', 10);
+    },
+  );
+
+  final pinnedRows = ValueVariant<bool>({false, true});
+
+  testWidgets(
+    'same-group tab drag reorders selected tabs as a stable block',
+    variant: pinnedRows,
+    (tester) async {
+      await prepareWorkspace(tester);
+      final files = ['alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot']
+          .map((name) => File('${workspace.path}/$name.txt')
+            ..writeAsStringSync('$name fixture\n'))
+          .toList();
+      sessionStore.save({
+        'v': 1,
+        'focused': 'editor',
+        'editorTabSizing': 'shrink',
+        'pinnedTabsOnSeparateRow': pinnedRows.currentValue!,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 15,
+            'locked': true,
+            'docs': [
+              for (var i = 0; i < files.length; i++)
+                {'id': i + 10, 'path': files[i].path},
+            ],
+          },
+        ],
+      });
+      await mountPage(tester);
+
+      void expectOrder(List<int> ids, List<int> sticky) {
+        final groups = sessionStore.tryLoad()!['groups'] as List;
+        final group = groups.single as Map;
+        expect(
+            (group['docs'] as List).cast<Map>().map((doc) => doc['id']), ids);
+        expect(group['sticky'], sticky);
+      }
+
+      Future<void> drag(int from, int to, {bool after = false}) async {
+        final source = tester.getCenter(_tabIn('editor', from));
+        final target = tester.getRect(_tabIn('editor', to));
+        final drop = Offset(
+          target.left + (after ? 0.76 : 0.22) * target.width,
+          target.center.dy,
+        );
+        final gesture = await tester.startGesture(
+          source,
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(Offset(drop.dx < source.dx ? -18 : 18, 0));
+        await tester.pump();
+        await gesture.moveTo(drop);
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 650));
+        await tester.pumpAndSettle();
+      }
+
+      await clickTab(tester, 11);
+      await clickTab(tester, 13, modifier: LogicalKeyboardKey.controlLeft);
+      final delta = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      await tester.enterText(find.byType(EditableText), 'edited 😀 delta');
+      await tester.pump(const Duration(milliseconds: 650));
+      await drag(13, 15, after: true);
+      expectOrder([10, 12, 14, 15, 11, 13], []);
+      expectSelected(tester, {11, 13}, 13);
+      final moved = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      expect(moved.inputWindow, same(delta.inputWindow));
+      expect(moved.focusNode, same(delta.focusNode));
+      expect(moved.focusNode!.hasPrimaryFocus, isTrue);
+      expect(moved.inputWindow.text, 'edited 😀 delta');
+
+      await drag(11, 12);
+      expectOrder([10, 11, 13, 12, 14, 15], []);
+      expectSelected(tester, {11, 13}, 11);
+      await drag(14, 10);
+      expectOrder([14, 10, 11, 13, 12, 15], []);
+      expectSelected(tester, {14}, 14);
+
+      for (final id in [10, 12]) {
+        await clickTab(tester, id);
+        expect(await commands!.execute('workbench.action.pinEditor'),
+            CommandExecutionStatus.executed);
+        await tester.pumpAndSettle();
+      }
+      await clickTab(tester, 10);
+      await clickTab(tester, 13, modifier: LogicalKeyboardKey.controlLeft);
+      if (pinnedRows.currentValue!) {
+        await drag(13, 12, after: true);
+        expectOrder([12, 10, 13, 14, 11, 15], [12, 10, 13]);
+      } else {
+        await drag(13, 10);
+        expectOrder([10, 13, 12, 14, 11, 15], [10, 13, 12]);
+      }
+      expectSelected(tester, {10, 13}, 13);
+      await drag(10, 15, after: true);
+      expectOrder([12, 14, 11, 15, 10, 13], [12]);
+      expectSelected(tester, {10, 13}, 10);
     },
   );
 }
