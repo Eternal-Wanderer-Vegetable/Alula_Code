@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:alula_app/workbench/quick_input.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -187,6 +189,106 @@ void main() {
     expect(accepted, hasLength(2));
     expect(accepted.last, 41);
   });
+
+  testWidgets('group keys reveal distant groups and use filtered boundaries',
+      (tester) async {
+    final harness = await _pumpHarness(tester);
+    final runs = <int>[];
+    var active = 0;
+    final modifier = defaultTargetPlatform == TargetPlatform.macOS
+        ? LogicalKeyboardKey.metaLeft
+        : LogicalKeyboardKey.altLeft;
+
+    QuickItem item(int i) => QuickItem(
+          label: 'Choice $i',
+          detail: i.isEven ? 'Two-line item' : null,
+          onPreview: () => active = i,
+          onRun: () async => runs.add(i),
+        );
+
+    unawaited(
+        QuickInput.show(harness.pickerContext, hint: 'Grouped results', items: [
+      const QuickItem(label: 'First section', kind: QuickItemKind.separator),
+      for (var i = 1; i <= 32; i++) item(i),
+      const QuickItem(label: 'Empty section', kind: QuickItemKind.separator),
+      const QuickItem(label: 'Second section', kind: QuickItemKind.separator),
+      for (var i = 33; i <= 40; i++) item(i),
+      const QuickItem(label: 'Trailing heading', kind: QuickItemKind.separator),
+    ]));
+    await tester.pumpAndSettle();
+
+    Future<void> jump({
+      required bool down,
+      bool explicitGroup = false,
+    }) async {
+      if (explicitGroup) {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      }
+      await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyEvent(
+          down ? LogicalKeyboardKey.arrowDown : LogicalKeyboardKey.arrowUp);
+      await tester.sendKeyUpEvent(modifier);
+      if (explicitGroup) {
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      }
+      await tester.pumpAndSettle();
+    }
+
+    void expectItem(int number) {
+      expect(active, number);
+      expect(find.byKey(ValueKey('qi-Choice $number')).hitTestable(),
+          findsOneWidget);
+    }
+
+    expectItem(1);
+    expect(find.byKey(const ValueKey('qi-Choice 33')), findsNothing);
+    final pointer = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await pointer.addPointer(
+      location: tester.getCenter(find.byKey(const ValueKey('qi-Choice 1'))),
+    );
+    addTearDown(pointer.removePointer);
+    await tester.pump();
+    await jump(down: true);
+    expectItem(33);
+    await jump(down: true);
+    expectItem(1);
+    await jump(down: false);
+    expectItem(33);
+    await pointer.moveTo(
+      tester.getCenter(find.byKey(const ValueKey('qi-Choice 34'))),
+    );
+    await tester.pumpAndSettle();
+    expectItem(34);
+    await jump(down: false);
+    expectItem(33);
+    await jump(down: false);
+    expectItem(1);
+    await jump(down: true, explicitGroup: true);
+    expectItem(33);
+
+    await tester.enterText(_inputFinder(), 'Choice');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('qi-separator-Second section')),
+        findsNothing);
+    expectItem(1);
+    await jump(down: true);
+    expectItem(40);
+    await jump(down: true);
+    expectItem(1);
+    await jump(down: false);
+    expectItem(1);
+    final input = find.descendant(
+        of: _inputFinder(), matching: find.byType(EditableText));
+    expect(
+        tester.widget<EditableText>(input).focusNode.hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(runs, [1]);
+  },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.macOS,
+      }));
 
   testWidgets('separators disappear while a query filters the list',
       (tester) async {

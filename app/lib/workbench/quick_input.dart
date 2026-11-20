@@ -651,6 +651,77 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
   }
 
+  void _moveGroup({required bool down}) {
+    final starts = <int>[];
+    var startsGroup = true;
+    var lastItem = -1;
+    for (final (index, item) in _filtered.indexed) {
+      if (!_isSelectable(item)) {
+        startsGroup = true;
+      } else {
+        if (startsGroup) starts.add(index);
+        startsGroup = false;
+        lastItem = index;
+      }
+    }
+    if (starts.isEmpty) return;
+
+    final nextGroup = down
+        ? starts.firstWhere((index) => index > _selected,
+            orElse: () => starts.first)
+        : starts.reversed.firstWhere((index) => index < _selected,
+            orElse: () => starts.last);
+    final target = down && nextGroup == _selected ? lastItem : nextGroup;
+    final generation = ++_navigationGeneration;
+    _selectIndex(target);
+    if (target == starts.first || target == lastItem) {
+      unawaited(_revealBoundary(generation, last: target == lastItem));
+    } else {
+      unawaited(_revealGroup(generation, target, down: down));
+    }
+  }
+
+  Future<void> _revealGroup(int generation, int target,
+      {required bool down}) async {
+    await WidgetsBinding.instance.endOfFrame;
+    for (var attempt = 0;
+        attempt < _filtered.length && _canNavigate(generation);
+        attempt++) {
+      final firstVisible = _visiblePageEdge(down: false);
+      final row = _rowKeys[_filtered[target]]?.currentContext;
+      if (row != null && row.mounted) {
+        final lastVisible = _visiblePageEdge(down: true);
+        if (firstVisible == null ||
+            lastVisible == null ||
+            target < firstVisible ||
+            target > lastVisible) {
+          await Scrollable.ensureVisible(row, alignment: 0);
+        }
+        return;
+      }
+
+      final position = _scroll.position;
+      final viewport = position.viewportDimension;
+      // Jump near the unbuilt row first, then use the actual mounted rows to
+      // correct for variable heights and the list's estimated scroll extent.
+      final estimate = attempt == 0
+          ? (position.maxScrollExtent + viewport) * target / _filtered.length
+          : position.pixels +
+              ((firstVisible == null ? down : target > firstVisible)
+                  ? viewport
+                  : -viewport);
+      final offset = estimate
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      if (offset == position.pixels) {
+        if (attempt == 0) continue;
+        return;
+      }
+      _scroll.jumpTo(offset);
+      await WidgetsBinding.instance.endOfFrame;
+    }
+  }
+
   void _moveToBoundary({required bool last}) {
     final generation = ++_navigationGeneration;
     for (var i = 0; i < _filtered.length; i++) {
@@ -762,14 +833,22 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
     final key = event.logicalKey;
     final keyboard = HardwareKeyboard.instance;
-    final listModifiers = !keyboard.isShiftPressed &&
-        (!keyboard.isMetaPressed ||
-            Theme.of(context).platform == TargetPlatform.macOS);
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
+    final listModifiers =
+        !keyboard.isShiftPressed && (!keyboard.isMetaPressed || isMac);
     if (!widget.inputMode &&
         listModifiers &&
         (key == LogicalKeyboardKey.pageDown ||
             key == LogicalKeyboardKey.pageUp)) {
       _movePage(down: key == LogicalKeyboardKey.pageDown);
+      return KeyEventResult.handled;
+    }
+    if (!widget.inputMode &&
+        listModifiers &&
+        (isMac ? keyboard.isMetaPressed : keyboard.isAltPressed) &&
+        (key == LogicalKeyboardKey.arrowDown ||
+            key == LogicalKeyboardKey.arrowUp)) {
+      _moveGroup(down: key == LogicalKeyboardKey.arrowDown);
       return KeyEventResult.handled;
     }
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
@@ -985,8 +1064,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final detail = item.detail;
     final hasDetail = detail != null && detail.isNotEmpty;
     final rowKey = _rowKeys.putIfAbsent(item, GlobalKey.new);
-    return InkWell(
-      key: rowKey,
+    final row = InkWell(
       onTap: enabled
           ? () {
               if (widget.canSelectMany) {
@@ -996,12 +1074,6 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
               }
             }
           : null,
-      onHover: (hovering) {
-        if (hovering && !selected) {
-          setState(() => _selected = index);
-          _previewSelected();
-        }
-      },
       child: Container(
         key: ValueKey('qi-${item.label}'),
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -1076,6 +1148,15 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
           ],
         ),
       ),
+    );
+    return Listener(
+      key: rowKey,
+      onPointerHover: (_) {
+        if (_selected == index) return;
+        _navigationGeneration++;
+        _selectIndex(index);
+      },
+      child: row,
     );
   }
 }
