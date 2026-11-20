@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 实现 P05.105 / feat-157。Windows 已确认三种清除入口各只产生一次 Narrator 语音回顾和一次系统提示音。保持工作台进程并退出 Narrator 后，三种清除均无原生警报和提示音。保留活动进度。证据和校验数据见 [Windows 去重及静默复验](docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md)。待登记产品 SHA 的托管检查。
+
 - 2026-11-20 补登记 P05.104 Windows 11 x64 实机。使用 `e6f81ad` Release 工作台注入通知夹具，Delete、单条按钮、全部清除分别移除 1、1、2 条，保留活动进度。WASAPI 确认每次一声。Narrator 语音回顾每次新增两条相同内容，关闭 Narrator 时语义树仍启用且三个入口均响。已在 docs/03 登记两项 Windows 验收差异。macOS 实机暂缓。[Windows 原生验收](docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md)
 
 - 2026-11-20 完成 P05.104 / feat-156。产品 `c2bf107774188446848d651b98eeef2512903ac6` 已推 PR #3。成功的键位、通知中心单条按钮和批量清除会播报并调用系统提示音。批量播报一次并使用实际清除数，活动进度保留。Linux Release 原生探针收到批量 AT-SPI 播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。专项 103/103，本地 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44656072778 四项和 Platform Availability 44656065738 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。

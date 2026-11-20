@@ -1928,6 +1928,18 @@
       "evidence": "产品 `c2bf107774188446848d651b98eeef2512903ac6` 已推 PR #3。成功的键位、通知中心单条按钮和批量清除会播报并调用系统提示音。批量播报一次并使用实际清除数，活动进度保留。Linux Release 原生探针收到批量 AT-SPI 播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。专项 103/103，本地 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44656072778 四项和 Platform Availability 44656065738 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。 Windows 11 x64 实机确认三种入口均播放一次系统提示音，Narrator 语音回顾每次新增两条相同播报，关闭 Narrator 后三种入口仍响，Windows 行为验收待闭环。详见 docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-157",
+      "name": "P05.105 Windows 清除通知播报去重与静默",
+      "description": "修复 LAY-18 在 Narrator 上的重复播报和朗读器关闭后仍响，保留三种清除入口与进度保护。",
+      "dependencies": [
+        "feat-156"
+      ],
+      "status": "in-progress",
+      "evidence": "docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

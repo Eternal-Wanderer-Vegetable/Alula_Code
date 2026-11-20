@@ -229,6 +229,101 @@ void main() {
     }
   });
 
+  testWidgets('Windows sends each successful clear to the native runner once',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    final feedback = _ClearFeedbackProbe(tester);
+    final messages = <String>[];
+    const channel = MethodChannel('alula/accessibility');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'notificationCleared');
+      messages.add(call.arguments as String);
+      return false;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    final progress = NotificationProgress(total: 10);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      final active = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Active progress',
+        progress: progress,
+      );
+      for (final name in ['Batch one', 'Batch two', 'Button', 'Keyboard']) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: name,
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      expect(notifications.byId(5), isNull);
+
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-4')));
+      await tester.pump();
+      expect(notifications.byId(4), isNull);
+
+      await tester.tap(find.byKey(const ValueKey('notification-clear-all')));
+      await tester.pump();
+      expect(notifications.items, [active]);
+
+      await _runClearAllCommand(tester);
+
+      expect(messages, ['通知已清除', '通知已清除', '已清除 2 条通知']);
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
+    } finally {
+      await _unmountApp(tester);
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'Windows uses Flutter feedback only for registered reader fallback',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    final feedback = _ClearFeedbackProbe(tester);
+    var useFlutter = false;
+    const channel = MethodChannel('alula/accessibility');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'notificationCleared');
+      return useFlutter;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    await _mountApp(tester);
+    try {
+      for (final name in ['Registered reader', 'Reader off']) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: name,
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-2')));
+      await tester.pump();
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
+
+      useFlutter = true;
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-1')));
+      await tester.pump();
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, ['通知已清除']);
+      expect(feedback.sounds, ['SystemSoundType.alert']);
+    } finally {
+      await _unmountApp(tester);
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('unavailable native feedback does not interrupt clearing',
       (tester) async {
     final feedback = _ClearFeedbackProbe(

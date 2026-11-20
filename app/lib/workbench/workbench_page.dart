@@ -20826,14 +20826,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Future<void> _signalNotificationClear(int count) async {
-    if (count == 0 ||
-        !mounted ||
-        _disposing ||
-        !SemanticsBinding.instance.semanticsEnabled) {
-      return;
-    }
+    if (count == 0 || !mounted || _disposing) return;
 
+    final message = count == 1 ? '通知已清除' : '已清除 $count 条通知';
     try {
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        // The runner handles Narrator directly. Other registered readers use
+        // the Flutter path when the runner explicitly requests it.
+        final useFlutter = await const MethodChannel('alula/accessibility')
+            .invokeMethod<bool>('notificationCleared', message);
+        if (useFlutter != true || !mounted || _disposing) return;
+      }
+
+      if (!SemanticsBinding.instance.semanticsEnabled) return;
+
       // Linux enables the semantics tree even without a screen reader.
       if (defaultTargetPlatform == TargetPlatform.linux) {
         final screenReaderEnabled =
@@ -20847,7 +20853,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
 
-      final message = count == 1 ? '通知已清除' : '已清除 $count 条通知';
       await Future.wait<void>([
         if (MediaQuery.supportsAnnounceOf(context))
           SemanticsService.sendAnnouncement(
