@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
-- 2026-11-20 P05.123 / feat-175。产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，实机键鼠输入待恢复。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。
+- 2026-11-20 完成 P05.123 / feat-175。产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，Windows 实机键位按 P05.124 继续验收。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。
 
 - 2026-11-20 完成 P05.122 / feat-174。产品 `e5f720cfd978e346f8bff22c5443cf6a73147136` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 用 12 个来源复验配置菜单仅显示前十个、按稳定 ID 更新、更多进入完整选择器与全局勿扰。专项 114/114，Flutter 1,636 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44726959456 四项与 Platform Availability 44726947590 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.122-notification-filter-menu.md。
 
