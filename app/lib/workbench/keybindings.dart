@@ -323,6 +323,9 @@ class KeybindingSet {
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
     'notification.clear': 'notificationFocus',
+    'notification.expand': 'notificationRowFocus',
+    'notification.collapse': 'notificationRowFocus',
+    'notification.toggle': 'notificationRowFocus',
     'notifications.hideList': 'notificationCenterVisible',
     'notifications.hideToasts': 'notificationToastsVisible',
     'notifications.focusNextToast':
@@ -384,6 +387,9 @@ class KeybindingSet {
         'breadcrumbs.revealFocused': platform == TargetPlatform.macOS
             ? 'space,cmd+enter'
             : 'space,ctrl+enter',
+        'notification.expand': 'arrowright',
+        'notification.collapse': 'arrowleft',
+        'notification.toggle': 'space,enter',
       };
 
   /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.

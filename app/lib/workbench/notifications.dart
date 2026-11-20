@@ -42,6 +42,7 @@ class WorkbenchNotification {
     this.secondaryActions = const <WorkbenchNotificationAction>[],
     this.progress,
     this.banner = false,
+    this.sticky = false,
   });
 
   final int id;
@@ -61,9 +62,12 @@ class WorkbenchNotification {
 
   /// 以编辑器区上方的内嵌 banner 呈现（不产生 toast）。
   final bool banner;
+  final bool sticky;
 
   bool get hasActions => actions.isNotEmpty;
   bool get hasProgress => progress != null && !progress!.isDone;
+  bool get hasPrimaryActions =>
+      hasActions || (hasProgress && progress!.onCancel != null);
 }
 
 /// 通知进度（上游 `IProgressOptions`/`IProgressStep`）：有 `total` 时为确定进度，
@@ -162,6 +166,7 @@ class NotificationCenter extends ChangeNotifier {
   final int maxNotifications;
   final List<WorkbenchNotification> _items = <WorkbenchNotification>[];
   final Set<int> _unread = <int>{};
+  final Set<int> _expandedIds = <int>{};
   final List<int> _toasts = <int>[]; // 旧 → 新
   final List<int> _banners = <int>[]; // 旧 → 新
   var _centerVisible = false;
@@ -222,6 +227,7 @@ class NotificationCenter extends ChangeNotifier {
     DateTime? createdAt,
     NotificationProgress? progress,
     bool banner = false,
+    bool sticky = false,
   }) {
     _rememberSource(sourceId, source);
     final notification = WorkbenchNotification(
@@ -236,6 +242,7 @@ class NotificationCenter extends ChangeNotifier {
       secondaryActions: List.unmodifiable(secondaryActions),
       progress: progress,
       banner: banner,
+      sticky: sticky,
     );
     _items.insert(0, notification);
     if (!_centerVisible) _unread.add(notification.id);
@@ -253,6 +260,7 @@ class NotificationCenter extends ChangeNotifier {
     while (_items.length > maxNotifications) {
       final removed = _items.removeLast();
       _unread.remove(removed.id);
+      _expandedIds.remove(removed.id);
       _toasts.remove(removed.id);
       _banners.remove(removed.id);
     }
@@ -310,6 +318,7 @@ class NotificationCenter extends ChangeNotifier {
     final before = _items.length;
     _items.removeWhere((item) => item.id == id);
     _unread.remove(id);
+    _expandedIds.remove(id);
     _toasts.remove(id);
     _banners.remove(id);
     if (_items.length == before) return;
@@ -339,12 +348,35 @@ class NotificationCenter extends ChangeNotifier {
 
     _items.removeWhere((item) => clearedIds.contains(item.id));
     _unread.removeAll(clearedIds);
+    _expandedIds.removeAll(clearedIds);
     _toasts.removeWhere(clearedIds.contains);
     _banners.removeWhere(clearedIds.contains);
     if (_items.isEmpty) _centerVisible = false;
     notifyListeners();
     return clearedIds.length;
   }
+
+  bool isExpanded(WorkbenchNotification notification) =>
+      notification.hasPrimaryActions || _expandedIds.contains(notification.id);
+
+  bool setExpanded(WorkbenchNotification notification, bool value) {
+    if (notification.hasPrimaryActions ||
+        !identical(byId(notification.id), notification)) {
+      return false;
+    }
+    final changed = value
+        ? _expandedIds.add(notification.id)
+        : _expandedIds.remove(notification.id);
+    if (changed) notifyListeners();
+    return changed;
+  }
+
+  bool isSticky(WorkbenchNotification notification) =>
+      notification.sticky ||
+      notification.hasProgress ||
+      (notification.hasActions
+          ? notification.severity == WorkbenchNotificationSeverity.error
+          : isExpanded(notification));
 
   void markRead(int id) {
     if (_unread.remove(id)) notifyListeners();

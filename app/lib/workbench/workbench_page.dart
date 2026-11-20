@@ -1185,6 +1185,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     reg(
+      'notification.expand',
+      '查看',
+      '展开通知',
+      () async => _changeFocusedNotificationExpansion(true),
+      when: 'notificationRowFocus',
+    );
+    reg(
+      'notification.collapse',
+      '查看',
+      '折叠通知',
+      () async => _changeFocusedNotificationExpansion(false),
+      when: 'notificationRowFocus',
+    );
+    reg(
+      'notification.toggle',
+      '查看',
+      '切换通知展开状态',
+      () async => _changeFocusedNotificationExpansion(),
+      when: 'notificationRowFocus',
+    );
+    reg(
       'notification.clear',
       '查看',
       '清除通知',
@@ -20951,11 +20972,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _syncNotificationFocusContext() {
     if (!mounted || _disposing) return;
+    final hasFocus = _focusedNotification != null;
     _commands.context.setValues({
-      'notificationFocus': _focusedNotification != null,
+      'notificationFocus': hasFocus,
+      'notificationRowFocus': hasFocus && hasNotificationRowFocus(),
       'notificationCenterVisible': !_zenMode && _notificationsVisible,
       'notificationToastsVisible': !_zenMode && _notifications.hasToasts,
     });
+  }
+
+  void _changeFocusedNotificationExpansion([bool? expanded]) {
+    final notification = _focusedNotification;
+    if (notification == null) return;
+    _notifications.setExpanded(
+      notification,
+      expanded ?? !_notifications.isExpanded(notification),
+    );
   }
 
   bool _allowOptionalNotificationToast() {

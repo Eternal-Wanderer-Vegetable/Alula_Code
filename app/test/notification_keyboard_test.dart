@@ -256,6 +256,42 @@ void main() {
     });
   });
 
+  testWidgets('notification disclosure keys are shared by toast and center',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final notice = _notify(center, 'Message with a disclosure row');
+      await tester.pump();
+
+      Finder message() => find.text(notice.message);
+      int? lines() => tester.widget<Text>(message()).maxLines;
+      Focus.of(tester.element(message())).requestFocus();
+      await tester.pump();
+      expect(lines(), 1);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump();
+      expect(lines(), isNull);
+      expect(find.text('来源：Alula'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump();
+      expect(lines(), 1);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      expect(lines(), isNull);
+
+      await _showCenter(tester);
+      expect(lines(), isNull);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      expect(lines(), 1);
+      await tester.tap(message());
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(message());
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(lines(), isNull);
+    });
+  });
+
   testWidgets('toast shortcut protects running progress and clears after done',
       (tester) async {
     final progress = NotificationProgress(total: 10, worked: 1);

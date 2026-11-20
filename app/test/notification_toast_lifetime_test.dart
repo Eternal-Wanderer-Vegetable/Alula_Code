@@ -62,6 +62,47 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('manual expansion keeps a toast until it is collapsed',
+      (tester) async {
+    final center = NotificationCenter();
+    addTearDown(center.dispose);
+    final notice = center.notify(
+      severity: WorkbenchNotificationSeverity.info,
+      message: 'Manually expanded',
+    );
+    await _mount(tester, center);
+    expect(center.setExpanded(notice, true), isTrue);
+    await tester.pump(const Duration(seconds: 11));
+    expect(_toast(notice.id), findsOneWidget);
+    expect(center.setExpanded(notice, false), isTrue);
+    await tester.pump(const Duration(seconds: 8));
+    expect(_toast(notice.id), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    expect(_toast(notice.id), findsNothing);
+    expect(center.items, [notice]);
+    expect(center.unreadCount, 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('explicitly sticky toast survives its deadline while collapsed',
+      (tester) async {
+    final center = NotificationCenter();
+    addTearDown(center.dispose);
+    final notice = center.notify(
+      severity: WorkbenchNotificationSeverity.info,
+      message: 'Explicitly sticky',
+      sticky: true,
+    );
+    await _mount(tester, center);
+    await tester.pump(const Duration(seconds: 21));
+    expect(_toast(notice.id), findsOneWidget);
+    expect(center.isExpanded(notice), isFalse);
+    expect(center.clearNotification(notice), isTrue);
+    await tester.pump();
+    expect(_toast(notice.id), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('descendant action focus postpones the deadline', (tester) async {
     final center = NotificationCenter();
     addTearDown(center.dispose);

@@ -203,6 +203,29 @@ void main() {
       expect(center.centerVisible, isTrue);
     });
 
+    test('disclosure changes only the owned collapsible notification', () {
+      final center = NotificationCenter(maxNotifications: 2);
+      final otherCenter = NotificationCenter();
+      final notice = notify(center);
+      final foreign = notify(otherCenter);
+      final action = notify(
+        center,
+        actions: [WorkbenchNotificationAction(label: 'Run', run: () async {})],
+      );
+      expect(center.setExpanded(foreign, true), isFalse);
+      expect(center.isExpanded(action), isTrue);
+      expect(center.setExpanded(action, false), isFalse);
+      expect(center.setExpanded(notice, true), isTrue);
+      expect(center.setExpanded(notice, true), isFalse);
+      expect(center.isExpanded(notice), isTrue);
+      expect(center.items, [action, notice]);
+
+      final fresh = notify(center);
+      expect(center.setExpanded(notice, false), isFalse);
+      expect(center.isExpanded(fresh), isFalse);
+      expect(center.items, [fresh, action]);
+    });
+
     test('markRead and markAllRead clear unread state', () {
       final center = NotificationCenter();
       final first = notify(center);

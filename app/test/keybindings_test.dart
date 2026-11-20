@@ -34,23 +34,26 @@ void main() {
           'escape': 'breadcrumbs.selectEditor',
           'space': 'breadcrumbs.revealFocused',
         }.entries) {
-          final binding = keys.bindingForChord(parseChord(entry.key)!)!;
+          final expectedContext = switch (entry.value) {
+            'breadcrumbs.focus' ||
+            'breadcrumbs.focusAndSelect' =>
+              'breadcrumbsPossible',
+            'breadcrumbs.focusNext' ||
+            'breadcrumbs.focusPrevious' =>
+              'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+            'breadcrumbs.focusNextWithPicker' ||
+            'breadcrumbs.focusPreviousWithPicker' =>
+              'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+            _ => 'breadcrumbsVisible && breadcrumbsActive',
+          };
+          final binding = keys.bindingForChord(
+            parseChord(entry.key)!,
+            matchesWhen: (condition) =>
+                condition == null || condition == expectedContext,
+          )!;
           expect(binding.commandId, entry.value,
               reason: '$platform/${entry.key}');
-          expect(
-              binding.when,
-              switch (entry.value) {
-                'breadcrumbs.focus' ||
-                'breadcrumbs.focusAndSelect' =>
-                  'breadcrumbsPossible',
-                'breadcrumbs.focusNext' ||
-                'breadcrumbs.focusPrevious' =>
-                  'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
-                'breadcrumbs.focusNextWithPicker' ||
-                'breadcrumbs.focusPreviousWithPicker' =>
-                  'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
-                _ => 'breadcrumbsVisible && breadcrumbsActive',
-              });
+          expect(binding.when, expectedContext);
         }
         final outsidePicker = keys.resolveBindings(
           matchesWhen: (condition) =>

@@ -124,6 +124,10 @@ class _NotificationStyle {
   return null;
 }
 
+bool hasNotificationRowFocus() =>
+    FocusManager.instance.primaryFocus?.context?.widget
+        is _NotificationItemFocus;
+
 /// Focus an attached toast row and keep the row in the visible viewport.
 void requestNotificationToastFocus(
   FocusNode surface,
@@ -413,11 +417,7 @@ class _NotificationToastState extends State<_NotificationToast> {
       _waitingForWindowFocus = true;
       return;
     }
-    final notification = widget.notification;
-    final sticky = notification.hasProgress ||
-        (notification.severity == WorkbenchNotificationSeverity.error &&
-            notification.hasActions);
-    if (sticky ||
+    if (widget.center.isSticky(widget.notification) ||
         _hovered ||
         _descendantFocused ||
         _secondaryMenuOpen ||
@@ -785,9 +785,6 @@ class _NotificationContent extends StatefulWidget {
 }
 
 class _NotificationContentState extends State<_NotificationContent> {
-  // Toast and center display the same notification object. Overrides disappear
-  // with that object, including when the center evicts an old notification.
-  static final _expandedByNotification = Expando<bool>();
   static const _messageStyle = TextStyle(fontSize: 13, height: 1.35);
   static const _actionStyle = ButtonStyle(
     minimumSize: WidgetStatePropertyAll(Size(0, 26)),
@@ -816,14 +813,20 @@ class _NotificationContentState extends State<_NotificationContent> {
           );
   }
 
+  void _toggleExpanded() {
+    final notification = widget.notification;
+    final center = widget.center;
+    if (center.setExpanded(notification, !center.isExpanded(notification))) {
+      setState(() {});
+    }
+  }
+
   Widget _buildContent(BuildContext context) {
     final notification = widget.notification;
     final style = _NotificationStyle.of(notification.severity);
     final hasProgress = notification.hasProgress;
-    final hasPrimaryActions = notification.hasActions ||
-        (hasProgress && notification.progress!.onCancel != null);
-    final expanded =
-        hasPrimaryActions || (_expandedByNotification[notification] ?? false);
+    final hasPrimaryActions = notification.hasPrimaryActions;
+    final expanded = widget.center.isExpanded(notification);
     final prefix = widget.isToast ? 'notification-toast' : 'notification';
     final details =
         expanded && (notification.source.isNotEmpty || notification.hasActions)
@@ -854,15 +857,20 @@ class _NotificationContentState extends State<_NotificationContent> {
                     ),
                     const SizedBox(width: 6),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          notification.message,
-                          style: _messageStyle,
-                          maxLines: expanded ? null : 1,
-                          overflow: expanded
-                              ? TextOverflow.clip
-                              : TextOverflow.ellipsis,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        excludeFromSemantics: true,
+                        onDoubleTap: hasPrimaryActions ? null : _toggleExpanded,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            notification.message,
+                            style: _messageStyle,
+                            maxLines: expanded ? null : 1,
+                            overflow: expanded
+                                ? TextOverflow.clip
+                                : TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ),
@@ -875,9 +883,7 @@ class _NotificationContentState extends State<_NotificationContent> {
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         tooltip: expanded ? '折叠通知' : '展开通知',
-                        onPressed: () => setState(() {
-                          _expandedByNotification[notification] = !expanded;
-                        }),
+                        onPressed: _toggleExpanded,
                       ),
                     if (!hasProgress)
                       _toolbarButton(
