@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
-- P05.103 / feat-155 已通过本地验证，待托管结果。中键释放时清除命中的 toast 或通知中心条目，保留活动进度。专项 97/97，Flutter 1,579 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。见 `docs/diagnostics/2026-11-20-p05/p05.103-notification-middle-click.md`。
+- 2026-11-20 完成 P05.103 / feat-155。产品 `a1f82b1455ee1886e952a5c8a6884905909ee23b` 已推 PR #3。鼠标中键在 toast 或通知中心行内释放时清除当前位置的单条通知。保留活动进度和其他通知。中键与快捷键共用模型校验，同步检查当前条目身份及活动进度。专项 97/97，本地 Flutter 1,579 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44648381359 四项和 Platform Availability 44648372041 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。 macOS 实机验收暂缓。最终 staged all-scope 为 MEDIUM，9 个文件、27 个映射符号、2 个流程，无 partial/truncated。两个流程均经过 clearNotification，分别通往 ById 和 Dismiss。累计 compare-main 为 CRITICAL，767 个文件、2,705 个映射符号、80 个流程，重跑仍有列表截断。 证据：docs/diagnostics/2026-11-20-p05/p05.103-notification-middle-click.md。
 
 - 2026-11-20 完成 P05.102 / feat-154。产品 `846e0b7ae8b01b37392a84eddc38a1523cb518dc` 已推 PR #3。Windows/Linux Delete、macOS Cmd+Backspace 通过 notification.clear 清除当前获焦的 toast 或通知中心条目。保留活动进度、已收起 toast 与其他通知。支持重绑，编辑器 Delete 按原有路径处理。打开时聚焦首条，后续到达不会抢焦点。专项 91/91，本地 Flutter 1,573 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44643034139 四项和 Platform Availability 44643024085 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。 macOS 实机验收暂缓。最终 staged all-scope 为 CRITICAL，10 个文件、11 个映射符号、414 个流程，无 partial/truncated。414 个流程全部仅经焦点解析器的空 UID 映射，源码核对真实调用点，并以键位隔离和全量测试复核。累计 compare-main 为 CRITICAL，766 个文件、541 个映射符号、419 个流程。 证据：docs/diagnostics/2026-11-20-p05/p05.102-notification-clear-keybinding.md。
 
