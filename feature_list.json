@@ -2085,8 +2085,20 @@
       "dependencies": [
         "feat-168"
       ],
+      "status": "done",
+      "evidence": "产品 `785b5e6a5990e4f8013df8c335142d8c1c235080` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 对照验证通知行展开、折叠、键鼠和错过首个到期后仍保留。折叠后在后续到期收起，中心仍保留条目。专项 141/141，Flutter 1,624 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44713994088 四项及 Platform Availability 44713987929 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.117-notification-disclosure.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-170",
+      "name": "P05.118 LAY-18 通知主操作执行与收起",
+      "description": "按固定版在 toast 和中心执行当前条目的主操作，验证默认收起、显式保持、异步失败及真实保存失败入口。",
+      "dependencies": [
+        "feat-169"
+      ],
       "status": "not-started",
-      "evidence": "待核对固定版 notification.expand/collapse/toggle、双击及无主操作的展开通知到期。",
+      "evidence": "待核对固定版主操作成功、异步执行、显式保持和失败提示各路径。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

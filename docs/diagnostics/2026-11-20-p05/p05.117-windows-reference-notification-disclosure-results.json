@@ -1,0 +1,22 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "expandedSteps": {
+    "initial": false,
+    "right": true,
+    "left": false,
+    "space": true,
+    "enter": false,
+    "expandedPastDeadline": true,
+    "leftAfterDeadline": false
+  },
+  "collapsedToastExpired": true,
+  "retainedInCenter": true,
+  "exitCode": 0,
+  "visibleSecondsAfterArrival": 11.91654170001857,
+  "scriptedWaitAfterMovingFocusSeconds": 10.8
+}
