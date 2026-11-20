@@ -247,6 +247,9 @@ void main() {
       expect(
           tester.getTopLeft(newer).dy, lessThan(tester.getTopLeft(older).dy));
       final toast = tester.getRect(older);
+      expect(toast.top - tester.getBottomLeft(newer).dy, 4);
+      expect(toast.width, 452);
+      expect(toast.bottom, 564);
 
       await _showNotificationCenter(tester);
       final panel =
@@ -254,6 +257,10 @@ void main() {
       expect(panel.width, closeTo(toast.width, .01));
       expect(panel.right, closeTo(toast.right, .01));
       expect(panel.bottom, closeTo(toast.bottom, .01));
+      expect(
+        tester.getSize(find.byKey(const ValueKey('notification-position'))),
+        const Size(24, 24),
+      );
     } finally {
       await _unmountApp(tester);
     }
@@ -413,6 +420,7 @@ void main() {
       await choose('topRight');
       final top = tester.getRect(panel);
       expect(top.right, originalToast.right);
+      expect(top.top, 36);
       expect(top.top, greaterThan(tester.getBottomLeft(titleBell).dy));
       expect(statusBell, findsNothing);
 
@@ -473,7 +481,7 @@ void main() {
       final panel =
           tester.getRect(find.byKey(const ValueKey('notification-center')));
       expect(panel.right, 792);
-      expect(panel.bottom, 570);
+      expect(panel.bottom, 564);
       expect(find.byKey(const ValueKey('title-notifications')), findsNothing);
     } finally {
       await _unmountApp(tester);

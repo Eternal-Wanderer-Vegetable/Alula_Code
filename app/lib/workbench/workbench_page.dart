@@ -20913,11 +20913,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (_zenMode) return const SizedBox.shrink();
     return Positioned(
       top: _notificationPosition.atTop && hasRenderedTitleBar
-          ? 8 + WindowChromeConfiguration.customTitleBarHeight
+          ? WindowChromeConfiguration.customTitleBarHeight + 1
           : 8,
       left: 8,
       right: 8,
-      bottom: 30,
+      bottom: 36,
       child: Align(
         alignment: _notificationPosition.alignment,
         child: _notificationsVisible

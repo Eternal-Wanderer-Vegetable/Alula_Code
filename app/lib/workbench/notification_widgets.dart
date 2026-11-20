@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 
 import 'notifications.dart';
 
-const _notificationSurfaceWidth = 450.0;
+// The shared frame includes a one-pixel border on either side of the content.
+const _notificationSurfaceWidth = 452.0;
 
 enum WorkbenchNotificationPosition {
   bottomRight('bottom-right', '右下角', Alignment.bottomRight),
@@ -197,7 +198,7 @@ class WorkbenchNotificationToasts extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
-        spacing: 8,
+        spacing: 4,
         children: [
           for (final notification in visible)
             _NotificationToast(
@@ -442,30 +443,33 @@ class _WorkbenchNotificationCenterState
                     ),
                   ),
                   if (widget.onPositionChanged != null)
-                    PopupMenuButton<WorkbenchNotificationPosition>(
-                      key: const ValueKey('notification-position'),
-                      tooltip: '通知位置',
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 140),
-                      style: IconButton.styleFrom(
-                        minimumSize: const Size(24, 24),
+                    SizedBox.square(
+                      dimension: 24,
+                      child: PopupMenuButton<WorkbenchNotificationPosition>(
+                        key: const ValueKey('notification-position'),
+                        tooltip: '通知位置',
                         padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        constraints: const BoxConstraints(minWidth: 140),
+                        style: IconButton.styleFrom(
+                          minimumSize: const Size(24, 24),
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        icon: Icon(Icons.open_with,
+                            size: 15, color: Colors.grey.shade400),
+                        onSelected: widget.onPositionChanged,
+                        itemBuilder: (context) => [
+                          for (final position
+                              in WorkbenchNotificationPosition.values)
+                            CheckedPopupMenuItem(
+                              key: ValueKey(
+                                  'notification-position-${position.name}'),
+                              value: position,
+                              checked: position == widget.position,
+                              child: Text(position.label),
+                            ),
+                        ],
                       ),
-                      icon: Icon(Icons.open_with,
-                          size: 15, color: Colors.grey.shade400),
-                      onSelected: widget.onPositionChanged,
-                      itemBuilder: (context) => [
-                        for (final position
-                            in WorkbenchNotificationPosition.values)
-                          CheckedPopupMenuItem(
-                            key: ValueKey(
-                                'notification-position-${position.name}'),
-                            value: position,
-                            checked: position == widget.position,
-                            child: Text(position.label),
-                          ),
-                      ],
                     ),
                   IconButton(
                     key: const ValueKey('notification-center-close'),
