@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.136 / feat-188。产品 `c0c04ed8d4b9e3adeaaf777031d34b2f45aecca3` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证组内 Ctrl 增减选择、最近活动回退、Shift 范围、关闭的选择范围以及批量取消和保存。专项 73/73，Flutter 1,659 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44787029079 四项及 Platform Availability 44787011636 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.136-tab-selection.md。
+
 - 2026-11-21 完成 P05.135 / feat-187。产品 `ecbc5fd0b2a3a1d87055ddce04c57801d937d45f` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证单标签双视图、两侧文本一致、独立焦点和滚动、方向与分隔条、保留活动视图的合并及文件保存。专项 53/53，Flutter 1,656 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44781172968 四项及 Platform Availability 44781156916 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.135-split-in-group.md。
 
 - 2026-11-21 完成 P05.134 / feat-186。产品 `50caa0718335eeffd9a99875c9527064aec27f9a` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 验证嵌套单轴及两轴扩展、220×70 最小尺寸、均分、同时隐藏两侧栏和视图身份。专项 71/71，Flutter 1,655 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44774272272 四项及 Platform Availability 44774255986 Windows 和同 SHA 44775806212 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.134-editor-group-expansion.md。

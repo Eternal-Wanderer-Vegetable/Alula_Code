@@ -2333,6 +2333,20 @@
         "feat-095",
         "feat-187"
       ],
+      "status": "done",
+      "evidence": "产品 `c0c04ed8d4b9e3adeaaf777031d34b2f45aecca3` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证组内 Ctrl 增减选择、最近活动回退、Shift 范围、关闭的选择范围以及批量取消和保存。专项 73/73，Flutter 1,659 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44787029079 四项及 Platform Availability 44787011636 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.136-tab-selection.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-189",
+      "name": "P05.137 LAY-10 最近使用编辑器快速切换",
+      "description": "提供组内或跨组的最近活动编辑器快速切换，覆盖循环、确认与取消、文档及所属组身份。",
+      "dependencies": [
+        "feat-098",
+        "feat-179",
+        "feat-188"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
