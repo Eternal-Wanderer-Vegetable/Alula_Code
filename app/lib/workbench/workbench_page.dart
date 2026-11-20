@@ -25,7 +25,8 @@ import 'package:flutter/gestures.dart'
         PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
-import 'package:flutter/semantics.dart' show CustomSemanticsAction;
+import 'package:flutter/semantics.dart'
+    show CustomSemanticsAction, SemanticsBinding, SemanticsService;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
@@ -1119,7 +1120,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async {
         final notification = _focusedNotification;
         if (notification != null) {
-          _notifications.clearNotification(notification);
+          _clearNotification(notification);
         }
       },
       when: 'notificationFocus',
@@ -20813,9 +20814,54 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _clearNotification(WorkbenchNotification notification) {
+    if (_notifications.clearNotification(notification)) {
+      unawaited(_signalNotificationClear(1));
+    }
+  }
+
   void _clearNotifications() {
     if (_notificationsVisible) _toggleNotificationCenter();
-    _notifications.clearAll();
+    unawaited(_signalNotificationClear(_notifications.clearAll()));
+  }
+
+  Future<void> _signalNotificationClear(int count) async {
+    if (count == 0 ||
+        !mounted ||
+        _disposing ||
+        !SemanticsBinding.instance.semanticsEnabled) {
+      return;
+    }
+
+    try {
+      // Linux enables the semantics tree even without a screen reader.
+      if (defaultTargetPlatform == TargetPlatform.linux) {
+        final screenReaderEnabled =
+            await const MethodChannel('alula/accessibility')
+                .invokeMethod<bool>('screenReaderEnabled');
+        if (screenReaderEnabled != true ||
+            !mounted ||
+            _disposing ||
+            !SemanticsBinding.instance.semanticsEnabled) {
+          return;
+        }
+      }
+
+      final message = count == 1 ? '通知已清除' : '已清除 $count 条通知';
+      await Future.wait<void>([
+        if (MediaQuery.supportsAnnounceOf(context))
+          SemanticsService.sendAnnouncement(
+            View.of(context),
+            message,
+            Directionality.of(context),
+          ),
+        SystemSound.play(SystemSoundType.alert),
+      ]);
+    } on PlatformException {
+      // A platform feedback failure should not interrupt notification clearing.
+    } on MissingPluginException {
+      // A native feedback channel is unavailable on this embedder.
+    }
   }
 
   Widget _buildNotificationLayer() {
@@ -20831,7 +20877,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               sourceFilter: _notificationSourceFilter,
               onSourceFilterChanged: (value) =>
                   setState(() => _notificationSourceFilter = value),
-              onDismiss: _notifications.dismiss,
+              onDismiss: (id) {
+                if (_notifications.byId(id) case final notification?) {
+                  _clearNotification(notification);
+                }
+              },
               onClearAll: _clearNotifications,
               onToggleDoNotDisturb: () => _notifications
                   .setDoNotDisturb(!_notifications.doNotDisturb),

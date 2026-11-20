@@ -4,8 +4,10 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 late Directory temp;
@@ -66,6 +68,226 @@ void main() {
       expect(find.byKey(const ValueKey('status-notifications-badge')),
           findsNothing,
           reason: '打开中心即标记已读');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('shortcut and center clear button send one native signal each',
+      (tester) async {
+    final feedback = _ClearFeedbackProbe(tester);
+    final progress = NotificationProgress(total: 5);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Ordinary notification',
+      );
+      final active = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Progress notification',
+        progress: progress,
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
+      expect(notifications.byId(active.id), same(active));
+
+      progress.done();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      expect(notifications.byId(active.id), isNull);
+      expect(feedback.announcements, ['通知已清除']);
+      expect(feedback.viewIds, [tester.view.viewId]);
+      expect(feedback.sounds, ['SystemSoundType.alert']);
+
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-1')));
+      await tester.pump();
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, ['通知已清除', '通知已清除']);
+      expect(
+          feedback.sounds, ['SystemSoundType.alert', 'SystemSoundType.alert']);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('clear all reports only the actual cleared count once',
+      (tester) async {
+    final feedback = _ClearFeedbackProbe(tester);
+    final progress = NotificationProgress(total: 5);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      for (final name in ['First notification', 'Second notification']) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: name,
+        );
+      }
+      final active = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Still running',
+        progress: progress,
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      await tester.tap(find.byKey(const ValueKey('notification-clear-all')));
+      await tester.pump();
+
+      expect(notifications.items, [active]);
+      expect(feedback.announcements, ['已清除 2 条通知']);
+      expect(feedback.sounds, ['SystemSoundType.alert']);
+
+      await _runClearAllCommand(tester);
+      expect(notifications.items, [active]);
+      expect(feedback.announcements, ['已清除 2 条通知']);
+      expect(feedback.sounds, hasLength(1));
+
+      progress.done();
+      await _runClearAllCommand(tester);
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, ['已清除 2 条通知', '通知已清除']);
+      expect(feedback.sounds, hasLength(2));
+
+      await _runClearAllCommand(tester);
+      expect(feedback.announcements, hasLength(2));
+      expect(feedback.sounds, hasLength(2));
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('clear stays silent when accessibility semantics are disabled',
+      (tester) async {
+    final feedback = _ClearFeedbackProbe(tester);
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'No active semantics',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-1')));
+      await tester.pump();
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
+    } finally {
+      await _unmountApp(tester);
+    }
+  }, semanticsEnabled: false);
+
+  testWidgets('Linux uses the screen reader state instead of semantics alone',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    final feedback = _ClearFeedbackProbe(tester);
+    var readerEnabled = false;
+    var statusReads = 0;
+    const channel = MethodChannel('alula/accessibility');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'screenReaderEnabled');
+      statusReads++;
+      return readerEnabled;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    await _mountApp(tester);
+    try {
+      for (final message in ['First item', 'Second item']) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: message,
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-2')));
+      await tester.pump();
+      expect(notifications.items, hasLength(1));
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
+
+      readerEnabled = true;
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-1')));
+      await tester.pump();
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, ['通知已清除']);
+      expect(feedback.sounds, ['SystemSoundType.alert']);
+      expect(statusReads, 2);
+    } finally {
+      await _unmountApp(tester);
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('unavailable native feedback does not interrupt clearing',
+      (tester) async {
+    final feedback = _ClearFeedbackProbe(
+      tester,
+      supportsAnnounce: false,
+      failSound: true,
+    );
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'No announcement support',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      await tester.tap(find.byKey(const ValueKey('notification-dismiss-1')));
+      await tester.pump();
+      expect(notifications.items, isEmpty);
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, ['SystemSoundType.alert']);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('toast hide, middle click and expiration leave feedback silent',
+      (tester) async {
+    final feedback = _ClearFeedbackProbe(tester);
+    await _mountApp(tester);
+    try {
+      final hidden = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Hide this toast',
+      );
+      await tester.pump();
+      await tester
+          .tap(find.byKey(ValueKey('notification-toast-close-${hidden.id}')));
+      await tester.pump();
+
+      final expired = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Expiring toast',
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 10));
+      expect(notifications.toastIds, isEmpty);
+
+      final middle = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Middle-click this toast',
+      );
+      await tester.pump();
+      await _middleClick(tester, find.text(middle.message));
+      expect(notifications.byId(middle.id), isNull);
+
+      expect(notifications.items, [expired, hidden]);
+      expect(feedback.announcements, isEmpty);
+      expect(feedback.sounds, isEmpty);
     } finally {
       await _unmountApp(tester);
     }
@@ -454,6 +676,60 @@ Future<void> _middleClick(WidgetTester tester, Finder target) async {
     buttons: kMiddleMouseButton,
   );
   await tester.pump();
+}
+
+Future<void> _runClearAllCommand(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey('command-center-control')));
+  await tester.pumpAndSettle();
+  await tester.enterText(_paletteInput(), '清除所有通知');
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('qi-查看: 清除所有通知')));
+  await tester.pumpAndSettle();
+}
+
+class _ClearFeedbackProbe {
+  _ClearFeedbackProbe(
+    WidgetTester tester, {
+    bool supportsAnnounce = true,
+    bool failSound = false,
+  }) {
+    final dispatcher = tester.binding.platformDispatcher;
+    dispatcher.accessibilityFeaturesTestValue =
+        FakeAccessibilityFeatures(supportsAnnounce: supportsAnnounce);
+    addTearDown(dispatcher.clearAccessibilityFeaturesTestValue);
+
+    final messenger = tester.binding.defaultBinaryMessenger;
+    messenger.setMockDecodedMessageHandler<Object?>(
+      SystemChannels.accessibility,
+      (Object? message) async {
+        if (message case {'type': 'announce', 'data': final Map data}) {
+          announcements.add(data['message'] as String);
+          viewIds.add(data['viewId'] as int);
+        }
+        return null;
+      },
+    );
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'SystemSound.play' &&
+          call.arguments == 'SystemSoundType.alert') {
+        sounds.add(call.arguments as String);
+        if (failSound) throw PlatformException(code: 'sound-unavailable');
+      }
+      return null;
+    });
+
+    addTearDown(() {
+      messenger.setMockDecodedMessageHandler<Object?>(
+        SystemChannels.accessibility,
+        null,
+      );
+      messenger.setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+  }
+
+  final announcements = <String>[];
+  final viewIds = <int>[];
+  final sounds = <String>[];
 }
 
 Future<void> _mountApp(WidgetTester tester) async {

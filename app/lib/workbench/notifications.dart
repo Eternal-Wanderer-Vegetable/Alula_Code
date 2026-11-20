@@ -246,30 +246,32 @@ class NotificationCenter extends ChangeNotifier {
     if (_items.length != before) notifyListeners();
   }
 
-  /// 用户清除单条通知时保留活动进度，并校验条目仍属于当前中心。
-  void clearNotification(WorkbenchNotification notification) {
+  /// Returns whether the notification belonged to this center and was cleared.
+  bool clearNotification(WorkbenchNotification notification) {
     if (notification.hasProgress ||
         !identical(byId(notification.id), notification)) {
-      return;
+      return false;
     }
     dismiss(notification.id);
+    return true;
   }
 
   bool get canClearAll => _items.any((item) => !item.hasProgress);
 
-  /// Clear completed and ordinary notifications, retaining active progress.
-  void clearAll() {
+  /// Clear completed and ordinary notifications and return the cleared count.
+  int clearAll() {
     final clearedIds = <int>{
       for (final item in _items)
         if (!item.hasProgress) item.id,
     };
-    if (clearedIds.isEmpty) return;
+    if (clearedIds.isEmpty) return 0;
 
     _items.removeWhere((item) => clearedIds.contains(item.id));
     _unread.removeAll(clearedIds);
     _toasts.removeWhere(clearedIds.contains);
     _banners.removeWhere(clearedIds.contains);
     notifyListeners();
+    return clearedIds.length;
   }
 
   void markRead(int id) {
