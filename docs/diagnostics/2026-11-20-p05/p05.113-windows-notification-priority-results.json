@@ -1,0 +1,236 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "171262b305bcc85ecdf288142d8e52260676116f8d91bfad1273cd1a0f36bfbc",
+  "fixtureSha256": "82cc0d6db48b50c7f58f2dc775fdcce11f687dba89a99b3bd0b370819f66a72a",
+  "observations": {
+    "find": {
+      "request": "find",
+      "boxes": {
+        "title-notifications": [
+          965.2,
+          10.5,
+          979.2,
+          24.5
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          733.2000000000002,
+          111.0
+        ]
+      },
+      "dnd": false,
+      "toastIds": [],
+      "items": []
+    },
+    "during": {
+      "request": "during",
+      "boxes": {
+        "title-notifications": [
+          948.0984375,
+          10.5,
+          979.2,
+          24.5
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          733.2000000000002,
+          111.0
+        ],
+        "notification-toast-4": [
+          527.2,
+          36.0,
+          979.2,
+          72.0
+        ],
+        "notification-toast-2": [
+          527.2,
+          76.0,
+          979.2,
+          112.0
+        ]
+      },
+      "dnd": false,
+      "toastIds": [
+        2,
+        4
+      ],
+      "items": [
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "find-closed": {
+      "request": "find-closed",
+      "boxes": {
+        "title-notifications": [
+          948.0984375,
+          10.5,
+          979.2,
+          24.5
+        ],
+        "notification-toast-4": [
+          527.2,
+          36.0,
+          979.2,
+          72.0
+        ],
+        "notification-toast-2": [
+          527.2,
+          76.0,
+          979.2,
+          112.0
+        ]
+      },
+      "dnd": false,
+      "toastIds": [
+        2,
+        4
+      ],
+      "items": [
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "after": {
+      "request": "after",
+      "boxes": {
+        "title-notifications": [
+          948.0984375,
+          10.5,
+          979.2,
+          24.5
+        ],
+        "notification-toast-5": [
+          527.2,
+          36.0,
+          979.2,
+          72.0
+        ],
+        "notification-toast-4": [
+          527.2,
+          76.0,
+          979.2,
+          112.0
+        ],
+        "notification-toast-2": [
+          527.2,
+          116.0,
+          979.2,
+          152.0
+        ]
+      },
+      "dnd": false,
+      "toastIds": [
+        2,
+        4,
+        5
+      ],
+      "items": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "center": {
+      "request": "center",
+      "boxes": {
+        "title-notifications": [
+          965.2,
+          10.5,
+          979.2,
+          24.5
+        ],
+        "notification-center": [
+          527.2,
+          36.0,
+          979.2,
+          253.0
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          49.0,
+          915.2,
+          65.0
+        ],
+        "notification-position": [
+          931.2,
+          45.0,
+          955.2,
+          69.0
+        ],
+        "notification-item-5": [
+          528.2,
+          78.0,
+          978.2,
+          113.0
+        ],
+        "notification-item-4": [
+          528.2,
+          113.0,
+          978.2,
+          148.0
+        ],
+        "notification-item-3": [
+          528.2,
+          148.0,
+          978.2,
+          183.0
+        ],
+        "notification-item-2": [
+          528.2,
+          183.0,
+          978.2,
+          218.0
+        ],
+        "notification-item-1": [
+          528.2,
+          218.0,
+          978.2,
+          252.0
+        ]
+      },
+      "dnd": false,
+      "toastIds": [
+        2,
+        4,
+        5
+      ],
+      "items": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "productCommit": "b45cb4a50ead9d98779a38334e33a97dcc1500c7",
+  "fixtureBuildMethod": "Prior release scratch; mirrored tracked product sources verified against the product commit. The scratch Git HEAD is an earlier commit.",
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "594c1193e722dc2f380dbd83bbfa2fa5f3bf383681360c3e5488d063f6481623",
+    "app/lib/workbench/notifications.dart": "6fbe0a2bc20562e133c09234bd2f6989079988c7e8a7ab62d1bae36db598f1b6",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "7c38aa43947a7e1adca0b91704aef6237b1f213e1165dd9e126569e0820d236c",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}
