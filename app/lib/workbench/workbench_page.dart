@@ -468,6 +468,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(true);
   final ValueNotifier<bool> _editorTabActionReserveSpace = ValueNotifier(true);
   final ValueNotifier<bool> _pinnedTabsOnSeparateRow = ValueNotifier(false);
+  final ValueNotifier<EditorPinnedTabSizing> _editorPinnedTabSizing =
+      ValueNotifier(EditorPinnedTabSizing.normal);
   final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
       ValueNotifier(null);
   // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
@@ -1791,6 +1793,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           EditorTabSizing.fixed => '固定编辑器标签宽度',
         },
         () async => _setEditorTabSizing(sizing),
+      );
+    }
+    for (final sizing in EditorPinnedTabSizing.values) {
+      reg(
+        'workbench.action.editorTabs.pinnedSizing.${sizing.name}',
+        '查看',
+        switch (sizing) {
+          EditorPinnedTabSizing.normal => '使用普通固定标签宽度',
+          EditorPinnedTabSizing.compact => '使用紧凑固定标签宽度',
+          EditorPinnedTabSizing.shrink => '使用收缩固定标签宽度',
+        },
+        () async => _setEditorPinnedTabSizing(sizing),
       );
     }
     for (final location in EditorTabActionLocation.values) {
@@ -4238,6 +4252,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorPinnedTabSizing(EditorPinnedTabSizing sizing) {
+    if (_editorPinnedTabSizing.value == sizing) return;
+    setState(() {
+      _editorPinnedTabSizing.value = sizing;
+      _editorTabHeldWidths.clear();
+      for (final group in _groups.values) {
+        group.lastAutoRevealedTabId = null;
+      }
+    });
+    _scheduleStateSave();
+  }
+
   void _setEditorTabActionLocation(EditorTabActionLocation location) {
     if (_editorTabActionLocation.value == location) return;
     setState(() => _editorTabActionLocation.value = location);
@@ -4291,6 +4317,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorTabActionReserveSpace': _editorTabActionReserveSpace.value,
         'editorWrapTabs': _editorTabWrap.value,
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
+        'pinnedTabSizing': _editorPinnedTabSizing.value.name,
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
         'openEditorsSortOrder': _openEditorsSortOrder.name,
@@ -4431,6 +4458,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : true;
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
+    _editorPinnedTabSizing.value =
+        EditorPinnedTabSizing.fromSessionValue(data['pinnedTabSizing']);
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
     _openEditorsSortOrder = OpenEditorsSortOrder.parse(data['openEditorsSortOrder']);
     _modalEditorUseMode =
@@ -20946,6 +20975,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabHoveredTarget.dispose();
     _editorTabWrap.dispose();
     _pinnedTabsOnSeparateRow.dispose();
+    _editorPinnedTabSizing.dispose();
     _commitMessage.dispose();
     if (identical(_notifications.allowOptionalToast, _optionalToastAdmission)) {
       _notifications.allowOptionalToast = null;
@@ -21255,6 +21285,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     _editorTabSizing.value ==
                                     EditorTabSizing.fixed,
                               ),
+                            ]),
+                            TitleMenuItem.submenu('固定标签尺寸', children: [
+                              for (final sizing in EditorPinnedTabSizing.values)
+                                TitleMenuItem(
+                                  switch (sizing) {
+                                    EditorPinnedTabSizing.normal => '普通',
+                                    EditorPinnedTabSizing.compact => '紧凑',
+                                    EditorPinnedTabSizing.shrink => '收缩',
+                                  },
+                                  commandId:
+                                      'workbench.action.editorTabs.pinnedSizing.${sizing.name}',
+                                  checkedListenable: _editorPinnedTabSizing,
+                                  checkedBuilder: () =>
+                                      _editorPinnedTabSizing.value == sizing,
+                                ),
                             ]),
                             TitleMenuItem.submenu('关闭操作位置', children: [
                               TitleMenuItem(
@@ -23783,9 +23828,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       required double availableWidth,
     }) {
       final sizing = _editorTabSizing.value;
+      final pinnedWidth = _editorTabMode.value == EditorTabMode.multiple
+          ? _editorPinnedTabSizing.value.width
+          : null;
+      final ordinaryDocs = pinnedWidth == null
+          ? rowDocs
+          : rowDocs
+              .where((doc) => !g.stickyDocIds.contains(doc.id))
+              .toList(growable: false);
+      final reservedWidth =
+          (rowDocs.length - ordinaryDocs.length) * (pinnedWidth ?? 0.0);
       final widths = EditorTabWidthPolicy.layout(
         contentWidths: [
-          for (final doc in rowDocs)
+          for (final doc in ordinaryDocs)
             _tabContentWidth(
               context,
               g,
@@ -23794,19 +23849,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               reserveActionSpace: _tabCloseActionReservesSpace(g, doc),
             ),
         ],
-        availableWidth: availableWidth,
+        availableWidth: _editorTabWrap.value
+            ? availableWidth
+            : availableWidth - reservedWidth,
         sizing: sizing,
         wrapping: _editorTabWrap.value,
-        fixedMinWidthOverride: _tabFixedMinimumWidth(g, rowDocs),
+        fixedMinWidthOverride: _tabFixedMinimumWidth(g, ordinaryDocs),
       );
       final heldWidths = sizing == EditorTabSizing.fixed
           ? _editorTabHeldWidths[g.region]
           : null;
       final currentWidths = _editorTabLastWidths[g.region] ?? <int, double>{};
       final tabs = <Widget>[];
-      for (var i = 0; i < rowDocs.length; i++) {
-        final doc = rowDocs[i];
-        final width = heldWidths?[doc.id] ?? widths[i];
+      var ordinaryIndex = 0;
+      for (final doc in rowDocs) {
+        final double width;
+        if (pinnedWidth != null && g.stickyDocIds.contains(doc.id)) {
+          width = pinnedWidth;
+        } else {
+          final measured = widths[ordinaryIndex++];
+          width = heldWidths?[doc.id] ?? measured;
+        }
         currentWidths[doc.id] = width;
         tabs.add(SizedBox(
           key: doc.id == g.activeDocId ? g.activeTabVisibilityKey : null,
@@ -24149,6 +24212,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       languageId: d.path == null ? null : _languageIdOf(d.path!),
     );
     final isSticky = g.stickyDocIds.contains(d.id);
+    final pinnedSizing =
+        isSticky && _editorTabMode.value == EditorTabMode.multiple
+            ? _editorPinnedTabSizing.value
+            : EditorPinnedTabSizing.normal;
+    final compact = pinnedSizing == EditorPinnedTabSizing.compact;
+    final shrink = pinnedSizing == EditorPinnedTabSizing.shrink;
     final isActive = d.id == g.activeDocId;
     final isSelected = g._isTabSelected(d.id);
     final label = Tooltip(
@@ -24186,12 +24255,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onTap: () => _selectEditorTab(g, d),
       child: Container(
         key: ValueKey('tab-${d.id}'),
-        padding: actionLocation == EditorTabActionLocation.left
-            ? const EdgeInsets.only(right: 10)
-            : EdgeInsets.symmetric(
-                horizontal:
-                    _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
-              ),
+        padding: compact
+            ? EdgeInsets.zero
+            : shrink
+                ? const EdgeInsets.symmetric(horizontal: 4)
+                : actionLocation == EditorTabActionLocation.left
+                    ? const EdgeInsets.only(right: 10)
+                    : EdgeInsets.symmetric(
+                        horizontal:
+                            _editorTabSizing.value == EditorTabSizing.fixed
+                                ? 8
+                                : 12,
+                      ),
         decoration: BoxDecoration(
           color: isActive
               ? const Color(0xFF14161A)
@@ -24204,74 +24279,84 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : const Border(
                   top: BorderSide(color: Colors.transparent, width: 2)),
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (reserveActionSpace &&
-                    actionLocation == EditorTabActionLocation.left) ...[
-                  closeAction,
-                  const SizedBox(width: 6),
-                ],
-                fileIcon,
-                if (isSticky) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.push_pin,
-                    key: ValueKey('sticky-tab-indicator-${g.region}-${d.id}'),
-                    size: 12,
-                    color: Colors.blueGrey.shade200,
+        child: compact
+            ? Tooltip(
+                message: '$displayLabel（已固定）',
+                excludeFromSemantics: true,
+                child: SizedBox(height: 24, child: Center(child: fileIcon)),
+              )
+            : Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (reserveActionSpace &&
+                          actionLocation == EditorTabActionLocation.left) ...[
+                        closeAction,
+                        const SizedBox(width: 6),
+                      ],
+                      fileIcon,
+                      if (isSticky && !shrink) ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.push_pin,
+                          key: ValueKey(
+                              'sticky-tab-indicator-${g.region}-${d.id}'),
+                          size: 12,
+                          color: Colors.blueGrey.shade200,
+                        ),
+                      ],
+                      if (shrink ||
+                          _editorTabWrap.value ||
+                          _editorTabSizing.value != EditorTabSizing.fit)
+                        Flexible(fit: FlexFit.tight, child: label)
+                      else
+                        label,
+                      if (d.diskState != DiskDocumentState.current) ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          switch (d.diskState) {
+                            DiskDocumentState.current => Icons.check,
+                            DiskDocumentState.conflict =>
+                              Icons.sync_problem_outlined,
+                            DiskDocumentState.missing =>
+                              Icons.file_present_outlined,
+                            DiskDocumentState.readOnly => Icons.lock_outline,
+                            DiskDocumentState.unavailable =>
+                              Icons.warning_amber_outlined,
+                          },
+                          key: ValueKey('tab-disk-state-${d.id}'),
+                          size: 13,
+                          color: d.diskState == DiskDocumentState.conflict
+                              ? Colors.orangeAccent
+                              : Colors.blueGrey.shade300,
+                        ),
+                      ],
+                      if (reserveActionSpace &&
+                          actionLocation == EditorTabActionLocation.right) ...[
+                        const SizedBox(width: 6),
+                        closeAction,
+                      ],
+                    ],
                   ),
+                  if (!reserveActionSpace)
+                    Positioned(
+                      left: actionLocation == EditorTabActionLocation.left
+                          ? 0
+                          : null,
+                      right: actionLocation == EditorTabActionLocation.right
+                          ? (d.diskState == DiskDocumentState.current ? 0 : 17)
+                          : null,
+                      top: 0,
+                      bottom: 0,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: closeAction,
+                      ),
+                    ),
                 ],
-                if (_editorTabWrap.value ||
-                    _editorTabSizing.value != EditorTabSizing.fit)
-                  Flexible(fit: FlexFit.tight, child: label)
-                else
-                  label,
-                if (d.diskState != DiskDocumentState.current) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    switch (d.diskState) {
-                      DiskDocumentState.current => Icons.check,
-                      DiskDocumentState.conflict => Icons.sync_problem_outlined,
-                      DiskDocumentState.missing => Icons.file_present_outlined,
-                      DiskDocumentState.readOnly => Icons.lock_outline,
-                      DiskDocumentState.unavailable =>
-                        Icons.warning_amber_outlined,
-                    },
-                    key: ValueKey('tab-disk-state-${d.id}'),
-                    size: 13,
-                    color: d.diskState == DiskDocumentState.conflict
-                        ? Colors.orangeAccent
-                        : Colors.blueGrey.shade300,
-                  ),
-                ],
-                if (reserveActionSpace &&
-                    actionLocation == EditorTabActionLocation.right) ...[
-                  const SizedBox(width: 6),
-                  closeAction,
-                ],
-              ],
-            ),
-            if (!reserveActionSpace)
-              Positioned(
-                left: actionLocation == EditorTabActionLocation.left
-                    ? 0
-                    : null,
-                right: actionLocation == EditorTabActionLocation.right
-                    ? (d.diskState == DiskDocumentState.current ? 0 : 17)
-                    : null,
-                top: 0,
-                bottom: 0,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: closeAction,
-                ),
               ),
-          ],
-        ),
       ),
     );
     return MouseRegion(
@@ -24284,6 +24369,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: Semantics(
         key: ValueKey('editor-tab-semantics-${g.region}-${d.id}'),
+        label: compact ? '$displayLabel，已固定${d.isDirty ? '，未保存' : ''}' : null,
         selected: isSelected,
         customSemanticsActions: {
           CustomSemanticsAction(label: isSticky ? '取消固定编辑器' : '固定编辑器'): () =>

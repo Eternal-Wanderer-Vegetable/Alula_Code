@@ -12,6 +12,26 @@ enum EditorTabSizing {
       };
 }
 
+/// Width overrides for pinned tabs when multiple tabs are visible.
+enum EditorPinnedTabSizing {
+  normal,
+  compact,
+  shrink;
+
+  static EditorPinnedTabSizing fromSessionValue(Object? value) =>
+      switch (value) {
+        'compact' => EditorPinnedTabSizing.compact,
+        'shrink' => EditorPinnedTabSizing.shrink,
+        _ => EditorPinnedTabSizing.normal,
+      };
+
+  double? get width => switch (this) {
+        normal => null,
+        compact => 28,
+        shrink => 80,
+      };
+}
+
 /// Computes bounded tab widths without depending on a widget tree.
 class EditorTabWidthPolicy {
   const EditorTabWidthPolicy._();

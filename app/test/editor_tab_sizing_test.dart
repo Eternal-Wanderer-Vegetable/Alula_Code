@@ -105,6 +105,142 @@ void main() {
     });
   });
 
+  test('pinned tab sizing restores old and unsupported values as normal', () {
+    expect(EditorPinnedTabSizing.fromSessionValue(null),
+        EditorPinnedTabSizing.normal);
+    expect(EditorPinnedTabSizing.fromSessionValue('unsupported'),
+        EditorPinnedTabSizing.normal);
+    expect(EditorPinnedTabSizing.fromSessionValue('compact').width, 28);
+    expect(EditorPinnedTabSizing.fromSessionValue('shrink').width, 80);
+  });
+
+  testWidgets(
+      'pinned sizing keeps hit targets, ordinary tabs and session state',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 850);
+    addTearDown(tester.view.resetPhysicalSize);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final semantics = tester.ensureSemantics();
+    final temp = Directory.systemTemp.createTempSync('alula_pinned_tab_sizing');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await temp.delete(recursive: true);
+    });
+    final root = temp.path.replaceAll(r'\', '/');
+    final layout = LayoutStore(path: '$root/layout.json');
+    final session = SessionStore(path: '$root/session.json');
+    final files = <String>[];
+    for (final name in ['alpha', 'bravo', 'charlie', 'delta']) {
+      final file = File('$root/$name.txt')..writeAsStringSync('$name text\n');
+      files.add(file.path);
+    }
+    session.save({
+      'v': 1,
+      'focused': 'editor',
+      'groups': [
+        {
+          'region': 'editor',
+          'active': 13,
+          'sticky': [10, 11],
+          'locked': true,
+          'docs': [
+            for (var i = 0; i < files.length; i++)
+              {'id': 10 + i, 'path': files[i]},
+          ],
+        },
+      ],
+    });
+
+    Future<void> mount() async {
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layout,
+        sessionStore: session,
+      ));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> tabsMenu() async {
+      for (final label in ['查看(V)', '外观(A)', '编辑器标签']) {
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+      }
+    }
+
+    Future<void> choose(String label, {required String checked}) async {
+      await tabsMenu();
+      await tester.tap(find.text('固定标签尺寸'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .getSemantics(find.text(checked))
+            .getSemanticsData()
+            .flagsCollection
+            .isChecked,
+        CheckedState.isTrue,
+      );
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+    }
+
+    Finder tab(int id) => find.byKey(ValueKey('tab-$id'));
+    Finder label(int id) => find.byKey(ValueKey('editor-tab-label-editor-$id'));
+    double width(int id) => tester.getSize(tab(id)).width;
+    int active() => tester
+        .widget<RustTextInputField>(find.byType(RustTextInputField))
+        .inputWindow
+        .document
+        .id;
+
+    await mount();
+    expect(width(10), greaterThan(80));
+    final ordinaryWidth = width(12);
+    final before = active();
+    expect(before, 13);
+    await choose('紧凑', checked: '普通');
+    expect(width(10), 28);
+    expect(width(11), 28);
+    expect(width(12), ordinaryWidth);
+    expect(label(10), findsNothing);
+    expect(find.byKey(const ValueKey('close-tab-editor-10')), findsNothing);
+    final tabSemantics =
+        find.byKey(const ValueKey('editor-tab-semantics-editor-10'));
+    expect(tester.widget<Semantics>(tabSemantics).properties.label,
+        contains('alpha.txt'));
+    final first = tester.getRect(tab(10));
+    await tester.tapAt(Offset(first.left + 4, first.center.dy));
+    await tester.pumpAndSettle();
+    expect(active(), 10);
+    final second = tester.getRect(tab(11));
+    await tester.tapAt(Offset(second.right - 4, second.top + 4));
+    await tester.pumpAndSettle();
+    expect(active(), 11);
+
+    await tabsMenu();
+    await tester.tap(find.text('固定标签单独成行'));
+    await tester.pumpAndSettle();
+    await choose('收缩', checked: '紧凑');
+    expect(width(10), 80);
+    expect(width(11), 80);
+    expect(width(12), ordinaryWidth);
+    expect(label(10), findsOneWidget);
+    expect(tester.getTopLeft(tab(12)).dy,
+        greaterThan(tester.getTopLeft(tab(10)).dy));
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(session.tryLoad()?['pinnedTabSizing'], 'shrink');
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await mount();
+    expect(width(10), 80);
+    expect(width(11), 80);
+    expect(active(), 11);
+    await choose('普通', checked: '收缩');
+    expect(width(10), greaterThan(80));
+    expect(width(12), ordinaryWidth);
+    semantics.dispose();
+  });
+
   testWidgets('tab sizing changes geometry, persists, and holds close widths',
       (tester) async {
     tester.view.physicalSize = const Size(650, 900);
