@@ -131,8 +131,10 @@ void main() {
           ValueKey('notification-toast-action-${failures.single.id}-0')));
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.byKey(const ValueKey('save-as-path')), findsOneWidget);
+      expect(notifications.byId(failures.single.id), isNull);
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pump(const Duration(milliseconds: 200));
+      expect(find.byKey(const ValueKey('save-as-path')), findsNothing);
     });
 
     await tester.pumpWidget(const SizedBox.shrink());

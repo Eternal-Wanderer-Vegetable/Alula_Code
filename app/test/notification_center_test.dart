@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -224,6 +226,78 @@ void main() {
       expect(center.setExpanded(notice, false), isFalse);
       expect(center.isExpanded(fresh), isFalse);
       expect(center.items, [fresh, action]);
+    });
+
+    test('a primary action dismisses its owner once and reports failure',
+        () async {
+      final center = NotificationCenter();
+      final other = NotificationCenter();
+      notify(other);
+      final unrelated = notify(center);
+      final completion = Completer<void>();
+      var starts = 0;
+      final action = WorkbenchNotificationAction(
+        label: 'Retry',
+        run: () {
+          starts++;
+          return completion.future;
+        },
+      );
+      final notice = center.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Original notice',
+        source: 'Fixture',
+        sourceId: 'fixture.primary',
+        actions: [action],
+      );
+      final foreign = notify(other, actions: [action]);
+      expect(foreign.id, notice.id);
+      await center.runPrimaryAction(foreign, action);
+      expect(starts, 0);
+      final pending = center.runPrimaryAction(notice, action);
+      expect(center.items, [unrelated]);
+      await center.runPrimaryAction(notice, action);
+      expect(starts, 1);
+
+      completion.completeError(StateError('fixture failure'));
+      await pending;
+      expect(
+          center.items.map((item) => item.id), [notice.id + 1, unrelated.id]);
+      final failure = center.items.first;
+      expect(failure.severity, WorkbenchNotificationSeverity.error);
+      expect(failure.message, contains('fixture failure'));
+      expect(failure.source, notice.source);
+      expect(failure.sourceId, notice.sourceId);
+    });
+
+    test('keep-open primary actions retain their notification', () async {
+      final center = NotificationCenter();
+      var starts = 0;
+      final action = WorkbenchNotificationAction(
+        label: 'Retry',
+        keepOpen: true,
+        run: () async => starts++,
+      );
+      final notice = notify(center, actions: [action]);
+      await center.runPrimaryAction(notice, action);
+      expect(starts, 1);
+      expect(center.items, [notice]);
+      expect(center.toastIds, [notice.id]);
+    });
+
+    test('late action failure after center disposal has no recipient',
+        () async {
+      final center = NotificationCenter();
+      final completion = Completer<void>();
+      final action = WorkbenchNotificationAction(
+        label: 'Retry',
+        run: () => completion.future,
+      );
+      final notice = notify(center, actions: [action]);
+      final pending = center.runPrimaryAction(notice, action);
+      center.dispose();
+      completion.completeError(StateError('late failure'));
+      await pending;
     });
 
     test('markRead and markAllRead clear unread state', () {

@@ -17161,6 +17161,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         WorkbenchNotificationAction(
           label: '重试保存会话',
           key: 'retry-session-save',
+          keepOpen: true,
           run: () async => _scheduleStateSave(),
         ),
       ],

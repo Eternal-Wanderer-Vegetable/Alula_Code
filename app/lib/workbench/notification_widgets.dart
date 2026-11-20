@@ -1050,17 +1050,20 @@ class _NotificationContentState extends State<_NotificationContent> {
   }) {
     final label =
         Text(action.label, maxLines: 1, overflow: TextOverflow.ellipsis);
+    final notification = widget.notification;
+    void runAction() =>
+        unawaited(widget.center.runPrimaryAction(notification, action));
     return primary
         ? FilledButton(
             key: key,
             style: _actionStyle,
-            onPressed: action.run,
+            onPressed: runAction,
             child: label,
           )
         : OutlinedButton(
             key: key,
             style: _actionStyle,
-            onPressed: action.run,
+            onPressed: runAction,
             child: label,
           );
   }

@@ -20,6 +20,7 @@ class WorkbenchNotificationAction {
     required this.label,
     required this.run,
     this.key,
+    this.keepOpen = false,
   });
 
   final String label;
@@ -27,6 +28,9 @@ class WorkbenchNotificationAction {
   /// 稳定的测试/证据后缀（可选）。
   final String? key;
   final Future<void> Function() run;
+
+  /// Retain the owning notification after a primary action is selected.
+  final bool keepOpen;
 }
 
 class WorkbenchNotification {
@@ -169,6 +173,7 @@ class NotificationCenter extends ChangeNotifier {
   final Set<int> _expandedIds = <int>{};
   final List<int> _toasts = <int>[]; // 旧 → 新
   final List<int> _banners = <int>[]; // 旧 → 新
+  var _disposed = false;
   var _centerVisible = false;
   var _doNotDisturb = false;
   Map<String, WorkbenchNotificationSourceFilter> _sourceFilters = const {};
@@ -282,17 +287,39 @@ class NotificationCenter extends ChangeNotifier {
         (allowOptionalToast?.call() ?? true);
   }
 
+  Future<void> runPrimaryAction(
+    WorkbenchNotification notification,
+    WorkbenchNotificationAction action,
+  ) async {
+    if (_disposed ||
+        !identical(byId(notification.id), notification) ||
+        !notification.actions.contains(action)) {
+      return;
+    }
+    if (!action.keepOpen) dismiss(notification.id);
+    await _runAction(notification, action);
+  }
+
   Future<void> runSecondaryAction(
     WorkbenchNotification notification,
     WorkbenchNotificationAction action,
   ) async {
-    if (!identical(byId(notification.id), notification) ||
+    if (_disposed ||
+        !identical(byId(notification.id), notification) ||
         !notification.secondaryActions.contains(action)) {
       return;
     }
+    await _runAction(notification, action);
+  }
+
+  Future<void> _runAction(
+    WorkbenchNotification notification,
+    WorkbenchNotificationAction action,
+  ) async {
     try {
       await action.run();
     } catch (error) {
+      if (_disposed) return;
       notify(
         severity: WorkbenchNotificationSeverity.error,
         message: '通知操作“${action.label}”失败：$error',
@@ -471,6 +498,12 @@ class NotificationCenter extends ChangeNotifier {
           _sourceFilters[entry.sourceId]?.muted == true;
     });
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   List<WorkbenchNotification> filtered([String? source]) => source == null

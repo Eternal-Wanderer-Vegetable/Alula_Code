@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
@@ -1486,6 +1487,50 @@ void main() {
     expect(notifications.allowOptionalToast, isNull);
   });
 
+  for (final inCenter in [false, true]) {
+    testWidgets(
+        'a primary action closes only its own notice in ${inCenter ? 'center' : 'toast'}',
+        (tester) async {
+      await _mountApp(tester);
+      try {
+        final completion = Completer<void>();
+        var invoked = 0;
+        final retained = notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          priority: WorkbenchNotificationPriority.silent,
+          message: 'Other entry',
+        );
+        final notice = notifications.notify(
+          severity: WorkbenchNotificationSeverity.error,
+          message: 'Primary action',
+          actions: [
+            WorkbenchNotificationAction(
+              label: 'Test operation',
+              run: () {
+                invoked++;
+                return completion.future;
+              },
+            ),
+          ],
+        );
+        await tester.pump();
+        if (inCenter) await _showNotificationCenter(tester);
+        final prefix = inCenter ? 'notification' : 'notification-toast';
+        final button = find.byKey(ValueKey('$prefix-action-${notice.id}-0'));
+        await tester.tap(button);
+        await tester.pump();
+        expect(invoked, 1);
+        expect(notifications.items, [retained]);
+        expect(button, findsNothing);
+        completion.complete();
+        await tester.pump();
+        expect(notifications.items, [retained]);
+      } finally {
+        await _unmountApp(tester);
+      }
+    });
+  }
+
   testWidgets('actions run, source filter narrows and clear all empties',
       (tester) async {
     await _mountApp(tester);
@@ -1498,6 +1543,7 @@ void main() {
         actions: [
           WorkbenchNotificationAction(
             label: '重试',
+            keepOpen: true,
             run: () async => actionRuns += 1,
           ),
         ],
