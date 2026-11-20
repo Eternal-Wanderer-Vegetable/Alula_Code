@@ -87,6 +87,7 @@ class AlulaTitleBar extends StatefulWidget {
     required this.menus,
     required this.commands,
     this.layoutControlsBuilder,
+    this.notificationButton,
     this.windowControls = false,
     this.windowChromeDriver,
     this.onCloseRequested,
@@ -102,6 +103,7 @@ class AlulaTitleBar extends StatefulWidget {
 
   /// Current layout toggle items, read when the custom title-bar menu opens.
   final List<TitleMenuItem> Function()? layoutControlsBuilder;
+  final Widget? notificationButton;
 
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
   final bool windowControls;
@@ -637,6 +639,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                   )
                 : const SizedBox.expand(),
           ),
+          if (widget.notificationButton != null) ...[
+            widget.notificationButton!,
+            const SizedBox(width: 8),
+          ],
           if (showCustomControls) ..._buildWindowButtons(),
         ],
       ),

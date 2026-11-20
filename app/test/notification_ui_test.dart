@@ -380,6 +380,106 @@ void main() {
     }
   });
 
+  testWidgets('notification position menu moves the center, toast and bell',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Position fixture',
+      );
+      await tester.pump();
+      final toast = find.byKey(const ValueKey('notification-toast-1'));
+      final panel = find.byKey(const ValueKey('notification-center'));
+      final statusBell = find.byKey(const ValueKey('status-notifications'));
+      final titleBell = find.byKey(const ValueKey('title-notifications'));
+      final originalToast = tester.getRect(toast);
+      final originalBell = tester.getCenter(statusBell);
+
+      await _showNotificationCenter(tester);
+      Future<void> choose(String target) async {
+        await tester.tap(find.byKey(const ValueKey('notification-position')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(ValueKey('notification-position-$target')));
+        await tester.pumpAndSettle();
+      }
+
+      await choose('bottomLeft');
+      final left = tester.getRect(panel);
+      expect(left.left, 8);
+      expect(left.bottom, originalToast.bottom);
+      expect(tester.getCenter(statusBell).dx, lessThan(originalBell.dx));
+
+      await choose('topRight');
+      final top = tester.getRect(panel);
+      expect(top.right, originalToast.right);
+      expect(top.top, greaterThan(tester.getBottomLeft(titleBell).dy));
+      expect(statusBell, findsNothing);
+
+      await tester.tap(titleBell);
+      await tester.pump();
+      expect(tester.getRect(toast).top, top.top);
+      expect(tester.getRect(toast).right, top.right);
+
+      await tester.tap(titleBell);
+      await tester.pump();
+      await choose('bottomRight');
+      expect(tester.getRect(panel).bottomRight, originalToast.bottomRight);
+      expect(statusBell, findsOneWidget);
+      expect(titleBell, findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('notification position command persists through session restore',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), '通知位置：右上角');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 通知位置：右上角')));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 550));
+      expect(sessionStore.tryLoad()?['workbench.notifications.position'],
+          'top-right');
+    } finally {
+      await _unmountApp(tester);
+    }
+
+    notifications = NotificationCenter();
+    await _mountApp(tester);
+    try {
+      expect(find.byKey(const ValueKey('title-notifications')), findsOneWidget);
+      expect(find.byKey(const ValueKey('status-notifications')), findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('unknown notification position restores the default',
+      (tester) async {
+    expect(
+        sessionStore.save({
+          'v': 1,
+          'workbench.notifications.position': 'unrecognized',
+        }),
+        isTrue);
+    await _mountApp(tester);
+    try {
+      await _showNotificationCenter(tester);
+      final panel =
+          tester.getRect(find.byKey(const ValueKey('notification-center')));
+      expect(panel.right, 792);
+      expect(panel.bottom, 570);
+      expect(find.byKey(const ValueKey('title-notifications')), findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('Windows sends each successful clear to the native runner once',
       (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;

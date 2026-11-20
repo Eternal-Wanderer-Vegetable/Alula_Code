@@ -1,4 +1,4 @@
-/// 通知 UI（docs/11 LAY-18a）：右下角 toast 堆叠与通知中心面板。
+/// 通知 UI（docs/11 LAY-18）：toast 堆叠与通知中心面板。
 ///
 /// toast 与中心共享 [NotificationCenter]：关闭 toast 只影响 toast 层，中心里的
 /// 条目仍在；Do Not Disturb 只抑制 toast。两者都带 live region 与可读名称。
@@ -12,6 +12,81 @@ import 'package:flutter/material.dart';
 import 'notifications.dart';
 
 const _notificationSurfaceWidth = 450.0;
+
+enum WorkbenchNotificationPosition {
+  bottomRight('bottom-right', '右下角', Alignment.bottomRight),
+  bottomLeft('bottom-left', '左下角', Alignment.bottomLeft),
+  topRight('top-right', '右上角', Alignment.topRight);
+
+  const WorkbenchNotificationPosition(this.value, this.label, this.alignment);
+
+  final String value;
+  final String label;
+  final Alignment alignment;
+
+  String get commandId => 'workbench.action.setNotificationsPosition.$name';
+  bool get atTop => this == topRight;
+
+  static WorkbenchNotificationPosition parse(Object? value) => switch (value) {
+        'bottom-left' => bottomLeft,
+        'top-right' => topRight,
+        _ => bottomRight,
+      };
+}
+
+class WorkbenchNotificationBell extends StatelessWidget {
+  const WorkbenchNotificationBell({
+    super.key,
+    required this.unreadCount,
+    required this.visible,
+    required this.doNotDisturb,
+    required this.onPressed,
+  });
+
+  final int unreadCount;
+  final bool visible;
+  final bool doNotDisturb;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Tooltip(
+        message: unreadCount > 0 ? '通知（$unreadCount 条未读）' : '通知',
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              doNotDisturb
+                  ? Icons.notifications_off
+                  : visible
+                      ? Icons.notifications
+                      : Icons.notifications_none,
+              size: 14,
+              color: visible ? Colors.lightBlueAccent : Colors.grey.shade400,
+            ),
+            if (unreadCount > 0) ...[
+              const SizedBox(width: 4),
+              Container(
+                key: const ValueKey('status-notifications-badge'),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0E639C),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Text(
+                  '$unreadCount',
+                  style: const TextStyle(fontSize: 9, color: Colors.white),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _NotificationStyle {
   const _NotificationStyle(this.icon, this.color);
@@ -92,17 +167,20 @@ class _NotificationMiddleClick extends StatelessWidget {
   }
 }
 
-/// 右下角 toast 堆叠（新在上、旧在下；数量由中心限制）。
+/// Toast 堆叠（新在上、旧在下；数量由中心限制）。
 class WorkbenchNotificationToasts extends StatelessWidget {
   const WorkbenchNotificationToasts({
     super.key,
     required this.center,
     required this.onDismissToast,
     this.windowFocused = true,
+    this.position = WorkbenchNotificationPosition.bottomRight,
   });
 
   final NotificationCenter center;
   final void Function(int id) onDismissToast;
+
+  final WorkbenchNotificationPosition position;
 
   /// 由宿主窗口的焦点事件更新；到期后失焦的 toast 等恢复焦点再计时。
   final bool windowFocused;
@@ -126,6 +204,7 @@ class WorkbenchNotificationToasts extends StatelessWidget {
               key: ValueKey('notification-toast-${notification.id}'),
               notification: notification,
               windowFocused: windowFocused,
+              expandsDown: position.atTop,
               onDismiss: () => onDismissToast(notification.id),
               onMiddleClick: () {
                 if (center.toastIds.contains(notification.id)) {
@@ -144,12 +223,14 @@ class _NotificationToast extends StatefulWidget {
     super.key,
     required this.notification,
     required this.windowFocused,
+    required this.expandsDown,
     required this.onDismiss,
     required this.onMiddleClick,
   });
 
   final WorkbenchNotification notification;
   final bool windowFocused;
+  final bool expandsDown;
   final VoidCallback onDismiss;
   final VoidCallback onMiddleClick;
 
@@ -242,6 +323,7 @@ class _NotificationToastState extends State<_NotificationToast> {
             child: _NotificationContent(
               notification: notification,
               isToast: true,
+              expandsDown: widget.expandsDown,
               onDismiss: widget.onDismiss,
             ),
           ),
@@ -261,6 +343,8 @@ class WorkbenchNotificationCenter extends StatefulWidget {
     required this.onDismiss,
     required this.onClearAll,
     required this.onToggleDoNotDisturb,
+    this.position = WorkbenchNotificationPosition.bottomRight,
+    this.onPositionChanged,
     required this.onClose,
   });
 
@@ -270,6 +354,8 @@ class WorkbenchNotificationCenter extends StatefulWidget {
   final void Function(int id) onDismiss;
   final VoidCallback onClearAll;
   final VoidCallback onToggleDoNotDisturb;
+  final WorkbenchNotificationPosition position;
+  final ValueChanged<WorkbenchNotificationPosition>? onPositionChanged;
   final VoidCallback onClose;
 
   @override
@@ -355,6 +441,32 @@ class _WorkbenchNotificationCenterState
                       icon: const Icon(Icons.clear_all, size: 16),
                     ),
                   ),
+                  if (widget.onPositionChanged != null)
+                    PopupMenuButton<WorkbenchNotificationPosition>(
+                      key: const ValueKey('notification-position'),
+                      tooltip: '通知位置',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 140),
+                      style: IconButton.styleFrom(
+                        minimumSize: const Size(24, 24),
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(Icons.open_with,
+                          size: 15, color: Colors.grey.shade400),
+                      onSelected: widget.onPositionChanged,
+                      itemBuilder: (context) => [
+                        for (final position
+                            in WorkbenchNotificationPosition.values)
+                          CheckedPopupMenuItem(
+                            key: ValueKey(
+                                'notification-position-${position.name}'),
+                            value: position,
+                            checked: position == widget.position,
+                            child: Text(position.label),
+                          ),
+                      ],
+                    ),
                   IconButton(
                     key: const ValueKey('notification-center-close'),
                     tooltip: '关闭通知中心',
@@ -363,8 +475,13 @@ class _WorkbenchNotificationCenterState
                     constraints:
                         const BoxConstraints(minWidth: 24, minHeight: 24),
                     onPressed: widget.onClose,
-                    icon: Icon(Icons.keyboard_arrow_down,
-                        size: 17, color: Colors.grey.shade400),
+                    icon: Icon(
+                      widget.position.atTop
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 17,
+                      color: Colors.grey.shade400,
+                    ),
                   ),
                 ],
               ),
@@ -434,6 +551,7 @@ class _WorkbenchNotificationCenterState
                         child: _NotificationCenterRow(
                           notification: notification,
                           showDivider: index < notifications.length - 1,
+                          expandsDown: widget.position.atTop,
                           onDismiss: () => widget.onDismiss(notification.id),
                         ),
                       );
@@ -452,11 +570,13 @@ class _NotificationCenterRow extends StatelessWidget {
   const _NotificationCenterRow({
     required this.notification,
     required this.showDivider,
+    required this.expandsDown,
     required this.onDismiss,
   });
 
   final WorkbenchNotification notification;
   final bool showDivider;
+  final bool expandsDown;
   final VoidCallback onDismiss;
 
   @override
@@ -475,6 +595,7 @@ class _NotificationCenterRow extends StatelessWidget {
           : null,
       child: _NotificationContent(
         notification: notification,
+        expandsDown: expandsDown,
         onDismiss: onDismiss,
       ),
     );
@@ -484,6 +605,7 @@ class _NotificationCenterRow extends StatelessWidget {
 class _NotificationContent extends StatefulWidget {
   const _NotificationContent({
     required this.notification,
+    required this.expandsDown,
     required this.onDismiss,
     this.isToast = false,
   });
@@ -491,6 +613,7 @@ class _NotificationContent extends StatefulWidget {
   final WorkbenchNotification notification;
   final VoidCallback onDismiss;
   final bool isToast;
+  final bool expandsDown;
 
   @override
   State<_NotificationContent> createState() => _NotificationContentState();
@@ -573,9 +696,9 @@ class _NotificationContentState extends State<_NotificationContent> {
                     if (showDisclosure)
                       _toolbarButton(
                         key: ValueKey('$prefix-toggle-${notification.id}'),
-                        icon: expanded
-                            ? Icons.keyboard_arrow_down
-                            : Icons.keyboard_arrow_up,
+                        icon: expanded == widget.expandsDown
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
                         tooltip: expanded ? '折叠通知' : '展开通知',
                         onPressed: () => setState(() {
                           _expandedByNotification[notification] = !expanded;

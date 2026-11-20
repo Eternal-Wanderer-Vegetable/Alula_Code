@@ -127,6 +127,7 @@ import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
+import 'window_chrome_configuration.dart';
 import 'workbench_window_title.dart';
 import 'auxiliary_window.dart';
 import 'modal_editor.dart';
@@ -538,6 +539,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late final NotificationCenter _notifications =
       widget.notifications ?? NotificationCenter();
   bool _notificationsVisible = false;
+  WorkbenchNotificationPosition _notificationPosition =
+      WorkbenchNotificationPosition.bottomRight;
   String? _notificationSourceFilter;
 
   // ---------- 搜索视图（feat-search） ----------
@@ -1138,6 +1141,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _notifications
           .setDoNotDisturb(!_notifications.doNotDisturb),
     );
+    for (final position in WorkbenchNotificationPosition.values) {
+      reg(
+        position.commandId,
+        '查看',
+        '通知位置：${position.label}',
+        () async => _setNotificationPosition(position),
+      );
+    }
     reg(
       'workbench.action.toggleMaximizedPanel',
       '查看',
@@ -3938,6 +3949,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 干净文件恢复时从磁盘重读（journal 保持小）。
   Map<String, Object?> _encodeSession() => {
         'v': 1,
+        'workbench.notifications.position': _notificationPosition.value,
         'editorTabMode': _editorTabMode.value.name,
         'editorTabSizing': _editorTabSizing.value.name,
         'editorTabActionLocation': _editorTabActionLocation.value.name,
@@ -4055,6 +4067,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         null,
     };
     if (data == null) return;
+    _notificationPosition = WorkbenchNotificationPosition.parse(
+      data['workbench.notifications.position'],
+    );
     _editorTabMode.value =
         EditorTabMode.fromSessionValue(data['editorTabMode']);
     _editorTabSizing.value =
@@ -20289,6 +20304,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ? workspaceRoot
           : workspaceName,
     );
+    final chrome = WindowChromeConfigurationScope.maybeOf(context) ??
+        WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
+    final hasRenderedTitleBar =
+        chrome.isCustom || chrome.targetPlatform != TargetPlatform.macOS;
+    final notificationInTitleBar =
+        _notificationPosition.atTop && hasRenderedTitleBar;
+    final notificationButton = WorkbenchNotificationBell(
+      key: ValueKey(
+        notificationInTitleBar ? 'title-notifications' : 'status-notifications',
+      ),
+      unreadCount: _notifications.unreadCount,
+      visible: _notificationsVisible,
+      doNotDisturb: _notifications.doNotDisturb,
+      onPressed: _toggleNotificationCenter,
+    );
 
     return Scaffold(
       body: CallbackShortcuts(
@@ -20327,6 +20357,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               AlulaTitleBar(
                   commands: _commands,
                   windowTitle: windowTitle,
+                  notificationButton:
+                      notificationInTitleBar ? notificationButton : null,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
                   layoutControlsBuilder: () => [
@@ -20753,14 +20785,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     : () => _showEncodingActions(_active!),
                 onLineEndingTap:
                     _active == null ? null : _selectLineEndingActive,
-                notificationUnreadCount: _notifications.unreadCount,
-                notificationsVisible: _notificationsVisible,
-                notificationDoNotDisturb: _notifications.doNotDisturb,
-                onToggleNotifications: _toggleNotificationCenter,
+                notificationButton:
+                    notificationInTitleBar ? null : notificationButton,
+                notificationAtStart: _notificationPosition ==
+                    WorkbenchNotificationPosition.bottomLeft,
               ),
                 ],
               ),
-              _buildNotificationLayer(),
+              _buildNotificationLayer(
+                hasRenderedTitleBar: hasRenderedTitleBar,
+              ),
             ],
           ),
         ),
@@ -20801,6 +20835,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _onNotificationsChanged() {
     if (!mounted) return;
     setState(() {});
+  }
+
+  void _setNotificationPosition(WorkbenchNotificationPosition position) {
+    if (_notificationPosition == position) return;
+    setState(() => _notificationPosition = position);
+    _scheduleStateSave();
   }
 
   void _toggleNotificationCenter() {
@@ -20869,18 +20909,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  Widget _buildNotificationLayer() {
+  Widget _buildNotificationLayer({required bool hasRenderedTitleBar}) {
     if (_zenMode) return const SizedBox.shrink();
     return Positioned(
-      top: 8,
+      top: _notificationPosition.atTop && hasRenderedTitleBar
+          ? 8 + WindowChromeConfiguration.customTitleBarHeight
+          : 8,
       left: 8,
       right: 8,
       bottom: 30,
       child: Align(
-        alignment: Alignment.bottomRight,
+        alignment: _notificationPosition.alignment,
         child: _notificationsVisible
             ? WorkbenchNotificationCenter(
                 center: _notifications,
+                position: _notificationPosition,
+                onPositionChanged: (position) => _runCommand(position.commandId),
                 sourceFilter: _notificationSourceFilter,
                 onSourceFilterChanged: (value) =>
                     setState(() => _notificationSourceFilter = value),
@@ -20896,6 +20940,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               )
             : WorkbenchNotificationToasts(
                 center: _notifications,
+                position: _notificationPosition,
                 windowFocused: _mainWindowFocused ?? true,
                 onDismissToast: _notifications.dismissToast,
               ),

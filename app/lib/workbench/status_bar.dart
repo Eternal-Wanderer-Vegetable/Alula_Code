@@ -30,10 +30,8 @@ class AlulaStatusBar extends StatelessWidget {
     this.onLineEndingTap,
     this.overtypeMode = false,
     this.onToggleOvertype,
-    this.notificationUnreadCount = 0,
-    this.notificationsVisible = false,
-    this.notificationDoNotDisturb = false,
-    this.onToggleNotifications,
+    this.notificationButton,
+    this.notificationAtStart = false,
   });
 
   final WbSyncState state;
@@ -59,11 +57,8 @@ class AlulaStatusBar extends StatelessWidget {
   final bool overtypeMode;
   final VoidCallback? onToggleOvertype;
 
-  /// 通知中心入口（LAY-18a）：未读数、面板是否展开、Do Not Disturb 状态。
-  final int notificationUnreadCount;
-  final bool notificationsVisible;
-  final bool notificationDoNotDisturb;
-  final VoidCallback? onToggleNotifications;
+  final Widget? notificationButton;
+  final bool notificationAtStart;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +68,10 @@ class AlulaStatusBar extends StatelessWidget {
       decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
       child: Row(
         children: [
+          if (notificationButton != null && notificationAtStart) ...[
+            notificationButton!,
+            const SizedBox(width: 8),
+          ],
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
@@ -160,50 +159,10 @@ class AlulaStatusBar extends StatelessWidget {
                 ),
               ),
             ),
-          const SizedBox(width: 8),
-          if (onToggleNotifications != null)
-            InkWell(
-              key: const ValueKey('status-notifications'),
-              onTap: onToggleNotifications,
-              child: Tooltip(
-                message: notificationUnreadCount > 0
-                    ? '通知（$notificationUnreadCount 条未读）'
-                    : '通知',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      notificationDoNotDisturb
-                          ? Icons.notifications_off
-                          : notificationsVisible
-                              ? Icons.notifications
-                              : Icons.notifications_none,
-                      size: 14,
-                      color: notificationsVisible
-                          ? Colors.lightBlueAccent
-                          : Colors.grey.shade400,
-                    ),
-                    if (notificationUnreadCount > 0) ...[
-                      const SizedBox(width: 4),
-                      Container(
-                        key: const ValueKey('status-notifications-badge'),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0E639C),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: Text(
-                          '$notificationUnreadCount',
-                          style: const TextStyle(
-                              fontSize: 9, color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+          if (notificationButton != null && !notificationAtStart) ...[
+            const SizedBox(width: 8),
+            notificationButton!,
+          ],
           const SizedBox(width: 8),
           InkWell(
             onTap: onTogglePanel,
