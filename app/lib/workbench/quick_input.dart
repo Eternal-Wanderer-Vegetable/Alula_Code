@@ -266,6 +266,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   final _controller = TextEditingController();
   final _scroll = ScrollController();
+  final _viewportKey = GlobalKey();
+  int _navigationGeneration = 0;
+  Future<void>? _pendingPages;
   final _focusNode = FocusNode(debugLabel: 'quick-input-field');
   final _rowKeys = <QuickItem, GlobalKey>{};
   final _buttonFocusNodes = <QuickItem, List<FocusNode>>{};
@@ -496,10 +499,18 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       return byScore != 0 ? byScore : a.$3.compareTo(b.$3);
     });
     final filtered = scored.map((e) => e.$1).toList();
+    final generation = ++_navigationGeneration;
     setState(() {
       _filtered = filtered;
       _selected = _firstSelectable();
     });
+    if (_scroll.hasClients && _scroll.offset != 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_canNavigate(generation)) {
+          _scroll.jumpTo(_scroll.position.minScrollExtent);
+        }
+      });
+    }
     _previewSelected();
   }
 
@@ -550,6 +561,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   void _moveSelection(int delta) {
+    _navigationGeneration++;
     if (_filtered.isEmpty) return;
     var index = _selected;
     for (var step = 0; step < _filtered.length; step++) {
@@ -559,10 +571,115 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       if (_isSelectable(_filtered[index])) break;
     }
     if (index != _selected) {
-      setState(() => _selected = index);
+      _selectIndex(index);
       _revealSelected();
-      _previewSelected();
     }
+  }
+
+  void _selectIndex(int index) {
+    if (index == _selected) return;
+    setState(() => _selected = index);
+    _previewSelected();
+  }
+
+  bool _canNavigate(int generation) =>
+      mounted &&
+      generation == _navigationGeneration &&
+      _scroll.hasClients &&
+      ModalRoute.of(context)?.isCurrent == true;
+
+  int? _visiblePageEdge({required bool down}) {
+    final viewport = _viewportKey.currentContext?.findRenderObject();
+    if (viewport is! RenderBox || !viewport.hasSize) return null;
+    final top = viewport.localToGlobal(Offset.zero).dy;
+    final bottom = top + viewport.size.height;
+    for (var i = 0; i < _filtered.length; i++) {
+      final index = down ? _filtered.length - i - 1 : i;
+      final item = _filtered[index];
+      if (!_isSelectable(item)) continue;
+      final row = _rowKeys[item]?.currentContext?.findRenderObject();
+      if (row is! RenderBox || !row.attached || !row.hasSize) continue;
+      final rowTop = row.localToGlobal(Offset.zero).dy;
+      if (rowTop >= top - 0.5 && rowTop + row.size.height <= bottom + 0.5) {
+        return index;
+      }
+    }
+    return null;
+  }
+
+  void _movePage({required bool down}) {
+    if (!_scroll.hasClients) return;
+    final generation = _navigationGeneration;
+    final pending = _pendingPages;
+    final next = pending == null
+        ? _moveToPageEdge(generation, down: down)
+        : pending.then((_) => _moveToPageEdge(generation, down: down));
+    _pendingPages = next;
+    unawaited(next.whenComplete(() {
+      if (identical(_pendingPages, next)) _pendingPages = null;
+    }));
+  }
+
+  Future<void> _moveToPageEdge(int generation, {required bool down}) async {
+    if (!_canNavigate(generation)) return;
+    final edge = _visiblePageEdge(down: down);
+    if (edge != null && (down ? edge > _selected : edge < _selected)) {
+      _selectIndex(edge);
+      return;
+    }
+    // The first press reaches the edge of the current page. At that edge,
+    // scroll one viewport and choose the outermost fully visible item again.
+    for (var i = 0; i < _filtered.length && _canNavigate(generation); i++) {
+      final position = _scroll.position;
+      final offset = (position.pixels +
+              (down ? position.viewportDimension : -position.viewportDimension))
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      if (offset == position.pixels) return;
+      _scroll.jumpTo(offset);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!_canNavigate(generation)) return;
+      final nextEdge = _visiblePageEdge(down: down);
+      if (nextEdge != null) {
+        _selectIndex(nextEdge);
+        return;
+      }
+    }
+  }
+
+  void _moveToBoundary({required bool last}) {
+    final generation = ++_navigationGeneration;
+    for (var i = 0; i < _filtered.length; i++) {
+      final index = last ? _filtered.length - i - 1 : i;
+      if (!_isSelectable(_filtered[index])) continue;
+      _selectIndex(index);
+      unawaited(_revealBoundary(generation, last: last));
+      return;
+    }
+  }
+
+  Future<void> _revealBoundary(int generation, {required bool last}) async {
+    // The lazy list can refine its maximum extent as variable-height rows
+    // mount. Use the latest extent until the chosen boundary is visible.
+    for (var i = 0; i < _filtered.length && _canNavigate(generation); i++) {
+      final position = _scroll.position;
+      final extent = last ? position.maxScrollExtent : position.minScrollExtent;
+      if (extent == position.pixels) return;
+      _scroll.jumpTo(extent);
+      await WidgetsBinding.instance.endOfFrame;
+    }
+  }
+
+  void _afterPendingPages(VoidCallback run) {
+    final pending = _pendingPages;
+    if (pending == null) {
+      run();
+      return;
+    }
+    final generation = _navigationGeneration;
+    unawaited(pending.then((_) {
+      if (_canNavigate(generation)) run();
+    }));
   }
 
   /// 过滤/导航后把选中行滚入可视区（行高随 detail 第二行变化，不能按固定
@@ -636,7 +753,29 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final key = event.logicalKey;
+    final keyboard = HardwareKeyboard.instance;
+    final listModifiers = !keyboard.isShiftPressed &&
+        (!keyboard.isMetaPressed ||
+            Theme.of(context).platform == TargetPlatform.macOS);
+    if (!widget.inputMode &&
+        listModifiers &&
+        (key == LogicalKeyboardKey.pageDown ||
+            key == LogicalKeyboardKey.pageUp)) {
+      _movePage(down: key == LogicalKeyboardKey.pageDown);
+      return KeyEventResult.handled;
+    }
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (!widget.inputMode &&
+        listModifiers &&
+        keyboard.isControlPressed &&
+        (key == LogicalKeyboardKey.home || key == LogicalKeyboardKey.end)) {
+      _moveToBoundary(last: key == LogicalKeyboardKey.end);
+      return KeyEventResult.handled;
+    }
     if (event.logicalKey == LogicalKeyboardKey.tab &&
         !HardwareKeyboard.instance.isShiftPressed) {
       // 上游：Tab 进入活动条目的行尾按钮；没有按钮时交回默认焦点遍历。
@@ -666,18 +805,22 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       return KeyEventResult.handled;
     }
     if (widget.canSelectMany && event.logicalKey == LogicalKeyboardKey.space) {
-      if (_selected >= 0 && _selected < _filtered.length) {
-        _togglePicked(_filtered[_selected]);
-      }
+      _afterPendingPages(() {
+        if (_selected >= 0 && _selected < _filtered.length) {
+          _togglePicked(_filtered[_selected]);
+        }
+      });
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.enter ||
         event.logicalKey == LogicalKeyboardKey.numpadEnter) {
-      if (widget.canSelectMany) {
-        _accept();
-      } else {
-        _runAt(_selected);
-      }
+      _afterPendingPages(() {
+        if (widget.canSelectMany) {
+          _accept();
+        } else {
+          unawaited(_runAt(_selected));
+        }
+      });
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
@@ -795,6 +938,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                               color: Colors.grey.shade500, fontSize: 12)),
                     )
                   : ListView.builder(
+                      key: _viewportKey,
                       controller: _scroll,
                       shrinkWrap: true,
                       padding: const EdgeInsets.symmetric(vertical: 4),
