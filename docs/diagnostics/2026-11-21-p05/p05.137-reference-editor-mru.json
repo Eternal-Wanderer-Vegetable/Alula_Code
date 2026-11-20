@@ -1,0 +1,474 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "forward-first": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "charlie.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": true
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "file results",
+          "focused": false
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "forward-second": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "charlie.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": false
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "forward-release-accepts": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    },
+    "reverse-starts-at-last": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "",
+          "focused": false
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "shift-release-keeps-open": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "",
+          "focused": false
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "file results",
+          "focused": true
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "reverse-control-release-accepts": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "bravo.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    },
+    "before-cancel": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "bravo.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "",
+          "focused": false
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "recently opened",
+          "focused": true
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "file results",
+          "focused": false
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "escape-restores": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "bravo.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    },
+    "activate-original-group": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        },
+        {
+          "focused": false,
+          "active": "delta.txt",
+          "tabs": [
+            "bravo.txt",
+            "delta.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    },
+    "activate-second-group": {
+      "groups": [
+        {
+          "focused": false,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        },
+        {
+          "focused": true,
+          "active": "delta.txt",
+          "tabs": [
+            "bravo.txt",
+            "delta.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    },
+    "all-groups-mru": {
+      "groups": [
+        {
+          "focused": false,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        },
+        {
+          "focused": true,
+          "active": "delta.txt",
+          "tabs": [
+            "bravo.txt",
+            "delta.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "delta.txt",
+          "description": null,
+          "group": "Group 2",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": null,
+          "group": "Group 2",
+          "focused": true
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "Group 1",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "Group 2",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "Group 1",
+          "focused": false
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "similar commands",
+          "focused": false
+        }
+      ],
+      "picker": true,
+      "inputVisible": true
+    },
+    "cross-group-previous": {
+      "groups": [
+        {
+          "focused": false,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        },
+        {
+          "focused": true,
+          "active": "delta.txt",
+          "tabs": [
+            "bravo.txt",
+            "delta.txt"
+          ]
+        }
+      ],
+      "highlights": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "Group 1",
+          "focused": true
+        }
+      ],
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": null,
+          "group": "Group 2",
+          "focused": false
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "group": "Group 1",
+          "focused": true
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "Group 2",
+          "focused": false
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "group": "Group 1",
+          "focused": false
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "group": "similar commands",
+          "focused": false
+        }
+      ],
+      "picker": true,
+      "inputVisible": false
+    },
+    "cross-group-accept": {
+      "groups": [
+        {
+          "focused": true,
+          "active": "alpha.txt",
+          "tabs": [
+            "alpha.txt",
+            "bravo.txt",
+            "charlie.txt"
+          ]
+        },
+        {
+          "focused": false,
+          "active": "delta.txt",
+          "tabs": [
+            "bravo.txt",
+            "delta.txt"
+          ]
+        }
+      ],
+      "highlights": [],
+      "rows": [],
+      "picker": false,
+      "inputVisible": false
+    }
+  },
+  "exitCode": 0
+}

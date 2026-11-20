@@ -2347,6 +2347,20 @@
         "feat-179",
         "feat-188"
       ],
+      "status": "done",
+      "evidence": "产品 `3207d3a4775f0c5044de9b53f5fa2c7b39867e5a` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证组内双向循环、修饰键松开、取消、跨组重复文档和焦点。专项 83/83，Flutter 1,660 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44792092379 四项及 Platform Availability 44792079134 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.137-editor-mru.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-190",
+      "name": "P05.138 LAY-10 同组多选标签批量排序",
+      "description": "复刻同组已选标签相对顺序、批量落点、固定区和焦点，验证普通单标签拖动路径。",
+      "dependencies": [
+        "feat-091",
+        "feat-094",
+        "feat-188"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

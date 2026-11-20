@@ -1,0 +1,1762 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "sourceTree": "c2ab49525b8c8efd449ba3b9c45eac5256850654",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "4e3a444b30b10d873d80ff52f9672f8a5d285e2b4388e713ad4ddd1bfa174ba3",
+  "observations": {
+    "ready": {
+      "request": "ready",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-10": {
+      "request": "activated-10",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-11": {
+      "request": "activated-11",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-12": {
+      "request": "activated-12",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-first": {
+      "request": "forward-first",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-second": {
+      "request": "forward-second",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-wrap": {
+      "request": "forward-wrap",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-wrap": {
+      "request": "reverse-wrap",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-release-accepts": {
+      "request": "forward-release-accepts",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-starts-at-last": {
+      "request": "reverse-starts-at-last",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "shift-release-keeps-open": {
+      "request": "shift-release-keeps-open",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-release-accepts": {
+      "request": "reverse-release-accepts",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "before-cancel": {
+      "request": "before-cancel",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "escape-restores": {
+      "request": "escape-restores",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activate-second-bravo": {
+      "request": "activate-second-bravo",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "activate-first-alpha": {
+      "request": "activate-first-alpha",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activate-second-delta": {
+      "request": "activate-second-delta",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "all-groups-mru": {
+      "request": "all-groups-mru",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": true,
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": true,
+          "box": [
+            305.0,
+            97.0,
+            905.0,
+            119.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            305.0,
+            119.0,
+            905.0,
+            141.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            305.0,
+            141.0,
+            905.0,
+            163.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            305.0,
+            163.0,
+            905.0,
+            185.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            305.0,
+            185.0,
+            905.0,
+            207.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor-2"
+    },
+    "choose-second-bravo": {
+      "request": "choose-second-bravo",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "return-first-alpha": {
+      "request": "return-first-alpha",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "restore-second-delta": {
+      "request": "restore-second-delta",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "cross-group-previous": {
+      "request": "cross-group-previous",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            305.0,
+            61.0,
+            905.0,
+            83.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": true,
+          "box": [
+            305.0,
+            83.0,
+            905.0,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            305.0,
+            105.0,
+            905.0,
+            127.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            305.0,
+            127.0,
+            905.0,
+            149.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            305.0,
+            149.0,
+            905.0,
+            171.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor-2"
+    },
+    "cross-group-accept": {
+      "request": "cross-group-accept",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          144.00035095214844,
+          62.5
+        ],
+        "editor-11": [
+          208.00035095214844,
+          45.5,
+          271.1767272949219,
+          62.5
+        ],
+        "editor-12": [
+          335.1767272949219,
+          45.5,
+          403.65711975097656,
+          62.5
+        ],
+        "editor-2-11": [
+          665.0,
+          45.5,
+          728.1763763427734,
+          62.5
+        ],
+        "editor-2-13": [
+          792.1763763427734,
+          45.5,
+          852.4727172851562,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1578826,
+          "ppid": 1578821,
+          "private": 249958400,
+          "pss": 265330688,
+          "working_set": 338882560
+        }
+      ],
+      "root_pid": 1578826,
+      "total_private_bytes": 249958400,
+      "total_private_mib": 238.4,
+      "total_working_set_bytes": 338882560
+    },
+    "picker": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1578826,
+          "ppid": 1578821,
+          "private": 243306496,
+          "pss": 258690048,
+          "working_set": 332349440
+        }
+      ],
+      "root_pid": 1578826,
+      "total_private_bytes": 243306496,
+      "total_private_mib": 232.0,
+      "total_working_set_bytes": 332349440
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1578826,
+          "ppid": 1578821,
+          "private": 251981824,
+          "pss": 267360256,
+          "working_set": 341024768
+        }
+      ],
+      "root_pid": 1578826,
+      "total_private_bytes": 251981824,
+      "total_private_mib": 240.3,
+      "total_working_set_bytes": 341024768
+    }
+  },
+  "fixtureSha256": "6ec0d9b7e95fe521ef104ea2ed4bbe9b2bae482aa456cf7887ab17ae264ce7a8",
+  "results": {
+    "crossGroupTarget": "editor:10",
+    "duplicatedDocument": "bravo.txt",
+    "canceledTarget": "editor:11"
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "keyEvents": [
+    {
+      "event": "down",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Escape",
+      "physical": 458793,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Escape",
+      "physical": 458793,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "F7",
+      "physical": 458816,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "F7",
+      "physical": 458816,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Enter",
+      "physical": 458792,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Enter",
+      "physical": 458792,
+      "control": false,
+      "shift": false
+    }
+  ]
+}
