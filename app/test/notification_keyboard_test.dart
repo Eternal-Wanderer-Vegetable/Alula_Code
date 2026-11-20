@@ -399,6 +399,52 @@ void main() {
       expect(center.items, isEmpty);
     }, keybindings: '[{"key":"alt+f10","command":"notification.clear"}]');
   });
+  testWidgets(
+      'fixed notification command IDs and old bindings use the same actions',
+      (tester) async {
+    final progress = NotificationProgress(total: 8);
+    addTearDown(progress.dispose);
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      Future<void> press(LogicalKeyboardKey key) async {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyEvent(key);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.pump();
+      }
+
+      final active = _notify(center, 'Active job', progress: progress);
+      _notify(center, 'Read report');
+      await tester.pump();
+      await _showCenter(tester);
+      await press(LogicalKeyboardKey.f8);
+      expect(center.centerVisible, isFalse);
+      expect(center.items, [active]);
+
+      await press(LogicalKeyboardKey.f10);
+      expect(center.doNotDisturb, isTrue);
+      final quiet = _notify(center, 'Quiet notification');
+      await tester.pump();
+      expect(center.toastIds, isEmpty);
+
+      await press(LogicalKeyboardKey.f11);
+      expect(center.doNotDisturb, isFalse);
+      final visible = _notify(center, 'Ordinary notification again');
+      await tester.pump();
+      expect(center.toastIds, [visible.id]);
+      expect(center.items, [visible, quiet, active]);
+
+      progress.done();
+      await press(LogicalKeyboardKey.f9);
+      expect(center.items, isEmpty);
+    }, keybindings: '''
+[
+  {"key":"alt+f8","command":"notifications.clearAll"},
+  {"key":"alt+f9","command":"workbench.action.clearNotifications"},
+  {"key":"alt+f10","command":"notifications.toggleDoNotDisturbMode"},
+  {"key":"alt+f11","command":"workbench.action.toggleNotificationsDoNotDisturb"}
+]
+''');
+  });
 }
 
 WorkbenchNotification _notify(

@@ -27,6 +27,32 @@ void main() {
       expect(r.byId('file.save'), isNull);
     });
 
+    test('alternate IDs dispatch without adding a search result', () async {
+      final commands = CommandService(
+        registry: CommandRegistry(aliases: const {'app.old': 'app.current'}),
+      );
+      addTearDown(commands.dispose);
+      final command = Command(
+        id: 'app.current',
+        title: 'Action',
+        category: 'Test',
+        run: () async {},
+        when: 'active',
+      );
+      commands.register(command);
+      expect(commands.byId('app.old'), same(command));
+      expect(commands.search('Action'), [command]);
+      expect(commands.all, [command]);
+      expect(await commands.execute('app.old'), CommandExecutionStatus.hidden);
+
+      commands.context.setValue('active', true);
+      expect(commands.isEnabled('app.old'), isTrue);
+      expect(
+          await commands.execute('app.old'), CommandExecutionStatus.executed);
+      commands.unregister('app.current');
+      expect(await commands.execute('app.old'), CommandExecutionStatus.unknown);
+    });
+
     test('label 为「分类: 名称」', () {
       expect(_cmd('file.save', '文件', '保存').label, '文件: 保存');
     });

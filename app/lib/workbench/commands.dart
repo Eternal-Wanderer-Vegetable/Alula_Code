@@ -51,6 +51,10 @@ class Command {
 }
 
 class CommandRegistry {
+  CommandRegistry({Map<String, String> aliases = const {}})
+      : _aliases = Map.unmodifiable(aliases);
+
+  final Map<String, String> _aliases;
   final Map<String, Command> _commands = {};
 
   /// 注册；同 id 覆盖（页面在动作重建时重复注册是合法用法）。
@@ -58,7 +62,9 @@ class CommandRegistry {
 
   void unregister(String id) => _commands.remove(id);
 
-  Command? byId(String id) => _commands[id];
+  /// Resolve an alternate ID to its registered command. Alternate IDs do not
+  /// contribute duplicate entries to UI or search.
+  Command? byId(String id) => _commands[id] ?? _commands[_aliases[id]];
 
   List<Command> get all => _commands.values.toList();
 

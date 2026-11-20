@@ -449,7 +449,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
-  final CommandService _commands = CommandService();
+  static const _notificationCommandAliases = <String, String>{
+    'workbench.action.clearNotifications': 'notifications.clearAll',
+    'workbench.action.toggleNotificationsDoNotDisturb':
+        'notifications.toggleDoNotDisturbMode',
+  };
+
+  final CommandService _commands = CommandService(
+    registry: CommandRegistry(aliases: _notificationCommandAliases),
+  );
   final ValueNotifier<EditorTabMode> _editorTabMode =
       ValueNotifier(EditorTabMode.multiple);
   final ValueNotifier<EditorTabSizing> _editorTabSizing =
@@ -761,7 +769,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.addListener(_syncPanelMaximizationCommandContext);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
-    _commandHistory = _commandHistoryStore.load();
+    final savedCommandIds = _commandHistoryStore.load().commandIds;
+    _commandHistory = CommandHistory(commandIds: [
+      for (final id in savedCommandIds) _notificationCommandAliases[id] ?? id,
+    ]);
     _recentHistory = _recentHistoryStore.load();
     _completedWalkthroughSteps = _walkthroughProgressStore.load();
     unawaited(_refreshRecentHistory());
@@ -1218,16 +1229,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'notificationFocus',
     );
     reg(
-      'workbench.action.clearNotifications',
+      'notifications.clearAll',
       '查看',
       '清除所有通知',
       () async => _clearNotifications(),
+      shortcut: _keybindings.shortcutFor('workbench.action.clearNotifications'),
     );
     reg(
-      'workbench.action.toggleNotificationsDoNotDisturb',
+      'notifications.toggleDoNotDisturbMode',
       '查看',
       '切换请勿打扰',
       () async => _toggleNotificationDoNotDisturb(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleNotificationsDoNotDisturb',
+      ),
     );
     reg(
       'notifications.toggleDoNotDisturbModeBySource',
@@ -21251,8 +21266,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       _clearNotification(notification);
                     }
                   },
-                  onClearAll: _clearNotifications,
-                  onToggleDoNotDisturb: _toggleNotificationDoNotDisturb,
+                  onClearAll: () => _runCommand('notifications.clearAll'),
+                  onToggleDoNotDisturb: () =>
+                      _runCommand('notifications.toggleDoNotDisturbMode'),
                   onClose: () => _runCommand('notifications.hideList'),
                 )
               : WorkbenchNotificationToasts(

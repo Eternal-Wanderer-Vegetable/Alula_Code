@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/command_history.dart';
 import 'package:alula_app/workbench/command_history_store.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/quick_input.dart';
@@ -61,6 +62,36 @@ void main() {
       expect(
           _rowTop(tester, '查看: 移动视图…'), lessThan(_rowTop(tester, '文件: 新建文本文件')),
           reason: '历史跨重启恢复并继续参与排序');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('old notification command history resolves to one current row',
+      (tester) async {
+    expect(
+        commandHistoryStore.save(CommandHistory(commandIds: const [
+          'workbench.action.clearNotifications',
+          'notifications.clearAll',
+          'workbench.action.toggleNotificationsDoNotDisturb',
+        ])),
+        isTrue);
+    await _mountApp(tester);
+    try {
+      await _openPalette(tester);
+      const clear = '查看: 清除所有通知';
+      expect(find.byKey(const ValueKey('qi-separator-最近使用')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qi-查看: 清除所有通知')), findsOneWidget);
+      expect(_rowTop(tester, clear), lessThan(_rowTop(tester, '文件: 新建文本文件')));
+
+      await tester.enterText(_inputFinder(), '> 清除所有通知');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 清除所有通知')));
+      await tester.pumpAndSettle();
+      expect(commandHistoryStore.load().commandIds, [
+        'notifications.clearAll',
+        'notifications.toggleDoNotDisturbMode',
+      ]);
     } finally {
       await _unmountApp(tester);
     }
