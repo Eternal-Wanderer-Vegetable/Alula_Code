@@ -1925,7 +1925,7 @@
         "feat-154"
       ],
       "status": "done",
-      "evidence": "产品 `c2bf107774188446848d651b98eeef2512903ac6` 已推 PR #3。成功的键位、通知中心单条按钮和批量清除会播报并调用系统提示音。批量播报一次并使用实际清除数，活动进度保留。Linux Release 原生探针收到批量 AT-SPI 播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。专项 103/103，本地 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44656072778 四项和 Platform Availability 44656065738 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。 Windows 11 x64 实机确认三种入口均播放一次系统提示音，Narrator 语音回顾每次新增两条相同播报，关闭 Narrator 后三种入口仍响，Windows 行为验收待闭环。详见 docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md。",
+      "evidence": "产品 `c2bf107774188446848d651b98eeef2512903ac6` 已推 PR #3。成功的键位、通知中心单条按钮和批量清除会播报并调用系统提示音。批量播报一次并使用实际清除数，活动进度保留。Linux Release 原生探针收到批量 AT-SPI 播报和一次 GDK 提示音调用，屏幕阅读器关闭时静默。专项 103/103，本地 Flutter 1,585 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44656072778 四项和 Platform Availability 44656065738 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.104-notification-clear-accessibility.md。 Windows 11 x64 实机确认三种入口均播放一次系统提示音，Narrator 语音回顾每次新增两条相同播报，关闭 Narrator 后三种入口仍响，原 Windows 实机证据见 docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md。两项差异已由 P05.105 修复并复验。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1936,8 +1936,8 @@
       "dependencies": [
         "feat-156"
       ],
-      "status": "in-progress",
-      "evidence": "docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md",
+      "status": "done",
+      "evidence": "产品 `d412c0b94f9421c280da4d426836d6539e54fe29` 已推 PR #3。当前会话的系统 Narrator 运行时，Windows runner 每次只发一个 Win32 警报。Windows 11 x64 实机复验 Delete、单条按钮、全部清除各新增一条语音回顾并匹配一次系统提示音。在工作台保持运行时退出 Narrator，三个入口均无警报或系统提示音。两组都保留活动进度。通知与键位专项 100/100，完整本地 Flutter 1,587 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt、Dart analyze 通过。精确 SHA 的 CI 44670062672 四项与 Platform Availability 44670057435 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

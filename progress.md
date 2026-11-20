@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
-- 2026-11-20 实现 P05.105 / feat-157。Windows 已确认三种清除入口各只产生一次 Narrator 语音回顾和一次系统提示音。保持工作台进程并退出 Narrator 后，三种清除均无原生警报和提示音。保留活动进度。证据和校验数据见 [Windows 去重及静默复验](docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md)。待登记产品 SHA 的托管检查。
+- 2026-11-20 完成 P05.105 / feat-157。产品 `d412c0b94f9421c280da4d426836d6539e54fe29` 已推 PR #3。当前会话的系统 Narrator 运行时，Windows runner 每次只发一个 Win32 警报。Windows 11 x64 实机复验 Delete、单条按钮、全部清除各新增一条语音回顾并匹配一次系统提示音。在工作台保持运行时退出 Narrator，三个入口均无警报或系统提示音。两组都保留活动进度。通知与键位专项 100/100，完整本地 Flutter 1,587 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt、Dart analyze 通过。精确 SHA 的 CI 44670062672 四项与 Platform Availability 44670057435 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.105-windows-notification-feedback.md。
 
 - 2026-11-20 补登记 P05.104 Windows 11 x64 实机。使用 `e6f81ad` Release 工作台注入通知夹具，Delete、单条按钮、全部清除分别移除 1、1、2 条，保留活动进度。WASAPI 确认每次一声。Narrator 语音回顾每次新增两条相同内容，关闭 Narrator 时语义树仍启用且三个入口均响。已在 docs/03 登记两项 Windows 验收差异。macOS 实机暂缓。[Windows 原生验收](docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md)
 
