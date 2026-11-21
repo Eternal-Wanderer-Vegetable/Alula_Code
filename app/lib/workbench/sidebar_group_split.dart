@@ -1,15 +1,12 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show listEquals, mapEquals, setEquals;
-import 'package:flutter/gestures.dart'
-    show PointerDownEvent, PointerMoveEvent, kPrimaryButton;
+import 'package:flutter/gestures.dart' show kPrimaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 
-import 'layout_model.dart';
+import 'pane_group_split.dart';
 
-/// A vertical split within one side bar entry. Drag previews are local until
-/// the pointer is released, so cancellation leaves the saved layout intact.
+/// The panes inside one side bar entry, including their interactive headers.
 class SidebarGroupSplit extends StatefulWidget {
   const SidebarGroupSplit({
     super.key,
@@ -45,171 +42,21 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
   static const _headerExtent = 28.0;
 
   final _group = Object();
-  ({int index, int pointer})? _drag;
-  Map<String, double>? _preview;
-
-  @override
-  void didUpdateWidget(covariant SidebarGroupSplit oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!listEquals(
-            oldWidget.panes.keys.toList(), widget.panes.keys.toList()) ||
-        !mapEquals(oldWidget.weights, widget.weights) ||
-        !setEquals(oldWidget.collapsed, widget.collapsed)) {
-      _drag = null;
-      _preview = null;
-    }
-  }
-
-  WbSplit _split(List<String> views) {
-    final weights = _preview ?? widget.weights;
-    return WbSplit(
-      axis: Axis.vertical,
-      children: [
-        for (final view in views)
-          WbLeaf(
-            region: view,
-            weight: weights[view] ?? 1,
-            minExtent: _minimumPaneExtent,
-          ),
-      ],
-    );
-  }
-
-  void _start(int index, PointerDownEvent event) {
-    if (_drag != null || (event.buttons & kPrimaryButton) == 0) return;
-    _drag = (index: index, pointer: event.pointer);
-  }
-
-  void _resize(
-      List<String> views, int index, PointerMoveEvent event, double inside) {
-    if (_drag != (index: index, pointer: event.pointer)) return;
-    final split = _split(views);
-    final previous = [for (final pane in split.children) pane.weight];
-    split.applyDrag(index, event.delta.dy, inside);
-    final updated = [for (final pane in split.children) pane.weight];
-    if (listEquals(previous, updated)) return;
-    setState(() => _preview = _weightsAfterLayout(split));
-  }
-
-  void _finish(int index, int pointer, {required bool commit}) {
-    if (_drag != (index: index, pointer: pointer)) return;
-    final resized = _preview;
-    setState(() {
-      _drag = null;
-      _preview = null;
-    });
-    if (commit && resized != null) widget.onCommit(resized);
-  }
-
-  void _reset(List<String> views, int index, double inside) {
-    if (_drag != null) return;
-    final split = _split(views);
-    if (!split.resetDivider(index, inside)) return;
-    widget.onCommit(_weightsAfterLayout(split));
-  }
-
-  Map<String, double> _weightsAfterLayout(WbSplit split) {
-    final current = _preview ?? widget.weights;
-    final expanded = split.children.cast<WbLeaf>();
-    // Keep the saved share of a collapsed pane while resizing the open panes.
-    final previousTotal = expanded.fold(
-      0.0,
-      (sum, pane) => sum + (current[pane.region] ?? 1),
-    );
-    final updatedTotal = expanded.fold(0.0, (sum, pane) => sum + pane.weight);
-    return {
-      for (final view in widget.panes.keys) view: current[view] ?? 1,
-      for (final pane in expanded)
-        pane.region: pane.weight / updatedTotal * previousTotal,
-    };
-  }
-
-  Widget _buildDivider(
-    String before,
-    String after,
-    List<String> expanded,
-    int index,
-    double inside,
-    double thickness,
-  ) {
-    return SizedBox(
-      key: ValueKey('sidebar-group-sash-${widget.location}-$before-$after'),
-      height: thickness,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.resizeUpDown,
-        child: Listener(
-          behavior: HitTestBehavior.opaque,
-          onPointerDown: (event) => _start(index, event),
-          onPointerMove: (event) => _resize(expanded, index, event, inside),
-          onPointerUp: (event) => _finish(index, event.pointer, commit: true),
-          onPointerCancel: (event) =>
-              _finish(index, event.pointer, commit: false),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onDoubleTap: () => _reset(expanded, index, inside),
-            child: const Center(
-              child: SizedBox(
-                width: double.infinity,
-                height: 1,
-                child: ColoredBox(color: Color(0xFF2A2E37)),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final views = widget.panes.keys.toList(growable: false);
-        final expandedIndices = [
-          for (var i = 0; i < views.length; i++)
-            if (!widget.collapsed.contains(views[i])) i,
-        ];
-        final first = expandedIndices.isEmpty ? 0 : expandedIndices.first;
-        final last = expandedIndices.isEmpty ? 0 : expandedIndices.last;
-        final dividerCount = last - first;
-        final collapsedCount = views.length - expandedIndices.length;
-        final extent = constraints.maxHeight;
-        final header = collapsedCount == 0
-            ? _headerExtent
-            : math.min(_headerExtent, extent / collapsedCount);
-        final available = math.max(0.0, extent - header * collapsedCount);
-        final thickness = dividerCount == 0
-            ? 0.0
-            : math.min(workbenchDividerThickness, available / dividerCount);
-        final inside = math.max(0.0, available - thickness * dividerCount);
-        final expanded = [for (final i in expandedIndices) views[i]];
-        final extents = switch (expanded.length) {
-          0 => <double>[],
-          1 => [inside],
-          _ => _split(expanded).extentsFor(inside),
-        };
-        final sizes = {
-          for (final view in widget.collapsed) view: header,
-          for (var i = 0; i < expanded.length; i++) expanded[i]: extents[i],
-        };
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (var i = 0; i < views.length; i++) ...[
-              _buildPane(views[i], sizes[views[i]]!),
-              if (i >= first && i < last)
-                _buildDivider(
-                  views[i],
-                  views[i + 1],
-                  expanded,
-                  expandedIndices.lastIndexWhere((value) => value <= i),
-                  inside,
-                  thickness,
-                ),
-            ],
-          ],
-        );
+    return PaneGroupSplit(
+      axis: Axis.vertical,
+      minimums: {
+        for (final view in widget.panes.keys) view: _minimumPaneExtent
       },
+      weights: widget.weights,
+      collapsed: widget.collapsed,
+      collapsedExtent: _headerExtent,
+      sashKeyPrefix: 'sidebar-group-sash-${widget.location}',
+      resetOnDoubleClick: true,
+      buildPane: _buildPane,
+      onCommit: widget.onCommit,
     );
   }
 

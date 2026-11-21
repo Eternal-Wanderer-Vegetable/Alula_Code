@@ -118,6 +118,7 @@ import 'notifications.dart';
 import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 import 'panel_position.dart';
+import 'pane_group_split.dart';
 import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
@@ -22516,13 +22517,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Widget pane(String view, Widget child) => _buildPanelGroupPane(
           key: ValueKey('$location-sidebar-group-body-$view'),
           label: null,
-          // Explorer and Source Control can have more fixed controls than
-          // the sash minimum. Keep those controls reachable by scrolling.
-          minimumContentHeight: switch (view) {
-            'explorer' => 384,
-            'git' => 264,
-            _ => 136,
-          },
+          minimumContentHeight: _groupViewMinimumContentHeight(view),
           child: child,
         );
 
@@ -27011,6 +27006,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           key: ValueKey('panel-view-group-${tab.name}-$view'),
           label: _sidebarViewLabel(view),
           draggedView: view,
+          minimumContentHeight: _groupViewMinimumContentHeight(view),
           child: _buildSidebarViewRegion(
             panelSidebarViewLocation,
             view,
@@ -27029,22 +27025,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               if (before.isEmpty && after.isEmpty)
                 original
               else
-                Flex(
-                  direction: axis,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final view in before)
-                      Expanded(child: groupedView(view)),
-                    Expanded(
-                      child: _buildPanelGroupPane(
-                        key: ValueKey('panel-view-group-${tab.name}-original'),
-                        label: _standardPanelTitle(tab),
-                        child: original,
-                      ),
-                    ),
-                    for (final view in after)
-                      Expanded(child: groupedView(view)),
-                  ],
+                PaneGroupSplit(
+                  key: ValueKey('panel-view-group-${tab.name}'),
+                  axis: axis,
+                  minimums: {
+                    for (final view in [
+                      ...before,
+                      panelGroupOriginalPane,
+                      ...after
+                    ])
+                      view: 228,
+                  },
+                  weights: {...?_layout.root.panelGroupPaneWeights[tab]},
+                  sashKeyPrefix: 'panel-group-sash-${tab.name}',
+                  buildPane: (view, _) => view == panelGroupOriginalPane
+                      ? _buildPanelGroupPane(
+                          key:
+                              ValueKey('panel-view-group-${tab.name}-original'),
+                          label: _standardPanelTitle(tab),
+                          child: original,
+                        )
+                      : groupedView(view),
+                  onCommit: (weights) =>
+                      _layout.setPanelGroupPaneWeights(tab, weights),
                 ),
               Flex(
                 direction: axis,
@@ -27061,6 +27064,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
   }
+
+  // Keep fixed controls reachable when the pane is shorter than its contents.
+  double _groupViewMinimumContentHeight(String view) => switch (view) {
+        'explorer' => 384,
+        'git' => 264,
+        _ => 136,
+      };
 
   Widget _buildPanelGroupPane({
     required Key key,

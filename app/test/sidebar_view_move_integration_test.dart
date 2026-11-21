@@ -1316,6 +1316,120 @@ void main() {
     });
   }
 
+  for (final position in [PanelPosition.bottom, PanelPosition.right]) {
+    testWidgets('$position group sash sizes its panes on the panel main axis',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      const tab = PanelViewTab.diagnostics;
+      for (final view in ['search', 'outline']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation,
+            panelPlacement: (tab: tab, before: view == 'search'));
+      }
+      layout.setPanelPosition(position);
+      layout.showRegion('panel');
+      layout.setRegionCollapsed('sidebar', true);
+      layoutStore.save(layout.root);
+      layout.dispose();
+      final keybindingsPath = '${temp.path}/panel-sash-keybindings.json';
+      File(keybindingsPath).writeAsStringSync(
+        '[{"key":"f7","command":"view.togglePanel"}]',
+      );
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: keybindingsPath),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final vertical = position == PanelPosition.right;
+      final sash = find.byKey(
+          const ValueKey('panel-group-sash-diagnostics-search-original'));
+      final first =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-search'));
+      final second =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-original'));
+      final third =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-outline'));
+      final search = find.byKey(const ValueKey('search-input'));
+      double extent(Finder pane) {
+        final size = tester.getSize(pane);
+        return vertical ? size.height : size.width;
+      }
+
+      Future<TestGesture> drag(double delta) async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(sash),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(vertical ? Offset(0, delta) : Offset(delta, 0));
+        await tester.pump();
+        return gesture;
+      }
+
+      const query = 'survives panel sash drag 😀';
+      await tester.enterText(search, query);
+      final initialFirst = extent(first);
+      final initialSecond = extent(second);
+      final initialThird = extent(third);
+      final preview = await drag(60);
+      expect(extent(first), closeTo(initialFirst + 60, .05));
+      expect(extent(second), closeTo(initialSecond - 60, .05));
+      expect(extent(third), closeTo(initialThird, .05));
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.panelGroupPaneWeights, isEmpty);
+      await preview.cancel();
+      await tester.pumpAndSettle();
+      expect(extent(first), closeTo(initialFirst, .05));
+      expect(extent(second), closeTo(initialSecond, .05));
+
+      final searchMinimum = await drag(-1200);
+      expect(extent(first), closeTo(228, .05));
+      await searchMinimum.up();
+      await tester.pumpAndSettle();
+      final originalMinimum = await drag(1200);
+      expect(extent(second), closeTo(228, .05));
+      await originalMinimum.up();
+      await tester.pumpAndSettle();
+      expect(extent(third), closeTo(initialThird, .05));
+      final moved = extent(first);
+      await tester.pump(const Duration(milliseconds: 700));
+      final weights = layoutStore.tryLoad()!.panelGroupPaneWeights[tab]!;
+      expect(weights.keys.toSet(), {'search', 'original', 'outline'});
+      expect(weights['search'], greaterThan(weights['original']!));
+
+      await tester.tap(find.byKey(const ValueKey('wb-region-editor')));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f7);
+      await tester.pumpAndSettle();
+      expect(sash, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f7);
+      await tester.pumpAndSettle();
+      expect(extent(first), closeTo(moved, .05));
+      expect(extent(second), closeTo(228, .05));
+      expect(tester.widget<TextField>(search).controller!.text, query);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(extent(first), closeTo(moved, .05));
+      expect(extent(second), closeTo(228, .05));
+      expect(extent(third), closeTo(initialThird, .05));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

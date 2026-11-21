@@ -100,6 +100,9 @@ enum PanelViewTab { diagnostics, completions, syntax, gitDiff }
 
 typedef PanelViewPlacement = ({PanelViewTab tab, bool before});
 
+/// The standard tab body within a group of panel panes.
+const panelGroupOriginalPane = 'original';
+
 typedef SidebarViewPlacement = ({String container, bool before});
 
 /// Normalize built-in view location metadata. Layouts predating view movement
@@ -302,6 +305,14 @@ class WbSplit extends WbNode {
   /// Root-only placement of views grouped into a standard Panel tab.
   final Map<String, PanelViewPlacement> panelViewPlacements = {};
 
+  /// Root-only pane proportions within each standard Panel tab.
+  final Map<PanelViewTab, Map<String, double>> panelGroupPaneWeights = {};
+
+  Set<String> panelGroupedPaneIds(PanelViewTab tab) => {
+        for (final entry in panelViewPlacements.entries)
+          if (entry.value.tab == tab) entry.key,
+      };
+
   /// Root-only membership and order for views within a side bar entry.
   final Map<String, SidebarViewPlacement> sidebarViewPlacements = {};
 
@@ -366,6 +377,11 @@ class WbSplit extends WbNode {
                  'tab': entry.value.tab.name,
                  'before': entry.value.before,
                },
+          },
+        if (panelGroupPaneWeights.isNotEmpty)
+          'panelGroupPaneWeights': {
+            for (final entry in panelGroupPaneWeights.entries)
+              entry.key.name: Map.of(entry.value),
           },
         if (sidebarViewPlacements.isNotEmpty)
           'sidebarViewPlacements': {
@@ -444,6 +460,25 @@ class WbSplit extends WbNode {
         if (tab != null && before is bool) {
           split.panelViewPlacements[view] = (tab: tab, before: before);
         }
+      }
+    }
+    final panelWeights = json['panelGroupPaneWeights'];
+    if (panelWeights is Map) {
+      for (final tab in PanelViewTab.values) {
+        final group = split.panelGroupedPaneIds(tab);
+        final weights = panelWeights[tab.name];
+        if (group.isEmpty || weights is! Map) continue;
+        final saved = <String, double>{};
+        for (final pane in {panelGroupOriginalPane, ...group}) {
+          final weight = weights[pane];
+          if (weight is num &&
+              weight.isFinite &&
+              weight > 0 &&
+              weight <= activityBarViewOrder.length + 1) {
+            saved[pane] = weight.toDouble();
+          }
+        }
+        if (saved.isNotEmpty) split.panelGroupPaneWeights[tab] = saved;
       }
     }
     final sidebarPlacements = json['sidebarViewPlacements'];

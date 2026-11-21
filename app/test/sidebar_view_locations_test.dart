@@ -368,6 +368,64 @@ void main() {
     layout.dispose();
   });
 
+  test('Panel pane sizes persist per standard tab and discard stale members',
+      () {
+    final layout = WorkbenchLayout();
+    const tab = PanelViewTab.diagnostics;
+    const otherTab = PanelViewTab.syntax;
+    expect(layout.root.toJson(), isNot(contains('panelGroupPaneWeights')));
+    for (final (view, tab) in [
+      ('search', tab),
+      ('git', tab),
+      ('outline', otherTab)
+    ]) {
+      expect(
+          layout.moveSidebarView(
+            view,
+            panelSidebarViewLocation,
+            panelPlacement: (tab: tab, before: true),
+          ),
+          isTrue);
+    }
+    expect(
+        layout.setPanelGroupPaneWeights(
+            tab, {panelGroupOriginalPane: 1, 'search': 2}),
+        isFalse);
+    expect(
+        layout.setPanelGroupPaneWeights(
+            tab, {panelGroupOriginalPane: 2, 'search': 3, 'git': 1}),
+        isTrue);
+    expect(
+        layout.setPanelGroupPaneWeights(
+            otherTab, {panelGroupOriginalPane: 3, 'outline': 1}),
+        isTrue);
+    final saved = layout.root.toJson();
+    final byTab = Map<String, Object?>.of(
+      saved['panelGroupPaneWeights']! as Map<String, Object?>,
+    );
+    saved['panelGroupPaneWeights'] = byTab;
+    final group = byTab[tab.name]! as Map<String, double>;
+    group['obsolete'] = 0.3;
+    byTab[PanelViewTab.gitDiff.name] = {panelGroupOriginalPane: 1};
+    byTab['unknown'] = {panelGroupOriginalPane: 1};
+    final restored = WorkbenchLayout(root: WbSplit.fromJson(saved));
+    expect(restored.root.panelGroupPaneWeights, {
+      tab: {panelGroupOriginalPane: 1.0, 'search': 1.5, 'git': 0.5},
+      otherTab: {panelGroupOriginalPane: 1.5, 'outline': 0.5},
+    });
+    expect(
+        restored.moveSidebarView('search', primarySidebarViewLocation), isTrue);
+    expect(restored.root.panelGroupPaneWeights[tab],
+        {panelGroupOriginalPane: 1.0, 'git': 0.5});
+    expect(
+        restored.moveSidebarView('git', secondarySidebarViewLocation), isTrue);
+    expect(restored.root.panelGroupPaneWeights.keys, [otherTab]);
+    expect(restored.resetSidebarViewLocations(), isTrue);
+    expect(restored.root.toJson(), isNot(contains('panelGroupPaneWeights')));
+    restored.dispose();
+    layout.dispose();
+  });
+
   test('group collapse round-trips and clears when a group is removed', () {
     final layout = WorkbenchLayout();
     expect(layout.root.toJson(), isNot(contains('sidebarGroupCollapsedPanes')));

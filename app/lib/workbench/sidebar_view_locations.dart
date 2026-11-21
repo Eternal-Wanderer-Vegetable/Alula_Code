@@ -128,25 +128,19 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       ...groupedSidebarViews(container, before: true),
       ...groupedSidebarViews(container, before: false),
     };
-    if (panes.length < 2 ||
-        weights.length != panes.length ||
-        !panes.every(weights.containsKey) ||
-        weights.values.any((weight) => !weight.isFinite || weight <= 0)) {
+    if (!_savePaneWeights(panes, weights, root.sidebarGroupPaneWeights)) {
       return false;
     }
-    final total = weights.values.fold(0.0, (sum, weight) => sum + weight);
-    if (!total.isFinite) return false;
-    final normalized = {
-      for (final view in panes) view: (weights[view]! / total) * panes.length,
-    };
-    if (normalized.values.any((weight) => weight <= 0)) return false;
-    final saved = root.sidebarGroupPaneWeights;
-    if (normalized.entries.every(
-      (entry) => ((saved[entry.key] ?? 1) - entry.value).abs() < 1e-9,
-    )) {
-      return false;
-    }
-    saved.addAll(normalized);
+    notifyLayoutChanged();
+    return true;
+  }
+
+  /// Persist the committed proportions of one standard Panel tab.
+  bool setPanelGroupPaneWeights(PanelViewTab tab, Map<String, double> weights) {
+    final panes = {panelGroupOriginalPane, ...root.panelGroupedPaneIds(tab)};
+    final saved = root.panelGroupPaneWeights[tab] ?? <String, double>{};
+    if (!_savePaneWeights(panes, weights, saved)) return false;
+    root.panelGroupPaneWeights[tab] = saved;
     notifyLayoutChanged();
     return true;
   }
@@ -217,11 +211,16 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     root.sidebarGroupCollapsedPanes.removeWhere(
       (id) => !stillGrouped.contains(id),
     );
-    if (panelPlacement == null) {
-      root.panelViewPlacements.remove(view);
-    } else {
-      root.panelViewPlacements[view] = panelPlacement;
+    final previousPanelTab = root.panelViewPlacements.remove(view)?.tab;
+    if (previousPanelTab != null) {
+      final sizes = root.panelGroupPaneWeights[previousPanelTab];
+      sizes?.remove(view);
+      if (sizes?.isEmpty == true ||
+          root.panelGroupedPaneIds(previousPanelTab).isEmpty) {
+        root.panelGroupPaneWeights.remove(previousPanelTab);
+      }
     }
+    if (panelPlacement != null) root.panelViewPlacements[view] = panelPlacement;
 
     if (sourceSelection == view) {
       final sourceFallback = _firstViewAt(source, locations);
@@ -252,6 +251,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
 
     root.sidebarViewLocations = null;
     root.panelViewPlacements.clear();
+    root.panelGroupPaneWeights.clear();
     root.sidebarViewPlacements.clear();
     root.sidebarGroupPaneWeights.clear();
     root.sidebarGroupCollapsedPanes.clear();
@@ -280,4 +280,30 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
     return null;
   }
+}
+
+bool _savePaneWeights(
+  Set<String> panes,
+  Map<String, double> weights,
+  Map<String, double> saved,
+) {
+  if (panes.length < 2 ||
+      weights.length != panes.length ||
+      !panes.every(weights.containsKey) ||
+      weights.values.any((weight) => !weight.isFinite || weight <= 0)) {
+    return false;
+  }
+  final total = weights.values.fold(0.0, (sum, weight) => sum + weight);
+  if (!total.isFinite) return false;
+  final normalized = {
+    for (final view in panes) view: (weights[view]! / total) * panes.length,
+  };
+  if (normalized.values.any((weight) => weight <= 0)) return false;
+  if (normalized.entries.every(
+    (entry) => ((saved[entry.key] ?? 1) - entry.value).abs() < 1e-9,
+  )) {
+    return false;
+  }
+  saved.addAll(normalized);
+  return true;
 }
