@@ -27005,16 +27005,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildPanelViewDropTarget(Widget tabs) {
-    return DragTarget<ActivityBarViewDrag>(
+    return DragTarget<Object>(
       key: const ValueKey('panel-view-title-drop'),
       onWillAcceptWithDetails: (details) =>
-          _layout.sidebarViewLocation(details.data.view) ==
-          primarySidebarViewLocation,
+          _sidebarViewForPanelDrop(details.data) != null,
       onAcceptWithDetails: (details) {
-        final view = details.data.view;
-        if (_layout.sidebarViewLocation(view) == primarySidebarViewLocation) {
-          _moveSidebarView(view, panelSidebarViewLocation);
-        }
+        final view = _sidebarViewForPanelDrop(details.data);
+        if (view != null) _moveSidebarView(view, panelSidebarViewLocation);
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,
@@ -27103,7 +27100,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _PanelHostedViewDrag(view: final member)
               when _layout.root.panelViewPlacements[member]?.tab == tab =>
             member,
-          _ => _sidebarViewForPanelDrop(tab, data),
+          _ => _sidebarViewForPanelDrop(data, tab: tab),
         },
         onReorder: (source, target, before) {
           if (source == panelGroupOriginalPane ||
@@ -27252,8 +27249,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  String? _sidebarViewForPanelDrop(PanelViewTab tab, Object drag) {
-    if (_panelTab.index != tab.index) return null;
+  String? _sidebarViewForPanelDrop(Object drag, {PanelViewTab? tab}) {
+    if (tab != null && _panelTab.index != tab.index) return null;
     if (drag is ActivityBarViewDrag &&
         _layout.sidebarViewLocation(drag.view) == primarySidebarViewLocation) {
       return drag.view;
@@ -27296,9 +27293,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return DragTarget<Object>(
       key: ValueKey('panel-view-body-drop-${tab.name}-$side'),
       onWillAcceptWithDetails: (details) =>
-          _sidebarViewForPanelDrop(tab, details.data) != null,
+          _sidebarViewForPanelDrop(details.data, tab: tab) != null,
       onAcceptWithDetails: (details) {
-        final view = _sidebarViewForPanelDrop(tab, details.data);
+        final view = _sidebarViewForPanelDrop(details.data, tab: tab);
         if (view != null) _moveSidebarViewToPanelBody(view, tab, before, focus);
       },
       builder: (context, candidates, _) => IgnorePointer(
