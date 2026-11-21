@@ -22534,45 +22534,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         );
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        if (!grouped)
-          original
-        else
-          SidebarGroupSplit(
-            key: ValueKey('sidebar-group-$location-$container'),
-            location: location,
-            container: container,
-            panes: {
-              for (final view in before) view: member(view),
-              container: pane(container, original),
-              for (final view in after) view: member(view),
-            },
-            labels: {
-              for (final view in [...before, container, ...after])
-                view: _sidebarViewLabel(view),
-            },
-            weights: {
-              for (final view in [...before, container, ...after])
-                view: _layout.root.sidebarGroupPaneWeights[view] ?? 1,
-            },
-            collapsed: {
-              for (final view in [...before, container, ...after])
-                if (_layout.root.sidebarGroupCollapsedPanes.contains(view)) view,
-            },
-            onCommit: (weights) =>
-                _layout.setSidebarGroupPaneWeights(container, weights),
-            onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
-            onFocus: (view) => _focusSidebarRegion(location, view),
-            onReorder: (source, target, before) =>
-                _layout.reorderSidebarGroupPane(
+    if (grouped) {
+      return SidebarGroupSplit(
+        key: ValueKey('sidebar-group-$location-$container'),
+        location: location,
+        container: container,
+        panes: {
+          for (final view in before) view: member(view),
+          container: pane(container, original),
+          for (final view in after) view: member(view),
+        },
+        labels: {
+          for (final view in [...before, container, ...after])
+            view: _sidebarViewLabel(view),
+        },
+        weights: {
+          for (final view in [...before, container, ...after])
+            view: _layout.root.sidebarGroupPaneWeights[view] ?? 1,
+        },
+        collapsed: {
+          for (final view in [...before, container, ...after])
+            if (_layout.root.sidebarGroupCollapsedPanes.contains(view)) view,
+        },
+        onCommit: (weights) =>
+            _layout.setSidebarGroupPaneWeights(container, weights),
+        onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
+        onFocus: (view) => _focusSidebarRegion(location, view),
+        externalSourceFor: (data) =>
+            _panelViewForSidebarDrop(location, container, data),
+        onReorder: (source, target, before) {
+          if (_layout.root.panelViewPlacements.containsKey(source)) {
+            _movePanelViewIntoSidebar(
+              source,
+              location,
+              container,
+              before,
+              sidebarTarget: target,
+            );
+          } else {
+            _layout.reorderSidebarGroupPane(
               container,
               source,
               target,
               before: before,
-            ),
-          ),
+            );
+          }
+        },
+      );
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        original,
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -22586,41 +22599,64 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  String? _panelViewForSidebarDrop(
+    String location,
+    String container,
+    Object drag,
+  ) {
+    if (drag is _PanelHostedViewDrag &&
+        _layout.sidebarSelection(location) == container &&
+        _layout.root.panelViewPlacements.containsKey(drag.view)) {
+      return drag.view;
+    }
+    return null;
+  }
+
+  void _movePanelViewIntoSidebar(
+    String view,
+    String location,
+    String container,
+    bool before, {
+    String? sidebarTarget,
+  }) {
+    if (!_layout.moveSidebarView(
+      view,
+      location,
+      sidebarPlacement: (container: container, before: before),
+      sidebarTarget: sidebarTarget,
+    )) {
+      return;
+    }
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = container;
+      if (view == 'outline') _refreshOutline();
+    });
+    final focus = location == primarySidebarViewLocation
+        ? _primarySidebarFocus
+        : _secondarySidebarFocus;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          _layout.root.sidebarViewPlacements[view]?.container == container &&
+          _layout.sidebarViewLocation(view) == location) {
+        focus.requestFocus();
+      }
+    });
+  }
+
   Widget _buildSidebarBodyDrop(String location, String container, bool before) {
     final side = before ? 'before' : 'after';
-    bool accepts(_PanelHostedViewDrag drag) =>
-        _layout.sidebarSelection(location) == container &&
-        _layout.root.panelViewPlacements.containsKey(drag.view);
-
     return DragTarget<_PanelHostedViewDrag>(
       key: ValueKey('$location-sidebar-body-drop-$side'),
-      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onWillAcceptWithDetails: (details) =>
+          _panelViewForSidebarDrop(location, container, details.data) != null,
       onAcceptWithDetails: (details) {
-        if (!accepts(details.data)) return;
-        final view = details.data.view;
-        final placement = (container: container, before: before);
-        if (!_layout.moveSidebarView(
-          view,
-          location,
-          sidebarPlacement: placement,
-        )) {
-          return;
+        final view =
+            _panelViewForSidebarDrop(location, container, details.data);
+        if (view != null) {
+          _movePanelViewIntoSidebar(view, location, container, before);
         }
-        setState(() {
-          _sidebarView = _layout.primarySidebarView;
-          _secondarySidebarView = _layout.secondarySidebarView;
-          _focusedSidebarView = container;
-          if (view == 'outline') _refreshOutline();
-        });
-        final focus = location == primarySidebarViewLocation
-            ? _primarySidebarFocus
-            : _secondarySidebarFocus;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted &&
-              _layout.root.sidebarViewPlacements[view] == placement) {
-            focus.requestFocus();
-          }
-        });
       },
       builder: (context, candidates, _) => IgnorePointer(
         child: candidates.isEmpty

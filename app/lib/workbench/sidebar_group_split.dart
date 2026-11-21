@@ -20,6 +20,7 @@ class SidebarGroupSplit extends StatefulWidget {
     required this.onCommit,
     required this.onSetCollapsed,
     required this.onFocus,
+    required this.externalSourceFor,
     required this.onReorder,
   }) : assert(panes.length > 1);
 
@@ -32,6 +33,7 @@ class SidebarGroupSplit extends StatefulWidget {
   final ValueChanged<Map<String, double>> onCommit;
   final void Function(String view, bool collapsed) onSetCollapsed;
   final ValueChanged<String> onFocus;
+  final String? Function(Object data) externalSourceFor;
   final void Function(String source, String target, bool before) onReorder;
 
   @override
@@ -67,11 +69,16 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     return SizedBox(
       key: ValueKey('${widget.location}-sidebar-group-$role$view'),
       height: extent,
-      child: PaneGroupDropTarget<SidebarGroupPaneDrag>(
+      child: PaneGroupDropTarget<Object>(
         axis: Axis.vertical,
         view: view,
         highlightKeyPrefix: 'sidebar-group-drop-${widget.location}-$view',
-        sourceFor: (data) => identical(data.group, _group) ? data.view : null,
+        sourceFor: (data) {
+          if (data is SidebarGroupPaneDrag) {
+            return identical(data.group, _group) ? data.view : null;
+          }
+          return widget.externalSourceFor(data);
+        },
         onReorder: widget.onReorder,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

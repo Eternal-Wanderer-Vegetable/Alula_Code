@@ -93,13 +93,21 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     String target, {
     required bool before,
   }) {
-    final views = [
-      ...groupedSidebarViews(container, before: true),
-      container,
-      ...groupedSidebarViews(container, before: false),
-    ];
+    final views = _sidebarGroupOrder(container);
     if (!_reorderPane(views, source, target, before)) return false;
 
+    _setSidebarGroupOrder(container, views);
+    notifyLayoutChanged();
+    return true;
+  }
+
+  List<String> _sidebarGroupOrder(String container) => [
+        ...groupedSidebarViews(container, before: true),
+        container,
+        ...groupedSidebarViews(container, before: false),
+      ];
+
+  void _setSidebarGroupOrder(String container, List<String> views) {
     final placements = root.sidebarViewPlacements;
     placements.removeWhere((_, placement) => placement.container == container);
     final host = views.indexOf(container);
@@ -108,8 +116,6 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
         placements[views[i]] = (container: container, before: i < host);
       }
     }
-    notifyLayoutChanged();
-    return true;
   }
 
   /// Reorder a standard Panel tab's panes without leaving that group.
@@ -200,14 +206,15 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   }
 
   /// Assign [view] to a side or panel. Select a replacement if it was the
-  /// source side's selection. When [panelTarget] identifies a pane in the
-  /// destination tab, place the view immediately before or after that pane.
+  /// source side's selection. When [panelTarget] or [sidebarTarget] identifies
+  /// a pane in the destination group, place the view adjacent to that pane.
   bool moveSidebarView(
     String view,
     String destination, {
     PanelViewPlacement? panelPlacement,
     SidebarViewPlacement? sidebarPlacement,
     String? panelTarget,
+    String? sidebarTarget,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -245,6 +252,16 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       panelOrder = order;
     }
 
+    List<String>? sidebarOrder;
+    if (sidebarTarget != null) {
+      if (sidebarPlacement == null) return false;
+      final order = _sidebarGroupOrder(sidebarPlacement.container);
+      final index = order.indexOf(sidebarTarget);
+      if (index < 0) return false;
+      order.insert(sidebarPlacement.before ? index : index + 1, view);
+      sidebarOrder = order;
+    }
+
     final sourceSelection =
         source == panelSidebarViewLocation ? null : sidebarSelection(source);
     if (destination == panelSidebarViewLocation) {
@@ -257,7 +274,11 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       (_, placement) => placement.container == view,
     );
     if (sidebarPlacement != null) {
-      root.sidebarViewPlacements[view] = sidebarPlacement;
+      if (sidebarOrder == null) {
+        root.sidebarViewPlacements[view] = sidebarPlacement;
+      } else {
+        _setSidebarGroupOrder(sidebarPlacement.container, sidebarOrder);
+      }
     }
     final stillGrouped = root.sidebarGroupedPaneIds;
     root.sidebarGroupPaneWeights.remove(view);

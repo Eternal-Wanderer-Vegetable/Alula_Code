@@ -482,6 +482,58 @@ void main() {
     layout.dispose();
   });
 
+  test('relative sidebar insertion saves order with the move', () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const side = secondarySidebarViewLocation;
+    const tab = PanelViewTab.diagnostics;
+    layout.moveSidebarView('explorer', side);
+    layout.moveSidebarView('outline', side,
+        sidebarPlacement: (container: 'explorer', before: false));
+    for (final view in ['search', 'git']) {
+      layout.moveSidebarView(view, panelSidebarViewLocation,
+          panelPlacement: (tab: tab, before: false));
+    }
+    layout.setSidebarGroupPaneWeights(
+        'explorer', {'explorer': .9, 'outline': 1.1});
+    layout.setSidebarGroupPaneCollapsed('outline', true);
+    final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+    final notifications = <List<String>>[];
+    layout.addListener(() {
+      notifications.add(layout.groupedSidebarViews('explorer', before: false));
+    });
+
+    expect(
+      layout.moveSidebarView('search', side,
+          sidebarPlacement: (container: 'explorer', before: true),
+          sidebarTarget: 'git'),
+      isFalse,
+    );
+    expect(layout.sidebarViewLocation('search'), panelSidebarViewLocation);
+    expect(notifications, isEmpty);
+
+    expect(
+      layout.moveSidebarView('search', side,
+          sidebarPlacement: (container: 'explorer', before: true),
+          sidebarTarget: 'outline'),
+      isTrue,
+    );
+    expect(notifications, [
+      ['search', 'outline'],
+    ]);
+    expect(layout.groupedPanelViews(tab, before: false), ['git']);
+    expect(layout.secondarySidebarView, 'explorer');
+    expect(layout.root.sidebarGroupPaneWeights, weights);
+    expect(layout.root.sidebarGroupCollapsedPanes, {'outline'});
+
+    final restored =
+        WorkbenchLayout(root: WbSplit.fromJson(layout.root.toJson()));
+    addTearDown(restored.dispose);
+    expect(restored.groupedSidebarViews('explorer', before: false),
+        ['search', 'outline']);
+    expect(restored.root.sidebarGroupPaneWeights, weights);
+  });
+
   test('relative panel insertion keeps one atomic layout update', () {
     final layout = WorkbenchLayout();
     addTearDown(layout.dispose);

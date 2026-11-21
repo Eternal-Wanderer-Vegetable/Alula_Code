@@ -889,6 +889,137 @@ void main() {
     });
   }
 
+  for (final (location, anchor, before) in [
+    (primarySidebarViewLocation, 'outline', true),
+    (secondarySidebarViewLocation, 'explorer', false),
+  ]) {
+    testWidgets(
+        '$location grouped sidebar inserts a panel view at the hovered pane',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      if (location == secondarySidebarViewLocation) {
+        layout.moveSidebarView('explorer', location);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      layout.moveSidebarView('outline', panelSidebarViewLocation);
+      layout.moveSidebarView('outline', location,
+          sidebarPlacement: (container: 'explorer', before: false));
+      layout.setSidebarGroupPaneWeights(
+          'explorer', {'outline': .86, 'explorer': 1.14});
+      layout.setSidebarGroupPaneCollapsed('outline', true);
+      const tab = PanelViewTab.diagnostics;
+      for (final view in ['search', 'git']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation,
+            panelPlacement: (tab: tab, before: view == 'search'));
+      }
+      layout.showRegion('panel');
+      layoutStore.save(layout.root);
+      layout.dispose();
+      final weights = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final search = find.byKey(const ValueKey('search-input'));
+      final source =
+          find.byKey(const ValueKey('panel-view-group-title-search'));
+      final panelGit = find.byKey(const ValueKey('panel-view-group-title-git'));
+      final explorer =
+          find.byKey(ValueKey('$location-sidebar-group-original-explorer'));
+      final outline = find.byKey(ValueKey('$location-sidebar-group-outline'));
+      final target = before ? outline : explorer;
+      final move = find.byKey(ValueKey('$location-sidebar-group-search'));
+      Finder highlight(bool upper) => find.byKey(ValueKey(
+            'sidebar-group-drop-$location-$anchor-${upper ? 'before' : 'after'}',
+          ));
+
+      Offset inside(bool upper) {
+        final rect = tester.getRect(target);
+        return rect.topLeft +
+            Offset(rect.width * .55, rect.height * (upper ? .25 : .75));
+      }
+
+      Future<TestGesture> startDrag() async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(source) + const Offset(24, 12),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveBy(const Offset(0, -18));
+        await gesture.moveTo(inside(before));
+        await tester.pump();
+        return gesture;
+      }
+
+      const query = 'from standard panel to existing sidebar panes 😀';
+      await tester.enterText(search, query);
+      final canceled = await startDrag();
+      expect(highlight(before), findsOneWidget);
+      expect(highlight(!before), findsNothing);
+      await canceled.cancel();
+      await tester.pumpAndSettle();
+      expect(highlight(before), findsNothing);
+      expect(source, findsOneWidget);
+      expect(move, findsNothing);
+
+      final accepted = await startDrag();
+      await accepted.moveTo(inside(!before));
+      await tester.pump();
+      expect(highlight(!before), findsOneWidget);
+      await accepted.moveTo(inside(before));
+      await tester.pump();
+      final targetRect = tester.getRect(target);
+      final hover = tester.getRect(highlight(before));
+      expect(hover.left, targetRect.left);
+      expect(hover.width, targetRect.width);
+      expect(hover.height, closeTo(targetRect.height / 2, .05));
+      expect(hover.top,
+          closeTo(before ? targetRect.top : targetRect.center.dy, .05));
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(source, findsNothing);
+      expect(panelGit, findsOneWidget);
+      expect(highlight(before), findsNothing);
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isFalse);
+
+      void expectBetween() {
+        expect(tester.getTopLeft(explorer).dy,
+            lessThan(tester.getTopLeft(move).dy));
+        expect(tester.getTopLeft(move).dy,
+            lessThan(tester.getTopLeft(outline).dy));
+        expect(tester.getSize(outline).height, 28);
+      }
+
+      expectBetween();
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarGroupPaneWeights, weights);
+      expect(saved.sidebarGroupCollapsedPanes, {'outline'});
+      expect(saved.panelViewPlacements.keys, ['git']);
+      expect(saved.sidebarViewPlacements['search'],
+          (container: 'explorer', before: false));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expectBetween();
+      expect(panelGit, findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   for (final location in [
     primarySidebarViewLocation,
     secondarySidebarViewLocation,
