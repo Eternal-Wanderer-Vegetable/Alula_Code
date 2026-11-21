@@ -1,0 +1,227 @@
+{
+  "linuxDocumentCollision": {
+    "sourceTree": "b2700f52e4e8d01f94212a94cc9ee9e438a457eb",
+    "fixtureSha256": "a22e85a5f97a3c6fe12a589ced7953ce04b406155ad49be613928ba6caf3f56b",
+    "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+    "aotSha256": "df9ab4e0c87cb89e58d046c1f31de9c6fc6d32b1ccda9d239f1a47dc0d58cca6",
+    "editors": {
+      "main": [
+        {
+          "label": "main-source.txt 主编辑器",
+          "documentId": 101,
+          "box": [
+            246.23999999999998,
+            102.0,
+            820.0,
+            780.0000000000001
+          ],
+          "rust": "source 😀A-DIRTY\nsecond source\n",
+          "mirror": "source 😀A-DIRTY\nsecond source\n",
+          "totalUtf16": 31,
+          "stateVersion": 4
+        }
+      ],
+      "child-aux-target.txt": [
+        {
+          "label": "aux-target.txt 辅助窗口编辑器",
+          "documentId": 1,
+          "box": [
+            4.0,
+            52.0,
+            619.0,
+            688.0
+          ],
+          "rust": "overlap 🪟\nsecond overlap\n",
+          "mirror": "target 🪶B-DIRTY\nsecond target\n",
+          "totalUtf16": 26,
+          "stateVersion": 1
+        }
+      ],
+      "child-aux-overlap.txt": [
+        {
+          "label": "aux-overlap.txt 辅助窗口编辑器",
+          "documentId": 1,
+          "box": [
+            4.0,
+            52.0,
+            619.0,
+            688.0
+          ],
+          "rust": "overlap 🪟\nsecond overlap\n",
+          "mirror": "overlap 🪟\nsecond overlap\n",
+          "totalUtf16": 26,
+          "stateVersion": 1
+        }
+      ]
+    }
+  },
+  "windowsStaleBounds": {
+    "sourceTree": "9e8ef835a79590a7e05bc0bee85d279e0cf9994a",
+    "fixtureSha256": "842194cf1fed227d1910955a768924675a49f24cba794994fd3d61385998a01c",
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+    "aotSha256": "9775bfb30222a56d96eebc7e51405c4bd4295652398c555db767a34b3136e5d9",
+    "before": {
+      "main": {
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              314.4,
+              102.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "bounds": [
+          1168.0,
+          64.0,
+          2028.8,
+          616.0
+        ],
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              842.4,
+              510.4
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "child-aux-overlap.txt": {
+        "bounds": [
+          1168.0,
+          64.0,
+          2028.8,
+          616.0
+        ],
+        "editors": [
+          {
+            "label": "aux-overlap.txt 辅助窗口编辑器",
+            "documentId": 6,
+            "box": [
+              4.0,
+              52.0,
+              842.4,
+              510.4
+            ],
+            "rust": "overlap 🪟\nsecond overlap\n",
+            "mirror": "overlap 🪟\nsecond overlap\n",
+            "totalUtf16": 26,
+            "stateVersion": 1
+          }
+        ]
+      }
+    },
+    "after": {
+      "main": [
+        {
+          "label": "aux-overlap.txt 主编辑器",
+          "documentId": 8,
+          "box": [
+            314.4,
+            102.0,
+            1015.9999999999999,
+            636.8
+          ],
+          "rust": "overlap 🪟\nsecond overlap\n",
+          "mirror": "overlap 🪟\nsecond overlap\n",
+          "totalUtf16": 26,
+          "stateVersion": 1
+        }
+      ],
+      "child-aux-target.txt": [
+        {
+          "label": "aux-target.txt 辅助窗口编辑器",
+          "documentId": 5,
+          "box": [
+            4.0,
+            52.0,
+            842.4,
+            510.4
+          ],
+          "rust": "target 🪶B-DIRTY\nsecond target\n",
+          "mirror": "target 🪶B-DIRTY\nsecond target\n",
+          "totalUtf16": 31,
+          "stateVersion": 1
+        }
+      ],
+      "child-aux-overlap.txt": [
+        {
+          "label": "main-source.txt 辅助窗口编辑器",
+          "documentId": 7,
+          "box": [
+            4.0,
+            52.0,
+            842.4,
+            510.4
+          ],
+          "rust": "source 😀A-DIRTY\nsecond source\n",
+          "mirror": "source 😀A-DIRTY\nsecond source\n",
+          "totalUtf16": 31,
+          "stateVersion": 1
+        }
+      ]
+    },
+    "drag": {
+      "source": "main",
+      "target": "child-aux-overlap.txt",
+      "start": [
+        516,
+        115
+      ],
+      "intendedTarget": [
+        1624,
+        213
+      ],
+      "releasePoint": [
+        1624,
+        213
+      ],
+      "returnToSource": false
+    }
+  },
+  "windowsCloseCrash": {
+    "sourceTree": "944a3f4d7071d596940acaa857fbc773b0847f6e",
+    "fixtureSha256": "842194cf1fed227d1910955a768924675a49f24cba794994fd3d61385998a01c",
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+    "aotSha256": "683bd596bbb3870092024b84535db221012163e2687fa7cb4b780825fd5e76d8",
+    "cleanup": {
+      "exitCode": 3221226525,
+      "gracefulClose": false
+    },
+    "eventLogExceptionCodes": [
+      "0xc0000005",
+      "0xc000041d"
+    ],
+    "engineRevision": "cf636b1dfb818dd6a3ff16e390e93b1a036969c8",
+    "symbolizedDump": [
+      "flutter_windows+0x1e220 flutter::FlutterWindowsView::GetEngine",
+      "flutter_windows+0x14e20 FlutterDesktopViewControllerHandleTopLevelWindowProc+0x32"
+    ],
+    "lockedWindowManager": "0.5.2",
+    "windowManagerDestroyBehavior": "PostQuitMessage(0)",
+    "windowManagerCloseBehavior": "PostMessage(targetHWND, WM_SYSCOMMAND, SC_CLOSE, 0)"
+  }
+}

@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.174 / feat-226。产品 5a592570b0a927aedd58f198011116ad41e34034 已推草稿 PR #3。修复辅助引擎 Rust 文档 ID 冲突、原生窗口位置更新缺失和 Windows 辅助窗关闭崩溃。Windows 实机与 Linux Xvfb 的取消、重叠拒收、交换及关闭回主窗通过，两份脏文本和三个磁盘文件验证通过。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA 的 PR CI 44910776052 四项及 Platform Availability 44910771568 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.174-auxiliary-tab-exchange-native.md。
+
 - 2026-11-21 完成 P05.173 / feat-225。产品 0a57370117a4c1fbeda9b037ae37c9d1b59e2935 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对次侧栏组拖到面板标题。整组保留，底部横排、右侧纵排，原次侧栏回到 SCM，Search 保留两处结果。专项 171/171，Flutter 1,746 passed / 2 skipped。同一 SHA 的 PR CI 44904213504 四项及 Platform Availability 44905152176 Windows 和同 SHA 44904209090 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.173-secondary-container-to-panel.md。
 
 - 2026-11-21 完成 P05.172 / feat-224。产品 781f4da0d97cee2bd19eb158341fff295f2c1c79 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对独立面板整组拖到次侧栏标题。组成员、权重、折叠和两处结果保留，次侧栏原入口仍可切换，诊断页接管面板。专项 169/169，Flutter 1,744 passed / 2 skipped。同一 SHA 的 PR CI 44901980641 四项及 Platform Availability 44901976731 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.172-panel-container-to-secondary.md。

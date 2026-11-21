@@ -1505,7 +1505,7 @@
         "feat-101"
       ],
       "status": "done",
-      "evidence": "Local and hosted N.2 complete. Commit f0c67bd8c3bb1b65964e7dcce784664e38522440. Bounded event-driven auxiliary bounds and prepare/commit/abort/status swap; target prior doc returns to main, source closes only after confirmed commit; uncertain outcomes retain both local snapshots. P05.67 focus channel remains window/group-only; no Rust/FFI changes. Focused tests 32/32; cargo fmt --check; flutter analyze 0; bash init.sh passed (Rust 125, Clippy, core build, Flutter 1360/1360); Harness 100/100. PR CI 43941953054 all four jobs passed. Platform Availability 43941942416 Linux/Windows/macOS Intel x64 all passed. App artifacts Linux/Windows/macOS 14264550521 / 14264616080 / 14265886712; generic Linux/Windows native DnD artifacts 14265025133 / 14263916308 passed move/cross-document copy/external text; macOS DnD artifact 14266081126 explicitly skipped because the hosted pointer route was unavailable. macOS startup/native Quit artifact 14266101279; native Quit passed. Existing hosted DnD probes do not launch Alula auxiliary; feature-specific native cross-window swap remains unverified. Final scope/evidence: docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md. PR #3 remains OPEN/DRAFT.",
+      "evidence": "Local and hosted N.2 complete. Commit f0c67bd8c3bb1b65964e7dcce784664e38522440. Bounded event-driven auxiliary bounds and prepare/commit/abort/status swap; target prior doc returns to main, source closes only after confirmed commit; uncertain outcomes retain both local snapshots. P05.67 focus channel remains window/group-only; no Rust/FFI changes. Focused tests 32/32; cargo fmt --check; flutter analyze 0; bash init.sh passed (Rust 125, Clippy, core build, Flutter 1360/1360); Harness 100/100. PR CI 43941953054 all four jobs passed. Platform Availability 43941942416 Linux/Windows/macOS Intel x64 all passed. App artifacts Linux/Windows/macOS 14264550521 / 14264616080 / 14265886712; generic Linux/Windows native DnD artifacts 14265025133 / 14263916308 passed move/cross-document copy/external text; macOS DnD artifact 14266081126 explicitly skipped because the hosted pointer route was unavailable. macOS startup/native Quit artifact 14266101279; native Quit passed. Existing hosted DnD probes do not launch Alula auxiliary; feature-specific native cross-window swap remains unverified. Final scope/evidence: docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md. PR #3 remains OPEN/DRAFT. P05.174 Windows 和 Linux Xvfb 专属交换续验：docs/diagnostics/2026-11-21-p05/p05.174-auxiliary-tab-exchange-native.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2862,8 +2862,21 @@
         "feat-121",
         "feat-151"
       ],
+      "status": "done",
+      "evidence": "产品 5a592570b0a927aedd58f198011116ad41e34034 已推草稿 PR #3。修复辅助引擎 Rust 文档 ID 冲突、原生窗口位置更新缺失和 Windows 辅助窗关闭崩溃。Windows 实机与 Linux Xvfb 的取消、重叠拒收、交换及关闭回主窗通过，两份脏文本和三个磁盘文件验证通过。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA 的 PR CI 44910776052 四项及 Platform Availability 44910771568 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.174-auxiliary-tab-exchange-native.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-227",
+      "name": "P05.175 LAY-12 辅助编辑器窗紧凑模式固定版视觉与原生交互验收",
+      "description": "核对普通与紧凑辅助窗的可见结构与还原，复验 Windows 实机和 Linux Xvfb 的切换、置顶入口与文档保留。",
+      "dependencies": [
+        "feat-120",
+        "feat-226"
+      ],
       "status": "not-started",
-      "evidence": "P05.69 专属跨窗交换尚未由真实产品双窗的原生输入验证。",
+      "evidence": "P05.68 紧凑模式专属固定版和产品原生视觉对照待验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
