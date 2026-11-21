@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- 产品 0205034c94ea14819793993cd1a6797130b6c98b 已推草稿 PR #3。辅助窗已支持活动标签、固定关闭槽脏标、紧凑恢复及正确的单次输入提交。Linux xfwm4 真实窗口两种关闭入口通过，Windows Release 构建及 125% 离屏几何通过，最终 Windows 实机截图与交互待复验。本地 Flutter 1,749 passed / 2 skipped，同 SHA CI 44928231147 四项和 Platform Availability 44928228908 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.177-auxiliary-active-editor-tab.md。
+
 - 2026-11-22 完成 P05.176 / feat-228。产品 f206f3dbe5f80b8daab702c086a4e129599356ae 已推草稿 PR #3。Linux GTK 先隐藏辅助窗再销毁，xfwm4 中两次应用内关闭和一次 Alt+F4 均回收脏文档并可继续输入，Windows 实机回归通过。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44921293006 四项与 Platform Availability 44921288023 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.176-linux-xfwm4-auxiliary-close.md。
 
 - 2026-11-21 完成 P05.175 / feat-227。产品 e18328f1b6a367fcd2b39a2d3f26046431191f03 已推草稿 PR #3。固定版与 Windows 实机、Linux xfwm4 验证辅助窗 35/30 逻辑像素标题行、紧凑与恢复、置顶和文档保留，Windows 关闭回主窗通过。Linux xfwm4 关闭 GLX BadAccess 登记 P05.176。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44916113131 四项与 Platform Availability 44916109760 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。

@@ -2901,8 +2901,8 @@
         "feat-227",
         "feat-228"
       ],
-      "status": "not-started",
-      "evidence": "P05.175 已登记辅助窗应用标题行差异以及固定版标签 32 逻辑像素几何。",
+      "status": "in-progress",
+      "evidence": "产品 0205034c94ea14819793993cd1a6797130b6c98b 已推草稿 PR #3。辅助窗已支持活动标签、固定关闭槽脏标、紧凑恢复及正确的单次输入提交。Linux xfwm4 真实窗口两种关闭入口通过，Windows Release 构建及 125% 离屏几何通过，最终 Windows 实机截图与交互待复验。本地 Flutter 1,749 passed / 2 skipped，同 SHA CI 44928231147 四项和 Platform Availability 44928228908 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.177-auxiliary-active-editor-tab.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

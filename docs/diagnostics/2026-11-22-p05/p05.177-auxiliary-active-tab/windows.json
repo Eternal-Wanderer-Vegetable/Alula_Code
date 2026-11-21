@@ -1,0 +1,184 @@
+{
+  "sourceTree": "5f914937be26222f33247f4ef57a4931378f7065",
+  "binaryBuildTree": "fca57e959fd89bab10ecc11f2dade951526b72a4",
+  "draftReleaseBuilt": true,
+  "headless": {
+    "geometry": {
+      "clean": {
+        "strip": [
+          0.0,
+          35.0,
+          705.6,
+          32.0
+        ],
+        "tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          31.0
+        ],
+        "close": [
+          145.19775390625,
+          40.5,
+          20.0,
+          20.0
+        ],
+        "body": [
+          4.0,
+          71.0,
+          697.6,
+          438.6
+        ],
+        "label": [
+          28.0,
+          42.0,
+          113.19775390625,
+          17.0
+        ]
+      },
+      "dirty": {
+        "strip": [
+          0.0,
+          35.0,
+          705.6,
+          32.0
+        ],
+        "tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          31.0
+        ],
+        "close": [
+          145.19775390625,
+          40.5,
+          20.0,
+          20.0
+        ],
+        "body": [
+          4.0,
+          71.0,
+          697.6,
+          438.6
+        ],
+        "label": [
+          28.0,
+          42.0,
+          113.19775390625,
+          17.0
+        ]
+      },
+      "compact": {
+        "strip": null,
+        "tab": null,
+        "close": null,
+        "body": [
+          0.0,
+          30.0,
+          705.6,
+          483.6
+        ],
+        "label": null
+      },
+      "restored": {
+        "strip": [
+          0.0,
+          35.0,
+          705.6,
+          32.0
+        ],
+        "tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          31.0
+        ],
+        "close": [
+          145.19775390625,
+          40.5,
+          20.0,
+          20.0
+        ],
+        "body": [
+          4.0,
+          71.0,
+          697.6,
+          438.6
+        ],
+        "label": [
+          28.0,
+          42.0,
+          113.19775390625,
+          17.0
+        ]
+      }
+    },
+    "sample": "Windows 11 x64, Segoe UI, 1.25 dpr, 882 × 642 px simulated client",
+    "geometryCasesPassed": true,
+    "testHarnessPaintsSomeGlyphsWithFallbacks": true
+  },
+  "priorNative": {
+    "tree": "558909ca10a5de665864123466e77ff3d235aa1d",
+    "checksPassed": true,
+    "checks": {
+      "activeTabSelectedAndFocusedEditor": true,
+      "dirtyMarkerAppearedAfterTyping": true,
+      "dirtyMarkerClearedAtSavepoint": true,
+      "compactRemovedTabAndRestoredDirtyLabel": true,
+      "compactAndRestored": true,
+      "nativeAlwaysOnTopOnAndOff": true,
+      "controlsAvailableInCompact": true,
+      "exactRestoredGeometry": true,
+      "documentAndSelectionPreserved": true,
+      "dirtyDocumentReturnedOnClose": true,
+      "mainRemainedEditable": true,
+      "diskSha256Unchanged": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "geometry": {
+        "expandedTitleHeight": 35.0,
+        "compactTitleHeight": 30.0,
+        "expandedEditorTop": 71.0,
+        "compactEditorTop": 30.0,
+        "expandedEditorHeight": 407.4,
+        "compactEditorHeight": 452.4
+      }
+    },
+    "os": "Windows-11-10.0.26200-SP0",
+    "input": "guarded real Win32 mouse and keys",
+    "cleanup": {
+      "exitCode": 0,
+      "gracefulClose": true
+    },
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+    "aotSha256": "9cbe631982324cdbef69735b8d58a56c4e029f7d65cba4160cfd300b79a99386",
+    "fixtureSha256": "5c15bdcadc5d1122bbb876a36f3776e45b0a0b5f85bec8438f7558d6a0bd71bf"
+  },
+  "visibleRaster": {
+    "P05.175ClientCenter": [
+      20,
+      22,
+      26
+    ],
+    "P05.176ClientCenter": [
+      255,
+      255,
+      255
+    ],
+    "beforeDirtySlotClientCenter": [
+      255,
+      255,
+      255
+    ],
+    "beforeDirtySlotGDIAndPrintWindowWhite": true,
+    "finalCandidateDeviceScreenshotPending": true
+  },
+  "finalRelease": {
+    "AotSha256": "d126e198410abeea4b454110db45508ecfd5d71f11ac5be4ba39acd8d2c5b802",
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10"
+  },
+  "p175ControlRelease": {
+    "sourceCommit": "e18328f1b6a367fcd2b39a2d3f26046431191f03",
+    "aotSha256": "202eb2b42dd5e8159d07f03fc409a61b3b793c190e1e5f06d840e633228d1671",
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+    "aotAndRunnerMatchEarlierScreenshot": true
+  }
+}
