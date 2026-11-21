@@ -2575,6 +2575,20 @@
         "feat-203",
         "feat-204"
       ],
+      "status": "done",
+      "evidence": "产品 `d043cd9210b8d9e6d796acd577b437a02feeaaac` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主次侧栏窗格折叠至标题、展开恢复高度、查询与焦点、双窗格折叠及显隐恢复。专项 88/88，Flutter 1,697 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44856874979 四项及 Platform Availability 44856872329 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.153-sidebar-group-collapse.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-206",
+      "name": "P05.154 LAY-04/06 拖动侧栏分组标题调整顺序",
+      "description": "对照固定版主次侧栏内的分组标题拖动排序，验收顺序、内容、尺寸与折叠状态的保留和恢复。",
+      "dependencies": [
+        "feat-201",
+        "feat-202",
+        "feat-205"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

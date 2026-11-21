@@ -1,0 +1,918 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "grouped-in-terminal": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "editor-drop-rejected": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-before": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 215,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 215,
+            "right": 342.1999931335449,
+            "bottom": 243,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-sash-dragged": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 299,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 299,
+            "right": 342.1999931335449,
+            "bottom": 327,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-expanded": {
+      "active": "FileEditSelectionViewGoRunTerminalHelpemptyemptyOpen in AgentsSign InExplorerDrag a view here to display.Searchfixture\u00a0files to includefiles to exclude2 results in 2 files - Open in editora.txt1fixture oneb.txt1fixture two.monaco-list.list_id_11 .monaco-list-rows { background: var(--vscode-sideBar-background); }\n.monaco-list.list_id_11:focus .monaco-list-row.focused { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_11:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_11:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_11:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_11:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_11:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_11:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_11,\n\t\t\t\t.monaco-list.list_id_11:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_11,\n\t\t\t\t.monaco-list.list_id_11:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_11 .monaco-list-row.focused .codicon { color:  var(--vscode-list-inactiveSelectionIconForeground); }\n.monaco-list.list_id_11 .monaco-list-row.focused { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_11 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_11 .monaco-list-row.selected { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_11 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_11 .monaco-list-row.selected { color: var(--vscode-list-inactiveSelectionForeground); }\n.monaco-list.list_id_11:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_11:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_11:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_11,\n\t\t\t\t.monaco-list.list_id_11:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_11.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_11 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-list-inactiveFocusOutline)); outline-offset: -1px; }\n.monaco-list.list_id_11 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_11 .monaco-list-row.focused { outline: 1px dotted var(--vscode-list-inactiveFocusOutline); outline-offset: -1px; }\n.monaco-list.list_id_11 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_11.drop-target,\n\t\t\t\t.monaco-list.list_id_11 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_11 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_11 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_11 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_11 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_11 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_11:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_11.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_11 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_11 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_11 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_11 .monaco-scrollable-element .monaco-tree-sticky-container { border-bottom: 1px solid var(--vscode-sideBarStickyScroll-border); }\n.monaco-list.list_id_11 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-sideBarStickyScroll-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_11.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_11:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_11.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n.monaco-list.list_id_11:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_11.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.monaco-list.list_id_11:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_11.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_11.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_11.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }emptya.txtb.txt.monaco-list.list_id_3 .monaco-list-rows { background: var(--vscode-sideBar-background); }\n.monaco-list.list_id_3:focus .monaco-list-row.focused { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_3:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_3:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_3:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_3:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_3:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_3:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_3,\n\t\t\t\t.monaco-list.list_id_3:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_3,\n\t\t\t\t.monaco-list.list_id_3:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_3 .monaco-list-row.focused .codicon { color:  var(--vscode-list-inactiveSelectionIconForeground); }\n.monaco-list.list_id_3 .monaco-list-row.focused { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_3 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_3 .monaco-list-row.selected { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_3 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_3 .monaco-list-row.selected { color: var(--vscode-list-inactiveSelectionForeground); }\n.monaco-list.list_id_3:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_3:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_3:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_3,\n\t\t\t\t.monaco-list.list_id_3:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_3.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_3 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-list-inactiveFocusOutline)); outline-offset: -1px; }\n.monaco-list.list_id_3 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_3 .monaco-list-row.focused { outline: 1px dotted var(--vscode-list-inactiveFocusOutline); outline-offset: -1px; }\n.monaco-list.list_id_3 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_3.drop-target,\n\t\t\t\t.monaco-list.list_id_3 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_3 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_3 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_3 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_3 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_3 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_3:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_3.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_3 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_3 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_3 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_3 .monaco-scrollable-element .monaco-tree-sticky-container { border-bottom: 1px solid var(--vscode-sideBarStickyScroll-border); }\n.monaco-list.list_id_3 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-sideBarStickyScroll-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_3.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_3:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_3.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n.monaco-list.list_id_3:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_3.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.monaco-list.list_id_3:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_3.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_3.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_3.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }OutlineTimelineOpen ChatCtrl+Alt+IShow All CommandsCtrl+Shift+PFind in FilesCtrl+Shift+F.monaco-breadcrumbs { background-color: var(--vscode-breadcrumb-background)}\n.monaco-breadcrumbs .monaco-breadcrumb-item { color: var(--vscode-breadcrumb-foreground)}\n.monaco-breadcrumbs .monaco-breadcrumb-item.focused { color: var(--vscode-breadcrumb-focusForeground)}\n.monaco-breadcrumbs .monaco-breadcrumb-item.focused.selected { color: var(--vscode-breadcrumb-activeSelectionForeground)}\n.monaco-breadcrumbs:not(.disabled) .monaco-breadcrumb-item:hover:not(.focused):not(.selected) { color: var(--vscode-breadcrumb-focusForeground)}\nTerminalTerminal powershellDrag a view here to display.Terminal.xterm .xterm-scrollable-element > .xterm-scrollbar > .xterm-slider {\n  background: #a8a9aa85;\n}\n.xterm .xterm-scrollable-element > .xterm-scrollbar > .xterm-slider:hover {\n  background: #a8a9aa8f;\n}\n.xterm .xterm-scrollable-element > .xterm-scrollbar > .xterm-slider.xterm-active {\n  background: #a8a9aa9c;\n}57 x 13XChatChatDrag a view here to display.ChatSessionsNew SessionNo matching sessions - Reset Filter.monaco-list.list_id_1 .monaco-list-rows { background: var(--vscode-sideBar-background); }\n.monaco-list.list_id_1:focus .monaco-list-row.focused { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_1:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_1:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_1:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_1:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_1:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_1:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_1,\n\t\t\t\t.monaco-list.list_id_1:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_1,\n\t\t\t\t.monaco-list.list_id_1:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_1 .monaco-list-row.focused .codicon { color:  var(--vscode-list-inactiveSelectionIconForeground); }\n.monaco-list.list_id_1 .monaco-list-row.focused { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_1 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_1 .monaco-list-row.selected { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_1 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_1 .monaco-list-row.selected { color: var(--vscode-list-inactiveSelectionForeground); }\n.monaco-list.list_id_1:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_1:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_1:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_1,\n\t\t\t\t.monaco-list.list_id_1:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_1.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_1 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-list-inactiveFocusOutline)); outline-offset: -1px; }\n.monaco-list.list_id_1 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_1 .monaco-list-row.focused { outline: 1px dotted var(--vscode-list-inactiveFocusOutline); outline-offset: -1px; }\n.monaco-list.list_id_1 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_1.drop-target,\n\t\t\t\t.monaco-list.list_id_1 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_1 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_1 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_1 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_1 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_1 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_1:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_1.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_1 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_1 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_1 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-sideBarStickyScroll-background); }\n.monaco-list.list_id_1 .monaco-scrollable-element .monaco-tree-sticky-container { border-bottom: 1px solid var(--vscode-sideBarStickyScroll-border); }\n.monaco-list.list_id_1 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-sideBarStickyScroll-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_1.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_1:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_1.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n.monaco-list.list_id_1:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_1.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.monaco-list.list_id_1:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_1.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_1.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_1.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }Local\u00b7Build with AgentAI responses may be inaccurateGenerate Agent Instructions to onboard AI onto your codebase.This chat is read-only.monaco-list.list_id_2 .monaco-list-rows { background: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:focus .monaco-list-row.focused { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:focus .monaco-list-row.focused { color: var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2:focus .monaco-list-row.selected { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:focus .monaco-list-row.selected { color: var(--vscode-sideBar-foreground); }\n\n\t\t\t\t.monaco-drag-image.list_id_2,\n\t\t\t\t.monaco-list.list_id_2:focus .monaco-list-row.selected.focused { background-color: var(--vscode-sideBar-background); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_2,\n\t\t\t\t.monaco-list.list_id_2:focus .monaco-list-row.selected.focused { color: var(--vscode-sideBar-foreground); }\n\t\t\t\n.monaco-list.list_id_2 .monaco-list-row.focused { color:  var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2 .monaco-list-row.focused:is(:hover, .hovered) { color:  var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2 .monaco-list-row.focused { background-color:  var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-list-row.selected { background-color:  var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-list-row.selected { color: var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_2,\n\t\t\t\t.monaco-list.list_id_2:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_2.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_2 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-list-inactiveFocusOutline)); outline-offset: -1px; }\n.monaco-list.list_id_2 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_2 .monaco-list-row.focused { outline: 1px dotted var(--vscode-list-inactiveFocusOutline); outline-offset: -1px; }\n.monaco-list.list_id_2 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_2.drop-target,\n\t\t\t\t.monaco-list.list_id_2 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_2 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_2 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_2 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_2 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_2 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_2:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_2.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_2 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_2 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-sideBar-background); }\n.monaco-list.list_id_2 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-sideBarStickyScroll-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_2.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-sideBar-foreground); }\n.monaco-list.list_id_2:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_2.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n.monaco-list.list_id_2:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_2.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.monaco-list.list_id_2:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_2.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_2.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_2.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }Review MigrationsTodosAgentModelsLocalDefault permissionsAsk QuestionAsk in a Side ChatQuoteCopy 0  0Hello \n\n\t\t\t\t/* Status bar focus outline */\n\t\t\t\t.monaco-workbench .part.statusbar:focus {\n\t\t\t\t\toutline-color: rgba(57, 148, 188, 0.7);\n\t\t\t\t}\n\n\t\t\t\t/* Status bar item focus outline */\n\t\t\t\t.monaco-workbench .part.statusbar > .items-container > .statusbar-item a:focus-visible {\n\t\t\t\t\toutline: 1px solid rgba(57, 148, 188, 0.7);\n\t\t\t\t\toutline-offset: -2px;\n\t\t\t\t}\n\n\t\t\t\t/* Notification Beak */\n\t\t\t\t.monaco-workbench .part.statusbar > .items-container > .statusbar-item.has-beak > .status-bar-item-beak-container:before {\n\t\t\t\t\tborder-bottom-color: #2a2b2c;\n\t\t\t\t}\n\t\t\tInfo: All installed extensions are temporarily disabled.Search returned 2 results in 2 files.quick-input-list .quick-input-list-entry { border-top-color:  var(--vscode-pickerGroup-border); }\n.quick-input-list .quick-input-list-separator { color:  var(--vscode-pickerGroup-foreground); }\n.quick-input-list .quick-input-list-separator-as-item { color: var(--vscode-descriptionForeground); }\n.quick-input-list .monaco-keybinding > .monaco-keybinding-key {\nbackground-color: var(--vscode-keybindingLabel-background);\nborder-color: var(--vscode-keybindingLabel-border);\nborder-bottom-color: var(--vscode-keybindingLabel-bottomBorder);\nbox-shadow: inset 0 -1px 0 var(--vscode-widget-shadow);\ncolor: var(--vscode-keybindingLabel-foreground);\n}\u00a01 Results0 SelectedOKView: Toggle Panel VisibilityCtrl+J.monaco-list.list_id_6 .monaco-list-rows { background: var(--vscode-quickInput-background); }\n.monaco-list.list_id_6:focus .monaco-list-row.focused { background-color: var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6:focus .monaco-list-row.focused { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_6:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_6:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_6:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_6:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_6,\n\t\t\t\t.monaco-list.list_id_6:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_6,\n\t\t\t\t.monaco-list.list_id_6:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_6 .monaco-list-row.focused { color:  var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_6 .monaco-list-row.focused:is(:hover, .hovered) { color:  var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_6 .monaco-list-row.focused .codicon { color:  var(--vscode-quickInputList-focusIconForeground); }\n.monaco-list.list_id_6 .monaco-list-row.focused { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6 .monaco-list-row.selected { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_6 .monaco-list-row.selected { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_6:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_6:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_6:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_6,\n\t\t\t\t.monaco-list.list_id_6:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_6.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_6 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder)); outline-offset: -1px; }\n.monaco-list.list_id_6 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_6 .monaco-list-row.focused { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_6 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_6.drop-target,\n\t\t\t\t.monaco-list.list_id_6 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_6 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_6 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_6 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_6 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_6 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_6:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_6.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_6 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_6 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-quickInput-background); }\n.monaco-list.list_id_6 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-quickInput-background); }\n.monaco-list.list_id_6 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_6.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_6:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_6.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder))); outline-offset: -1px;}\n.monaco-list.list_id_6:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_6.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_6:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_6.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_6.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_6.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }.monaco-list.list_id_7 .monaco-list-rows { background: var(--vscode-quickInput-background); }\n.monaco-list.list_id_7:focus .monaco-list-row.focused { background-color: var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7:focus .monaco-list-row.focused { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_7:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_7:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_7:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_7:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_7,\n\t\t\t\t.monaco-list.list_id_7:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_7,\n\t\t\t\t.monaco-list.list_id_7:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_7 .monaco-list-row.focused { color:  var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_7 .monaco-list-row.focused:is(:hover, .hovered) { color:  var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_7 .monaco-list-row.focused .codicon { color:  var(--vscode-quickInputList-focusIconForeground); }\n.monaco-list.list_id_7 .monaco-list-row.focused { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7 .monaco-list-row.selected { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-quickInputList-focusBackground); }\n.monaco-list.list_id_7 .monaco-list-row.selected { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_7:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_7:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_7:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_7,\n\t\t\t\t.monaco-list.list_id_7:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_7.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_7 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder)); outline-offset: -1px; }\n.monaco-list.list_id_7 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_7 .monaco-list-row.focused { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_7 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_7.drop-target,\n\t\t\t\t.monaco-list.list_id_7 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_7 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_7 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_7 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_7 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_7 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}\n\t\t\t.monaco-list.list_id_7:hover .monaco-tl-indent > .indent-guide, .monaco-list.list_id_7.always .monaco-tl-indent > .indent-guide  { opacity: 1; border-color: var(--vscode-tree-inactiveIndentGuidesStroke); }\n.monaco-list.list_id_7 .monaco-tl-indent > .indent-guide.active { opacity: 1; border-color: var(--vscode-tree-indentGuidesStroke); }\n.monaco-list.list_id_7 .monaco-scrollable-element .monaco-tree-sticky-container { background-color: var(--vscode-quickInput-background); }\n.monaco-list.list_id_7 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-row { background-color: var(--vscode-quickInput-background); }\n.monaco-list.list_id_7 .monaco-scrollable-element .monaco-tree-sticky-container .monaco-tree-sticky-container-shadow { box-shadow: var(--vscode-scrollbar-shadow) 0 6px 6px -6px inset; height: 3px; }\n.monaco-list.list_id_7.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { color: var(--vscode-quickInputList-focusForeground); }\n.monaco-list.list_id_7:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { color: inherit; }\n.monaco-list.list_id_7.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-contrastActiveBorder))); outline-offset: -1px;}\n.monaco-list.list_id_7:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused.selected { outline: inherit;}\n.monaco-list.list_id_7.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container:focus .monaco-list-row.focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_7:not(.sticky-scroll-focused) .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_7.last-focused.sticky-scroll-focused .monaco-scrollable-element .monaco-tree-sticky-container .monaco-list-row.passive-focused { outline: 1px solid var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.context-menu-visible .monaco-list.list_id_7.last-focused.sticky-scroll-focused .monaco-list-rows .monaco-list-row.focused { outline: inherit; }\n.context-menu-visible .monaco-list.list_id_7.last-focused:not(.sticky-scroll-focused) .monaco-tree-sticky-container .monaco-list-rows .monaco-list-row.focused { outline: inherit; }Reload and Enable ExtensionsAll installed extensions are temporarily disabled..monaco-list.list_id_9 .monaco-list-rows { background: var(--vscode-notifications-background); }\n.monaco-list.list_id_9:focus .monaco-list-row.focused { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_9:focus .monaco-list-row.focused:is(:hover, .hovered) { background-color: var(--vscode-list-focusBackground); }\n.monaco-list.list_id_9:focus .monaco-list-row.focused { color: var(--vscode-list-focusForeground); }\n.monaco-list.list_id_9:focus .monaco-list-row.selected { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_9:focus .monaco-list-row.selected:is(:hover, .hovered) { background-color: var(--vscode-list-activeSelectionBackground); }\n.monaco-list.list_id_9:focus .monaco-list-row.selected { color: var(--vscode-list-activeSelectionForeground); }\n.monaco-list.list_id_9:focus .monaco-list-row.selected .codicon { color: var(--vscode-list-activeSelectionIconForeground); }\n\n\t\t\t\t.monaco-drag-image.list_id_9,\n\t\t\t\t.monaco-list.list_id_9:focus .monaco-list-row.selected.focused { background-color: var(--vscode-list-activeSelectionBackground); }\n\t\t\t\n\n\t\t\t\t.monaco-drag-image.list_id_9,\n\t\t\t\t.monaco-list.list_id_9:focus .monaco-list-row.selected.focused { color: var(--vscode-list-activeSelectionForeground); }\n\t\t\t\n.monaco-list.list_id_9 .monaco-list-row.focused .codicon { color:  var(--vscode-list-inactiveSelectionIconForeground); }\n.monaco-list.list_id_9 .monaco-list-row.focused { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_9 .monaco-list-row.focused:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveFocusBackground); }\n.monaco-list.list_id_9 .monaco-list-row.selected { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_9 .monaco-list-row.selected:is(:hover, .hovered) { background-color:  var(--vscode-list-inactiveSelectionBackground); }\n.monaco-list.list_id_9 .monaco-list-row.selected { color: var(--vscode-list-inactiveSelectionForeground); }\n.monaco-list.list_id_9:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { background-color: var(--vscode-list-hoverBackground); }\n.monaco-list.list_id_9:not(.drop-target):not(.dragging) .monaco-list-row:is(:hover, .hovered):not(.selected):not(.focused) { color:  var(--vscode-list-hoverForeground); }\n.monaco-list.list_id_9:focus .monaco-list-row.focused.selected { outline: 1px solid var(--vscode-list-focusAndSelectionOutline, var(--vscode-contrastActiveBorder, var(--vscode-list-focusOutline))); outline-offset: -1px;}\n\n\t\t\t\t.monaco-drag-image.list_id_9,\n\t\t\t\t.monaco-list.list_id_9:focus .monaco-list-row.focused,\n\t\t\t\t.context-menu-visible .monaco-list.list_id_9.last-focused .monaco-list-row.focused { outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }\n\t\t\t\n.monaco-list.list_id_9 .monaco-list-row.focused.selected { outline: 1px dotted var(--vscode-contrastActiveBorder, var(--vscode-list-inactiveFocusOutline)); outline-offset: -1px; }\n.monaco-list.list_id_9 .monaco-list-row.selected { outline: 1px dotted var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n.monaco-list.list_id_9 .monaco-list-row.focused { outline: 1px dotted var(--vscode-list-inactiveFocusOutline); outline-offset: -1px; }\n.monaco-list.list_id_9 .monaco-list-row:is(:hover, .hovered) { outline: 1px dashed var(--vscode-contrastActiveBorder); outline-offset: -1px; }\n\n\t\t\t\t.monaco-list.list_id_9.drop-target,\n\t\t\t\t.monaco-list.list_id_9 .monaco-list-rows.drop-target,\n\t\t\t\t.monaco-list.list_id_9 .monaco-list-row.drop-target { background-color: var(--vscode-list-dropBackground) !important; color: inherit !important; }\n\t\t\t\n\n\t\t\t.monaco-list.list_id_9 .monaco-list-rows.drop-target-before .monaco-list-row:first-child::before,\n\t\t\t.monaco-list.list_id_9 .monaco-list-row.drop-target-before::before {\n\t\t\t\tcontent: \"\"; position: absolute; top: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t.monaco-list.list_id_9 .monaco-list-rows.drop-target-after .monaco-list-row:last-child::after,\n\t\t\t.monaco-list.list_id_9 .monaco-list-row.drop-target-after::after {\n\t\t\t\tcontent: \"\"; position: absolute; bottom: 0px; left: 0px; width: 100%; height: 1px;\n\t\t\t\tbackground-color: var(--vscode-list-dropBetweenBackground);\n\t\t\t}\n\n\t\t\t\t.monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-table > .monaco-split-view2 .monaco-sash.vertical::before,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table:hover > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: var(--vscode-tree-tableColumnsBorder);\n\t\t\t\t}\n\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2,\n\t\t\t\t.monaco-enable-motion .monaco-table > .monaco-split-view2 .monaco-sash.vertical::before {\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t}\n\t\t\t\n\n\t\t\t\t.monaco-table .monaco-list-row[data-parity=odd]:not(.focused):not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(:focus) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr,\n\t\t\t\t.monaco-table .monaco-list:not(.focused) .monaco-list-row[data-parity=odd].focused:not(.selected):not(:hover) .monaco-table-tr {\n\t\t\t\t\tbackground-color: var(--vscode-tree-tableOddRowsBackground);\n\t\t\t\t}",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 232,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 299,
+          "headerHeight": 28,
+          "height": 384.3999938964844,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-search-collapsed": {
+      "active": "Search",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "empty",
+          "y": 95,
+          "headerHeight": 28,
+          "height": 588.4000244140625,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-collapsed-reopened": {
+      "active": "Open ChatCtrl+Alt+IShow All CommandsCtrl+Shift+PFind in FilesCtrl+Shift+F.monaco-breadcrumbs { background-color: var(--vscode-breadcrumb-background)}\n.monaco-breadcrumbs .monaco-breadcrumb-item { color: var(--vscode-breadcrumb-foreground)}\n.monaco-breadcrumbs .monaco-breadcrumb-item.focused { color: var(--vscode-breadcrumb-focusForeground)}\n.monaco-breadcrumbs .monaco-breadcrumb-item.focused.selected { color: var(--vscode-breadcrumb-activeSelectionForeground)}\n.monaco-breadcrumbs:not(.disabled) .monaco-breadcrumb-item:hover:not(.focused):not(.selected) { color: var(--vscode-breadcrumb-focusForeground)}",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 95,
+          "headerHeight": 28,
+          "height": 588.4000244140625,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-search-restored": {
+      "active": "Search",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 232,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "empty",
+          "y": 299,
+          "headerHeight": 28,
+          "height": 384.3999938964844,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-explorer-collapsed": {
+      "active": "empty",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 588.4000244140625,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 655.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-explorer-restored": {
+      "active": "empty",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 232,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 299,
+          "headerHeight": 28,
+          "height": 384.3999938964844,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-closed-for-reveal": {
+      "active": "Search",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "empty",
+          "y": 95,
+          "headerHeight": 28,
+          "height": 588.4000244140625,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-search-command-revealed": {
+      "active": "",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 232,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 299,
+          "headerHeight": 28,
+          "height": 384.3999938964844,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-both-collapsed": {
+      "active": "Search",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "empty",
+          "y": 95,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 123,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 151,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-search-unfolded-by-arrow": {
+      "active": "Search",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 588.4000244140625,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "empty",
+          "y": 655.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "primary-both-unfolded": {
+      "active": "empty",
+      "panes": [
+        {
+          "label": "Search",
+          "y": 67,
+          "headerHeight": 28,
+          "height": 232,
+          "expanded": "true",
+          "body": true,
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "empty",
+          "y": 299,
+          "headerHeight": 28,
+          "height": 384.3999938964844,
+          "expanded": "true",
+          "body": true,
+          "query": null,
+          "matches": null,
+          "active": true
+        },
+        {
+          "label": "Outline",
+          "y": 683.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Timeline",
+          "y": 711.4000244140625,
+          "headerHeight": 28,
+          "height": 28,
+          "expanded": "false",
+          "body": false,
+          "query": null,
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "regrouped-in-terminal": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-after": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 535.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 535.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 563.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    }
+  },
+  "exitCode": 0
+}
