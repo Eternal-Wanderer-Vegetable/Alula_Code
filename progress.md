@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.165 / feat-217。产品 ed26e989333e933221ed2e17bbc8c38723022eff 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏分组成员拖到同侧入口。Search 保留位置、创建独立入口并聚焦，原组 Outline、权重和两个结果保留。专项 122/122，Flutter 1,726 passed / 2 skipped。同一 SHA 的 PR CI 44884037580 四项及 Platform Availability 44884032849 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.165-sidebar-member-detach.md。
+
 - 2026-11-21 完成 P05.164 / feat-216。产品 585a4b8f3c1a1047ef4d7e661a29a6b124b45573 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对分组标题跨侧栏拖至活动栏或次侧栏标题。独立 Search 入口创建并聚焦，原源代码管理与目标 Explorer 入口可达，两处结果保留。专项 119/119，Flutter 1,723 passed / 2 skipped。同一 SHA 的 PR CI 44881993018 四项及 Platform Availability 44881988769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.164-grouped-sidebar-entry.md。
 
 - 2026-11-21 完成 P05.163 / feat-215。产品 6e2ab28b1bb656c3d2e188a4ae014ea5a39062d7 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏标题拖到面板标题区。Search 独立入口激活并聚焦输入，原侧栏分组保留，反复切换后有两处结果。专项 117/117，Flutter 1,721 passed / 2 skipped。同一 SHA 的 PR CI 44879949427 四项及 Platform Availability 44879945621 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.163-grouped-sidebar-panel-tab.md。

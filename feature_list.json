@@ -2741,8 +2741,22 @@
         "feat-206",
         "feat-216"
       ],
+      "status": "done",
+      "evidence": "产品 ed26e989333e933221ed2e17bbc8c38723022eff 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏分组成员拖到同侧入口。Search 保留位置、创建独立入口并聚焦，原组 Outline、权重和两个结果保留。专项 122/122，Flutter 1,726 passed / 2 skipped。同一 SHA 的 PR CI 44884037580 四项及 Platform Availability 44884032849 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.165-sidebar-member-detach.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-218",
+      "name": "P05.166 LAY-04 搜索侧栏显示命令与输入焦点",
+      "description": "固定版核对显示 Search 的键盘命令从编辑区或其他视图打开搜索时的显隐与聚焦，覆盖主次侧栏。",
+      "dependencies": [
+        "feat-196",
+        "feat-216",
+        "feat-217"
+      ],
       "status": "not-started",
-      "evidence": "等待固定版对照、实现和平台验收。",
+      "evidence": "P05.164 已复现差异，等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
