@@ -1348,6 +1348,119 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets(
+      'secondary title drag returns the whole group to the activity bar',
+      (tester) async {
+    tester.view.physicalSize = const Size(1480, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final layout = WorkbenchLayout();
+    layout.moveSidebarView('explorer', secondarySidebarViewLocation);
+    for (final view in ['search', 'outline']) {
+      layout.moveSidebarView(view, secondarySidebarViewLocation,
+          sidebarPlacement: (container: 'explorer', before: view == 'search'));
+    }
+    layout.setSidebarGroupPaneWeights(
+        'explorer', {'explorer': 1.3, 'search': .8, 'outline': .9});
+    layout.setSidebarGroupPaneCollapsed('outline', true);
+    layout.showRegion(secondarySidebarRegion);
+    layout.setRegionCollapsed('sidebar', true);
+    final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+    final placements = Map.of(layout.root.sidebarViewPlacements);
+    layoutStore.save(layout.root);
+    layout.dispose();
+
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: layoutStore,
+      sessionStore: sessionStore,
+    ));
+    await tester.pumpAndSettle();
+    final from = find.byKey(const ValueKey('secondary-sidebar-entry-explorer'));
+    final target =
+        find.byKey(const ValueKey('grouped-panel-view-entry-drop-primary'));
+    final highlight = find
+        .byKey(const ValueKey('grouped-panel-view-entry-highlight-primary'));
+    final editor = find.byKey(const ValueKey('wb-region-editor'));
+    final search = find.byKey(const ValueKey('search-input'));
+    final activityExplorer =
+        find.byKey(const ValueKey('activity-bar-item-menu-anchor-explorer'));
+    final activityGit =
+        find.byKey(const ValueKey('activity-bar-item-menu-anchor-git'));
+    const query = 'query returned with group 😀';
+    await tester.enterText(search, query);
+    expect(activityExplorer, findsNothing);
+
+    Future<TestGesture> dragTo(Finder surface) async {
+      final gesture = await tester.startGesture(
+        tester.getCenter(from),
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.moveBy(const Offset(-20, 0));
+      await gesture.moveTo(tester.getCenter(surface));
+      await tester.pump();
+      return gesture;
+    }
+
+    final outside = await dragTo(editor);
+    expect(highlight, findsNothing);
+    await outside.up();
+    await tester.pumpAndSettle();
+    expect(from, findsOneWidget);
+
+    final canceled = await dragTo(target);
+    expect(highlight, findsOneWidget);
+    await canceled.cancel();
+    await tester.pumpAndSettle();
+    expect(from, findsOneWidget);
+    expect(activityExplorer, findsNothing);
+
+    final accepted = await dragTo(target);
+    expect(highlight, findsOneWidget);
+    await accepted.up();
+    await tester.pumpAndSettle();
+    expect(highlight, findsNothing);
+    expect(from, findsNothing);
+    expect(activityExplorer, findsOneWidget);
+    expect(activityGit, findsOneWidget);
+    expect(tester.widget<TextField>(search).controller!.text, query);
+
+    final searchHeader =
+        find.byKey(const ValueKey('sidebar-group-header-primary-search'));
+    final explorerHeader =
+        find.byKey(const ValueKey('sidebar-group-header-primary-explorer'));
+    final outline = find.byKey(const ValueKey('primary-sidebar-group-outline'));
+    expect(tester.getTopLeft(searchHeader).dy,
+        lessThan(tester.getTopLeft(explorerHeader).dy));
+    expect(tester.getTopLeft(explorerHeader).dy,
+        lessThan(tester.getTopLeft(outline).dy));
+    expect(tester.getSize(outline).height, 28);
+    expect(find.byKey(const ValueKey('activity-bar-item-menu-anchor-search')),
+        findsNothing);
+
+    await tester.tap(activityGit);
+    await tester.pumpAndSettle();
+    expect(search, findsNothing);
+    await tester.tap(activityExplorer);
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(search).controller!.text, query);
+    await tester.pump(const Duration(milliseconds: 700));
+
+    final saved = layoutStore.tryLoad()!;
+    expect(saved.primarySidebarView, 'explorer');
+    expect(saved.secondarySidebarView, isNull);
+    expect(saved.leafOf('sidebar')!.collapsed, isFalse);
+    expect(saved.sidebarViewPlacements, placements);
+    expect(saved.sidebarGroupPaneWeights, weights);
+    expect(saved.sidebarGroupCollapsedPanes, {'outline'});
+    for (final view in ['explorer', 'search', 'outline']) {
+      expect(saved.sidebarViewLocations?[view], primarySidebarViewLocation);
+    }
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+  });
+
   for (final side in [
     primarySidebarViewLocation,
     secondarySidebarViewLocation

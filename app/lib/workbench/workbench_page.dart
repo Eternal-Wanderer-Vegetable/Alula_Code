@@ -22736,32 +22736,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (final view in views)
-                      Semantics(
-                        selected: view == _secondarySidebarView,
-                        child: TextButton(
-                          key: ValueKey('secondary-sidebar-entry-$view'),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            minimumSize: const Size(0, 32),
-                            foregroundColor: view == _secondarySidebarView
-                                ? Colors.white
-                                : const Color(0xFFA5A8B1),
-                            textStyle: const TextStyle(fontSize: 12),
-                          ),
-                          onPressed: () {
-                            if (view != _secondarySidebarView) {
-                              _selectSidebarView(view);
-                            }
-                            _focusSidebarRegion(
-                                secondarySidebarViewLocation, null);
-                            _focusMovedSearchView(
-                                view, secondarySidebarViewLocation);
-                          },
-                          child: Text(_sidebarViewLabel(view)),
-                        ),
-                      ),
+                    for (final view in views) _buildSecondarySidebarEntry(view),
                   ],
                 ),
               ),
@@ -22778,18 +22753,60 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Widget _buildSecondarySidebarEntry(String view) {
+    final label = _sidebarViewLabel(view);
+    final entry = Semantics(
+      selected: view == _secondarySidebarView,
+      child: TextButton(
+        key: ValueKey('secondary-sidebar-entry-$view'),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          minimumSize: const Size(0, 32),
+          foregroundColor: view == _secondarySidebarView
+              ? Colors.white
+              : const Color(0xFFA5A8B1),
+          textStyle: const TextStyle(fontSize: 12),
+        ),
+        onPressed: () {
+          if (view != _secondarySidebarView) {
+            _selectSidebarView(view);
+          }
+          _focusSidebarRegion(secondarySidebarViewLocation, null);
+          _focusMovedSearchView(view, secondarySidebarViewLocation);
+        },
+        child: Text(label),
+      ),
+    );
+    return _hasSidebarGroup(view)
+        ? _buildViewDrag(_SecondarySidebarContainerDrag(view), label, entry)
+        : entry;
+  }
+
+  bool _hasSidebarGroup(String view) =>
+      _layout.root.sidebarViewPlacements.values
+          .any((placement) => placement.container == view);
+
   Widget _buildSidebarEntryDropTarget(String location, Widget child) {
     String? viewFor(Object drag) {
-      if (location == secondarySidebarViewLocation &&
-          drag is ActivityBarViewDrag &&
-          _layout.sidebarViewLocation(drag.view) ==
-              primarySidebarViewLocation &&
-          _layout.root.sidebarViewPlacements.values.any(
-            (placement) => placement.container == drag.view,
-          )) {
-        return drag.view;
-      }
-      return _viewForSidebarDrop(location, drag);
+      final container = switch ((location, drag)) {
+        (secondarySidebarViewLocation, ActivityBarViewDrag(:final view)) =>
+          view,
+        (
+          primarySidebarViewLocation,
+          _SecondarySidebarContainerDrag(:final view)
+        ) =>
+          view,
+        _ => null,
+      };
+      if (container == null) return _viewForSidebarDrop(location, drag);
+      final source = location == primarySidebarViewLocation
+          ? secondarySidebarViewLocation
+          : primarySidebarViewLocation;
+      return _layout.sidebarViewLocation(container) == source &&
+              _hasSidebarGroup(container)
+          ? container
+          : null;
     }
 
     return DragTarget<Object>(
@@ -22798,7 +22815,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onAcceptWithDetails: (details) {
         final view = viewFor(details.data);
         if (view == null) return;
-        final moveGroup = details.data is ActivityBarViewDrag;
+        final moveGroup = details.data is ActivityBarViewDrag ||
+            details.data is _SecondarySidebarContainerDrag;
         _moveSidebarView(
           view,
           location,
@@ -27029,10 +27047,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
 
   Widget _buildPanelHostedViewDrag(String view, Widget child) =>
-      _buildPanelPaneDrag(
+      _buildViewDrag(
           _PanelHostedViewDrag(view), _sidebarViewLabel(view), child);
 
-  Widget _buildPanelPaneDrag<T extends Object>(
+  Widget _buildViewDrag<T extends Object>(
     T data,
     String label,
     Widget child,
@@ -27174,7 +27192,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ? constraints.maxHeight
                     : math.min(28.0, constraints.maxHeight),
                 child: isOriginal
-                    ? _buildPanelPaneDrag(
+                    ? _buildViewDrag(
                         _PanelOriginalPaneDrag(tab),
                         _standardPanelTitle(tab),
                         header,
@@ -28189,6 +28207,12 @@ typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 
 /// Small breadcrumb copy of a symbol's identity, label, and UTF-16 start.
 typedef BreadcrumbSymbolPathEntry = ({String id, String name, int startUtf16});
+
+class _SecondarySidebarContainerDrag {
+  const _SecondarySidebarContainerDrag(this.view);
+
+  final String view;
+}
 
 class _PanelHostedViewDrag {
   const _PanelHostedViewDrag(this.view);
