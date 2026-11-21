@@ -1317,7 +1317,7 @@ void main() {
   }
 
   for (final position in [PanelPosition.bottom, PanelPosition.right]) {
-    testWidgets('$position group sash sizes its panes on the panel main axis',
+    testWidgets('$position group sash resizes and balances its adjacent panes',
         (tester) async {
       tester.view.physicalSize = const Size(1480, 1000);
       tester.view.devicePixelRatio = 1;
@@ -1401,11 +1401,30 @@ void main() {
       await originalMinimum.up();
       await tester.pumpAndSettle();
       expect(extent(third), closeTo(initialThird, .05));
-      final moved = extent(first);
+      final dragged = extent(first);
       await tester.pump(const Duration(milliseconds: 700));
       final weights = layoutStore.tryLoad()!.panelGroupPaneWeights[tab]!;
       expect(weights.keys.toSet(), {'search', 'original', 'outline'});
       expect(weights['search'], greaterThan(weights['original']!));
+      final midpoint = (dragged + extent(second)) / 2;
+
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(extent(first), closeTo(dragged, .05));
+      expect(extent(second), closeTo(228, .05));
+      expect(layoutStore.tryLoad()!.panelGroupPaneWeights[tab], weights);
+
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pump(const Duration(milliseconds: 70));
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(extent(first), closeTo(midpoint, .05));
+      expect(extent(second), closeTo(midpoint, .05));
+      expect(extent(third), closeTo(initialThird, .05));
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      await tester.pump(const Duration(milliseconds: 700));
+      final balanced = layoutStore.tryLoad()!.panelGroupPaneWeights[tab]!;
+      expect(balanced['search'], closeTo(balanced['original']!, 1e-9));
 
       await tester.tap(find.byKey(const ValueKey('wb-region-editor')));
       await tester.pumpAndSettle();
@@ -1414,15 +1433,15 @@ void main() {
       expect(sash, findsNothing);
       await tester.sendKeyEvent(LogicalKeyboardKey.f7);
       await tester.pumpAndSettle();
-      expect(extent(first), closeTo(moved, .05));
-      expect(extent(second), closeTo(228, .05));
+      expect(extent(first), closeTo(midpoint, .05));
+      expect(extent(second), closeTo(midpoint, .05));
       expect(tester.widget<TextField>(search).controller!.text, query);
 
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
       await mount();
-      expect(extent(first), closeTo(moved, .05));
-      expect(extent(second), closeTo(228, .05));
+      expect(extent(first), closeTo(midpoint, .05));
+      expect(extent(second), closeTo(midpoint, .05));
       expect(extent(third), closeTo(initialThird, .05));
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());

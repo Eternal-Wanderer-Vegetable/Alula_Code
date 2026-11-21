@@ -54,7 +54,6 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
       collapsed: widget.collapsed,
       collapsedExtent: _headerExtent,
       sashKeyPrefix: 'sidebar-group-sash-${widget.location}',
-      resetOnDoubleClick: true,
       buildPane: _buildPane,
       onCommit: widget.onCommit,
     );
