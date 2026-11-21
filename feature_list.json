@@ -2835,6 +2835,20 @@
         "feat-219",
         "feat-223"
       ],
+      "status": "done",
+      "evidence": "产品 781f4da0d97cee2bd19eb158341fff295f2c1c79 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对独立面板整组拖到次侧栏标题。组成员、权重、折叠和两处结果保留，次侧栏原入口仍可切换，诊断页接管面板。专项 169/169，Flutter 1,744 passed / 2 skipped。同一 SHA 的 PR CI 44901980641 四项及 Platform Availability 44901976731 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.172-panel-container-to-secondary.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-225",
+      "name": "P05.173 LAY-05/06 次侧栏分组容器拖入面板标题区",
+      "description": "固定版核对整个次侧栏分组拖到面板独立入口，保留组成员、折叠、权重与内容。",
+      "dependencies": [
+        "feat-220",
+        "feat-222",
+        "feat-224"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
