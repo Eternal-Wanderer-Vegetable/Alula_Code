@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.169 / feat-221。产品 7d0ebad5841e765b23d076dede575af2fb3aec67 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对图标前后及空白处的整组插入。活动栏顺序、组成员、窗格权重和两处搜索结果通过验证。专项 160/160，Flutter 1,735 passed / 2 skipped。同一 SHA 的 PR CI 44894553365 四项及 Platform Availability 44894551436 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.169-activity-container-placement.md。
+
 - 2026-11-21 完成 P05.168 / feat-220。产品 e856deb35f9b00d038cd4a01fd9fb50436232780 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对次侧栏组标题拖回活动栏。窗格顺序、权重、折叠、查询结果及原 SCM 入口保留。活动栏落点排序差异登记 P05.169。专项 156/156，Flutter 1,731 passed / 2 skipped。同一 SHA 的 PR CI 44892334029 四项及 Platform Availability 44892330729 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.168-secondary-sidebar-container-move.md。
 
 - 2026-11-21 完成 P05.167 / feat-219。产品 b7b822c64bf5c469ffe1b164b90ea79ec7284324 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对活动栏分组容器移到次侧栏。窗格顺序、权重、折叠、查询结果及目标原入口保留。专项 155/155，Flutter 1,730 passed / 2 skipped。同一 SHA 的 PR CI 44890433058 四项及 Platform Availability 44890430904 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.167-sidebar-container-move.md。

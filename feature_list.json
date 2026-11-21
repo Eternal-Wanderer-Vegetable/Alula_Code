@@ -2795,8 +2795,22 @@
         "feat-066",
         "feat-220"
       ],
+      "status": "done",
+      "evidence": "产品 7d0ebad5841e765b23d076dede575af2fb3aec67 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对图标前后及空白处的整组插入。活动栏顺序、组成员、窗格权重和两处搜索结果通过验证。专项 160/160，Flutter 1,735 passed / 2 skipped。同一 SHA 的 PR CI 44894553365 四项及 Platform Availability 44894551436 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.169-activity-container-placement.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-222",
+      "name": "P05.170 LAY-04/06 分组主侧栏容器拖入面板标题区",
+      "description": "固定版对照从活动栏拖整组到面板标题区后的容器入口、成员、折叠、轴向和内容。",
+      "dependencies": [
+        "feat-198",
+        "feat-209",
+        "feat-219"
+      ],
       "status": "not-started",
-      "evidence": "P05.168 已确认空白处落点时图标排序差异，等待实现和验收。",
+      "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
