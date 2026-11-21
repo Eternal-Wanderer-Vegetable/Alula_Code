@@ -210,7 +210,8 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   /// a pane in the destination group, place the view adjacent to that pane.
   /// [detachFromSidebarGroup] allows a grouped member to become an independent
   /// entry on its current side. [moveSidebarGroup] moves a sidebar container
-  /// together with its panes and their existing layout.
+  /// together with its panes and their existing layout. [activityBarOrder]
+  /// saves the launcher order as part of a group move to the primary sidebar.
   bool moveSidebarView(
     String view,
     String destination, {
@@ -220,6 +221,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     String? sidebarTarget,
     bool detachFromSidebarGroup = false,
     bool moveSidebarGroup = false,
+    List<String>? activityBarOrder,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -229,6 +231,10 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
 
     if (panelPlacement != null && destination != panelSidebarViewLocation) {
+      return false;
+    }
+    if (activityBarOrder != null &&
+        (!moveSidebarGroup || destination != primarySidebarViewLocation)) {
       return false;
     }
 
@@ -337,6 +343,9 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       }
     }
 
+    if (activityBarOrder != null) {
+      root.activityBarOrder = normalizeActivityBarViewOrder(activityBarOrder);
+    }
     if (sourceSelection == view) {
       final sourceFallback = _firstViewAt(source, locations);
       if (source == primarySidebarViewLocation) {

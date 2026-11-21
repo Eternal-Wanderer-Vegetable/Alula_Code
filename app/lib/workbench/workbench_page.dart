@@ -21012,12 +21012,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool fromDrag = false,
     bool detachFromSidebarGroup = false,
     bool moveSidebarGroup = false,
+    List<String>? activityBarOrder,
   }) {
     if (!_layout.moveSidebarView(
       view,
       destination,
       detachFromSidebarGroup: detachFromSidebarGroup,
       moveSidebarGroup: moveSidebarGroup,
+      activityBarOrder: activityBarOrder,
     )) {
       return;
     }
@@ -21730,6 +21732,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   _layout.activityBarBadgesDisabledViews,
                               accountsVisible: _layout.activityBarAccountsVisible,
                               onOrderChanged: _layout.setActivityBarOrder,
+                              onContainerDrop:
+                                  _moveSecondaryContainerToActivityBar,
                               onPinnedViewsChanged:
                                   _layout.setActivityBarPinnedViews,
                               onBadgeDisabledViewsChanged:
@@ -22779,7 +22783,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     return _hasSidebarGroup(view)
-        ? _buildViewDrag(_SecondarySidebarContainerDrag(view), label, entry)
+        ? _buildViewDrag(SecondarySidebarContainerDrag(view), label, entry)
         : entry;
   }
 
@@ -22787,26 +22791,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout.root.sidebarViewPlacements.values
           .any((placement) => placement.container == view);
 
+  void _moveSecondaryContainerToActivityBar(
+    String view,
+    List<String> order,
+  ) {
+    if (_layout.sidebarViewLocation(view) != secondarySidebarViewLocation ||
+        !_hasSidebarGroup(view)) {
+      return;
+    }
+    _moveSidebarView(
+      view,
+      primarySidebarViewLocation,
+      moveSidebarGroup: true,
+      activityBarOrder: order,
+    );
+  }
+
   Widget _buildSidebarEntryDropTarget(String location, Widget child) {
     String? viewFor(Object drag) {
-      final container = switch ((location, drag)) {
-        (secondarySidebarViewLocation, ActivityBarViewDrag(:final view)) =>
-          view,
-        (
-          primarySidebarViewLocation,
-          _SecondarySidebarContainerDrag(:final view)
-        ) =>
-          view,
-        _ => null,
-      };
-      if (container == null) return _viewForSidebarDrop(location, drag);
-      final source = location == primarySidebarViewLocation
-          ? secondarySidebarViewLocation
-          : primarySidebarViewLocation;
-      return _layout.sidebarViewLocation(container) == source &&
-              _hasSidebarGroup(container)
-          ? container
-          : null;
+      if (location == secondarySidebarViewLocation &&
+          drag is ActivityBarViewDrag &&
+          _layout.sidebarViewLocation(drag.view) ==
+              primarySidebarViewLocation &&
+          _hasSidebarGroup(drag.view)) {
+        return drag.view;
+      }
+      return _viewForSidebarDrop(location, drag);
     }
 
     return DragTarget<Object>(
@@ -22815,8 +22825,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onAcceptWithDetails: (details) {
         final view = viewFor(details.data);
         if (view == null) return;
-        final moveGroup = details.data is ActivityBarViewDrag ||
-            details.data is _SecondarySidebarContainerDrag;
+        final moveGroup = details.data is ActivityBarViewDrag;
         _moveSidebarView(
           view,
           location,
@@ -28207,12 +28216,6 @@ typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 
 /// Small breadcrumb copy of a symbol's identity, label, and UTF-16 start.
 typedef BreadcrumbSymbolPathEntry = ({String id, String name, int startUtf16});
-
-class _SecondarySidebarContainerDrag {
-  const _SecondarySidebarContainerDrag(this.view);
-
-  final String view;
-}
 
 class _PanelHostedViewDrag {
   const _PanelHostedViewDrag(this.view);

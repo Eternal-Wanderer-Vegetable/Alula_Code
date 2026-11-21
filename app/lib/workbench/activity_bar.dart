@@ -19,6 +19,12 @@ class ActivityBarViewDrag {
   final String view;
 }
 
+class SecondarySidebarContainerDrag {
+  const SecondarySidebarContainerDrag(this.view);
+
+  final String view;
+}
+
 class ActivityBar extends StatefulWidget {
   const ActivityBar({
     super.key,
@@ -35,6 +41,7 @@ class ActivityBar extends StatefulWidget {
     this.accountsVisible = true,
     this.onSizeChanged,
     this.onOrderChanged,
+    this.onContainerDrop,
     this.onPinnedViewsChanged,
     this.onBadgeDisabledViewsChanged,
     this.onAccountsVisibilityChanged,
@@ -63,6 +70,9 @@ class ActivityBar extends StatefulWidget {
 
   /// Changes the order of two existing view actions by drag-and-drop.
   final ValueChanged<List<String>>? onOrderChanged;
+
+  /// Moves an incoming secondary-sidebar container with its launcher order.
+  final void Function(String view, List<String> order)? onContainerDrop;
 
   /// Changes the set of pinned view actions.
   final ValueChanged<List<String>>? onPinnedViewsChanged;
@@ -211,7 +221,8 @@ class _ActivityBarState extends State<ActivityBar> {
         targetId: id,
         globalPosition: details.offset,
       ),
-      builder: (context, candidates, rejected) => Draggable<ActivityBarViewDrag>(
+      builder: (context, candidates, rejected) =>
+          Draggable<ActivityBarViewDrag>(
         data: ActivityBarViewDrag(id),
         dragAnchorStrategy: pointerDragAnchorStrategy,
         maxSimultaneousDrags: widget.onOrderChanged == null ? 0 : 1,
@@ -344,18 +355,86 @@ class _ActivityBarState extends State<ActivityBar> {
         _viewItemKeys[targetId]?.currentContext?.findRenderObject();
     if (targetRenderObject is! RenderBox) return;
 
-    final localPosition = targetRenderObject.globalToLocal(globalPosition);
-    final after = widget.axis == Axis.vertical
-        ? localPosition.dy >= targetRenderObject.size.height / 2
-        : localPosition.dx >= targetRenderObject.size.width / 2;
-
-    final reordered = List<String>.of(order)..remove(draggedId);
-    final targetIndex = reordered.indexOf(targetId);
-    final insertionIndex = targetIndex + (after ? 1 : 0);
-    reordered.insert(insertionIndex, draggedId);
+    final local = targetRenderObject.globalToLocal(globalPosition);
+    final reordered = _insertView(
+      order,
+      draggedId,
+      anchor: (
+        view: targetId,
+        after: _isAfterCenter(targetRenderObject, local)
+      ),
+    );
     if (!listEquals(order, reordered)) {
       widget.onOrderChanged!(List.unmodifiable(reordered));
     }
+  }
+
+  bool _isAfterCenter(RenderBox item, Offset local) =>
+      widget.axis == Axis.vertical
+          ? local.dy >= item.size.height / 2
+          : local.dx >= item.size.width / 2;
+
+  List<String> _insertView(
+    List<String> order,
+    String view, {
+    ({String view, bool after})? anchor,
+  }) {
+    final reordered = List<String>.of(order)..remove(view);
+    final index = anchor == null
+        ? reordered.length
+        : reordered.indexOf(anchor.view) + (anchor.after ? 1 : 0);
+    return reordered..insert(index, view);
+  }
+
+  ({String view, bool after})? _containerDropAnchor(Offset globalPosition) {
+    for (final view in _visibleViewOrder) {
+      final item = _viewItemKeys[view]?.currentContext?.findRenderObject();
+      if (item is! RenderBox || !item.hasSize) continue;
+      final local = item.globalToLocal(globalPosition);
+      if ((Offset.zero & item.size).contains(local)) {
+        return (view: view, after: _isAfterCenter(item, local));
+      }
+    }
+    return null;
+  }
+
+  Widget _buildContainerDropTarget(Widget child) {
+    final onDrop = widget.onContainerDrop;
+    if (onDrop == null) return child;
+    return DragTarget<SecondarySidebarContainerDrag>(
+      onWillAcceptWithDetails: (details) =>
+          widget.excludedViews.contains(details.data.view),
+      onAcceptWithDetails: (details) {
+        final view = details.data.view;
+        if (!widget.excludedViews.contains(view)) return;
+        final order = _insertView(
+          normalizeActivityBarViewOrder(widget.order),
+          view,
+          anchor: _containerDropAnchor(details.offset),
+        );
+        onDrop(view, order);
+      },
+      builder: (context, candidates, _) => Stack(
+        fit: StackFit.passthrough,
+        children: [
+          child,
+          if (candidates.isNotEmpty)
+            const Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  key: ValueKey('grouped-panel-view-entry-highlight-primary'),
+                  decoration: BoxDecoration(
+                    color: Color(0x30007ACC),
+                    border: Border.fromBorderSide(
+                      BorderSide(color: Color(0xFF55B8FF)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   KeyEventResult _handleViewKey(String id, KeyEvent event) {
@@ -656,7 +735,7 @@ class _ActivityBarState extends State<ActivityBar> {
           child: child!,
         ),
       ),
-      child: activityBar,
+      child: _buildContainerDropTarget(activityBar),
     );
   }
 }
