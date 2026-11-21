@@ -2876,7 +2876,7 @@
         "feat-226"
       ],
       "status": "done",
-      "evidence": "产品 e18328f1b6a367fcd2b39a2d3f26046431191f03 已推草稿 PR #3。固定版与 Windows 实机、Linux xfwm4 验证辅助窗 35/30 逻辑像素标题行、紧凑与恢复、置顶和文档保留，Windows 关闭回主窗通过。Linux xfwm4 关闭 GLX BadAccess 登记 P05.176。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44916113131 四项与 Platform Availability 44916109760 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。",
+      "evidence": "产品 e18328f1b6a367fcd2b39a2d3f26046431191f03 已推草稿 PR #3。固定版与 Windows 实机、Linux xfwm4 验证辅助窗 35/30 逻辑像素标题行、紧凑与恢复、置顶和文档保留，Windows 关闭回主窗通过。Linux xfwm4 关闭 GLX BadAccess 登记 P05.176。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44916113131 四项与 Platform Availability 44916109760 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。 P05.176 完成 xfwm4 关闭复验。见 docs/diagnostics/2026-11-21-p05/p05.176-linux-xfwm4-auxiliary-close.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2888,8 +2888,21 @@
         "feat-226",
         "feat-227"
       ],
+      "status": "done",
+      "evidence": "产品 f206f3dbe5f80b8daab702c086a4e129599356ae 已推草稿 PR #3。Linux GTK 先隐藏辅助窗再销毁，xfwm4 中两次应用内关闭和一次 Alt+F4 均回收脏文档并可继续输入，Windows 实机回归通过。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44921293006 四项与 Platform Availability 44921288023 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.176-linux-xfwm4-auxiliary-close.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-229",
+      "name": "P05.177 LAY-12 普通辅助窗的活动编辑器标签与紧凑恢复",
+      "description": "按固定版核对普通辅助窗活动标签、名称及脏标，紧凑时隐藏，恢复后保持文档和选择范围。",
+      "dependencies": [
+        "feat-227",
+        "feat-228"
+      ],
       "status": "not-started",
-      "evidence": "P05.175 记录调整前后的关闭异常。见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。",
+      "evidence": "P05.175 已登记辅助窗应用标题行差异以及固定版标签 32 逻辑像素几何。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

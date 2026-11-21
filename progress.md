@@ -3,7 +3,9 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-21 更新）
+## Current State（当前状态，2026-11-22 更新）
+
+- 2026-11-22 完成 P05.176 / feat-228。产品 f206f3dbe5f80b8daab702c086a4e129599356ae 已推草稿 PR #3。Linux GTK 先隐藏辅助窗再销毁，xfwm4 中两次应用内关闭和一次 Alt+F4 均回收脏文档并可继续输入，Windows 实机回归通过。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44921293006 四项与 Platform Availability 44921288023 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.176-linux-xfwm4-auxiliary-close.md。
 
 - 2026-11-21 完成 P05.175 / feat-227。产品 e18328f1b6a367fcd2b39a2d3f26046431191f03 已推草稿 PR #3。固定版与 Windows 实机、Linux xfwm4 验证辅助窗 35/30 逻辑像素标题行、紧凑与恢复、置顶和文档保留，Windows 关闭回主窗通过。Linux xfwm4 关闭 GLX BadAccess 登记 P05.176。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44916113131 四项与 Platform Availability 44916109760 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。
 
