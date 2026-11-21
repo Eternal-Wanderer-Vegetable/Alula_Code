@@ -2589,6 +2589,19 @@
         "feat-202",
         "feat-205"
       ],
+      "status": "done",
+      "evidence": "产品 `a777bc18aee35d6513912ccf69884ba78541344f` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主次侧栏同组标题拖动排序、上下半区反馈、折叠和尺寸随窗格移动及显隐恢复。专项 91/91，Flutter 1,700 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44859446825 四项及 Platform Availability 44859445195 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.154-sidebar-group-reorder.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-207",
+      "name": "P05.155 LAY-05/06 标准面板分组窗格的分隔线调整",
+      "description": "对照固定版底部及侧边面板内的分组窗格分隔线，覆盖主轴方向、拖动边界、取消、内容和尺寸存储与恢复。",
+      "dependencies": [
+        "feat-199",
+        "feat-203"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
