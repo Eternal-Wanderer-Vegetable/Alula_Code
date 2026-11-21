@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.151 / feat-203。产品 `f6e5a271bfd7a771ec2dc57cbb7ada1e43461db2` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主次侧栏内分隔线拖动、148 像素下限、保留查询及显隐恢复。专项 85/85，Flutter 1,694 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44851649424 四项及 Platform Availability 44851641315 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.151-sidebar-group-sash.md。
+
 - 2026-11-21 完成 P05.150 / feat-202。产品 `fe5fd41d10e49d7a6dd6d5d00fad862a82452c63` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证次侧栏正文分组的前后落点、原容器、原入口、面板保留、查询与焦点。专项 92/92，Flutter 1,691 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44848080923 四项及 Platform Availability 44848074686 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.150-secondary-view-group.md。
 
 - 2026-11-21 完成 P05.149 / feat-201。产品 `d4773a9d45f66e5762ca0c3e62a27890ebe750de` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主侧栏正文分组前后顺序、原容器与面板、查询、焦点、重置及主动显示。专项 89/89，Flutter 1,688 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44844469177 四项及 Platform Availability 44844462012 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.149-primary-view-group.md。

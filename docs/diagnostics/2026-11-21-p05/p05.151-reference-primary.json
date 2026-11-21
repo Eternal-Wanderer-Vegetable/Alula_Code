@@ -1,0 +1,586 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "grouped-in-terminal": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "editor-drop-rejected": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-before": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 215,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 215,
+            "right": 342.1999931335449,
+            "bottom": 243,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-sash-dragged": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 299,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 299,
+            "right": 342.1999931335449,
+            "bottom": 327,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-sash-reopened": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 299,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 299,
+            "right": 342.1999931335449,
+            "bottom": 327,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-sash-minimum": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 215,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 215,
+            "right": 342.1999931335449,
+            "bottom": 243,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-sash-maximum": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 535.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 535.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 563.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "regrouped-in-terminal": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "primary-after": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.explorer",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "empty",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 67,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 67,
+            "right": 342.1999931335449,
+            "bottom": 95,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 535.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 535.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 563.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Outline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 683.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 683.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 711.4000244140625,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Timeline",
+          "box": {
+            "x": 52.79999923706055,
+            "y": 711.4000244140625,
+            "width": 289.3999938964844,
+            "height": 28,
+            "top": 711.4000244140625,
+            "right": 342.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 52.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    }
+  },
+  "exitCode": 0
+}
