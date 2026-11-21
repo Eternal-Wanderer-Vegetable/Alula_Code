@@ -1,0 +1,191 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "inserted-between-panes": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Outline",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 474.4624938964844,
+            "width": 220,
+            "height": 28,
+            "top": 474.4624938964844,
+            "right": 576.8000183105469,
+            "bottom": 502.4624938964844,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 474.4624938964844,
+            "width": 261,
+            "height": 28,
+            "top": 474.4624938964844,
+            "right": 846.6000366210938,
+            "bottom": 502.4624938964844,
+            "left": 585.6000366210938
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 854.6000366210938,
+            "y": 474.4624938964844,
+            "width": 435.3999938964844,
+            "height": 28,
+            "top": 474.4624938964844,
+            "right": 1290.0000305175781,
+            "bottom": 502.4624938964844,
+            "left": 854.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    }
+  },
+  "before": [
+    {
+      "label": "Outline",
+      "expanded": "true",
+      "pane": {
+        "x": 352.8000183105469,
+        "y": 474.4624938964844,
+        "width": 228,
+        "height": 260.7250061035156,
+        "top": 474.4624938964844,
+        "right": 580.8000183105469,
+        "bottom": 735.1875,
+        "left": 352.8000183105469
+      }
+    },
+    {
+      "label": "Terminal",
+      "expanded": "true",
+      "pane": {
+        "x": 580.7999877929688,
+        "y": 474.4624938964844,
+        "width": 713.2000122070312,
+        "height": 260.7250061035156,
+        "top": 474.4624938964844,
+        "right": 1294,
+        "bottom": 735.1875,
+        "left": 580.7999877929688
+      }
+    }
+  ],
+  "target": {
+    "label": "Terminal",
+    "point": [
+      766.2319909667968,
+      617.861247253418
+    ],
+    "side": "before",
+    "pane": {
+      "x": 580.7999877929688,
+      "y": 474.4624938964844,
+      "width": 713.2000122070312,
+      "height": 260.7250061035156,
+      "top": 474.4624938964844,
+      "right": 1294,
+      "bottom": 735.1875,
+      "left": 580.7999877929688
+    }
+  },
+  "overlay": "<div id=\"monaco-pane-drop-overlay\" style=\"top: 0px; height: 100%;\"><div class=\"pane-overlay-indicator overlay-move-transition\" style=\"background-color: rgba(83, 89, 93, 0.5); border-style: solid; border-width: 0px; top: 0px; left: 0px; width: 50%; height: 100%; opacity: 1;\"></div></div>",
+  "after": [
+    {
+      "label": "Outline",
+      "expanded": "true",
+      "pane": {
+        "x": 352.8000183105469,
+        "y": 474.4624938964844,
+        "width": 228,
+        "height": 260.7250061035156,
+        "top": 474.4624938964844,
+        "right": 580.8000183105469,
+        "bottom": 735.1875,
+        "left": 352.8000183105469
+      }
+    },
+    {
+      "label": "Search",
+      "expanded": "true",
+      "pane": {
+        "x": 580.7999877929688,
+        "y": 474.4624938964844,
+        "width": 269.8000183105469,
+        "height": 260.7250061035156,
+        "top": 474.4624938964844,
+        "right": 850.6000061035156,
+        "bottom": 735.1875,
+        "left": 580.7999877929688
+      }
+    },
+    {
+      "label": "Terminal powershell",
+      "expanded": "true",
+      "pane": {
+        "x": 849.7999877929688,
+        "y": 474.4624938964844,
+        "width": 444.20001220703125,
+        "height": 260.7250061035156,
+        "top": 474.4624938964844,
+        "right": 1294,
+        "bottom": 735.1875,
+        "left": 849.7999877929688
+      }
+    }
+  ],
+  "explorerStillInSource": true,
+  "exitCode": 0
+}

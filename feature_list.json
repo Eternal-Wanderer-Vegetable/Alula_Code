@@ -2671,6 +2671,21 @@
         "feat-210",
         "feat-211"
       ],
+      "status": "done",
+      "evidence": "产品 57ac5330f5d104779baf70547fc5294a3cb76e6a 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 核对活动栏至底部原窗格左半区、次侧栏标题至右侧 Outline 下半区。两路均在既有窗格之间插入 Search，保留权重、归属和两个结果。专项 110/110，Flutter 1,714 passed / 2 skipped。同一 SHA 的 PR CI 44873058519 四项及 Platform Availability 44873055120 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.160-panel-group-insertion.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-213",
+      "name": "P05.161 LAY-04/05 既有侧栏分组按目标窗格接收面板视图",
+      "description": "固定版核对面板成员拖入主、次侧栏既有分组，按命中窗格的上下半区相邻插入。",
+      "dependencies": [
+        "feat-201",
+        "feat-202",
+        "feat-206",
+        "feat-212"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
