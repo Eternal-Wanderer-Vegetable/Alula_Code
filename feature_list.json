@@ -2520,8 +2520,22 @@
         "feat-199",
         "feat-200"
       ],
+      "status": "done",
+      "evidence": "产品 `d4773a9d45f66e5762ca0c3e62a27890ebe750de` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主侧栏正文分组前后顺序、原容器与面板、查询、焦点、重置及主动显示。专项 89/89，Flutter 1,688 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44844469177 四项及 Platform Availability 44844462012 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.149-primary-view-group.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-202",
+      "name": "P05.150 LAY-04/05 分组面板视图拖入次侧栏正文",
+      "description": "对照固定版正文落点，在可用的内置次侧栏容器内分组，验收前后顺序、原内容、焦点、取消和持久化。",
+      "dependencies": [
+        "feat-070",
+        "feat-200",
+        "feat-201"
+      ],
       "status": "not-started",
-      "evidence": "P05.148 已对照 Search 在主侧栏正文放入 Explorer。等待实现和平台验收。",
+      "evidence": "P05.148 已对照固定版次侧栏正文的分组路径。等待可用内置容器对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
