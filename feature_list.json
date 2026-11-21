@@ -2849,8 +2849,21 @@
         "feat-222",
         "feat-224"
       ],
+      "status": "done",
+      "evidence": "产品 0a57370117a4c1fbeda9b037ae37c9d1b59e2935 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对次侧栏组拖到面板标题。整组保留，底部横排、右侧纵排，原次侧栏回到 SCM，Search 保留两处结果。专项 171/171，Flutter 1,746 passed / 2 skipped。同一 SHA 的 PR CI 44904213504 四项及 Platform Availability 44905152176 Windows 和同 SHA 44904209090 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.173-secondary-container-to-panel.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-226",
+      "name": "P05.174 LAY-12 主窗标签拖入既有辅助编辑器窗的原生交换验收",
+      "description": "补 P05.69 的专属 Windows/Linux 原生双窗交换实测。确认主窗打开目标原文档、辅助窗接收被拖文档、拒收或取消时保留两侧。",
+      "dependencies": [
+        "feat-121",
+        "feat-151"
+      ],
       "status": "not-started",
-      "evidence": "等待固定版对照、实现和平台验收。",
+      "evidence": "P05.69 专属跨窗交换尚未由真实产品双窗的原生输入验证。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
