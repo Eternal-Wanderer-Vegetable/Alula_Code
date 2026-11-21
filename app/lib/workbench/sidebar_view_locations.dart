@@ -54,16 +54,17 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     if (!activityBarViewOrder.contains(view)) return false;
     final location = sidebarViewLocation(view);
     if (location == panelSidebarViewLocation) return false;
+    final entry = root.sidebarViewPlacements[view]?.container ?? view;
     final selected = sidebarSelection(location);
-    if (selected == view && root.sidebarViewLocations != null) return false;
+    if (selected == entry && root.sidebarViewLocations != null) return false;
 
     root.sidebarViewLocations = normalizeSidebarViewLocations(
       root.sidebarViewLocations,
     );
     if (location == primarySidebarViewLocation) {
-      root.primarySidebarView = view;
+      root.primarySidebarView = entry;
     } else {
-      root.secondarySidebarView = view;
+      root.secondarySidebarView = entry;
     }
     notifyLayoutChanged();
     return true;
@@ -79,12 +80,19 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
           if (entry.value == (tab: tab, before: before)) entry.key,
       ];
 
+  List<String> groupedSidebarViews(String container, {required bool before}) =>
+      [
+        for (final entry in root.sidebarViewPlacements.entries)
+          if (entry.value == (container: container, before: before)) entry.key,
+      ];
+
   /// Assign [view] to a side or panel. Select a replacement if it was the
   /// source side's selection. Panel placements can use a standard tab.
   bool moveSidebarView(
     String view,
     String destination, {
     PanelViewPlacement? panelPlacement,
+    SidebarViewPlacement? sidebarPlacement,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -102,6 +110,15 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     );
     final source = locations[view]!;
     if (source == destination) return false;
+    if (sidebarPlacement != null) {
+      final container = sidebarPlacement.container;
+      if (destination != primarySidebarViewLocation ||
+          container == view ||
+          locations[container] != destination ||
+          root.sidebarViewPlacements.containsKey(container)) {
+        return false;
+      }
+    }
 
     final sourceSelection =
         source == panelSidebarViewLocation ? null : sidebarSelection(source);
@@ -110,6 +127,13 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
     locations[view] = destination;
     root.sidebarViewLocations = locations;
+    root.sidebarViewPlacements.remove(view);
+    root.sidebarViewPlacements.removeWhere(
+      (_, placement) => placement.container == view,
+    );
+    if (sidebarPlacement != null) {
+      root.sidebarViewPlacements[view] = sidebarPlacement;
+    }
     if (panelPlacement == null) {
       root.panelViewPlacements.remove(view);
     } else {
@@ -125,7 +149,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       }
     }
     if (destination == primarySidebarViewLocation) {
-      root.primarySidebarView = view;
+      root.primarySidebarView = sidebarPlacement?.container ?? view;
     } else if (destination == secondarySidebarViewLocation) {
       root.secondarySidebarView = view;
     }
@@ -145,6 +169,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
 
     root.sidebarViewLocations = null;
     root.panelViewPlacements.clear();
+    root.sidebarViewPlacements.clear();
     root.primarySidebarView = null;
     root.secondarySidebarView = null;
     notifyLayoutChanged();
@@ -152,15 +177,21 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   }
 
   String? _selectedView(String? raw, String location) {
-    final available = sidebarViews(location);
+    final available = sidebarViews(location)
+        .where((view) => !root.sidebarViewPlacements.containsKey(view))
+        .toList();
     if (available.isEmpty) return null;
-    if (raw != null && available.contains(raw)) return raw;
+    final entry = root.sidebarViewPlacements[raw]?.container ?? raw;
+    if (entry != null && available.contains(entry)) return entry;
     return available.first;
   }
 
   String? _firstViewAt(String location, Map<String, String> locations) {
     for (final id in normalizeActivityBarViewOrder(root.activityBarOrder)) {
-      if (locations[id] == location) return id;
+      if (locations[id] == location &&
+          !root.sidebarViewPlacements.containsKey(id)) {
+        return id;
+      }
     }
     return null;
   }

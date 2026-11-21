@@ -20869,6 +20869,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (view == 'outline') _refreshOutline();
     });
     _layout.showRegion(region);
+    if (_layout.root.sidebarViewPlacements.containsKey(view)) {
+      _focusMovedSearchView(view, location);
+    }
   }
 
   void _showPanelHostedView(String view) {
@@ -21032,9 +21035,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _ => '次侧栏',
       };
 
-  void _focusSidebarRegion(String location, String? panelView) {
-    final view = location == panelSidebarViewLocation
-        ? panelView
+  void _focusSidebarRegion(String location, String? regionView) {
+    final view = location == panelSidebarViewLocation ||
+            _layout.root.sidebarViewPlacements.containsKey(regionView)
+        ? regionView
         : _layout.sidebarSelection(location);
     if (view == null || _focusedSidebarView == view) return;
     setState(() => _focusedSidebarView = view);
@@ -21684,6 +21688,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               excludedViews: [
                                 ..._layout.sidebarViews(panelSidebarViewLocation),
                                 ..._layout.sidebarViews(secondarySidebarViewLocation),
+                              ..._layout.root.sidebarViewPlacements.keys,
                               ],
                               badgeDisabledViews:
                                   _layout.activityBarBadgesDisabledViews,
@@ -21703,10 +21708,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               onSelectView: _selectSidebarView,
                             ),
                           ),
-                      'sidebar': (_) => _buildSidebarViewRegion(
-                            primarySidebarViewLocation,
-                            _sidebarView,
-                          ),
+                      'sidebar': (_) => _buildPrimarySidebar(),
                       secondarySidebarRegion: (_) => _buildSecondarySidebar(),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
@@ -22495,6 +22497,111 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：资源管理器 ----------
 
+  Widget _buildPrimarySidebar() {
+    final container = _sidebarView;
+    if (container == null) {
+      return _buildSidebarViewRegion(primarySidebarViewLocation, null);
+    }
+    final before = _layout.groupedSidebarViews(container, before: true);
+    final after = _layout.groupedSidebarViews(container, before: false);
+    final grouped = before.isNotEmpty || after.isNotEmpty;
+    final original = _buildSidebarViewRegion(
+      primarySidebarViewLocation,
+      container,
+      autofocusSearch: !grouped,
+    );
+
+    Widget member(String view) => _buildPanelGroupPane(
+          key: ValueKey('primary-sidebar-group-$view'),
+          label: view == 'search' ? _sidebarViewLabel(view) : null,
+          child: _buildSidebarViewRegion(
+            primarySidebarViewLocation,
+            view,
+            autofocusSearch: false,
+          ),
+        );
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (!grouped)
+          original
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final view in before) Expanded(child: member(view)),
+              Expanded(
+                child: _buildPanelGroupPane(
+                  key: ValueKey('primary-sidebar-group-original-$container'),
+                  label: container == 'search'
+                      ? _sidebarViewLabel(container)
+                      : null,
+                  child: original,
+                ),
+              ),
+              for (final view in after) Expanded(child: member(view)),
+            ],
+          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final before in const [true, false])
+              Expanded(child: _buildPrimarySidebarBodyDrop(container, before)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPrimarySidebarBodyDrop(String container, bool before) {
+    final side = before ? 'before' : 'after';
+    bool accepts(_PanelHostedViewDrag drag) =>
+        _sidebarView == container &&
+        _layout.root.panelViewPlacements.containsKey(drag.view);
+
+    return DragTarget<_PanelHostedViewDrag>(
+      key: ValueKey('primary-sidebar-body-drop-$side'),
+      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onAcceptWithDetails: (details) {
+        if (!accepts(details.data)) return;
+        final view = details.data.view;
+        final placement = (container: container, before: before);
+        if (!_layout.moveSidebarView(
+          view,
+          primarySidebarViewLocation,
+          sidebarPlacement: placement,
+        )) {
+          return;
+        }
+        setState(() {
+          _sidebarView = _layout.primarySidebarView;
+          _focusedSidebarView = _sidebarView;
+          if (view == 'outline') _refreshOutline();
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted &&
+              _layout.root.sidebarViewPlacements[view] == placement) {
+            _primarySidebarFocus.requestFocus();
+          }
+        });
+      },
+      builder: (context, candidates, _) => IgnorePointer(
+        child: candidates.isEmpty
+            ? const SizedBox.expand()
+            : DecoratedBox(
+                key: ValueKey('primary-sidebar-body-highlight-$side'),
+                decoration: const BoxDecoration(
+                  color: Color(0x30007ACC),
+                  border: Border.fromBorderSide(
+                    BorderSide(color: Color(0xFF55B8FF)),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
   Widget _buildSecondarySidebar() {
     final views = _layout.sidebarViews(secondarySidebarViewLocation);
     return Column(
@@ -22593,12 +22700,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool autofocusSearch = true,
   }) {
     final title = _sidebarViewLocationLabel(location);
+    final groupMember = _layout.root.sidebarViewPlacements.containsKey(view);
     final child = Focus(
-      focusNode: switch (location) {
-        primarySidebarViewLocation => _primarySidebarFocus,
-        secondarySidebarViewLocation => _secondarySidebarFocus,
-        _ => null,
-      },
+      focusNode: groupMember
+          ? null
+          : switch (location) {
+              primarySidebarViewLocation => _primarySidebarFocus,
+              secondarySidebarViewLocation => _secondarySidebarFocus,
+              _ => null,
+            },
       key: view == null ? null : ValueKey('builtin-view-focus-$view'),
       onFocusChange: (focused) {
         if (focused) _focusSidebarRegion(location, view);
@@ -22611,7 +22721,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _ => SecondarySidebarEmptyState(title: title),
       },
     );
-    if (location == panelSidebarViewLocation) return child;
+    if (location == panelSidebarViewLocation || groupMember) return child;
     return DragTarget<_PanelHostedViewDrag>(
       key: ValueKey('sidebar-panel-view-drop-$location'),
       onWillAcceptWithDetails: (details) =>
@@ -26915,33 +27025,36 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildPanelGroupPane({
     required Key key,
-    required String label,
+    required String? label,
     required Widget child,
     String? draggedView,
   }) {
-    final heading = Container(
-      height: 24,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      color: const Color(0xFF252932),
-      child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-    );
+    final heading = label == null
+        ? null
+        : Container(
+            height: 24,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            color: const Color(0xFF252932),
+            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          );
     return LayoutBuilder(
       key: key,
       builder: (context, constraints) {
         final pane = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (draggedView == null)
-              heading
-            else
-              _buildPanelHostedViewDrag(
-                draggedView,
-                KeyedSubtree(
-                  key: ValueKey('panel-view-group-title-$draggedView'),
-                  child: heading,
+            if (heading != null)
+              if (draggedView == null)
+                heading
+              else
+                _buildPanelHostedViewDrag(
+                  draggedView,
+                  KeyedSubtree(
+                    key: ValueKey('panel-view-group-title-$draggedView'),
+                    child: heading,
+                  ),
                 ),
-              ),
             Expanded(child: child),
           ],
         );

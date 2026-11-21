@@ -740,6 +740,129 @@ void main() {
     });
   }
 
+  for (final before in [true, false]) {
+    testWidgets(
+        'Grouped panel view moves into the active Primary body, before=$before',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      layout.moveSidebarView('search', panelSidebarViewLocation,
+          panelPlacement: (tab: PanelViewTab.diagnostics, before: false));
+      layout.moveSidebarView('outline', panelSidebarViewLocation,
+          panelPlacement: (tab: PanelViewTab.diagnostics, before: true));
+      layout.showRegion('panel');
+      layoutStore.save(layout.root);
+      layout.dispose();
+      final keybindingsPath = '${temp.path}/side-group-keybindings.json';
+      File(keybindingsPath).writeAsStringSync(
+        '[{"key":"f6","command":"view.search"}]',
+      );
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: keybindingsPath),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final source =
+          find.byKey(const ValueKey('panel-view-group-title-search'));
+      final outline =
+          find.byKey(const ValueKey('panel-view-group-title-outline'));
+      final side = before ? 'before' : 'after';
+      final target = find.byKey(ValueKey('primary-sidebar-body-drop-$side'));
+      final highlight =
+          find.byKey(ValueKey('primary-sidebar-body-highlight-$side'));
+      final original =
+          find.byKey(const ValueKey('primary-sidebar-group-original-explorer'));
+      final group = find.byKey(const ValueKey('primary-sidebar-group-search'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final activitySearch =
+          find.byKey(const ValueKey('activity-bar-item-menu-anchor-search'));
+
+      Future<TestGesture> dragTo(Finder destination) async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(source) + const Offset(24, 12),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(const Offset(0, -18));
+        await gesture.moveTo(tester.getCenter(destination));
+        await tester.pump();
+        return gesture;
+      }
+
+      await tester.enterText(search, 'grouped into Explorer 😀');
+      final rejected =
+          await dragTo(find.byKey(const ValueKey('wb-region-editor')));
+      expect(highlight, findsNothing);
+      await rejected.up();
+      await tester.pumpAndSettle();
+      expect(source, findsOneWidget);
+      final cancelled = await dragTo(target);
+      expect(highlight, findsOneWidget);
+      await cancelled.cancel();
+      await tester.pumpAndSettle();
+      expect(source, findsOneWidget);
+      expect(group, findsNothing);
+
+      final accepted = await dragTo(target);
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(source, findsNothing);
+      expect(outline, findsOneWidget);
+      expect(activitySearch, findsNothing);
+      expect(find.descendant(of: original, matching: find.text('资源管理器')),
+          findsOneWidget);
+      final searchOrigin = tester.getTopLeft(group);
+      final explorerOrigin = tester.getTopLeft(original);
+      expect(searchOrigin.dx, explorerOrigin.dx);
+      expect(searchOrigin.dy < explorerOrigin.dy, before);
+      final field = tester
+          .widget<TextField>(find.descendant(of: group, matching: search));
+      expect(field.controller!.text, 'grouped into Explorer 😀');
+      expect(field.focusNode!.hasFocus, isFalse);
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewPlacements['search'],
+          (container: 'explorer', before: before));
+      expect(saved.panelViewPlacements.keys, ['outline']);
+      expect(saved.primarySidebarView, 'explorer');
+
+      await tester
+          .tap(find.byKey(const ValueKey('activity-bar-item-menu-anchor-git')));
+      await tester.pumpAndSettle();
+      expect(group, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f6);
+      await tester.pumpAndSettle();
+      expect(group, findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text,
+          'grouped into Explorer 😀');
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      await tester.pump(const Duration(milliseconds: 700));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(outline, findsOneWidget);
+      expect(group, findsOneWidget);
+      expect(source, findsNothing);
+      expect(activitySearch, findsNothing);
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isFalse);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

@@ -297,6 +297,51 @@ void main() {
     layout.dispose();
   });
 
+
+  test('Primary group keeps its container selected and restores orphaned views', () {
+    final layout = WorkbenchLayout();
+    expect(layout.root.toJson(), isNot(contains('sidebarViewPlacements')));
+    expect(layout.moveSidebarView('search', panelSidebarViewLocation,
+        panelPlacement: (tab: PanelViewTab.diagnostics, before: false)), isTrue);
+    const placement = (container: 'explorer', before: true);
+    expect(layout.moveSidebarView('search', secondarySidebarViewLocation,
+        sidebarPlacement: placement), isFalse);
+    expect(layout.moveSidebarView('search', primarySidebarViewLocation,
+        sidebarPlacement: (container: 'search', before: false)), isFalse);
+    expect(layout.moveSidebarView('search', primarySidebarViewLocation,
+        sidebarPlacement: placement), isTrue);
+    expect(layout.primarySidebarView, 'explorer');
+    expect(layout.root.panelViewPlacements, isEmpty);
+    expect(layout.groupedSidebarViews('explorer', before: true), ['search']);
+    expect(layout.groupedSidebarViews('explorer', before: false), isEmpty);
+    expect(layout.selectSidebarView('git'), isTrue);
+    expect(layout.selectSidebarView('search'), isTrue);
+    expect(layout.primarySidebarView, 'explorer');
+
+    final json = layout.root.toJson();
+    expect(json['sidebarViewPlacements'], {
+      'search': {'container': 'explorer', 'before': true},
+    });
+    final placements = json['sidebarViewPlacements']! as Map<String, Object?>;
+    placements['outline'] = {'container': 'search', 'before': true};
+    placements['git'] = {'container': 'unknown', 'before': false};
+    final restored = WorkbenchLayout(root: WbSplit.fromJson(json));
+    expect(restored.root.sidebarViewPlacements, {'search': placement});
+    expect(restored.primarySidebarView, 'explorer');
+    expect(restored.moveSidebarView('explorer', secondarySidebarViewLocation),
+        isTrue);
+    expect(restored.root.sidebarViewPlacements, isEmpty);
+    expect(restored.primarySidebarView, 'search');
+    expect(restored.sidebarViewLocation('search'), primarySidebarViewLocation);
+    expect(restored.root.toJson(), isNot(contains('sidebarViewPlacements')));
+
+    expect(layout.resetSidebarViewLocations(), isTrue);
+    expect(layout.root.sidebarViewPlacements, isEmpty);
+    expect(layout.root.toJson(), isNot(contains('sidebarViewPlacements')));
+    restored.dispose();
+    layout.dispose();
+  });
+
 }
 
 Map<String, Object?> _withoutViewMetadata(Map<String, Object?> json) {

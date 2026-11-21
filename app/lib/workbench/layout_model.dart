@@ -100,6 +100,8 @@ enum PanelViewTab { diagnostics, completions, syntax, gitDiff }
 
 typedef PanelViewPlacement = ({PanelViewTab tab, bool before});
 
+typedef SidebarViewPlacement = ({String container, bool before});
+
 /// Normalize built-in view location metadata. Layouts predating view movement
 /// omit this field and are handled as all views belonging to the Primary Side
 /// Bar by [WbSplit].
@@ -300,6 +302,9 @@ class WbSplit extends WbNode {
   /// Root-only placement of views grouped into a standard Panel tab.
   final Map<String, PanelViewPlacement> panelViewPlacements = {};
 
+  /// Root-only membership and order for views within a Primary sidebar entry.
+  final Map<String, SidebarViewPlacement> sidebarViewPlacements = {};
+
   /// Root-only selected view IDs; null identifies legacy/default selection.
   String? primarySidebarView;
   String? secondarySidebarView;
@@ -350,6 +355,14 @@ class WbSplit extends WbNode {
                  'tab': entry.value.tab.name,
                  'before': entry.value.before,
                },
+          },
+        if (sidebarViewPlacements.isNotEmpty)
+          'sidebarViewPlacements': {
+            for (final entry in sidebarViewPlacements.entries)
+              entry.key: {
+                'container': entry.value.container,
+                'before': entry.value.before,
+              },
           },
         'children': children.map((c) => c.toJson()).toList(),
       };
@@ -417,6 +430,32 @@ class WbSplit extends WbNode {
           split.panelViewPlacements[view] = (tab: tab, before: before);
         }
       }
+    }
+    final sidebarPlacements = json['sidebarViewPlacements'];
+    if (sidebarPlacements is Map) {
+      for (final entry in sidebarPlacements.entries) {
+        final view = entry.key;
+        final placement = entry.value;
+        if (view is! String ||
+            split.sidebarViewLocations?[view] != primarySidebarViewLocation ||
+            placement is! Map) {
+          continue;
+        }
+        final container = placement['container'];
+        final before = placement['before'];
+        if (container is String &&
+            container != view &&
+            split.sidebarViewLocations?[container] ==
+                primarySidebarViewLocation &&
+            before is bool) {
+          split.sidebarViewPlacements[view] =
+              (container: container, before: before);
+        }
+      }
+      final members = split.sidebarViewPlacements.keys.toSet();
+      split.sidebarViewPlacements.removeWhere(
+        (_, placement) => members.contains(placement.container),
+      );
     }
     // P05.12 layouts persisted Activity Bar placement but had no size field.
     // Upgrade those root layouts to Default while preserving the existing
