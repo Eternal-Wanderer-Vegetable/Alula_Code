@@ -13,6 +13,7 @@ import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -39,6 +40,7 @@ void main() {
   group('AuxiliaryWindowPayload', () {
     test('document payload round-trips through arguments', () {
       final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 100,
         path: 'C:/ws/src/main.rs',
         mainWindowId: 'main-0',
         name: 'main.rs',
@@ -51,6 +53,7 @@ void main() {
       expect(parsed.isAuxiliary, isTrue);
       expect(parsed.path, 'C:/ws/src/main.rs');
       expect(parsed.mainWindowId, 'main-0');
+      expect(parsed.documentId, 100);
       expect(parsed.name, 'main.rs');
       expect(parsed.text, 'fn main() {}');
       expect(parsed.dirty, isTrue);
@@ -58,6 +61,7 @@ void main() {
 
     test('untitled payloads keep a null path', () {
       final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 100,
         name: '未命名',
         text: 'body',
         dirty: false,
@@ -130,6 +134,7 @@ void main() {
       (tester) async {
         const body = 'first line\r\nsecond 😀 line\n';
         final payload = AuxiliaryWindowPayload.forDocument(
+          documentId: 100,
           name: 'notes.txt',
           mainWindowId: 'main',
           text: body,
@@ -247,6 +252,7 @@ void main() {
         (tester) async {
       const body = 'unsaved text';
       final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 100,
         name: 'draft.txt',
         text: body,
         dirty: true,
@@ -325,6 +331,7 @@ void main() {
       await mountAuxiliary(
         tester,
         AuxiliaryWindowPayload.forDocument(
+          documentId: 100,
           name: 'unavailable.txt',
           text: 'content',
           dirty: false,
@@ -362,6 +369,7 @@ void main() {
         const body = 'dirty\r\nemoji 😀\n';
         const selection = TextSelection(baseOffset: 1, extentOffset: 4);
         final payload = AuxiliaryWindowPayload.forDocument(
+          documentId: 100,
           name: 'notes.txt',
           mainWindowId: 'main',
           text: body,
@@ -503,19 +511,23 @@ void main() {
       const previousText = 'target dirty\r\n😀\n';
       const incomingText = 'source dirty\r\n🪺\n';
       final initialPayload = AuxiliaryWindowPayload.forDocument(
+        documentId: 100,
         mainWindowId: 'main',
         name: 'target.txt',
         text: previousText,
         dirty: true,
       );
       final incomingPayload = AuxiliaryWindowPayload.forDocument(
+        documentId: 101,
         mainWindowId: 'main',
         name: 'source.txt',
         text: incomingText,
         dirty: true,
       );
       final outboundBounds = <Map<String, Object?>>[];
+      final returnedDocuments = <Map<String, Object?>>[];
       final nativeTitles = <String>[];
+      final nativeCloseCalls = <String>[];
       var reportedBounds = const Rect.fromLTWH(500, 100, 640, 480);
 
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -559,6 +571,11 @@ void main() {
                 Map<String, Object?>.from(request['arguments'] as Map),
               );
             }
+            if (request['method'] == 'alula_auxiliary_closed') {
+              returnedDocuments.add(
+                Map<String, Object?>.from(request['arguments'] as Map),
+              );
+            }
           }
           return null;
         },
@@ -569,6 +586,9 @@ void main() {
           if (call.method == 'isAlwaysOnTop') return false;
           if (call.method == 'isFocused') return false;
           if (call.method == 'setPreventClose') return null;
+          if (call.method == 'close' || call.method == 'destroy') {
+            nativeCloseCalls.add(call.method);
+          }
           if (call.method == 'getBounds') {
             return {
               'x': reportedBounds.left,
@@ -638,6 +658,21 @@ void main() {
           'document': incomingPayload.toMap(),
         },
       });
+      for (final invalidId in [null, initialPayload.documentId]) {
+        final rejected = await dispatchPlatformMethod(
+          tester,
+          crossWindowChannel.name,
+          MethodCall('methodCall', {
+            'channel': 'mixin.one/window_controller/aux-1',
+            'method': auxiliaryDocumentTransferPrepareMethod,
+            'arguments': {
+              'requestId': 'main:1',
+              'document': {...incomingPayload.toMap(), 'documentId': invalidId},
+            },
+          }),
+        ) as Map;
+        expect(rejected['status'], 'rejected');
+      }
       final prepared = await dispatchPlatformMethod(
         tester,
         crossWindowChannel.name,
@@ -665,6 +700,7 @@ void main() {
           tester.widget<RustTextInputField>(find.byType(RustTextInputField));
       final targetDocumentBeforeTransfer =
           targetEditorBeforeTransfer.inputWindow.document;
+      expect(targetDocumentBeforeTransfer.id, initialPayload.documentId);
       final delayedInputDelta = RustTextInputDelta(
         operations: const [TextOp.insert(0, 'late ')],
         version: targetEditorBeforeTransfer.inputWindow.version,
@@ -753,7 +789,20 @@ void main() {
       expect(repeatedCommit['status'], 'committed',
           reason:
               'the commit response is idempotent after an acknowledgement loss');
-    });
+
+      await tester.tap(find.byKey(const ValueKey('auxiliary-close-button')));
+      await tester.pumpAndSettle();
+      expect(returnedDocuments.single['text'], incomingText);
+      expect(returnedDocuments.single['dirty'], isTrue);
+      expect(nativeCloseCalls, [
+        defaultTargetPlatform == TargetPlatform.windows ? 'close' : 'destroy',
+      ]);
+      expect(input.inputWindow.document.resync, throwsA(isA<AlulaException>()));
+    },
+        variant: const TargetPlatformVariant({
+          TargetPlatform.linux,
+          TargetPlatform.windows,
+        }));
   });
 
   group('main-window move flow', () {
@@ -889,6 +938,7 @@ void main() {
         );
         expect(parsed.isAuxiliary, isTrue);
         expect(parsed.mainWindowId, 'main');
+        expect(parsed.documentId, greaterThan(10));
         expect(parsed.name, 'journal-copy.txt');
         expect(parsed.text, 'moved body',
             reason: 'the document text travels with the window');

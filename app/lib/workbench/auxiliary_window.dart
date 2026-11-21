@@ -10,6 +10,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -25,6 +26,7 @@ class AuxiliaryWindowPayload {
     required this.isAuxiliary,
     this.path,
     this.mainWindowId,
+    this.documentId,
     this.name = '未命名',
     this.text = '',
     this.dirty = false,
@@ -35,6 +37,9 @@ class AuxiliaryWindowPayload {
   final bool isAuxiliary;
   final String? path;
   final String? mainWindowId;
+
+  /// Reserved by the main workbench for a new document in the shared core.
+  final int? documentId;
   final String name;
   final String text;
   final bool dirty;
@@ -45,6 +50,7 @@ class AuxiliaryWindowPayload {
   factory AuxiliaryWindowPayload.forDocument({
     String? path,
     String? mainWindowId,
+    int? documentId,
     required String name,
     required String text,
     required bool dirty,
@@ -53,6 +59,7 @@ class AuxiliaryWindowPayload {
       isAuxiliary: true,
       path: path,
       mainWindowId: mainWindowId,
+      documentId: documentId,
       name: name,
       text: text,
       dirty: dirty,
@@ -70,12 +77,14 @@ class AuxiliaryWindowPayload {
       }
       final pathValue = map['path'] as String?;
       final mainWindowIdValue = map['mainWindowId'] as String?;
+      final documentId = map['documentId'];
       return AuxiliaryWindowPayload(
         isAuxiliary: true,
         path: pathValue == null || pathValue.isEmpty ? null : pathValue,
         mainWindowId: mainWindowIdValue == null || mainWindowIdValue.isEmpty
             ? null
             : mainWindowIdValue,
+        documentId: documentId is int && documentId > 0 ? documentId : null,
         name: map['name'] as String? ?? '未命名',
         text: map['text'] as String? ?? '',
         dirty: map['dirty'] == true,
@@ -89,6 +98,7 @@ class AuxiliaryWindowPayload {
         'businessId': businessId,
         'path': path ?? '',
         'mainWindowId': mainWindowId ?? '',
+        if (documentId != null) 'documentId': documentId,
         'name': name,
         'text': text,
         'dirty': dirty,
@@ -156,7 +166,6 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   Future<void> _focusEventQueue = Future<void>.value();
   int _focusEventSequence = 0;
   int _nativeFocusGeneration = 0;
-  int _nextDocumentId = 2;
   int _latestGlobalFocusRevision = -1;
   int _boundsReportSequence = 0;
   bool? _nativeWindowFocused;
@@ -180,8 +189,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   @override
   void dispose() {
     windowManager.removeListener(this);
-    _pendingTransfer?.document.close();
-    _pendingTransfer = null;
+    _releaseDocuments();
     final windowController = _windowController;
     if (windowController != null) {
       unawaited(windowController
@@ -297,13 +305,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
           return;
         }
         try {
-          final bounds = await windowManager.getBounds();
-          if (!mounted) return;
-          final snapshot = AuxiliaryWindowBounds(
-            windowId: windowController.windowId,
-            sequence: ++_boundsReportSequence,
-            bounds: bounds,
-          );
+          final snapshot = await _readWindowBounds();
+          if (snapshot == null) return;
           await mainController.invokeMethod<void>(
             auxiliaryWindowBoundsMethod,
             snapshot.toMap(),
@@ -316,6 +319,18 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _boundsReportRunning = false;
       if (_boundsReportRequested && mounted) _requestBoundsReport();
     }
+  }
+
+  Future<AuxiliaryWindowBounds?> _readWindowBounds() async {
+    final controller = _windowController;
+    if (controller == null || _closing) return null;
+    final bounds = await windowManager.getBounds();
+    if (!mounted || _closing) return null;
+    return AuxiliaryWindowBounds(
+      windowId: controller.windowId,
+      sequence: ++_boundsReportSequence,
+      bounds: bounds,
+    );
   }
 
   Map<String, Object?> _transferResponse(String requestId, String status) =>
@@ -356,7 +371,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     final incomingPayload = sourceMap is Map
         ? AuxiliaryWindowPayload.fromArguments(jsonEncode(sourceMap))
         : AuxiliaryWindowPayload.mainWindow();
-    if (!incomingPayload.isAuxiliary) {
+    final documentId = incomingPayload.documentId;
+    if (!incomingPayload.isAuxiliary ||
+        documentId == null ||
+        documentId == currentDocument.id) {
       return _transferResponse(requestId, 'rejected');
     }
 
@@ -370,7 +388,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         dirty: _dirty || currentDocument.isDirty,
       ).toMap();
       final core = currentDocument.core;
-      preparedDocument = core.openDoc(_nextDocumentId++, incomingPayload.text);
+      preparedDocument = core.openDoc(documentId, incomingPayload.text);
       final decoded = incomingPayload.path == null
           ? null
           : core.workspace.readFileDocument(incomingPayload.path!);
@@ -498,6 +516,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     Object? arguments,
   ) async {
     switch (method) {
+      case auxiliaryWindowBoundsQueryMethod:
+        return (await _readWindowBounds())?.toMap();
       case auxiliaryDocumentTransferPrepareMethod:
         return _prepareDocumentTransfer(arguments);
       case auxiliaryDocumentTransferCommitMethod:
@@ -626,7 +646,12 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
 
   Future<void> _openDocument() async {
     final payload = widget.payload;
+    AlulaDoc? openedDocument;
     try {
+      final documentId = payload.documentId;
+      if (documentId == null || documentId <= 0) {
+        throw StateError('缺少为辅助窗口分配的文档 ID');
+      }
       final core = AlulaCore.load();
       final decoded = payload.path != null
           ? core.workspace.readFileDocument(payload.path!)
@@ -634,7 +659,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       final content = payload.path != null && !payload.dirty
           ? decoded?.content ?? payload.text
           : payload.text;
-      final doc = core.openDoc(1, content);
+      final doc = openedDocument = core.openDoc(documentId, content);
       final inputWindow = RustTextInputWindow.openAround(
         doc,
         selectionUtf16: 0,
@@ -645,7 +670,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       doc.setSavepoint(
         decoded?.content ?? (payload.dirty ? '' : content),
       );
-      if (!mounted) return;
+      if (!mounted) {
+        doc.close();
+        return;
+      }
       setState(() {
         _doc = doc;
         _inputWindow = inputWindow;
@@ -654,6 +682,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         _dirty = payload.dirty || doc.isDirty;
       });
     } on Object catch (error) {
+      openedDocument?.close();
       if (!mounted) return;
       setState(() {
         _name = payload.name;
@@ -691,7 +720,23 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       // 主窗口不可达：仅关闭本窗口（文档状态以磁盘/主窗会话为准）。
     }
     await windowManager.setPreventClose(false);
-    await windowManager.destroy();
+    if (mounted) setState(_releaseDocuments);
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      // destroy() posts WM_QUIT to the message loop shared with the main window.
+      await windowManager.close();
+    } else {
+      await windowManager.destroy();
+    }
+  }
+
+  void _releaseDocuments() {
+    final document = _doc;
+    final prepared = _pendingTransfer?.document;
+    _doc = null;
+    _inputWindow = null;
+    _pendingTransfer = null;
+    document?.close();
+    prepared?.close();
   }
 
   Future<WindowController?> _findMainWindowController() async {

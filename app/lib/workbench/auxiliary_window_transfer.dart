@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/painting.dart';
 
 const auxiliaryWindowBoundsMethod = 'alula_auxiliary_window_bounds';
+const auxiliaryWindowBoundsQueryMethod = 'alula_auxiliary_window_bounds_query';
 const auxiliaryDocumentTransferPrepareMethod =
     'alula_auxiliary_document_transfer_prepare';
 const auxiliaryDocumentTransferCommitMethod =

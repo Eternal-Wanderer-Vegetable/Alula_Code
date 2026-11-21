@@ -36,6 +36,7 @@ void main() {
 
       const body = 'alpha\r\nsecond 😀 line\n';
       final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 100,
         name: 'notes.txt',
         mainWindowId: 'main',
         text: body,

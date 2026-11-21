@@ -214,6 +214,7 @@ void main() {
     late String documentPath;
     final createdPayloads = <String>[];
     final auxiliaryTransferCalls = <String>[];
+    final nativeAuxiliaryBounds = <String, Rect>{};
     final transferredSourceDocuments = <Map<String, Object?>>[];
     Offset cursorPosition = const Offset(2600, 700);
     Rect windowBounds = const Rect.fromLTWH(100, 200, 2400, 1000);
@@ -235,6 +236,7 @@ void main() {
       sessionStore = SessionStore(path: '$base/session.json');
       createdPayloads.clear();
       auxiliaryTransferCalls.clear();
+      nativeAuxiliaryBounds.clear();
       transferredSourceDocuments.clear();
       cursorPosition = const Offset(2600, 700);
       windowBounds = const Rect.fromLTWH(100, 200, 2400, 1000);
@@ -305,10 +307,21 @@ void main() {
             return null;
           }
           final envelope = Map<String, Object?>.from(call.arguments as Map);
-          if (envelope['channel'] != 'mixin.one/window_controller/aux-1') {
+          final channel = envelope['channel'] as String?;
+          const windowChannel = 'mixin.one/window_controller/';
+          if (channel == null || !channel.startsWith('${windowChannel}aux-')) {
             return null;
           }
+          final windowId = channel.substring(windowChannel.length);
           final method = envelope['method'] as String?;
+          if (method == auxiliaryWindowBoundsQueryMethod) {
+            final bounds = nativeAuxiliaryBounds[windowId];
+            return bounds == null
+                ? null
+                : AuxiliaryWindowBounds(
+                        windowId: windowId, sequence: 2, bounds: bounds)
+                    .toMap();
+          }
           if (method == null) return null;
           auxiliaryTransferCalls.add(method);
           final arguments = envelope['arguments'] is Map
@@ -435,6 +448,7 @@ void main() {
       String windowId = 'aux-1',
       Rect bounds = const Rect.fromLTWH(2550, 300, 900, 800),
     }) async {
+      nativeAuxiliaryBounds[windowId] = bounds;
       final event = AuxiliaryFocusContextEvent(
         kind: AuxiliaryFocusEventKind.register,
         windowId: windowId,
@@ -533,6 +547,7 @@ void main() {
         expect(transferredSourceDocuments.single['dirty'], isTrue);
         expect(find.byKey(const ValueKey('tab-10')), findsNothing);
         expect(find.text('aux-original.rs •'), findsOneWidget);
+        expect(find.text('已与辅助窗口交换文档'), findsOneWidget);
         final input = tester.widget<RustTextInputField>(
           find.byType(RustTextInputField),
         );
@@ -558,6 +573,39 @@ void main() {
         );
       },
     );
+
+    testWidgets('fresh bounds reject overlap after an unreported native move',
+        (tester) async {
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      await registerAuxiliaryWindow(
+        tester,
+        windowId: 'aux-2',
+        bounds: const Rect.fromLTWH(3600, 300, 900, 800),
+      );
+      nativeAuxiliaryBounds['aux-2'] = nativeAuxiliaryBounds['aux-1']!;
+
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(auxiliaryTransferCalls,
+          isNot(contains(auxiliaryDocumentTransferPrepareMethod)));
+      expect(createdPayloads, isEmpty);
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
+    });
+
+    testWidgets('missing fresh auxiliary bounds retains the source tab',
+        (tester) async {
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      nativeAuxiliaryBounds.clear();
+
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(auxiliaryTransferCalls,
+          isNot(contains(auxiliaryDocumentTransferPrepareMethod)));
+      expect(createdPayloads, isEmpty);
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
+    });
 
     testWidgets('rejected auxiliary transfer keeps the source tab open',
         (tester) async {

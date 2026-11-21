@@ -84,6 +84,7 @@ class _FocusSmokeMainState extends State<_FocusSmokeMain> {
       await _traceWrites;
       final payload = AuxiliaryWindowPayload.forDocument(
         mainWindowId: widget.windowId,
+        documentId: 1 << 60,
         name: _auxiliaryTitle,
         text: _documentSentinel,
         dirty: true,

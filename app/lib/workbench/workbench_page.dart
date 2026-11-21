@@ -450,6 +450,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   AlulaCore? _core;
   String _loadError = '';
+  // Rust document IDs share one namespace across the workbench and auxiliary engines.
   int _nextDocId = 2;
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
@@ -14670,6 +14671,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final payload = AuxiliaryWindowPayload.forDocument(
       path: doc.path,
       mainWindowId: _mainWindowController?.windowId,
+      documentId: _nextDocId++,
       name: doc.name,
       text: doc.text,
       dirty: doc.isDirty,
@@ -14782,6 +14784,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final sourcePayload = AuxiliaryWindowPayload.forDocument(
         path: doc.path,
         mainWindowId: mainWindowId,
+        documentId: _nextDocId++,
         name: doc.name,
         text: doc.text,
         dirty: doc.isDirty,
@@ -14928,6 +14931,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (transactionStatus == 'committed') {
         _unlockAuxiliaryTransferSource(doc);
         _closeDocNow(group, doc);
+        _statusDetail = '已与辅助窗口交换文档';
         _addAuxiliaryTransferReturnDocument(group, returnedDocument);
         return;
       }
@@ -25863,6 +25867,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  Future<bool> _refreshAuxiliaryDropBounds() async {
+    if (_auxiliaryWindowCreationsInProgress != 0) return false;
+    final windowIds = _auxiliaryWindowIds.toList();
+    if (windowIds.isEmpty) return true;
+
+    // Native window placement can change without a move notification.
+    final snapshots = await Future.wait(windowIds.map((windowId) async {
+      final controller = WindowController.fromWindowId(windowId);
+      final response = await controller
+          .invokeMethod<Object?>(auxiliaryWindowBoundsQueryMethod)
+          .timeout(const Duration(seconds: 1));
+      final bounds = AuxiliaryWindowBounds.tryParse(response);
+      return bounds?.windowId == windowId ? bounds : null;
+    }));
+    if (_auxiliaryWindowCreationsInProgress != 0 ||
+        _auxiliaryWindowIds.length != windowIds.length ||
+        !_auxiliaryWindowIds.containsAll(windowIds) ||
+        snapshots.contains(null)) {
+      return false;
+    }
+    for (final snapshot in snapshots) {
+      _auxiliaryWindowBounds.update(snapshot!);
+    }
+    return true;
+  }
+
   Future<void> _tearOutEditorTabIfOutside(
     EditorGroup group,
     OpenDoc doc,
@@ -25893,8 +25923,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return;
       }
       if (pointer == null) return;
+      final boundsReady = await _refreshAuxiliaryDropBounds();
       if (!mounted ||
           !group.docs.any((candidate) => identical(candidate, doc))) {
+        return;
+      }
+      if (!boundsReady) {
+        setState(() => _statusDetail = '无法确认辅助窗口位置；源文档已保留');
         return;
       }
       final targetAuxiliaryWindowId =
