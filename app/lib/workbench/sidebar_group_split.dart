@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart' show kPrimaryButton;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show LogicalKeyboardKey;
 
+import 'pane_group_header.dart';
 import 'pane_group_split.dart';
 
 /// The panes inside one side bar entry, including their interactive headers.
@@ -92,7 +92,7 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
                     child: Text(label, style: const TextStyle(fontSize: 12)),
                   ),
                 ),
-                child: _SidebarGroupHeader(
+                child: PaneGroupHeader(
                   semanticsKey:
                       ValueKey('sidebar-group-header-${widget.location}-$view'),
                   label: label,
@@ -194,92 +194,6 @@ class _SidebarGroupDropTargetState extends State<_SidebarGroupDropTarget> {
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class _SidebarGroupHeader extends StatefulWidget {
-  const _SidebarGroupHeader({
-    required this.semanticsKey,
-    required this.label,
-    required this.collapsed,
-    required this.onSetCollapsed,
-    required this.onFocus,
-  });
-
-  final Key semanticsKey;
-  final String label;
-  final bool collapsed;
-  final ValueChanged<bool> onSetCollapsed;
-  final VoidCallback onFocus;
-
-  @override
-  State<_SidebarGroupHeader> createState() => _SidebarGroupHeaderState();
-}
-
-class _SidebarGroupHeaderState extends State<_SidebarGroupHeader> {
-  final _focus = FocusNode();
-
-  void _toggle() {
-    _focus.requestFocus();
-    widget.onSetCollapsed(!widget.collapsed);
-  }
-
-  @override
-  void dispose() {
-    _focus.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      key: widget.semanticsKey,
-      button: true,
-      expanded: !widget.collapsed,
-      onTap: _toggle,
-      child: CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
-              widget.onSetCollapsed(true),
-          const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-              widget.onSetCollapsed(false),
-        },
-        child: Material(
-          color: const Color(0xFF252932),
-          child: InkWell(
-            focusNode: _focus,
-            excludeFromSemantics: true,
-            onFocusChange: (focused) {
-              if (focused) widget.onFocus();
-            },
-            onTap: _toggle,
-            child: ClipRect(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      widget.collapsed
-                          ? Icons.chevron_right
-                          : Icons.expand_more,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        widget.label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

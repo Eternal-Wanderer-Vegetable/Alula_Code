@@ -308,6 +308,9 @@ class WbSplit extends WbNode {
   /// Root-only pane proportions within each standard Panel tab.
   final Map<PanelViewTab, Map<String, double>> panelGroupPaneWeights = {};
 
+  /// Root-only collapsed panes within each standard Panel tab.
+  final Map<PanelViewTab, Set<String>> panelGroupCollapsedPanes = {};
+
   Set<String> panelGroupedPaneIds(PanelViewTab tab) => {
         for (final entry in panelViewPlacements.entries)
           if (entry.value.tab == tab) entry.key,
@@ -382,6 +385,11 @@ class WbSplit extends WbNode {
           'panelGroupPaneWeights': {
             for (final entry in panelGroupPaneWeights.entries)
               entry.key.name: Map.of(entry.value),
+          },
+        if (panelGroupCollapsedPanes.isNotEmpty)
+          'panelGroupCollapsedPanes': {
+            for (final entry in panelGroupCollapsedPanes.entries)
+              entry.key.name: entry.value.toList(),
           },
         if (sidebarViewPlacements.isNotEmpty)
           'sidebarViewPlacements': {
@@ -479,6 +487,17 @@ class WbSplit extends WbNode {
           }
         }
         if (saved.isNotEmpty) split.panelGroupPaneWeights[tab] = saved;
+      }
+    }
+    final panelCollapsed = json['panelGroupCollapsedPanes'];
+    if (panelCollapsed is Map) {
+      for (final tab in PanelViewTab.values) {
+        final group = split.panelGroupedPaneIds(tab);
+        final collapsed = panelCollapsed[tab.name];
+        if (group.isEmpty || collapsed is! List) continue;
+        final panes = {panelGroupOriginalPane, ...group};
+        final saved = collapsed.whereType<String>().where(panes.contains).toSet();
+        if (saved.isNotEmpty) split.panelGroupCollapsedPanes[tab] = saved;
       }
     }
     final sidebarPlacements = json['sidebarViewPlacements'];

@@ -118,6 +118,7 @@ import 'notifications.dart';
 import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 import 'panel_position.dart';
+import 'pane_group_header.dart';
 import 'pane_group_split.dart';
 import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
@@ -20881,6 +20882,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final standaloneIndex = _panelHostedViews.indexOf(view);
     final groupedTab = _layout.root.panelViewPlacements[view]?.tab;
     if (groupedTab == null && standaloneIndex < 0) return;
+    if (groupedTab != null) {
+      _layout.setPanelGroupPaneCollapsed(groupedTab, view, false);
+    }
     if (view == 'outline') _refreshOutline();
     _panelTab.index =
         groupedTab?.index ?? _standardPanelTabCount + standaloneIndex;
@@ -22516,7 +22520,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     Widget pane(String view, Widget child) => _buildPanelGroupPane(
           key: ValueKey('$location-sidebar-group-body-$view'),
-          label: null,
           minimumContentHeight: _groupViewMinimumContentHeight(view),
           child: child,
         );
@@ -27002,17 +27005,77 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? Axis.vertical
             : Axis.horizontal;
 
-    Widget groupedView(String view) => _buildPanelGroupPane(
-          key: ValueKey('panel-view-group-${tab.name}-$view'),
-          label: _sidebarViewLabel(view),
-          draggedView: view,
-          minimumContentHeight: _groupViewMinimumContentHeight(view),
-          child: _buildSidebarViewRegion(
-            panelSidebarViewLocation,
-            view,
-            autofocusSearch: false,
-          ),
-        );
+    final collapsed = {...?_layout.root.panelGroupCollapsedPanes[tab]};
+
+    Widget groupedView(String view, double _) {
+      final isOriginal = view == panelGroupOriginalPane;
+      final folded = collapsed.contains(view);
+      final compact = folded && axis == Axis.horizontal;
+      final icon = isOriginal
+          ? switch (tab) {
+              PanelViewTab.diagnostics => Icons.error_outline,
+              PanelViewTab.completions => Icons.lightbulb_outline,
+              PanelViewTab.syntax => Icons.data_object,
+              PanelViewTab.gitDiff => Icons.compare_arrows,
+            }
+          : switch (view) {
+              'search' => Icons.search,
+              'git' => Icons.merge_type,
+              'outline' => Icons.account_tree_outlined,
+              _ => Icons.folder_outlined,
+            };
+      final header = PaneGroupHeader(
+        semanticsKey: ValueKey('panel-group-header-${tab.name}-$view'),
+        label: isOriginal ? _standardPanelTitle(tab) : _sidebarViewLabel(view),
+        collapsed: folded,
+        compactIcon: compact ? icon : null,
+        onSetCollapsed: (value) =>
+            _layout.setPanelGroupPaneCollapsed(tab, view, value),
+        onFocus: () => _focusSidebarRegion(
+          panelSidebarViewLocation,
+          isOriginal ? null : view,
+        ),
+      );
+      return LayoutBuilder(
+        key: ValueKey('panel-view-group-${tab.name}-$view'),
+        builder: (context, constraints) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              height: compact
+                  ? constraints.maxHeight
+                  : math.min(28.0, constraints.maxHeight),
+              child: isOriginal
+                  ? header
+                  : _buildPanelHostedViewDrag(
+                      view,
+                      KeyedSubtree(
+                        key: ValueKey('panel-view-group-title-$view'),
+                        child: header,
+                      ),
+                    ),
+            ),
+            Expanded(
+              child: Visibility(
+                visible: !folded,
+                maintainState: true,
+                child: _buildPanelGroupPane(
+                  key: ValueKey('panel-view-group-body-${tab.name}-$view'),
+                  minimumContentHeight: _groupViewMinimumContentHeight(view),
+                  child: isOriginal
+                      ? original
+                      : _buildSidebarViewRegion(
+                          panelSidebarViewLocation,
+                          view,
+                          autofocusSearch: false,
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Focus(
       skipTraversal: true,
@@ -27038,14 +27101,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   },
                   weights: {...?_layout.root.panelGroupPaneWeights[tab]},
                   sashKeyPrefix: 'panel-group-sash-${tab.name}',
-                  buildPane: (view, _) => view == panelGroupOriginalPane
-                      ? _buildPanelGroupPane(
-                          key:
-                              ValueKey('panel-view-group-${tab.name}-original'),
-                          label: _standardPanelTitle(tab),
-                          child: original,
-                        )
-                      : groupedView(view),
+                  collapsed: collapsed,
+                  collapsedExtent: 28,
+                  buildPane: groupedView,
                   onCommit: (weights) =>
                       _layout.setPanelGroupPaneWeights(tab, weights),
                 ),
@@ -27074,46 +27132,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildPanelGroupPane({
     required Key key,
-    required String? label,
     required Widget child,
-    String? draggedView,
-    double minimumContentHeight = 136,
+    required double minimumContentHeight,
   }) {
-    final heading = label == null
-        ? null
-        : Container(
-            height: 24,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            color: const Color(0xFF252932),
-            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-          );
     return LayoutBuilder(
       key: key,
       builder: (context, constraints) {
-        final pane = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (heading != null)
-              if (draggedView == null)
-                heading
-              else
-                _buildPanelHostedViewDrag(
-                  draggedView,
-                  KeyedSubtree(
-                    key: ValueKey('panel-view-group-title-$draggedView'),
-                    child: heading,
-                  ),
-                ),
-            Expanded(child: child),
-          ],
-        );
         // A pane remains scrollable when the outer sash leaves too little
         // space for the hosted view's inputs and actions.
         const minWidth = 180.0;
         if (constraints.maxWidth >= minWidth &&
             constraints.maxHeight >= minimumContentHeight) {
-          return pane;
+          return child;
         }
         return SingleChildScrollView(
           primary: false,
@@ -27125,7 +27155,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               primary: false,
               child: SizedBox(
                 height: math.max(constraints.maxHeight, minimumContentHeight),
-                child: pane,
+                child: child,
               ),
             ),
           ),

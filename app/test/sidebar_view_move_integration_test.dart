@@ -1449,6 +1449,136 @@ void main() {
     });
   }
 
+  for (final position in [PanelPosition.bottom, PanelPosition.right]) {
+    testWidgets('$position grouped panels fold on their main axis',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      const tab = PanelViewTab.diagnostics;
+      layout.moveSidebarView('search', panelSidebarViewLocation,
+          panelPlacement: (tab: tab, before: true));
+      layout.setPanelGroupPaneWeights(tab, {'search': 1.3, 'original': .7});
+      layout.setPanelPosition(position);
+      layout.showRegion('panel');
+      layout.setRegionCollapsed('sidebar', true);
+      layoutStore.save(layout.root);
+      layout.dispose();
+      final keybindingsPath = '${temp.path}/panel-fold-keybindings.json';
+      File(keybindingsPath).writeAsStringSync(
+        '[{"key":"f6","command":"view.search"},{"key":"f7","command":"view.togglePanel"}]',
+      );
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: keybindingsPath),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final vertical = position == PanelPosition.right;
+      final search = find.byKey(const ValueKey('search-input'));
+      final searchHeader =
+          find.byKey(const ValueKey('panel-group-header-diagnostics-search'));
+      final hostHeader =
+          find.byKey(const ValueKey('panel-group-header-diagnostics-original'));
+      final sash = find.byKey(
+          const ValueKey('panel-group-sash-diagnostics-search-original'));
+      final first =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-search'));
+      final host =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-original'));
+
+      double extent(Finder pane) {
+        final size = tester.getSize(pane);
+        return vertical ? size.height : size.width;
+      }
+
+      bool expanded(Finder header) =>
+          tester.widget<Semantics>(header).properties.expanded!;
+      Future<void> press(Finder header) async {
+        await tester.tap(header, kind: PointerDeviceKind.mouse);
+        await tester.pumpAndSettle();
+      }
+
+      const query = 'retained through Panel folding 😀';
+      await tester.enterText(search, query);
+      final firstBefore = extent(first);
+      final hostBefore = extent(host);
+      final weights = layoutStore.tryLoad()!.panelGroupPaneWeights;
+      await press(searchHeader);
+      expect(expanded(searchHeader), isFalse);
+      expect(extent(first), 28);
+      expect(extent(host), greaterThan(hostBefore));
+      expect(search, findsNothing);
+      expect(sash, findsNothing);
+      if (!vertical) {
+        expect(tester.widget<Semantics>(searchHeader).properties.label, '搜索');
+        expect(
+          find.descendant(of: searchHeader, matching: find.byType(Tooltip)),
+          findsOneWidget,
+        );
+      }
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.panelGroupCollapsedPanes[tab], {'search'});
+      expect(layoutStore.tryLoad()!.panelGroupPaneWeights, weights);
+
+      await tester.tap(find.byKey(const ValueKey('wb-region-editor')));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f7);
+      await tester.pumpAndSettle();
+      expect(searchHeader, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f7);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isFalse);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f6);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isTrue);
+      expect(extent(first), closeTo(firstBefore, .05));
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      expect(tester.widget<TextField>(search).controller!.text, query);
+
+      await press(hostHeader);
+      expect(expanded(hostHeader), isFalse);
+      expect(extent(host), 28);
+      expect(extent(first), greaterThan(firstBefore));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(expanded(hostHeader), isTrue);
+      expect(extent(host), closeTo(hostBefore, .05));
+
+      await press(hostHeader);
+      await press(searchHeader);
+      expect([extent(first), extent(host)], [28, 28]);
+      expect(search, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isTrue);
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(
+          layoutStore.tryLoad()!.panelGroupCollapsedPanes[tab], {'original'});
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(expanded(hostHeader), isFalse);
+      expect(expanded(searchHeader), isTrue);
+      await press(hostHeader);
+      expect(extent(first), closeTo(firstBefore, .05));
+      expect(extent(host), closeTo(hostBefore, .05));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

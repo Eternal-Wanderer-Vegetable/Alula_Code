@@ -145,6 +145,29 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     return true;
   }
 
+  /// Collapse a pane within one standard Panel tab that has grouped views.
+  bool setPanelGroupPaneCollapsed(
+    PanelViewTab tab,
+    String view,
+    bool collapsed,
+  ) {
+    final members = root.panelGroupedPaneIds(tab);
+    if (members.isEmpty ||
+        (view != panelGroupOriginalPane && !members.contains(view))) {
+      return false;
+    }
+    final groups = root.panelGroupCollapsedPanes;
+    if (collapsed) {
+      if (!groups.putIfAbsent(tab, () => <String>{}).add(view)) return false;
+    } else {
+      final panes = groups[tab];
+      if (panes == null || !panes.remove(view)) return false;
+      if (panes.isEmpty) groups.remove(tab);
+    }
+    notifyLayoutChanged();
+    return true;
+  }
+
   /// Collapse only a pane currently participating in a side bar group.
   bool setSidebarGroupPaneCollapsed(String view, bool collapsed) {
     if (!root.sidebarGroupedPaneIds.contains(view)) return false;
@@ -214,10 +237,15 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     final previousPanelTab = root.panelViewPlacements.remove(view)?.tab;
     if (previousPanelTab != null) {
       final sizes = root.panelGroupPaneWeights[previousPanelTab];
+      final collapsed = root.panelGroupCollapsedPanes[previousPanelTab];
       sizes?.remove(view);
-      if (sizes?.isEmpty == true ||
-          root.panelGroupedPaneIds(previousPanelTab).isEmpty) {
+      collapsed?.remove(view);
+      final emptyGroup = root.panelGroupedPaneIds(previousPanelTab).isEmpty;
+      if (emptyGroup || sizes?.isEmpty == true) {
         root.panelGroupPaneWeights.remove(previousPanelTab);
+      }
+      if (emptyGroup || collapsed?.isEmpty == true) {
+        root.panelGroupCollapsedPanes.remove(previousPanelTab);
       }
     }
     if (panelPlacement != null) root.panelViewPlacements[view] = panelPlacement;
@@ -252,6 +280,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     root.sidebarViewLocations = null;
     root.panelViewPlacements.clear();
     root.panelGroupPaneWeights.clear();
+    root.panelGroupCollapsedPanes.clear();
     root.sidebarViewPlacements.clear();
     root.sidebarGroupPaneWeights.clear();
     root.sidebarGroupCollapsedPanes.clear();

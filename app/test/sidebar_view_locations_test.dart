@@ -426,6 +426,57 @@ void main() {
     layout.dispose();
   });
 
+  test('Panel pane collapse persists per tab and clears with its group', () {
+    final layout = WorkbenchLayout();
+    const tab = PanelViewTab.diagnostics;
+    const otherTab = PanelViewTab.syntax;
+    expect(layout.root.toJson(), isNot(contains('panelGroupCollapsedPanes')));
+    expect(layout.setPanelGroupPaneCollapsed(tab, panelGroupOriginalPane, true),
+        isFalse);
+    for (final (view, tab) in [('search', tab), ('outline', otherTab)]) {
+      layout.moveSidebarView(
+        view,
+        panelSidebarViewLocation,
+        panelPlacement: (tab: tab, before: false),
+      );
+    }
+    expect(layout.setPanelGroupPaneCollapsed(tab, 'outline', true), isFalse);
+    expect(layout.setPanelGroupPaneCollapsed(tab, 'search', true), isTrue);
+    expect(layout.setPanelGroupPaneCollapsed(tab, 'search', true), isFalse);
+    expect(layout.setPanelGroupPaneCollapsed(tab, panelGroupOriginalPane, true),
+        isTrue);
+    expect(
+        layout.setPanelGroupPaneCollapsed(otherTab, 'outline', true), isTrue);
+
+    final saved = layout.root.toJson();
+    final groups = Map<String, Object?>.of(
+      saved['panelGroupCollapsedPanes']! as Map<String, Object?>,
+    );
+    groups[tab.name] = [
+      'search',
+      'outline',
+      panelGroupOriginalPane,
+      false,
+      'search'
+    ];
+    groups[PanelViewTab.gitDiff.name] = [panelGroupOriginalPane];
+    saved['panelGroupCollapsedPanes'] = groups;
+    final restored = WorkbenchLayout(root: WbSplit.fromJson(saved));
+    expect(restored.root.panelGroupCollapsedPanes, {
+      tab: {'search', panelGroupOriginalPane},
+      otherTab: {'outline'},
+    });
+    expect(
+        restored.moveSidebarView('search', primarySidebarViewLocation), isTrue);
+    expect(restored.root.panelGroupCollapsedPanes, {
+      otherTab: {'outline'}
+    });
+    expect(restored.resetSidebarViewLocations(), isTrue);
+    expect(restored.root.toJson(), isNot(contains('panelGroupCollapsedPanes')));
+    restored.dispose();
+    layout.dispose();
+  });
+
   test('group collapse round-trips and clears when a group is removed', () {
     final layout = WorkbenchLayout();
     expect(layout.root.toJson(), isNot(contains('sidebarGroupCollapsedPanes')));
