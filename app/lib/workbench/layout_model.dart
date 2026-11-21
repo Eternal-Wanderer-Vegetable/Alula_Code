@@ -507,8 +507,7 @@ class WbSplit extends WbNode {
         final placement = entry.value;
         if (view is! String || placement is! Map) continue;
         final location = split.sidebarViewLocations?[view];
-        if (location != primarySidebarViewLocation &&
-            location != secondarySidebarViewLocation) {
+        if (location == null || split.panelViewPlacements.containsKey(view)) {
           continue;
         }
         final container = placement['container'];
@@ -516,6 +515,7 @@ class WbSplit extends WbNode {
         if (container is String &&
             container != view &&
             split.sidebarViewLocations?[container] == location &&
+            !split.panelViewPlacements.containsKey(container) &&
             before is bool) {
           split.sidebarViewPlacements[view] =
               (container: container, before: before);

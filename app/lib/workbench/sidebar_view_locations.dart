@@ -72,7 +72,9 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
 
   List<String> get standalonePanelViews => [
         for (final view in sidebarViews(panelSidebarViewLocation))
-          if (!root.panelViewPlacements.containsKey(view)) view,
+          if (!root.panelViewPlacements.containsKey(view) &&
+              !root.sidebarViewPlacements.containsKey(view))
+            view,
       ];
 
   List<String> groupedPanelViews(PanelViewTab tab, {required bool before}) => [
@@ -245,7 +247,6 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     if (moveSidebarGroup &&
         (source == destination ||
             source == panelSidebarViewLocation ||
-            destination == panelSidebarViewLocation ||
             panelPlacement != null ||
             sidebarPlacement != null ||
             detachFromSidebarGroup ||

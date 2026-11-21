@@ -765,6 +765,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late TabController _panelTab;
   List<String> _panelHostedViews = const [];
   final _searchViewFocus = FocusNode(debugLabel: 'workbench search view');
+  String? _pendingPanelSearchFocus;
   final _primarySidebarFocus = FocusNode(debugLabel: 'primary side bar');
   final _secondarySidebarFocus = FocusNode(debugLabel: 'secondary side bar');
 
@@ -781,6 +782,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _onPanelTabChanged() {
+    if (_activePanelHostedView != _pendingPanelSearchFocus) {
+      _pendingPanelSearchFocus = null;
+    }
     _syncCommandContext();
     _scheduleStateSave();
   }
@@ -20899,18 +20903,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showPanelHostedView(String view) {
-    final standaloneIndex = _panelHostedViews.indexOf(view);
+    final container = _layout.root.sidebarViewPlacements[view]?.container;
+    final standaloneIndex = _panelHostedViews.indexOf(container ?? view);
     final groupedTab = _layout.root.panelViewPlacements[view]?.tab;
     if (groupedTab == null && standaloneIndex < 0) return;
     if (groupedTab != null) {
       _layout.setPanelGroupPaneCollapsed(groupedTab, view, false);
+    } else if (container != null) {
+      _layout.setSidebarGroupPaneCollapsed(view, false);
     }
     if (view == 'outline') _refreshOutline();
     _panelTab.index =
         groupedTab?.index ?? _standardPanelTabCount + standaloneIndex;
     setState(() => _focusedSidebarView = view);
     _layout.showRegion('panel');
-    _focusMovedSearchView(view, panelSidebarViewLocation);
+    if (container != null && view == 'search') {
+      _pendingPanelSearchFocus = container;
+    } else {
+      _pendingPanelSearchFocus = null;
+      _focusMovedSearchView(view, panelSidebarViewLocation);
+    }
   }
 
   void _focusMovedSearchView(String view, String location) {
@@ -22571,6 +22583,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         key: ValueKey('sidebar-group-$location-$container'),
         location: location,
         container: container,
+        axis: location == panelSidebarViewLocation
+            ? switch (_layout.panelPosition) {
+                PanelPosition.top || PanelPosition.bottom => Axis.horizontal,
+                _ => Axis.vertical,
+              }
+            : Axis.vertical,
         panes: {
           for (final view in before) view: member(view),
           container: pane(container, original),
@@ -22592,8 +22610,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _layout.setSidebarGroupPaneWeights(container, weights),
         onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
         onFocus: (view) => _focusSidebarRegion(location, view),
-        externalSourceFor: (data) =>
-            _viewForSidebarDrop(location, data, container: container),
+        externalSourceFor: (data) => location == panelSidebarViewLocation
+            ? null
+            : _viewForSidebarDrop(location, data, container: container),
         onReorder: (source, target, before) {
           if (_layout.sidebarViewLocation(source) != location) {
             _moveViewIntoSidebarBody(
@@ -22614,6 +22633,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
       );
     }
+    if (location == panelSidebarViewLocation) return original;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -22651,8 +22671,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   String? _sidebarGroupViewForDrop(SidebarGroupPaneDrag drag) {
+    final currentContainer = drag.location == panelSidebarViewLocation
+        ? _activePanelHostedView
+        : _layout.sidebarSelection(drag.location);
     if (_layout.sidebarViewLocation(drag.view) == drag.location &&
-        _layout.sidebarSelection(drag.location) == drag.container &&
+        currentContainer == drag.container &&
         _layout.root.sidebarViewPlacements[drag.view]?.container ==
             drag.container) {
       return drag.view;
@@ -22856,6 +22879,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Widget _buildPanelGroupSearchView() {
+    return Builder(
+      builder: (context) {
+        final target = _pendingPanelSearchFocus;
+        if (target != null && target == _activePanelHostedView) {
+          // TabBarView can attach the requested pane after the selection frame.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted ||
+                !context.mounted ||
+                _pendingPanelSearchFocus != target ||
+                _activePanelHostedView != target) {
+              return;
+            }
+            _pendingPanelSearchFocus = null;
+            if (!_layout.isCollapsed('panel') &&
+                !_layout.root.sidebarGroupCollapsedPanes.contains('search')) {
+              _searchViewFocus.requestFocus();
+            }
+          });
+        }
+        return _buildSearchPanel(autofocus: false);
+      },
+    );
+  }
+
   Widget _buildSidebarViewRegion(
     String location,
     String? view, {
@@ -22877,7 +22925,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: switch (view) {
         'git' => _buildGitPanel(),
-        'search' => _buildSearchPanel(autofocus: autofocusSearch),
+        'search' => location == panelSidebarViewLocation && groupMember
+            ? _buildPanelGroupSearchView()
+            : _buildSearchPanel(autofocus: autofocusSearch),
         'outline' => _buildOutlinePanel(),
         'explorer' => _buildSidebar(),
         _ => SecondarySidebarEmptyState(title: title),
@@ -27048,16 +27098,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 面板：诊断 / 补全 / 语法 ----------
 
-  Widget _buildPanelHostedViewTab(String view) => _buildPanelHostedViewDrag(
-        view,
-        Tab(
-            key: ValueKey('panel-builtin-view-$view'),
-            text: _sidebarViewLabel(view)),
-      );
+  Widget _buildPanelHostedViewTab(String view) {
+    final tab = Tab(
+      key: ValueKey('panel-builtin-view-$view'),
+      text: _sidebarViewLabel(view),
+    );
+    return _hasSidebarGroup(view) ? tab : _buildPanelHostedViewDrag(view, tab);
+  }
 
-  Widget _buildPanelHostedViewDrag(String view, Widget child) =>
-      _buildViewDrag(
-          _PanelHostedViewDrag(view), _sidebarViewLabel(view), child);
+  Widget _buildPanelHostedViewDrag(String view, Widget child) => _buildViewDrag(
+      _PanelHostedViewDrag(view), _sidebarViewLabel(view), child);
 
   Widget _buildViewDrag<T extends Object>(
     T data,
@@ -27087,7 +27137,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _sidebarViewForPanelDrop(details.data) != null,
       onAcceptWithDetails: (details) {
         final view = _sidebarViewForPanelDrop(details.data);
-        if (view != null) _moveSidebarView(view, panelSidebarViewLocation);
+        if (view == null) return;
+        _moveSidebarView(
+          view,
+          panelSidebarViewLocation,
+          moveSidebarGroup:
+              details.data is ActivityBarViewDrag && _hasSidebarGroup(view),
+        );
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,
@@ -27331,7 +27387,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.sidebarViewLocation(drag.view) == primarySidebarViewLocation) {
       return drag.view;
     }
-    if (drag is SidebarGroupPaneDrag) return _sidebarGroupViewForDrop(drag);
+    if (drag is SidebarGroupPaneDrag &&
+        drag.location != panelSidebarViewLocation) {
+      return _sidebarGroupViewForDrop(drag);
+    }
     return null;
   }
 
@@ -27467,8 +27526,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 for (final view in _panelHostedViews)
                   KeyedSubtree(
                     key: ValueKey('panel-builtin-content-$view'),
-                    child:
-                        _buildSidebarViewRegion(panelSidebarViewLocation, view),
+                    child: _buildSidebarBody(panelSidebarViewLocation, view),
                   ),
               ],
             ),

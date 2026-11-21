@@ -2963,6 +2963,146 @@ void main() {
     });
   }
 
+  for (final position in [
+    PanelPosition.top,
+    PanelPosition.bottom,
+    PanelPosition.right
+  ]) {
+    testWidgets('$position Panel title receives the entire primary container',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      for (final view in ['search', 'outline']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation);
+        layout.moveSidebarView(view, primarySidebarViewLocation,
+            sidebarPlacement: (
+              container: 'explorer',
+              before: view == 'search'
+            ));
+      }
+      layout.setSidebarGroupPaneWeights(
+          'explorer', {'explorer': 1.3, 'search': .8, 'outline': .9});
+      layout.setSidebarGroupPaneCollapsed('outline', true);
+      layout.setPanelPosition(position);
+      layout.showRegion('panel');
+      final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+      final placements = Map.of(layout.root.sidebarViewPlacements);
+      layoutStore.save(layout.root);
+      layout.dispose();
+      final path = '${temp.path}/keybindings.json';
+      File(path).writeAsStringSync(
+        '[{"key":"f6","command":"view.search"},'
+        '{"key":"f7","command":"view.panelDiagnostics"}]',
+      );
+      final keybindings = KeybindingsStore(path: path);
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: keybindings,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final source =
+          find.byKey(const ValueKey('activity-bar-item-menu-anchor-explorer'));
+      final title = find.byKey(const ValueKey('panel-view-title-drop'));
+      final highlight =
+          find.byKey(const ValueKey('panel-view-title-drop-highlight'));
+      final editor = find.byKey(const ValueKey('wb-region-editor'));
+      final panelEntry =
+          find.byKey(const ValueKey('panel-builtin-view-explorer'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final searchHeader =
+          find.byKey(const ValueKey('sidebar-group-header-panel-search'));
+      final hostHeader =
+          find.byKey(const ValueKey('sidebar-group-header-panel-explorer'));
+      final outline = find.byKey(const ValueKey('panel-sidebar-group-outline'));
+      const query = 'retained in the panel group 😀';
+      await tester.enterText(search, query);
+
+      Future<TestGesture> dragTo(Finder drop) async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(source),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveBy(const Offset(20, 0));
+        await gesture.moveTo(tester.getCenter(drop));
+        await tester.pump();
+        return gesture;
+      }
+
+      final outside = await dragTo(editor);
+      expect(highlight, findsNothing);
+      await outside.up();
+      await tester.pumpAndSettle();
+      final canceled = await dragTo(title);
+      expect(highlight, findsOneWidget);
+      await canceled.cancel();
+      await tester.pumpAndSettle();
+      expect(panelEntry, findsNothing);
+      final accepted = await dragTo(title);
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(source, findsNothing);
+      expect(panelEntry, findsOneWidget);
+      expect(find.byKey(const ValueKey('panel-builtin-view-search')),
+          findsNothing);
+      expect(find.byKey(const ValueKey('panel-builtin-view-outline')),
+          findsNothing);
+
+      void expectGroup() {
+        final horizontal = position != PanelPosition.right;
+        double along(Offset point) => horizontal ? point.dx : point.dy;
+        expect(along(tester.getTopLeft(searchHeader)),
+            lessThan(along(tester.getTopLeft(hostHeader))));
+        expect(along(tester.getTopLeft(hostHeader)),
+            lessThan(along(tester.getTopLeft(outline))));
+        final size = tester.getSize(outline);
+        expect(horizontal ? size.width : size.height, 28);
+      }
+
+      expectGroup();
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      await tester.tap(searchHeader, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(search, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f7);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f6);
+      await tester.pumpAndSettle();
+      expectGroup();
+      final field = tester.widget<TextField>(search);
+      expect(field.focusNode!.hasPrimaryFocus, isTrue);
+      expect(field.controller!.text, query);
+      await tester.pump(const Duration(milliseconds: 700));
+
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewPlacements, placements);
+      expect(saved.sidebarGroupPaneWeights, weights);
+      expect(saved.sidebarGroupCollapsedPanes, {'outline'});
+      expect(saved.panelViewPlacements, isEmpty);
+      for (final view in ['explorer', 'search', 'outline']) {
+        expect(saved.sidebarViewLocations?[view], panelSidebarViewLocation);
+      }
+      expect(sessionStore.tryLoad()?['activePanelHostedView'], 'explorer');
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expectGroup();
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

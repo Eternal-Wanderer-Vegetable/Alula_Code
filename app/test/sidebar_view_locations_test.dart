@@ -546,8 +546,12 @@ void main() {
     expect(layout.moveSidebarView('explorer', primary, moveSidebarGroup: true),
         isFalse);
     expect(
-        layout.moveSidebarView('explorer', panelSidebarViewLocation,
-            moveSidebarGroup: true),
+        layout.moveSidebarView(
+          'explorer',
+          panelSidebarViewLocation,
+          moveSidebarGroup: true,
+          panelPlacement: (tab: PanelViewTab.diagnostics, before: true),
+        ),
         isFalse);
     expect(observed, isEmpty);
 
@@ -572,6 +576,51 @@ void main() {
         restored.groupedSidebarViews('explorer', before: false), ['outline']);
     expect(restored.root.sidebarGroupPaneWeights, weights);
     expect(restored.root.sidebarGroupCollapsedPanes, {'outline'});
+  });
+
+  test('Panel container persists without adding member tabs or mixing groups',
+      () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const panel = panelSidebarViewLocation;
+    const diagnostics = PanelViewTab.diagnostics;
+    for (final view in ['search', 'outline']) {
+      layout.moveSidebarView(view, panel);
+      layout.moveSidebarView(view, primarySidebarViewLocation,
+          sidebarPlacement: (container: 'explorer', before: view == 'search'));
+    }
+    layout.moveSidebarView('git', panel,
+        panelPlacement: (tab: diagnostics, before: true));
+    layout.setSidebarGroupPaneWeights(
+        'explorer', {'explorer': 1, 'search': .8, 'outline': 1.2});
+    layout.setSidebarGroupPaneCollapsed('outline', true);
+    final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+    var changes = 0;
+    layout.addListener(() {
+      changes++;
+      expect(layout.standalonePanelViews, ['explorer']);
+      expect(layout.sidebarViews(panel).toSet(),
+          {'git', 'explorer', 'outline', 'search'});
+    });
+
+    expect(layout.moveSidebarView('explorer', panel, moveSidebarGroup: true),
+        isTrue);
+    expect(changes, 1);
+    final json = layout.root.toJson();
+    final placements = Map<String, Object?>.of(
+        json['sidebarViewPlacements'] as Map<String, Object?>)
+      ..['git'] = {'container': 'explorer', 'before': true};
+    final restored = WorkbenchLayout(
+      root: WbSplit.fromJson({...json, 'sidebarViewPlacements': placements}),
+    );
+    addTearDown(restored.dispose);
+    expect(restored.standalonePanelViews, ['explorer']);
+    expect(restored.groupedPanelViews(diagnostics, before: true), ['git']);
+    expect(restored.groupedSidebarViews('explorer', before: true), ['search']);
+    expect(
+        restored.groupedSidebarViews('explorer', before: false), ['outline']);
+    expect(restored.root.sidebarGroupCollapsedPanes, {'outline'});
+    expect(restored.root.sidebarGroupPaneWeights, weights);
   });
 
   test('relative sidebar insertion saves order with the move', () {

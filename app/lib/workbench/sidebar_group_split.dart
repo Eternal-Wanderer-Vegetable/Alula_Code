@@ -22,10 +22,12 @@ class SidebarGroupSplit extends StatefulWidget {
     required this.onFocus,
     required this.externalSourceFor,
     required this.onReorder,
+    this.axis = Axis.vertical,
   }) : assert(panes.length > 1);
 
   final String location;
   final String container;
+  final Axis axis;
   final Map<String, Widget> panes;
   final Map<String, String> labels;
   final Map<String, double> weights;
@@ -49,9 +51,10 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
   @override
   Widget build(BuildContext context) {
     return PaneGroupSplit(
-      axis: Axis.vertical,
+      axis: widget.axis,
       minimums: {
-        for (final view in widget.panes.keys) view: _minimumPaneExtent
+        for (final view in widget.panes.keys)
+          view: widget.axis == Axis.vertical ? _minimumPaneExtent : 228,
       },
       weights: widget.weights,
       collapsed: widget.collapsed,
@@ -64,13 +67,43 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
 
   Widget _buildPane(String view, double extent) {
     final collapsed = widget.collapsed.contains(view);
+    final horizontal = widget.axis == Axis.horizontal;
+    final compact = horizontal && collapsed;
     final role = view == widget.container ? 'original-' : '';
     final label = widget.labels[view]!;
+    final header = Draggable<SidebarGroupPaneDrag>(
+      data: (
+        group: _group,
+        location: widget.location,
+        container: widget.container,
+        view: view,
+      ),
+      maxSimultaneousDrags: 1,
+      allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      feedback: Material(
+        color: const Color(0xFF252932),
+        borderRadius: BorderRadius.circular(3),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(label, style: const TextStyle(fontSize: 12)),
+        ),
+      ),
+      child: PaneGroupHeader(
+        semanticsKey: ValueKey('sidebar-group-header-${widget.location}-$view'),
+        label: label,
+        collapsed: collapsed,
+        compactIcon: compact ? Icons.chevron_right : null,
+        onSetCollapsed: (value) => widget.onSetCollapsed(view, value),
+        onFocus: () => widget.onFocus(view),
+      ),
+    );
     return SizedBox(
       key: ValueKey('${widget.location}-sidebar-group-$role$view'),
-      height: extent,
+      width: horizontal ? extent : null,
+      height: horizontal ? null : extent,
       child: PaneGroupDropTarget<Object>(
-        axis: Axis.vertical,
+        axis: widget.axis,
         view: view,
         highlightKeyPrefix: 'sidebar-group-drop-${widget.location}-$view',
         sourceFor: (data) {
@@ -80,50 +113,25 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
           return widget.externalSourceFor(data);
         },
         onReorder: widget.onReorder,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: math.min(_headerExtent, extent),
-              child: Draggable<SidebarGroupPaneDrag>(
-                data: (
-                  group: _group,
-                  location: widget.location,
-                  container: widget.container,
-                  view: view,
-                ),
-                maxSimultaneousDrags: 1,
-                allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
-                dragAnchorStrategy: pointerDragAnchorStrategy,
-                feedback: Material(
-                  color: const Color(0xFF252932),
-                  borderRadius: BorderRadius.circular(3),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: Text(label, style: const TextStyle(fontSize: 12)),
-                  ),
-                ),
-                child: PaneGroupHeader(
-                  semanticsKey:
-                      ValueKey('sidebar-group-header-${widget.location}-$view'),
-                  label: label,
-                  collapsed: collapsed,
-                  onSetCollapsed: (value) => widget.onSetCollapsed(view, value),
-                  onFocus: () => widget.onFocus(view),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: compact
+                    ? constraints.maxHeight
+                    : math.min(_headerExtent, constraints.maxHeight),
+                child: header,
+              ),
+              Expanded(
+                child: Visibility(
+                  visible: !collapsed,
+                  maintainState: true,
+                  child: widget.panes[view]!,
                 ),
               ),
-            ),
-            Expanded(
-              child: Visibility(
-                visible: !collapsed,
-                maintainState: true,
-                child: widget.panes[view]!,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
