@@ -769,7 +769,16 @@ void main() {
       );
       expect(input.inputWindow.document.resync().content, incomingText);
       expect(input.inputWindow.document.isDirty, isTrue);
-      expect(find.text('source.txt •'), findsOneWidget);
+      expect(find.text('source.txt'), findsOneWidget);
+      final tab = find.byKey(const ValueKey('auxiliary-editor-active-tab'));
+      final closeAction =
+          find.byKey(const ValueKey('auxiliary-editor-tab-close'));
+      expect(
+          tester.getSemantics(tab).getSemanticsData().label, 'source.txt，未保存');
+      expect(
+        find.descendant(of: closeAction, matching: find.byIcon(Icons.circle)),
+        findsOneWidget,
+      );
       await tester.pumpAndSettle();
       expect(nativeTitles, contains('source.txt'));
       targetEditorBeforeTransfer.onDelta!(delayedInputDelta);

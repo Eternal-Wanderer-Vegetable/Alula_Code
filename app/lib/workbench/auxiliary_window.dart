@@ -8,6 +8,7 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' show SemanticsRole;
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,8 @@ import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
 import 'auxiliary_focus_context.dart';
 import 'auxiliary_window_transfer.dart';
+import 'editor_tab_close_action.dart';
+import 'editor_tab_file_icon.dart';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
@@ -161,6 +164,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   bool _compactMode = false;
   String? _windowStateError;
   late final ScrollController _scrollController;
+  final FocusNode _editorFocus = FocusNode(debugLabel: 'auxiliary editor');
   WindowController? _windowController;
   WindowController? _mainWindowController;
   Future<void> _focusEventQueue = Future<void>.value();
@@ -197,6 +201,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
           .catchError((Object _) {}));
     }
     _scrollController.dispose();
+    _editorFocus.dispose();
     super.dispose();
   }
 
@@ -763,6 +768,76 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     return null;
   }
 
+  Widget _buildActiveEditorTab() {
+    final enabled = !_closing && _pendingTransfer == null;
+    final activate = enabled ? _editorFocus.requestFocus : null;
+    return Semantics(
+      container: true,
+      role: SemanticsRole.tabBar,
+      child: Container(
+        key: const ValueKey('auxiliary-editor-tab-strip'),
+        height: 32,
+        decoration: const BoxDecoration(
+          color: Color(0xFF181B20),
+          border: Border(bottom: BorderSide(color: Color(0xFF343945))),
+        ),
+        alignment: Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 31, maxWidth: 320),
+          child: Semantics(
+            key: const ValueKey('auxiliary-editor-active-tab'),
+            container: true,
+            explicitChildNodes: true,
+            role: SemanticsRole.tab,
+            selected: true,
+            label: _dirty ? '$_name，未保存' : _name,
+            onTap: activate,
+            child: Material(
+              color: const Color(0xFF14161A),
+              child: InkWell(
+                onTap: activate,
+                excludeFromSemantics: true,
+                child: Container(
+                  foregroundDecoration: const BoxDecoration(
+                    border: Border(
+                        top: BorderSide(color: Colors.blueAccent, width: 2)),
+                  ),
+                  padding: const EdgeInsetsDirectional.only(start: 6, end: 6.5),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      EditorTabFileIcon(fileName: _name),
+                      Flexible(
+                        child: ExcludeSemantics(
+                          child: Text(
+                            _name,
+                            key: const ValueKey('auxiliary-editor-tab-label'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      EditorTabCloseAction(
+                        actionKey: const ValueKey('auxiliary-editor-tab-close'),
+                        enabled: enabled,
+                        emphasized: true,
+                        dirty: _dirty,
+                        width: 20,
+                        onPressed: () => unawaited(_sendClosedAndDestroy()),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final doc = _doc;
@@ -787,17 +862,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
-                  Expanded(
-                    child: _compactMode
-                        ? const SizedBox.shrink()
-                        : Text(
-                            '$_name${_dirty ? " •" : ""}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontSize: 11, fontWeight: FontWeight.bold),
-                          ),
-                  ),
+                  const Spacer(),
                   Semantics(
                     key: const ValueKey('auxiliary-compact-mode-semantics'),
                     container: true,
@@ -866,6 +931,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                 ],
               ),
             ),
+            if (!_compactMode && doc != null) _buildActiveEditorTab(),
             if (_statusMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(8),
@@ -907,23 +973,23 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                           child: RustTextInputField(
                             key: const ValueKey('auxiliary-editor-input'),
                             inputWindow: inputWindow,
+                            focusNode: _editorFocus,
                             scrollController: _scrollController,
                             tabSize: 4,
                             semanticsLabel: '$_name 辅助窗口编辑器',
                             style: const TextStyle(
                                 fontFamily: 'monospace', fontSize: 12),
                             onDelta: (delta) {
-                              if (_pendingTransfer != null ||
+                              if (!mounted ||
+                                  delta.operations.isEmpty ||
+                                  _pendingTransfer != null ||
                                   !identical(_doc, doc)) {
                                 return;
                               }
-                              try {
-                                doc.applyWith(delta.version, delta.operations);
-                                if (mounted && !_dirty) {
-                                  setState(() => _dirty = true);
-                                }
-                              } on Object {
-                                // 陈旧窗口引擎：忽略增量。
+                              // The input window has already committed the delta.
+                              final dirty = doc.isDirty;
+                              if (_dirty != dirty) {
+                                setState(() => _dirty = dirty);
                               }
                             },
                             onError: (error) {

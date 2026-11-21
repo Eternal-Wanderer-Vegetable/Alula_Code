@@ -12,12 +12,16 @@ class EditorTabCloseAction extends StatefulWidget {
     required this.enabled,
     required this.emphasized,
     required this.onPressed,
+    this.dirty = false,
+    this.width = 12,
   });
 
   final Key actionKey;
   final bool enabled;
   final bool emphasized;
   final VoidCallback onPressed;
+  final bool dirty;
+  final double width;
 
   @override
   State<EditorTabCloseAction> createState() => _EditorTabCloseActionState();
@@ -27,6 +31,7 @@ class _EditorTabCloseActionState extends State<EditorTabCloseAction> {
   late final FocusNode _focusNode = FocusNode(
     debugLabel: 'editor tab close action',
   );
+  bool _hovered = false;
 
   @override
   void didUpdateWidget(covariant EditorTabCloseAction oldWidget) {
@@ -43,10 +48,12 @@ class _EditorTabCloseActionState extends State<EditorTabCloseAction> {
 
   @override
   Widget build(BuildContext context) {
-    final showGlyph =
+    final showDirty = widget.dirty &&
+        (!widget.enabled || (!_hovered && !_focusNode.hasFocus));
+    final showGlyph = showDirty ||
         widget.enabled && (widget.emphasized || _focusNode.hasFocus);
     return SizedBox(
-      width: 12,
+      width: widget.width,
       height: 20,
       child: ExcludeSemantics(
         excluding: !widget.enabled,
@@ -68,11 +75,10 @@ class _EditorTabCloseActionState extends State<EditorTabCloseAction> {
                   if (mounted) setState(() {});
                 },
                 onTap: widget.enabled ? widget.onPressed : null,
-                child: const Icon(
-                  Icons.close,
-                  size: 12,
-                  color: Colors.grey,
-                ),
+                onHover: (hovered) => setState(() => _hovered = hovered),
+                child: showDirty
+                    ? const Icon(Icons.circle, size: 8, color: Colors.white)
+                    : const Icon(Icons.close, size: 12, color: Colors.grey),
               ),
             ),
           ),
