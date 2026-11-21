@@ -21681,7 +21681,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
                     builders: {
-                      'activity': (_) => _buildGroupedPanelViewDropTarget(
+                      'activity': (_) => _buildSidebarEntryDropTarget(
                             primarySidebarViewLocation,
                             ActivityBar(
                               activeView: _sidebarView ?? 'explorer',
@@ -22561,7 +22561,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
         onFocus: (view) => _focusSidebarRegion(location, view),
         externalSourceFor: (data) =>
-            _viewForSidebarBodyDrop(location, container, data),
+            _viewForSidebarDrop(location, data, container: container),
         onReorder: (source, target, before) {
           if (_layout.sidebarViewLocation(source) != location) {
             _moveViewIntoSidebarBody(
@@ -22599,12 +22599,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  String? _viewForSidebarBodyDrop(
+  String? _viewForSidebarDrop(
     String location,
-    String container,
-    Object drag,
-  ) {
-    if (_layout.sidebarSelection(location) != container) return null;
+    Object drag, {
+    String? container,
+  }) {
+    if (container != null && _layout.sidebarSelection(location) != container) {
+      return null;
+    }
     if (drag is _PanelHostedViewDrag &&
         _layout.root.panelViewPlacements.containsKey(drag.view)) {
       return drag.view;
@@ -22663,9 +22665,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return DragTarget<Object>(
       key: ValueKey('$location-sidebar-body-drop-$side'),
       onWillAcceptWithDetails: (details) =>
-          _viewForSidebarBodyDrop(location, container, details.data) != null,
+          _viewForSidebarDrop(location, details.data, container: container) !=
+          null,
       onAcceptWithDetails: (details) {
-        final view = _viewForSidebarBodyDrop(location, container, details.data);
+        final view =
+            _viewForSidebarDrop(location, details.data, container: container);
         if (view != null) {
           _moveViewIntoSidebarBody(view, location, container, before);
         }
@@ -22695,7 +22699,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         SizedBox(
           height: 32,
           width: double.infinity,
-          child: _buildGroupedPanelViewDropTarget(
+          child: _buildSidebarEntryDropTarget(
             secondarySidebarViewLocation,
             ColoredBox(
               color: const Color(0xFF1B1E24),
@@ -22745,17 +22749,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  Widget _buildGroupedPanelViewDropTarget(String location, Widget child) {
-    bool accepts(_PanelHostedViewDrag drag) =>
-        _layout.root.panelViewPlacements.containsKey(drag.view);
-
-    return DragTarget<_PanelHostedViewDrag>(
+  Widget _buildSidebarEntryDropTarget(String location, Widget child) {
+    return DragTarget<Object>(
       key: ValueKey('grouped-panel-view-entry-drop-$location'),
-      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onWillAcceptWithDetails: (details) =>
+          _viewForSidebarDrop(location, details.data) != null,
       onAcceptWithDetails: (details) {
-        if (accepts(details.data)) {
-          _moveSidebarView(details.data.view, location);
-        }
+        final view = _viewForSidebarDrop(location, details.data);
+        if (view != null) _moveSidebarView(view, location);
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,
