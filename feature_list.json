@@ -2686,6 +2686,20 @@
         "feat-206",
         "feat-212"
       ],
+      "status": "done",
+      "evidence": "产品 483688212955d46ffce881d4f16fc0f14bb84605 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 核对面板标题至主侧栏 Outline 上半区和次侧栏 Explorer 下半区。两路均在侧栏既有窗格之间插入 Search，保留权重、归属、原面板和两个搜索结果。专项 113/113，Flutter 1,717 passed / 2 skipped。同一 SHA 的 PR CI 44875236741 四项及 Platform Availability 44875230226 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.161-sidebar-group-insertion.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-214",
+      "name": "P05.162 LAY-04/05 分组侧栏成员标题直接拖入另一侧栏正文",
+      "description": "固定版核对两侧栏之间直接拖动组内成员，按目标窗格的上下半区插入并保留两组其他成员。",
+      "dependencies": [
+        "feat-206",
+        "feat-211",
+        "feat-213"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
