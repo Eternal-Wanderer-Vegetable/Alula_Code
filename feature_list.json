@@ -1491,7 +1491,7 @@
         "feat-101"
       ],
       "status": "done",
-      "evidence": "Local N.2 complete: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. PR CI 43900198139 all four jobs passed; Platform Availability 43900182449 Linux/Windows/macOS passed. App artifacts Linux/Windows/macOS 14241267651 / 14241891156 / 14255681783. Linux/Windows DnD diagnostics 14240123820 / 14240964046 passed move/cross-document copy/external text (19/11 pointer events); macOS DnD artifact 14256920434 explicitly skipped because the hosted pointer route was unavailable. macOS native Quit passed through Accessibility; startup artifact 14255711563; app ZIP SHA-256 a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3 matched sidecar and the 81-entry archive passed integrity checks. Native OS compact pixel/reference diff remains unverified. Scope, N.2 and closeout: docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md; local full log: docs/diagnostics/2026-11-16-p05/p05.68-init.log.",
+      "evidence": "Local N.2 complete: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. PR CI 43900198139 all four jobs passed; Platform Availability 43900182449 Linux/Windows/macOS passed. App artifacts Linux/Windows/macOS 14241267651 / 14241891156 / 14255681783. Linux/Windows DnD diagnostics 14240123820 / 14240964046 passed move/cross-document copy/external text (19/11 pointer events); macOS DnD artifact 14256920434 explicitly skipped because the hosted pointer route was unavailable. macOS native Quit passed through Accessibility; startup artifact 14255711563; app ZIP SHA-256 a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3 matched sidecar and the 81-entry archive passed integrity checks. Native OS compact pixel/reference diff remains unverified. Scope, N.2 and closeout: docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md; local full log: docs/diagnostics/2026-11-16-p05/p05.68-init.log. P05.175 补固定版和 Windows/Linux 紧凑对照见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2875,8 +2875,21 @@
         "feat-120",
         "feat-226"
       ],
+      "status": "done",
+      "evidence": "产品 e18328f1b6a367fcd2b39a2d3f26046431191f03 已推草稿 PR #3。固定版与 Windows 实机、Linux xfwm4 验证辅助窗 35/30 逻辑像素标题行、紧凑与恢复、置顶和文档保留，Windows 关闭回主窗通过。Linux xfwm4 关闭 GLX BadAccess 登记 P05.176。专项 43/43，Flutter 1,749 passed / 2 skipped。同 SHA CI 44916113131 四项与 Platform Availability 44916109760 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-228",
+      "name": "P05.176 LAY-12 Linux xfwm4 关闭辅助编辑窗的 GLX 生命周期回归",
+      "description": "复现并修复 Linux xfwm4 关闭辅助窗时的 GLX BadAccess，验证主窗仍可编辑并接回脏文档。",
+      "dependencies": [
+        "feat-226",
+        "feat-227"
+      ],
       "status": "not-started",
-      "evidence": "P05.68 紧凑模式专属固定版和产品原生视觉对照待验收。",
+      "evidence": "P05.175 记录调整前后的关闭异常。见 docs/diagnostics/2026-11-21-p05/p05.175-auxiliary-compact-native.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

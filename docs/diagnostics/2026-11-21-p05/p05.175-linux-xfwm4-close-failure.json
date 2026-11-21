@@ -1,0 +1,53 @@
+{
+  "sourceTree": "e85ea727f80e3414deb47d462db44a0bb2567ecb",
+  "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "c95f37c3ba8daee11d89101f97b8153d023b795acd3288925f079d2865638e9e",
+  "cleanup": {
+    "exitCode": 1,
+    "driverSentSigterm": false
+  },
+  "lastTraceStep": "expanded-restored",
+  "editor": {
+    "label": "compact-sample.txt 辅助窗口编辑器",
+    "documentId": 3,
+    "box": [
+      4.0,
+      52.0,
+      619.0,
+      688.0
+    ],
+    "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+    "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+    "totalUtf16": 43,
+    "stateVersion": 1,
+    "dirty": true,
+    "selection": [
+      0,
+      0
+    ]
+  },
+  "errors": [
+    "(com.alula.alula_app:1908170): GLib-GObject-CRITICAL **: 22:31:57.410: g_signal_handler_disconnect: assertion 'G_TYPE_CHECK_INSTANCE (instance)' failed",
+    "embedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.",
+    "The error was 'BadAccess (attempt to access private resource denied)'.",
+    "  (Details: serial 3786 error_code 10 request_code 150 (GLX) minor_code 26)"
+  ],
+  "reproducedAfterLayoutChange": {
+    "sourceTree": "136b6558b44d61559bad3a942684d8fa16582911",
+    "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69",
+    "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+    "aotSha256": "56a87fbb7cca0c46d482e7c6669a015bde2e495520f719d26e3abc694292457c",
+    "cleanup": {
+      "exitCode": 1,
+      "driverSentSigterm": false
+    },
+    "lastTraceStep": "expanded-restored",
+    "errors": [
+      "(com.alula.alula_app:1914757): GLib-GObject-CRITICAL **: 22:56:54.684: g_signal_handler_disconnect: assertion 'G_TYPE_CHECK_INSTANCE (instance)' failed",
+      "embedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.",
+      "The error was 'BadAccess (attempt to access private resource denied)'.",
+      "  (Details: serial 4214 error_code 10 request_code 150 (GLX) minor_code 26)"
+    ]
+  }
+}

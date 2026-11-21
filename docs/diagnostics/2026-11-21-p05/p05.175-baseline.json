@@ -1,0 +1,30 @@
+{
+  "windows": {
+    "tree": "e85ea727f80e3414deb47d462db44a0bb2567ecb",
+    "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69",
+    "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+    "aotSha256": "406561665e98bfa968146fa7a93d4f356fa66e447a480054157ee3e63788886c",
+    "geometry": {
+      "expandedTitleHeight": 48.0,
+      "compactTitleHeight": 40.0,
+      "expandedEditorTop": 52.0,
+      "compactEditorTop": 40.0,
+      "expandedEditorHeight": 426.4,
+      "compactEditorHeight": 442.4
+    }
+  },
+  "linux": {
+    "tree": "e85ea727f80e3414deb47d462db44a0bb2567ecb",
+    "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69",
+    "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+    "aotSha256": "c95f37c3ba8daee11d89101f97b8153d023b795acd3288925f079d2865638e9e",
+    "geometry": {
+      "expandedTitleHeight": 48.0,
+      "compactTitleHeight": 40.0,
+      "expandedEditorTop": 52.0,
+      "compactEditorTop": 40.0,
+      "expandedEditorHeight": 636.0,
+      "compactEditorHeight": 652.0
+    }
+  }
+}

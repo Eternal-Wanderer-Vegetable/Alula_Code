@@ -1,0 +1,1182 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "referenceVersion": "Code-OSS 1.145.0",
+  "input": "Win32 F6 to open auxiliary; guarded native pointer clicks and title action geometry from the reference renderer",
+  "initialDiskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+  "trace": {
+    "expanded": {
+      "title": "compact-sample.txt - workspace - Code - OSS Dev",
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "boxes": {
+        "workbench": {
+          "x": 0,
+          "y": 0,
+          "width": 706.4000244140625,
+          "height": 513.6000366210938,
+          "visible": true,
+          "className": "monaco-enable-motion modern-ui modern-ui-tabs modern-ui-connected-editor-tabs modern-ui-notifications-dialogs monaco-workbench windows chromium nopanel floating-panels panel-position-bottom panel-alignment-center file-icons-enabled vs-dark vscode-theme-defaults-themes-2026-dark-json",
+          "color": "rgb(25, 26, 27)"
+        },
+        "titlebar": {
+          "x": 0,
+          "y": 0,
+          "width": 706,
+          "height": 34.97500228881836,
+          "visible": true,
+          "className": "part titlebar",
+          "color": "rgb(25, 26, 27)"
+        },
+        "editorPart": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 706.4000244140625,
+          "height": 456.63751220703125,
+          "visible": true,
+          "className": "part editor editor-tabs-multiple",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "statusbar": {
+          "x": 0,
+          "y": 491.6125183105469,
+          "width": 706,
+          "height": 21.98750114440918,
+          "visible": true,
+          "className": "part statusbar status-border-top",
+          "color": "rgb(25, 26, 27)"
+        },
+        "breadcrumbs": {
+          "x": 0,
+          "y": 66.9749984741211,
+          "width": 706,
+          "height": 22,
+          "visible": true,
+          "className": "breadcrumbs-control with-editor-type backslash-path relative-path",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "tabs": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 624,
+          "height": 32,
+          "visible": true,
+          "className": "tabs-container",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "monaco": {
+          "x": 0,
+          "y": 88.9749984741211,
+          "width": 706,
+          "height": 403,
+          "visible": true,
+          "className": "monaco-editor no-user-select  showUnused showDeprecated vs-dark focused",
+          "color": "rgb(18, 19, 20)"
+        },
+        "lines": {
+          "x": 68,
+          "y": 88.9749984741211,
+          "width": 572,
+          "height": 441,
+          "visible": true,
+          "className": "view-lines monaco-mouse-cursor-text",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ],
+      "tabNames": [
+        "compact-sample.txt, Window 2: Editor Group 1"
+      ],
+      "titleToolbar": [
+        [
+          "Go Back (Alt+LeftArrow)",
+          {
+            "x": 131.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-arrow-left",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Go Forward (Alt+RightArrow)",
+          {
+            "x": 157.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Agent Status",
+          {
+            "x": 183.5625,
+            "y": 5.287499904632568,
+            "width": 268.4250183105469,
+            "height": 23.600000381469727,
+            "visible": true,
+            "className": "action-item agent-status-container",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Open Quick Access",
+          {
+            "x": 184.3625030517578,
+            "y": 6.087500095367432,
+            "width": 215.8249969482422,
+            "height": 22,
+            "visible": true,
+            "className": "agent-status-input-area",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Toggle Chat",
+          {
+            "x": 406.1875,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-chat-sparkle",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "More Actions",
+          {
+            "x": 431.6875,
+            "y": 6.087500095367432,
+            "width": 18,
+            "height": 24,
+            "visible": true,
+            "className": "action-label codicon codicon-chevron-down agent-status-sparkle-dropdown",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Sign In",
+          {
+            "x": 461.9875183105469,
+            "y": 6.087500095367432,
+            "width": 54.01250076293945,
+            "height": 22,
+            "visible": true,
+            "className": "action-item",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Title actions",
+          {
+            "x": 516,
+            "y": 0,
+            "width": 48,
+            "height": 34.17499923706055,
+            "visible": true,
+            "className": "actions-container highlight-toggled",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn On Compact Mode",
+          {
+            "x": 516,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-screen-full",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn On Always on Top",
+          {
+            "x": 542,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-pin",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      ],
+      "visibleText": "workspace\nSign In\ncompact-sample.txt\ncompact-sample.txt\n1\n2\n3\nCompact example 😀\nSecond line\nPlain Text\nCRLF\nUTF-8 with BOM\nSpaces: 4\nLn 2, Col 12",
+      "realDocumentFocus": {
+        "main": false,
+        "auxiliary": true
+      },
+      "native": {
+        "dpi": 120,
+        "nativeTitle": "compact-sample.txt - workspace - Code - OSS Dev",
+        "outerBounds": [
+          1450,
+          115,
+          2350,
+          765
+        ],
+        "clientBounds": [
+          1459,
+          115,
+          2341,
+          756
+        ],
+        "alwaysOnTop": false
+      },
+      "image": {
+        "file": "expanded-native.png",
+        "sha256": "ba02740c7ed79ff38748425d95de239dc8fa2ae3589edbc70e734d44fb05ea4d"
+      }
+    },
+    "compact": {
+      "title": "compact-sample.txt - workspace - Code - OSS Dev",
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "boxes": {
+        "workbench": {
+          "x": 0,
+          "y": 0,
+          "width": 706.4000244140625,
+          "height": 513.6000366210938,
+          "visible": true,
+          "className": "monaco-enable-motion modern-ui modern-ui-tabs modern-ui-connected-editor-tabs modern-ui-notifications-dialogs monaco-workbench windows chromium nopanel floating-panels panel-position-bottom panel-alignment-center file-icons-enabled vs-dark vscode-theme-defaults-themes-2026-dark-json modern-ui-frosted-glass sash-grippers-hidden",
+          "color": "rgb(25, 26, 27)"
+        },
+        "titlebar": {
+          "x": 0,
+          "y": 0,
+          "width": 706,
+          "height": 34.97500228881836,
+          "visible": true,
+          "className": "part titlebar",
+          "color": "rgb(25, 26, 27)"
+        },
+        "editorPart": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 706.4000244140625,
+          "height": 456.63751220703125,
+          "visible": true,
+          "className": "part editor editor-tabs-multiple",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "statusbar": {
+          "x": 0,
+          "y": 491.6125183105469,
+          "width": 706,
+          "height": 21.98750114440918,
+          "visible": true,
+          "className": "part statusbar status-border-top",
+          "color": "rgb(25, 26, 27)"
+        },
+        "breadcrumbs": {
+          "x": 0,
+          "y": 66.9749984741211,
+          "width": 706,
+          "height": 22,
+          "visible": true,
+          "className": "breadcrumbs-control with-editor-type backslash-path relative-path",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "tabs": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 624,
+          "height": 32,
+          "visible": true,
+          "className": "tabs-container",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "monaco": {
+          "x": 0,
+          "y": 88.9749984741211,
+          "width": 706,
+          "height": 403,
+          "visible": true,
+          "className": "monaco-editor no-user-select  showUnused showDeprecated vs-dark focused",
+          "color": "rgb(18, 19, 20)"
+        },
+        "lines": {
+          "x": 68,
+          "y": 88.9749984741211,
+          "width": 572,
+          "height": 441,
+          "visible": true,
+          "className": "view-lines monaco-mouse-cursor-text",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ],
+      "tabNames": [
+        "compact-sample.txt, Window 2: Editor Group 1"
+      ],
+      "titleToolbar": [
+        [
+          "Go Back (Alt+LeftArrow)",
+          {
+            "x": 131.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-arrow-left",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Go Forward (Alt+RightArrow)",
+          {
+            "x": 157.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Agent Status",
+          {
+            "x": 183.5625,
+            "y": 5.287499904632568,
+            "width": 268.4250183105469,
+            "height": 23.600000381469727,
+            "visible": true,
+            "className": "action-item agent-status-container",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Open Quick Access",
+          {
+            "x": 184.3625030517578,
+            "y": 6.087500095367432,
+            "width": 215.8249969482422,
+            "height": 22,
+            "visible": true,
+            "className": "agent-status-input-area",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Toggle Chat",
+          {
+            "x": 406.1875,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-chat-sparkle",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "More Actions",
+          {
+            "x": 431.6875,
+            "y": 6.087500095367432,
+            "width": 18,
+            "height": 24,
+            "visible": true,
+            "className": "action-label codicon codicon-chevron-down agent-status-sparkle-dropdown",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Sign In",
+          {
+            "x": 461.9875183105469,
+            "y": 6.087500095367432,
+            "width": 54.01250076293945,
+            "height": 22,
+            "visible": true,
+            "className": "action-item",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Title actions",
+          {
+            "x": 516,
+            "y": 0,
+            "width": 48,
+            "height": 34.17499923706055,
+            "visible": true,
+            "className": "actions-container highlight-toggled",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn On Compact Mode",
+          {
+            "x": 516,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-screen-full",
+            "color": "rgba(90, 93, 94, 0.31)"
+          }
+        ],
+        [
+          "Turn On Always on Top",
+          {
+            "x": 542,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-pin",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      ],
+      "visibleText": "workspace\nSign In\ncompact-sample.txt\ncompact-sample.txt\n1\n2\n3\nCompact example 😀\nSecond line\nPlain Text\nCRLF\nUTF-8 with BOM\nSpaces: 4\nLn 2, Col 12\nTurn On Compact Mode",
+      "realDocumentFocus": {
+        "main": false,
+        "auxiliary": true
+      },
+      "native": {
+        "dpi": 120,
+        "nativeTitle": "compact-sample.txt - workspace - Code - OSS Dev",
+        "outerBounds": [
+          1450,
+          115,
+          2350,
+          765
+        ],
+        "clientBounds": [
+          1459,
+          115,
+          2341,
+          756
+        ],
+        "alwaysOnTop": false
+      },
+      "image": {
+        "file": "compact-native.png",
+        "sha256": "ec1c9df981a285947062819c629fb8ff2c92742aab0b7d1a0520fcef8ae0485a"
+      }
+    },
+    "compact-from-command-palette": {
+      "title": "compact-sample.txt - workspace - Code - OSS Dev",
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "boxes": {
+        "workbench": {
+          "x": 0,
+          "y": 0,
+          "width": 706.4000244140625,
+          "height": 513.6000366210938,
+          "visible": true,
+          "className": "monaco-enable-motion modern-ui modern-ui-tabs modern-ui-connected-editor-tabs modern-ui-notifications-dialogs monaco-workbench windows chromium nopanel floating-panels panel-position-bottom panel-alignment-center file-icons-enabled vs-dark vscode-theme-defaults-themes-2026-dark-json modern-ui-frosted-glass sash-grippers-hidden",
+          "color": "rgb(25, 26, 27)"
+        },
+        "titlebar": {
+          "x": 0,
+          "y": 0,
+          "width": 706,
+          "height": 29.975000381469727,
+          "visible": true,
+          "className": "part titlebar",
+          "color": "rgb(25, 26, 27)"
+        },
+        "editorPart": {
+          "x": 0,
+          "y": 29.975000381469727,
+          "width": 706.4000244140625,
+          "height": 483.625,
+          "visible": true,
+          "className": "part editor",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "statusbar": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "visible": false,
+          "className": "part statusbar status-border-top",
+          "color": "rgb(25, 26, 27)"
+        },
+        "breadcrumbs": null,
+        "tabs": null,
+        "monaco": {
+          "x": 0,
+          "y": 29.975000381469727,
+          "width": 706,
+          "height": 484,
+          "visible": true,
+          "className": "monaco-editor no-user-select  showUnused showDeprecated vs-dark focused",
+          "color": "rgb(18, 19, 20)"
+        },
+        "lines": {
+          "x": 68,
+          "y": 29.975000381469727,
+          "width": 572,
+          "height": 522,
+          "visible": true,
+          "className": "view-lines monaco-mouse-cursor-text",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ],
+      "tabNames": [],
+      "titleToolbar": [
+        [
+          "Sign In",
+          {
+            "x": 461.9875183105469,
+            "y": 3.5875000953674316,
+            "width": 54.01250076293945,
+            "height": 22,
+            "visible": true,
+            "className": "action-item",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Title actions",
+          {
+            "x": 516,
+            "y": 0,
+            "width": 48,
+            "height": 29.17500114440918,
+            "visible": true,
+            "className": "actions-container highlight-toggled",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn Off Compact Mode",
+          {
+            "x": 516,
+            "y": 3.5875000953674316,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-screen-normal",
+            "color": "rgba(90, 93, 94, 0.31)"
+          }
+        ],
+        [
+          "Turn On Always on Top",
+          {
+            "x": 542,
+            "y": 3.5875000953674316,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-pin",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      ],
+      "visibleText": "compact-sample.txt - workspace - Code - OSS Dev\nSign In\n1\n2\n3\nCompact example 😀\nSecond line\nTurn Off Compact Mode",
+      "realDocumentFocus": {
+        "main": false,
+        "auxiliary": true
+      },
+      "native": {
+        "dpi": 120,
+        "nativeTitle": "compact-sample.txt - workspace - Code - OSS Dev",
+        "outerBounds": [
+          1450,
+          115,
+          2350,
+          765
+        ],
+        "clientBounds": [
+          1459,
+          115,
+          2341,
+          756
+        ],
+        "alwaysOnTop": false
+      },
+      "image": {
+        "file": "compact-from-command-palette-native.png",
+        "sha256": "16eb58910ace6f89adbf2e9e9874ded1099a5a195016f9de8ccd39f071a54edb"
+      }
+    },
+    "compact-pinned": {
+      "title": "compact-sample.txt - workspace - Code - OSS Dev",
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "boxes": {
+        "workbench": {
+          "x": 0,
+          "y": 0,
+          "width": 706.4000244140625,
+          "height": 513.6000366210938,
+          "visible": true,
+          "className": "monaco-enable-motion modern-ui modern-ui-tabs modern-ui-connected-editor-tabs modern-ui-notifications-dialogs monaco-workbench windows chromium nopanel floating-panels panel-position-bottom panel-alignment-center file-icons-enabled vs-dark vscode-theme-defaults-themes-2026-dark-json modern-ui-frosted-glass",
+          "color": "rgb(25, 26, 27)"
+        },
+        "titlebar": {
+          "x": 0,
+          "y": 0,
+          "width": 706,
+          "height": 29.975000381469727,
+          "visible": true,
+          "className": "part titlebar",
+          "color": "rgb(25, 26, 27)"
+        },
+        "editorPart": {
+          "x": 0,
+          "y": 29.975000381469727,
+          "width": 706.4000244140625,
+          "height": 483.625,
+          "visible": true,
+          "className": "part editor",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "statusbar": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "visible": false,
+          "className": "part statusbar status-border-top",
+          "color": "rgb(25, 26, 27)"
+        },
+        "breadcrumbs": null,
+        "tabs": null,
+        "monaco": {
+          "x": 0,
+          "y": 29.975000381469727,
+          "width": 706,
+          "height": 484,
+          "visible": true,
+          "className": "monaco-editor no-user-select  showUnused showDeprecated vs-dark focused",
+          "color": "rgb(18, 19, 20)"
+        },
+        "lines": {
+          "x": 68,
+          "y": 29.975000381469727,
+          "width": 572,
+          "height": 522,
+          "visible": true,
+          "className": "view-lines monaco-mouse-cursor-text",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ],
+      "tabNames": [],
+      "titleToolbar": [
+        [
+          "Sign In",
+          {
+            "x": 461.9875183105469,
+            "y": 3.5875000953674316,
+            "width": 54.01250076293945,
+            "height": 22,
+            "visible": true,
+            "className": "action-item",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Title actions",
+          {
+            "x": 516,
+            "y": 0,
+            "width": 48,
+            "height": 29.17500114440918,
+            "visible": true,
+            "className": "actions-container highlight-toggled",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn Off Compact Mode",
+          {
+            "x": 516,
+            "y": 3.5875000953674316,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-screen-normal",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn Off Always on Top",
+          {
+            "x": 542,
+            "y": 3.5875000953674316,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-pinned",
+            "color": "rgba(90, 93, 94, 0.31)"
+          }
+        ]
+      ],
+      "visibleText": "compact-sample.txt - workspace - Code - OSS Dev\nSign In\n1\n2\n3\nCompact example 😀\nSecond line\nTurn Off Always on Top",
+      "realDocumentFocus": {
+        "main": false,
+        "auxiliary": true
+      },
+      "native": {
+        "dpi": 120,
+        "nativeTitle": "compact-sample.txt - workspace - Code - OSS Dev",
+        "outerBounds": [
+          1450,
+          115,
+          2350,
+          765
+        ],
+        "clientBounds": [
+          1459,
+          115,
+          2341,
+          756
+        ],
+        "alwaysOnTop": true
+      },
+      "image": {
+        "file": "compact-pinned-native.png",
+        "sha256": "38dac97cf16dc60d1379e2875ead217a377900b3f57edc0bde048e954fd81e75"
+      }
+    },
+    "expanded-restored": {
+      "title": "compact-sample.txt - workspace - Code - OSS Dev",
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "boxes": {
+        "workbench": {
+          "x": 0,
+          "y": 0,
+          "width": 706.4000244140625,
+          "height": 513.6000366210938,
+          "visible": true,
+          "className": "monaco-enable-motion modern-ui modern-ui-tabs modern-ui-connected-editor-tabs modern-ui-notifications-dialogs monaco-workbench windows chromium nopanel floating-panels panel-position-bottom panel-alignment-center file-icons-enabled vs-dark vscode-theme-defaults-themes-2026-dark-json modern-ui-frosted-glass",
+          "color": "rgb(25, 26, 27)"
+        },
+        "titlebar": {
+          "x": 0,
+          "y": 0,
+          "width": 706,
+          "height": 34.97500228881836,
+          "visible": true,
+          "className": "part titlebar",
+          "color": "rgb(25, 26, 27)"
+        },
+        "editorPart": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 706.4000244140625,
+          "height": 456.63751220703125,
+          "visible": true,
+          "className": "part editor editor-tabs-multiple",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "statusbar": {
+          "x": 0,
+          "y": 491.6125183105469,
+          "width": 706,
+          "height": 21.98750114440918,
+          "visible": true,
+          "className": "part statusbar status-border-top",
+          "color": "rgb(25, 26, 27)"
+        },
+        "breadcrumbs": {
+          "x": 0,
+          "y": 66.9749984741211,
+          "width": 706,
+          "height": 22,
+          "visible": true,
+          "className": "breadcrumbs-control with-editor-type backslash-path relative-path",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "tabs": {
+          "x": 0,
+          "y": 34.97500228881836,
+          "width": 624,
+          "height": 32,
+          "visible": true,
+          "className": "tabs-container",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "monaco": {
+          "x": 0,
+          "y": 88.9749984741211,
+          "width": 706,
+          "height": 403,
+          "visible": true,
+          "className": "monaco-editor no-user-select  showUnused showDeprecated vs-dark focused",
+          "color": "rgb(18, 19, 20)"
+        },
+        "lines": {
+          "x": 68,
+          "y": 88.9749984741211,
+          "width": 572,
+          "height": 441,
+          "visible": true,
+          "className": "view-lines monaco-mouse-cursor-text",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ],
+      "tabNames": [
+        "compact-sample.txt, Window 2: Editor Group 1"
+      ],
+      "titleToolbar": [
+        [
+          "Go Back (Alt+LeftArrow)",
+          {
+            "x": 131.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-arrow-left",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Go Forward (Alt+RightArrow)",
+          {
+            "x": 157.5625,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Agent Status",
+          {
+            "x": 183.5625,
+            "y": 5.287499904632568,
+            "width": 268.4250183105469,
+            "height": 23.600000381469727,
+            "visible": true,
+            "className": "action-item agent-status-container",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Open Quick Access",
+          {
+            "x": 184.3625030517578,
+            "y": 6.087500095367432,
+            "width": 215.8249969482422,
+            "height": 22,
+            "visible": true,
+            "className": "agent-status-input-area",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Toggle Chat",
+          {
+            "x": 406.1875,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-chat-sparkle",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "More Actions",
+          {
+            "x": 431.6875,
+            "y": 6.087500095367432,
+            "width": 18,
+            "height": 24,
+            "visible": true,
+            "className": "action-label codicon codicon-chevron-down agent-status-sparkle-dropdown",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Sign In",
+          {
+            "x": 461.9875183105469,
+            "y": 6.087500095367432,
+            "width": 54.01250076293945,
+            "height": 22,
+            "visible": true,
+            "className": "action-item",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Title actions",
+          {
+            "x": 516,
+            "y": 0,
+            "width": 48,
+            "height": 34.17499923706055,
+            "visible": true,
+            "className": "actions-container highlight-toggled",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        [
+          "Turn On Compact Mode",
+          {
+            "x": 516,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-screen-full",
+            "color": "rgba(90, 93, 94, 0.31)"
+          }
+        ],
+        [
+          "Turn On Always on Top",
+          {
+            "x": 542,
+            "y": 6.087500095367432,
+            "width": 22,
+            "height": 22,
+            "visible": true,
+            "className": "action-label codicon codicon-pin",
+            "color": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      ],
+      "visibleText": "workspace\nSign In\ncompact-sample.txt\ncompact-sample.txt\n1\n2\n3\nCompact example 😀\nSecond line\nPlain Text\nCRLF\nUTF-8 with BOM\nSpaces: 4\nLn 2, Col 12\nTurn On Compact Mode",
+      "realDocumentFocus": {
+        "main": false,
+        "auxiliary": true
+      },
+      "native": {
+        "dpi": 120,
+        "nativeTitle": "compact-sample.txt - workspace - Code - OSS Dev",
+        "outerBounds": [
+          1450,
+          115,
+          2350,
+          765
+        ],
+        "clientBounds": [
+          1459,
+          115,
+          2341,
+          756
+        ],
+        "alwaysOnTop": false
+      },
+      "image": {
+        "file": "expanded-restored-native.png",
+        "sha256": "d428c62c2d437eb28871c4d1f74c401bb2d32b5657c5682aaa1367070a073f34"
+      }
+    }
+  },
+  "trustedInput": [
+    {
+      "type": "pointerdown",
+      "x": 164.8000030517578,
+      "y": 115.20000457763672,
+      "target": null,
+      "className": "view-line",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerup",
+      "x": 164.8000030517578,
+      "y": 115.20000457763672,
+      "target": null,
+      "className": "view-lines monaco-mouse-cursor-text",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "click",
+      "x": 164,
+      "y": 115,
+      "target": null,
+      "className": "view-lines monaco-mouse-cursor-text",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerdown",
+      "x": 527.2000122070312,
+      "y": 16.80000114440918,
+      "target": "Turn On Compact Mode",
+      "className": "action-label codicon codicon-screen-full",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerup",
+      "x": 527.2000122070312,
+      "y": 16.80000114440918,
+      "target": "Turn On Compact Mode",
+      "className": "action-label codicon codicon-screen-full",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerdown",
+      "x": 552.7999877929688,
+      "y": 14.40000057220459,
+      "target": "Turn On Always on Top",
+      "className": "action-label codicon codicon-pin",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerup",
+      "x": 552.7999877929688,
+      "y": 14.40000057220459,
+      "target": "Turn On Always on Top",
+      "className": "action-label codicon codicon-pin",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "click",
+      "x": 552,
+      "y": 14,
+      "target": "Turn On Always on Top",
+      "className": "action-label codicon codicon-pin",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerdown",
+      "x": 552.7999877929688,
+      "y": 14.40000057220459,
+      "target": "Turn Off Always on Top",
+      "className": "action-label codicon codicon-pinned",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerup",
+      "x": 552.7999877929688,
+      "y": 14.40000057220459,
+      "target": "Turn Off Always on Top",
+      "className": "action-label codicon codicon-pinned",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "click",
+      "x": 552,
+      "y": 14,
+      "target": "Turn Off Always on Top",
+      "className": "action-label codicon codicon-pinned",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerdown",
+      "x": 527.2000122070312,
+      "y": 14.40000057220459,
+      "target": "Turn Off Compact Mode",
+      "className": "action-label codicon codicon-screen-normal",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "pointerup",
+      "x": 527.2000122070312,
+      "y": 14.40000057220459,
+      "target": "Turn Off Compact Mode",
+      "className": "action-label codicon codicon-screen-normal",
+      "focused": true,
+      "trusted": true
+    },
+    {
+      "type": "click",
+      "x": 527,
+      "y": 14,
+      "target": "Turn Off Compact Mode",
+      "className": "action-label codicon codicon-screen-normal",
+      "focused": true,
+      "trusted": true
+    }
+  ],
+  "focusedAfterInput": true,
+  "registryBefore": {
+    "count": 2,
+    "active": 2,
+    "main": 1,
+    "windows": [
+      {
+        "id": 1,
+        "hasFocus": false
+      },
+      {
+        "id": 2,
+        "hasFocus": true
+      }
+    ]
+  },
+  "registryAfter": {
+    "count": 2,
+    "active": 2,
+    "main": 1,
+    "windows": [
+      {
+        "id": 1,
+        "hasFocus": false
+      },
+      {
+        "id": 2,
+        "hasFocus": true
+      }
+    ]
+  },
+  "compactEntry": "Command Palette",
+  "exactRestoredGeometry": true,
+  "checksPassed": true,
+  "diskSha256After": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+  "exitCode": 0
+}
