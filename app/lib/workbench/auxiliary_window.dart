@@ -719,6 +719,14 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     } on Object {
       // 主窗口不可达：仅关闭本窗口（文档状态以磁盘/主窗会话为准）。
     }
+    if (defaultTargetPlatform == TargetPlatform.linux) {
+      // Unmap the GTK window while its rendering context is still alive.
+      try {
+        await windowManager.hide();
+      } on Exception {
+        // The native close still finishes if hiding is unavailable.
+      }
+    }
     await windowManager.setPreventClose(false);
     if (mounted) setState(_releaseDocuments);
     if (defaultTargetPlatform == TargetPlatform.windows) {

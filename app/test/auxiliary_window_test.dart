@@ -586,7 +586,9 @@ void main() {
           if (call.method == 'isAlwaysOnTop') return false;
           if (call.method == 'isFocused') return false;
           if (call.method == 'setPreventClose') return null;
-          if (call.method == 'close' || call.method == 'destroy') {
+          if (call.method == 'hide' ||
+              call.method == 'close' ||
+              call.method == 'destroy') {
             nativeCloseCalls.add(call.method);
           }
           if (call.method == 'getBounds') {
@@ -795,6 +797,7 @@ void main() {
       expect(returnedDocuments.single['text'], incomingText);
       expect(returnedDocuments.single['dirty'], isTrue);
       expect(nativeCloseCalls, [
+        if (defaultTargetPlatform == TargetPlatform.linux) 'hide',
         defaultTargetPlatform == TargetPlatform.windows ? 'close' : 'destroy',
       ]);
       expect(input.inputWindow.document.resync, throwsA(isA<AlulaException>()));
