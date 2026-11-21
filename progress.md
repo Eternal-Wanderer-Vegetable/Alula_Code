@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.159 / feat-211。产品 4e71b60e7e66f7452c6c5135b85359ebedb3c800 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主侧栏至底部左半区、次侧栏至右侧下半区。保留 Explorer、Diagnostics 和两个搜索结果，持久化迁移位置。专项 107/107，Flutter 1,711 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44871027179 四项及 Platform Availability 44871023371 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.159-sidebar-group-to-panel.md。
+
 - 2026-11-21 完成 P05.158 / feat-210。产品 `8ba064e1b42809635430cb6dbe968abab41b812b` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证底部和右侧面板的窗格标题排序、半区反馈、折叠、比例、内容和显隐恢复。成员可拖回主侧栏。专项 105/105，Flutter 1,709 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44868880615 四项及 Platform Availability 44868874401 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.158-panel-group-reorder.md。
 
 - 2026-11-21 完成 P05.157 / feat-209。产品 `afb33ec775b9d055e8ae0514d461b106a75e66ca` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证底部和右侧面板的窗格折叠、比例恢复、搜索聚焦、双折叠及显隐和重挂载。专项 102/102，Flutter 1,706 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44866645581 四项及 Platform Availability 44866638620 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.157-panel-group-collapse.md。

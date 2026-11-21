@@ -2657,6 +2657,20 @@
         "feat-206",
         "feat-210"
       ],
+      "status": "done",
+      "evidence": "产品 4e71b60e7e66f7452c6c5135b85359ebedb3c800 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主侧栏至底部左半区、次侧栏至右侧下半区。保留 Explorer、Diagnostics 和两个搜索结果，持久化迁移位置。专项 107/107，Flutter 1,711 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44871027179 四项及 Platform Availability 44871023371 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.159-sidebar-group-to-panel.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-212",
+      "name": "P05.160 LAY-04/05 既有面板分组按目标窗格接收侧栏视图",
+      "description": "固定版核对侧栏来源移入已有成员的标准面板，按命中窗格半区相邻插入并保留已有窗格状态。",
+      "dependencies": [
+        "feat-199",
+        "feat-210",
+        "feat-211"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
