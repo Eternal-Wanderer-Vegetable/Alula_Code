@@ -2500,14 +2500,28 @@
     },
     {
       "id": "feat-200",
-      "name": "P05.148 LAY-04/05 分组视图拖回侧栏",
-      "description": "对照固定版从分组视图标题拖回侧栏，覆盖原标签、剩余内容、取消、焦点和持久化。",
+      "name": "P05.148 LAY-04/05 分组视图拖回侧栏并建立独立入口",
+      "description": "对照固定版从分组视图标题拖到活动栏或次侧栏标题区，验证独立入口、原内容、取消、焦点和持久化。",
       "dependencies": [
         "feat-197",
         "feat-199"
       ],
+      "status": "done",
+      "evidence": "产品 `233736ae8fc96dcf4e8142fadaf810e973e3c8ba` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证分组标题拖回主次侧栏的独立入口、查询、焦点、其余分组和次侧栏切换。专项 49/49，Flutter 1,685 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44840906126 四项及 Platform Availability 44840896134 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.148-grouped-view-sidebar.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-201",
+      "name": "P05.149 LAY-04/05 分组面板视图拖入主侧栏正文",
+      "description": "对照固定版正文落点，将分组内置视图放入主侧栏的当前容器，覆盖布局、剩余内容、焦点、取消和持久化。",
+      "dependencies": [
+        "feat-072",
+        "feat-199",
+        "feat-200"
+      ],
       "status": "not-started",
-      "evidence": "等待固定版行为对照、实现和平台验收。",
+      "evidence": "P05.148 已对照 Search 在主侧栏正文放入 Explorer。等待实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
