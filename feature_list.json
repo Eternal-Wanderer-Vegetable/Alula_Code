@@ -2714,6 +2714,20 @@
         "feat-211",
         "feat-214"
       ],
+      "status": "done",
+      "evidence": "产品 6e2ab28b1bb656c3d2e188a4ae014ea5a39062d7 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏标题拖到面板标题区。Search 独立入口激活并聚焦输入，原侧栏分组保留，反复切换后有两处结果。专项 117/117，Flutter 1,721 passed / 2 skipped。同一 SHA 的 PR CI 44879949427 四项及 Platform Availability 44879945621 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.163-grouped-sidebar-panel-tab.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-216",
+      "name": "P05.164 LAY-04/05 分组侧栏成员拖至对侧独立视图入口",
+      "description": "固定版核对跨侧栏标题拖放时创建独立视图入口，保留源组与成员内容。",
+      "dependencies": [
+        "feat-200",
+        "feat-214",
+        "feat-215"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
