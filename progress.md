@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.167 / feat-219。产品 b7b822c64bf5c469ffe1b164b90ea79ec7284324 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对活动栏分组容器移到次侧栏。窗格顺序、权重、折叠、查询结果及目标原入口保留。专项 155/155，Flutter 1,730 passed / 2 skipped。同一 SHA 的 PR CI 44890433058 四项及 Platform Availability 44890430904 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.167-sidebar-container-move.md。
+
 - 2026-11-21 完成 P05.166 / feat-218。产品 4590fc534e3f5f19223bda70a1a583c67f5499f6 已推草稿 PR #3。固定版、Windows 实机 F6 和 Linux Xvfb 默认 Ctrl+Shift+F 验证两侧栏 Search 的四种打开与聚焦状态。修复前后的 Windows 实机均运行同一命令，实机默认组合键送达限制保留。专项 153/153，Flutter 1,728 passed / 2 skipped。同一 SHA 的 PR CI 44886744177 四项及 Platform Availability 44886738603 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.166-sidebar-search-focus.md。
 
 - 2026-11-21 完成 P05.165 / feat-217。产品 ed26e989333e933221ed2e17bbc8c38723022eff 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏分组成员拖到同侧入口。Search 保留位置、创建独立入口并聚焦，原组 Outline、权重和两个结果保留。专项 122/122，Flutter 1,726 passed / 2 skipped。同一 SHA 的 PR CI 44884037580 四项及 Platform Availability 44884032849 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.165-sidebar-member-detach.md。
