@@ -21669,46 +21669,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
                     builders: {
-                      'activity': (_) => ActivityBar(
-                            activeView: _focusedSidebarView ??
-                                _sidebarView ??
-                                _secondarySidebarView ??
-                                'explorer',
-                            sidebarCollapsed: _layout.isCollapsed('sidebar'),
-                            axis: _layout.activityBarLocation ==
-                                    ActivityBarLocation.side
-                                ? Axis.vertical
-                                : Axis.horizontal,
-                            size: _layout.activityBarSize,
-                            order: _layout.activityBarOrder,
-                            pinnedViews: _layout.activityBarPinnedViews,
-                            excludedViews:
-                                _layout.sidebarViews(panelSidebarViewLocation),
-                            badgeDisabledViews:
-                                _layout.activityBarBadgesDisabledViews,
-                            accountsVisible: _layout.activityBarAccountsVisible,
-                            onOrderChanged: _layout.setActivityBarOrder,
-                            onPinnedViewsChanged:
-                                _layout.setActivityBarPinnedViews,
-                            onBadgeDisabledViewsChanged:
-                                _layout.setActivityBarBadgesDisabledViews,
-                            onAccountsVisibilityChanged:
-                                _layout.setActivityBarAccountsVisible,
-                            onManageCommand: (command) => _runCommand(command),
-                            onSizeChanged: _layout.activityBarLocation ==
-                                    ActivityBarLocation.side
-                                ? _layout.setActivityBarSize
-                                : null,
-                            onSelectView: _selectSidebarView,
+                      'activity': (_) => _buildGroupedPanelViewDropTarget(
+                            primarySidebarViewLocation,
+                            ActivityBar(
+                              activeView: _sidebarView ?? 'explorer',
+                              sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                              axis: _layout.activityBarLocation ==
+                                      ActivityBarLocation.side
+                                  ? Axis.vertical
+                                  : Axis.horizontal,
+                              size: _layout.activityBarSize,
+                              order: _layout.activityBarOrder,
+                              pinnedViews: _layout.activityBarPinnedViews,
+                              excludedViews: [
+                                ..._layout.sidebarViews(panelSidebarViewLocation),
+                                ..._layout.sidebarViews(secondarySidebarViewLocation),
+                              ],
+                              badgeDisabledViews:
+                                  _layout.activityBarBadgesDisabledViews,
+                              accountsVisible: _layout.activityBarAccountsVisible,
+                              onOrderChanged: _layout.setActivityBarOrder,
+                              onPinnedViewsChanged:
+                                  _layout.setActivityBarPinnedViews,
+                              onBadgeDisabledViewsChanged:
+                                  _layout.setActivityBarBadgesDisabledViews,
+                              onAccountsVisibilityChanged:
+                                  _layout.setActivityBarAccountsVisible,
+                              onManageCommand: (command) => _runCommand(command),
+                              onSizeChanged: _layout.activityBarLocation ==
+                                      ActivityBarLocation.side
+                                  ? _layout.setActivityBarSize
+                                  : null,
+                              onSelectView: _selectSidebarView,
+                            ),
                           ),
                       'sidebar': (_) => _buildSidebarViewRegion(
                             primarySidebarViewLocation,
                             _sidebarView,
                           ),
-                      secondarySidebarRegion: (_) => _buildSidebarViewRegion(
-                            secondarySidebarViewLocation,
-                            _secondarySidebarView,
-                          ),
+                      secondarySidebarRegion: (_) => _buildSecondarySidebar(),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                       for (final g in _groups.values)
@@ -22496,6 +22495,98 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：资源管理器 ----------
 
+  Widget _buildSecondarySidebar() {
+    final views = _layout.sidebarViews(secondarySidebarViewLocation);
+    return Column(
+      children: [
+        SizedBox(
+          height: 32,
+          width: double.infinity,
+          child: _buildGroupedPanelViewDropTarget(
+            secondarySidebarViewLocation,
+            ColoredBox(
+              color: const Color(0xFF1B1E24),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final view in views)
+                      Semantics(
+                        selected: view == _secondarySidebarView,
+                        child: TextButton(
+                          key: ValueKey('secondary-sidebar-entry-$view'),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: const Size(0, 32),
+                            foregroundColor: view == _secondarySidebarView
+                                ? Colors.white
+                                : const Color(0xFFA5A8B1),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                          onPressed: () {
+                            if (view != _secondarySidebarView) {
+                              _selectSidebarView(view);
+                            }
+                            _focusSidebarRegion(
+                                secondarySidebarViewLocation, null);
+                            _focusMovedSearchView(
+                                view, secondarySidebarViewLocation);
+                          },
+                          child: Text(_sidebarViewLabel(view)),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: _buildSidebarViewRegion(
+            secondarySidebarViewLocation,
+            _secondarySidebarView,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroupedPanelViewDropTarget(String location, Widget child) {
+    bool accepts(_PanelHostedViewDrag drag) =>
+        _layout.root.panelViewPlacements.containsKey(drag.view);
+
+    return DragTarget<_PanelHostedViewDrag>(
+      key: ValueKey('grouped-panel-view-entry-drop-$location'),
+      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onAcceptWithDetails: (details) {
+        if (accepts(details.data)) {
+          _moveSidebarView(details.data.view, location);
+        }
+      },
+      builder: (context, candidates, _) => Stack(
+        fit: StackFit.passthrough,
+        children: [
+          child,
+          if (candidates.isNotEmpty)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  key: ValueKey('grouped-panel-view-entry-highlight-$location'),
+                  decoration: const BoxDecoration(
+                    color: Color(0x30007ACC),
+                    border: Border.fromBorderSide(
+                      BorderSide(color: Color(0xFF55B8FF)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSidebarViewRegion(
     String location,
     String? view, {
@@ -22525,10 +22616,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       key: ValueKey('sidebar-panel-view-drop-$location'),
       onWillAcceptWithDetails: (details) =>
           _layout.sidebarViewLocation(details.data.view) ==
-          panelSidebarViewLocation,
+              panelSidebarViewLocation &&
+          !_layout.root.panelViewPlacements.containsKey(details.data.view),
       onAcceptWithDetails: (details) {
         final view = details.data.view;
-        if (_layout.sidebarViewLocation(view) != panelSidebarViewLocation) {
+        if (_layout.sidebarViewLocation(view) != panelSidebarViewLocation ||
+            _layout.root.panelViewPlacements.containsKey(view)) {
           return;
         }
         _moveSidebarView(view, location, fromDrag: true);
@@ -26683,8 +26776,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 面板：诊断 / 补全 / 语法 ----------
 
-  Widget _buildPanelHostedViewTab(String view) {
-    final label = _sidebarViewLabel(view);
+  Widget _buildPanelHostedViewTab(String view) => _buildPanelHostedViewDrag(
+        view,
+        Tab(
+            key: ValueKey('panel-builtin-view-$view'),
+            text: _sidebarViewLabel(view)),
+      );
+
+  Widget _buildPanelHostedViewDrag(String view, Widget child) {
     return Draggable<_PanelHostedViewDrag>(
       data: _PanelHostedViewDrag(view),
       maxSimultaneousDrags: 1,
@@ -26694,10 +26793,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         borderRadius: BorderRadius.circular(3),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(label, style: const TextStyle(fontSize: 12)),
+          child: Text(_sidebarViewLabel(view),
+              style: const TextStyle(fontSize: 12)),
         ),
       ),
-      child: Tab(key: ValueKey('panel-builtin-view-$view'), text: label),
+      child: child,
     );
   }
 
@@ -26761,6 +26861,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Widget groupedView(String view) => _buildPanelGroupPane(
           key: ValueKey('panel-view-group-${tab.name}-$view'),
           label: _sidebarViewLabel(view),
+          draggedView: view,
           child: _buildSidebarViewRegion(
             panelSidebarViewLocation,
             view,
@@ -26816,20 +26917,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required Key key,
     required String label,
     required Widget child,
+    String? draggedView,
   }) {
+    final heading = Container(
+      height: 24,
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      color: const Color(0xFF252932),
+      child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+    );
     return LayoutBuilder(
       key: key,
       builder: (context, constraints) {
         final pane = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              height: 24,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              color: const Color(0xFF252932),
-              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-            ),
+            if (draggedView == null)
+              heading
+            else
+              _buildPanelHostedViewDrag(
+                draggedView,
+                KeyedSubtree(
+                  key: ValueKey('panel-view-group-title-$draggedView'),
+                  child: heading,
+                ),
+              ),
             Expanded(child: child),
           ],
         );

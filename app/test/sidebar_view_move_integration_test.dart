@@ -73,6 +73,14 @@ void main() {
     await mountApp();
     final primary = find.byKey(const ValueKey('wb-region-sidebar'));
     final secondary = find.byKey(const ValueKey('wb-region-secondarySidebar'));
+    Finder secondaryExplorer(Finder region) => find.descendant(
+          of: find.descendant(
+            of: region,
+            matching: find.byKey(const ValueKey('builtin-view-focus-explorer')),
+          ),
+          matching: find.text('资源管理器'),
+        );
+
     expect(secondary, findsNothing);
 
     final viewInput = await openCommand('移动视图', 'qi-查看: 移动视图…');
@@ -84,7 +92,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(secondary, findsOneWidget);
     expect(
-      find.descendant(of: secondary, matching: find.text('资源管理器')),
+      secondaryExplorer(secondary),
       findsOneWidget,
     );
     expect(
@@ -108,11 +116,13 @@ void main() {
         reason: 'canceling the destination picker does not change the layout');
     expect(cancelInput, findsNothing);
     expect(
-      find.descendant(of: secondary, matching: find.text('资源管理器')),
+      secondaryExplorer(secondary),
       findsOneWidget,
     );
 
-    await tester.tap(find.byTooltip('资源管理器'));
+    await tester.tap(
+      find.byKey(const ValueKey('secondary-sidebar-entry-explorer')),
+    );
     await tester.pumpAndSettle();
     await openCommand('移动聚焦的视图', 'qi-查看: 移动聚焦的视图…');
     await tester.tap(find.byKey(const ValueKey('qi-主侧栏')));
@@ -120,7 +130,7 @@ void main() {
     expect(
       find.descendant(of: primary, matching: find.text('资源管理器')),
       findsOneWidget,
-      reason: 'moveFocusedView acts on the view selected by the Activity Bar',
+      reason: 'moveFocusedView acts on the selected secondary entry',
     );
 
     await moveView('资源管理器', '次侧栏');
@@ -151,10 +161,7 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: restoredSecondary,
-        matching: find.text('资源管理器'),
-      ),
+      secondaryExplorer(restoredSecondary),
       findsOneWidget,
     );
 
@@ -606,6 +613,128 @@ void main() {
       expect(find.descendant(of: group, matching: search), findsOneWidget);
       expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
+  for (final (location, region) in [
+    (primarySidebarViewLocation, 'sidebar'),
+    (secondarySidebarViewLocation, secondarySidebarRegion),
+  ]) {
+    testWidgets('Grouped panel titles return to a $location entry surface',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      layout.moveSidebarView('git', secondarySidebarViewLocation);
+      layout.moveSidebarView('search', panelSidebarViewLocation,
+          panelPlacement: (tab: PanelViewTab.diagnostics, before: false));
+      layout.moveSidebarView('outline', panelSidebarViewLocation,
+          panelPlacement: (tab: PanelViewTab.diagnostics, before: true));
+      layout.showRegion('panel');
+      layout.showRegion(secondarySidebarRegion);
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final source =
+          find.byKey(const ValueKey('panel-view-group-title-search'));
+      final outline =
+          find.byKey(const ValueKey('panel-view-group-title-outline'));
+      final editor = find.byKey(const ValueKey('wb-region-editor'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final owner = find.byKey(ValueKey('wb-region-$region'));
+      final panel = find.byKey(const ValueKey('wb-region-panel'));
+      final target =
+          find.byKey(ValueKey('grouped-panel-view-entry-drop-$location'));
+      final highlight =
+          find.byKey(ValueKey('grouped-panel-view-entry-highlight-$location'));
+      final activitySearch =
+          find.byKey(const ValueKey('activity-bar-item-menu-anchor-search'));
+      final secondarySearch =
+          find.byKey(const ValueKey('secondary-sidebar-entry-search'));
+
+      Future<TestGesture> dragTo(Finder destination) async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(source) + const Offset(24, 12),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(const Offset(0, -18));
+        await gesture.moveTo(tester.getCenter(destination));
+        await tester.pump();
+        return gesture;
+      }
+
+      await tester.enterText(search, 'query remains 😀');
+      final rejected = await dragTo(editor);
+      expect(highlight, findsNothing);
+      await rejected.up();
+      await tester.pumpAndSettle();
+      expect(source, findsOneWidget);
+      expect(outline, findsOneWidget);
+
+      final cancelled = await dragTo(target);
+      expect(highlight, findsOneWidget);
+      await cancelled.cancel();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(source, findsOneWidget);
+
+      final accepted = await dragTo(target);
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(source, findsNothing);
+      expect(highlight, findsNothing);
+      expect(outline, findsOneWidget);
+      expect(
+          find.descendant(of: panel, matching: find.textContaining('LSP 未启动')),
+          findsOneWidget);
+      expect(find.descendant(of: owner, matching: search), findsOneWidget);
+      final field = tester.widget<TextField>(search);
+      expect(field.controller!.text, 'query remains 😀');
+      expect(field.focusNode!.hasFocus, isTrue);
+
+      if (location == secondarySidebarViewLocation) {
+        expect(activitySearch, findsNothing);
+        expect(secondarySearch, findsOneWidget);
+        await tester
+            .tap(find.byKey(const ValueKey('secondary-sidebar-entry-git')));
+        await tester.pumpAndSettle();
+        expect(search, findsNothing);
+        await tester.tap(secondarySearch);
+        await tester.pumpAndSettle();
+        expect(tester.widget<TextField>(search).controller!.text,
+            'query remains 😀');
+        expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      } else {
+        expect(activitySearch, findsOneWidget);
+        expect(secondarySearch, findsNothing);
+      }
+
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewLocations?['search'], location);
+      expect(saved.panelViewPlacements.keys, ['outline']);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(outline, findsOneWidget);
+      expect(source, findsNothing);
+      expect(find.descendant(of: owner, matching: search), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
     });
