@@ -2755,8 +2755,22 @@
         "feat-216",
         "feat-217"
       ],
+      "status": "done",
+      "evidence": "产品 4590fc534e3f5f19223bda70a1a583c67f5499f6 已推草稿 PR #3。固定版、Windows 实机 F6 和 Linux Xvfb 默认 Ctrl+Shift+F 验证两侧栏 Search 的四种打开与聚焦状态。修复前后的 Windows 实机均运行同一命令，实机默认组合键送达限制保留。专项 153/153，Flutter 1,728 passed / 2 skipped。同一 SHA 的 PR CI 44886744177 四项及 Platform Availability 44886738603 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.166-sidebar-search-focus.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-219",
+      "name": "P05.167 LAY-04/05 移动已有分组的整个主侧栏容器",
+      "description": "固定版核对活动栏拖整个主侧栏分组容器至次侧栏入口，保留成员、内容、顺序、权重和折叠。",
+      "dependencies": [
+        "feat-206",
+        "feat-214",
+        "feat-217"
+      ],
       "status": "not-started",
-      "evidence": "P05.164 已复现差异，等待固定版对照、实现和平台验收。",
+      "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
