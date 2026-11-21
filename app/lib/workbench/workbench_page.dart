@@ -124,6 +124,7 @@ import 'secondary_sidebar_layout.dart';
 import 'sidebar_position.dart';
 import 'welcome_page.dart';
 import 'walkthrough.dart';
+import 'sidebar_group_split.dart';
 import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
@@ -22511,10 +22512,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       autofocusSearch: !grouped,
     );
 
-    Widget member(String view) => _buildPanelGroupPane(
-          key: ValueKey('$location-sidebar-group-$view'),
+    Widget pane(String view, Key key, Widget child) => _buildPanelGroupPane(
+          key: key,
           label: view == 'search' ? _sidebarViewLabel(view) : null,
-          child: _buildSidebarViewRegion(
+          // Explorer and Source Control can have more fixed controls than
+          // the sash minimum. Keep those controls reachable by scrolling.
+          minimumContentHeight: switch (view) {
+            'explorer' => 384,
+            'git' => 264,
+            _ => 136,
+          },
+          child: child,
+        );
+
+    Widget member(String view) => pane(
+          view,
+          ValueKey('$location-sidebar-group-$view'),
+          _buildSidebarViewRegion(
             location,
             view,
             autofocusSearch: false,
@@ -22527,21 +22541,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (!grouped)
           original
         else
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final view in before) Expanded(child: member(view)),
-              Expanded(
-                child: _buildPanelGroupPane(
-                  key: ValueKey('$location-sidebar-group-original-$container'),
-                  label: container == 'search'
-                      ? _sidebarViewLabel(container)
-                      : null,
-                  child: original,
-                ),
+          SidebarGroupSplit(
+            key: ValueKey('sidebar-group-$location-$container'),
+            location: location,
+            panes: {
+              for (final view in before) view: member(view),
+              container: pane(
+                container,
+                ValueKey('$location-sidebar-group-original-$container'),
+                original,
               ),
-              for (final view in after) Expanded(child: member(view)),
-            ],
+              for (final view in after) view: member(view),
+            },
+            weights: {
+              for (final view in [...before, container, ...after])
+                view: _layout.root.sidebarGroupPaneWeights[view] ?? 1,
+            },
+            onCommit: (weights) =>
+                _layout.setSidebarGroupPaneWeights(container, weights),
           ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -27036,6 +27053,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required String? label,
     required Widget child,
     String? draggedView,
+    double minimumContentHeight = 136,
   }) {
     final heading = label == null
         ? null
@@ -27069,9 +27087,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         // A pane remains scrollable when the outer sash leaves too little
         // space for the hosted view's inputs and actions.
         const minWidth = 180.0;
-        const minHeight = 136.0;
         if (constraints.maxWidth >= minWidth &&
-            constraints.maxHeight >= minHeight) {
+            constraints.maxHeight >= minimumContentHeight) {
           return pane;
         }
         return SingleChildScrollView(
@@ -27083,7 +27100,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: SingleChildScrollView(
               primary: false,
               child: SizedBox(
-                height: math.max(constraints.maxHeight, minHeight),
+                height: math.max(constraints.maxHeight, minimumContentHeight),
                 child: pane,
               ),
             ),

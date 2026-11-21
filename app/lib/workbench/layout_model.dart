@@ -305,6 +305,14 @@ class WbSplit extends WbNode {
   /// Root-only membership and order for views within a side bar entry.
   final Map<String, SidebarViewPlacement> sidebarViewPlacements = {};
 
+  /// Root-only relative sizes of panes participating in a side bar group.
+  final Map<String, double> sidebarGroupPaneWeights = {};
+
+  Set<String> get sidebarGroupedPaneIds => {
+        ...sidebarViewPlacements.keys,
+        for (final placement in sidebarViewPlacements.values) placement.container,
+      };
+
   /// Root-only selected view IDs; null identifies legacy/default selection.
   String? primarySidebarView;
   String? secondarySidebarView;
@@ -364,6 +372,8 @@ class WbSplit extends WbNode {
                 'before': entry.value.before,
               },
           },
+        if (sidebarGroupPaneWeights.isNotEmpty)
+          'sidebarGroupPaneWeights': Map.of(sidebarGroupPaneWeights),
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -456,6 +466,18 @@ class WbSplit extends WbNode {
       split.sidebarViewPlacements.removeWhere(
         (_, placement) => members.contains(placement.container),
       );
+    }
+    final sidebarWeights = json['sidebarGroupPaneWeights'];
+    if (sidebarWeights is Map) {
+      for (final view in split.sidebarGroupedPaneIds) {
+        final weight = sidebarWeights[view];
+        if (weight is num &&
+            weight.isFinite &&
+            weight > 0 &&
+            weight <= activityBarViewOrder.length) {
+          split.sidebarGroupPaneWeights[view] = weight.toDouble();
+        }
+      }
     }
     // P05.12 layouts persisted Activity Bar placement but had no size field.
     // Upgrade those root layouts to Default while preserving the existing

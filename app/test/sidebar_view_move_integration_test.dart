@@ -885,6 +885,112 @@ void main() {
     });
   }
 
+  for (final location in [
+    primarySidebarViewLocation,
+    secondarySidebarViewLocation,
+  ]) {
+    testWidgets('$location group sash clamps, cancels and restores its sizes',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      if (location == secondarySidebarViewLocation) {
+        layout.moveSidebarView('explorer', location);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      layout.moveSidebarView('search', panelSidebarViewLocation);
+      layout.moveSidebarView('search', location,
+          sidebarPlacement: (container: 'explorer', before: true));
+      layout.moveSidebarView('git', panelSidebarViewLocation);
+      layout.moveSidebarView('git', location,
+          sidebarPlacement: (container: 'explorer', before: false));
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final sash =
+          find.byKey(ValueKey('sidebar-group-sash-$location-search-explorer'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final first = find.byKey(ValueKey('$location-sidebar-group-search'));
+      final second =
+          find.byKey(ValueKey('$location-sidebar-group-original-explorer'));
+      final neighbor = find.byKey(ValueKey('$location-sidebar-group-git'));
+      await tester.enterText(search, 'retained through sash drag 😀');
+      final initial = tester.getSize(first).height;
+      final sameNeighbor = tester.getRect(neighbor);
+      final initialSecond = tester.getRect(second);
+
+      void expectNeighborUnchanged() {
+        final current = tester.getRect(neighbor);
+        expect(
+            (current.topLeft - sameNeighbor.topLeft).distance, lessThan(1e-6));
+        expect((current.bottomRight - sameNeighbor.bottomRight).distance,
+            lessThan(1e-6));
+      }
+
+      Future<TestGesture> drag(double dy) async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(sash),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(Offset(0, dy));
+        await tester.pump();
+        return gesture;
+      }
+
+      final preview = await drag(84);
+      expect(tester.getSize(first).height, closeTo(initial + 84, 0.05));
+      expectNeighborUnchanged();
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarGroupPaneWeights, isEmpty);
+      await preview.cancel();
+      await tester.pumpAndSettle();
+      expect(tester.getSize(first).height, closeTo(initial, 0.05));
+      expect(tester.getRect(second), initialSecond);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarGroupPaneWeights, isEmpty);
+
+      final min = await drag(-1000);
+      expect(tester.getSize(first).height, closeTo(148, 0.05));
+      await min.up();
+      await tester.pumpAndSettle();
+      final max = await drag(1000);
+      expect(tester.getSize(second).height, closeTo(148, 0.05));
+      await max.up();
+      await tester.pumpAndSettle();
+      expectNeighborUnchanged();
+      expect(tester.widget<TextField>(search).controller!.text,
+          'retained through sash drag 😀');
+      await tester.pump(const Duration(milliseconds: 700));
+      final persisted = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+      expect(persisted.keys.toSet(), {'explorer', 'search', 'git'});
+      expect(persisted['search'], greaterThan(persisted['explorer']!));
+      final settled = tester.getSize(first).height;
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(tester.getSize(first).height, closeTo(settled, 0.05));
+      expect(tester.getSize(second).height, closeTo(148, 0.05));
+      expectNeighborUnchanged();
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

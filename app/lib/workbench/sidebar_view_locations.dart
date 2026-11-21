@@ -86,6 +86,37 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
           if (entry.value == (container: container, before: before)) entry.key,
       ];
 
+  /// Persist the committed pane proportions for the current group only.
+  bool setSidebarGroupPaneWeights(
+      String container, Map<String, double> weights) {
+    final panes = {
+      container,
+      ...groupedSidebarViews(container, before: true),
+      ...groupedSidebarViews(container, before: false),
+    };
+    if (panes.length < 2 ||
+        weights.length != panes.length ||
+        !panes.every(weights.containsKey) ||
+        weights.values.any((weight) => !weight.isFinite || weight <= 0)) {
+      return false;
+    }
+    final total = weights.values.fold(0.0, (sum, weight) => sum + weight);
+    if (!total.isFinite) return false;
+    final normalized = {
+      for (final view in panes) view: (weights[view]! / total) * panes.length,
+    };
+    if (normalized.values.any((weight) => weight <= 0)) return false;
+    final saved = root.sidebarGroupPaneWeights;
+    if (normalized.entries.every(
+      (entry) => ((saved[entry.key] ?? 1) - entry.value).abs() < 1e-9,
+    )) {
+      return false;
+    }
+    saved.addAll(normalized);
+    notifyLayoutChanged();
+    return true;
+  }
+
   /// Assign [view] to a side or panel. Select a replacement if it was the
   /// source side's selection. Panel placements can use a standard tab.
   bool moveSidebarView(
@@ -134,6 +165,11 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     if (sidebarPlacement != null) {
       root.sidebarViewPlacements[view] = sidebarPlacement;
     }
+    final stillGrouped = root.sidebarGroupedPaneIds;
+    root.sidebarGroupPaneWeights.remove(view);
+    root.sidebarGroupPaneWeights.removeWhere(
+      (id, _) => !stillGrouped.contains(id),
+    );
     if (panelPlacement == null) {
       root.panelViewPlacements.remove(view);
     } else {
@@ -170,6 +206,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     root.sidebarViewLocations = null;
     root.panelViewPlacements.clear();
     root.sidebarViewPlacements.clear();
+    root.sidebarGroupPaneWeights.clear();
     root.primarySidebarView = null;
     root.secondarySidebarView = null;
     notifyLayoutChanged();

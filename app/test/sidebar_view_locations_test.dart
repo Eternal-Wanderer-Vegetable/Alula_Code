@@ -372,6 +372,41 @@ void main() {
     layout.dispose();
   });
 
+
+  test('sidebar pane weights validate participants, round-trip, and prune', () {
+    final layout = WorkbenchLayout();
+    expect(layout.setSidebarGroupPaneWeights('explorer', {'explorer': 1}),
+        isFalse);
+    expect(layout.moveSidebarView('search', panelSidebarViewLocation), isTrue);
+    expect(layout.moveSidebarView('search', primarySidebarViewLocation,
+        sidebarPlacement: (container: 'explorer', before: true)), isTrue);
+    expect(layout.setSidebarGroupPaneWeights(
+        'explorer', {'search': double.infinity, 'explorer': 1}), isFalse);
+    expect(layout.setSidebarGroupPaneWeights(
+        'explorer', {'search': 1, 'outline': 1}), isFalse);
+    expect(layout.setSidebarGroupPaneWeights(
+        'explorer', {'search': 3, 'explorer': 1}), isTrue);
+    expect(layout.setSidebarGroupPaneWeights(
+        'explorer', {'search': 6, 'explorer': 2}), isFalse);
+    expect(layout.root.sidebarGroupPaneWeights, {'search': 1.5, 'explorer': 0.5});
+    final json = layout.root.toJson();
+    final weights = json['sidebarGroupPaneWeights']! as Map<String, double>;
+    weights['outline'] = 1;
+    weights['explorer'] = double.nan;
+    final rebuilt = WorkbenchLayout(root: WbSplit.fromJson(json));
+    expect(rebuilt.root.sidebarGroupPaneWeights, {'search': 1.5});
+    expect(layout.root.sidebarGroupPaneWeights, {'search': 1.5, 'explorer': 0.5});
+
+    expect(rebuilt.moveSidebarView('search', secondarySidebarViewLocation),
+        isTrue);
+    expect(rebuilt.root.sidebarGroupPaneWeights, isEmpty);
+    expect(rebuilt.root.toJson(), isNot(contains('sidebarGroupPaneWeights')));
+    expect(layout.resetSidebarViewLocations(), isTrue);
+    expect(layout.root.sidebarGroupPaneWeights, isEmpty);
+    rebuilt.dispose();
+    layout.dispose();
+  });
+
 }
 
 Map<String, Object?> _withoutViewMetadata(Map<String, Object?> json) {
