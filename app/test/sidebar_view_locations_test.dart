@@ -342,6 +342,36 @@ void main() {
     layout.dispose();
   });
 
+
+  test('Secondary groups round-trip and keep the current entry selected', () {
+    final layout = WorkbenchLayout();
+    expect(layout.moveSidebarView('explorer', secondarySidebarViewLocation),
+        isTrue);
+    expect(layout.moveSidebarView('search', panelSidebarViewLocation,
+        panelPlacement: (tab: PanelViewTab.diagnostics, before: false)), isTrue);
+    const placement = (container: 'explorer', before: false);
+    expect(layout.moveSidebarView('search', secondarySidebarViewLocation,
+        sidebarPlacement: placement), isTrue);
+    expect(layout.secondarySidebarView, 'explorer');
+    expect(layout.primarySidebarView, 'outline');
+    expect(layout.groupedSidebarViews('explorer', before: false), ['search']);
+    expect(layout.root.panelViewPlacements, isEmpty);
+
+    final json = layout.root.toJson();
+    final placements = json['sidebarViewPlacements']! as Map<String, Object?>;
+    placements['outline'] = {'container': 'explorer', 'before': false};
+    final restored = WorkbenchLayout(root: WbSplit.fromJson(json));
+    expect(restored.root.sidebarViewPlacements, {'search': placement});
+    expect(restored.secondarySidebarView, 'explorer');
+    expect(restored.moveSidebarView('explorer', primarySidebarViewLocation),
+        isTrue);
+    expect(restored.secondarySidebarView, 'search');
+    expect(restored.root.sidebarViewPlacements, isEmpty);
+    expect(restored.sidebarViewLocation('search'), secondarySidebarViewLocation);
+    restored.dispose();
+    layout.dispose();
+  });
+
 }
 
 Map<String, Object?> _withoutViewMetadata(Map<String, Object?> json) {

@@ -112,7 +112,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     if (source == destination) return false;
     if (sidebarPlacement != null) {
       final container = sidebarPlacement.container;
-      if (destination != primarySidebarViewLocation ||
+      if (destination == panelSidebarViewLocation ||
           container == view ||
           locations[container] != destination ||
           root.sidebarViewPlacements.containsKey(container)) {
@@ -151,7 +151,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     if (destination == primarySidebarViewLocation) {
       root.primarySidebarView = sidebarPlacement?.container ?? view;
     } else if (destination == secondarySidebarViewLocation) {
-      root.secondarySidebarView = view;
+      root.secondarySidebarView = sidebarPlacement?.container ?? view;
     }
 
     notifyLayoutChanged();

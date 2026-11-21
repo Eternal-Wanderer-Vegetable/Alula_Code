@@ -302,7 +302,7 @@ class WbSplit extends WbNode {
   /// Root-only placement of views grouped into a standard Panel tab.
   final Map<String, PanelViewPlacement> panelViewPlacements = {};
 
-  /// Root-only membership and order for views within a Primary sidebar entry.
+  /// Root-only membership and order for views within a side bar entry.
   final Map<String, SidebarViewPlacement> sidebarViewPlacements = {};
 
   /// Root-only selected view IDs; null identifies legacy/default selection.
@@ -436,17 +436,17 @@ class WbSplit extends WbNode {
       for (final entry in sidebarPlacements.entries) {
         final view = entry.key;
         final placement = entry.value;
-        if (view is! String ||
-            split.sidebarViewLocations?[view] != primarySidebarViewLocation ||
-            placement is! Map) {
+        if (view is! String || placement is! Map) continue;
+        final location = split.sidebarViewLocations?[view];
+        if (location != primarySidebarViewLocation &&
+            location != secondarySidebarViewLocation) {
           continue;
         }
         final container = placement['container'];
         final before = placement['before'];
         if (container is String &&
             container != view &&
-            split.sidebarViewLocations?[container] ==
-                primarySidebarViewLocation &&
+            split.sidebarViewLocations?[container] == location &&
             before is bool) {
           split.sidebarViewPlacements[view] =
               (container: container, before: before);

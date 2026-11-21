@@ -740,15 +740,27 @@ void main() {
     });
   }
 
-  for (final before in [true, false]) {
+  for (final (destination, before) in [
+    (primarySidebarViewLocation, true),
+    (primarySidebarViewLocation, false),
+    (secondarySidebarViewLocation, true),
+    (secondarySidebarViewLocation, false),
+  ]) {
     testWidgets(
-        'Grouped panel view moves into the active Primary body, before=$before',
+        'Grouped panel view moves into the active $destination body, before=$before',
         (tester) async {
       tester.view.physicalSize = const Size(1400, 980);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final layout = WorkbenchLayout();
+      final secondary = destination == secondarySidebarViewLocation;
+      if (secondary) {
+        layout.moveSidebarView('explorer', secondarySidebarViewLocation);
+        layout.moveSidebarView('git', secondarySidebarViewLocation);
+        layout.selectSidebarView('explorer');
+        layout.showRegion(secondarySidebarRegion);
+      }
       layout.moveSidebarView('search', panelSidebarViewLocation,
           panelPlacement: (tab: PanelViewTab.diagnostics, before: false));
       layout.moveSidebarView('outline', panelSidebarViewLocation,
@@ -776,12 +788,13 @@ void main() {
       final outline =
           find.byKey(const ValueKey('panel-view-group-title-outline'));
       final side = before ? 'before' : 'after';
-      final target = find.byKey(ValueKey('primary-sidebar-body-drop-$side'));
+      final target =
+          find.byKey(ValueKey('$destination-sidebar-body-drop-$side'));
       final highlight =
-          find.byKey(ValueKey('primary-sidebar-body-highlight-$side'));
+          find.byKey(ValueKey('$destination-sidebar-body-highlight-$side'));
       final original =
-          find.byKey(const ValueKey('primary-sidebar-group-original-explorer'));
-      final group = find.byKey(const ValueKey('primary-sidebar-group-search'));
+          find.byKey(ValueKey('$destination-sidebar-group-original-explorer'));
+      final group = find.byKey(ValueKey('$destination-sidebar-group-search'));
       final search = find.byKey(const ValueKey('search-input'));
       final activitySearch =
           find.byKey(const ValueKey('activity-bar-item-menu-anchor-search'));
@@ -835,10 +848,19 @@ void main() {
       expect(saved.sidebarViewPlacements['search'],
           (container: 'explorer', before: before));
       expect(saved.panelViewPlacements.keys, ['outline']);
-      expect(saved.primarySidebarView, 'explorer');
+      expect(secondary ? saved.secondarySidebarView : saved.primarySidebarView,
+          'explorer');
+      expect(find.byKey(const ValueKey('secondary-sidebar-entry-search')),
+          findsNothing);
+      if (secondary) {
+        expect(find.byKey(const ValueKey('secondary-sidebar-entry-explorer')),
+            findsOneWidget);
+      }
 
-      await tester
-          .tap(find.byKey(const ValueKey('activity-bar-item-menu-anchor-git')));
+      final otherEntry = secondary
+          ? 'secondary-sidebar-entry-git'
+          : 'activity-bar-item-menu-anchor-git';
+      await tester.tap(find.byKey(ValueKey(otherEntry)));
       await tester.pumpAndSettle();
       expect(group, findsNothing);
       await tester.sendKeyEvent(LogicalKeyboardKey.f6);
