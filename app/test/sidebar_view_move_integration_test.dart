@@ -2963,25 +2963,32 @@ void main() {
     });
   }
 
-  for (final position in [
-    PanelPosition.top,
-    PanelPosition.bottom,
-    PanelPosition.right
+  for (final (position, origin) in [
+    (PanelPosition.top, primarySidebarViewLocation),
+    (PanelPosition.bottom, primarySidebarViewLocation),
+    (PanelPosition.right, primarySidebarViewLocation),
+    (PanelPosition.bottom, secondarySidebarViewLocation),
+    (PanelPosition.right, secondarySidebarViewLocation),
   ]) {
-    testWidgets('$position Panel title receives the entire primary container',
+    testWidgets('$position Panel title receives the entire $origin container',
         (tester) async {
       tester.view.physicalSize = const Size(1480, 1000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final layout = WorkbenchLayout();
+      final secondary = origin == secondarySidebarViewLocation;
+      if (secondary) {
+        layout.moveSidebarView('explorer', origin);
+        layout.moveSidebarView('git', origin);
+        layout.showRegion(secondarySidebarRegion);
+      }
       for (final view in ['search', 'outline']) {
         layout.moveSidebarView(view, panelSidebarViewLocation);
-        layout.moveSidebarView(view, primarySidebarViewLocation,
-            sidebarPlacement: (
-              container: 'explorer',
-              before: view == 'search'
-            ));
+        layout.moveSidebarView(view, origin, sidebarPlacement: (
+          container: 'explorer',
+          before: view == 'search'
+        ));
       }
       layout.setSidebarGroupPaneWeights(
           'explorer', {'explorer': 1.3, 'search': .8, 'outline': .9});
@@ -3009,8 +3016,11 @@ void main() {
       }
 
       await mount();
-      final source =
-          find.byKey(const ValueKey('activity-bar-item-menu-anchor-explorer'));
+      final source = find.byKey(ValueKey(secondary
+          ? 'secondary-sidebar-entry-explorer'
+          : 'activity-bar-item-menu-anchor-explorer'));
+      final secondaryGit =
+          find.byKey(const ValueKey('secondary-sidebar-entry-git'));
       final title = find.byKey(const ValueKey('panel-view-title-drop'));
       final highlight =
           find.byKey(const ValueKey('panel-view-title-drop-highlight'));
@@ -3053,6 +3063,9 @@ void main() {
       expect(highlight, findsNothing);
       expect(source, findsNothing);
       expect(panelEntry, findsOneWidget);
+      if (secondary) {
+        expect(secondaryGit, findsOneWidget);
+      }
       expect(find.byKey(const ValueKey('panel-builtin-view-search')),
           findsNothing);
       expect(find.byKey(const ValueKey('panel-builtin-view-outline')),
@@ -3089,6 +3102,11 @@ void main() {
       expect(saved.sidebarGroupPaneWeights, weights);
       expect(saved.sidebarGroupCollapsedPanes, {'outline'});
       expect(saved.panelViewPlacements, isEmpty);
+      if (secondary) {
+        expect(saved.secondarySidebarView, 'git');
+        expect(
+            saved.sidebarViewLocations?['git'], secondarySidebarViewLocation);
+      }
       for (final view in ['explorer', 'search', 'outline']) {
         expect(saved.sidebarViewLocations?[view], panelSidebarViewLocation);
       }

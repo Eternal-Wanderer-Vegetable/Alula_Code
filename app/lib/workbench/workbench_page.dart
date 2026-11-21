@@ -27156,18 +27156,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildPanelViewDropTarget(Widget tabs) {
+    String? viewFor(Object drag) {
+      if (drag is BuiltinViewContainerDrag &&
+          drag.sourceLocation == secondarySidebarViewLocation &&
+          _layout.sidebarViewLocation(drag.view) ==
+              secondarySidebarViewLocation &&
+          _hasSidebarGroup(drag.view)) {
+        return drag.view;
+      }
+      return _sidebarViewForPanelDrop(drag);
+    }
+
     return DragTarget<Object>(
       key: const ValueKey('panel-view-title-drop'),
-      onWillAcceptWithDetails: (details) =>
-          _sidebarViewForPanelDrop(details.data) != null,
+      onWillAcceptWithDetails: (details) => viewFor(details.data) != null,
       onAcceptWithDetails: (details) {
-        final view = _sidebarViewForPanelDrop(details.data);
+        final view = viewFor(details.data);
         if (view == null) return;
         _moveSidebarView(
           view,
           panelSidebarViewLocation,
-          moveSidebarGroup:
-              details.data is ActivityBarViewDrag && _hasSidebarGroup(view),
+          moveSidebarGroup: (details.data is ActivityBarViewDrag ||
+                  details.data is BuiltinViewContainerDrag) &&
+              _hasSidebarGroup(view),
         );
       },
       builder: (context, candidates, _) => Stack(
