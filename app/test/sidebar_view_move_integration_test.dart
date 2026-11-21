@@ -833,7 +833,11 @@ void main() {
       expect(source, findsNothing);
       expect(outline, findsOneWidget);
       expect(activitySearch, findsNothing);
-      expect(find.descendant(of: original, matching: find.text('资源管理器')),
+      final explorerBody = find.descendant(
+        of: original,
+        matching: find.byKey(const ValueKey('builtin-view-focus-explorer')),
+      );
+      expect(find.descendant(of: explorerBody, matching: find.text('资源管理器')),
           findsOneWidget);
       final searchOrigin = tester.getTopLeft(group);
       final explorerOrigin = tester.getTopLeft(original);
@@ -1004,6 +1008,154 @@ void main() {
       expect(tester.getSize(first).height, closeTo(midpoint, 0.05));
       expect(tester.getSize(second).height, closeTo(midpoint, 0.05));
       expectNeighborUnchanged();
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
+  for (final location in [
+    primarySidebarViewLocation,
+    secondarySidebarViewLocation,
+  ]) {
+    testWidgets('$location grouped headers retain state and remembered sizes',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      if (location == secondarySidebarViewLocation) {
+        layout.moveSidebarView('explorer', location);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      for (final view in ['search', 'git']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation);
+        layout.moveSidebarView(view, location, sidebarPlacement: (
+          container: 'explorer',
+          before: view == 'search'
+        ));
+      }
+      layout.setSidebarGroupPaneWeights(
+        'explorer',
+        {'search': 1.16, 'explorer': 0.88, 'git': 0.96},
+      );
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      final keybindingsPath = '${temp.path}/collapsed-group-keybindings.json';
+      File(keybindingsPath).writeAsStringSync(
+        '[{"key":"f6","command":"view.search"}]',
+      );
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: keybindingsPath),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final search = find.byKey(const ValueKey('search-input'));
+      final searchHeader =
+          find.byKey(ValueKey('sidebar-group-header-$location-search'));
+      final explorerHeader =
+          find.byKey(ValueKey('sidebar-group-header-$location-explorer'));
+      final gitHeader =
+          find.byKey(ValueKey('sidebar-group-header-$location-git'));
+      final searchPane = find.byKey(ValueKey('$location-sidebar-group-search'));
+      final explorerPane =
+          find.byKey(ValueKey('$location-sidebar-group-original-explorer'));
+      final gitPane = find.byKey(ValueKey('$location-sidebar-group-git'));
+      final sash =
+          find.byKey(ValueKey('sidebar-group-sash-$location-search-explorer'));
+      double height(Finder pane) => tester.getSize(pane).height;
+      bool expanded(Finder header) =>
+          tester.widget<Semantics>(header).properties.expanded!;
+      Future<void> press(Finder header) async {
+        await tester.tap(header, kind: PointerDeviceKind.mouse);
+        await tester.pumpAndSettle();
+      }
+
+      const query = 'preserved when folded 😀';
+      await tester.enterText(search, query);
+      final searchHeight = height(searchPane);
+      final explorerHeight = height(explorerPane);
+      final gitHeight = height(gitPane);
+      final initialWeights = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+
+      await press(searchHeader);
+      expect(expanded(searchHeader), isFalse);
+      expect(height(searchPane), 28);
+      expect(height(explorerPane), greaterThan(explorerHeight));
+      expect(height(gitPane), greaterThan(gitHeight));
+      expect(search, findsNothing);
+      expect(sash, findsNothing);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarGroupCollapsedPanes, {'search'});
+      expect(layoutStore.tryLoad()!.sidebarGroupPaneWeights, initialWeights);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isTrue);
+      expect(height(searchPane), closeTo(searchHeight, 0.05));
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isFalse);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isFalse);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f6);
+      await tester.pumpAndSettle();
+      expect(expanded(searchHeader), isTrue);
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      expect(tester.widget<TextField>(search).controller!.text, query);
+
+      await press(explorerHeader);
+      expect(expanded(explorerHeader), isFalse);
+      expect(height(explorerPane), 28);
+      expect(sash, findsOneWidget);
+      final tallSearch = height(searchPane);
+      await tester.drag(sash, const Offset(0, 64),
+          kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(height(searchPane), closeTo(tallSearch + 64, 0.05));
+      expect(height(explorerPane), 28);
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pump(const Duration(milliseconds: 70));
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(height(searchPane), closeTo(height(gitPane), 0.05));
+      expect(height(explorerPane), 28);
+      await tester.pump(const Duration(milliseconds: 700));
+      final balanced = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+      expect(balanced['explorer'], closeTo(initialWeights['explorer']!, 1e-9));
+
+      // Keep enough focusable headers to reopen a completely collapsed group.
+      await press(searchHeader);
+      await press(gitHeader);
+      expect([searchPane, explorerPane, gitPane].map(height), [28, 28, 28]);
+      expect(search, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(expanded(gitHeader), isTrue);
+      expect(height(gitPane), greaterThan(gitHeight));
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarGroupCollapsedPanes,
+          {'search', 'explorer'});
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(expanded(searchHeader), isFalse);
+      expect(expanded(explorerHeader), isFalse);
+      await press(explorerHeader);
+      await press(searchHeader);
+      expect(expanded(searchHeader), isTrue);
+      expect(expanded(explorerHeader), isTrue);
+      expect(height(explorerPane), closeTo(explorerHeight, 0.05));
+      expect(height(searchPane), closeTo(height(gitPane), 0.05));
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();

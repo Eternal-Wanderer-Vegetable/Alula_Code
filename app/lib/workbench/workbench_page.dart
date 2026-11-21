@@ -20863,6 +20863,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     _layout.selectSidebarView(view);
+    _layout.setSidebarGroupPaneCollapsed(view, false);
     setState(() {
       _sidebarView = _layout.primarySidebarView;
       _secondarySidebarView = _layout.secondarySidebarView;
@@ -22512,9 +22513,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       autofocusSearch: !grouped,
     );
 
-    Widget pane(String view, Key key, Widget child) => _buildPanelGroupPane(
-          key: key,
-          label: view == 'search' ? _sidebarViewLabel(view) : null,
+    Widget pane(String view, Widget child) => _buildPanelGroupPane(
+          key: ValueKey('$location-sidebar-group-body-$view'),
+          label: null,
           // Explorer and Source Control can have more fixed controls than
           // the sash minimum. Keep those controls reachable by scrolling.
           minimumContentHeight: switch (view) {
@@ -22527,7 +22528,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     Widget member(String view) => pane(
           view,
-          ValueKey('$location-sidebar-group-$view'),
           _buildSidebarViewRegion(
             location,
             view,
@@ -22544,21 +22544,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           SidebarGroupSplit(
             key: ValueKey('sidebar-group-$location-$container'),
             location: location,
+            container: container,
             panes: {
               for (final view in before) view: member(view),
-              container: pane(
-                container,
-                ValueKey('$location-sidebar-group-original-$container'),
-                original,
-              ),
+              container: pane(container, original),
               for (final view in after) view: member(view),
+            },
+            labels: {
+              for (final view in [...before, container, ...after])
+                view: _sidebarViewLabel(view),
             },
             weights: {
               for (final view in [...before, container, ...after])
                 view: _layout.root.sidebarGroupPaneWeights[view] ?? 1,
             },
+            collapsed: {
+              for (final view in [...before, container, ...after])
+                if (_layout.root.sidebarGroupCollapsedPanes.contains(view)) view,
+            },
             onCommit: (weights) =>
                 _layout.setSidebarGroupPaneWeights(container, weights),
+            onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
+            onFocus: (view) => _focusSidebarRegion(location, view),
           ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

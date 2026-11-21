@@ -1,9 +1,10 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show listEquals, mapEquals;
+import 'package:flutter/foundation.dart' show listEquals, mapEquals, setEquals;
 import 'package:flutter/gestures.dart'
     show PointerDownEvent, PointerMoveEvent, kPrimaryButton;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 
 import 'layout_model.dart';
 
@@ -13,15 +14,25 @@ class SidebarGroupSplit extends StatefulWidget {
   const SidebarGroupSplit({
     super.key,
     required this.location,
+    required this.container,
     required this.panes,
+    required this.labels,
     required this.weights,
+    required this.collapsed,
     required this.onCommit,
+    required this.onSetCollapsed,
+    required this.onFocus,
   }) : assert(panes.length > 1);
 
   final String location;
+  final String container;
   final Map<String, Widget> panes;
+  final Map<String, String> labels;
   final Map<String, double> weights;
+  final Set<String> collapsed;
   final ValueChanged<Map<String, double>> onCommit;
+  final void Function(String view, bool collapsed) onSetCollapsed;
+  final ValueChanged<String> onFocus;
 
   @override
   State<SidebarGroupSplit> createState() => _SidebarGroupSplitState();
@@ -29,6 +40,7 @@ class SidebarGroupSplit extends StatefulWidget {
 
 class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
   static const _minimumPaneExtent = 148.0;
+  static const _headerExtent = 28.0;
 
   ({int index, int pointer})? _drag;
   Map<String, double>? _preview;
@@ -38,7 +50,8 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     super.didUpdateWidget(oldWidget);
     if (!listEquals(
             oldWidget.panes.keys.toList(), widget.panes.keys.toList()) ||
-        !mapEquals(oldWidget.weights, widget.weights)) {
+        !mapEquals(oldWidget.weights, widget.weights) ||
+        !setEquals(oldWidget.collapsed, widget.collapsed)) {
       _drag = null;
       _preview = null;
     }
@@ -72,11 +85,7 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     split.applyDrag(index, event.delta.dy, inside);
     final updated = [for (final pane in split.children) pane.weight];
     if (listEquals(previous, updated)) return;
-    setState(() {
-      _preview = {
-        for (var i = 0; i < views.length; i++) views[i]: updated[i],
-      };
-    });
+    setState(() => _preview = _weightsAfterLayout(split));
   }
 
   void _finish(int index, int pointer, {required bool commit}) {
@@ -93,9 +102,59 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     if (_drag != null) return;
     final split = _split(views);
     if (!split.resetDivider(index, inside)) return;
-    widget.onCommit({
-      for (var i = 0; i < views.length; i++) views[i]: split.children[i].weight,
-    });
+    widget.onCommit(_weightsAfterLayout(split));
+  }
+
+  Map<String, double> _weightsAfterLayout(WbSplit split) {
+    final current = _preview ?? widget.weights;
+    final expanded = split.children.cast<WbLeaf>();
+    // Keep the saved share of a collapsed pane while resizing the open panes.
+    final previousTotal = expanded.fold(
+      0.0,
+      (sum, pane) => sum + (current[pane.region] ?? 1),
+    );
+    final updatedTotal = expanded.fold(0.0, (sum, pane) => sum + pane.weight);
+    return {
+      for (final view in widget.panes.keys) view: current[view] ?? 1,
+      for (final pane in expanded)
+        pane.region: pane.weight / updatedTotal * previousTotal,
+    };
+  }
+
+  Widget _buildDivider(
+    String before,
+    String after,
+    List<String> expanded,
+    int index,
+    double inside,
+    double thickness,
+  ) {
+    return SizedBox(
+      key: ValueKey('sidebar-group-sash-${widget.location}-$before-$after'),
+      height: thickness,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.resizeUpDown,
+        child: Listener(
+          behavior: HitTestBehavior.opaque,
+          onPointerDown: (event) => _start(index, event),
+          onPointerMove: (event) => _resize(expanded, index, event, inside),
+          onPointerUp: (event) => _finish(index, event.pointer, commit: true),
+          onPointerCancel: (event) =>
+              _finish(index, event.pointer, commit: false),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onDoubleTap: () => _reset(expanded, index, inside),
+            child: const Center(
+              child: SizedBox(
+                width: double.infinity,
+                height: 1,
+                child: ColoredBox(color: Color(0xFF2A2E37)),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -103,58 +162,169 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final views = widget.panes.keys.toList(growable: false);
-        final dividerCount = views.length - 1;
+        final expandedIndices = [
+          for (var i = 0; i < views.length; i++)
+            if (!widget.collapsed.contains(views[i])) i,
+        ];
+        final first = expandedIndices.isEmpty ? 0 : expandedIndices.first;
+        final last = expandedIndices.isEmpty ? 0 : expandedIndices.last;
+        final dividerCount = last - first;
+        final collapsedCount = views.length - expandedIndices.length;
         final extent = constraints.maxHeight;
-        final thickness = math.min(
-          workbenchDividerThickness,
-          extent / dividerCount,
-        );
-        final inside = math.max(0.0, extent - thickness * dividerCount);
-        final extents = _split(views).extentsFor(inside);
+        final header = collapsedCount == 0
+            ? _headerExtent
+            : math.min(_headerExtent, extent / collapsedCount);
+        final available = math.max(0.0, extent - header * collapsedCount);
+        final thickness = dividerCount == 0
+            ? 0.0
+            : math.min(workbenchDividerThickness, available / dividerCount);
+        final inside = math.max(0.0, available - thickness * dividerCount);
+        final expanded = [for (final i in expandedIndices) views[i]];
+        final extents = switch (expanded.length) {
+          0 => <double>[],
+          1 => [inside],
+          _ => _split(expanded).extentsFor(inside),
+        };
+        final sizes = {
+          for (final view in widget.collapsed) view: header,
+          for (var i = 0; i < expanded.length; i++) expanded[i]: extents[i],
+        };
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (var i = 0; i < views.length; i++) ...[
-              SizedBox(
-                key: ValueKey(views[i]),
-                height: extents[i],
-                child: widget.panes[views[i]],
-              ),
-              if (i < dividerCount)
-                SizedBox(
-                  key: ValueKey(
-                    'sidebar-group-sash-${widget.location}-${views[i]}-${views[i + 1]}',
-                  ),
-                  height: thickness,
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.resizeUpDown,
-                    child: Listener(
-                      behavior: HitTestBehavior.opaque,
-                      onPointerDown: (event) => _start(i, event),
-                      onPointerMove: (event) =>
-                          _resize(views, i, event, inside),
-                      onPointerUp: (event) =>
-                          _finish(i, event.pointer, commit: true),
-                      onPointerCancel: (event) =>
-                          _finish(i, event.pointer, commit: false),
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onDoubleTap: () => _reset(views, i, inside),
-                        child: const Center(
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 1,
-                            child: ColoredBox(color: Color(0xFF2A2E37)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+              _buildPane(views[i], sizes[views[i]]!),
+              if (i >= first && i < last)
+                _buildDivider(
+                  views[i],
+                  views[i + 1],
+                  expanded,
+                  expandedIndices.lastIndexWhere((value) => value <= i),
+                  inside,
+                  thickness,
                 ),
             ],
           ],
         );
       },
+    );
+  }
+
+  Widget _buildPane(String view, double extent) {
+    final collapsed = widget.collapsed.contains(view);
+    final role = view == widget.container ? 'original-' : '';
+    return SizedBox(
+      key: ValueKey('${widget.location}-sidebar-group-$role$view'),
+      height: extent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: math.min(_headerExtent, extent),
+            child: _SidebarGroupHeader(
+              semanticsKey:
+                  ValueKey('sidebar-group-header-${widget.location}-$view'),
+              label: widget.labels[view]!,
+              collapsed: collapsed,
+              onSetCollapsed: (value) => widget.onSetCollapsed(view, value),
+              onFocus: () => widget.onFocus(view),
+            ),
+          ),
+          Expanded(
+            child: Visibility(
+              visible: !collapsed,
+              maintainState: true,
+              child: widget.panes[view]!,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SidebarGroupHeader extends StatefulWidget {
+  const _SidebarGroupHeader({
+    required this.semanticsKey,
+    required this.label,
+    required this.collapsed,
+    required this.onSetCollapsed,
+    required this.onFocus,
+  });
+
+  final Key semanticsKey;
+  final String label;
+  final bool collapsed;
+  final ValueChanged<bool> onSetCollapsed;
+  final VoidCallback onFocus;
+
+  @override
+  State<_SidebarGroupHeader> createState() => _SidebarGroupHeaderState();
+}
+
+class _SidebarGroupHeaderState extends State<_SidebarGroupHeader> {
+  final _focus = FocusNode();
+
+  void _toggle() {
+    _focus.requestFocus();
+    widget.onSetCollapsed(!widget.collapsed);
+  }
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      key: widget.semanticsKey,
+      button: true,
+      expanded: !widget.collapsed,
+      onTap: _toggle,
+      child: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+              widget.onSetCollapsed(true),
+          const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+              widget.onSetCollapsed(false),
+        },
+        child: Material(
+          color: const Color(0xFF252932),
+          child: InkWell(
+            focusNode: _focus,
+            excludeFromSemantics: true,
+            onFocusChange: (focused) {
+              if (focused) widget.onFocus();
+            },
+            onTap: _toggle,
+            child: ClipRect(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      widget.collapsed
+                          ? Icons.chevron_right
+                          : Icons.expand_more,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        widget.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

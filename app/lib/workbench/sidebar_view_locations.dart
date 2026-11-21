@@ -117,6 +117,15 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     return true;
   }
 
+  /// Collapse only a pane currently participating in a side bar group.
+  bool setSidebarGroupPaneCollapsed(String view, bool collapsed) {
+    if (!root.sidebarGroupedPaneIds.contains(view)) return false;
+    final panes = root.sidebarGroupCollapsedPanes;
+    final changed = collapsed ? panes.add(view) : panes.remove(view);
+    if (changed) notifyLayoutChanged();
+    return changed;
+  }
+
   /// Assign [view] to a side or panel. Select a replacement if it was the
   /// source side's selection. Panel placements can use a standard tab.
   bool moveSidebarView(
@@ -170,6 +179,10 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     root.sidebarGroupPaneWeights.removeWhere(
       (id, _) => !stillGrouped.contains(id),
     );
+    root.sidebarGroupCollapsedPanes.remove(view);
+    root.sidebarGroupCollapsedPanes.removeWhere(
+      (id) => !stillGrouped.contains(id),
+    );
     if (panelPlacement == null) {
       root.panelViewPlacements.remove(view);
     } else {
@@ -207,6 +220,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     root.panelViewPlacements.clear();
     root.sidebarViewPlacements.clear();
     root.sidebarGroupPaneWeights.clear();
+    root.sidebarGroupCollapsedPanes.clear();
     root.primarySidebarView = null;
     root.secondarySidebarView = null;
     notifyLayoutChanged();

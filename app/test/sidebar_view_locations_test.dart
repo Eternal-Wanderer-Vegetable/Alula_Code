@@ -298,6 +298,51 @@ void main() {
   });
 
 
+  test('group collapse round-trips and clears when a group is removed', () {
+    final layout = WorkbenchLayout();
+    expect(layout.root.toJson(), isNot(contains('sidebarGroupCollapsedPanes')));
+    expect(layout.setSidebarGroupPaneCollapsed('explorer', true), isFalse);
+    layout.moveSidebarView('search', panelSidebarViewLocation);
+    layout.moveSidebarView(
+      'search',
+      primarySidebarViewLocation,
+      sidebarPlacement: (container: 'explorer', before: true),
+    );
+
+    var changes = 0;
+    layout.addListener(() => changes++);
+    expect(layout.setSidebarGroupPaneCollapsed('search', true), isTrue);
+    expect(layout.setSidebarGroupPaneCollapsed('search', true), isFalse);
+    expect(layout.setSidebarGroupPaneCollapsed('explorer', true), isTrue);
+    expect(changes, 2);
+    final saved = layout.root.toJson();
+    expect(saved['sidebarGroupCollapsedPanes'], ['search', 'explorer']);
+    expect(
+      WbSplit.fromJson({...saved}..remove('sidebarGroupCollapsedPanes'))
+          .sidebarGroupCollapsedPanes,
+      isEmpty,
+    );
+    saved['sidebarGroupCollapsedPanes'] = [
+      'search',
+      'explorer',
+      'explorer',
+      'git',
+      false,
+      'unknown',
+    ];
+    final restored = WorkbenchLayout(root: WbSplit.fromJson(saved));
+    expect(restored.root.sidebarGroupCollapsedPanes, {'search', 'explorer'});
+    expect(
+        restored.moveSidebarView('search', panelSidebarViewLocation), isTrue);
+    expect(restored.root.sidebarGroupCollapsedPanes, isEmpty);
+    expect(
+        restored.root.toJson(), isNot(contains('sidebarGroupCollapsedPanes')));
+    expect(layout.resetSidebarViewLocations(), isTrue);
+    expect(layout.root.sidebarGroupCollapsedPanes, isEmpty);
+    restored.dispose();
+    layout.dispose();
+  });
+
   test('Primary group keeps its container selected and restores orphaned views', () {
     final layout = WorkbenchLayout();
     expect(layout.root.toJson(), isNot(contains('sidebarViewPlacements')));

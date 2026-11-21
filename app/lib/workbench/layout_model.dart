@@ -308,6 +308,9 @@ class WbSplit extends WbNode {
   /// Root-only relative sizes of panes participating in a side bar group.
   final Map<String, double> sidebarGroupPaneWeights = {};
 
+  /// Root-only collapsed panes within side bar groups.
+  final Set<String> sidebarGroupCollapsedPanes = {};
+
   Set<String> get sidebarGroupedPaneIds => {
         ...sidebarViewPlacements.keys,
         for (final placement in sidebarViewPlacements.values) placement.container,
@@ -374,6 +377,8 @@ class WbSplit extends WbNode {
           },
         if (sidebarGroupPaneWeights.isNotEmpty)
           'sidebarGroupPaneWeights': Map.of(sidebarGroupPaneWeights),
+        if (sidebarGroupCollapsedPanes.isNotEmpty)
+          'sidebarGroupCollapsedPanes': sidebarGroupCollapsedPanes.toList(),
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -478,6 +483,13 @@ class WbSplit extends WbNode {
           split.sidebarGroupPaneWeights[view] = weight.toDouble();
         }
       }
+    }
+    final collapsedPanes = json['sidebarGroupCollapsedPanes'];
+    if (collapsedPanes is List) {
+      final grouped = split.sidebarGroupedPaneIds;
+      split.sidebarGroupCollapsedPanes.addAll(
+        collapsedPanes.whereType<String>().where(grouped.contains),
+      );
     }
     // P05.12 layouts persisted Activity Bar placement but had no size field.
     // Upgrade those root layouts to Default while preserving the existing
