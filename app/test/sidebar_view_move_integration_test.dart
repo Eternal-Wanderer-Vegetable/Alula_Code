@@ -889,7 +889,8 @@ void main() {
     primarySidebarViewLocation,
     secondarySidebarViewLocation,
   ]) {
-    testWidgets('$location group sash clamps, cancels and restores its sizes',
+    testWidgets(
+        '$location group sash clamps, cancels, resets and restores its sizes',
         (tester) async {
       tester.view.physicalSize = const Size(1400, 980);
       tester.view.devicePixelRatio = 1;
@@ -977,13 +978,31 @@ void main() {
       final persisted = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
       expect(persisted.keys.toSet(), {'explorer', 'search', 'git'});
       expect(persisted['search'], greaterThan(persisted['explorer']!));
-      final settled = tester.getSize(first).height;
+      final dragged = tester.getSize(first).height;
+      final midpoint = (dragged + tester.getSize(second).height) / 2;
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.getSize(first).height, closeTo(dragged, 0.05));
+      expect(layoutStore.tryLoad()!.sidebarGroupPaneWeights, persisted);
+
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pump(const Duration(milliseconds: 70));
+      await tester.tap(sash, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(tester.getSize(first).height, closeTo(midpoint, 0.05));
+      expect(tester.getSize(second).height, closeTo(midpoint, 0.05));
+      expectNeighborUnchanged();
+      expect(tester.widget<TextField>(search).controller!.text,
+          'retained through sash drag 😀');
+      await tester.pump(const Duration(milliseconds: 700));
+      final reset = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+      expect(reset['search'], closeTo(reset['explorer']!, 1e-9));
 
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
       await mount();
-      expect(tester.getSize(first).height, closeTo(settled, 0.05));
-      expect(tester.getSize(second).height, closeTo(148, 0.05));
+      expect(tester.getSize(first).height, closeTo(midpoint, 0.05));
+      expect(tester.getSize(second).height, closeTo(midpoint, 0.05));
       expectNeighborUnchanged();
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());

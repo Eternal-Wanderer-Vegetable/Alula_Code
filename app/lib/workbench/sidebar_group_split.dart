@@ -89,6 +89,15 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     if (commit && resized != null) widget.onCommit(resized);
   }
 
+  void _reset(List<String> views, int index, double inside) {
+    if (_drag != null) return;
+    final split = _split(views);
+    if (!split.resetDivider(index, inside)) return;
+    widget.onCommit({
+      for (var i = 0; i < views.length; i++) views[i]: split.children[i].weight,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -128,11 +137,15 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
                           _finish(i, event.pointer, commit: true),
                       onPointerCancel: (event) =>
                           _finish(i, event.pointer, commit: false),
-                      child: const Center(
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 1,
-                          child: ColoredBox(color: Color(0xFF2A2E37)),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onDoubleTap: () => _reset(views, i, inside),
+                        child: const Center(
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: ColoredBox(color: Color(0xFF2A2E37)),
+                          ),
                         ),
                       ),
                     ),
