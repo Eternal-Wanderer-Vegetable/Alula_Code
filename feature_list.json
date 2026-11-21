@@ -2642,6 +2642,21 @@
         "feat-206",
         "feat-209"
       ],
+      "status": "done",
+      "evidence": "产品 `8ba064e1b42809635430cb6dbe968abab41b812b` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证底部和右侧面板的窗格标题排序、半区反馈、折叠、比例、内容和显隐恢复。成员可拖回主侧栏。专项 105/105，Flutter 1,709 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44868880615 四项及 Platform Availability 44868874401 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.158-panel-group-reorder.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-211",
+      "name": "P05.159 LAY-04/05 侧栏分组窗格标题拖入面板正文",
+      "description": "对照固定版主次侧栏分组窗格标题拖入标准面板正文的半区与分组行为，验收原组、内容、边界和持久化。",
+      "dependencies": [
+        "feat-201",
+        "feat-202",
+        "feat-206",
+        "feat-210"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
