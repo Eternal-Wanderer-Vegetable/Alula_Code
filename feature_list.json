@@ -2561,6 +2561,20 @@
         "feat-079",
         "feat-203"
       ],
+      "status": "done",
+      "evidence": "产品 `f9b624274c54b3182911d2dc5b1788a74946d32f` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证主次侧栏分隔线单击保留尺寸、双击等分相邻窗格、查询及显隐恢复。专项 85/85，Flutter 1,694 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44854035451 四项及 Platform Availability 44854029976 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.152-sidebar-sash-reset.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-205",
+      "name": "P05.153 LAY-04/06 侧栏分组窗格折叠和展开",
+      "description": "对照固定版主次侧栏分组窗格标题折叠和展开，覆盖状态、内容、可用空间分配及恢复。",
+      "dependencies": [
+        "feat-079",
+        "feat-203",
+        "feat-204"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
