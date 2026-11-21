@@ -482,6 +482,42 @@ void main() {
     layout.dispose();
   });
 
+  test(
+      'detaching a member preserves its side and selects its independent entry',
+      () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const side = secondarySidebarViewLocation;
+    layout.moveSidebarView('git', side);
+    for (final view in ['search', 'outline']) {
+      layout.moveSidebarView(view, side,
+          sidebarPlacement: (container: 'git', before: view == 'search'));
+    }
+    layout.setSidebarGroupPaneWeights(
+        'git', {'git': 1, 'search': .8, 'outline': 1.2});
+    layout.setSidebarGroupPaneCollapsed('outline', true);
+    final locations = Map.of(layout.root.sidebarViewLocations!);
+    var changes = 0;
+    layout.addListener(() => changes++);
+
+    expect(layout.moveSidebarView('search', side), isFalse);
+    expect(layout.moveSidebarView('git', side, detachFromSidebarGroup: true),
+        isFalse);
+    expect(changes, 0);
+    expect(layout.moveSidebarView('search', side, detachFromSidebarGroup: true),
+        isTrue);
+    expect(changes, 1);
+    expect(layout.root.sidebarViewLocations, locations);
+    expect(layout.secondarySidebarView, 'search');
+    expect(layout.root.sidebarViewPlacements,
+        {'outline': (container: 'git', before: false)});
+    expect(layout.root.sidebarGroupPaneWeights, {'git': 1, 'outline': 1.2});
+    expect(layout.root.sidebarGroupCollapsedPanes, {'outline'});
+    expect(layout.moveSidebarView('search', side, detachFromSidebarGroup: true),
+        isFalse);
+    expect(changes, 1);
+  });
+
   test('relative sidebar insertion saves order with the move', () {
     final layout = WorkbenchLayout();
     addTearDown(layout.dispose);

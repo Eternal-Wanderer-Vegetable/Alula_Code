@@ -208,6 +208,8 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   /// Assign [view] to a side or panel. Select a replacement if it was the
   /// source side's selection. When [panelTarget] or [sidebarTarget] identifies
   /// a pane in the destination group, place the view adjacent to that pane.
+  /// [detachFromSidebarGroup] allows a grouped member to become an independent
+  /// entry on its current side.
   bool moveSidebarView(
     String view,
     String destination, {
@@ -215,6 +217,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     SidebarViewPlacement? sidebarPlacement,
     String? panelTarget,
     String? sidebarTarget,
+    bool detachFromSidebarGroup = false,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -231,7 +234,12 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       root.sidebarViewLocations,
     );
     final source = locations[view]!;
-    if (source == destination) return false;
+    if (source == destination &&
+        (!detachFromSidebarGroup ||
+            sidebarPlacement != null ||
+            !root.sidebarViewPlacements.containsKey(view))) {
+      return false;
+    }
     if (sidebarPlacement != null) {
       final container = sidebarPlacement.container;
       if (destination == panelSidebarViewLocation ||

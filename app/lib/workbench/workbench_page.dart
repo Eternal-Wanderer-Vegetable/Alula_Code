@@ -20991,8 +20991,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String view,
     String destination, {
     bool fromDrag = false,
+    bool detachFromSidebarGroup = false,
   }) {
-    if (!_layout.moveSidebarView(view, destination)) return;
+    if (!_layout.moveSidebarView(
+      view,
+      destination,
+      detachFromSidebarGroup: detachFromSidebarGroup,
+    )) {
+      return;
+    }
     setState(() {
       _sidebarView = _layout.primarySidebarView;
       _secondarySidebarView = _layout.secondarySidebarView;
@@ -22611,7 +22618,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.root.panelViewPlacements.containsKey(drag.view)) {
       return drag.view;
     }
-    if (drag is SidebarGroupPaneDrag && drag.location != location) {
+    if (drag is SidebarGroupPaneDrag &&
+        (container == null || drag.location != location)) {
       return _sidebarGroupViewForDrop(drag);
     }
     return null;
@@ -22756,7 +22764,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _viewForSidebarDrop(location, details.data) != null,
       onAcceptWithDetails: (details) {
         final view = _viewForSidebarDrop(location, details.data);
-        if (view != null) _moveSidebarView(view, location);
+        if (view != null) {
+          _moveSidebarView(view, location, detachFromSidebarGroup: true);
+        }
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,

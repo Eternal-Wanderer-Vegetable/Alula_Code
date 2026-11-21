@@ -1136,6 +1136,129 @@ void main() {
     });
   }
 
+  for (final side in [
+    primarySidebarViewLocation,
+    secondarySidebarViewLocation
+  ]) {
+    testWidgets('$side group member can create an entry on the same side',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      if (side == secondarySidebarViewLocation) {
+        layout.moveSidebarView('git', side);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      for (final view in ['search', 'outline']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation);
+        layout.moveSidebarView(view, side,
+            sidebarPlacement: (container: 'git', before: view == 'search'));
+      }
+      layout.setSidebarGroupPaneWeights(
+          'git', {'git': 1, 'search': .8, 'outline': 1.2});
+      layout.setSidebarGroupPaneCollapsed('outline', true);
+      const order = ['outline', 'git', 'search', 'explorer'];
+      const pinned = ['git', 'search', 'explorer'];
+      layout.setActivityBarOrder(order);
+      layout.setActivityBarPinnedViews(pinned);
+      final locations = Map.of(layout.root.sidebarViewLocations!);
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final from = find.byKey(ValueKey('sidebar-group-header-$side-search'));
+      final git = find.byKey(ValueKey('sidebar-group-header-$side-git'));
+      final outline = find.byKey(ValueKey('$side-sidebar-group-outline'));
+      final region =
+          find.byKey(ValueKey('grouped-panel-view-entry-drop-$side'));
+      final highlight =
+          find.byKey(ValueKey('grouped-panel-view-entry-highlight-$side'));
+      final input = find.byKey(const ValueKey('search-input'));
+      final prefix = side == primarySidebarViewLocation
+          ? 'activity-bar-item-menu-anchor-'
+          : 'secondary-sidebar-entry-';
+      final searchEntry = find.byKey(ValueKey('${prefix}search'));
+      final sourceEntry = find.byKey(ValueKey('${prefix}git'));
+
+      Future<TestGesture> startDrag(Finder header) async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(header) + const Offset(29, 14),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveBy(const Offset(0, 18));
+        await gesture.moveTo(tester.getCenter(region));
+        await tester.pump();
+        return gesture;
+      }
+
+      const query = 'same sidebar independent search 😀';
+      await tester.enterText(input, query);
+      final invalid = await startDrag(git);
+      expect(highlight, findsNothing);
+      await invalid.up();
+      await tester.pumpAndSettle();
+      expect(from, findsOneWidget);
+      expect(searchEntry, findsNothing);
+
+      final canceled = await startDrag(from);
+      expect(highlight, findsOneWidget);
+      await canceled.cancel();
+      await tester.pumpAndSettle();
+      expect(from, findsOneWidget);
+      expect(searchEntry, findsNothing);
+
+      final accepted = await startDrag(from);
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(from, findsNothing);
+      expect(searchEntry, findsOneWidget);
+      expect(sourceEntry, findsOneWidget);
+      expect(tester.widget<TextField>(input).focusNode!.hasFocus, isTrue);
+      expect(tester.widget<TextField>(input).controller!.text, query);
+
+      await tester.tap(sourceEntry);
+      await tester.pumpAndSettle();
+      expect(git, findsOneWidget);
+      expect(tester.getSize(outline).height, 28);
+      expect(input, findsNothing);
+      await tester.tap(searchEntry);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(input).controller!.text, query);
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewLocations, locations);
+      expect(saved.sidebarViewPlacements,
+          {'outline': (container: 'git', before: false)});
+      expect(saved.sidebarGroupPaneWeights, {'git': 1, 'outline': 1.2});
+      expect(saved.sidebarGroupCollapsedPanes, {'outline'});
+      expect(saved.activityBarOrder, order);
+      final restored = WorkbenchLayout(root: saved);
+      expect(restored.activityBarPinnedViews, pinned);
+      restored.dispose();
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(searchEntry, findsOneWidget);
+      expect(sourceEntry, findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   for (final (source, destination) in [
     (secondarySidebarViewLocation, primarySidebarViewLocation),
     (primarySidebarViewLocation, secondarySidebarViewLocation),
@@ -1180,14 +1303,11 @@ void main() {
       final search = find.byKey(const ValueKey('search-input'));
       final from = find.byKey(ValueKey('sidebar-group-header-$source-search'));
       final host = find.byKey(ValueKey('sidebar-group-header-$source-git'));
-      final sourceEntry =
-          find.byKey(ValueKey('grouped-panel-view-entry-drop-$source'));
+      final editor = find.byKey(const ValueKey('wb-region-editor'));
       final target =
           find.byKey(ValueKey('grouped-panel-view-entry-drop-$destination'));
       final highlight = find
           .byKey(ValueKey('grouped-panel-view-entry-highlight-$destination'));
-      final sameHighlight =
-          find.byKey(ValueKey('grouped-panel-view-entry-highlight-$source'));
       final prefix = primary
           ? 'activity-bar-item-menu-anchor-'
           : 'secondary-sidebar-entry-';
@@ -1208,9 +1328,9 @@ void main() {
 
       const query = 'from grouped view to opposite entry 😀';
       await tester.enterText(search, query);
-      final same = await startDrag(from, sourceEntry);
-      expect(sameHighlight, findsNothing);
-      await same.up();
+      final outside = await startDrag(from, editor);
+      expect(highlight, findsNothing);
+      await outside.up();
       await tester.pumpAndSettle();
       final invalidHost = await startDrag(host, target);
       expect(highlight, findsNothing);
