@@ -1020,6 +1020,131 @@ void main() {
     });
   }
 
+  for (final (source, destination, before) in [
+    (secondarySidebarViewLocation, primarySidebarViewLocation, true),
+    (primarySidebarViewLocation, secondarySidebarViewLocation, false),
+  ]) {
+    testWidgets('$source group member transfers to the $destination sidebar',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      if (source == secondarySidebarViewLocation) {
+        layout.moveSidebarView('git', source);
+      } else {
+        layout.moveSidebarView('explorer', destination);
+      }
+      layout.moveSidebarView('search', panelSidebarViewLocation);
+      layout.moveSidebarView('search', source,
+          sidebarPlacement: (container: 'git', before: true));
+      layout.moveSidebarView('outline', panelSidebarViewLocation);
+      layout.moveSidebarView('outline', destination,
+          sidebarPlacement: (container: 'explorer', before: false));
+      layout.setSidebarGroupPaneWeights(
+          'explorer', {'explorer': 1.12, 'outline': .88});
+      layout.setSidebarGroupPaneWeights('git', {'git': .96, 'search': 1.04});
+      layout.showRegion(secondarySidebarRegion);
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final search = find.byKey(const ValueKey('search-input'));
+      final sourceHeader =
+          find.byKey(ValueKey('sidebar-group-header-$source-search'));
+      final sourceHost =
+          find.byKey(ValueKey('sidebar-group-header-$source-git'));
+      final explorer =
+          find.byKey(ValueKey('$destination-sidebar-group-original-explorer'));
+      final outline =
+          find.byKey(ValueKey('$destination-sidebar-group-outline'));
+      final moved = find.byKey(ValueKey('$destination-sidebar-group-search'));
+      final anchor = before ? 'outline' : 'explorer';
+      final half = before ? 'before' : 'after';
+      final highlight =
+          find.byKey(ValueKey('sidebar-group-drop-$destination-$anchor-$half'));
+      final target = before ? outline : explorer;
+
+      Future<TestGesture> startDrag(Finder header, Offset point) async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(header) + const Offset(29, 13),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveBy(const Offset(0, 18));
+        await gesture.moveTo(point);
+        await tester.pump();
+        return gesture;
+      }
+
+      final rect = tester.getRect(target);
+      final point = rect.topLeft +
+          Offset(rect.width * .53, rect.height * (before ? .26 : .74));
+      const query = 'retained across grouped sidebars 😀';
+      await tester.enterText(search, query);
+      final invalid = await startDrag(sourceHost, point);
+      expect(highlight, findsNothing);
+      await invalid.up();
+      await tester.pumpAndSettle();
+      expect(sourceHeader, findsOneWidget);
+      expect(moved, findsNothing);
+
+      final canceled = await startDrag(sourceHeader, point);
+      expect(highlight, findsOneWidget);
+      await canceled.cancel();
+      await tester.pumpAndSettle();
+      expect(sourceHeader, findsOneWidget);
+      expect(highlight, findsNothing);
+
+      final accepted = await startDrag(sourceHeader, point);
+      expect(highlight, findsOneWidget);
+      expect(tester.getSize(highlight).height, closeTo(rect.height / 2, .05));
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(sourceHeader, findsNothing);
+      expect(
+          find.byKey(const ValueKey('builtin-view-focus-git')), findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text, query);
+
+      void expectBetween() {
+        expect(tester.getTopLeft(explorer).dy,
+            lessThan(tester.getTopLeft(moved).dy));
+        expect(tester.getTopLeft(moved).dy,
+            lessThan(tester.getTopLeft(outline).dy));
+      }
+
+      expectBetween();
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewPlacements['search'],
+          (container: 'explorer', before: false));
+      expect(saved.sidebarViewLocations?['git'], source);
+      expect(saved.sidebarViewLocations?['search'], destination);
+      expect(saved.panelViewPlacements, isEmpty);
+      expect(saved.sidebarGroupPaneWeights.keys,
+          unorderedEquals(['explorer', 'outline']));
+      expect(saved.sidebarGroupPaneWeights['explorer'], closeTo(1.12, .001));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expectBetween();
+      expect(
+          find.byKey(const ValueKey('builtin-view-focus-git')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   for (final location in [
     primarySidebarViewLocation,
     secondarySidebarViewLocation,

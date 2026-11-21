@@ -74,8 +74,8 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
         view: view,
         highlightKeyPrefix: 'sidebar-group-drop-${widget.location}-$view',
         sourceFor: (data) {
-          if (data is SidebarGroupPaneDrag) {
-            return identical(data.group, _group) ? data.view : null;
+          if (data is SidebarGroupPaneDrag && identical(data.group, _group)) {
+            return data.view;
           }
           return widget.externalSourceFor(data);
         },
