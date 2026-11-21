@@ -67,7 +67,7 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     return SizedBox(
       key: ValueKey('${widget.location}-sidebar-group-$role$view'),
       height: extent,
-      child: PaneGroupDropTarget<_SidebarGroupPaneDrag>(
+      child: PaneGroupDropTarget<SidebarGroupPaneDrag>(
         axis: Axis.vertical,
         view: view,
         highlightKeyPrefix: 'sidebar-group-drop-${widget.location}-$view',
@@ -78,8 +78,13 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
           children: [
             SizedBox(
               height: math.min(_headerExtent, extent),
-              child: Draggable<_SidebarGroupPaneDrag>(
-                data: (group: _group, view: view),
+              child: Draggable<SidebarGroupPaneDrag>(
+                data: (
+                  group: _group,
+                  location: widget.location,
+                  container: widget.container,
+                  view: view,
+                ),
                 maxSimultaneousDrags: 1,
                 allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
                 dragAnchorStrategy: pointerDragAnchorStrategy,
@@ -118,4 +123,10 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
   }
 }
 
-typedef _SidebarGroupPaneDrag = ({Object group, String view});
+/// Identifies the pane and its owning side bar group during a header drag.
+typedef SidebarGroupPaneDrag = ({
+  Object group,
+  String location,
+  String container,
+  String view,
+});

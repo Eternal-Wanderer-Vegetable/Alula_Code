@@ -27197,16 +27197,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     FocusNode focus,
   ) {
     final side = before ? 'before' : 'after';
-    bool accepts(ActivityBarViewDrag drag) =>
-        _panelTab.index == tab.index &&
-        _layout.sidebarViewLocation(drag.view) == primarySidebarViewLocation;
+    String? viewFor(Object drag) {
+      if (_panelTab.index != tab.index) return null;
+      if (drag is ActivityBarViewDrag &&
+          _layout.sidebarViewLocation(drag.view) ==
+              primarySidebarViewLocation) {
+        return drag.view;
+      }
+      if (drag is SidebarGroupPaneDrag &&
+          _layout.sidebarViewLocation(drag.view) == drag.location &&
+          _layout.sidebarSelection(drag.location) == drag.container &&
+          _layout.root.sidebarViewPlacements[drag.view]?.container ==
+              drag.container) {
+        return drag.view;
+      }
+      return null;
+    }
 
-    return DragTarget<ActivityBarViewDrag>(
+    return DragTarget<Object>(
       key: ValueKey('panel-view-body-drop-${tab.name}-$side'),
-      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onWillAcceptWithDetails: (details) => viewFor(details.data) != null,
       onAcceptWithDetails: (details) {
-        if (!accepts(details.data)) return;
-        final view = details.data.view;
+        final view = viewFor(details.data);
+        if (view == null) return;
         if (!_layout.moveSidebarView(
           view,
           panelSidebarViewLocation,
