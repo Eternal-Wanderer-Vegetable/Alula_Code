@@ -19,10 +19,12 @@ class ActivityBarViewDrag {
   final String view;
 }
 
-class SecondarySidebarContainerDrag {
-  const SecondarySidebarContainerDrag(this.view);
+/// An entire built-in container dragged from a title entry.
+class BuiltinViewContainerDrag {
+  const BuiltinViewContainerDrag(this.view, this.sourceLocation);
 
   final String view;
+  final String sourceLocation;
 }
 
 class ActivityBar extends StatefulWidget {
@@ -71,8 +73,9 @@ class ActivityBar extends StatefulWidget {
   /// Changes the order of two existing view actions by drag-and-drop.
   final ValueChanged<List<String>>? onOrderChanged;
 
-  /// Moves an incoming secondary-sidebar container with its launcher order.
-  final void Function(String view, List<String> order)? onContainerDrop;
+  /// Moves an incoming container with its launcher order.
+  final void Function(BuiltinViewContainerDrag drag, List<String> order)?
+      onContainerDrop;
 
   /// Changes the set of pinned view actions.
   final ValueChanged<List<String>>? onPinnedViewsChanged;
@@ -401,7 +404,7 @@ class _ActivityBarState extends State<ActivityBar> {
   Widget _buildContainerDropTarget(Widget child) {
     final onDrop = widget.onContainerDrop;
     if (onDrop == null) return child;
-    return DragTarget<SecondarySidebarContainerDrag>(
+    return DragTarget<BuiltinViewContainerDrag>(
       onWillAcceptWithDetails: (details) =>
           widget.excludedViews.contains(details.data.view),
       onAcceptWithDetails: (details) {
@@ -412,7 +415,7 @@ class _ActivityBarState extends State<ActivityBar> {
           view,
           anchor: _containerDropAnchor(details.offset),
         );
-        onDrop(view, order);
+        onDrop(details.data, order);
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,

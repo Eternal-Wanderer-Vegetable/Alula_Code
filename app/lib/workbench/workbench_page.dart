@@ -21744,8 +21744,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   _layout.activityBarBadgesDisabledViews,
                               accountsVisible: _layout.activityBarAccountsVisible,
                               onOrderChanged: _layout.setActivityBarOrder,
-                              onContainerDrop:
-                                  _moveSecondaryContainerToActivityBar,
+                              onContainerDrop: _moveContainerToActivityBar,
                               onPinnedViewsChanged:
                                   _layout.setActivityBarPinnedViews,
                               onBadgeDisabledViewsChanged:
@@ -22806,7 +22805,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     return _hasSidebarGroup(view)
-        ? _buildViewDrag(SecondarySidebarContainerDrag(view), label, entry)
+        ? _buildViewDrag(
+            BuiltinViewContainerDrag(view, secondarySidebarViewLocation),
+            label,
+            entry,
+          )
         : entry;
   }
 
@@ -22814,11 +22817,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout.root.sidebarViewPlacements.values
           .any((placement) => placement.container == view);
 
-  void _moveSecondaryContainerToActivityBar(
-    String view,
+  void _moveContainerToActivityBar(
+    BuiltinViewContainerDrag drag,
     List<String> order,
   ) {
-    if (_layout.sidebarViewLocation(view) != secondarySidebarViewLocation ||
+    final view = drag.view;
+    if ((drag.sourceLocation != secondarySidebarViewLocation &&
+            drag.sourceLocation != panelSidebarViewLocation) ||
+        _layout.sidebarViewLocation(view) != drag.sourceLocation ||
         !_hasSidebarGroup(view)) {
       return;
     }
@@ -27103,7 +27109,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       key: ValueKey('panel-builtin-view-$view'),
       text: _sidebarViewLabel(view),
     );
-    return _hasSidebarGroup(view) ? tab : _buildPanelHostedViewDrag(view, tab);
+    return _hasSidebarGroup(view)
+        ? _buildViewDrag(
+            BuiltinViewContainerDrag(view, panelSidebarViewLocation),
+            _sidebarViewLabel(view),
+            tab,
+          )
+        : _buildPanelHostedViewDrag(view, tab);
   }
 
   Widget _buildPanelHostedViewDrag(String view, Widget child) => _buildViewDrag(

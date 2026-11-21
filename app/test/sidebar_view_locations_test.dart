@@ -623,6 +623,44 @@ void main() {
     expect(restored.root.sidebarGroupPaneWeights, weights);
   });
 
+  test('returning a Panel group restores its launcher and members together',
+      () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const panel = panelSidebarViewLocation;
+    const primary = primarySidebarViewLocation;
+    layout.moveSidebarView('search', panel);
+    layout.moveSidebarView('search', primary,
+        sidebarPlacement: (container: 'explorer', before: true));
+    layout.moveSidebarView('explorer', panel, moveSidebarGroup: true);
+    layout.moveSidebarView('outline', panel,
+        panelPlacement: (tab: PanelViewTab.diagnostics, before: true));
+    final order = ['search', 'outline', 'git', 'explorer'];
+    var changes = 0;
+    layout.addListener(() {
+      changes++;
+      expect(layout.root.activityBarOrder, order);
+      expect(layout.sidebarViewLocation('search'), primary);
+      expect(layout.sidebarViewLocation('explorer'), primary);
+      expect(layout.standalonePanelViews, isEmpty);
+    });
+    expect(layout.moveSidebarView('outline', primary, moveSidebarGroup: true),
+        isFalse);
+    expect(layout.moveSidebarView('search', primary, moveSidebarGroup: true),
+        isFalse);
+    expect(changes, 0);
+    expect(
+      layout.moveSidebarView('explorer', primary,
+          moveSidebarGroup: true, activityBarOrder: order),
+      isTrue,
+    );
+    expect(changes, 1);
+    expect(layout.primarySidebarView, 'explorer');
+    expect(layout.groupedSidebarViews('explorer', before: true), ['search']);
+    expect(layout.groupedPanelViews(PanelViewTab.diagnostics, before: true),
+        ['outline']);
+  });
+
   test('relative sidebar insertion saves order with the move', () {
     final layout = WorkbenchLayout();
     addTearDown(layout.dispose);

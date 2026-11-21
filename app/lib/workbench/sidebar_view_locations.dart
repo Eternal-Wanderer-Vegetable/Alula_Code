@@ -246,7 +246,11 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     final source = locations[view]!;
     if (moveSidebarGroup &&
         (source == destination ||
-            source == panelSidebarViewLocation ||
+            (source == panelSidebarViewLocation &&
+                !root.sidebarViewPlacements.values.any(
+                  (placement) => placement.container == view,
+                )) ||
+            root.panelViewPlacements.containsKey(view) ||
             panelPlacement != null ||
             sidebarPlacement != null ||
             detachFromSidebarGroup ||
