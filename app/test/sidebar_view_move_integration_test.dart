@@ -3103,14 +3103,24 @@ void main() {
     });
   }
 
-  for (final position in [PanelPosition.bottom, PanelPosition.right]) {
-    testWidgets('$position Panel group returns to the primary Activity Bar',
+  for (final (position, destination) in [
+    (PanelPosition.bottom, primarySidebarViewLocation),
+    (PanelPosition.right, primarySidebarViewLocation),
+    (PanelPosition.bottom, secondarySidebarViewLocation),
+    (PanelPosition.right, secondarySidebarViewLocation),
+  ]) {
+    testWidgets('$position Panel group moves to the $destination sidebar',
         (tester) async {
       tester.view.physicalSize = const Size(1480, 1000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final layout = WorkbenchLayout();
+      final secondary = destination == secondarySidebarViewLocation;
+      if (secondary) {
+        layout.moveSidebarView('git', destination);
+        layout.showRegion(secondarySidebarRegion);
+      }
       for (final view in ['search', 'outline']) {
         layout.moveSidebarView(view, panelSidebarViewLocation);
         layout.moveSidebarView(view, primarySidebarViewLocation,
@@ -3149,17 +3159,18 @@ void main() {
       await mount();
       final source = find.byKey(const ValueKey('panel-builtin-view-explorer'));
       final target =
-          find.byKey(const ValueKey('grouped-panel-view-entry-drop-primary'));
+          find.byKey(ValueKey('grouped-panel-view-entry-drop-$destination'));
       final highlight = find
-          .byKey(const ValueKey('grouped-panel-view-entry-highlight-primary'));
+          .byKey(ValueKey('grouped-panel-view-entry-highlight-$destination'));
       final editor = find.byKey(const ValueKey('wb-region-editor'));
       final panel = find.byKey(const ValueKey('wb-region-panel'));
       final tabs = find.descendant(of: panel, matching: find.byType(TabBar));
       final search = find.byKey(const ValueKey('search-input'));
-      final activityExplorer =
-          find.byKey(const ValueKey('activity-bar-item-menu-anchor-explorer'));
-      final activityGit =
-          find.byKey(const ValueKey('activity-bar-item-menu-anchor-git'));
+      final prefix = secondary
+          ? 'secondary-sidebar-entry-'
+          : 'activity-bar-item-menu-anchor-';
+      final explorerEntry = find.byKey(ValueKey('${prefix}explorer'));
+      final gitEntry = find.byKey(ValueKey('${prefix}git'));
       const query = 'returned from the panel 😀';
       await tester.enterText(search, query);
 
@@ -3192,15 +3203,18 @@ void main() {
       expect(highlight, findsNothing);
 
       void expectReturnedGroup() {
-        expect(activityExplorer, findsOneWidget);
-        expect(tester.getCenter(activityGit).dy,
-            lessThan(tester.getCenter(activityExplorer).dy));
+        expect(explorerEntry, findsOneWidget);
+        expect(gitEntry, findsOneWidget);
+        if (!secondary) {
+          expect(tester.getCenter(gitEntry).dy,
+              lessThan(tester.getCenter(explorerEntry).dy));
+        }
         final first =
-            find.byKey(const ValueKey('sidebar-group-header-primary-search'));
+            find.byKey(ValueKey('sidebar-group-header-$destination-search'));
         final host =
-            find.byKey(const ValueKey('sidebar-group-header-primary-explorer'));
+            find.byKey(ValueKey('sidebar-group-header-$destination-explorer'));
         final outline =
-            find.byKey(const ValueKey('primary-sidebar-group-outline'));
+            find.byKey(ValueKey('$destination-sidebar-group-outline'));
         expect(
             tester.getTopLeft(first).dy, lessThan(tester.getTopLeft(host).dy));
         expect(tester.getTopLeft(host).dy,
@@ -3213,15 +3227,24 @@ void main() {
 
       expectReturnedGroup();
       expect(tester.widget<TextField>(search).controller!.text, query);
+      await tester.tap(gitEntry);
+      await tester.pumpAndSettle();
+      expect(search, findsNothing);
+      await tester.tap(explorerEntry);
+      await tester.pumpAndSettle();
+      expectReturnedGroup();
+      expect(tester.widget<TextField>(search).controller!.text, query);
       await tester.pump(const Duration(milliseconds: 700));
       final saved = layoutStore.tryLoad()!;
-      expect(saved.activityBarOrder, ['search', 'outline', 'git', 'explorer']);
+      expect(saved.activityBarOrder,
+          secondary ? isNull : ['search', 'outline', 'git', 'explorer']);
       expect(saved.sidebarViewPlacements, placements);
       expect(saved.sidebarGroupPaneWeights, weights);
       expect(saved.sidebarGroupCollapsedPanes, {'outline'});
-      expect(saved.primarySidebarView, 'explorer');
+      expect(secondary ? saved.secondarySidebarView : saved.primarySidebarView,
+          'explorer');
       for (final view in ['explorer', 'search', 'outline']) {
-        expect(saved.sidebarViewLocations?[view], primarySidebarViewLocation);
+        expect(saved.sidebarViewLocations?[view], destination);
       }
       expect(sessionStore.tryLoad()?['activePanelHostedView'], isNull);
 

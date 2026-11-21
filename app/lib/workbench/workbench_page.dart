@@ -22838,12 +22838,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildSidebarEntryDropTarget(String location, Widget child) {
     String? viewFor(Object drag) {
-      if (location == secondarySidebarViewLocation &&
-          drag is ActivityBarViewDrag &&
-          _layout.sidebarViewLocation(drag.view) ==
-              primarySidebarViewLocation &&
-          _hasSidebarGroup(drag.view)) {
-        return drag.view;
+      if (location == secondarySidebarViewLocation) {
+        final (view, source) = switch (drag) {
+          ActivityBarViewDrag(:final view) => (
+              view,
+              primarySidebarViewLocation
+            ),
+          BuiltinViewContainerDrag(
+            :final view,
+            sourceLocation: panelSidebarViewLocation,
+          ) =>
+            (view, panelSidebarViewLocation),
+          _ => (null, null),
+        };
+        if (view != null &&
+            _layout.sidebarViewLocation(view) == source &&
+            _hasSidebarGroup(view)) {
+          return view;
+        }
       }
       return _viewForSidebarDrop(location, drag);
     }
@@ -22854,7 +22866,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onAcceptWithDetails: (details) {
         final view = viewFor(details.data);
         if (view == null) return;
-        final moveGroup = details.data is ActivityBarViewDrag;
+        final moveGroup = details.data is ActivityBarViewDrag ||
+            details.data is BuiltinViewContainerDrag;
         _moveSidebarView(
           view,
           location,
