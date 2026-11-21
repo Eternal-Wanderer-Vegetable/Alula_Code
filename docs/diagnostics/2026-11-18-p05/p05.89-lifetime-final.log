@@ -1,0 +1,6 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/editor_group_close_lifetime_test.dart
+00:00 +0: closeAllGroups releases mounted split editor views safely (breadcrumb focus: false)
+00:01 +1: closeAllGroups releases mounted split editor views safely (breadcrumb focus: true)
+00:01 +2: batch close releases a shared document after its final view
+00:02 +3: dirty Cancel preserves both split views and their controllers
+00:02 +4: All tests passed!

@@ -76,6 +76,48 @@ void main() {
         resolved[1].range, const TextSelection(baseOffset: 5, extentOffset: 8));
   });
 
+  test('gutter painting stays inside its viewport and restores canvas state',
+      () async {
+    const shell = Color(0xFF1B1E24);
+    const gutter = Color(0xFF191B20);
+    const marker = Color(0xFFFFC107);
+    const width = 80;
+    const height = 64;
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.drawColor(shell, BlendMode.src);
+    canvas.save();
+    canvas.translate(20, 16);
+    EditorGutterPainter(
+      text: 'first line',
+      firstLineNumber: 0,
+      style: const TextStyle(fontSize: 14),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
+      padding: EdgeInsets.zero,
+      textWidth: 200,
+      scrollController: null,
+      backgroundColor: gutter,
+      foregroundColor: Colors.white,
+      dividerColor: Colors.grey,
+    ).paint(canvas, const Size(28, 32));
+    canvas.drawRect(const Rect.fromLTWH(36, 4, 3, 3), Paint()..color = marker);
+    canvas.restore();
+
+    final picture = recorder.endRecording();
+    addTearDown(picture.dispose);
+    final image = await picture.toImage(width, height);
+    addTearDown(image.dispose);
+    final bytes =
+        (await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba))!;
+    int pixel(int x, int y) => bytes.getUint32((y * width + x) * 4);
+
+    expect(pixel(5, 5), 0x1B1E24FF);
+    expect(pixel(24, 40), 0x191B20FF);
+    expect(pixel(53, 40), 0x1B1E24FF);
+    expect(pixel(57, 21), 0xFFC107FF);
+  });
+
   test('range decoration painter draws background and underline at text bounds',
       () async {
     const text = 'abcdef';

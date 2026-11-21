@@ -1,0 +1,45 @@
+
+  GitNexus Detect Changes (1.6.12)
+warning: in the working copy of 'app/linux/flutter/generated_plugin_registrant.cc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/linux/flutter/generated_plugin_registrant.h', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/linux/flutter/generated_plugins.cmake', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/macos/Flutter/GeneratedPluginRegistrant.swift', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/windows/flutter/generated_plugin_registrant.cc', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/windows/flutter/generated_plugin_registrant.h', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/windows/flutter/generated_plugins.cmake', LF will be replaced by CRLF the next time Git touches it
+Changes: 313 files, 756 symbols
+Affected processes: 303
+Risk level: critical
+
+Changed symbols:
+  Class AlulaApp → app/lib/main.dart
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Property axis → app/lib/workbench/activity_bar.dart
+  Property size → app/lib/workbench/activity_bar.dart
+  Property order → app/lib/workbench/activity_bar.dart
+  Property pinnedViews → app/lib/workbench/activity_bar.dart
+  Property badges → app/lib/workbench/activity_bar.dart
+  Property badgeDisabledViews → app/lib/workbench/activity_bar.dart
+  Property accountsVisible → app/lib/workbench/activity_bar.dart
+  Property onSizeChanged → app/lib/workbench/activity_bar.dart
+  Property onOrderChanged → app/lib/workbench/activity_bar.dart
+  Property onPinnedViewsChanged → app/lib/workbench/activity_bar.dart
+  Property onBadgeDisabledViewsChanged → app/lib/workbench/activity_bar.dart
+  Property onAccountsVisibilityChanged → app/lib/workbench/activity_bar.dart
+  Property onManageCommand → app/lib/workbench/activity_bar.dart
+... and 741 more
+
+Affected execution flows:
+  • Build → _match (10 steps) — changed: createState, createState, createState, createState, createState, createState, createState, createState, createState, _visibleTitleMenuItems
+  • Build → _parseUnary (10 steps) — changed: createState, createState, createState, createState, createState, createState, createState, createState, createState, _visibleTitleMenuItems
+  • Build → _truthy (10 steps) — changed: createState, createState, createState, createState, createState, createState, createState, createState, createState, _visibleTitleMenuItems
+  • _applyIndentation → _splitsSurrogatePair (9 steps) — changed: createState, createState, createState, createState, createState, createState, createState, createState, createState
+  • Build → _tokenize (8 steps) — changed: createState, createState, createState, createState, createState, createState, _visibleTitleMenuItems
+  • _applyIndentation → _takeJson (8 steps) — changed: createState, createState, createState, createState, createState, createState
+  • RunBuildCommand → SourceSpanException (8 steps) — changed: createState, createState
+  • Build → _hasAdjacentChange (7 steps) — changed: createState, createState, createState, createState
+  • InitState → _backtrack (7 steps) — changed: createState, createState
+  • InitState → LineDiffHunk (7 steps) — changed: createState, createState
+... and 293 more
+(node:32360) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

@@ -1,0 +1,175 @@
+{
+  "window": {
+    "windowHandle": 393386,
+    "windowProcessId": 7040,
+    "windowTitle": "alula_app",
+    "foregroundWindow": 393386,
+    "clientRect": {
+      "width": 1028,
+      "height": 681
+    },
+    "clientScreenOrigin": {
+      "x": 18,
+      "y": 41
+    },
+    "devicePixelRatio": 1.0,
+    "sourceScreen": {
+      "x": 532,
+      "y": 223
+    },
+    "externalSourceScreen": {
+      "x": 532,
+      "y": 329
+    },
+    "targetScreen": {
+      "x": 532,
+      "y": 539
+    }
+  },
+  "layout": {
+    "source": {
+      "x": 514.0,
+      "y": 182.5
+    },
+    "externalSource": {
+      "x": 514.0,
+      "y": 288.5
+    },
+    "target": {
+      "x": 514.0,
+      "y": 498.5
+    },
+    "devicePixelRatio": 1.0
+  },
+  "drop": {
+    "selectedText": "alpha",
+    "operation": "move",
+    "targetOffsetUtf16": 11
+  },
+  "dragCompleted": {
+    "selectedText": "alpha",
+    "operation": "move"
+  },
+  "crossDocumentDrop": {
+    "selectedText": "alpha",
+    "operation": "copy",
+    "targetDocumentId": 7002,
+    "targetDocumentVersion": 4,
+    "targetOffsetUtf16": 6
+  },
+  "crossDocumentDragCompleted": {
+    "selectedText": "alpha",
+    "operation": "copy"
+  },
+  "externalDrop": {
+    "text": "external text",
+    "targetDocumentId": 7002,
+    "targetDocumentVersion": 4,
+    "targetOffsetUtf16": 6
+  },
+  "dropOverOperations": [
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy"
+  ],
+  "flutterPointerEventCount": 12,
+  "flutterPointerEventTypes": [
+    "cancel",
+    "down",
+    "move"
+  ]
+}

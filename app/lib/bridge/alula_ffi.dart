@@ -329,6 +329,20 @@ class AlulaFfi {
     'alula_definition_cancel',
   );
 
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _workspaceSymbolsStart = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint64),
+          Pointer<Utf8> Function(
+              int, Pointer<Utf8>, int)>('alula_workspace_symbols_start');
+
+  late final Pointer<Utf8> Function(int) _workspaceSymbolsPoll =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_workspace_symbols_poll');
+
+  late final Pointer<Utf8> Function(int) _workspaceSymbolsCancel =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_workspace_symbols_cancel');
+
   late final Pointer<Utf8> Function(int, int) _semanticTokensStart =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
           Pointer<Utf8> Function(int, int)>('alula_semantic_tokens_start');
@@ -768,6 +782,20 @@ class AlulaFfi {
 
   String definitionCancelJson(int requestId) =>
       _takeJson(_definitionCancel(requestId));
+
+  String workspaceSymbolsStartJson(int id, String query, int timeoutMs) {
+    final nativeQuery = query.toNativeUtf8();
+    try {
+      return _takeJson(_workspaceSymbolsStart(id, nativeQuery, timeoutMs));
+    } finally {
+      malloc.free(nativeQuery);
+    }
+  }
+
+  String workspaceSymbolsPollJson(int requestId) =>
+      _takeJson(_workspaceSymbolsPoll(requestId));
+  String workspaceSymbolsCancelJson(int requestId) =>
+      _takeJson(_workspaceSymbolsCancel(requestId));
 
   String semanticTokensStartJson(int id, int timeoutMs) =>
       _takeJson(_semanticTokensStart(id, timeoutMs));

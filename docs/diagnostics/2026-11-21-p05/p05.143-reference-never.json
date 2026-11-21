@@ -1,0 +1,63 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "preventPinnedEditorClose": "never",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "keyboard-target-alpha": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "alpha.txt"
+      ],
+      "active": "alpha.txt",
+      "pinned": [
+        "alpha.txt",
+        "bravo.txt"
+      ]
+    },
+    "key-close-alpha": {
+      "tabs": [
+        "bravo.txt",
+        "charlie.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "foxtrot.txt"
+      ],
+      "active": "foxtrot.txt",
+      "pinned": [
+        "bravo.txt"
+      ]
+    },
+    "middle-close-bravo": {
+      "tabs": [
+        "charlie.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "foxtrot.txt"
+      ],
+      "active": "foxtrot.txt",
+      "pinned": []
+    },
+    "context-close-echo": {
+      "tabs": [
+        "charlie.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "foxtrot.txt"
+      ],
+      "active": "foxtrot.txt",
+      "pinned": []
+    }
+  },
+  "exitCode": 0
+}

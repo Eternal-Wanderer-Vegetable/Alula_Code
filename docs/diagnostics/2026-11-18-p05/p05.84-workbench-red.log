@@ -1,0 +1,32 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart
+00:00 +0: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _ElementPredicateWidgetFinder:<Found 0 widgets with a semantics label named "错误": []>
+   Which: means none were found but some were expected
+Product validator exposes a typed error severity
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart:63:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart line 63
+The test description was:
+  Go to Line accepts UTF-16 positions and cancel leaves document state intact
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: Go to Line accepts UTF-16 positions and cancel leaves document state intact [E]
+  Test failed. See exception logs above.
+  The test description was: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+  
+00:01 +0 -1: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact

@@ -1,0 +1,22 @@
+{
+  "feature": "feat-143",
+  "scope": "Open Editors multi-group inline Close Group",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "test_file": "app/test/open_editors_close_group_test.dart",
+  "focused_passed": 7,
+  "full_passed": 1545,
+  "additional_test": "workbench_merge_result_close_test.dart: workspace switch before Discard/Save and nested external overwrite preserves live session/text/disk",
+  "workspace_roundtrip": "A to B to A stale Discard cannot revive request",
+  "review": "passed after keepEmpty, workspace generation, write guard and typed merge veto corrections",
+  "cases": [
+    "Close inactive group including sticky while preserving other group focus, text and disk",
+    "Dirty Cancel retains the group, all tabs and controllers/content",
+    "Save writes dirty sticky document before removing the group",
+    "Shared dirty document remains live in surviving view with same Rust instance and content",
+    "Preexisting empty group closes without disturbing active group",
+    "Single remaining group has no inline close button and remains present"
+  ],
+  "first_run": {"passed": 3, "failed": 3, "reason": "Fixture assumed disk CRLF equals normalized Rust content and offscreen lazy row remains mounted; corrected authoritative-content snapshots and row visibility assertions", "product_red_claimed": false},
+  "limits": ["Existing single-group header visibility differs from pinned source", "Complete command/menu registration remains beyond this inline host", "Duplicate-request and layout removal failure guards source-reviewed; root/generation races exercised by ordinary and merge fixtures", "macOS native/device/visual validation deferred"],
+  "parents_remain_open": true
+}

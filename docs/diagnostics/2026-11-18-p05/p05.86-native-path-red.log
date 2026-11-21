@@ -1,0 +1,49 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart
+00:00 +0: path sorting changes sidebar projection only and restores preference
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: a value less than <163.0>
+  Actual: <251.0>
+   Which: is not a value less than <163.0>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart:154:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart line 154
+The test description was:
+  path sorting changes sidebar projection only and restores preference
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: path sorting changes sidebar projection only and restores preference [E]
+  Test failed. See exception logs above.
+  The test description was: path sorting changes sidebar projection only and restores preference
+  
+00:01 +0 -1: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference

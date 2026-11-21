@@ -1,0 +1,54 @@
+{
+  "updated": "2026-11-17",
+  "phase": "P05",
+  "complete": false,
+  "slices": [
+    {
+      "slice": "P05.70",
+      "commit": "231e853",
+      "ci": 43992774712,
+      "platform": 43992763968,
+      "status": "passed",
+      "macosPackage": 14290614081,
+      "sha256": "4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497"
+    },
+    {
+      "slice": "P05.71-initial",
+      "commit": "29924ce",
+      "ci": 44002878893,
+      "platform": 44002870442,
+      "status": "passed"
+    },
+    {
+      "slice": "P05.71-reference",
+      "commit": "d3e537b",
+      "ci": 44007182727,
+      "platform": 44007176331,
+      "status": "passed",
+      "macosPackage": 14297420144,
+      "sha256": "77864ecd06fefe987390aefe137e75f403db926ce4ce2c331cd532cc7272baad"
+    },
+    {
+      "slice": "P05.72",
+      "commit": "f92257e",
+      "ci": 44010850566,
+      "platform": 44010843172,
+      "status": "passed",
+      "localFlutter": 1381
+    },
+    {
+      "slice": "P05.73",
+      "commit": "8a4ef28",
+      "ci": 44016110199,
+      "platform": 44016101825,
+      "status": "passed",
+      "localFlutter": 1386
+    }
+  ],
+  "limits": [
+    "macOS generic native DnD pointer route is unavailable and explicitly skipped",
+    "generic DnD does not verify auxiliary document transfers",
+    "matched native visual acceptance remains open",
+    "child slice passed is not P05 phase completion"
+  ]
+}

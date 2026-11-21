@@ -1,0 +1,7 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart
+00:00 +0: reveal is disabled until breadcrumb navigation has focus
+00:01 +1: Space on a file preserves the dirty editor and its undo history
+00:01 +2: CtrlCmd+Enter on a file restores focus and keeps its preview
+00:02 +3: Space on a folder selects the next segment and lists siblings
+00:02 +4: folder reveal cancels back to its owner or preserves other focus
+00:03 +5: All tests passed!

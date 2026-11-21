@@ -1,0 +1,28 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "results": {
+    "beforeClear": [
+      "Bell progress fixture",
+      "Initial error",
+      "Initial info"
+    ],
+    "paletteClearClosesCenter": true,
+    "afterPaletteClear": [
+      "Bell progress fixture"
+    ],
+    "whileMuted": [
+      "Error during Do Not Disturb"
+    ],
+    "canonicalClearClosesCenter": true,
+    "afterCanonicalClear": [
+      "Bell progress fixture"
+    ],
+    "emptyCenterHidden": true
+  },
+  "exitCode": 0
+}

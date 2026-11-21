@@ -426,6 +426,9 @@ class EditorGutterPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // CustomPaint can share the canvas with surrounding workbench regions.
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
     canvas.drawColor(backgroundColor, BlendMode.src);
     final textPainter = TextPainter(
       text: textSpan ?? TextSpan(text: text, style: style),
@@ -495,6 +498,7 @@ class EditorGutterPainter extends CustomPainter {
         ..color = dividerColor
         ..strokeWidth = 1,
     );
+    canvas.restore();
     textPainter.dispose();
   }
 

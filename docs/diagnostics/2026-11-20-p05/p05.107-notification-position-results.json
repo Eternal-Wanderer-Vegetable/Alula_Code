@@ -1,0 +1,322 @@
+{
+  "measurement": "Code-OSS rendered DOM box bounds and Alula solid fill bounds are distinct measurements.",
+  "reference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "browser": "Chrome/150.0.7871.250",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 986,
+      "height": 666
+    },
+    "regions": {
+      "root": {
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 986,
+          "height": 666,
+          "top": 0,
+          "right": 986,
+          "bottom": 666,
+          "left": 0
+        },
+        "styleTop": "0px",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      },
+      "title": {
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 986,
+          "height": 35,
+          "top": 0,
+          "right": 986,
+          "bottom": 35,
+          "left": 0
+        },
+        "styleTop": "auto",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      },
+      "status": {
+        "box": {
+          "x": 0,
+          "y": 638,
+          "width": 986,
+          "height": 28,
+          "top": 638,
+          "right": 986,
+          "bottom": 666,
+          "left": 0
+        },
+        "styleTop": "auto",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      }
+    },
+    "cases": {
+      "bottom-right": {
+        "toastFirst": {
+          "x": 526.4000244140625,
+          "y": 481.20001220703125,
+          "width": 451.5999755859375,
+          "height": 69.5999755859375
+        },
+        "center": {
+          "x": 526.4000244140625,
+          "y": 457.3999938964844,
+          "width": 451.5999755859375,
+          "height": 172.60000610351562
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 946,
+            "y": 640,
+            "width": 28,
+            "height": 24
+          }
+        ],
+        "toastFrame": {
+          "top": "477.2px",
+          "bottom": "32px",
+          "inlineTop": "",
+          "view": {
+            "x": 522.4000244140625,
+            "y": 477.20001220703125,
+            "width": 459.6000061035156,
+            "height": 156.8000030517578,
+            "top": 477.20001220703125,
+            "right": 982.0000305175781,
+            "bottom": 634.0000152587891,
+            "left": 522.4000244140625
+          }
+        },
+        "centerStyle": {
+          "top": "457.4px",
+          "bottom": "36px",
+          "inlineTop": "",
+          "view": {
+            "x": 526.4000244140625,
+            "y": 457.3999938964844,
+            "width": 451.6000061035156,
+            "height": 172.60000610351562,
+            "top": 457.3999938964844,
+            "right": 978.0000305175781,
+            "bottom": 630,
+            "left": 526.4000244140625
+          }
+        }
+      },
+      "bottom-left": {
+        "toastFirst": {
+          "x": 8,
+          "y": 481.20001220703125,
+          "width": 451.6000061035156,
+          "height": 69.5999755859375
+        },
+        "center": {
+          "x": 8,
+          "y": 457.3999938964844,
+          "width": 451.6000061035156,
+          "height": 172.60000610351562
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 40,
+            "y": 640,
+            "width": 32,
+            "height": 24
+          }
+        ],
+        "toastFrame": {
+          "top": "477.2px",
+          "bottom": "32px",
+          "inlineTop": "",
+          "view": {
+            "x": 4,
+            "y": 477.20001220703125,
+            "width": 459.6000061035156,
+            "height": 156.8000030517578,
+            "top": 477.20001220703125,
+            "right": 463.6000061035156,
+            "bottom": 634.0000152587891,
+            "left": 4
+          }
+        },
+        "centerStyle": {
+          "top": "457.4px",
+          "bottom": "36px",
+          "inlineTop": "",
+          "view": {
+            "x": 8,
+            "y": 457.3999938964844,
+            "width": 451.6000061035156,
+            "height": 172.60000610351562,
+            "top": 457.3999938964844,
+            "right": 459.6000061035156,
+            "bottom": 630,
+            "left": 8
+          }
+        }
+      },
+      "top-right": {
+        "toastFirst": {
+          "x": 526.4000244140625,
+          "y": 36,
+          "width": 451.5999755859375,
+          "height": 69.5999984741211
+        },
+        "center": {
+          "x": 526.4000244140625,
+          "y": 36,
+          "width": 451.5999755859375,
+          "height": 172.60000610351562
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 822,
+            "y": 6.5,
+            "width": 22,
+            "height": 22
+          }
+        ],
+        "toastFrame": {
+          "top": "32px",
+          "bottom": "477.2px",
+          "inlineTop": "38px",
+          "view": {
+            "x": 522.4000244140625,
+            "y": 32,
+            "width": 459.6000061035156,
+            "height": 156.8000030517578,
+            "top": 32,
+            "right": 982.0000305175781,
+            "bottom": 188.8000030517578,
+            "left": 522.4000244140625
+          }
+        },
+        "centerStyle": {
+          "top": "36px",
+          "bottom": "457.4px",
+          "inlineTop": "42px",
+          "view": {
+            "x": 526.4000244140625,
+            "y": 36,
+            "width": 451.6000061035156,
+            "height": 172.60000610351562,
+            "top": 36,
+            "right": 978.0000305175781,
+            "bottom": 208.60000610351562,
+            "left": 526.4000244140625
+          }
+        }
+      }
+    }
+  },
+  "alula": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+    "aotSha256": "920f54afa2de54751c0a345ad047861cda7ca627fe4ac000b288c50f1234168f",
+    "fixtureSha256": "30364f4afd777e33eef0ada855f31695a7fe97096556c12729bb596924cf01a3",
+    "cases": {
+      "bottom-right": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          784.8,
+          656.0
+        ],
+        "toastBoundsLogical": [
+          530.4,
+          479.2,
+          977.6,
+          633.6
+        ],
+        "centerBoundsLogical": [
+          530.4,
+          456.0,
+          977.6,
+          633.6
+        ],
+        "exitCode": 0
+      },
+      "bottom-left": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          34.4,
+          656.0
+        ],
+        "toastBoundsLogical": [
+          9.6,
+          479.2,
+          456.8,
+          633.6
+        ],
+        "centerBoundsLogical": [
+          9.6,
+          456.0,
+          456.8,
+          633.6
+        ],
+        "exitCode": 0
+      },
+      "top-right": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          972.0,
+          16.8
+        ],
+        "toastBoundsLogical": [
+          530.4,
+          44.0,
+          977.6,
+          198.4
+        ],
+        "centerBoundsLogical": [
+          530.4,
+          44.0,
+          977.6,
+          221.6
+        ],
+        "exitCode": 0
+      }
+    }
+  },
+  "mirroredChangedSourcesSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "a053350c115e12c81f44e23b2aea9bec75203ab5b32f3a5513fc9e9bc9b2141a",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "47d65d773d7bae08c8d396289204d4df600e84390ad0f7230da64bc0cd81f4d1",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  },
+  "alulaBeforeGutterClip": {
+    "aotSha256": "88b76fe81fdacd2445c30c8787af7514ee19fc315bf781fb8e3782a0049972af",
+    "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+    "topRight": {
+      "welcomeBadgeVisible": true,
+      "editorBadgeVisible": false,
+      "editorPredictedBellPointOpenedCenter": true,
+      "editorCapturedToastSha256": "1fc7ecd2624ec5f2de7188743f258ce1e45198afb8923481d99e255e6f4f16b4",
+      "editorCapturedCenterSha256": "c56a71aee7d215dc6418414ada45945a651e0060bcaf1c1b7404bb914278e2d4"
+    }
+  }
+}

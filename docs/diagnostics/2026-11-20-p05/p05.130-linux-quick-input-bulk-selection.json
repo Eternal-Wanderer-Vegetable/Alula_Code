@@ -1,0 +1,108 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "9d86c0ba38b38a8ed97fb9c0bda09966b2de451c946897a5f4dfb6e22d0502e9",
+  "observations": {
+    "partial": {
+      "request": "partial",
+      "checked": false,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 2,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    },
+    "all-matches": {
+      "request": "all-matches",
+      "checked": true,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 3,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    },
+    "no-matches-picked": {
+      "request": "no-matches-picked",
+      "checked": false,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 1,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    },
+    "no-results": {
+      "request": "no-results",
+      "checked": false,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    },
+    "no-results-after-click": {
+      "request": "no-results-after-click",
+      "checked": false,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    },
+    "before-confirm": {
+      "request": "before-confirm",
+      "checked": false,
+      "checkAll": [
+        228.0,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        763.8999996185303,
+        80.0
+      ]
+    }
+  },
+  "fixtureSha256": "816d0f264cdc49507108f10d507c4a6fc568cace1fe69dfdf89100a89bd85bb3",
+  "accepted": [
+    "Hidden picked"
+  ],
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "parentAtCapture": "d295ab2402b82d7378168dc8c54be62ef46ed1af",
+  "quickInputSourceSha256": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+  "productCommit": "7b7061bc150281deb22b687fd7868e235fa18ca6",
+  "productTree": "86417bc40b0367c77eec0b6bfda0c3e9db36d663"
+}

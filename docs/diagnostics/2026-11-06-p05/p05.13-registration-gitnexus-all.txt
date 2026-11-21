@@ -1,0 +1,16 @@
+Changes: 5 files, 11 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section P05.12 / feat-064 — Activity Bar Top/Bottom 位置 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 状态 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 实施与验证记录 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 本地实现与验证 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section Hosted macOS native-titlebar 检查失败与自动化修复（2026-11-06） → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section macOS helper 修复提交前 GitNexus change analysis → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 最终 hosted 验证与完成证据 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section P05 / feat-027 进行中；P05.1–P05.12 / feat-053–064 已完成；P05.13 / feat-065 进行中 → progress.md
+  Section Session Handoff → session-handoff.md
+  Section Last Updated → session-handoff.md
+  Section Current Objective → session-handoff.md

@@ -1,0 +1,781 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP setup with Win32 single and double clicks",
+  "mode": "bottom",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "pane": {
+            "x": 48.79999923706055,
+            "y": 67,
+            "width": 297.3999938964844,
+            "height": 672.4000244140625,
+            "top": 67,
+            "right": 346.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 48.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "editor-drop-rejected": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "pane": {
+            "x": 48.79999923706055,
+            "y": 67,
+            "width": 297.3999938964844,
+            "height": 672.4000244140625,
+            "top": 67,
+            "right": 346.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 48.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-grouped": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          },
+          "pane": {
+            "x": 352.8000183105469,
+            "y": 483.6625061035156,
+            "width": 228,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 580.8000183105469,
+            "bottom": 744.3875122070312,
+            "left": 352.8000183105469
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          },
+          "pane": {
+            "x": 580.7999877929688,
+            "y": 483.6625061035156,
+            "width": 228.8000030517578,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 809.5999908447266,
+            "bottom": 744.3875122070312,
+            "left": 580.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-initial": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 512,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 568.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 520,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 572.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 577.6000366210938,
+            "y": 483.6625061035156,
+            "width": 512.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000610351562,
+            "bottom": 511.6625061035156,
+            "left": 577.6000366210938
+          },
+          "pane": {
+            "x": 572.7999877929688,
+            "y": 483.6625061035156,
+            "width": 521.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 572.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-dragged": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-reopened": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-search-minimum": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 276.79999923706055,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 228,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 280.79999923706055,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 285.6000061035156,
+            "y": 483.6625061035156,
+            "width": 804.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 285.6000061035156
+          },
+          "pane": {
+            "x": 280.8000183105469,
+            "y": 483.6625061035156,
+            "width": 813.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.0000305175781,
+            "bottom": 744.3875122070312,
+            "left": 280.8000183105469
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-terminal-minimum": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 804.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 861.200023651123,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 812.4000244140625,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 865.200023651123,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 870,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 511.6625061035156,
+            "left": 870
+          },
+          "pane": {
+            "x": 865.2000122070312,
+            "y": 483.6625061035156,
+            "width": 228.8000030517578,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.000015258789,
+            "bottom": 744.3875122070312,
+            "left": 865.2000122070312
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-single-click": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 804.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 861.200023651123,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 812.4000244140625,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 865.200023651123,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 870,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 511.6625061035156,
+            "left": 870
+          },
+          "pane": {
+            "x": 865.2000122070312,
+            "y": 483.6625061035156,
+            "width": 228.8000030517578,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.000015258789,
+            "bottom": 744.3875122070312,
+            "left": 865.2000122070312
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-sash-reset": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 512.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 569.200023651123,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 520.4000244140625,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 573.200023651123,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 578,
+            "y": 483.6625061035156,
+            "width": 512,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 511.6625061035156,
+            "left": 578
+          },
+          "pane": {
+            "x": 573.2000122070312,
+            "y": 483.6625061035156,
+            "width": 520.7999877929688,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 573.2000122070312
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-reset-reopened": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 512,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 568.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 520,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 572.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 577.6000366210938,
+            "y": 483.6625061035156,
+            "width": 512.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000610351562,
+            "bottom": 511.6625061035156,
+            "left": 577.6000366210938
+          },
+          "pane": {
+            "x": 572.7999877929688,
+            "y": 483.6625061035156,
+            "width": 521.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 572.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    }
+  },
+  "geometry": {
+    "bottom": {
+      "axis": "x",
+      "delta": 84.0,
+      "minimalSearch": 228,
+      "minimalTerminal": 228.8000030517578,
+      "singleClick": [
+        812.4000244140625,
+        228.8000030517578
+      ],
+      "doubleClick": [
+        520.4000244140625,
+        520.7999877929688
+      ],
+      "doubleClickSizesRememberedAfterReopen": true,
+      "doubleClickResized": true
+    }
+  },
+  "pointerClicks": {
+    "bottom": [
+      {
+        "name": "mousedown",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "mouseup",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum active"
+      },
+      {
+        "name": "click",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "mousedown",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "mouseup",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum active"
+      },
+      {
+        "name": "click",
+        "detail": 1,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "mousedown",
+        "detail": 2,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "mouseup",
+        "detail": 2,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum active"
+      },
+      {
+        "name": "click",
+        "detail": 2,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      },
+      {
+        "name": "dblclick",
+        "detail": 2,
+        "x": 865,
+        "y": 600,
+        "target": "monaco-sash vertical maximum"
+      }
+    ]
+  },
+  "exitCode": 0
+}

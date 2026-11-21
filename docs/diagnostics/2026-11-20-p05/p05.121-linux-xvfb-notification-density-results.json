@@ -1,0 +1,354 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "96a2ac6c34b1223454dad9137b0911a08e4f46f8",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "388e164f9b8e69d5c9c36658013b45acc64f2142a9a253f0a9d832f40900cc21",
+  "observations": {
+    "toast": {
+      "status-notifications": [
+        773.5004653930664,
+        676.0,
+        787.5004653930664,
+        700.0
+      ],
+      "notification-toast-18": [
+        540.0,
+        548.0,
+        992.0,
+        584.0
+      ],
+      "notification-toast-17": [
+        540.0,
+        588.0,
+        992.0,
+        624.0
+      ],
+      "notification-toast-16": [
+        540.0,
+        628.0,
+        992.0,
+        664.0
+      ]
+    },
+    "center": {
+      "status-notifications": [
+        773.5004653930664,
+        676.0,
+        787.5004653930664,
+        700.0
+      ],
+      "notification-center": [
+        540.0,
+        227.0,
+        992.0,
+        664.0
+      ],
+      "notification-center-header": [
+        541.0,
+        228.0,
+        991.0,
+        263.0
+      ],
+      "notification-clear-all": [
+        916.0,
+        237.5,
+        932.0,
+        253.5
+      ],
+      "notification-dnd-toggle": [
+        932.0,
+        237.5,
+        948.0,
+        253.5
+      ],
+      "notification-position": [
+        948.0,
+        233.5,
+        972.0,
+        257.5
+      ],
+      "notification-center-close": [
+        972.0,
+        237.0,
+        989.0,
+        254.0
+      ],
+      "notification-center-viewport": [
+        541.0,
+        263.0,
+        991.0,
+        663.0
+      ],
+      "notification-item-18": [
+        541.0,
+        263.0,
+        991.0,
+        297.0
+      ],
+      "notification-item-17": [
+        541.0,
+        297.0,
+        991.0,
+        331.0
+      ],
+      "notification-item-16": [
+        541.0,
+        331.0,
+        991.0,
+        365.0
+      ],
+      "notification-item-15": [
+        541.0,
+        365.0,
+        991.0,
+        399.0
+      ],
+      "notification-item-14": [
+        541.0,
+        399.0,
+        991.0,
+        433.0
+      ],
+      "notification-item-13": [
+        541.0,
+        433.0,
+        991.0,
+        467.0
+      ],
+      "notification-item-12": [
+        541.0,
+        467.0,
+        991.0,
+        501.0
+      ],
+      "notification-item-11": [
+        541.0,
+        501.0,
+        991.0,
+        535.0
+      ],
+      "notification-item-10": [
+        541.0,
+        535.0,
+        991.0,
+        569.0
+      ],
+      "notification-item-9": [
+        541.0,
+        569.0,
+        991.0,
+        603.0
+      ],
+      "notification-item-8": [
+        541.0,
+        603.0,
+        991.0,
+        637.0
+      ],
+      "notification-item-7": [
+        541.0,
+        637.0,
+        991.0,
+        671.0
+      ],
+      "notification-item-6": [
+        541.0,
+        671.0,
+        991.0,
+        705.0
+      ],
+      "notification-item-5": [
+        541.0,
+        705.0,
+        991.0,
+        739.0
+      ],
+      "notification-item-4": [
+        541.0,
+        739.0,
+        991.0,
+        773.0
+      ],
+      "notification-item-3": [
+        541.0,
+        773.0,
+        991.0,
+        807.0
+      ],
+      "notification-item-2": [
+        541.0,
+        807.0,
+        991.0,
+        841.0
+      ],
+      "notification-item-1": [
+        541.0,
+        841.0,
+        991.0,
+        875.0
+      ]
+    },
+    "scrolled": {
+      "status-notifications": [
+        773.5004653930664,
+        676.0,
+        787.5004653930664,
+        700.0
+      ],
+      "notification-center": [
+        540.0,
+        227.0,
+        992.0,
+        664.0
+      ],
+      "notification-center-header": [
+        541.0,
+        228.0,
+        991.0,
+        263.0
+      ],
+      "notification-clear-all": [
+        916.0,
+        237.5,
+        932.0,
+        253.5
+      ],
+      "notification-dnd-toggle": [
+        932.0,
+        237.5,
+        948.0,
+        253.5
+      ],
+      "notification-position": [
+        948.0,
+        233.5,
+        972.0,
+        257.5
+      ],
+      "notification-center-close": [
+        972.0,
+        237.0,
+        989.0,
+        254.0
+      ],
+      "notification-center-viewport": [
+        541.0,
+        263.0,
+        991.0,
+        663.0
+      ],
+      "notification-item-18": [
+        541.0,
+        51.0,
+        991.0,
+        85.0
+      ],
+      "notification-item-17": [
+        541.0,
+        85.0,
+        991.0,
+        119.0
+      ],
+      "notification-item-16": [
+        541.0,
+        119.0,
+        991.0,
+        153.0
+      ],
+      "notification-item-15": [
+        541.0,
+        153.0,
+        991.0,
+        187.0
+      ],
+      "notification-item-14": [
+        541.0,
+        187.0,
+        991.0,
+        221.0
+      ],
+      "notification-item-13": [
+        541.0,
+        221.0,
+        991.0,
+        255.0
+      ],
+      "notification-item-12": [
+        541.0,
+        255.0,
+        991.0,
+        289.0
+      ],
+      "notification-item-11": [
+        541.0,
+        289.0,
+        991.0,
+        323.0
+      ],
+      "notification-item-10": [
+        541.0,
+        323.0,
+        991.0,
+        357.0
+      ],
+      "notification-item-9": [
+        541.0,
+        357.0,
+        991.0,
+        391.0
+      ],
+      "notification-item-8": [
+        541.0,
+        391.0,
+        991.0,
+        425.0
+      ],
+      "notification-item-7": [
+        541.0,
+        425.0,
+        991.0,
+        459.0
+      ],
+      "notification-item-6": [
+        541.0,
+        459.0,
+        991.0,
+        493.0
+      ],
+      "notification-item-5": [
+        541.0,
+        493.0,
+        991.0,
+        527.0
+      ],
+      "notification-item-4": [
+        541.0,
+        527.0,
+        991.0,
+        561.0
+      ],
+      "notification-item-3": [
+        541.0,
+        561.0,
+        991.0,
+        595.0
+      ],
+      "notification-item-2": [
+        541.0,
+        595.0,
+        991.0,
+        629.0
+      ],
+      "notification-item-1": [
+        541.0,
+        629.0,
+        991.0,
+        663.0
+      ]
+    }
+  },
+  "fixtureSha256": "39c08d784555ebf9e73f01a9f0b33cc3e59a3a34924abbe3b2fc3418e7425546",
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

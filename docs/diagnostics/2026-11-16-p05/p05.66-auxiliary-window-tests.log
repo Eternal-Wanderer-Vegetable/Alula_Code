@@ -1,0 +1,27 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages/irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart
+00:00 +0: AuxiliaryWindowPayload document payload round-trips through arguments
+00:00 +1: AuxiliaryWindowPayload untitled payloads keep a null path
+00:00 +2: AuxiliaryWindowPayload main-window arguments parse as non-auxiliary
+00:00 +3: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +4: auxiliary always-on-top control a failed native change keeps the prior state and shows an error
+00:00 +5: auxiliary always-on-top control an unreadable initial state disables the toggle and reports why
+00:00 +6: main-window move flow the command captures the document payload and removes the source view
+00:01 +7: All tests passed!

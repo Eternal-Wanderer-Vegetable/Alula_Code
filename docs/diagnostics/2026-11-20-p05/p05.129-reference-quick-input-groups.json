@@ -1,0 +1,481 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 1444,
+    "height": 907
+  },
+  "driver": "Owned Code-OSS CDP renderer keyboard input",
+  "trace": [
+    {
+      "step": "initial",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    },
+    {
+      "step": "next-group",
+      "active": "Picker item 17",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 17",
+        "Picker item 18",
+        "Picker item 19",
+        "Picker item 20",
+        "Picker item 21",
+        "Picker item 22",
+        "Picker item 23",
+        "Picker item 24",
+        "Picker item 25",
+        "Picker item 26",
+        "Picker item 27"
+      ]
+    },
+    {
+      "step": "wrap-next",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    },
+    {
+      "step": "wrap-previous",
+      "active": "Picker item 17",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 17",
+        "Picker item 18",
+        "Picker item 19",
+        "Picker item 20",
+        "Picker item 21",
+        "Picker item 22",
+        "Picker item 23",
+        "Picker item 24",
+        "Picker item 25",
+        "Picker item 26",
+        "Picker item 27"
+      ]
+    },
+    {
+      "step": "advance-within",
+      "active": "Picker item 18",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 90,
+        "width": 588,
+        "height": 22,
+        "top": 90,
+        "right": 1016.8000183105469,
+        "bottom": 112,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 17",
+        "Picker item 18",
+        "Picker item 19",
+        "Picker item 20",
+        "Picker item 21",
+        "Picker item 22",
+        "Picker item 23",
+        "Picker item 24",
+        "Picker item 25",
+        "Picker item 26",
+        "Picker item 27"
+      ]
+    },
+    {
+      "step": "start-of-group",
+      "active": "Picker item 17",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 17",
+        "Picker item 18",
+        "Picker item 19",
+        "Picker item 20",
+        "Picker item 21",
+        "Picker item 22",
+        "Picker item 23",
+        "Picker item 24",
+        "Picker item 25",
+        "Picker item 26",
+        "Picker item 27"
+      ]
+    },
+    {
+      "step": "previous-group",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    },
+    {
+      "step": "explicit-next",
+      "active": "Picker item 17",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 17",
+        "Picker item 18",
+        "Picker item 19",
+        "Picker item 20",
+        "Picker item 21",
+        "Picker item 22",
+        "Picker item 23",
+        "Picker item 24",
+        "Picker item 25",
+        "Picker item 26",
+        "Picker item 27"
+      ]
+    },
+    {
+      "step": "filtered",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    },
+    {
+      "step": "filtered-next",
+      "active": "Picker item 40",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 382,
+        "width": 588,
+        "height": 22,
+        "top": 382,
+        "right": 1016.8000183105469,
+        "bottom": 404,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 29",
+        "Picker item 30",
+        "Picker item 31",
+        "Picker item 32",
+        "Picker item 33",
+        "Picker item 34",
+        "Picker item 35",
+        "Picker item 36",
+        "Picker item 37",
+        "Picker item 38",
+        "Picker item 39",
+        "Picker item 40"
+      ]
+    },
+    {
+      "step": "filtered-wrap",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    },
+    {
+      "step": "filtered-previous",
+      "active": "Picker item 01",
+      "activeBounds": {
+        "x": 428.8000183105469,
+        "y": 46,
+        "width": 588,
+        "height": 44,
+        "top": 46,
+        "right": 1016.8000183105469,
+        "bottom": 90,
+        "left": 428.8000183105469
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inputHasFocus": true,
+      "labels": [
+        "Picker item 01",
+        "Picker item 02",
+        "Picker item 03",
+        "Picker item 04",
+        "Picker item 05",
+        "Picker item 06",
+        "Picker item 07",
+        "Picker item 08",
+        "Picker item 09",
+        "Picker item 10",
+        "Picker item 11",
+        "Picker item 12",
+        "Picker item 13"
+      ]
+    }
+  ],
+  "exitCode": 0
+}

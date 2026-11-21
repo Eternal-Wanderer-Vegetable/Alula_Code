@@ -1,0 +1,53 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: Enter and Space select focused row and pass preserveFocus
+00:00 +1: Enter from a focused row preserves its async focus owner
+00:00 +2: pending Space never reclaims deliberate external focus
+00:00 +3: hover leaves focus, selection and keyboard target unchanged
+00:00 +4: Shift navigation previews a singleton without taking focus
+00:00 +5: Control-click toggles resources on TargetPlatform.windows
+00:00 +6: Control-click toggles resources on TargetPlatform.linux
+00:00 +7: Command-click toggles resources on macOS
+00:00 +8: Shift-click replaces only the anchor run and preserves islands
+00:01 +9: toggle plus Shift uses range selection on TargetPlatform.windows
+00:01 +10: toggle plus Shift uses range selection on TargetPlatform.linux
+00:01 +11: toggle plus Shift uses range selection on TargetPlatform.macOS
+00:01 +12: refresh prunes multiselection and remaps staged resources
+00:01 +13: multiselection never batches an explicit row action
+00:01 +14: Shift arrows grow, shrink, remove, and stop at boundaries
+00:01 +15: select all previews a singleton and keeps focus and anchor
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: [(String, bool):(only, true)]
+  Actual: []
+   Which: at location [0] is [] which shorter than expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:463:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 463
+The test description was:
+  select all previews a singleton and keeps focus and anchor
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +15 -1: select all previews a singleton and keeps focus and anchor [E]
+  Test failed. See exception logs above.
+  The test description was: select all previews a singleton and keeps focus and anchor
+  
+00:01 +15 -1: select all is scoped to list focus and Enter collapses selection
+00:01 +16 -1: focused action activates once; navigation transfers focus to list
+00:01 +17 -1: arrows, Home and End reveal focus across section headers
+00:02 +18 -1: unchanged parent rebuild preserves manual list scrolling
+00:02 +19 -1: focus and selection independently survive updates and clear on removal
+00:02 +20 -1: mixed changes keep the existing staged group identity
+00:02 +21 -1: pending Space completion after disposal does not restore focus
+00:02 +22 -1: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: select all previews a singleton and keeps focus and anchor

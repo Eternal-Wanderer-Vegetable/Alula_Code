@@ -1,0 +1,813 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "aff04869065e618d1b5ed2e3d4821f8c4e194367150b50de56e2bff8e5cb3231",
+  "observations": {
+    "single-group": {
+      "request": "single-group",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1"
+    },
+    "two-groups": {
+      "request": "two-groups",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3"
+    },
+    "three-groups": {
+      "request": "three-groups",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          398.5
+        ],
+        "editor-3": [
+          771.96,
+          402.5,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "05078da8607313032cb0b833f5266518fe7a7aa6c310b3769224495b4e8dee39"
+    },
+    "horizontal-drag": {
+      "request": "horizontal-drag",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          672.96,
+          766.0
+        ],
+        "editor-2": [
+          676.96,
+          35.0,
+          1210.0,
+          398.5
+        ],
+        "editor-3": [
+          676.96,
+          402.5,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "dd883c896ae2210017abc3aa8d920f8de4f9a2edb51c6ec8535cde268b9a7764"
+    },
+    "two-axis-drag": {
+      "request": "two-axis-drag",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          672.96,
+          766.0
+        ],
+        "editor-2": [
+          676.96,
+          35.0,
+          1210.0,
+          478.50000000000006
+        ],
+        "editor-3": [
+          676.96,
+          482.50000000000006,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "924bf7324b1f29361ffc4b3305aa57f9480a2e718bfd32fae0080cb4dcdb4435"
+    },
+    "before-maximize": {
+      "request": "before-maximize",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          672.96,
+          766.0
+        ],
+        "editor-2": [
+          676.96,
+          35.0,
+          1210.0,
+          478.50000000000006
+        ],
+        "editor-3": [
+          676.96,
+          482.50000000000006,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "924bf7324b1f29361ffc4b3305aa57f9480a2e718bfd32fae0080cb4dcdb4435"
+    },
+    "maximized": {
+      "request": "maximized",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor-2": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [
+        "editor",
+        "editor-3"
+      ],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": true,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "924bf7324b1f29361ffc4b3305aa57f9480a2e718bfd32fae0080cb4dcdb4435"
+    },
+    "restored": {
+      "request": "restored",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          672.96,
+          766.0
+        ],
+        "editor-2": [
+          676.96,
+          35.0,
+          1210.0,
+          478.50000000000006
+        ],
+        "editor-3": [
+          676.96,
+          482.50000000000006,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "924bf7324b1f29361ffc4b3305aa57f9480a2e718bfd32fae0080cb4dcdb4435"
+    },
+    "maximized-again": {
+      "request": "maximized-again",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor-2": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [
+        "editor",
+        "editor-3"
+      ],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": true,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "924bf7324b1f29361ffc4b3305aa57f9480a2e718bfd32fae0080cb4dcdb4435"
+    },
+    "reset": {
+      "request": "reset",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          398.5
+        ],
+        "editor-3": [
+          771.96,
+          402.5,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 292413398,
+          "focusNode": 503330184,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 103515034,
+          "focusNode": 943644980,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 286606656,
+          "focusNode": 997708931,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "05078da8607313032cb0b833f5266518fe7a7aa6c310b3769224495b4e8dee39"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1516987,
+          "ppid": 1516982,
+          "private": 229392384,
+          "pss": 245187584,
+          "working_set": 321290240
+        }
+      ],
+      "root_pid": 1516987,
+      "total_private_bytes": 229392384,
+      "total_private_mib": 218.8,
+      "total_working_set_bytes": 321290240
+    },
+    "maximized": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1516987,
+          "ppid": 1516982,
+          "private": 234065920,
+          "pss": 249862144,
+          "working_set": 325963776
+        }
+      ],
+      "root_pid": 1516987,
+      "total_private_bytes": 234065920,
+      "total_private_mib": 223.2,
+      "total_working_set_bytes": 325963776
+    },
+    "restored": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1516987,
+          "ppid": 1516982,
+          "private": 230973440,
+          "pss": 246770688,
+          "working_set": 322871296
+        }
+      ],
+      "root_pid": 1516987,
+      "total_private_bytes": 230973440,
+      "total_private_mib": 220.3,
+      "total_working_set_bytes": 322871296
+    }
+  },
+  "fixtureSha256": "eacbebe0953616b94a67fe973114df18d2e6908090ec31f84903c3a63746cafb",
+  "sizes": {
+    "before": [
+      [
+        343.04,
+        731.0
+      ],
+      [
+        533.04,
+        443.50000000000006
+      ],
+      [
+        533.04,
+        283.49999999999994
+      ]
+    ],
+    "maximized": [
+      880.0799999999999,
+      731.0
+    ],
+    "restored": [
+      [
+        343.04,
+        731.0
+      ],
+      [
+        533.04,
+        443.50000000000006
+      ],
+      [
+        533.04,
+        283.49999999999994
+      ]
+    ],
+    "reset": [
+      [
+        438.04,
+        731.0
+      ],
+      [
+        438.03999999999996,
+        363.5
+      ],
+      [
+        438.03999999999996,
+        363.5
+      ]
+    ]
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "parentAtCapture": "32136e45ecd5340264476c8ed7bb7e4fde9ed1bd",
+  "persistedLayoutBefore": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.39156241439137984,
+                "min": 180.0
+              },
+              {
+                "t": "split",
+                "axis": "v",
+                "weight": 0.6084375856086202,
+                "children": [
+                  {
+                    "t": "leaf",
+                    "region": "editor-2",
+                    "weight": 0.6100412654745531,
+                    "min": 180.0
+                  },
+                  {
+                    "t": "leaf",
+                    "region": "editor-3",
+                    "weight": 0.38995873452544694,
+                    "min": 180.0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "persistedLayoutAfterReset": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.5,
+                "min": 180.0
+              },
+              {
+                "t": "split",
+                "axis": "v",
+                "weight": 0.5,
+                "children": [
+                  {
+                    "t": "leaf",
+                    "region": "editor-2",
+                    "weight": 0.5,
+                    "min": 180.0
+                  },
+                  {
+                    "t": "leaf",
+                    "region": "editor-3",
+                    "weight": 0.5,
+                    "min": 180.0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "productCommit": "88d745b475ecfc353145dbbf73a76406e8cde6fd",
+  "productTree": "7d965d48281189794ad4af5af8b0d96840c660df"
+}

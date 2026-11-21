@@ -1,0 +1,109 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart
+00:00 +0: inline close removes the inactive group including sticky editors and preserves other focus
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'fn original_20() {\r\n'
+            '    // 😀\r\n'
+            '}\r\n'
+            ''
+  Actual: 'fn original_20() {\n'
+            '    // 😀\n'
+            '}\n'
+            ''
+   Which: is different.
+          Expected: ... al_20() {\r\n    //  ...
+            Actual: ... al_20() {\n    // 😀 ...
+                                  ^
+           Differ at offset 19
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:210:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart line 210
+The test description was:
+  inline close removes the inactive group including sticky editors and preserves other focus
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -1: inline close removes the inactive group including sticky editors and preserves other focus [E]
+  Test failed. See exception logs above.
+  The test description was: inline close removes the inactive group including sticky editors and preserves other focus
+  
+00:02 +0 -1: dirty Cancel preserves the whole target group including sticky
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'open-editors-doc-editor-2-20'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.expectOpen (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:170:7)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:236:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart line 170
+The test description was:
+  dirty Cancel preserves the whole target group including sticky
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -2: dirty Cancel preserves the whole target group including sticky [E]
+  Test failed. See exception logs above.
+  The test description was: dirty Cancel preserves the whole target group including sticky
+  
+00:04 +0 -2: dirty Save writes before removing the group and its sticky view
+00:05 +1 -2: shared dirty view closes its owner without prompting or releasing Rust identity
+00:07 +2 -2: inline close removes a preexisting empty inactive group
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'fn original_20() {\r\n'
+            '    // 😀\r\n'
+            '}\r\n'
+            ''
+  Actual: 'fn original_20() {\n'
+            '    // 😀\n'
+            '}\n'
+            ''
+   Which: is different.
+          Expected: ... al_20() {\r\n    //  ...
+            Actual: ... al_20() {\n    // 😀 ...
+                                  ^
+           Differ at offset 19
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:326:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart line 326
+The test description was:
+  inline close removes a preexisting empty inactive group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +2 -3: inline close removes a preexisting empty inactive group [E]
+  Test failed. See exception logs above.
+  The test description was: inline close removes a preexisting empty inactive group
+  
+00:08 +2 -3: single group has no inline close button and closing all retains it
+00:09 +3 -3: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Cancel preserves the whole target group including sticky
+  E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes a preexisting empty inactive group
+  E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes the inactive group including sticky editors and preserves other focus

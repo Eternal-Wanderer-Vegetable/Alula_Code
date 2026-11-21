@@ -1,0 +1,16 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "results": {
+    "fallback": "Newest fallback sample / First action",
+    "afterFocusedAccept": [
+      "Applied Older focused sample / First action",
+      "Newest focused sample"
+    ]
+  },
+  "exitCode": 0
+}

@@ -1,0 +1,108 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: foreign modifier click does not open or select on TargetPlatform.windows
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:304:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 304
+The test description was:
+  foreign modifier click does not open or select on TargetPlatform.windows
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: foreign modifier click does not open or select on TargetPlatform.windows [E]
+  Test failed. See exception logs above.
+  The test description was: foreign modifier click does not open or select on TargetPlatform.windows
+  
+00:00 +0 -1: foreign modifier click does not open or select on TargetPlatform.linux
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:304:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 304
+The test description was:
+  foreign modifier click does not open or select on TargetPlatform.linux
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: foreign modifier click does not open or select on TargetPlatform.linux [E]
+  Test failed. See exception logs above.
+  The test description was: foreign modifier click does not open or select on TargetPlatform.linux
+  
+00:00 +0 -2: foreign modifier click does not open or select on TargetPlatform.macOS
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:304:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 304
+The test description was:
+  foreign modifier click does not open or select on TargetPlatform.macOS
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: foreign modifier click does not open or select on TargetPlatform.macOS [E]
+  Test failed. See exception logs above.
+  The test description was: foreign modifier click does not open or select on TargetPlatform.macOS
+  
+00:00 +0 -3: modifier selection moves keyboard focus from an outside control
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:394:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 394
+The test description was:
+  modifier selection moves keyboard focus from an outside control
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: modifier selection moves keyboard focus from an outside control [E]
+  Test failed. See exception logs above.
+  The test description was: modifier selection moves keyboard focus from an outside control
+  
+00:00 +0 -4: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: foreign modifier click does not open or select on TargetPlatform.linux
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: foreign modifier click does not open or select on TargetPlatform.macOS
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: foreign modifier click does not open or select on TargetPlatform.windows
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: modifier selection moves keyboard focus from an outside control

@@ -1,0 +1,36 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 83 files, 154 symbols
+Affected processes: 17
+Risk level: critical
+
+Changed symbols:
+  Class AlulaApp → app/lib/main.dart
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Method createState → app/lib/workbench/activity_bar.dart
+  Class _ActivityBarState → app/lib/workbench/activity_bar.dart
+  Method dispose → app/lib/workbench/activity_bar.dart
+  Method _viewItem → app/lib/workbench/activity_bar.dart
+  Method _handleViewDrop → app/lib/workbench/activity_bar.dart
+  Method _handleViewKey → app/lib/workbench/activity_bar.dart
+  Method build → app/lib/workbench/activity_bar.dart
+  Class _Item → app/lib/workbench/activity_bar.dart
+  Class WorkbenchActivityBarOrder → app/lib/workbench/activity_bar_order.dart
+  Method setActivityBarOrder → app/lib/workbench/activity_bar_order.dart
+  Class WorkbenchActivityBarPosition → app/lib/workbench/activity_bar_position.dart
+  Method setActivityBarLocation → app/lib/workbench/activity_bar_position.dart
+  Function _moveActivityLeaf → app/lib/workbench/activity_bar_position.dart
+... and 139 more
+
+Affected execution flows:
+  • Build → _match (10 steps) — changed: _visibleTitleMenuItems, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Build → _parseUnary (10 steps) — changed: _visibleTitleMenuItems, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Build → _truthy (10 steps) — changed: _visibleTitleMenuItems, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Build → _tokenize (8 steps) — changed: _visibleTitleMenuItems, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Build → _codeOssMenuLabelToFlutter (6 steps) — changed: _macPlatformMenuLabel, _plainTitleMenuLabel, _codeOssMenuLabelToFlutter, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Build → ById (6 steps) — changed: _visibleTitleMenuItems, _buildMacPlatformMenuItems, _buildMacPlatformMenus
+  • Run → Attribute (5 steps) — changed: run
+  • Build → _restoreWorkbenchFocus (5 steps) — changed: _executeMacCommand, _buildMacApplicationMenu, _buildMacPlatformMenus, _restoreWorkbenchFocus
+  • Build → NormalizeActivityBarViewOrder (4 steps) — changed: normalizeActivityBarViewOrder, build, _handleViewDrop, _viewItem
+  • Build → _menuControllerKey (3 steps) — changed: _menuControllerKey, _buildTitleBarContents
+... and 7 more

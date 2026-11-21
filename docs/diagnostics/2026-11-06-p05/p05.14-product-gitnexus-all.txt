@@ -1,0 +1,26 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 14 files, 16 symbols
+Affected processes: 1
+Risk level: medium
+
+Changed symbols:
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Class _ActivityBarState → app/lib/workbench/activity_bar.dart
+  Method _viewItem → app/lib/workbench/activity_bar.dart
+  Method _handleViewDrop → app/lib/workbench/activity_bar.dart
+  Method _handleViewKey → app/lib/workbench/activity_bar.dart
+  Class WorkbenchActivityBarOrder → app/lib/workbench/activity_bar_order.dart
+  Method setActivityBarOrder → app/lib/workbench/activity_bar_order.dart
+  Variable activityBarViewOrder → app/lib/workbench/layout_model.dart
+  Function normalizeActivityBarViewOrder → app/lib/workbench/layout_model.dart
+  Class WbSplit → app/lib/workbench/layout_model.dart
+  Constructor WbSplit → app/lib/workbench/layout_model.dart
+  Function main → app/test/activity_bar_order_integration_test.dart
+  Function _activityBarView → app/test/activity_bar_order_integration_test.dart
+  Function _activityBarApp → app/test/activity_bar_test.dart
+  Section Product commit GitNexus change analysis → docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md
+... and 1 more
+
+Affected execution flows:
+  • Build → NormalizeActivityBarViewOrder (4 steps) — changed: _handleViewDrop, _viewItem, normalizeActivityBarViewOrder

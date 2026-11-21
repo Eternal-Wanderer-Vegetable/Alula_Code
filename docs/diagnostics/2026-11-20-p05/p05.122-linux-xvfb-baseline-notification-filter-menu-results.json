@@ -1,0 +1,91 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "96a2ac6c34b1223454dad9137b0911a08e4f46f8",
+  "runnerSha256": "125c2acb100a8f79a6b1d8526bce5a2b077807ec9a42d06b48aaaa943bae0399",
+  "aotSha256": "ff8968f1fc7317f19f7f7dc265c180f2d5972393ec1ddb7b147253ff7bd946b2",
+  "observations": {
+    "seeded": {
+      "request": "seeded",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "itemCount": 12,
+      "muted": []
+    },
+    "center": {
+      "request": "center",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          932.0,
+          237.5,
+          948.0,
+          253.5
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": []
+    }
+  },
+  "coreSha256": "9ee0c35c82c420a668ba30b7995f55442a63dba65f51c90a60d966ccc39edb99",
+  "fixtureSha256": "c566b740252697189ac0de350a7fd851f327456b62cfb097ea633a37f9a76adb",
+  "memProbe": {
+    "centerBeforeFirstMenu": [
+      {
+        "privateBytes": 211865600,
+        "workingSetBytes": 302608384,
+        "pssBytes": 227124224,
+        "processes": 1
+      },
+      {
+        "privateBytes": 211873792,
+        "workingSetBytes": 302616576,
+        "pssBytes": 227132416,
+        "processes": 1
+      },
+      {
+        "privateBytes": 211877888,
+        "workingSetBytes": 302620672,
+        "pssBytes": 227136512,
+        "processes": 1
+      },
+      {
+        "privateBytes": 211886080,
+        "workingSetBytes": 302628864,
+        "pssBytes": 227144704,
+        "processes": 1
+      },
+      {
+        "privateBytes": 211890176,
+        "workingSetBytes": 302632960,
+        "pssBytes": 227148800,
+        "processes": 1
+      }
+    ]
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

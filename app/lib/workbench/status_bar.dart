@@ -21,6 +21,8 @@ class AlulaStatusBar extends StatelessWidget {
     required this.syncCount,
     required this.panelCollapsed,
     required this.onTogglePanel,
+    this.lockedScrolling = false,
+    this.onToggleLockedScrolling,
     this.encodingLabel,
     this.encodingTooltip,
     this.lineEndingLabel,
@@ -28,6 +30,8 @@ class AlulaStatusBar extends StatelessWidget {
     this.onLineEndingTap,
     this.overtypeMode = false,
     this.onToggleOvertype,
+    this.notificationButton,
+    this.notificationAtStart = false,
   });
 
   final WbSyncState state;
@@ -43,6 +47,8 @@ class AlulaStatusBar extends StatelessWidget {
   final int syncCount;
   final bool panelCollapsed;
   final VoidCallback onTogglePanel;
+  final bool lockedScrolling;
+  final VoidCallback? onToggleLockedScrolling;
   final String? encodingLabel;
   final String? encodingTooltip;
   final String? lineEndingLabel;
@@ -50,6 +56,9 @@ class AlulaStatusBar extends StatelessWidget {
   final VoidCallback? onLineEndingTap;
   final bool overtypeMode;
   final VoidCallback? onToggleOvertype;
+
+  final Widget? notificationButton;
+  final bool notificationAtStart;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +68,10 @@ class AlulaStatusBar extends StatelessWidget {
       decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
       child: Row(
         children: [
+          if (notificationButton != null && notificationAtStart) ...[
+            notificationButton!,
+            const SizedBox(width: 8),
+          ],
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
@@ -129,6 +142,26 @@ class AlulaStatusBar extends StatelessWidget {
                 ],
               ),
             ),
+          ],
+          const SizedBox(width: 8),
+          if (onToggleLockedScrolling != null)
+            InkWell(
+              key: const ValueKey('status-bar-locked-scrolling'),
+              onTap: onToggleLockedScrolling,
+              child: Tooltip(
+                message: lockedScrolling ? '锁定滚动：开（点击关闭）' : '锁定滚动：关（点击开启）',
+                child: Icon(
+                  lockedScrolling ? Icons.lock : Icons.lock_open,
+                  size: 14,
+                  color: lockedScrolling
+                      ? Colors.lightBlueAccent
+                      : Colors.grey.shade400,
+                ),
+              ),
+            ),
+          if (notificationButton != null && !notificationAtStart) ...[
+            const SizedBox(width: 8),
+            notificationButton!,
           ],
           const SizedBox(width: 8),
           InkWell(

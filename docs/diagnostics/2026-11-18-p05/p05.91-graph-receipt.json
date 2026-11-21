@@ -1,0 +1,158 @@
+{
+  "repo": "E:\\temp\\alula-pr3-20261117",
+  "baseRef": "main",
+  "packageVersion": "1.6.12",
+  "before": {
+    "head": "f5ca28894620061dbe6e586aac303936d9be4bf4",
+    "base": "46084e95ea0bfd72cf86873339db9670d0ba0b67",
+    "gitIndexSha256": "8e9ef8765051fa99a90cb2bf695600c9db754cf7d898081f9a30bf9e7fde038c",
+    "graphMetaSha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd",
+    "graphFiles": [
+      {
+        "name": ".gitignore",
+        "bytes": 2,
+        "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b"
+      },
+      {
+        "name": "gitnexus.json",
+        "bytes": 293862,
+        "sha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd"
+      },
+      {
+        "name": "lbug",
+        "bytes": 298348544,
+        "sha256": "9bd819fe778d9746ca106347078a65d04029da21ca165f08e93268c224024853"
+      },
+      {
+        "name": "meta.json",
+        "bytes": 293862,
+        "sha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd"
+      },
+      {
+        "name": "run.cjs",
+        "bytes": 19564,
+        "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7"
+      }
+    ],
+    "trackedDiffSha256": "a9e822c40da2a9d6493054491ca613e4735b4d901f65d5ef7aeaf7bd83f04262",
+    "compareDiffSha256": "5f3cf221164326999321e4f07dc5a0f403bc31ac839c7377bf96efa21046a31b",
+    "allDiffSha256": "30ff739d9b58f355dab0461b0ed84d9d327a8191398d7d3283ca53a3558c51c9",
+    "statusSha256": "552a13731abe605f0b0088cdc9b575bcfd43c9aac70c8d598272fc24923731a9",
+    "untracked": []
+  },
+  "after": {
+    "head": "f5ca28894620061dbe6e586aac303936d9be4bf4",
+    "base": "46084e95ea0bfd72cf86873339db9670d0ba0b67",
+    "gitIndexSha256": "8e9ef8765051fa99a90cb2bf695600c9db754cf7d898081f9a30bf9e7fde038c",
+    "graphMetaSha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd",
+    "graphFiles": [
+      {
+        "name": ".gitignore",
+        "bytes": 2,
+        "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b"
+      },
+      {
+        "name": "gitnexus.json",
+        "bytes": 293862,
+        "sha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd"
+      },
+      {
+        "name": "lbug",
+        "bytes": 298348544,
+        "sha256": "9bd819fe778d9746ca106347078a65d04029da21ca165f08e93268c224024853"
+      },
+      {
+        "name": "meta.json",
+        "bytes": 293862,
+        "sha256": "663ba187aa6c9f649df734de593843c37727470de82bb44a970120a30042b8fd"
+      },
+      {
+        "name": "run.cjs",
+        "bytes": 19564,
+        "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7"
+      }
+    ],
+    "trackedDiffSha256": "a9e822c40da2a9d6493054491ca613e4735b4d901f65d5ef7aeaf7bd83f04262",
+    "compareDiffSha256": "5f3cf221164326999321e4f07dc5a0f403bc31ac839c7377bf96efa21046a31b",
+    "allDiffSha256": "30ff739d9b58f355dab0461b0ed84d9d327a8191398d7d3283ca53a3558c51c9",
+    "statusSha256": "552a13731abe605f0b0088cdc9b575bcfd43c9aac70c8d598272fc24923731a9",
+    "untracked": []
+  },
+  "repositorySnapshotUnchanged": true,
+  "installedBackendUnchanged": true,
+  "evidence": [
+    {
+      "label": "all",
+      "file": "E:\\Temp\\alula-p0591-graph-all.json",
+      "bytes": 236880,
+      "sha256": "9668da6138f16d4bf8a96ee008b80ef705d784b6371bed962f03e38f64e7d0bc",
+      "summary": {
+        "changed_count": 3,
+        "affected_count": 426,
+        "changed_files": 9,
+        "risk_level": "critical"
+      },
+      "partial": false,
+      "truncated": false,
+      "symbols": 3,
+      "processes": 426,
+      "completeness": {
+        "countsMatch": true,
+        "originalPrefixMatches": true,
+        "affectedProcessesMatch": true,
+        "changedFilesMatch": true,
+        "riskMatches": true,
+        "uniqueIds": true,
+        "queryDegraded": false,
+        "observedSymbolCount": 3,
+        "observedProcessCount": 426
+      },
+      "arrayDigests": {
+        "changedSymbolsSha256": "05a95ae88ec664bb95987ee9d1d72d97c147c4c20f3b944becf6a565de38c460",
+        "affectedProcessesSha256": "5f163c0b39a6a562669515eab81e08027529b59c761e42ab5d19b3e453486f60",
+        "changedSymbolIdsSortedSha256": "12ed79c34d3220eb7543445cd2a561297e4ca81fb8b7a13041b129a3fa7b2ff9",
+        "affectedProcessIdsSortedSha256": "736ece68dd24b45683d1694e4f42d852acc43502c0e023902305cd65a1716784"
+      },
+      "originalFile": "E:\\Temp\\alula-p0591-graph-all-original-response.json",
+      "originalSha256": "d550f3c2aa4b7678fbf8a75f229b3e6343649a0d76a6f2b3be7c0b204027ea87",
+      "originalTruncated": false
+    },
+    {
+      "label": "main",
+      "file": "E:\\Temp\\alula-p0591-graph-main.json",
+      "bytes": 389457,
+      "sha256": "5439fc19747ff01eedd429ce11ac2c6a0aa520ec3cafc839da684aa13e23313b",
+      "summary": {
+        "changed_count": 705,
+        "affected_count": 408,
+        "changed_files": 704,
+        "risk_level": "critical"
+      },
+      "partial": false,
+      "truncated": false,
+      "symbols": 705,
+      "processes": 408,
+      "completeness": {
+        "countsMatch": true,
+        "originalPrefixMatches": true,
+        "affectedProcessesMatch": true,
+        "changedFilesMatch": true,
+        "riskMatches": true,
+        "uniqueIds": true,
+        "queryDegraded": false,
+        "observedSymbolCount": 705,
+        "observedProcessCount": 408
+      },
+      "arrayDigests": {
+        "changedSymbolsSha256": "b7608edbbd1b218e6d3b58b49bcf50645b80400c47863cb93d3a507033786387",
+        "affectedProcessesSha256": "09adb1f22b4876ef2ccd7f0c723a2047562e1c980567e64dfed94b82e93c01e3",
+        "changedSymbolIdsSortedSha256": "2c29582a7e34983a70f56566bab43ba584fe8e09a91f4c1712e71cb8ca913a98",
+        "affectedProcessIdsSortedSha256": "e92c134168c6504c6c320bdf7b42ac54c2df2024650cdf5f9efd5e2fcd4f1d01"
+      },
+      "originalFile": "E:\\Temp\\alula-p0591-graph-main-original-response.json",
+      "originalSha256": "44520b424eb709d1b243c814d8cf48ae486c1f7ef5d723b91cb965b4ef161173",
+      "originalTruncated": false
+    }
+  ],
+  "success": true
+}

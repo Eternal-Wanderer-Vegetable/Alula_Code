@@ -1,0 +1,1207 @@
+00:00 +0: loading E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart                                                                                                                          00:01 +0: loading E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart                                                                                                                          00:01 +0: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: (setUpAll)                                                                                                                      00:01 +0: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +1: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +2: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +3: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +4: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +5: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +6: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +7: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +8: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:01 +9: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:02 +9: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                   00:02 +10: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                                  00:02 +10 -1: E:/temp/alula-pr3-p05/app/test/session_store_test.dart: 进程在临时 journal flush 后被强杀，重启可恢复最新一代 [E]                                                                                           
+  ProcessException: 系统找不到指定的文件。 (at ../../../flutter/third_party/dart/runtime/bin/process_win.cc:579)
+    Command: dart.exe E:\temp\alula-pr3-p05\app\test/helpers/session_store_crash_writer.dart C:/Users/VEGETA~1/AppData/Local/Temp/alula_session_testcf6270b9/session.json
+  dart:io                              Process.start
+  test\session_store_test.dart 148:33  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:io                              Process.start
+  test\session_store_test.dart 148:33  main.<fn>
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/session_store_test.dart -p vm --plain-name "进程在临时 journal flush 后被强杀，重启可恢复最新一代"
+00:02 +11 -1: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                               00:03 +11 -1: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                               00:03 +11 -1: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo                                               
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-preview257cf2c9/workspace/alpha.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _tapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:80:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:215:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Explorer previews replace clean tabs; dirty edits pin, save, and survive undo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +11 -2: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo [E]                                           
+  Test failed. See exception logs above.
+  The test description was: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "Explorer previews replace clean tabs; dirty edits pin, save, and survive undo"
+00:03 +11 -2: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: disk original is frozen with decoded text and modified side saves the Rust document                                 
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare9694d01/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:155:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  disk original is frozen with decoded text and modified side saves the Rust document
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +11 -3: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: disk original is frozen with decoded text and modified side saves the Rust document [E]                             
+  Test failed. See exception logs above.
+  The test description was: disk original is frozen with decoded text and modified side saves the Rust document
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "disk original is frozen with decoded text and modified side saves the Rust document"
+00:03 +11 -3: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Ctrl multi-selection compares in click order and saves the editable side                                            
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare9c5ba1d5/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:235:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Ctrl multi-selection compares in click order and saves the editable side
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +11 -4: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Ctrl multi-selection compares in click order and saves the editable side [E]                                        
+  Test failed. See exception logs above.
+  The test description was: Ctrl multi-selection compares in click order and saves the editable side
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "Ctrl multi-selection compares in click order and saves the editable side"
+00:03 +12 -4: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review applies selected edits atomically with per-document undo and save                                  00:03 +12 -4: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: macOS Command toggles files and Shift selects visible Explorer ranges                                               
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare54e02980/workspace/a.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:293:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  macOS Command toggles files and Shift selects visible Explorer ranges
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +12 -5: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: macOS Command toggles files and Shift selects visible Explorer ranges [E]                                           
+  Test failed. See exception logs above.
+  The test description was: macOS Command toggles files and Shift selects visible Explorer ranges
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "macOS Command toggles files and Shift selects visible Explorer ranges"
+00:04 +12 -5: E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document copy updates target, preserves source, and saves undoably                               
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.8 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#f1264 relayoutBoundary=up30 OVERFLOWING:
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-97631'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1098.0, 0.0<=h<=Infinity)
+  size: Size(1098.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.8 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#8586c relayoutBoundary=up30 OVERFLOWING:
+  needs compositing
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-97633'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1098.0, 0.0<=h<=Infinity)
+  size: Size(1098.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <97631>
+  Actual: <97633>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart:80:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart line 80
+The test description was:
+  cross-document copy updates target, preserves source, and saves undoably
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -6: E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document copy updates target, preserves source, and saves undoably [E]                           
+  Test failed. See exception logs above.
+  The test description was: cross-document copy updates target, preserves source, and saves undoably
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart -p vm --plain-name "cross-document copy updates target, preserves source, and saves undoably"
+00:04 +12 -6: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Revert Block restores one hunk and stays undoable                                                                   
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare52d07263/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:348:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Revert Block restores one hunk and stays undoable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -7: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Revert Block restores one hunk and stays undoable [E]                                                               
+  Test failed. See exception logs above.
+  The test description was: Revert Block restores one hunk and stays undoable
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "Revert Block restores one hunk and stays undoable"
+00:04 +12 -7: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review applies selected edits atomically with per-document undo and save                                  
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'workbench-bulk-edit-preview-dialog'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart:161:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart line 161
+The test description was:
+  Workbench review applies selected edits atomically with per-document undo and save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -8: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review applies selected edits atomically with per-document undo and save [E]                              
+  Test failed. See exception logs above.
+  The test description was: Workbench review applies selected edits atomically with per-document undo and save
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart -p vm --plain-name "Workbench review applies selected edits atomically with per-document undo and save"
+00:04 +12 -8: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Revert Selection and command palette Revert target exact hunks                                                      
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare93f2f84f/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:415:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Revert Selection and command palette Revert target exact hunks
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -9: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: Revert Selection and command palette Revert target exact hunks [E]                                                  
+  Test failed. See exception logs above.
+  The test description was: Revert Selection and command palette Revert target exact hunks
+  
+  PathAccessException: Deletion failed, path = 'C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare93f2f84f' (OS Error: 另一个程序正在使用此文件，进程无法访问。, errno = 32)
+  dart:io                                          FileSystemEntity.delete
+  test\workbench_explorer_compare_test.dart 28:39  _createWorkspace.<fn>
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "Revert Selection and command palette Revert target exact hunks"
+00:04 +12 -9: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group                                                                     
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-previewdb958504/workspace/pinned.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _tapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:80:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:334:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  preview state is isolated and restored per editor group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -10: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group [E]                                                                
+  Test failed. See exception logs above.
+  The test description was: preview state is isolated and restored per editor group
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "preview state is isolated and restored per editor group"
+00:04 +12 -10: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: block revert handles inserted and deleted empty lines                                                              
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-comparef091a3c3/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:488:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  block revert handles inserted and deleted empty lines
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +12 -11: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: block revert handles inserted and deleted empty lines [E]                                                          
+  Test failed. See exception logs above.
+  The test description was: block revert handles inserted and deleted empty lines
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "block revert handles inserted and deleted empty lines"
+00:04 +13 -11: E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart: cross-document edit validates, commits, and keeps per-document undo                                                00:04 +13 -11: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: block revert preserves BOM, CRLF and non-BMP text on save                                                          
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compared6891a71/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:548:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  block revert preserves BOM, CRLF and non-BMP text on save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +13 -12: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: block revert preserves BOM, CRLF and non-BMP text on save [E]                                                      
+  Test failed. See exception logs above.
+  The test description was: block revert preserves BOM, CRLF and non-BMP text on save
+  
+  PathAccessException: Deletion failed, path = 'C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compared6891a71' (OS Error: 另一个程序正在使用此文件，进程无法访问。, errno = 32)
+  dart:io                                          FileSystemEntity.delete
+  test\workbench_explorer_compare_test.dart 28:39  _createWorkspace.<fn>
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "block revert preserves BOM, CRLF and non-BMP text on save"
+00:05 +14 -12: E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart: cross-document edit validates, commits, and keeps per-document undo                                                00:05 +14 -12: E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart: cross-document edit validates, commits, and keeps per-document undo                                                
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '// 基准测试用的最小 Rust 工程：足够让编辑器/LSP 打开并索引，\r\n'
+            '// 又小到不会让语言服务器成为内存主因。\r\n'
+            '\r\n'
+            '/// 计算第 n 个斐波那契数（朴素递归，供跳转/重命名测试）。\r\n'
+            'fn fib(n: u64) -> u64 {\r\n'
+            '    if n < 2 {\r\n'
+            '        return n;\r\n'
+            '    }\r\n'
+            '    fib(n - 1) + fib(n - 2)\r\n'
+            '}\r\n'
+            '\r\n'
+            '/// 带前缀打印一行结果。\r\n'
+            'fn report(prefix: &str, value: u64) {\r\n'
+            '    println!("{prefix}: {value}");\r\n'
+            '}\r\n'
+            '\r\n'
+            'fn main() {\r\n'
+            '    let n = std::env::args()\r\n'
+            '        .nth(1)\r\n'
+            '        .and_then(|s| s.parse::<u64>().ok())\r\n'
+            '        .unwrap_or(10);\r\n'
+            '    report("fib", fib(n));\r\n'
+            '}\r\n'
+            ''
+  Actual: '// 基准测试用的最小 Rust 工程：足够让编辑器/LSP 打开并索引，\n'
+            '// 又小到不会让语言服务器成为内存主因。\n'
+            '\n'
+            '/// 计算第 n 个斐波那契数（朴素递归，供跳转/重命名测试）。\n'
+            'fn fib(n: u64) -> u64 {\n'
+            '    if n < 2 {\n'
+            '        return n;\n'
+            '    }\n'
+            '    fib(n - 1) + fib(n - 2)\n'
+            '}\n'
+            '\n'
+            '/// 带前缀打印一行结果。\n'
+            'fn report(prefix: &str, value: u64) {\n'
+            '    println!("{prefix}: {value}");\n'
+            '}\n'
+            '\n'
+            'fn main() {\n'
+            '    let n = std::env::args()\n'
+            '        .nth(1)\n'
+            '        .and_then(|s| s.parse::<u64>().ok())\n'
+            '        .unwrap_or(10);\n'
+            '    report("fib", fib(n));\n'
+            '}\n'
+            ''
+   Which: is different.
+          Expected: ... SP 打开并索引，\r\n// 又小到不 ...
+            Actual: ... SP 打开并索引，\n// 又小到不会让 ...
+                                  ^
+           Differ at offset 38
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart:73:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart line 73
+The test description was:
+  cross-document edit validates, commits, and keeps per-document undo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -13: E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart: cross-document edit validates, commits, and keeps per-document undo [E]                                            
+  Test failed. See exception logs above.
+  The test description was: cross-document edit validates, commits, and keeps per-document undo
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workspace_edit_transaction_test.dart -p vm --plain-name "cross-document edit validates, commits, and keeps per-document undo"
+00:05 +14 -13: E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document move edits and undoes both documents atomically                                        
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.5 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#a26d8 relayoutBoundary=up30 OVERFLOWING:
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-97641'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1086.0, 0.0<=h<=Infinity)
+  size: Size(1086.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.5 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#9af64 relayoutBoundary=up30 OVERFLOWING:
+  needs compositing
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-97643'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1086.0, 0.0<=h<=Infinity)
+  size: Size(1086.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <97641>
+  Actual: <97643>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart:206:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart line 206
+The test description was:
+  cross-document move edits and undoes both documents atomically
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -14: E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document move edits and undoes both documents atomically [E]                                    
+  Test failed. See exception logs above.
+  The test description was: cross-document move edits and undoes both documents atomically
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_cross_document_text_drag_drop_test.dart -p vm --plain-name "cross-document move edits and undoes both documents atomically"
+00:05 +14 -14: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: revert waits for a current diff after IME preedit commits on blur                                                  
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compareeb61f00b/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:589:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  revert waits for a current diff after IME preedit commits on blur
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -15: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: revert waits for a current diff after IME preedit commits on blur [E]                                              
+  Test failed. See exception logs above.
+  The test description was: revert waits for a current diff after IME preedit commits on blur
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "revert waits for a current diff after IME preedit commits on blur"
+00:05 +14 -15: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules                                        
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-previewa750d6db/workspace/alpha.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _tapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:80:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:365:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -16: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules [E]                                    
+  Test failed. See exception logs above.
+  The test description was: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules"
+00:05 +14 -16: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: an open dirty original is captured once and stays frozen                                                           
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare7305c323/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:645:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  an open dirty original is captured once and stays frozen
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -17: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: an open dirty original is captured once and stays frozen [E]                                                       
+  Test failed. See exception logs above.
+  The test description was: an open dirty original is captured once and stays frozen
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "an open dirty original is captured once and stays frozen"
+00:05 +15 -17: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review pins source versions and rejects stale batches                                                    00:05 +15 -17: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review pins source versions and rejects stale batches                                                    
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+main.rs - workspace - Alula Code | 文件(F) | 编辑(E) | 查看(V) | 帮助(H) | workspace | src | main.rs |
+Cargo.toml | 未命名 | Cargo.toml | main.rs | src |  ›  | main.rs |
+工作区：C:\Users\VEGETA~1\AppData\Local\Temp\alula_bulk_edit_review_d8a3f353/workspace（2 项） | LSP 未启动 ·
+诊断 0 · 标签 3 · ABI v40 · 同步 0 次 | UTF-8 | LF | 资源正常
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart:228:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart line 228
+The test description was:
+  Workbench review pins source versions and rejects stale batches
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -18: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review pins source versions and rejects stale batches [E]                                                
+  Test failed. See exception logs above.
+  The test description was: Workbench review pins source versions and rejects stale batches
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart -p vm --plain-name "Workbench review pins source versions and rejects stale batches"
+00:05 +15 -18: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: selection cancels if an open source document changes in flight                                                     
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare3cd1e497/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:692:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  selection cancels if an open source document changes in flight
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -19: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: selection cancels if an open source document changes in flight [E]                                                 
+  Test failed. See exception logs above.
+  The test description was: selection cancels if an open source document changes in flight
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "selection cancels if an open source document changes in flight"
+00:05 +15 -19: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: files only get compare actions; deleted originals and workspace switches are rejected                              
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-comparea631a7d9/workspace/folder'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:732:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  files only get compare actions; deleted originals and workspace switches are rejected
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -20: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: files only get compare actions; deleted originals and workspace switches are rejected [E]                          
+  Test failed. See exception logs above.
+  The test description was: files only get compare actions; deleted originals and workspace switches are rejected
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "files only get compare actions; deleted originals and workspace switches are rejected"
+00:05 +15 -20: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: accepts all smart-combinable conflicts through the F1 action                                                      
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.3 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#c8e0d relayoutBoundary=up30 OVERFLOWING:
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-2'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1074.0, 0.0<=h<=Infinity)
+  size: Size(1074.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -20: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands                                                                        
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-previewbbdf1b97/workspace/shared.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _tapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:80:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:472:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  sticky state follows editor split and move commands
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -21: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands [E]                                                                    
+  Test failed. See exception logs above.
+  The test description was: sticky state follows editor split and move commands
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "sticky state follows editor split and move commands"
+00:06 +15 -21: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: oversized original is rejected before a compare preview opens                                                      
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare1e491d94/workspace/oversized.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:781:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  oversized original is rejected before a compare preview opens
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -22: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: oversized original is rejected before a compare preview opens [E]                                                  
+  Test failed. See exception logs above.
+  The test description was: oversized original is rejected before a compare preview opens
+  
+  PathAccessException: Deletion failed, path = 'C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compare1e491d94' (OS Error: 另一个程序正在使用此文件，进程无法访问。, errno = 32)
+  dart:io                                          FileSystemEntity.delete
+  test\workbench_explorer_compare_test.dart 28:39  _createWorkspace.<fn>
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "oversized original is rejected before a compare preview opens"
+00:06 +15 -22: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: diff row budget rejects the complete Explorer comparison                                                           
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-explorer-compareef09c0ca/workspace/original.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _rightClickNode (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:51:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart:804:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diff row budget rejects the complete Explorer comparison
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -23: E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart: diff row budget rejects the complete Explorer comparison [E]                                                       
+  Test failed. See exception logs above.
+  The test description was: diff row budget rejects the complete Explorer comparison
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_explorer_compare_test.dart -p vm --plain-name "diff row budget rejects the complete Explorer comparison"
+00:06 +15 -23: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: accepts all smart-combinable conflicts through the F1 action                                                      00:06 +15 -23: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save                                                                         
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-preview7c15c398/workspace/dirty.rs'>]:
+[]" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      _tapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:80:16)
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:534:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  dirty tab close supports cancel and confirmed save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -24: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save [E]                                                                     
+  Test failed. See exception logs above.
+  The test description was: dirty tab close supports cancel and confirmed save
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "dirty tab close supports cancel and confirmed save"
+00:06 +15 -24: E:/temp/alula-pr3-p05/app/test/workbench_paste_as_test.dart: post-paste provider switch remains one undoable edit                                                                       
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'C:/Users/VEGETA~1/AppData/Local/Temp/alula-paste-switch-a7a27ff8/workspace/main.rs'
+  Actual:
+'C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\alula-paste-switch-a7a27ff8\\workspace\\main.rs'
+   Which: is different.
+          Expected: C:/Users/VEG ...
+            Actual: C:\\Users\\V ...
+                      ^
+           Differ at offset 2
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_paste_as_test.dart:198:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_paste_as_test.dart line 198
+The test description was:
+  post-paste provider switch remains one undoable edit
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -25: E:/temp/alula-pr3-p05/app/test/workbench_paste_as_test.dart: post-paste provider switch remains one undoable edit [E]                                                                   
+  Test failed. See exception logs above.
+  The test description was: post-paste provider switch remains one undoable edit
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_paste_as_test.dart -p vm --plain-name "post-paste provider switch remains one undoable edit"
+00:06 +15 -25: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review Escape and Discard leave documents unchanged                                                      
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key [<'workbench-bulk-edit-preview-discard'>]: []" (used in a call
+to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart:279:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Workbench review Escape and Discard leave documents unchanged
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -26: E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart: Workbench review Escape and Discard leave documents unchanged [E]                                                  
+  Test failed. See exception logs above.
+  The test description was: Workbench review Escape and Discard leave documents unchanged
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_bulk_edit_review_test.dart -p vm --plain-name "Workbench review Escape and Discard leave documents unchanged"
+00:06 +15 -26: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: accepts all smart-combinable conflicts through the F1 action                                                      
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.3 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#256ae relayoutBoundary=up30 OVERFLOWING:
+  needs compositing
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-3'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1074.0, 0.0<=h<=Infinity)
+  size: Size(1074.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: an object with length of <1>
+  Actual: Set:[2, 3]
+   Which: has length of <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart:224:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart line 224
+The test description was:
+  accepts all smart-combinable conflicts through the F1 action
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -27: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: accepts all smart-combinable conflicts through the F1 action [E]                                                  
+  Test failed. See exception logs above.
+  The test description was: accepts all smart-combinable conflicts through the F1 action
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart -p vm --plain-name "accepts all smart-combinable conflicts through the F1 action"
+00:06 +15 -27: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit                                                                       
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-preview6ac04ceb/workspace/alpha.rs'>]:
+[]" (used in a call to "getCenter()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      _doubleTapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:86:27)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:594:13)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  batch close cancel is atomic and discard is explicit
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +15 -28: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit [E]                                                                   
+  Test failed. See exception logs above.
+  The test description was: batch close cancel is atomic and discard is explicit
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "batch close cancel is atomic and discard is explicit"
+00:07 +15 -28: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group                                                                     
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with key
+[<'explorer-node:C:\Users\VEGETA~1\AppData\Local\Temp\alula-tab-previewda0657f9/workspace/alpha.rs'>]:
+[]" (used in a call to "getCenter()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      _doubleTapExplorerFile (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:86:27)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart:659:11)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  close others uses the clicked tab in an inactive group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +15 -29: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group [E]                                                                 
+  Test failed. See exception logs above.
+  The test description was: close others uses the clicked tab in an inactive group
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart -p vm --plain-name "close others uses the clicked tab in an inactive group"
+00:07 +15 -29: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: bulk side actions override mixed choices in one undoable split edit and save                                      
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.3 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#b122d relayoutBoundary=up30 OVERFLOWING:
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-2'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1074.0, 0.0<=h<=Infinity)
+  size: Size(1074.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.3 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-p05/app/lib/workbench/workbench_page.dart:19519:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#ead9b relayoutBoundary=up30 OVERFLOWING:
+  needs compositing
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-3'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1074.0, 0.0<=h<=Infinity)
+  size: Size(1074.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: an object with length of <1>
+  Actual: Set:[2, 3]
+   Which: has length of <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart:338:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart line 338
+The test description was:
+  bulk side actions override mixed choices in one undoable split edit and save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +15 -30: E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart: bulk side actions override mixed choices in one undoable split edit and save [E]                                  
+  Test failed. See exception logs above.
+  The test description was: bulk side actions override mixed choices in one undoable split edit and save
+  
+
+To run this test again: E:\flutter\bin\cache\dart-sdk\bin\dart.exe test E:/temp/alula-pr3-p05/app/test/workbench_merge_editor_open_test.dart -p vm --plain-name "bulk side actions override mixed choices in one undoable split edit and save"
+00:07 +16 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:07 +17 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:08 +17 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:08 +18 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:08 +19 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:08 +20 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:08 +21 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +21 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +22 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +23 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +24 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +25 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +26 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +27 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open                                                                   00:09 +27 -30: E:/temp/alula-pr3-p05/app/test/editor_tab_preview_test.dart: (tearDownAll)                                                                                                              00:09 +27 -30: Some tests failed.                                                                                                                                                                      

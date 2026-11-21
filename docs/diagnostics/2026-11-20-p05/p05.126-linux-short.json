@@ -1,0 +1,149 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "d84894e03d512b53e302510a3fd6d81ea7fdd37e",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "fcb6c1970bf2c33c54b9093814382e91f9fe27360f1b72c94be5950160af639c",
+  "observations": {
+    "toast": {
+      "request": "toast",
+      "scroll": {},
+      "center": null,
+      "viewport": null,
+      "oldest": null
+    },
+    "center": {
+      "request": "center",
+      "scroll": {
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 0.0,
+        "colorArgb": 2242423210,
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 0.0
+      },
+      "center": [
+        540.0,
+        492.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        528.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        629.0,
+        991.0,
+        663.0
+      ]
+    },
+    "idle": {
+      "request": "capture-idle",
+      "scroll": {
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 0.0,
+        "colorArgb": 2242423210,
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 0.0
+      },
+      "center": [
+        540.0,
+        492.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        528.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        629.0,
+        991.0,
+        663.0
+      ],
+      "image": "p05.126-linux-short.png",
+      "imageSha256": "d4f3a64a6f5f248b20df0bf113cd0026469f99f0bfce11c9579a0f40a0a2a0a9"
+    },
+    "hover": {
+      "request": "capture-hover",
+      "scroll": {
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 1.0,
+        "colorArgb": 2242423210,
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 0.0
+      },
+      "center": [
+        540.0,
+        492.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        528.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        629.0,
+        991.0,
+        663.0
+      ],
+      "image": "p05.126-linux-short.png",
+      "imageSha256": "d4f3a64a6f5f248b20df0bf113cd0026469f99f0bfce11c9579a0f40a0a2a0a9"
+    }
+  },
+  "case": "short",
+  "fixtureSha256": "96c9c6df4dc8a9a773b52eaa67429f21fec326812389c2585b79091ef8160ad5",
+  "memoryBeforeScreenshots": {
+    "samples": [
+      {
+        "privateBytes": 205950976,
+        "pssBytes": 221440000,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 205950976,
+        "pssBytes": 221440000,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 205950976,
+        "pssBytes": 221440000,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 205950976,
+        "pssBytes": 221440000,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 205950976,
+        "pssBytes": 221440000,
+        "processCount": 1
+      }
+    ],
+    "medianPrivateMiB": 196.41,
+    "medianPssMiB": 211.18
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "coreSha256": "9ee0c35c82c420a668ba30b7995f55442a63dba65f51c90a60d966ccc39edb99"
+}

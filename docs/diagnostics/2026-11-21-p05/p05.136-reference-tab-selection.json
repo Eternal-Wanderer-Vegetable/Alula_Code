@@ -1,0 +1,250 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "five-open": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "echo.txt"
+      ],
+      "active": "echo.txt",
+      "dirty": []
+    },
+    "ordinary-single": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "bravo.txt"
+      ],
+      "active": "bravo.txt",
+      "dirty": []
+    },
+    "control-add": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    },
+    "second-control-add": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": []
+    },
+    "remove-active-falls-back-mru": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    },
+    "remove-inactive": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    },
+    "keep-last-selection": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    },
+    "shift-forward": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    },
+    "shift-reverse": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": []
+    },
+    "normal-click-collapses": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "bravo.txt"
+      ],
+      "active": "bravo.txt",
+      "dirty": []
+    },
+    "selected-close-targets": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": []
+    },
+    "context-close-unselected": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": []
+    },
+    "make-second-active": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "bravo.txt"
+      ],
+      "active": "bravo.txt",
+      "dirty": [
+        "alpha.txt"
+      ]
+    },
+    "two-dirty-selected": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": [
+        "alpha.txt",
+        "bravo.txt"
+      ]
+    },
+    "cancel-batch-preserves-tabs": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "bravo.txt"
+      ],
+      "active": "alpha.txt",
+      "dirty": [
+        "alpha.txt",
+        "bravo.txt"
+      ]
+    },
+    "context-close-selected-batch": {
+      "tabs": [
+        "charlie.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "dirty": []
+    }
+  },
+  "dirtyConfirmation": {
+    "keyboardFirst": "Save\nDon't Save\nCancel\nDo you want to save the changes you made to alpha.txt?\nYour changes will be lost if you don't save them.",
+    "contextDiscards": [
+      "Save\nDon't Save\nCancel\nDo you want to save the changes you made to bravo.txt?\nYour changes will be lost if you don't save them.",
+      "Save\nDon't Save\nCancel\nDo you want to save the changes you made to alpha.txt?\nYour changes will be lost if you don't save them."
+    ]
+  },
+  "exitCode": 0
+}

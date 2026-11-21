@@ -1,0 +1,286 @@
+{
+  "sourceSha": "519a826e13fca2db3e8d23f7ecc810c0c258ff20",
+  "sourceHashes": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "7d642facbaecbd29816852eeca9cec58539667891ff38b63a80f5f7c29c7bd6d",
+    "app/lib/workbench/notifications.dart": "0db9d29535b1e7f5f41cded0f041a83c2a9af194f5b02bf27c028652df38499c",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "981858fdbce0061b071e40df01550e3bf399a0e01917bf69e75b4426901d7dcc",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  },
+  "alula": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+    "aotSha256": "9124e6d6e34edf2ace0dd1e1790784cdc99b7eae1c41b36d450c8175c71499a1",
+    "fixtureSha256": "fda753d5d2b6f891417153da94fa66b890c8493112a9083b33532e3a31996c91",
+    "observations": {
+      "initial": {
+        "request": "initial",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-2": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-1": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ]
+        },
+        "dnd": false,
+        "toastIds": [
+          1,
+          2
+        ],
+        "items": [
+          2,
+          1
+        ]
+      },
+      "initial-center": {
+        "request": "initial-center",
+        "boxes": {
+          "status-notifications": [
+            769.410791015625,
+            645.8,
+            783.410791015625,
+            659.8
+          ],
+          "notification-center": [
+            527.2,
+            516.8,
+            979.2,
+            628.8
+          ],
+          "notification-dnd-toggle": [
+            899.2,
+            529.8,
+            915.2,
+            545.8
+          ],
+          "notification-position": [
+            931.2,
+            525.8,
+            955.2,
+            549.8
+          ],
+          "notification-item-2": [
+            528.2,
+            558.8,
+            978.2,
+            593.8
+          ],
+          "notification-item-1": [
+            528.2,
+            593.8,
+            978.2,
+            627.8
+          ]
+        },
+        "dnd": false,
+        "toastIds": [
+          1,
+          2
+        ],
+        "items": [
+          2,
+          1
+        ]
+      },
+      "quiet": {
+        "request": "quiet",
+        "boxes": {
+          "status-notifications": [
+            769.410791015625,
+            645.8,
+            783.410791015625,
+            659.8
+          ]
+        },
+        "dnd": true,
+        "toastIds": [],
+        "items": [
+          2,
+          1
+        ]
+      },
+      "new-error": {
+        "request": "new-error",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-5": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ]
+        },
+        "dnd": true,
+        "toastIds": [
+          5
+        ],
+        "items": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      "quiet-center": {
+        "request": "quiet-center",
+        "boxes": {
+          "status-notifications": [
+            769.410791015625,
+            645.8,
+            783.410791015625,
+            659.8
+          ],
+          "notification-center": [
+            527.2,
+            411.79999999999995,
+            979.2,
+            628.8
+          ],
+          "notification-dnd-toggle": [
+            899.2,
+            424.79999999999995,
+            915.2,
+            440.79999999999995
+          ],
+          "notification-position": [
+            931.2,
+            420.79999999999995,
+            955.2,
+            444.79999999999995
+          ],
+          "notification-item-5": [
+            528.2,
+            453.79999999999995,
+            978.2,
+            488.79999999999995
+          ],
+          "notification-item-4": [
+            528.2,
+            488.79999999999995,
+            978.2,
+            523.8
+          ],
+          "notification-item-3": [
+            528.2,
+            523.8,
+            978.2,
+            558.8
+          ],
+          "notification-item-2": [
+            528.2,
+            558.8,
+            978.2,
+            593.8
+          ],
+          "notification-item-1": [
+            528.2,
+            593.8,
+            978.2,
+            627.8
+          ]
+        },
+        "dnd": true,
+        "toastIds": [
+          5
+        ],
+        "items": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    "dpr": 1.25,
+    "clientLogical": [
+      987.2,
+      664.8
+    ],
+    "journalDnd": true,
+    "exitCode": 0
+  },
+  "alulaReopen": {
+    "request": "new-error",
+    "boxes": {
+      "status-notifications": [
+        900.860009765625,
+        693.8,
+        931.961572265625,
+        707.8
+      ],
+      "notification-toast-5": [
+        807.2,
+        600.8,
+        1259.2,
+        636.8
+      ],
+      "notification-toast-2": [
+        807.2,
+        640.8,
+        1259.2,
+        676.8
+      ]
+    },
+    "dnd": true,
+    "toastIds": [
+      2,
+      5
+    ],
+    "items": [
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "exitCode": 0
+  },
+  "reference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 986,
+      "height": 666
+    },
+    "before": [
+      "Initial error",
+      "Initial info"
+    ],
+    "hiddenOnEnable": true,
+    "duringDnd": [
+      "Error during Do Not Disturb"
+    ],
+    "centerRetained": [
+      "Error during Do Not Disturb",
+      "Quiet warning",
+      "Quiet info",
+      "Initial error",
+      "Initial info"
+    ]
+  }
+}

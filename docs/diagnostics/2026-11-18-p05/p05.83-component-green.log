@@ -1,0 +1,39 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: Enter and Space select focused row and pass preserveFocus
+00:01 +1: Enter from a focused row preserves its async focus owner
+00:01 +2: pending Space never reclaims deliberate external focus
+00:01 +3: hover leaves focus, selection and keyboard target unchanged
+00:01 +4: Shift navigation previews a singleton without taking focus
+00:01 +5: Control-click toggles resources on TargetPlatform.windows
+00:01 +6: Control-click toggles resources on TargetPlatform.linux
+00:01 +7: Command-click toggles resources on macOS
+00:02 +8: foreign modifier click does not open or select on TargetPlatform.windows
+00:02 +9: foreign modifier click does not open or select on TargetPlatform.linux
+00:02 +10: foreign modifier click does not open or select on TargetPlatform.macOS
+00:02 +11: Shift-click replaces only the anchor run and preserves islands
+00:02 +12: toggle plus Shift uses range selection on TargetPlatform.windows
+00:02 +13: toggle plus Shift uses range selection on TargetPlatform.linux
+00:02 +14: toggle plus Shift uses range selection on TargetPlatform.macOS
+00:02 +15: modifier selection moves keyboard focus from an outside control
+00:03 +16: refresh prunes multiselection and remaps staged resources
+00:03 +17: multiselection never batches an explicit row action
+00:03 +18: Shift arrows grow, shrink, remove, and stop at boundaries
+00:03 +19: select all previews a singleton and keeps focus and anchor
+00:03 +20: select all is scoped to list focus and Enter collapses selection
+00:04 +21: focused action activates once; navigation transfers focus to list
+00:04 +22: arrows, Home and End reveal focus across section headers
+00:05 +23: unchanged parent rebuild preserves manual list scrolling
+00:05 +24: focus and selection independently survive updates and clear on removal
+00:05 +25: mixed changes keep the existing staged group identity
+00:05 +26: secondary click targets row without changing selection or anchor
+00:05 +27: context key opens only on keyup and cancellation is inert
+00:05 +28: releasing Shift inside the popup cannot arm a later bare F10
+00:05 +29: queued keyboard menu cannot outlive its focused target
+00:05 +30: pending menu action does not lock or close a newer menu
+00:05 +31: context menu target cannot revive after removal and readd
+00:06 +32: unchanged refresh keeps context action valid and row scoped
+00:06 +33: context key reveals offscreen focus and opens once
+00:06 +34: cancel preserves an explicitly acquired outside focus
+00:06 +35: context menu action rejects an entry changed while open
+00:06 +36: pending Space completion after disposal does not restore focus
+00:06 +37: All tests passed!

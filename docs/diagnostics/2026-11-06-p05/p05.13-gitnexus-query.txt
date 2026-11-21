@@ -1,0 +1,246 @@
+{
+  "processes": [
+    {
+      "id": "proc_158_build",
+      "summary": "Build → _buildResultPane",
+      "priority": 0.111,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_97_build",
+      "summary": "Build → _bulkAcceptButton",
+      "priority": 0.111,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_105_build",
+      "summary": "Build → _buildWordSpans",
+      "priority": 0.108,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_171_build",
+      "summary": "Build → _lineNumber",
+      "priority": 0.108,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_165_build",
+      "summary": "Build → _sourceCell",
+      "priority": 0.104,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_166_build",
+      "summary": "Build → DiffRevertToolbarRows",
+      "priority": 0.104,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_167_build",
+      "summary": "Build → _editableOriginalRow",
+      "priority": 0.104,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_168_build",
+      "summary": "Build → _headerCell",
+      "priority": 0.104,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    }
+  ],
+  "process_symbols": [
+    {
+      "id": "Method:app/lib/editor/merge_editor_surface.dart:_MergeEditorSurfaceState.build#1",
+      "name": "build",
+      "filePath": "app/lib/editor/merge_editor_surface.dart",
+      "startLine": 58,
+      "endLine": 58,
+      "module": "Editor",
+      "process_id": "proc_158_build",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/lib/git/git_diff_patch_view.dart:_GitDiffPatchRow.build#1",
+      "name": "build",
+      "filePath": "app/lib/git/git_diff_patch_view.dart",
+      "startLine": 936,
+      "endLine": 936,
+      "module": "Git",
+      "process_id": "proc_105_build",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/lib/editor/snapshot_compare_preview.dart:SnapshotComparePreview.build#1",
+      "name": "build",
+      "filePath": "app/lib/editor/snapshot_compare_preview.dart",
+      "startLine": 56,
+      "endLine": 56,
+      "module": "Editor",
+      "process_id": "proc_165_build",
+      "step_index": 1
+    }
+  ],
+  "definitions": [
+    {
+      "id": "Const:crates/editor-buffer/src/lib.rs:MAX_INDENTATION_TAB_SIZE",
+      "name": "MAX_INDENTATION_TAB_SIZE",
+      "filePath": "crates/editor-buffer/src/lib.rs",
+      "startLine": 51,
+      "endLine": 51
+    },
+    {
+      "name": "value",
+      "type": "File",
+      "filePath": "tools/vscode-parity/macos-native-dnd-input.swift"
+    },
+    {
+      "id": "Method:app/lib/editor/editor_rendering.dart:EditorRangeDecorationPainter.paint#2",
+      "name": "paint",
+      "filePath": "app/lib/editor/editor_rendering.dart",
+      "startLine": 260,
+      "endLine": 260,
+      "module": "Editor"
+    },
+    {
+      "id": "Method:app/lib/editor/editor_rendering.dart:EditorGutterPainter.paint#2",
+      "name": "paint",
+      "filePath": "app/lib/editor/editor_rendering.dart",
+      "startLine": 428,
+      "endLine": 428,
+      "module": "Editor"
+    },
+    {
+      "id": "Class:app/lib/workbench/keybindings.dart:KeybindingBinding",
+      "name": "KeybindingBinding",
+      "filePath": "app/lib/workbench/keybindings.dart",
+      "startLine": 1,
+      "endLine": 46,
+      "module": "Workbench"
+    },
+    {
+      "id": "File:docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md",
+      "name": "edit",
+      "filePath": "app/lib/editor/bulk_edit_preview.dart",
+      "startLine": 27,
+      "endLine": 27
+    },
+    {
+      "id": "File:docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md",
+      "name": "documentIndex",
+      "filePath": "app/lib/editor/bulk_edit_preview.dart",
+      "startLine": 41,
+      "endLine": 41
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar.dart",
+      "name": "activity_bar.dart",
+      "filePath": "app/lib/workbench/activity_bar.dart"
+    },
+    {
+      "id": "Class:app/lib/workbench/commands.dart:CommandService",
+      "name": "CommandService",
+      "filePath": "app/lib/workbench/commands.dart",
+      "startLine": 93,
+      "endLine": 160,
+      "module": "Workbench"
+    },
+    {
+      "id": "Constructor:app/lib/workbench/commands.dart:CommandService.CommandService#2",
+      "name": "CommandService",
+      "filePath": "app/lib/workbench/commands.dart",
+      "startLine": 94,
+      "endLine": 94
+    },
+    {
+      "id": "Property:app/lib/workbench/commands.dart:CommandService.context",
+      "name": "context",
+      "filePath": "app/lib/workbench/commands.dart",
+      "startLine": 101,
+      "endLine": 101
+    },
+    {
+      "id": "Property:app/lib/workbench/title_bar.dart:AlulaTitleBar.menus",
+      "name": "menus",
+      "filePath": "app/lib/workbench/title_bar.dart",
+      "startLine": 87,
+      "endLine": 87
+    },
+    {
+      "id": "Property:app/lib/workbench/title_bar.dart:_MenuButton._popupMenuItemStyle",
+      "name": "_popupMenuItemStyle",
+      "filePath": "app/lib/workbench/title_bar.dart",
+      "startLine": 977,
+      "endLine": 982
+    },
+    {
+      "id": "File:app/lib/workbench/title_bar.dart",
+      "name": "title_bar.dart",
+      "filePath": "app/lib/workbench/title_bar.dart"
+    },
+    {
+      "id": "File:app/lib/workbench/context_keys.dart",
+      "name": "context_keys.dart",
+      "filePath": "app/lib/workbench/context_keys.dart"
+    },
+    {
+      "id": "Property:app/test/title_bar_test.dart:_RecordingPlatformMenuDelegate.menus",
+      "name": "menus",
+      "filePath": "app/test/title_bar_test.dart",
+      "startLine": 1149,
+      "endLine": 1149
+    },
+    {
+      "id": "Method:app/test/title_bar_test.dart:_RecordingPlatformMenuDelegate.debugLockDelegate#1",
+      "name": "debugLockDelegate",
+      "filePath": "app/test/title_bar_test.dart",
+      "startLine": 1162,
+      "endLine": 1162
+    },
+    {
+      "id": "File:app/test/title_bar_test.dart",
+      "name": "title_bar_test.dart",
+      "filePath": "app/test/title_bar_test.dart"
+    },
+    {
+      "id": "Impl:crates/editor-buffer/src/lib.rs:TextBuffer",
+      "name": "TextBuffer",
+      "filePath": "crates/editor-buffer/src/lib.rs",
+      "startLine": 1365,
+      "endLine": 2884
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar_position.dart:WorkbenchActivityBarPosition.setActivityBarLocation#1",
+      "name": "setActivityBarLocation",
+      "filePath": "app/lib/workbench/activity_bar_position.dart",
+      "startLine": 21,
+      "endLine": 21,
+      "module": "Workbench"
+    }
+  ],
+  "timing": {
+    "vector": 15.6,
+    "bm25": 666.4,
+    "merge": 0.2,
+    "symbol_lookup": 24.6,
+    "ranking": 0.1,
+    "formatting": 0.1,
+    "wall": 692.8
+  }
+}

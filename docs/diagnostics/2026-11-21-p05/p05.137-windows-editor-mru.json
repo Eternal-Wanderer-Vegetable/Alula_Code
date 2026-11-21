@@ -1,0 +1,1808 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "c2ab49525b8c8efd449ba3b9c45eac5256850654",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "c426d0f94421ad3a67683784ab6aa721b98247e125c3c9e30c218b92e8bc4d8f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "5236d6268c12b361e0b963258bf7808fe49bbb7871ebcabe1622e6cff363a62f",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "30bc2fe937ed9c140cdd8fd8957180a471c30e2689f688c228f8d7188de3c6f4",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "7452fc7cebc4804d403f798a4d3835222cbaa81a5fb66e8060edb4f806d01246",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "6ec0d9b7e95fe521ef104ea2ed4bbe9b2bae482aa456cf7887ab17ae264ce7a8"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "6207bee09246b906b8444ee472205bedd7232d67533840a93f916e97703a9016",
+  "fixtureSha256": "6ec0d9b7e95fe521ef104ea2ed4bbe9b2bae482aa456cf7887ab17ae264ce7a8",
+  "trace": {
+    "ready": {
+      "request": "ready",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-10": {
+      "request": "activated-10",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-11": {
+      "request": "activated-11",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activated-12": {
+      "request": "activated-12",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-first": {
+      "request": "forward-first",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-second": {
+      "request": "forward-second",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-wrap": {
+      "request": "forward-wrap",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-wrap": {
+      "request": "reverse-wrap",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 12,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "forward-release-accepts": {
+      "request": "forward-release-accepts",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-starts-at-last": {
+      "request": "reverse-starts-at-last",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "shift-release-keeps-open": {
+      "request": "shift-release-keeps-open",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "alpha.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": null,
+          "selected": false,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": null,
+          "selected": true,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "reverse-release-accepts": {
+      "request": "reverse-release-accepts",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "before-cancel": {
+      "request": "before-cancel",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": true,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        },
+        {
+          "name": "delta.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            261.6,
+            127.0,
+            861.6,
+            149.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            261.6,
+            149.0,
+            861.6,
+            171.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "escape-restores": {
+      "request": "escape-restores",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activate-second-bravo": {
+      "request": "activate-second-bravo",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 11,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "activate-first-alpha": {
+      "request": "activate-first-alpha",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "activate-second-delta": {
+      "request": "activate-second-delta",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "all-groups-mru": {
+      "request": "all-groups-mru",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": true,
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": true,
+          "box": [
+            261.6,
+            97.0,
+            861.6,
+            119.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            119.0,
+            861.6,
+            141.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            261.6,
+            141.0,
+            861.6,
+            163.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            163.0,
+            861.6,
+            185.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            185.0,
+            861.6,
+            207.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor-2"
+    },
+    "choose-second-bravo": {
+      "request": "choose-second-bravo",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "return-first-alpha": {
+      "request": "return-first-alpha",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 11,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    },
+    "restore-second-delta": {
+      "request": "restore-second-delta",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": true
+        }
+      },
+      "focused": "editor-2"
+    },
+    "cross-group-previous": {
+      "request": "cross-group-previous",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": true,
+      "pickerHasInput": false,
+      "rows": [
+        {
+          "name": "delta.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            261.6,
+            61.0,
+            861.6,
+            83.0
+          ]
+        },
+        {
+          "name": "alpha.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": true,
+          "box": [
+            261.6,
+            83.0,
+            861.6,
+            105.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 2",
+          "selected": false,
+          "box": [
+            261.6,
+            105.0,
+            861.6,
+            127.0
+          ]
+        },
+        {
+          "name": "bravo.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            127.0,
+            861.6,
+            149.0
+          ]
+        },
+        {
+          "name": "charlie.txt",
+          "description": "\u7f16\u8f91\u5668\u7ec4 1",
+          "selected": false,
+          "box": [
+            261.6,
+            149.0,
+            861.6,
+            171.0
+          ]
+        }
+      ],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": false
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor-2"
+    },
+    "cross-group-accept": {
+      "request": "cross-group-accept",
+      "boxes": {
+        "editor-10": [
+          82.0,
+          45.5,
+          141.19999999999993,
+          62.5
+        ],
+        "editor-11": [
+          205.19999999999993,
+          45.5,
+          264.39999999999986,
+          62.5
+        ],
+        "editor-12": [
+          328.39999999999986,
+          45.5,
+          387.5999999999998,
+          62.5
+        ],
+        "editor-2-11": [
+          621.6,
+          45.5,
+          681.953515625,
+          62.5
+        ],
+        "editor-2-13": [
+          745.953515625,
+          45.5,
+          802.615625,
+          62.5
+        ]
+      },
+      "picker": false,
+      "pickerHasInput": false,
+      "rows": [],
+      "views": {
+        "editor": {
+          "id": 10,
+          "focused": true
+        },
+        "editor-2": {
+          "id": 13,
+          "focused": false
+        }
+      },
+      "focused": "editor"
+    }
+  },
+  "screenshots": {
+    "forward": {
+      "name": "windows-editor-mru-forward.png",
+      "sha256": "5f804053f28b0b3c37b36358e0521fc5bc2010a62f72b9355ac734ff01874c91"
+    },
+    "all-groups": {
+      "name": "windows-editor-mru-all-groups.png",
+      "sha256": "4c926ca008e9d049c5ee85b34a7f6ca2af21a929d887793fc0f8c3a811af6381"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 308465664,
+          "pid": 55060,
+          "ppid": 58916,
+          "private": 258428928,
+          "pss": 258428928,
+          "working_set": 164593664
+        }
+      ],
+      "root_pid": 55060,
+      "total_private_bytes": 258428928,
+      "total_private_mib": 246.5,
+      "total_working_set_bytes": 164593664
+    },
+    "picker": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 308465664,
+          "pid": 55060,
+          "ppid": 58916,
+          "private": 249966592,
+          "pss": 249966592,
+          "working_set": 159338496
+        }
+      ],
+      "root_pid": 55060,
+      "total_private_bytes": 249966592,
+      "total_private_mib": 238.4,
+      "total_working_set_bytes": 159338496
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 308465664,
+          "pid": 55060,
+          "ppid": 58916,
+          "private": 255942656,
+          "pss": 255942656,
+          "working_set": 167686144
+        }
+      ],
+      "root_pid": 55060,
+      "total_private_bytes": 255942656,
+      "total_private_mib": 244.1,
+      "total_working_set_bytes": 167686144
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    1123.2,
+    664.8
+  ],
+  "results": {
+    "crossGroupTarget": "editor:10",
+    "duplicatedDocument": "bravo.txt",
+    "canceledTarget": "editor:11",
+    "escapeWhileControlHeld": false
+  },
+  "checksPassed": true,
+  "exitCode": 0,
+  "keyEvents": [
+    {
+      "event": "down",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "down",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Tab",
+      "physical": 458795,
+      "control": true,
+      "shift": true
+    },
+    {
+      "event": "up",
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Escape",
+      "physical": 458793,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Escape",
+      "physical": 458793,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "F7",
+      "physical": 458816,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "F7",
+      "physical": 458816,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "F9",
+      "physical": 458818,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "down",
+      "logical": "Enter",
+      "physical": 458792,
+      "control": false,
+      "shift": false
+    },
+    {
+      "event": "up",
+      "logical": "Enter",
+      "physical": 458792,
+      "control": false,
+      "shift": false
+    }
+  ]
+}

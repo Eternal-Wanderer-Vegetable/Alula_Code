@@ -1,0 +1,18 @@
+P05.14 / feat-066 local validation
+Branch: codex/vscode-parity-p05
+
+Focused Flutter coverage:
+- app/test/activity_bar_test.dart: 9/9 (desktop mouse Side after-drop, Top/Bottom before-drop, same-slot no-op, Manage fixed, custom keyboard order).
+- app/test/layout_model_test.dart: 21/21 (root JSON round-trip, legacy default, malformed ID normalization, layout notification).
+- app/test/activity_bar_order_integration_test.dart: 1/1 (drag reorder, active selection, layout save/remount, Top/Bottom/Hidden/Side and Compact retention).
+
+Full local DoD:
+- FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh: PASS.
+- Rust workspace: 71 + 54 tests passed; Clippy -D warnings passed; build_core passed.
+- Flutter full suite: 1,076 tests passed.
+- cargo fmt --check: PASS.
+- app Flutter analyze: 0 issues.
+- git diff --check: PASS.
+- node .agents/skills/harness-creator/scripts/validate-harness.mjs --target .: 100/100.
+
+Hosted PR CI and Linux/Windows/macOS Intel x64 Platform Availability are pending the product commit.

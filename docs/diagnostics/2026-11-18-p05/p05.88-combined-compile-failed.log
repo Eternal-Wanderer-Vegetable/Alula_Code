@@ -1,0 +1,115 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart
+lib/workbench/breadcrumb_navigation.dart:81:22: Error: 'KeyDownEvent' isn't a type.
+        if (event is KeyDownEvent &&
+                     ^^^^^^^^^^^^
+lib/workbench/breadcrumb_navigation.dart:82:33: Error: The getter 'LogicalKeyboardKey' isn't defined for the type '_BreadcrumbMenuEntryState'.
+ - '_BreadcrumbMenuEntryState' is from 'package:alula_app/workbench/breadcrumb_navigation.dart' ('lib/workbench/breadcrumb_navigation.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'LogicalKeyboardKey'.
+            event.logicalKey == LogicalKeyboardKey.escape) {
+                                ^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart [E]
+  Failed to load "E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart":
+  Compilation failed for testPath=E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: lib/workbench/breadcrumb_navigation.dart:81:22: Error: 'KeyDownEvent' isn't a type.
+          if (event is KeyDownEvent &&
+                       ^^^^^^^^^^^^
+  lib/workbench/breadcrumb_navigation.dart:82:33: Error: The getter 'LogicalKeyboardKey' isn't defined for the type '_BreadcrumbMenuEntryState'.
+   - '_BreadcrumbMenuEntryState' is from 'package:alula_app/workbench/breadcrumb_navigation.dart' ('lib/workbench/breadcrumb_navigation.dart').
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'LogicalKeyboardKey'.
+              event.logicalKey == LogicalKeyboardKey.escape) {
+                                  ^^^^^^^^^^^^^^^^^^
+  .
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 1024:11   DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 816:35                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 862:9                Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 743:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+  
+lib/workbench/breadcrumb_navigation.dart:81:22: Error: 'KeyDownEvent' isn't a type.
+        if (event is KeyDownEvent &&
+                     ^^^^^^^^^^^^
+lib/workbench/breadcrumb_navigation.dart:82:33: Error: The getter 'LogicalKeyboardKey' isn't defined for the type '_BreadcrumbMenuEntryState'.
+ - '_BreadcrumbMenuEntryState' is from 'package:alula_app/workbench/breadcrumb_navigation.dart' ('lib/workbench/breadcrumb_navigation.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'LogicalKeyboardKey'.
+            event.logicalKey == LogicalKeyboardKey.escape) {
+                                ^^^^^^^^^^^^^^^^^^
+00:00 +0 -2: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart [E]
+  Failed to load "E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart":
+  Compilation failed for testPath=E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: lib/workbench/breadcrumb_navigation.dart:81:22: Error: 'KeyDownEvent' isn't a type.
+          if (event is KeyDownEvent &&
+                       ^^^^^^^^^^^^
+  lib/workbench/breadcrumb_navigation.dart:82:33: Error: The getter 'LogicalKeyboardKey' isn't defined for the type '_BreadcrumbMenuEntryState'.
+   - '_BreadcrumbMenuEntryState' is from 'package:alula_app/workbench/breadcrumb_navigation.dart' ('lib/workbench/breadcrumb_navigation.dart').
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'LogicalKeyboardKey'.
+              event.logicalKey == LogicalKeyboardKey.escape) {
+                                  ^^^^^^^^^^^^^^^^^^
+  .
+00:00 +0 -2: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart [E]
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 1024:11   DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 816:35                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 862:9                Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 743:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+  
+00:00 +0 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: Breadcrumb keybindings punctuation names resolve to the same logical keys
+00:00 +1 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: Breadcrumb keybindings platform defaults retain context and navigation alternatives
+00:00 +2 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: Breadcrumb keybindings user removal and replacement apply to breadcrumb defaults
+00:00 +3 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 修饰键组合与裸键
+00:00 +4 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 非法输入返回 null
+00:00 +5 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChordSequence parses two strokes and displays each chord
+00:00 +6 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet occurrence selection defaults use platform commands
+00:00 +7 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet overtype toggle follows the pinned platform keybindings
+00:00 +8 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet word delete follows the pinned platform keybindings
+00:00 +9 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+00:00 +10 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+00:00 +11 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+00:00 +12 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+00:00 +13 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet sticky and editor close commands use the platform defaults
+00:00 +14 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+00:00 +15 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+00:00 +16 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+00:00 +17 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+00:00 +18 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet copy-line defaults coexist with platform column-selection chords
+00:00 +19 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+00:00 +20 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet navigation defaults leave platform word-movement chords available
+00:00 +21 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位
+00:00 +22 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+00:00 +23 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File respects a user keybinding override
+00:00 +24 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户追加：新键位生效
+00:00 +25 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户键位可覆盖与移除双段默认键位
+00:00 +26 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+00:00 +27 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+00:00 +28 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 移除不匹配的键位串：无操作
+00:00 +29 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+00:00 +30 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+00:00 +31 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+00:00 +32 -2: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart
+  E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart

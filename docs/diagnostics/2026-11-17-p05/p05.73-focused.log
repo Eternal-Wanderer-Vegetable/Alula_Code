@@ -1,0 +1,30 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/goto_position_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/goto_position_test.dart: resolves line, visible column, BOM, CRLF, tab, fullwidth, and emoji
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/goto_position_test.dart: preserves Code-OSS parseInt prefixes and negative lines
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/goto_position_test.dart: resolves one-based and zero-based offsets from either end
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/goto_position_test.dart: long lines stream bounded chunks without losing tail positions
+00:00 +4: loading E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:02 +5: loading E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart
+00:02 +5: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input validates asynchronously, rejects stale results and accepts current text
+00:02 +6: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input history retains draft and Escape returns null
+00:03 +7: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: multi selection accepts picked items hidden by query
+00:03 +8: All tests passed!

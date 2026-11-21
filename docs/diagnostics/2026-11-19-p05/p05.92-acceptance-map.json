@@ -1,0 +1,19 @@
+{
+  "feature": "feat-144",
+  "scope": "Bounded horizontal breadcrumb viewport and focused-segment reveal",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "test_file": "app/test/breadcrumb_overflow_test.dart",
+  "new_tests": 2,
+  "focused_combination_passed": 19,
+  "cases": [
+    "Actual sibling workspace switch with two retained absolute document paths reproduces738/749px Row overflow before fix",
+    "Long emoji segment, narrow viewport and pointer scrolling preserve all segment text and reachability",
+    "focusLast/previous/next and resize reveal selected segment; oversized segment leading edge remains visible",
+    "Manual scrolling remains stable without new navigation/constraint events",
+    "Resource replacement and unmount with queued reveal are safe; controller and FocusNode are disposed",
+    "Workbench input windows, text/version/selection/dirty, actual undo/redo and disk bytes remain unchanged"
+  ],
+  "review": "Parent source review completed; independent agent provider failures not counted as pass",
+  "limits": ["Native/visual geometry comparison remains unverified", "macOS native/device validation deferred"],
+  "parents_remain_open": true
+}

@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+import 'helpers/file_paths.dart';
+
 const _cargoBefore = 'alpha\nbeta\n';
 const _rustBefore = 'gamma\ndelta\n';
 
@@ -24,8 +27,8 @@ class _WorkbenchFixture {
   final File rust;
   final dynamic state;
 
-  String get cargoUri => 'file:///${cargo.absolute.path.replaceAll(r'\', '/')}';
-  String get rustUri => 'file:///${rust.absolute.path.replaceAll(r'\', '/')}';
+  String get cargoUri => workbenchFileUri(cargo.path);
+  String get rustUri => workbenchFileUri(rust.path);
 }
 
 Future<_WorkbenchFixture> _startWorkbench(WidgetTester tester) async {
@@ -55,11 +58,11 @@ Future<_WorkbenchFixture> _startWorkbench(WidgetTester tester) async {
     keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
   ));
   await tester.pump(const Duration(milliseconds: 600));
-  await tester.tap(find.text('Cargo.toml').first);
+  await openPinnedExplorerFile(tester, find.text('Cargo.toml').first);
   await tester.pump(const Duration(milliseconds: 200));
   await tester.tap(find.text('src').first);
   await tester.pump(const Duration(milliseconds: 100));
-  await tester.tap(find.text('main.rs').first);
+  await openPinnedExplorerFile(tester, find.text('main.rs').first);
   await tester.pump(const Duration(milliseconds: 200));
 
   return _WorkbenchFixture(

@@ -1,0 +1,20 @@
+{
+  "feature": "feat-142",
+  "command": "breadcrumbs.revealFocused",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "shortcuts": ["Space", "CtrlCmd+Enter"],
+  "when": "breadcrumbsVisible && breadcrumbsActive",
+  "test_file": "app/test/breadcrumb_reveal_test.dart",
+  "cases": [
+    "Command disabled without active breadcrumb focus",
+    "Dirty terminal Space returns owner editor with content/version/selection/inputWindow/history/disk unchanged and actual undo/redo intact",
+    "CtrlCmdEnter preserves clean preview state without opening symbol picker",
+    "Directory advances visual segment while listing original folder file siblings, picked file opens and receives text focus in owner group",
+    "Unexpanded nested folder lists its own children, Escape restores owner, outside dismissal preserves foreign focus"
+  ],
+  "new_suite_passed": 5,
+  "combined_passed": 49,
+  "initial_failure": "Picked file had no text focus; bounded wait confirmed product gap before reveal-only focus handoff",
+  "limits": ["WithPicker/aside/treeAside", "Full symbol-path/provider behavior", "Native keyboard/visual/device acceptance", "macOS device validation deferred"],
+  "parents_remain_open": true
+}

@@ -1,0 +1,193 @@
+{
+  "task": "P05.83 read-only exact hosted verification",
+  "repository": "github.com/Eternal-Wanderer-Vegetable/Alula_Code",
+  "head_sha": "f4b1faf7313a9133ecc68db0b1c558324f6a51ce",
+  "captured_at_utc": "2026-11-18T08:23:05.699100+00:00",
+  "ci": {
+    "id": 44264627191,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44264627191",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 134665970691,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:09:56Z"
+      },
+      {
+        "id": 134665971154,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:18:28Z"
+      },
+      {
+        "id": 134665971262,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:10:30Z"
+      },
+      {
+        "id": 134665971373,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:11:30Z"
+      }
+    ],
+    "flutter_reported_passed": 1472,
+    "flutter_analyze": "No issues found! (ran in 10.7s)",
+    "rust_workspace_passed_per_os": 191,
+    "rust_windows_additional_fixture_repetitions_passed": 10,
+    "format": "success on Ubuntu and Windows",
+    "clippy_D_warnings": "success on Ubuntu and Windows"
+  },
+  "platform": {
+    "id": 44264618665,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44264618665",
+    "attempt": 1,
+    "overall_status": "in_progress",
+    "overall_conclusion": null,
+    "target_jobs": [
+      {
+        "id": 134665943874,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:13:54Z"
+      },
+      {
+        "id": 134665944218,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-18T08:20:06Z"
+      }
+    ],
+    "linux_clipboard_passed": 1,
+    "windows_desktop_interaction_passed": 25,
+    "windows_clipboard_passed": 1,
+    "linux_checks": [
+      "Release bundle",
+      "Rust core bundle verification",
+      "native clipboard",
+      "native move/copy/external text DnD",
+      "Xvfb launch",
+      "Xvfb native-titlebar launch"
+    ],
+    "windows_checks": [
+      "Release bundle/core DLL",
+      "visible client capture",
+      "P03.7 desktop interaction suite25/25",
+      "native move/copy/external text DnD",
+      "native clipboard1/1",
+      "MSAA editor focus/value/semantic text",
+      "graceful WM_CLOSE exit",
+      "native-titlebar launch and graceful close"
+    ],
+    "macOS": {
+      "deferred": true,
+      "last_observed_status": "in_progress",
+      "included_in_acceptance": false,
+      "not_waited_for": true
+    }
+  },
+  "dnd": {
+    "verdict": "Actual native pointer-driven routing passed on both Linux and Windows; not only step metadata",
+    "linux_result": "linux-native-dnd-result.json",
+    "windows_result": "windows-native-dnd-result.json",
+    "linux_pointer_events": 20,
+    "windows_pointer_events": 13,
+    "validated_scenarios": [
+      "move alpha at UTF-16 target offset11 with move completion",
+      "Ctrl-copy alpha to document7002 version4 offset6 with copy completion and copy drop-over",
+      "plain external text to document7002 version4 offset6"
+    ],
+    "limitations": "Native routing fixture supplies target document IDs/versions/offsets; these probes do not establish editor-buffer mutation, undo, caret hit-testing, or a separate external application. External plain-text source is another fixture widget."
+  },
+  "artifacts": [
+    {
+      "id": 14410820162,
+      "name": "alula-windows-native-dnd-44264618665-1",
+      "size_in_bytes": 3845,
+      "expired": false,
+      "digest": "sha256:7b008f2c616f1f5947fc05e12e4241cecfbf097ecb90d7fc8c5bb9517cc138dc"
+    },
+    {
+      "id": 14410022314,
+      "name": "alula-linux-x64-f4b1faf7313a9133ecc68db0b1c558324f6a51ce",
+      "size_in_bytes": 14064565,
+      "expired": false,
+      "digest": "sha256:023547ea3ede03d19a1d45863247e1acb0fa2f35f233bc5cf91492a8ce7b60e7"
+    },
+    {
+      "id": 14409574819,
+      "name": "alula-windows-x64-f4b1faf7313a9133ecc68db0b1c558324f6a51ce",
+      "size_in_bytes": 15674086,
+      "expired": false,
+      "digest": "sha256:1a95e81c96940eb55348751d680c1bcef006e0915f172b99dea019fbeaeeac34"
+    },
+    {
+      "id": 14409134624,
+      "name": "alula-linux-native-dnd-44264618665-1",
+      "size_in_bytes": 3294,
+      "expired": false,
+      "digest": "sha256:02e4d6462c83e52a50d03ea14b0620febbc0b26d4d1f90c511642bba8988bf84"
+    }
+  ],
+  "evidence_directory": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988",
+  "read_only_constraints": {
+    "repository_edits": false,
+    "workflow_mutations": false,
+    "workflow_reruns": false,
+    "application_zip_downloads": false,
+    "mac_native_Quit_investigation": false
+  },
+  "collection_errors": {
+    "hosted_failures": false,
+    "exact_api_errors_saved": [
+      "fetch-error-20261118T081353Z.log",
+      "fetch-error-20261118T081356Z.log",
+      "fetch-error-20261118T081724Z.log",
+      "fetch-error-20261118T081912Z.log",
+      "fetch-error-20261118T082119Z.log"
+    ],
+    "note": "Transient read-only API TCP connection failures and initial gh escape-output refusal preserved; no hosted reruns."
+  },
+  "raw_logs": [
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/ci-job-134665970691.log",
+      "bytes": 13572,
+      "sha256": "73678ec37e129177ebd2ff6de05e74b3842b2b6fbc86564d93dc92f2318f6b0e"
+    },
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/ci-job-134665971154.log",
+      "bytes": 335733,
+      "sha256": "1eacfc0757826911f5eba89fc01f45998f336cf7d90c7ab000e50fce19383005"
+    },
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/ci-job-134665971262.log",
+      "bytes": 67730,
+      "sha256": "34a6732cd53f6d1adeec55ec4f45ecd69850da92464d1d932caf670c6e6b4f8e"
+    },
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/ci-job-134665971373.log",
+      "bytes": 77296,
+      "sha256": "66bdb64dacb7948db91d43d9ccb39674483d78346a439ef93d6f136d23bfe529"
+    },
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/platform-job-134665943874.log",
+      "bytes": 122718,
+      "sha256": "5e7306de05c4949becc7c72f118a76df280b2fc229d1448b33112ff810edccfc"
+    },
+    {
+      "path": "E:/Temp/alula-p0583-hosted-20261118/20261118T081148Z-7da17988/platform-job-134665944218.log",
+      "bytes": 115690,
+      "sha256": "24c58c3782c1628da383bf882b0f082287c078c242271ce2351107e0375c5c6c"
+    }
+  ]
+}

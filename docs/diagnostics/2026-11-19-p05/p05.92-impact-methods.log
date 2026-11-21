@@ -1,0 +1,66 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'focusLast' not found",
+  "target": {
+    "name": "focusLast"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'move' not found",
+  "target": {
+    "name": "move"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'revealFocused' not found",
+  "target": {
+    "name": "revealFocused"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'dispose' not found",
+  "target": {
+    "name": "dispose"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'build' not found",
+  "target": {
+    "name": "build"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'didUpdateWidget' not found",
+  "target": {
+    "name": "didUpdateWidget"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

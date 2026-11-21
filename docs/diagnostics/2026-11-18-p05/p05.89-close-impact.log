@@ -1,0 +1,491 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "target": {
+    "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeDocNow#3",
+    "name": "_closeDocNow",
+    "type": "Method",
+    "filePath": "app/lib/workbench/workbench_page.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 40,
+  "risk": "MEDIUM",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 8,
+    "processes_affected": 2,
+    "modules_affected": 2
+  },
+  "byDepthCounts": {
+    "1": 8,
+    "2": 14,
+    "3": 18
+  },
+  "affected_processes": [
+    {
+      "name": "initState",
+      "type": "Function",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "affected_process_count": 9,
+      "total_hits": 9,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_registerCommands",
+      "type": "Function",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Workbench",
+      "hits": 39,
+      "impact": "direct"
+    },
+    {
+      "name": "Editor",
+      "hits": 1,
+      "impact": "indirect"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._acceptMergeResult#1",
+        "name": "_acceptMergeResult",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeMergeResultDocument#4",
+        "name": "_closeMergeResultDocument",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveDocAcrossGroups#5",
+        "name": "_moveDocAcrossGroups",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveEditorToExistingAuxiliaryWindow#3",
+        "name": "_moveEditorToExistingAuxiliaryWindow",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveEditorToNewWindow#2",
+        "name": "_moveEditorToNewWindow",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveFocusedEditorToGroup#1",
+        "name": "_moveFocusedEditorToGroup",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._replaceCleanPreviewBeforeOpen#1",
+        "name": "_replaceCleanPreviewBeforeOpen",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._requestCloseEditorViews#1",
+        "name": "_requestCloseEditorViews",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._acceptActiveMergeResult#0",
+        "name": "_acceptActiveMergeResult",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildTab#3",
+        "name": "_buildTab",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeAllEditorGroups#0",
+        "name": "_closeAllEditorGroups",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeAllEditorsInFocusedGroup#0",
+        "name": "_closeAllEditorsInFocusedGroup",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeDoc#2",
+        "name": "_closeDoc",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeTabsForAction#3",
+        "name": "_closeTabsForAction",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._handleBodyAreaDrop#4",
+        "name": "_handleBodyAreaDrop",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._handleGroupAreaDrop#2",
+        "name": "_handleGroupAreaDrop",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveFocusedEditorToNewWindow#0",
+        "name": "_moveFocusedEditorToNewWindow",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openFileByPath#4",
+        "name": "_openFileByPath",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._registerCommands#0",
+        "name": "_registerCommands",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_212__registercommands",
+            "label": "_registerCommands → Register",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._showEditorTabContextMenu#3",
+        "name": "_showEditorTabContextMenu",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._showOpenEditorsGroupContextMenu#2",
+        "name": "_showOpenEditorsGroupContextMenu",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._tearOutEditorTabIfOutside#2",
+        "name": "_tearOutEditorTabIfOutside",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildEditorArea#1",
+        "name": "_buildEditorArea",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildOpenEditorsSection#0",
+        "name": "_buildOpenEditorsSection",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildTabStrip#1",
+        "name": "_buildTabStrip",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeActiveEditorFromKeyboard#0",
+        "name": "_closeActiveEditorFromKeyboard",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeFromActiveEditor#1",
+        "name": "_closeFromActiveEditor",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._compareSelectedExplorerFile#1",
+        "name": "_compareSelectedExplorerFile",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._handleGroupAreaDropAndClearHover#2",
+        "name": "_handleGroupAreaDropAndClearHover",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._navigateToDefinition#3",
+        "name": "_navigateToDefinition",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openExplorerPreview#1",
+        "name": "_openExplorerPreview",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openMergeEditorFromArguments#1",
+        "name": "_openMergeEditorFromArguments",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openRecentEntry#1",
+        "name": "_openRecentEntry",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openSearchHit#1",
+        "name": "_openSearchHit",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openTreeFile#1",
+        "name": "_openTreeFile",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._reopenAuxiliaryDocument#1",
+        "name": "_reopenAuxiliaryDocument",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._restoreNavigationLocation#1",
+        "name": "_restoreNavigationLocation",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._showQuickOpen#0",
+        "name": "_showQuickOpen",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._showWorkspaceSymbols#0",
+        "name": "_showWorkspaceSymbols",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.initState#0",
+        "name": "initState",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_127_initstate",
+            "label": "InitState → _normalizePath",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_214_initstate",
+            "label": "InitState → _oversized",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_125_initstate",
+            "label": "InitState → SanitizeCommandHistoryEntries",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_126_initstate",
+            "label": "InitState → _journalFiles",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_128_initstate",
+            "label": "InitState → _journalFiles",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_74_initstate",
+            "label": "InitState → _pathKey",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_129_initstate",
+            "label": "InitState → _Owner",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_213_initstate",
+            "label": "InitState → SessionStore",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_215_initstate",
+            "label": "InitState → RecentHistorySnapshot",
+            "processType": "intra_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+(node:36320) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

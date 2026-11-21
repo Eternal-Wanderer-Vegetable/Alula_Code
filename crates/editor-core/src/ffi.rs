@@ -28,7 +28,8 @@ use editor_buffer::{
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_location,
-    DefinitionLocation, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
+    extract_workspace_symbols, DefinitionLocation, LspPendingRequest, LspServer, SemanticToken,
+    SemanticTokenLegend,
 };
 use editor_merge::{
     combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
@@ -40,7 +41,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 40;
+pub const ALULA_ABI_VERSION: u32 = 41;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -263,6 +264,32 @@ static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = O
 static PENDING_SEMANTIC_TOKENS: OnceLock<Mutex<HashMap<u64, PendingSemanticTokens>>> =
     OnceLock::new();
 static PENDING_DEFINITIONS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
+static PENDING_WORKSPACE_SYMBOLS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> =
+    OnceLock::new();
+static NEXT_WORKSPACE_SYMBOL_ID: AtomicU64 = AtomicU64::new(1);
+
+fn pending_workspace_symbols_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinition>> {
+    PENDING_WORKSPACE_SYMBOLS
+        .get_or_init(|| Mutex::new(HashMap::new()))
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn cancel_workspace_symbols(mut matches: impl FnMut(&PendingDefinition) -> bool) {
+    let requests: Vec<_> = {
+        let mut pending = pending_workspace_symbols_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(id, request)| matches(request).then_some(*id))
+            .collect();
+        ids.into_iter()
+            .filter_map(|id| pending.remove(&id))
+            .collect()
+    };
+    for mut request in requests {
+        let _ = request.request.cancel();
+    }
+}
 static RESOURCE_MONITOR: OnceLock<Mutex<Option<ResourcePressureMonitor>>> = OnceLock::new();
 
 fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
@@ -368,6 +395,7 @@ fn pending_definitions_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinit
 }
 
 fn cancel_definitions_for_doc(id: u64) {
+    cancel_workspace_symbols(|request| request.document_id == id);
     let requests: Vec<_> = {
         let mut pending = pending_definitions_lock();
         let ids: Vec<_> = pending
@@ -384,6 +412,7 @@ fn cancel_definitions_for_doc(id: u64) {
 }
 
 pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
+    cancel_workspace_symbols(|request| Arc::ptr_eq(&request.server, server));
     let requests: Vec<_> = {
         let mut pending = pending_definitions_lock();
         let ids: Vec<_> = pending
@@ -402,6 +431,7 @@ pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
 }
 
 fn cancel_all_definitions() {
+    cancel_workspace_symbols(|_| true);
     let requests: Vec<_> = pending_definitions_lock()
         .drain()
         .map(|(_, request)| request)
@@ -2934,6 +2964,130 @@ pub extern "C" fn alula_definition_cancel(request_id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_cancel")))
 }
 
+/// Start a workspace-scoped symbol query using the server attached to `id`.
+/// Query bytes and in-flight requests are bounded; unsupported servers are explicit.
+///
+/// # Safety
+/// `query_ptr` must point to a valid, NUL-terminated UTF-8 string for this call.
+#[no_mangle]
+pub unsafe extern "C" fn alula_workspace_symbols_start(
+    id: u64,
+    query_ptr: *const c_char,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let query = match unsafe { read_c_str(query_ptr) } {
+            Ok(query) => query,
+            Err(error) => return error,
+        };
+        if query.len() > 1024 {
+            return err_json("InvalidArgument", json!({"maxQueryBytes": 1024}));
+        }
+        let (server, version) = {
+            let reg = registry_lock();
+            let Some(server) = reg.lsp_of(id) else {
+                return err_json("NoLsp", json!({"id": id}));
+            };
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({"id": id}));
+            };
+            (server, version)
+        };
+        cancel_workspace_symbols(|request| request.document_id == id);
+        let request = match server.workspace_symbols_async(query) {
+            Ok(Some(request)) => request,
+            Ok(None) => return to_c_ptr(json!({"ok": true, "supported": false}).to_string()),
+            Err(error) => return err_json("WorkspaceSymbolsFailed", json!(error)),
+        };
+        let mut requests = pending_workspace_symbols_lock();
+        if requests.len() >= MAX_PENDING_DEFINITIONS {
+            let mut request = request;
+            let _ = request.cancel();
+            return err_json("Backpressure", json!({"limit": MAX_PENDING_DEFINITIONS}));
+        }
+        let request_id = NEXT_WORKSPACE_SYMBOL_ID.fetch_add(1, Ordering::Relaxed);
+        let deadline = Instant::now() + Duration::from_millis(timeout_ms.min(60_000));
+        requests.insert(
+            request_id,
+            PendingDefinition {
+                document_id: id,
+                document_version: version,
+                server,
+                request,
+                deadline,
+            },
+        );
+        to_c_ptr(
+            json!({"ok": true, "supported": true, "requestId": request_id, "version": version})
+                .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_start")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_workspace_symbols_poll(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        enum Poll { Pending, Timeout(PendingDefinition), Stale(PendingDefinition), Complete(PendingDefinition, serde_json::Value), Failed(PendingDefinition, String) }
+        let result = {
+            let mut requests = pending_workspace_symbols_lock();
+            let Some(pending) = requests.get_mut(&request_id) else {
+                return to_c_ptr(json!({"ok": true, "status": "cancelled"}).to_string());
+            };
+            if Instant::now() >= pending.deadline {
+                Poll::Timeout(requests.remove(&request_id).unwrap())
+            } else if registry_lock().version_of(pending.document_id) != Some(pending.document_version) {
+                Poll::Stale(requests.remove(&request_id).unwrap())
+            } else {
+                match pending.request.try_recv() {
+                    Ok(None) => Poll::Pending,
+                    Ok(Some(response)) => Poll::Complete(requests.remove(&request_id).unwrap(), response),
+                    Err(error) => Poll::Failed(requests.remove(&request_id).unwrap(), error),
+                }
+            }
+        };
+        match result {
+            Poll::Pending => to_c_ptr(json!({"ok": true, "status": "pending"}).to_string()),
+            Poll::Timeout(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(json!({"ok": true, "status": "timeout"}).to_string())
+            }
+            Poll::Stale(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(json!({"ok": true, "status": "stale"}).to_string())
+            }
+            Poll::Complete(pending, response) => match extract_workspace_symbols(&response) {
+                Ok(symbols) => {
+                    let items: Vec<_> = symbols.into_iter().map(|symbol| json!({
+                        "name": symbol.name, "kind": symbol.kind, "uri": symbol.uri,
+                        "line": symbol.line, "character": symbol.character,
+                        "endLine": symbol.end_line, "endCharacter": symbol.end_character,
+                        "containerName": symbol.container_name,
+                    })).collect();
+                    to_c_ptr(json!({"ok": true, "status": "completed", "version": pending.document_version, "symbols": items}).to_string())
+                }
+                Err(error) => err_json("WorkspaceSymbolsFailed", json!(error)),
+            },
+            Poll::Failed(mut pending, error) => {
+                let _ = pending.request.cancel();
+                err_json("WorkspaceSymbolsFailed", json!(error))
+            }
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_poll")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_workspace_symbols_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if let Some(mut pending) = pending_workspace_symbols_lock().remove(&request_id) {
+            let _ = pending.request.cancel();
+        }
+        to_c_ptr(json!({"ok": true, "requestId": request_id}).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_cancel")))
+}
+
 /// 同步兼容补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
 #[no_mangle]
 pub extern "C" fn alula_completion(id: u64, offset_utf16: u64, timeout_ms: u64) -> *mut c_char {
@@ -3222,7 +3376,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 40);
+        assert_eq!(alula_abi_version(), 41);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

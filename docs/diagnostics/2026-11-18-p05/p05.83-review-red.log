@@ -1,0 +1,66 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: releasing Shift inside the popup cannot arm a later bare F10
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'scm-context-open'>]: [
+            PopupMenuItem<String>-[<'scm-context-open'>](dependencies: [InheritedCupertinoTheme,
+_InheritedTheme, _LocalizationsScope-[GlobalKey#adeea]], state: PopupMenuItemState<String,
+PopupMenuItem<String>>#c8e6d),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:828:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 828
+The test description was:
+  releasing Shift inside the popup cannot arm a later bare F10
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: releasing Shift inside the popup cannot arm a later bare F10 [E]
+  Test failed. See exception logs above.
+  The test description was: releasing Shift inside the popup cannot arm a later bare F10
+  
+00:00 +0 -1: queued keyboard menu cannot outlive its focused target
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'scm-context-open'>]: [
+            PopupMenuItem<String>-[<'scm-context-open'>](dependencies: [InheritedCupertinoTheme,
+_InheritedTheme, _LocalizationsScope-[GlobalKey#ed2b8]], state: PopupMenuItemState<String,
+PopupMenuItem<String>>#bce04),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:840:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 840
+The test description was:
+  queued keyboard menu cannot outlive its focused target
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: queued keyboard menu cannot outlive its focused target [E]
+  Test failed. See exception logs above.
+  The test description was: queued keyboard menu cannot outlive its focused target
+  
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: queued keyboard menu cannot outlive its focused target
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: releasing Shift inside the popup cannot arm a later bare F10

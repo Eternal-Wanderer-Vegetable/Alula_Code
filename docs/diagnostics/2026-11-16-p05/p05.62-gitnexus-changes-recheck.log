@@ -1,0 +1,14 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 6 files, 4 symbols
+Affected processes: 1
+Risk level: medium
+
+Changed symbols:
+  Class WelcomePage → app/lib/workbench/welcome_page.dart
+  Property walkthroughCompletedSteps → app/lib/workbench/welcome_page.dart
+  Class _WelcomeWalkthroughSection → app/lib/workbench/welcome_page.dart
+  Method build → app/lib/workbench/welcome_page.dart
+
+Affected execution flows:
+  • InitState → Hunk (5 steps) — changed: walkthroughCompletedSteps

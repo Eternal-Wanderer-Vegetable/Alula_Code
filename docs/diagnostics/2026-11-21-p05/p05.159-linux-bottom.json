@@ -1,0 +1,1097 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "sourceTree": "5f1491150fbed16e28d8281aa0d0ed3885a1f944",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "c93eff6336ecfd623561fad08dbe8e64b931d0ce47faeb476e75f2e32b0aad31",
+  "observations": {
+    "startup": {
+      "request": "startup",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-group-header-primary-search": [
+          48.0,
+          35.0,
+          325.92,
+          63.0
+        ],
+        "search-input": [
+          56.0,
+          74.0,
+          253.92000000000002,
+          96.0
+        ],
+        "sidebar-group-header-primary-explorer": [
+          48.0,
+          402.5,
+          325.92,
+          430.5
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          430.5,
+          325.92,
+          814.5
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "sidebar",
+          "value": "",
+          "focused": false
+        }
+      ],
+      "matches": "0 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": {
+        "search": {
+          "container": "explorer",
+          "before": true
+        }
+      },
+      "headers": {
+        "sidebar-group-header-primary-search": {
+          "expanded": true,
+          "label": null
+        },
+        "sidebar-group-header-primary-explorer": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": null,
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "primary"
+      },
+      "activePanelHostedView": null
+    },
+    "grouped-in-explorer": {
+      "request": "grouped-in-explorer",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-group-header-primary-search": [
+          48.0,
+          35.0,
+          325.92,
+          63.0
+        ],
+        "search-input": [
+          56.0,
+          74.0,
+          253.92000000000002,
+          96.0
+        ],
+        "sidebar-group-header-primary-explorer": [
+          48.0,
+          402.5,
+          325.92,
+          430.5
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          430.5,
+          325.92,
+          814.5
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "sidebar",
+          "value": "fixture",
+          "focused": false
+        }
+      ],
+      "matches": "ripgrep \u00b7 2 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": {
+        "search": {
+          "container": "explorer",
+          "before": true
+        }
+      },
+      "headers": {
+        "sidebar-group-header-primary-search": {
+          "expanded": true,
+          "label": null
+        },
+        "sidebar-group-header-primary-explorer": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": null,
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "primary"
+      },
+      "activePanelHostedView": null
+    },
+    "source-editor-drop-rejected": {
+      "request": "source-editor-drop-rejected",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-group-header-primary-search": [
+          48.0,
+          35.0,
+          325.92,
+          63.0
+        ],
+        "search-input": [
+          56.0,
+          74.0,
+          253.92000000000002,
+          96.0
+        ],
+        "sidebar-group-header-primary-explorer": [
+          48.0,
+          402.5,
+          325.92,
+          430.5
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          430.5,
+          325.92,
+          814.5
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "sidebar",
+          "value": "fixture",
+          "focused": false
+        }
+      ],
+      "matches": "ripgrep \u00b7 2 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": {
+        "search": {
+          "container": "explorer",
+          "before": true
+        }
+      },
+      "headers": {
+        "sidebar-group-header-primary-search": {
+          "expanded": true,
+          "label": null
+        },
+        "sidebar-group-header-primary-explorer": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": null,
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "primary"
+      },
+      "activePanelHostedView": null
+    },
+    "hover": {
+      "request": "hover",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-group-header-primary-search": [
+          48.0,
+          35.0,
+          325.92,
+          63.0
+        ],
+        "search-input": [
+          56.0,
+          74.0,
+          253.92000000000002,
+          96.0
+        ],
+        "sidebar-group-header-primary-explorer": [
+          48.0,
+          402.5,
+          325.92,
+          430.5
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          430.5,
+          325.92,
+          814.5
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-highlight-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "sidebar",
+          "value": "fixture",
+          "focused": false
+        }
+      ],
+      "matches": "ripgrep \u00b7 2 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": {
+        "search": {
+          "container": "explorer",
+          "before": true
+        }
+      },
+      "headers": {
+        "sidebar-group-header-primary-search": {
+          "expanded": true,
+          "label": null
+        },
+        "sidebar-group-header-primary-explorer": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": null,
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "primary"
+      },
+      "activePanelHostedView": null
+    },
+    "moved-to-standard-panel": {
+      "request": "moved-to-standard-panel",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-group-diagnostics": [
+          329.92,
+          595.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-group-diagnostics-search": [
+          329.92,
+          595.9,
+          767.96,
+          766.0
+        ],
+        "panel-view-group-title-search": [
+          329.92,
+          595.9,
+          767.96,
+          623.9
+        ],
+        "panel-group-header-diagnostics-search": [
+          329.92,
+          595.9,
+          767.96,
+          623.9
+        ],
+        "panel-view-group-body-diagnostics-search": [
+          329.92,
+          623.9,
+          767.96,
+          766.0
+        ],
+        "search-input": [
+          337.92,
+          634.9,
+          695.96,
+          656.9
+        ],
+        "panel-group-sash-diagnostics-search-original": [
+          767.96,
+          595.9,
+          771.96,
+          766.0
+        ],
+        "panel-view-group-diagnostics-original": [
+          771.96,
+          595.9,
+          1210.0,
+          766.0
+        ],
+        "panel-group-header-diagnostics-original": [
+          771.96,
+          595.9,
+          1210.0,
+          623.9
+        ],
+        "panel-view-group-body-diagnostics-original": [
+          771.96,
+          623.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "panel",
+          "value": "fixture",
+          "focused": false
+        }
+      ],
+      "matches": "ripgrep \u00b7 2 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": null,
+      "headers": {
+        "panel-group-header-diagnostics-search": {
+          "expanded": true,
+          "label": null
+        },
+        "panel-group-header-diagnostics-original": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": {
+        "search": {
+          "tab": "diagnostics",
+          "before": true
+        }
+      },
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "panel"
+      },
+      "activePanelHostedView": null
+    },
+    "panel-hidden": {
+      "request": "panel-hidden",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [],
+      "matches": null,
+      "panelTabs": [],
+      "activeTab": null,
+      "workbenchFocus": null,
+      "originalContentVisible": false,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": null,
+      "headers": {},
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": {
+        "search": {
+          "tab": "diagnostics",
+          "before": true
+        }
+      },
+      "panelShown": false,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "panel"
+      },
+      "activePanelHostedView": null
+    },
+    "panel-reopened": {
+      "request": "panel-reopened",
+      "boxes": {
+        "wb-region-activity": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "grouped-panel-view-entry-drop-primary": [
+          0.0,
+          35.0,
+          48.0,
+          766.0
+        ],
+        "wb-region-sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "sidebar-panel-view-drop-primary": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "wb-region-editor": [
+          329.92,
+          35.0,
+          1210.0,
+          543.9
+        ],
+        "wb-region-panel": [
+          329.92,
+          547.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-title-drop": [
+          329.92,
+          547.9,
+          1178.0,
+          595.9
+        ],
+        "panel-tab:\u8bca\u65ad": [
+          345.92,
+          547.9,
+          374.12000076293947,
+          593.9
+        ],
+        "panel-tab:\u8865\u5168": [
+          406.12000076293947,
+          547.9,
+          434.3200015258789,
+          593.9
+        ],
+        "panel-tab:\u8bed\u6cd5 (Tree-sitter)": [
+          466.3200015258789,
+          547.9,
+          575.9135607910157,
+          593.9
+        ],
+        "panel-tab:Git Diff": [
+          607.9135607910157,
+          547.9,
+          655.4593638610841,
+          593.9
+        ],
+        "panel-view-group-diagnostics": [
+          329.92,
+          595.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-group-diagnostics-search": [
+          329.92,
+          595.9,
+          767.96,
+          766.0
+        ],
+        "panel-view-group-title-search": [
+          329.92,
+          595.9,
+          767.96,
+          623.9
+        ],
+        "panel-group-header-diagnostics-search": [
+          329.92,
+          595.9,
+          767.96,
+          623.9
+        ],
+        "panel-view-group-body-diagnostics-search": [
+          329.92,
+          623.9,
+          767.96,
+          766.0
+        ],
+        "search-input": [
+          337.92,
+          634.9,
+          695.96,
+          656.9
+        ],
+        "panel-group-sash-diagnostics-search-original": [
+          767.96,
+          595.9,
+          771.96,
+          766.0
+        ],
+        "panel-view-group-diagnostics-original": [
+          771.96,
+          595.9,
+          1210.0,
+          766.0
+        ],
+        "panel-group-header-diagnostics-original": [
+          771.96,
+          595.9,
+          1210.0,
+          623.9
+        ],
+        "panel-view-group-body-diagnostics-original": [
+          771.96,
+          623.9,
+          1210.0,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-before": [
+          329.92,
+          595.9,
+          769.96,
+          766.0
+        ],
+        "panel-view-body-drop-diagnostics-after": [
+          769.96,
+          595.9,
+          1210.0,
+          766.0
+        ]
+      },
+      "search": [
+        {
+          "owner": "panel",
+          "value": "fixture",
+          "focused": false
+        }
+      ],
+      "matches": "ripgrep \u00b7 2 \u4e2a\u5339\u914d\uff08\u4e0a\u9650 500\uff09",
+      "panelTabs": [
+        "\u8bca\u65ad",
+        "\u8865\u5168",
+        "\u8bed\u6cd5 (Tree-sitter)",
+        "Git Diff"
+      ],
+      "activeTab": 0,
+      "workbenchFocus": null,
+      "originalContentVisible": true,
+      "explorerFileVisible": true,
+      "activeSidebarView": "explorer",
+      "sidebarViewPlacements": null,
+      "headers": {
+        "panel-group-header-diagnostics-search": {
+          "expanded": true,
+          "label": null
+        },
+        "panel-group-header-diagnostics-original": {
+          "expanded": true,
+          "label": null
+        }
+      },
+      "panelGroupCollapsedPanes": null,
+      "panelGroupPaneWeights": null,
+      "panelViewPlacements": {
+        "search": {
+          "tab": "diagnostics",
+          "before": true
+        }
+      },
+      "panelShown": true,
+      "locations": {
+        "explorer": "primary",
+        "outline": "primary",
+        "git": "primary",
+        "search": "panel"
+      },
+      "activePanelHostedView": null
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1773716,
+          "ppid": 1773713,
+          "private": 237699072,
+          "pss": 253704192,
+          "working_set": 330756096
+        }
+      ],
+      "root_pid": 1773716,
+      "total_private_bytes": 237699072,
+      "total_private_mib": 226.7,
+      "total_working_set_bytes": 330756096
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1773716,
+          "ppid": 1773713,
+          "private": 229109760,
+          "pss": 245114880,
+          "working_set": 322166784
+        }
+      ],
+      "root_pid": 1773716,
+      "total_private_bytes": 229109760,
+      "total_private_mib": 218.5,
+      "total_working_set_bytes": 322166784
+    }
+  },
+  "fixtureSha256": "78677cf47e3b6b4454f223d00948c02e029ce8036676dce2c5ce42240e9cd476",
+  "results": {
+    "side": "primary",
+    "position": "bottom",
+    "axis": "x",
+    "hover": "before",
+    "matchedReference": [
+      "grouped-in-explorer",
+      "source-editor-drop-rejected",
+      "target-half-highlight",
+      "moved-to-standard-panel"
+    ],
+    "matchedFiles": 2,
+    "panelReopenedWithContent": true
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

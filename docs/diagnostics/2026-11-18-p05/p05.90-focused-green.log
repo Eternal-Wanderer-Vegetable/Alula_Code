@@ -1,0 +1,65 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +6: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +7: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +8: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +9: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +10: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +11: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +12: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +13: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +14: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +15: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +16: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +17: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +18: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +19: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +20: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +21: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +22: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +23: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +24: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +25: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +26: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +27: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +28: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +29: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +30: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +31: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:00 +32: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: reveal is disabled until breadcrumb navigation has focus
+00:01 +33: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:01 +34: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the folder breadcrumb segment opens a picker of tree children
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker25092ec0/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker25092ec0/workspace\src)
+PICKERDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), 查看(V), ..., lib.rs, main.rs)
+00:01 +35: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: Space on a file preserves the dirty editor and its undo history
+00:02 +36: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends
+00:02 +36: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the file breadcrumb segment opens the symbol picker with keyboard support
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker44448b1f/workspace\src)
+SYMDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), ..., fn main, fn helper_fn)
+00:02 +37: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends
+00:02 +38: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: CtrlCmd+Enter on a file restores focus and keeps its preview
+00:02 +39: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: a folder without children shows an empty state and reveal still works
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker2b1d0695/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker2b1d0695/workspace\src)
+00:02 +40: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard33eab4b/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard33eab4b/workspace\other.rs)
+00:03 +41: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: Space on a folder selects the next segment and lists siblings
+00:03 +42: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde644ef89/workspace\other.rs)
+00:04 +43: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: folder reveal cancels back to its owner or preserves other focus
+00:04 +44: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard9818e94a/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard9818e94a/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard9818e94a/workspace\other.rs)
+00:04 +45: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard8e7f0ec4/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard8e7f0ec4/workspace\other.rs)
+00:04 +46: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Tab focuses a picker item and Escape still returns to its owner
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardf7042850/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardf7042850/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardf7042850/workspace\other.rs)
+00:05 +47: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: resource invalidation removes a covered picker but keeps its dialog
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard906c39a/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard906c39a/workspace\other.rs)
+00:05 +48: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard22cf7457/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard22cf7457/workspace\other.rs)
+00:05 +49: All tests passed!

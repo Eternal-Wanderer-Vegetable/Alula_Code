@@ -1,0 +1,37 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+  GITNEXUS_MAX_FILE_SIZE: effective threshold 1024KB (default 512KB)
+
+[2K  Skipped 3 large files (>1024KB)
+[2K  - app/windows/flutter/ephemeral/flutter_windows.dll.pdb
+[2K  - docs/diagnostics/2026-10-27-p00/atomic-contributions.json
+[2K  - docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-edit-30m-20261029-181513092.json
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:7278:27:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/test/title_bar_test.dart:1333:60:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/test/title_bar_test.dart:1333:60:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/find_replace_history.dart:58:13:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4909:26:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124600,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/bridge/alula_core.dart:1673:27:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124601,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124601,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/multi_selection.dart:688:14:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124601,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4926:19:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124601,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4926:19:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124601,"name":"gitnexus","language":"dart","context":"copy:app/lib/editor/text_diff.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795010124880,"name":"gitnexus","msg":"[scope-resolution] 709 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: method (rust), arguments (dart), bottom (dart), end (dart/rust), find (dart), first (dart), index (dart), left (dart), right (dart), size (dart/rust/swift), …"}
+{"level":40,"time":1795010125591,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1590,"entryPointsUnexplored":0,"walksCutByBudget":18,"tracesDepthCapped":3,"calleesDropped":648,"processesDropped":0},"msg":"[processes] 442 flows reported, but whole flows are MISSING: 1590 of 1790 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 3 trace(s) cut at maxTraceDepth, 648 callee(s) skipped at maxBranching, 18 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KIncremental: changed=7, added=4, deleted=0 (skipping wipe + 1789 unchanged file rows preserved)
+[2KIncremental: +129 importer(s) added to writable set (BFS depth ≤ 4)
+{"level":30,"time":1795010138347,"name":"gitnexus","msg":"name-fallback resolution: 256 call sites (104 distinct caller-file/name pairs), 27 refused as impossible (guessed/refused by language: dart 167/0, rust 65/27, cpp 24/0)"}
+[2KParse cache: pruned 4 stale chunk entries
+
+  Repository indexed successfully (44.6s)
+
+  14,912 nodes | 33,891 edges | 478 clusters | 442 flows
+  E:\temp\alula-pr3-20261117
+
+(node:58884) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

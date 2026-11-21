@@ -1,0 +1,407 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "2d497365eadeacbe310cd45ec9516de534134d1c",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "c7de1ed8c94b7ba9646d7ec50b595c8933b78b057596e1abbbad604aa1dc19d7",
+  "observations": {
+    "empty": {
+      "request": "empty",
+      "boxes": {
+        "status-notifications": [
+          913.5004653930664,
+          696.0,
+          927.5004653930664,
+          720.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u6ca1\u6709\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 0,
+      "inProgress": 0
+    },
+    "unread": {
+      "request": "unread",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-indicator": [
+          783.5004653930664,
+          690.0,
+          787.5004653930664,
+          694.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "2 \u6761\u65b0\u901a\u77e5"
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "toastIds": [
+        1,
+        2
+      ],
+      "entries": 2,
+      "inProgress": 0
+    },
+    "open": {
+      "request": "open",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-beak": [
+          775.5004653930664,
+          671.0,
+          785.5004653930664,
+          676.0
+        ],
+        "notification-center": [
+          540.0,
+          552.0,
+          992.0,
+          664.0
+        ],
+        "notification-position": [
+          944.0,
+          561.0,
+          968.0,
+          585.0
+        ],
+        "notification-center-close": [
+          968.0,
+          564.5,
+          985.0,
+          581.5
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u9690\u85cf\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "toastIds": [],
+      "entries": 2,
+      "inProgress": 0
+    },
+    "read": {
+      "request": "read",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u6ca1\u6709\u65b0\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 2,
+      "inProgress": 0
+    },
+    "visible-progress": {
+      "request": "visible-progress",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-indicator": [
+          783.5004653930664,
+          690.0,
+          787.5004653930664,
+          694.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "1 \u6761\u65b0\u901a\u77e5"
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "toastIds": [
+        3
+      ],
+      "entries": 3,
+      "inProgress": 1
+    },
+    "progress-open": {
+      "request": "progress-open",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-beak": [
+          775.5004653930664,
+          671.0,
+          785.5004653930664,
+          676.0
+        ],
+        "notification-center": [
+          540.0,
+          492.0,
+          992.0,
+          664.0
+        ],
+        "notification-position": [
+          944.0,
+          501.0,
+          968.0,
+          525.0
+        ],
+        "notification-center-close": [
+          968.0,
+          504.5,
+          985.0,
+          521.5
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u9690\u85cf\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 1
+    },
+    "background-progress": {
+      "request": "background-progress",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-indicator": [
+          783.5004653930664,
+          690.0,
+          787.5004653930664,
+          694.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u6ca1\u6709\u65b0\u901a\u77e5\uff081 \u9879\u6b63\u5728\u8fdb\u884c\uff09"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 1
+    },
+    "completed": {
+      "request": "completed",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u6ca1\u6709\u65b0\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    },
+    "quiet": {
+      "request": "quiet",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u8bf7\u52ff\u6253\u6270\u5df2\u542f\u7528"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    },
+    "position-open": {
+      "request": "position-open",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-beak": [
+          775.5004653930664,
+          671.0,
+          785.5004653930664,
+          676.0
+        ],
+        "notification-center": [
+          540.0,
+          517.0,
+          992.0,
+          664.0
+        ],
+        "notification-position": [
+          944.0,
+          526.0,
+          968.0,
+          550.0
+        ],
+        "notification-center-close": [
+          968.0,
+          529.5,
+          985.0,
+          546.5
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u8bf7\u52ff\u6253\u6270\u5df2\u542f\u7528"
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    },
+    "position-menu": {
+      "request": "position-menu",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "status-notifications-beak": [
+          775.5004653930664,
+          671.0,
+          785.5004653930664,
+          676.0
+        ],
+        "notification-center": [
+          540.0,
+          517.0,
+          992.0,
+          664.0
+        ],
+        "notification-position": [
+          944.0,
+          526.0,
+          968.0,
+          550.0
+        ],
+        "notification-center-close": [
+          968.0,
+          529.5,
+          985.0,
+          546.5
+        ],
+        "notification-position-topRight": [
+          828.0,
+          630.0,
+          968.0,
+          678.0
+        ]
+      },
+      "tooltips": {
+        "status-notifications": "\u8bf7\u52ff\u6253\u6270\u5df2\u542f\u7528"
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    },
+    "title-open": {
+      "request": "title-open",
+      "boxes": {
+        "title-notifications": [
+          858.0,
+          10.5,
+          872.0,
+          24.5
+        ],
+        "notification-center": [
+          540.0,
+          36.0,
+          992.0,
+          183.0
+        ],
+        "notification-position": [
+          944.0,
+          45.0,
+          968.0,
+          69.0
+        ],
+        "notification-center-close": [
+          968.0,
+          48.5,
+          985.0,
+          65.5
+        ],
+        "notification-position-topRight": [
+          828.0,
+          630.0,
+          968.0,
+          678.0
+        ]
+      },
+      "tooltips": {
+        "title-notifications": "\u5207\u6362\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    },
+    "title-closed": {
+      "request": "title-closed",
+      "boxes": {
+        "title-notifications": [
+          858.0,
+          10.5,
+          872.0,
+          24.5
+        ]
+      },
+      "tooltips": {
+        "title-notifications": "\u5207\u6362\u901a\u77e5"
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "toastIds": [],
+      "entries": 3,
+      "inProgress": 0
+    }
+  },
+  "fixtureSha256": "2b8c2e309a85de44e9caaaae8891fa8f84ebe71c68e51e6ee18351a54ae8cb2c",
+  "fixtureExitCode": -15
+}

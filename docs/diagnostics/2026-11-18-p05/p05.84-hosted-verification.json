@@ -1,0 +1,674 @@
+{
+  "task": "P05.84 exact hosted verification",
+  "repository": "github.com/Eternal-Wanderer-Vegetable/Alula_Code",
+  "head_sha": "697ab24840ba67f5c38023a75d3b349ceb0efc3a",
+  "captured_at_utc": "20261118T091414Z",
+  "expected_flutter_tests": 1478,
+  "runs": {
+    "ci": {
+      "id": 44272272721,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44272272721",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 134691573415,
+          "name": "Harness 文档结构校验",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:03:05Z"
+        },
+        {
+          "id": 134691573933,
+          "name": "Rust (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:03:36Z"
+        },
+        {
+          "id": 134691573960,
+          "name": "Flutter (analyze + test)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:13:05Z"
+        },
+        {
+          "id": 134691574010,
+          "name": "Rust (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:04:44Z"
+        }
+      ]
+    },
+    "platform": {
+      "id": 44272261767,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44272261767",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 134691540054,
+          "name": "Linux x64 build and launch smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:07:18Z"
+        },
+        {
+          "id": 134691540316,
+          "name": "macOS build, launch smoke, and app package",
+          "status": "in_progress",
+          "conclusion": null,
+          "completed_at": null
+        },
+        {
+          "id": 134691540541,
+          "name": "Windows x64 build and launch smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T09:12:22Z"
+        }
+      ]
+    }
+  },
+  "test_evidence": [
+    {
+      "job": "Harness 文档结构校验",
+      "job_id": 134691573415,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134691573415-footers.json"
+    },
+    {
+      "job": "Rust (ubuntu-latest)",
+      "job_id": 134691573933,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 191,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134691573933-footers.json"
+    },
+    {
+      "job": "Flutter (analyze + test)",
+      "job_id": 134691573960,
+      "reported_test_footer_counts": [
+        1478
+      ],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": true,
+      "footers_file": "ci-job-134691573960-footers.json"
+    },
+    {
+      "job": "Rust (windows-latest)",
+      "job_id": 134691574010,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 201,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134691574010-footers.json"
+    },
+    {
+      "job": "Linux x64 build and launch smoke",
+      "job_id": 134691540054,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [
+        1
+      ],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "platform-job-134691540054-footers.json"
+    },
+    {
+      "job": "Windows x64 build and launch smoke",
+      "job_id": 134691540541,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [
+        25,
+        1
+      ],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "platform-job-134691540541-footers.json"
+    }
+  ],
+  "native_dnd": {
+    "linux": {
+      "result_file": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/linux-native-dnd-result.json",
+      "pointer_event_count": 23,
+      "pointer_event_types": [
+        "down",
+        "move",
+        "up"
+      ],
+      "callback_payloads": {
+        "drop": {
+          "selectedText": "alpha",
+          "operation": "move",
+          "targetOffsetUtf16": 11
+        },
+        "dragCompleted": {
+          "selectedText": "alpha",
+          "operation": "move"
+        },
+        "crossDocumentDrop": {
+          "selectedText": "alpha",
+          "operation": "copy",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "crossDocumentDragCompleted": {
+          "selectedText": "alpha",
+          "operation": "copy"
+        },
+        "externalDrop": {
+          "text": "external text",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "flutterPointerEventCount": 23,
+        "flutterPointerEventTypes": [
+          "down",
+          "move",
+          "up"
+        ]
+      },
+      "drop_over_operation_counts": {
+        "copy": 18,
+        "move": 7
+      }
+    },
+    "windows": {
+      "result_file": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/windows-native-dnd-result.json",
+      "pointer_event_count": 14,
+      "pointer_event_types": [
+        "cancel",
+        "down",
+        "move"
+      ],
+      "callback_payloads": {
+        "drop": {
+          "selectedText": "alpha",
+          "operation": "move",
+          "targetOffsetUtf16": 11
+        },
+        "dragCompleted": {
+          "selectedText": "alpha",
+          "operation": "move"
+        },
+        "crossDocumentDrop": {
+          "selectedText": "alpha",
+          "operation": "copy",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "crossDocumentDragCompleted": {
+          "selectedText": "alpha",
+          "operation": "copy"
+        },
+        "externalDrop": {
+          "text": "external text",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "flutterPointerEventCount": 14,
+        "flutterPointerEventTypes": [
+          "cancel",
+          "down",
+          "move"
+        ]
+      },
+      "drop_over_operation_counts": {
+        "copy": 46,
+        "move": 44
+      }
+    },
+    "coverage_limit": "Actual native pointer-driven drop/completion callbacks; fixture-supplied target IDs, versions, offsets. Does not independently prove editor-buffer mutation, undo, caret hit testing, or drop from a separate application."
+  },
+  "artifacts": [
+    {
+      "workflow": "platform",
+      "id": 14414125474,
+      "name": "alula-windows-native-dnd-44272261767-1",
+      "size_in_bytes": 3852,
+      "expired": false,
+      "digest": "sha256:d8a6d6d176562da03d4fb629f16827eda25658f57ea6495fa015806361940544"
+    },
+    {
+      "workflow": "platform",
+      "id": 14414110726,
+      "name": "alula-windows-x64-697ab24840ba67f5c38023a75d3b349ceb0efc3a",
+      "size_in_bytes": 15675464,
+      "expired": false,
+      "digest": "sha256:b43a3b039d5f2d50d04872f41fe443229db0b5db01dcbd437eacee52e9999e89"
+    },
+    {
+      "workflow": "platform",
+      "id": 14413686040,
+      "name": "alula-linux-native-dnd-44272261767-1",
+      "size_in_bytes": 3286,
+      "expired": false,
+      "digest": "sha256:8bd116dd82af8b0bcceba18d6de537ee6022625c0849ddc8c52cbdb7b75271d6"
+    },
+    {
+      "workflow": "platform",
+      "id": 14413316861,
+      "name": "alula-linux-x64-697ab24840ba67f5c38023a75d3b349ceb0efc3a",
+      "size_in_bytes": 14068186,
+      "expired": false,
+      "digest": "sha256:0f769a31f3a082f0a6380174f9d11e957e58a0eda8efe4b16c0896e34477366f"
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/ci-job-134691573415.log",
+      "bytes": 13574,
+      "sha256": "2c8ce0c0a40cfa9ca83309c401c466becacf9c249ae70e6c8b30a3aead3a42e4"
+    },
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/ci-job-134691573933.log",
+      "bytes": 67724,
+      "sha256": "1b68d6efc40a8f6fe96a943ee15841015388cdc6e6520397ff7c13dc17758d96"
+    },
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/ci-job-134691573960.log",
+      "bytes": 336161,
+      "sha256": "0a264f382b3f8aed189ce5a92b5da0294b9ad7d676a3c925fc242ade591a8f4c"
+    },
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/ci-job-134691574010.log",
+      "bytes": 77048,
+      "sha256": "0f3c8c75b8cae8f35fae18f90a50abb7fde8efb6112247b7533f19d6be8fa8f8"
+    },
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/platform-job-134691540054.log",
+      "bytes": 121855,
+      "sha256": "86ac60c9dca6958d9d7b1ab5a2d85cce0d19a5cf9de104f67b86c82a3db303af"
+    },
+    {
+      "path": "E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85/platform-job-134691540541.log",
+      "bytes": 116907,
+      "sha256": "78de30146ff9d47231c18564e1878d4609486ed12c7542336853c7fe9f040179"
+    }
+  ],
+  "macOS_deferred": true,
+  "macOS_in_acceptance": false,
+  "repository_edits": false,
+  "workflow_mutations": false,
+  "workflow_reruns": false,
+  "app_zip_downloads": false,
+  "native_Quit_investigation": false,
+  "actual_flutter_test_footer": 1478,
+  "expected_flutter_count_matches": true,
+  "collection_error_logs": [
+    "fetch-error-20261118T090805Z.log",
+    "fetch-error-20261118T090854Z.log",
+    "fetch-error-20261118T091301Z.log"
+  ],
+  "completed_checks": {
+    "Harness 文档结构校验": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Validate harness（AGENTS/feature_list/progress/init）",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "Rust (ubuntu-latest)": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run dtolnay/rust-toolchain@stable",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Format",
+        "conclusion": "success"
+      },
+      {
+        "name": "Clippy（-D warnings）",
+        "conclusion": "success"
+      },
+      {
+        "name": "Tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Repeat async LSP workspace shutdown fixture on Windows",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Post Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "Flutter (analyze + test)": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run dtolnay/rust-toolchain@stable",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build fake LSP fixture for real-FFI tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build Rust core (libalula_core.so)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run flutter pub get",
+        "conclusion": "success"
+      },
+      {
+        "name": "Analyze",
+        "conclusion": "success"
+      },
+      {
+        "name": "Tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "Rust (windows-latest)": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run dtolnay/rust-toolchain@stable",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Format",
+        "conclusion": "success"
+      },
+      {
+        "name": "Clippy（-D warnings）",
+        "conclusion": "success"
+      },
+      {
+        "name": "Tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "Repeat async LSP workspace shutdown fixture on Windows",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "Linux x64 build and launch smoke": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run dtolnay/rust-toolchain@stable",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install Linux desktop build dependencies",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build Rust core",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build Linux Release bundle",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native Linux clipboard formats",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native Linux move, copy, and external text drag/drop",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload Linux native drag/drop diagnostics",
+        "conclusion": "success"
+      },
+      {
+        "name": "Add Rust core and verify Linux bundle",
+        "conclusion": "success"
+      },
+      {
+        "name": "Launch Linux app under Xvfb",
+        "conclusion": "success"
+      },
+      {
+        "name": "Launch Linux native-titlebar mode under Xvfb",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "Windows x64 build and launch smoke": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run dtolnay/rust-toolchain@stable",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build Rust core",
+        "conclusion": "success"
+      },
+      {
+        "name": "Resolve Flutter dependencies",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build Windows Release bundle",
+        "conclusion": "success"
+      },
+      {
+        "name": "Add Rust core DLL",
+        "conclusion": "success"
+      },
+      {
+        "name": "Launch Windows app and capture visible client area",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run P03.7 Windows desktop interaction suite",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native Windows move, copy, and external text drag/drop",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload Windows native drag/drop diagnostics",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify native Windows clipboard formats",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify Windows accessibility tree and smoke lifecycle",
+        "conclusion": "success"
+      },
+      {
+        "name": "Launch Windows native-titlebar mode and close gracefully",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run subosito/flutter-action@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run Swatinem/rust-cache@v2",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "rust_counts": {
+    "ubuntu_workspace_passed": 191,
+    "windows_workspace_passed": 191,
+    "windows_additional_async_fixture_repetitions_passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  "flutter_analyze_footer": "No issues found! (ran in 12.5s)"
+}

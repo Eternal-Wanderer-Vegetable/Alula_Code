@@ -1,0 +1,138 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer pointer input",
+  "trace": {
+    "initial-duplicate-target": [
+      {
+        "tabs": [
+          "alpha.txt",
+          "bravo.txt",
+          "charlie.txt"
+        ],
+        "selected": [
+          "bravo.txt"
+        ],
+        "active": "bravo.txt",
+        "focused": false,
+        "editorFocused": false
+      },
+      {
+        "tabs": [
+          "bravo.txt",
+          "echo.txt",
+          "foxtrot.txt"
+        ],
+        "selected": [
+          "foxtrot.txt"
+        ],
+        "active": "foxtrot.txt",
+        "focused": true,
+        "editorFocused": true
+      }
+    ],
+    "source-multi-selected": [
+      {
+        "tabs": [
+          "alpha.txt",
+          "bravo.txt",
+          "charlie.txt"
+        ],
+        "selected": [
+          "alpha.txt",
+          "bravo.txt"
+        ],
+        "active": "bravo.txt",
+        "focused": true,
+        "editorFocused": true
+      },
+      {
+        "tabs": [
+          "bravo.txt",
+          "echo.txt",
+          "foxtrot.txt"
+        ],
+        "selected": [
+          "foxtrot.txt"
+        ],
+        "active": "foxtrot.txt",
+        "focused": false,
+        "editorFocused": false
+      }
+    ],
+    "partial-drop-before-target": [
+      {
+        "tabs": [
+          "charlie.txt"
+        ],
+        "selected": [
+          "charlie.txt"
+        ],
+        "active": "charlie.txt",
+        "focused": false,
+        "editorFocused": false
+      },
+      {
+        "tabs": [
+          "echo.txt",
+          "alpha.txt",
+          "foxtrot.txt",
+          "bravo.txt"
+        ],
+        "selected": [
+          "bravo.txt"
+        ],
+        "active": "bravo.txt",
+        "focused": true,
+        "editorFocused": true
+      }
+    ],
+    "remaining-source-selected": [
+      {
+        "tabs": [
+          "charlie.txt",
+          "delta.txt"
+        ],
+        "selected": [
+          "charlie.txt",
+          "delta.txt"
+        ],
+        "active": "delta.txt",
+        "focused": true,
+        "editorFocused": true
+      },
+      {
+        "tabs": [
+          "echo.txt",
+          "alpha.txt",
+          "foxtrot.txt",
+          "bravo.txt"
+        ],
+        "selected": [
+          "bravo.txt"
+        ],
+        "active": "bravo.txt",
+        "focused": false,
+        "editorFocused": false
+      }
+    ],
+    "append-empties-source-group": [
+      {
+        "tabs": [
+          "echo.txt",
+          "alpha.txt",
+          "foxtrot.txt",
+          "bravo.txt",
+          "charlie.txt",
+          "delta.txt"
+        ],
+        "selected": [
+          "charlie.txt"
+        ],
+        "active": "charlie.txt",
+        "focused": true,
+        "editorFocused": true
+      }
+    ]
+  },
+  "exitCode": 0
+}

@@ -1,14 +1,16 @@
 name: Platform Availability
 
 on:
+  workflow_dispatch:
   push:
-    branches: [codex/vscode-parity-p00]
+    branches: [codex/vscode-parity-p00, codex/vscode-parity-p05]
     paths:
       - 'app/**'
       - 'crates/**'
       - 'tools/vscode-parity/macos-native-dnd-input.swift'
       - 'tools/vscode-parity/linux-native-dnd-input.py'
       - 'tools/vscode-parity/windows-native-dnd-input.py'
+      - 'tools/vscode-parity/auxiliary-focus-native-smoke.py'
       - 'scripts/build_core.*'
       - '.github/workflows/platform-availability.yml'
 
@@ -40,6 +42,27 @@ jobs:
         id: linux_release
         run: flutter build linux --release
         working-directory: app
+      - name: Build Linux auxiliary focus smoke app
+        run: flutter build linux --debug --target tool/auxiliary_focus_native_smoke.dart
+        working-directory: app
+      - name: Verify native Linux auxiliary-window focus handoff
+        run: |
+          cp app/native/libalula_core.so app/build/linux/x64/debug/bundle/
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            python3 tools/vscode-parity/auxiliary-focus-native-smoke.py \
+              app/build/linux/x64/debug/bundle/alula_app \
+              "$RUNNER_TEMP/alula-linux-auxiliary-focus"
+      - name: Upload Linux auxiliary focus diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-linux-auxiliary-focus-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-linux-auxiliary-focus
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Verify native Linux Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
+        working-directory: app
       - name: Verify native Linux clipboard formats
         id: linux_clipboard
         run: xvfb-run -a flutter test --no-pub -d linux --reporter expanded integration_test/editor_clipboard_desktop_test.dart
@@ -66,6 +89,15 @@ jobs:
           set +e
           timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             app/build/linux/x64/release/bundle/alula_app
+          status=$?
+          set -e
+          test "$status" -eq 124
+      - name: Launch Linux native-titlebar mode under Xvfb
+        if: ${{ always() && !cancelled() && steps.linux_bundle.outcome == 'success' }}
+        run: |
+          set +e
+          timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            app/build/linux/x64/release/bundle/alula_app --native-titlebar
           status=$?
           set -e
           test "$status" -eq 124
@@ -98,6 +130,27 @@ jobs:
       - name: Build Windows Release bundle
         id: windows_release
         run: flutter build windows --release
+        working-directory: app
+      - name: Build Windows auxiliary focus smoke app
+        run: flutter build windows --debug --target tool/auxiliary_focus_native_smoke.dart
+        working-directory: app
+      - name: Verify native Windows auxiliary-window focus handoff
+        shell: pwsh
+        run: |
+          Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Debug/ -Force
+          python tools/vscode-parity/auxiliary-focus-native-smoke.py `
+            app/build/windows/x64/runner/Debug/alula_app.exe `
+            "$env:RUNNER_TEMP/alula-windows-auxiliary-focus"
+      - name: Upload Windows auxiliary focus diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-windows-auxiliary-focus-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-windows-auxiliary-focus
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Verify native Windows Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
         working-directory: app
       - name: Add Rust core DLL
         id: windows_core_bundle
@@ -646,6 +699,27 @@ jobs:
           if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
           if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
           if (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }
+      - name: Launch Windows native-titlebar mode and close gracefully
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+          $process = Start-Process -FilePath $exe -ArgumentList '--native-titlebar' -PassThru -WindowStyle Normal
+          try {
+            $deadline = (Get-Date).AddSeconds(30)
+            do {
+              $process.Refresh()
+              if ($process.HasExited) { throw "Native-titlebar mode exited during startup (code $($process.ExitCode))" }
+              if ($process.MainWindowHandle -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+            } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+            if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'Native-titlebar mode did not create a top-level window' }
+            if (!$process.CloseMainWindow()) { throw 'CloseMainWindow was not accepted by native-titlebar mode' }
+            if (!$process.WaitForExit(10000)) { throw 'Native-titlebar mode did not exit within 10 seconds after close' }
+            $process.Refresh()
+            if ($process.ExitCode -ne 0) { throw "Native-titlebar mode exited after close with code $($process.ExitCode)" }
+          }
+          finally {
+            if (!$process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -659,7 +733,7 @@ jobs:
     name: macOS build, launch smoke, and app package
     # Use the Intel lane when the ARM64/M1 hosted pool has no available runner.
     runs-on: macos-15-intel
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -672,6 +746,8 @@ jobs:
       - name: Build Rust core
         id: build_rust_core
         run: bash scripts/build_core.sh
+      - name: Build fake LSP fixture for real-FFI tests
+        run: cargo build -p editor-core --bin async_completion_fake_lsp
       - name: Flutter analyze and tests
         id: flutter_tests
         run: |
@@ -703,11 +779,34 @@ jobs:
           mkdir -p "$ALULA_MACOS_DND_DIR"
           flutter test --no-pub -d macos --reporter expanded integration_test/editor_native_text_drag_drop_macos_test.dart > "$ALULA_MACOS_DND_DIR/flutter-test.log" 2>&1 &
           flutter_pid=$!
+          stop_integration_app() {
+            if ! pgrep -x alula_app >/dev/null 2>&1; then
+              return 0
+            fi
+            echo "Stopping leftover macOS Flutter integration app before Release smoke."
+            pkill -TERM -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 20); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            pkill -KILL -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 8); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            echo "A macOS Flutter integration app remained after cleanup."
+            return 1
+          }
           cleanup() {
             if kill -0 "$flutter_pid" 2>/dev/null; then
               kill -TERM "$flutter_pid" 2>/dev/null || true
               wait "$flutter_pid" 2>/dev/null || true
             fi
+            stop_integration_app || true
           }
           trap cleanup EXIT
 
@@ -747,6 +846,7 @@ jobs:
               cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
               exit 1
             fi
+            stop_integration_app
             trap - EXIT
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 0
@@ -755,6 +855,7 @@ jobs:
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 1
           fi
+          stop_integration_app
           trap - EXIT
           cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
         working-directory: app
@@ -845,12 +946,228 @@ jobs:
             exit 1
           fi
           wait "$app_pid" || true
+      - name: Launch macOS native-titlebar mode and verify native Quit menu
+        timeout-minutes: 5
+        if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
+        run: |
+          app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
+          bundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' \
+            "$app_bundle/Contents/Info.plist")
+          helper="$RUNNER_TEMP/alula-native-dnd-input"
+          log="$RUNNER_TEMP/alula-macos-native-titlebar.log"
+          before="$RUNNER_TEMP/alula-macos-native-before.json"
+          target="$RUNNER_TEMP/alula-macos-native-target.json"
+          # Absolute monotonic deadlines are shared across retries/cleanup calls.
+          native_watchdog() {
+            python3 -I -u - "$log" "$@" <<'PY'
+          import datetime
+          import math
+          import os
+          import signal
+          import subprocess
+          import sys
+          import tempfile
+          import time
+
+          log_path, mode, *args = sys.argv[1:]
+          if mode == "deadline":
+              seconds = float(args[0])
+              if not math.isfinite(seconds) or not 0 < seconds <= 120:
+                  sys.exit("Invalid native helper budget")
+              print(time.monotonic() + seconds, flush=True)
+              sys.exit(0)
+          deadline, stage, capture, *command = args
+          deadline = float(deadline)
+          if mode != "run" or not math.isfinite(deadline) or deadline > time.monotonic() + 121:
+              sys.exit("Invalid native helper deadline")
+          with open(log_path, "a", encoding="utf-8", buffering=1) as output, tempfile.TemporaryFile() as captured:
+              def mark(event, **fields):
+                  stamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                  text = f"{stamp} watchdog stage={stage} event={event} {fields}"
+                  print(text, file=sys.stderr, flush=True)
+                  print(text, file=output, flush=True)
+
+              process = None
+              def interrupted(signum, frame):
+                  raise subprocess.TimeoutExpired(command, 0)
+
+              signal.signal(signal.SIGTERM, interrupted)
+              signal.signal(signal.SIGINT, interrupted)
+              mark("start")
+              try:
+                  # Reserve termination grace inside the external deadline.
+                  remaining = deadline - time.monotonic() - 0.5
+                  if remaining <= 0:
+                      raise subprocess.TimeoutExpired(command, 0)
+                  process = subprocess.Popen(command, start_new_session=True,
+                      stdout=captured if capture == "pid" else output, stderr=output)
+                  mark("spawn", helperPID=process.pid)
+                  status = process.wait(timeout=max(0, deadline - time.monotonic() - 0.5))
+                  if capture == "pid" and status == 0:
+                      captured.seek(0)
+                      value = captured.read(64).decode("ascii").strip()
+                      if not value.isdecimal() or int(value) <= 0:
+                          raise OSError("Helper did not return a positive numeric PID")
+                      print(value, flush=True)
+                  mark("end", status=status)
+                  sys.exit(status if status >= 0 else 128 - status)
+              except subprocess.TimeoutExpired:
+                  # Only this helper session, including its osascript descendants.
+                  signal.signal(signal.SIGTERM, signal.SIG_IGN)
+                  signal.signal(signal.SIGINT, signal.SIG_IGN)
+                  mark("timeout", helperPID=process.pid if process else None)
+                  if process is not None:
+                      for sig in (signal.SIGTERM, signal.SIGKILL):
+                          try:
+                              os.killpg(process.pid, sig)
+                          except ProcessLookupError:
+                              pass
+                          if sig == signal.SIGTERM:
+                              time.sleep(min(0.2, max(0, deadline - time.monotonic())))
+                      try:
+                          process.wait(timeout=max(0, deadline - time.monotonic()))
+                      except subprocess.TimeoutExpired:
+                          mark("reap-timeout")
+                  sys.exit(124)
+              except OSError as error:
+                  mark("launch-error", error=str(error))
+                  sys.exit(125)
+          PY
+          }
+          rm -f "$target"
+          : > "$log"
+          snapshot_deadline=$(native_watchdog deadline 5)
+          native_watchdog run "$snapshot_deadline" snapshot log \
+            "$helper" --snapshot-native-apps "$bundle_identifier" "$app_bundle" "$before"
+          open -n -W -a "$app_bundle" --args --native-titlebar >> "$log" 2>&1 &
+          open_pid=$!
+          app_pid=""
+          cleanup() {
+            result=$?
+            trap - EXIT
+            set +e
+            printf '%s pre-cleanup result=%s appPID=%s openPID=%s\n' \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$result" "${app_pid:-unknown}" "$open_pid" >&2
+            cleanup_deadline=$(native_watchdog deadline 5)
+            native_watchdog run "$cleanup_deadline" cleanup-ps log \
+              ps -p "$open_pid${app_pid:+,$app_pid}" -o pid=,ppid=,lstart=,stat=,command=
+            if [[ -f "$target" ]]; then
+              native_watchdog run "$cleanup_deadline" cleanup-windows log \
+                "$helper" --observe-native-app "$target" --windows
+              # Revalidate launch date and paths within the same cleanup budget.
+              if validated_pid=$(native_watchdog run "$cleanup_deadline" cleanup-identity pid \
+                "$helper" --validate-native-app "$target"); then
+                if [[ "$validated_pid" == "$app_pid" ]]; then
+                  kill -TERM "$app_pid" 2>/dev/null || true
+                fi
+              fi
+            else
+              echo 'No bound app identity; application cleanup cannot be safely targeted.' >> "$log"
+            fi
+            # Wrapper cleanup is independent of helper timeout/identity failure.
+            if kill -0 "$open_pid" 2>/dev/null; then
+              kill -TERM "$open_pid" 2>/dev/null || true
+            fi
+            cat "$log"
+            exit "$result"
+          }
+          trap cleanup EXIT
+          binding_deadline=$(native_watchdog deadline 20)
+          if ! app_pid=$(native_watchdog run "$binding_deadline" binding pid \
+            "$helper" --bind-native-app "$bundle_identifier" "$app_bundle" "$before" "$target"); then
+            echo 'Could not bind exactly one new native app instance' >> "$log"
+            exit 1
+          fi
+          if [[ ! "$app_pid" =~ ^[1-9][0-9]*$ || "$app_pid" == "$open_pid" ]]; then
+            echo 'Invalid actual app PID; native Quit remains unverified' >> "$log"
+            exit 1
+          fi
+          sleep 12
+          if ! kill -0 "$open_pid" 2>/dev/null; then
+            set +e
+            wait "$open_pid"
+            open_status=$?
+            set -e
+            echo "open-W exited before Quit: open_status=$open_status" >> "$log"
+            exit 1
+          fi
+
+          quit_action_invoked=false
+          quit_deadline=$(native_watchdog deadline 120)
+          for attempt in 1 2; do
+            if native_watchdog run "$quit_deadline" "quit-$attempt" log \
+              "$helper" --quit-native-menu "$bundle_identifier" "$app_bundle" "$target"; then
+              quit_action_invoked=true
+              break
+            else
+              quit_status=$?
+            fi
+            if [[ "$quit_status" -eq 124 || "$quit_status" -eq 125 ]]; then
+              echo "Native Quit helper watchdog failed: status=$quit_status" >&2
+              exit "$quit_status"
+            fi
+
+            if ! grep -Fq \
+              "Could not read the native menu bar through Accessibility (AXError " \
+              "$RUNNER_TEMP/alula-macos-native-titlebar.log"; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "Could not invoke the native macOS Quit action"
+              exit 1
+            fi
+            if [[ "$attempt" -eq 2 ]]; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "The native macOS menu bar remained inaccessible after one retry"
+              exit 1
+            fi
+            echo "The native macOS menu bar is temporarily inaccessible; retrying once."
+            native_watchdog run "$quit_deadline" quit-retry-delay log /bin/sleep 2
+          done
+
+          if [[ "$quit_action_invoked" != true ]]; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Could not invoke the native macOS Quit action"
+            exit 1
+          fi
+          # One monotonic 20-second observation budget, shared by actual app and open-W.
+          observer_deadline=$(native_watchdog deadline 25)
+          native_watchdog run "$observer_deadline" observer log \
+            "$helper" --observe-native-app "$target" "$open_pid" &
+          observer_pid=$!
+          # Bash's wait builtin reaps exited children while waiting for the observer,
+          # so a completed open-W cannot remain a zombie visible to the helper.
+          set +e
+          wait "$observer_pid"
+          observer_status=$?
+          set -e
+          if [[ "$observer_status" -ne 0 ]]; then
+            if ! kill -0 "$open_pid" 2>/dev/null; then
+              set +e
+              wait "$open_pid"
+              open_status=$?
+              set -e
+              printf '%s failed-observation open_status=%s\n' \
+                "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$open_status" >> "$log"
+            fi
+            echo 'Native Quit did not establish app-gone and wrapper-gone within 20 seconds' >> "$log"
+            exit 1
+          fi
+          set +e
+          wait "$open_pid"
+          open_status=$?
+          set -e
+          printf '%s open_status=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$open_status" >> "$log"
+          if [[ "$open_status" -ne 0 ]]; then
+            echo "open-W exited with status $open_status after menu Quit" >> "$log"
+            exit "$open_status"
+          fi
+          echo 'Native macOS Quit observed app gone and open-W gone with open_status=0.' >> "$log"
       - name: Collect macOS startup diagnostics
         if: always()
         run: |
           diagnostics="$RUNNER_TEMP/alula-macos-diagnostics"
           mkdir -p "$diagnostics"
-          for log in alula-macos-smoke.log alula-macos-lldb.log; do
+          for log in alula-macos-smoke.log alula-macos-native-titlebar.log alula-macos-lldb.log \
+            alula-macos-native-before.json alula-macos-native-target.json; do
             if [[ -f "$RUNNER_TEMP/$log" ]]; then
               cp "$RUNNER_TEMP/$log" "$diagnostics/"
             fi

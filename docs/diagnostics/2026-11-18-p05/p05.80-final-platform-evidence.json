@@ -1,0 +1,80 @@
+{
+  "run_id": 44222968734,
+  "attempt": 1,
+  "sha": "6e529d438b8de722fb93b0d56aab77909e3aa567",
+  "overall": "success",
+  "macos": {
+    "job_id": 134529125411,
+    "conclusion": "success",
+    "test_passed": 1446,
+    "native_drag_drop": "skipped - hosted synthetic input route unavailable; not verified",
+    "native_quit": "passed - exact workflow termination check",
+    "artifacts": {
+      "app": 14393775629,
+      "startup_diagnostics": 14393471969,
+      "native_drag_drop_diagnostics": 14392932802
+    },
+    "excerpts": [
+      {
+        "line": 705,
+        "text": "2026-11-18T02:28:54.3908240Z No issues found! (ran in 28.3s)"
+      },
+      {
+        "line": 2256,
+        "text": "2026-11-18T02:47:18.8940760Z 🎉 1446 tests passed."
+      },
+      {
+        "line": 2297,
+        "text": "2026-11-18T02:57:07.8698570Z 00:01 +1: All tests passed!"
+      },
+      {
+        "line": 2492,
+        "text": "2026-11-18T02:58:20.1606020Z CGEventPostToPid pointer route: false"
+      },
+      {
+        "line": 2493,
+        "text": "2026-11-18T02:58:20.1607300Z Flutter pointer events after neutral click: <none>"
+      },
+      {
+        "line": 2496,
+        "text": "2026-11-18T02:58:20.2155490Z ##[notice]Hosted macOS runner did not route synthetic pointer input to Flutter; native drag/drop remains unverified and the interaction probe is skipped."
+      },
+      {
+        "line": 2534,
+        "text": "2026-11-18T02:58:20.6862120Z 00:11 +0 ~1: All tests skipped."
+      },
+      {
+        "line": 2563,
+        "text": "2026-11-18T02:58:22.5672750Z Artifact alula-macos-native-dnd-44222968734-1.zip successfully finalized. Artifact ID 14392932802"
+      },
+      {
+        "line": 2744,
+        "text": "2026-11-18T02:58:51.7068550Z Native macOS Quit action closed the native-titlebar app."
+      },
+      {
+        "line": 2807,
+        "text": "2026-11-18T02:59:14.0046640Z Artifact alula-macos-startup-diagnostics-44222968734-1.zip successfully finalized. Artifact ID 14393471969"
+      },
+      {
+        "line": 2857,
+        "text": "2026-11-18T02:59:21.5320960Z Artifact alula-macos-X64-6e529d438b8de722fb93b0d56aab77909e3aa567.zip successfully finalized. Artifact ID 14393775629"
+      }
+    ]
+  },
+  "windows": {
+    "job_id": 134529125714,
+    "conclusion": "success",
+    "artifacts": {
+      "bundle": 14391638012,
+      "native_drag_drop_diagnostics": 14392016899
+    }
+  },
+  "linux": {
+    "job_id": 134529125752,
+    "conclusion": "success",
+    "artifacts": {
+      "bundle": 14392430112,
+      "native_drag_drop_diagnostics": 14391084310
+    }
+  }
+}

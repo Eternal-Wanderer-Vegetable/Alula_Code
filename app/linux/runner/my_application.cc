@@ -1,6 +1,8 @@
 #include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
+#include <gio/gio.h>
+#include <desktop_multi_window/desktop_multi_window_plugin.h>
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
@@ -17,6 +19,55 @@ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+}
+
+static void respond_screen_reader_status(FlMethodCall* call, gboolean enabled) {
+  g_autoptr(FlValue) result = fl_value_new_bool(enabled);
+  fl_method_call_respond_success(call, result, nullptr);
+}
+
+static void screen_reader_status_ready(GObject* source,
+                                       GAsyncResult* result,
+                                       gpointer user_data) {
+  g_autoptr(FlMethodCall) call = FL_METHOD_CALL(user_data);
+  g_autoptr(GVariant) response = g_dbus_connection_call_finish(
+      G_DBUS_CONNECTION(source), result, nullptr);
+  if (response == nullptr) {
+    respond_screen_reader_status(call, FALSE);
+    return;
+  }
+  g_autoptr(GVariant) value = nullptr;
+  g_variant_get(response, "(v)", &value);
+  respond_screen_reader_status(
+      call, g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN) &&
+                g_variant_get_boolean(value));
+}
+
+static void accessibility_bus_ready(GObject*,
+                                    GAsyncResult* result,
+                                    gpointer user_data) {
+  g_autoptr(FlMethodCall) call = FL_METHOD_CALL(user_data);
+  g_autoptr(GDBusConnection) bus = g_bus_get_finish(result, nullptr);
+  if (bus == nullptr) {
+    respond_screen_reader_status(call, FALSE);
+    return;
+  }
+  g_dbus_connection_call(
+      bus, "org.a11y.Bus", "/org/a11y/bus", "org.freedesktop.DBus.Properties",
+      "Get", g_variant_new("(ss)", "org.a11y.Status", "ScreenReaderEnabled"),
+      G_VARIANT_TYPE("(v)"), G_DBUS_CALL_FLAGS_NO_AUTO_START, 500, nullptr,
+      screen_reader_status_ready, g_steal_pointer(&call));
+}
+
+static void accessibility_method_call(FlMethodChannel*,
+                                      FlMethodCall* call,
+                                      gpointer) {
+  if (g_strcmp0(fl_method_call_get_name(call), "screenReaderEnabled") != 0) {
+    fl_method_call_respond_not_implemented(call, nullptr);
+    return;
+  }
+  g_bus_get(G_BUS_TYPE_SESSION, nullptr, accessibility_bus_ready,
+            g_object_ref(call));
 }
 
 // Implements GApplication::activate.
@@ -74,6 +125,17 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_realize(GTK_WIDGET(view));
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
+
+  g_autoptr(FlStandardMethodCodec) accessibility_codec =
+      fl_standard_method_codec_new();
+  g_autoptr(FlMethodChannel) accessibility_channel = fl_method_channel_new(
+      fl_engine_get_binary_messenger(fl_view_get_engine(view)),
+      "alula/accessibility", FL_METHOD_CODEC(accessibility_codec));
+  fl_method_channel_set_method_call_handler(
+      accessibility_channel, accessibility_method_call, nullptr, nullptr);
+
+  desktop_multi_window_plugin_set_window_created_callback(
+      [](FlPluginRegistry* registry) { fl_register_plugins(registry); });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

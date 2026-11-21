@@ -1,0 +1,46 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workbench_quick_open_query_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/workbench_quick_open_query_test.dart: Quick Open disables repeated page actions during loading
+00:01 +1: E:/temp/alula-pr3-20261117/app/test/workbench_quick_open_query_test.dart: Quick Open resolves absolute path and line suffix without a workspace
+00:01 +2: loading E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart
+00:02 +2: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: async picker ignores stale results and late completion after close
+00:02 +3: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: disposing the Navigator cancels a pending picker once
+00:02 +4: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input validates asynchronously, rejects stale results and accepts current text
+00:02 +5: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input history retains draft and Escape returns null
+00:02 +6: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: multi selection accepts picked items hidden by query
+00:03 +7: loading E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart
+00:03 +7: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: parseQuickOpenQuery parses one-based colon line and column suffixes
+00:03 +8: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: parseQuickOpenQuery preserves Windows drives, UNC paths and other colons
+00:03 +9: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: parseQuickOpenQuery leaves plain and invalid suffixes intact
+00:03 +10: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch all 431 files are reachable through bounded, disjoint pages
+00:03 +11: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch next-page state uses actual lookahead at the exact page boundary
+00:03 +12: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch resolves absolute files outside even an unavailable root
+00:03 +13: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch resolves relative paths and normalizes both separators
+00:03 +14: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch matches filename and relative path fuzzily without case sensitivity
+00:03 +15: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch MRU preserves order, deduplicates normalized paths, skips missing
+00:03 +16: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch MRU and direct paths do not duplicate across page boundaries
+00:04 +17: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch excludes .git before descending and does not follow directory links
+00:04 +18: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch reports inaccessible roots and invalid pages explicitly
+00:04 +19: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch cancel discards pending results, and a later call still works
+00:04 +20: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch cancels an asynchronous directory scan
+00:04 +21: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch reports the directory depth cap instead of silently truncating
+00:04 +22: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch only the newest concurrent query returns results
+00:04 +23: E:/temp/alula-pr3-20261117/app/test/quick_open_query_test.dart: QuickOpenSearch does not retain file results between calls
+00:04 +24: All tests passed!

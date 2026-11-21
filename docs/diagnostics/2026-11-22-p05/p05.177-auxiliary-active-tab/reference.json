@@ -1,0 +1,272 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "referenceVersion": "Code-OSS 1.145.0",
+  "compactEntry": "Title action",
+  "exactRestoredGeometry": true,
+  "exactRestoredTabGeometry": true,
+  "diskSha256After": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+  "exitCode": 0,
+  "trace": {
+    "expanded-clean": {
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "titlebar": [
+        0,
+        0,
+        706,
+        34.97500228881836
+      ],
+      "breadcrumbs": [
+        0,
+        66.9749984741211,
+        706,
+        22
+      ],
+      "statusbar": [
+        0,
+        491.6125183105469,
+        706,
+        21.98750114440918
+      ],
+      "monaco": [
+        0,
+        88.9749984741211,
+        706,
+        403
+      ],
+      "tabs": [
+        {
+          "label": "compact-sample.txt, Window 2: Editor Group 1",
+          "selected": "true",
+          "role": "tab",
+          "dirty": false,
+          "active": true,
+          "box": {
+            "x": 0,
+            "y": 34.97500228881836,
+            "width": 171.6999969482422,
+            "height": 31,
+            "visible": true,
+            "className": "tab tab-actions-right sizing-fit has-icon active selected tab-border-bottom tab-border-top last-tab connected-tab-last connected-tab-top-row connected-tab-left-edge",
+            "color": "rgba(0, 0, 0, 0)"
+          },
+          "actions": [
+            {
+              "className": "action-label codicon codicon-close-small",
+              "title": null,
+              "box": {
+                "x": 145.1999969482422,
+                "y": 40.47500228881836,
+                "width": 20,
+                "height": 20,
+                "visible": true,
+                "className": "action-label codicon codicon-close-small",
+                "color": "rgba(0, 0, 0, 0)"
+              }
+            }
+          ]
+        }
+      ],
+      "shownLineText": [
+        "Compact example 😀",
+        "Second line",
+        ""
+      ]
+    },
+    "expanded-dirty": {
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "titlebar": [
+        0,
+        0,
+        706,
+        34.97500228881836
+      ],
+      "breadcrumbs": [
+        0,
+        66.9749984741211,
+        706,
+        22
+      ],
+      "statusbar": [
+        0,
+        491.6125183105469,
+        706,
+        21.98750114440918
+      ],
+      "monaco": [
+        0,
+        88.9749984741211,
+        706,
+        403
+      ],
+      "tabs": [
+        {
+          "label": "compact-sample.txt, Window 2: Editor Group 1",
+          "selected": "true",
+          "role": "tab",
+          "dirty": true,
+          "active": true,
+          "box": {
+            "x": 0,
+            "y": 34.97500228881836,
+            "width": 171.6999969482422,
+            "height": 31,
+            "visible": true,
+            "className": "tab tab-actions-right sizing-fit has-icon active selected tab-border-bottom tab-border-top last-tab connected-tab-last connected-tab-top-row dirty connected-tab-left-edge",
+            "color": "rgba(0, 0, 0, 0)"
+          },
+          "actions": [
+            {
+              "className": "action-label codicon codicon-close-small",
+              "title": null,
+              "box": {
+                "x": 145.1999969482422,
+                "y": 40.47500228881836,
+                "width": 20,
+                "height": 20,
+                "visible": true,
+                "className": "action-label codicon codicon-close-small",
+                "color": "rgba(0, 0, 0, 0)"
+              }
+            }
+          ]
+        }
+      ],
+      "shownLineText": [
+        "Compact example 😀",
+        "Second lineNATIVE-DIRTY",
+        ""
+      ]
+    },
+    "compact": {
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "titlebar": [
+        0,
+        0,
+        706,
+        29.975000381469727
+      ],
+      "breadcrumbs": null,
+      "statusbar": null,
+      "monaco": [
+        0,
+        29.975000381469727,
+        706,
+        484
+      ],
+      "tabs": [],
+      "shownLineText": [
+        "Compact example 😀",
+        "Second lineNATIVE-DIRTY",
+        ""
+      ]
+    },
+    "compact-pinned": {
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "titlebar": [
+        0,
+        0,
+        706,
+        29.975000381469727
+      ],
+      "breadcrumbs": null,
+      "statusbar": null,
+      "monaco": [
+        0,
+        29.975000381469727,
+        706,
+        484
+      ],
+      "tabs": [],
+      "shownLineText": [
+        "Compact example 😀",
+        "Second lineNATIVE-DIRTY",
+        ""
+      ]
+    },
+    "expanded-restored": {
+      "dpr": 1.25,
+      "viewport": [
+        706,
+        514
+      ],
+      "titlebar": [
+        0,
+        0,
+        706,
+        34.97500228881836
+      ],
+      "breadcrumbs": [
+        0,
+        66.9749984741211,
+        706,
+        22
+      ],
+      "statusbar": [
+        0,
+        491.6125183105469,
+        706,
+        21.98750114440918
+      ],
+      "monaco": [
+        0,
+        88.9749984741211,
+        706,
+        403
+      ],
+      "tabs": [
+        {
+          "label": "compact-sample.txt, Window 2: Editor Group 1",
+          "selected": "true",
+          "role": "tab",
+          "dirty": true,
+          "active": true,
+          "box": {
+            "x": 0,
+            "y": 34.97500228881836,
+            "width": 171.6999969482422,
+            "height": 31,
+            "visible": true,
+            "className": "tab tab-actions-right sizing-fit has-icon dirty active selected tab-border-bottom tab-border-top last-tab connected-tab-last connected-tab-top-row connected-tab-left-edge",
+            "color": "rgba(0, 0, 0, 0)"
+          },
+          "actions": [
+            {
+              "className": "action-label codicon codicon-close-small",
+              "title": null,
+              "box": {
+                "x": 145.1999969482422,
+                "y": 40.47500228881836,
+                "width": 20,
+                "height": 20,
+                "visible": true,
+                "className": "action-label codicon codicon-close-small",
+                "color": "rgba(0, 0, 0, 0)"
+              }
+            }
+          ]
+        }
+      ],
+      "shownLineText": [
+        "Compact example 😀",
+        "Second lineNATIVE-DIRTY",
+        ""
+      ]
+    }
+  }
+}

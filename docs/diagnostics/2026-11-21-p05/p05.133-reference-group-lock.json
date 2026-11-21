@@ -1,0 +1,308 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "source-open": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      }
+    ],
+    "primary-locked": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": true
+      }
+    ],
+    "new-resource-opens-beside-lock": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      }
+    ],
+    "reactivated-locked-primary": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": true
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": false
+      }
+    ],
+    "unlocked-group-mru-fallback": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      }
+    ],
+    "two-locked-groups": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": true
+      }
+    ],
+    "existing-resource-in-locked-group": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": true
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      }
+    ],
+    "all-locked-new-group": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      },
+      {
+        "x": 300.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      },
+      {
+        "x": 548.7999877929688,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      }
+    ],
+    "unlocked-primary": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      },
+      {
+        "x": 300.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": false
+      },
+      {
+        "x": 548.7999877929688,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      }
+    ],
+    "open-into-unlocked-primary": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "after-unlock.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "locked": false
+      },
+      {
+        "x": 300.8000183105469,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": false
+      },
+      {
+        "x": 548.7999877929688,
+        "y": 35.79999923706055,
+        "tabs": [
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "mru-fallback.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "locked": true
+      }
+    ]
+  },
+  "dpr": 1.25,
+  "exitCode": 0
+}

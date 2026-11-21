@@ -14,6 +14,7 @@ export 'alula_merge.dart'
         AlulaMergeProjection,
         AlulaMergeSide;
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'alula_ffi.dart';
@@ -21,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 40;
+const int expectedAbiVersion = 41;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -661,6 +662,55 @@ class AlulaLsp {
       }
     } finally {
       _core._ffi.definitionCancelJson(requestId);
+    }
+  }
+
+  /// Query the attached workspace provider. A null result means unsupported,
+  /// cancelled, stale, or timed out; an empty list is a completed empty result.
+  Future<List<Map<String, Object?>>?> workspaceSymbols(
+    int id,
+    String query, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) async {
+    final startJson =
+        _core._ffi.workspaceSymbolsStartJson(id, query, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] != true) return null;
+    final requestId = start['requestId'] as int;
+    var cancelled = false;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(cancelSignal.then((_) {
+        cancelled = true;
+        if (!finished) _core._ffi.workspaceSymbolsCancelJson(requestId);
+      }));
+    }
+    try {
+      while (!cancelled) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        if (cancelled) return null;
+        final pollJson = _core._ffi.workspaceSymbolsPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return (poll['symbols'] as List).cast<Map<String, Object?>>();
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知工作区符号请求状态：${poll['status']}');
+        }
+      }
+      return null;
+    } finally {
+      finished = true;
+      _core._ffi.workspaceSymbolsCancelJson(requestId);
     }
   }
 

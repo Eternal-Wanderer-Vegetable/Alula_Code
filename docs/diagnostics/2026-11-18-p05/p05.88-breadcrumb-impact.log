@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target '_buildBreadcrumb' not found",
+  "target": {
+    "name": "_buildBreadcrumb"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

@@ -1,0 +1,712 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "mode": "never",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "729724103bf9ca6898cec2eb8088a2b7dda59270",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "c426d0f94421ad3a67683784ab6aa721b98247e125c3c9e30c218b92e8bc4d8f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "5236d6268c12b361e0b963258bf7808fe49bbb7871ebcabe1622e6cff363a62f",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "30bc2fe937ed9c140cdd8fd8957180a471c30e2689f688c228f8d7188de3c6f4",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "4f1d1ea5a2d8b1b3b2cab8023ee03a0ed0a6d2e19f15119a0d7fa069f6d9303a",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "54aaa558164d96768ed988280877a097ce1ba1a4206fe1abfb95189aba69f012"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "c932cc8bc2809267fe72297d45570cbbddecd699fe03bc48cf9fe0a037953f92",
+  "fixtureSha256": "54aaa558164d96768ed988280877a097ce1ba1a4206fe1abfb95189aba69f012",
+  "trace": {
+    "startup": {
+      "request": "startup",
+      "boxes": {
+        "tab-10": [
+          48.0,
+          42.0,
+          186.205078125,
+          64.0
+        ],
+        "10": [
+          98.0,
+          45.5,
+          145.455078125,
+          62.5
+        ],
+        "tab-11": [
+          186.205078125,
+          42.0,
+          325.55859375,
+          64.0
+        ],
+        "11": [
+          236.205078125,
+          45.5,
+          284.80859375,
+          62.5
+        ],
+        "tab-12": [
+          325.55859375,
+          42.0,
+          454.5,
+          64.0
+        ],
+        "12": [
+          359.55859375,
+          45.5,
+          413.25,
+          62.5
+        ],
+        "tab-13": [
+          454.5,
+          42.0,
+          574.3828125,
+          64.0
+        ],
+        "13": [
+          488.5,
+          45.5,
+          532.3828125,
+          62.5
+        ],
+        "tab-14": [
+          574.3828125,
+          42.0,
+          704.255859375,
+          64.0
+        ],
+        "14": [
+          608.3828125,
+          45.5,
+          663.005859375,
+          62.5
+        ]
+      },
+      "selected": [
+        14
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "echo.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "semantics": {
+        "10": null,
+        "11": null,
+        "12": null,
+        "13": null,
+        "14": null
+      },
+      "active": 14,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "sticky": [
+        10,
+        11
+      ],
+      "view": {
+        "id": 14,
+        "focusNode": 938997718,
+        "inputWindow": 957966472,
+        "text": "Xfoxtrot fixture\n",
+        "focused": false
+      }
+    },
+    "keyboard-target-alpha": {
+      "request": "keyboard-target-alpha",
+      "boxes": {
+        "tab-10": [
+          48.0,
+          42.0,
+          186.205078125,
+          64.0
+        ],
+        "10": [
+          98.0,
+          45.5,
+          145.455078125,
+          62.5
+        ],
+        "tab-11": [
+          186.205078125,
+          42.0,
+          325.55859375,
+          64.0
+        ],
+        "11": [
+          236.205078125,
+          45.5,
+          284.80859375,
+          62.5
+        ],
+        "tab-12": [
+          325.55859375,
+          42.0,
+          454.5,
+          64.0
+        ],
+        "12": [
+          359.55859375,
+          45.5,
+          413.25,
+          62.5
+        ],
+        "tab-13": [
+          454.5,
+          42.0,
+          574.3828125,
+          64.0
+        ],
+        "13": [
+          488.5,
+          45.5,
+          532.3828125,
+          62.5
+        ],
+        "tab-14": [
+          574.3828125,
+          42.0,
+          704.255859375,
+          64.0
+        ],
+        "14": [
+          608.3828125,
+          45.5,
+          663.005859375,
+          62.5
+        ]
+      },
+      "selected": [
+        10
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "echo.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "semantics": {
+        "10": null,
+        "11": null,
+        "12": null,
+        "13": null,
+        "14": null
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "sticky": [
+        10,
+        11
+      ],
+      "view": {
+        "id": 10,
+        "focusNode": 1060010263,
+        "inputWindow": 392491146,
+        "text": "Xalpha fixture\n",
+        "focused": true
+      }
+    },
+    "key-close-alpha": {
+      "request": "key-close-alpha",
+      "boxes": {
+        "tab-11": [
+          48.0,
+          42.0,
+          187.353515625,
+          64.0
+        ],
+        "11": [
+          98.0,
+          45.5,
+          146.603515625,
+          62.5
+        ],
+        "tab-12": [
+          187.353515625,
+          42.0,
+          316.294921875,
+          64.0
+        ],
+        "12": [
+          221.353515625,
+          45.5,
+          275.044921875,
+          62.5
+        ],
+        "tab-13": [
+          316.294921875,
+          42.0,
+          436.177734375,
+          64.0
+        ],
+        "13": [
+          350.294921875,
+          45.5,
+          394.177734375,
+          62.5
+        ],
+        "tab-14": [
+          436.177734375,
+          42.0,
+          566.05078125,
+          64.0
+        ],
+        "14": [
+          470.177734375,
+          45.5,
+          524.80078125,
+          62.5
+        ]
+      },
+      "selected": [
+        14
+      ],
+      "labels": {
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "echo.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "semantics": {
+        "11": null,
+        "12": null,
+        "13": null,
+        "14": null
+      },
+      "active": 14,
+      "documents": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "sticky": [
+        11
+      ],
+      "view": {
+        "id": 14,
+        "focusNode": 938997718,
+        "inputWindow": 957966472,
+        "text": "Xfoxtrot fixture\n",
+        "focused": true
+      }
+    },
+    "middle-close-bravo": {
+      "request": "middle-close-bravo",
+      "boxes": {
+        "tab-12": [
+          48.0,
+          42.0,
+          176.94140625,
+          64.0
+        ],
+        "12": [
+          82.0,
+          45.5,
+          135.69140625,
+          62.5
+        ],
+        "tab-13": [
+          176.94140625,
+          42.0,
+          296.82421875,
+          64.0
+        ],
+        "13": [
+          210.94140625,
+          45.5,
+          254.82421875,
+          62.5
+        ],
+        "tab-14": [
+          296.82421875,
+          42.0,
+          426.697265625,
+          64.0
+        ],
+        "14": [
+          330.82421875,
+          45.5,
+          385.447265625,
+          62.5
+        ]
+      },
+      "selected": [
+        14
+      ],
+      "labels": {
+        "12": "charlie.txt",
+        "13": "echo.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        12,
+        13,
+        14
+      ],
+      "semantics": {
+        "12": null,
+        "13": null,
+        "14": null
+      },
+      "active": 14,
+      "documents": [
+        12,
+        13,
+        14
+      ],
+      "sticky": [],
+      "view": {
+        "id": 14,
+        "focusNode": 938997718,
+        "inputWindow": 957966472,
+        "text": "Xfoxtrot fixture\n",
+        "focused": true
+      }
+    },
+    "explicit-close-target": {
+      "request": "explicit-close-target",
+      "boxes": {
+        "tab-13": [
+          48.0,
+          42.0,
+          182.8828125,
+          64.0
+        ],
+        "13": [
+          98.0,
+          45.5,
+          141.8828125,
+          62.5
+        ],
+        "tab-12": [
+          182.8828125,
+          42.0,
+          311.82421875,
+          64.0
+        ],
+        "12": [
+          216.8828125,
+          45.5,
+          270.57421875,
+          62.5
+        ],
+        "tab-14": [
+          311.82421875,
+          42.0,
+          441.697265625,
+          64.0
+        ],
+        "14": [
+          345.82421875,
+          45.5,
+          400.447265625,
+          62.5
+        ]
+      },
+      "selected": [
+        13
+      ],
+      "labels": {
+        "13": "echo.txt",
+        "12": "charlie.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        13,
+        12,
+        14
+      ],
+      "semantics": {
+        "13": null,
+        "12": null,
+        "14": null
+      },
+      "active": 13,
+      "documents": [
+        13,
+        12,
+        14
+      ],
+      "sticky": [
+        13
+      ],
+      "view": {
+        "id": 13,
+        "focusNode": 352271393,
+        "inputWindow": 820293882,
+        "text": "Xecho fixture\n",
+        "focused": true
+      }
+    },
+    "explicit-close-menu": {
+      "request": "explicit-close-menu",
+      "boxes": {
+        "tab-13": [
+          48.0,
+          42.0,
+          182.8828125,
+          64.0
+        ],
+        "13": [
+          98.0,
+          45.5,
+          141.8828125,
+          62.5
+        ],
+        "tab-12": [
+          182.8828125,
+          42.0,
+          311.82421875,
+          64.0
+        ],
+        "12": [
+          216.8828125,
+          45.5,
+          270.57421875,
+          62.5
+        ],
+        "tab-14": [
+          311.82421875,
+          42.0,
+          441.697265625,
+          64.0
+        ],
+        "14": [
+          345.82421875,
+          45.5,
+          400.447265625,
+          62.5
+        ],
+        "context-close": [
+          120.0,
+          174.4,
+          288.0,
+          222.4
+        ]
+      },
+      "selected": [
+        13
+      ],
+      "labels": {
+        "13": "echo.txt",
+        "12": "charlie.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        13,
+        12,
+        14
+      ],
+      "semantics": {
+        "13": null,
+        "12": null,
+        "14": null
+      },
+      "active": 13,
+      "documents": [
+        13,
+        12,
+        14
+      ],
+      "sticky": [
+        13
+      ],
+      "view": {
+        "id": 13,
+        "focusNode": 352271393,
+        "inputWindow": 820293882,
+        "text": "Xecho fixture\n",
+        "focused": false
+      }
+    },
+    "context-close-echo": {
+      "request": "context-close-echo",
+      "boxes": {
+        "tab-12": [
+          48.0,
+          42.0,
+          176.94140625,
+          64.0
+        ],
+        "12": [
+          82.0,
+          45.5,
+          135.69140625,
+          62.5
+        ],
+        "tab-14": [
+          176.94140625,
+          42.0,
+          306.814453125,
+          64.0
+        ],
+        "14": [
+          210.94140625,
+          45.5,
+          265.564453125,
+          62.5
+        ]
+      },
+      "selected": [
+        14
+      ],
+      "labels": {
+        "12": "charlie.txt",
+        "14": "foxtrot.txt"
+      },
+      "protection": "never",
+      "dirtyPrompt": null,
+      "separateRows": false,
+      "actions": [
+        12,
+        14
+      ],
+      "semantics": {
+        "12": null,
+        "14": null
+      },
+      "active": 14,
+      "documents": [
+        12,
+        14
+      ],
+      "sticky": [],
+      "view": {
+        "id": 14,
+        "focusNode": 938997718,
+        "inputWindow": 957966472,
+        "text": "Xfoxtrot fixture\n",
+        "focused": true
+      }
+    }
+  },
+  "screenshots": {
+    "explicit-closed": {
+      "name": "windows-pinned-tab-close-never-explicit-closed.png",
+      "sha256": "c74f93102a87efca5c57b51456fe77e655a4449619c0e949949360bace3a040c"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 293801984,
+          "pid": 15544,
+          "ppid": 60884,
+          "private": 288030720,
+          "pss": 288030720,
+          "working_set": 159207424
+        }
+      ],
+      "root_pid": 15544,
+      "total_private_bytes": 288030720,
+      "total_private_mib": 274.7,
+      "total_working_set_bytes": 159207424
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 295903232,
+          "pid": 15544,
+          "ppid": 60884,
+          "private": 247869440,
+          "pss": 247869440,
+          "working_set": 162992128
+        }
+      ],
+      "root_pid": 15544,
+      "total_private_bytes": 247869440,
+      "total_private_mib": 236.4,
+      "total_working_set_bytes": 162992128
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    1067.2,
+    664.8
+  ],
+  "results": {
+    "mode": "never",
+    "matchedReference": [
+      "keyboard-target-alpha",
+      "key-close-alpha",
+      "middle-close-bravo",
+      "context-close-echo"
+    ],
+    "explicitClose": true,
+    "atomicCancel": null
+  },
+  "checksPassed": true,
+  "exitCode": 0
+}

@@ -1,0 +1,13 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: Enter and Space select focused row and pass preserveFocus
+00:00 +1: Enter from a focused row preserves its async focus owner
+00:00 +2: pending Space never reclaims deliberate external focus
+00:00 +3: hover leaves focus, selection and keyboard target unchanged
+00:00 +4: modified navigation and activation are ignored
+00:00 +5: focused action activates once; navigation transfers focus to list
+00:00 +6: arrows, Home and End reveal focus across section headers
+00:01 +7: unchanged parent rebuild preserves manual list scrolling
+00:01 +8: focus and selection independently survive updates and clear on removal
+00:01 +9: mixed changes keep the existing staged group identity
+00:01 +10: pending Space completion after disposal does not restore focus
+00:01 +11: All tests passed!

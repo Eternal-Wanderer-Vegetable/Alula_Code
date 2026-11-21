@@ -1,0 +1,78 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart
+00:00 +0: Breadcrumb keybindings punctuation names resolve to the same logical keys
+00:00 +1: Breadcrumb keybindings platform defaults retain context and navigation alternatives
+00:00 +2: Breadcrumb keybindings user removal and replacement apply to breadcrumb defaults
+00:00 +2 -1: Breadcrumb keybindings user removal and replacement apply to breadcrumb defaults [E]
+  Expected: 'breadcrumbs.focus'
+    Actual: 'workbench.action.toggleAuxiliaryBar'
+     Which: is different.
+            Expected: breadcrumb ...
+              Actual: workbench. ...
+                      ^
+             Differ at offset 0
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 70:7                     main.<fn>.<fn>
+  
+00:00 +2 -1: parseChord 修饰键组合与裸键
+00:00 +3 -1: parseChord 非法输入返回 null
+00:00 +4 -1: parseChordSequence parses two strokes and displays each chord
+00:00 +5 -1: KeybindingSet occurrence selection defaults use platform commands
+00:00 +6 -1: KeybindingSet overtype toggle follows the pinned platform keybindings
+00:00 +7 -1: KeybindingSet word delete follows the pinned platform keybindings
+00:00 +8 -1: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+00:00 +9 -1: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+00:00 +10 -1: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+00:00 +11 -1: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+00:00 +12 -1: KeybindingSet sticky and editor close commands use the platform defaults
+00:00 +13 -1: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+00:00 +14 -1: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+00:00 +15 -1: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+00:00 +16 -1: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+00:00 +17 -1: KeybindingSet copy-line defaults coexist with platform column-selection chords
+00:00 +18 -1: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+00:00 +19 -1: KeybindingSet navigation defaults leave platform word-movement chords available
+00:00 +19 -2: KeybindingSet navigation defaults leave platform word-movement chords available [E]
+  Expected: null
+    Actual: 'breadcrumbs.focusPrevious'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 519:7                    main.<fn>.<fn>
+  
+00:00 +19 -2: KeybindingSet 默认表可解析且包含核心键位
+00:00 +19 -3: KeybindingSet 默认表可解析且包含核心键位 [E]
+  Expected: <62>
+    Actual: <70>
+  tree find adds Ctrl+Alt+F and Escape; F3 shares a context
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 562:7                    main.<fn>.<fn>
+  
+00:00 +19 -3: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+00:00 +20 -3: KeybindingSet New Text File respects a user keybinding override
+00:00 +21 -3: KeybindingSet 用户追加：新键位生效
+00:00 +22 -3: KeybindingSet 用户键位可覆盖与移除双段默认键位
+00:00 +23 -3: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+00:00 +24 -3: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+00:00 +25 -3: KeybindingSet 移除不匹配的键位串：无操作
+00:00 +26 -3: KeybindingSet 损坏 JSON：只用默认键位
+00:00 +26 -4: KeybindingSet 损坏 JSON：只用默认键位 [E]
+  Expected: <62>
+    Actual: <70>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 705:7                    main.<fn>.<fn>
+  
+00:00 +26 -4: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+00:00 +27 -4: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+00:00 +28 -4: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: Breadcrumb keybindings user removal and replacement apply to breadcrumb defaults
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet navigation defaults leave platform word-movement chords available
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位

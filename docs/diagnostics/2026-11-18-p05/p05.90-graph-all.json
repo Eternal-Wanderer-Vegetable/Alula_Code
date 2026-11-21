@@ -1,0 +1,7423 @@
+{
+  "provenance": {
+    "method": "original-handler-pre-listing-debugger-capture",
+    "installedVersion": "1.6.12",
+    "backendFile": "C:\\Users\\Vegetable\\AppData\\Roaming\\npm\\node_modules\\gitnexus\\dist\\mcp\\local\\local-backend.js",
+    "backendSha256": "c421d9cfd6af419ee3ad210a27f1158385a35f73f22cd2aeafc49ca3cd3ec506",
+    "breakpointLine": 4794,
+    "snapshotBefore": {
+      "head": "4241eb2fb11a1f6ba8fd2a01231fc71de4462bb8",
+      "base": "46084e95ea0bfd72cf86873339db9670d0ba0b67",
+      "gitIndexSha256": "726b2634c997a8b7cc9353b3fe29b4cd6f1c647d17a1307bfc75f5ba80a62bfe",
+      "graphMetaSha256": "821e9191bd97c15a8697f84621b83d66d223312115092bf7055bc93f6ae18e10",
+      "graphFiles": [
+        {
+          "name": ".gitignore",
+          "bytes": 2,
+          "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b"
+        },
+        {
+          "name": "gitnexus.json",
+          "bytes": 292793,
+          "sha256": "821e9191bd97c15a8697f84621b83d66d223312115092bf7055bc93f6ae18e10"
+        },
+        {
+          "name": "lbug",
+          "bytes": 298348544,
+          "sha256": "2b587e38ee3ee359a7ef62717d40c70680466afeac4617858243ad4596c3dcdd"
+        },
+        {
+          "name": "meta.json",
+          "bytes": 292793,
+          "sha256": "821e9191bd97c15a8697f84621b83d66d223312115092bf7055bc93f6ae18e10"
+        },
+        {
+          "name": "run.cjs",
+          "bytes": 19564,
+          "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7"
+        }
+      ],
+      "trackedDiffSha256": "3bbf61da31f9b0651e2e3cda23a24bdf8af39ca2ac729d7d6f1a80867d6d90d2",
+      "compareDiffSha256": "504afe23cb6e5127785096d19453c454c3eb134b3ee723d9c74049626565bef0",
+      "allDiffSha256": "e2e04a7c37f3a7e88966138134b102536da718a0eb822bd783d683b34dd9e7c9",
+      "statusSha256": "c289203ef26383e6133e164c7f5034ebb78cefa3928ed7d090b7e41dc79455c5",
+      "untracked": []
+    },
+    "args": {
+      "scope": "all",
+      "repo": "E:\\temp\\alula-pr3-20261117",
+      "worktree": "E:\\temp\\alula-pr3-20261117"
+    },
+    "diffArgs": [
+      "-c",
+      "core.quotePath=false",
+      "diff",
+      "--ignore-cr-at-eol",
+      "--no-ext-diff",
+      "--color=never",
+      "--src-prefix=a/",
+      "--dst-prefix=b/",
+      "HEAD",
+      "-U0"
+    ],
+    "originalResponseFile": "E:\\Temp\\alula-p0590-graph-all-original-response.json",
+    "originalResponseSha256": "383684e41521d33c6b9ab3285bbb33df0c9bce4d4812e84aa3fef93a2c2ee867",
+    "originalResponseTruncated": false,
+    "cap": 1000,
+    "note": "The native API response remains unchanged in originalResponseFile. This full export uses the actual complete pre-cap maps from that same invocation. Its truncated:false describes these exported full arrays; it does not claim the native response was untruncated."
+  },
+  "summary": {
+    "changed_count": 19,
+    "affected_count": 321,
+    "changed_files": 12,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:app/lib/workbench/breadcrumb_navigation.dart:BreadcrumbNavigationController",
+      "name": "BreadcrumbNavigationController",
+      "type": "Class",
+      "filePath": "app/lib/workbench/breadcrumb_navigation.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "",
+      "name": "revealFocused",
+      "type": "Method",
+      "filePath": "app/lib/workbench/breadcrumb_navigation.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/breadcrumb_navigation.dart:BreadcrumbNavigation",
+      "name": "BreadcrumbNavigation",
+      "type": "Class",
+      "filePath": "app/lib/workbench/breadcrumb_navigation.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/breadcrumb_navigation.dart:_BreadcrumbNavigationState",
+      "name": "_BreadcrumbNavigationState",
+      "type": "Class",
+      "filePath": "app/lib/workbench/breadcrumb_navigation.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/keybindings.dart:KeybindingSet",
+      "name": "KeybindingSet",
+      "type": "Class",
+      "filePath": "app/lib/workbench/keybindings.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:app/lib/workbench/keybindings.dart:KeybindingSet.defaultWhen",
+      "name": "defaultWhen",
+      "type": "Property",
+      "filePath": "app/lib/workbench/keybindings.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+      "name": "_WorkbenchPageState",
+      "type": "Class",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/breadcrumb_reveal_test.dart:_reveal",
+      "name": "_reveal",
+      "type": "Variable",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/breadcrumb_reveal_test.dart:_original",
+      "name": "_original",
+      "type": "Variable",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/breadcrumb_reveal_test.dart:_library",
+      "name": "_library",
+      "type": "Variable",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/breadcrumb_reveal_test.dart:_other",
+      "name": "_other",
+      "type": "Variable",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/breadcrumb_reveal_test.dart:_pickerItems",
+      "name": "_pickerItems",
+      "type": "Variable",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_pickerEntry",
+      "name": "_pickerEntry",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_selectedSegment",
+      "name": "_selectedSegment",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_field",
+      "name": "_field",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_mainTabStyle",
+      "name": "_mainTabStyle",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_deleteDirectoryWithRetry",
+      "name": "_deleteDirectoryWithRetry",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:_key",
+      "name": "_key",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/breadcrumb_reveal_test.dart:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "app/test/breadcrumb_reveal_test.dart",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_0_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 10
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_1_build",
+      "name": "Build → _parseUnary",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 10
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_2_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 10
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_3_build",
+      "name": "Build → _isSeparatorAt",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_4_build",
+      "name": "Build → _isUpperCaseAt",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_5_build",
+      "name": "Build → _isWhitespaceAt",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_6_build",
+      "name": "Build → _isFinalSigma",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_7__applyindentation",
+      "name": "_applyIndentation → _splitsSurrogatePair",
+      "process_type": "cross_community",
+      "step_count": 9,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_8_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_9__applyindentation",
+      "name": "_applyIndentation → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "id": "proc_10_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_12_build",
+      "name": "Build → _identity",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_13_build",
+      "name": "Build → _hasAdjacentChange",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_14_initstate",
+      "name": "InitState → _backtrack",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_15_initstate",
+      "name": "InitState → LineDiffHunk",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_16__applyindentation",
+      "name": "_applyIndentation → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_17__applyindentation",
+      "name": "_applyIndentation → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_18__applyindentation",
+      "name": "_applyIndentation → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_19__applyindentation",
+      "name": "_applyIndentation → TextInputWindowLimitException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_20_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_21_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_23_build",
+      "name": "Build → _isCompatibleSourceKind",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_24_build",
+      "name": "Build → _buildSideBySideWordSpans",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_25_initstate",
+      "name": "InitState → _alignmentKeys",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_26_initstate",
+      "name": "InitState → _countLines",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_27_build",
+      "name": "Build → _codeOssMenuLabelToFlutter",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_28_build",
+      "name": "Build → ById",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_29_build",
+      "name": "Build → TreeFindEntry",
+      "process_type": "intra_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_30_runbuildcommand",
+      "name": "RunBuildCommand → CrateInfo",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_31_runbuildcommand",
+      "name": "RunBuildCommand → ManifestException",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_32_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_33_run",
+      "name": "Run → RustupNotFoundException",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_34_run",
+      "name": "Run → ExecutablePath",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_35_main",
+      "name": "Main → EditorClipboardMetadata",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_42_main",
+      "name": "Main → Use",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_49_build",
+      "name": "Build → _wordSpans",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_50_initstate",
+      "name": "InitState → EditorMinimapSyntaxSegment",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_51_initstate",
+      "name": "InitState → _minimapTokenInt",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_52_initstate",
+      "name": "InitState → DocumentLineOffset",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_53_build",
+      "name": "Build → VisibleLineToDocumentBoundary",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_54_initstate",
+      "name": "InitState → EditorStickySymbol",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_55_didupdatewidget",
+      "name": "DidUpdateWidget → _findEditableRenderObject",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_56_push",
+      "name": "Push → _removed",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_57_build",
+      "name": "Build → _inlineRowForChange",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_58_build",
+      "name": "Build → _buildLineNumber",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_59_initstate",
+      "name": "InitState → _minimum",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_60_initstate",
+      "name": "InitState → _modelFallback",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_61_initstate",
+      "name": "InitState → GitDiffPatchLine",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_62_initstate",
+      "name": "InitState → _PatchHunk",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_63_initstate",
+      "name": "InitState → Create",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_64_initstate",
+      "name": "InitState → Hunk",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_65_build",
+      "name": "Build → NormalizeActivityBarViewOrder",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_66_initstate",
+      "name": "InitState → AuxiliaryFocusContextSnapshot",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_67_initstate",
+      "name": "InitState → _transferResponse",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_68_initstate",
+      "name": "InitState → _updateNativeWindowTitle",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_69_initstate",
+      "name": "InitState → _afterSeparator",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_70_initstate",
+      "name": "InitState → _isSelectable",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_71_build",
+      "name": "Build → _restoreWorkbenchFocus",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_72_build",
+      "name": "Build → _cancel",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_73__buildeditor",
+      "name": "_buildEditor → _ownerOfView",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_74_initstate",
+      "name": "InitState → _pathKey",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_75_run",
+      "name": "Run → CommandFailedException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_76_run",
+      "name": "Run → TestRunCommandArgs",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_77_main",
+      "name": "Main → EditorPasteAsPayload",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_78_main",
+      "name": "Main → ParsePasteAsUriList",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_79_main",
+      "name": "Main → _readNativeUriItems",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_80_main",
+      "name": "Main → _newClipboardMetadataId",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_81_showbulkeditpreview",
+      "name": "ShowBulkEditPreview → BulkEditPreviewDocumentState",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_82_showbulkeditpreview",
+      "name": "ShowBulkEditPreview → BulkEditPreviewEditState",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_83_showbulkeditpreview",
+      "name": "ShowBulkEditPreview → _selectionState",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_97_build",
+      "name": "Build → _selectResource",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_98_build",
+      "name": "Build → _headerCell",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_99_build",
+      "name": "Build → _rowKindLabel",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_100_initstate",
+      "name": "InitState → EditorLogicalLine",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_101_initstate",
+      "name": "InitState → EditorDocumentLinePosition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_102_build",
+      "name": "Build → EditorDocumentLineProjection",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_103_build",
+      "name": "Build → DocumentLineToVisibleLine",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_104_build",
+      "name": "Build → VisibleLineCountInRange",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_105_build",
+      "name": "Build → _bulkAcceptButton",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_106_planacceptall",
+      "name": "PlanAcceptAll → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_107_planacceptall",
+      "name": "PlanAcceptAll → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_108_planacceptall",
+      "name": "PlanAcceptAll → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_109_build",
+      "name": "Build → EditorFoldSymbol",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_110_didupdatewidget",
+      "name": "DidUpdateWidget → ColumnSelectionState",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_111_didupdatewidget",
+      "name": "DidUpdateWidget → _stopColumnDrag",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_112_push",
+      "name": "Push → _removeLinkedTransaction",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_113_build",
+      "name": "Build → _buildWordSpans",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_114_initstate",
+      "name": "InitState → _divideBudget",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_115_build",
+      "name": "Build → _flexibleWeight",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_116_applydrag",
+      "name": "ApplyDrag → IsFlexibleNode",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_117_togglepanelmaximizat",
+      "name": "TogglePanelMaximization → LeafOf",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_118_build",
+      "name": "Build → _claimPickerAcceptance",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_119_build",
+      "name": "Build → _enabled",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_120_initstate",
+      "name": "InitState → _previewSelected",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_121_initstate",
+      "name": "InitState → QuickInputValidationMessage",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_122__applyindentation",
+      "name": "_applyIndentation → _hasComposition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_123__buildeditor",
+      "name": "_buildEditor → SnippetPlaceholderRange",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_124__buildeditor",
+      "name": "_buildEditor → _transformOffsetThroughEdits",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_125_initstate",
+      "name": "InitState → SanitizeCommandHistoryEntries",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_126_initstate",
+      "name": "InitState → _journalFiles",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_127_initstate",
+      "name": "InitState → _normalizePath",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_128_initstate",
+      "name": "InitState → _journalFiles",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_129_initstate",
+      "name": "InitState → _Owner",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_130_run",
+      "name": "Run → CargokitUserOptions",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_131_run",
+      "name": "Run → ForRustTriple",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_132_create",
+      "name": "Create → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_133_create",
+      "name": "Create → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_134_build",
+      "name": "Build → _hasProbeHeadingPixel",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_135_build",
+      "name": "Build → _writeAutoPhase",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_136_create",
+      "name": "Create → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_139_stream",
+      "name": "Stream → SuccessInternal",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_175_build",
+      "name": "Build → _resourceName",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_176_build",
+      "name": "Build → _changeSelection",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_177_build",
+      "name": "Build → _resourceLabel",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_178_build",
+      "name": "Build → _singleLine",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_179_paint",
+      "name": "Paint → EditorPrimaryScrollPosition",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_180_build",
+      "name": "Build → _buildResultPane",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_181_planacceptall",
+      "name": "PlanAcceptAll → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_182_planacceptall",
+      "name": "PlanAcceptAll → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_183_planacceptall",
+      "name": "PlanAcceptAll → _operationsFor",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_184_planacceptall",
+      "name": "PlanAcceptAll → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_185_build",
+      "name": "Build → _visibleFoldedRanges",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_186_build",
+      "name": "Build → _visibleTokens",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_187_build",
+      "name": "Build → _sourceCell",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_188_build",
+      "name": "Build → DiffRevertToolbarRows",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_189_build",
+      "name": "Build → _editableOriginalRow",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_190_build",
+      "name": "Build → _headerCell",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_191_push",
+      "name": "Push → _insertedChars",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_192_push",
+      "name": "Push → _enforce",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_193_build",
+      "name": "Build → _lineNumber",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_194_build",
+      "name": "Build → _changeAnnouncement",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_195_build",
+      "name": "Build → _currentSideBySideRowIndex",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_196_build",
+      "name": "Build → _handleGlobalActionKey",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_197_build",
+      "name": "Build → _handleViewKey",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_198_build",
+      "name": "Build → _findMainWindowController",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_199_initstate",
+      "name": "InitState → AuxiliaryFocusContextEvent",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_200_initstate",
+      "name": "InitState → ToMap",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_201_save",
+      "name": "Save → _stableHash",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_202_build",
+      "name": "Build → WbLeaf",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_203_build",
+      "name": "Build → WbSplit",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_204_applydrag",
+      "name": "ApplyDrag → _allocateWeightedWithMinimums",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_205_selectsidebarview",
+      "name": "SelectSidebarView → NormalizeSidebarViewLocations",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_206_build",
+      "name": "Build → _menuControllerKey",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_207_initstate",
+      "name": "InitState → IsMaximized",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_208_initstate",
+      "name": "InitState → SetTitle",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_209__buildeditor",
+      "name": "_buildEditor → _SnippetEditBatch",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_210__registercommands",
+      "name": "_registerCommands → Register",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_211_initstate",
+      "name": "InitState → SessionStore",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_212_initstate",
+      "name": "InitState → _oversized",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_213_initstate",
+      "name": "InitState → RecentHistorySnapshot",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_214_onattachedtoengine",
+      "name": "OnAttachedToEngine → GetPlugin",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_215_runbuildcommand",
+      "name": "RunBuildCommand → ForFlutterName",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_216_runbuildcommand",
+      "name": "RunBuildCommand → ForDarwin",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_217_run",
+      "name": "Run → Compute",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_218_run",
+      "name": "Run → AndroidTargets",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_219_readvalueoftype",
+      "name": "ReadValueOfType → ReadBytes",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_220_writevalue",
+      "name": "WriteValue → WriteBytes",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_221_create",
+      "name": "Create → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_222_create",
+      "name": "Create → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_223_build",
+      "name": "Build → _captureMhtml",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_224_build",
+      "name": "Build → _openMhtml",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_225_create",
+      "name": "Create → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_226_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 10
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_227_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 10
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_228_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → _splitsSurrogatePair",
+      "process_type": "cross_community",
+      "step_count": 9,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_229_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_230_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "id": "proc_231_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_233_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_234_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_235_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_236_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → TextInputWindowLimitException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_237_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_238_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_239_build",
+      "name": "Build → _codeOssMenuLabelToFlutter",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_240_build",
+      "name": "Build → ById",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_241_runbuildcommand",
+      "name": "RunBuildCommand → CrateInfo",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_242_runbuildcommand",
+      "name": "RunBuildCommand → ManifestException",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_243_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_244_runmain",
+      "name": "RunMain → RustupNotFoundException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_245_runmain",
+      "name": "RunMain → ExecutablePath",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_248_initstate",
+      "name": "InitState → DocumentLineOffset",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_249_paint",
+      "name": "Paint → VisibleLineToDocumentBoundary",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_251_movesidebarview",
+      "name": "MoveSidebarView → NormalizeActivityBarViewOrder",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_252_build",
+      "name": "Build → _isSelectable",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_253_dispose",
+      "name": "Dispose → _cancel",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_254_runmain",
+      "name": "RunMain → CommandFailedException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_255_runmain",
+      "name": "RunMain → TestRunCommandArgs",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_261_initstate",
+      "name": "InitState → EditorLogicalLine",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_262_initstate",
+      "name": "InitState → EditorDocumentLinePosition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_263_paint",
+      "name": "Paint → EditorDocumentLineProjection",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_264_initstate",
+      "name": "InitState → DocumentLineToVisibleLine",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_265_initstate",
+      "name": "InitState → VisibleLineCountInRange",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_266_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_267_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_268_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_269_initstate",
+      "name": "InitState → EditorFoldSymbol",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_270_resetdivider",
+      "name": "ResetDivider → IsFlexibleNode",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_271_build",
+      "name": "Build → _previewSelected",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_272_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → _hasComposition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_273_messagehandler",
+      "name": "MessageHandler → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_274_messagehandler",
+      "name": "MessageHandler → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_275_initstate",
+      "name": "InitState → _writeAutoPhase",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_276_messagehandler",
+      "name": "MessageHandler → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_279_build",
+      "name": "Build → EditorPrimaryScrollPosition",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_280_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_281_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_282_planresolveconflict",
+      "name": "PlanResolveConflict → _operationsFor",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_283_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_284_resetdivider",
+      "name": "ResetDivider → _allocateWeightedWithMinimums",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_285_runbuildcommand",
+      "name": "RunBuildCommand → ForFlutterName",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_286_run",
+      "name": "Run → Compute",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_287_messagehandler",
+      "name": "MessageHandler → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_288_messagehandler",
+      "name": "MessageHandler → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_289_messagehandler",
+      "name": "MessageHandler → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_290_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_291_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_292_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → _splitsSurrogatePair",
+      "process_type": "cross_community",
+      "step_count": 9,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 9
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_293_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_294_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 8
+        }
+      ]
+    },
+    {
+      "id": "proc_295_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_297_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_298_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_299_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_300_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → TextInputWindowLimitException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_301_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_302_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_303_build",
+      "name": "Build → ById",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_304_runbuildcommand",
+      "name": "RunBuildCommand → CrateInfo",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_305_runbuildcommand",
+      "name": "RunBuildCommand → ManifestException",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_306_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_307_run",
+      "name": "Run → ExecutablePath",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_309_build",
+      "name": "Build → DocumentLineOffset",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_315_paint",
+      "name": "Paint → EditorLogicalLine",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_316_build",
+      "name": "Build → EditorDocumentLinePosition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_317_paint",
+      "name": "Paint → DocumentLineToVisibleLine",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_318_paint",
+      "name": "Paint → VisibleLineCountInRange",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_319_planresolveconflict",
+      "name": "PlanResolveConflict → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_320_planresolveconflict",
+      "name": "PlanResolveConflict → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_321_planresolveconflict",
+      "name": "PlanResolveConflict → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_322_reviewworkspaceedit",
+      "name": "ReviewWorkspaceEdit → _hasComposition",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_324_initstate",
+      "name": "InitState → EditorPrimaryScrollPosition",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_325_planresolveconflict",
+      "name": "PlanResolveConflict → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_326_planresolveconflict",
+      "name": "PlanResolveConflict → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_327_planresolveconflict",
+      "name": "PlanResolveConflict → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_328_cancelcomposition",
+      "name": "CancelComposition → _splitsSurrogatePair",
+      "process_type": "intra_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 7
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_329_initstate",
+      "name": "InitState → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_330_run",
+      "name": "Run → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_332_initstate",
+      "name": "InitState → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_333_cancelcomposition",
+      "name": "CancelComposition → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_334_cancelcomposition",
+      "name": "CancelComposition → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_335_cancelcomposition",
+      "name": "CancelComposition → TextInputWindowLimitException",
+      "process_type": "intra_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_336_run",
+      "name": "Run → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_337_run",
+      "name": "Run → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_338_run",
+      "name": "Run → CrateInfo",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_339_run",
+      "name": "Run → ManifestException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_340_run",
+      "name": "Run → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_343_finishaccept",
+      "name": "FinishAccept → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_344_finishaccept",
+      "name": "FinishAccept → _ensureActive",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_345_applyoversized",
+      "name": "ApplyOversized → _splitsSurrogatePair",
+      "process_type": "intra_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_346_initstate",
+      "name": "InitState → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_347_run",
+      "name": "Run → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_349_initstate",
+      "name": "InitState → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_350_applyoversized",
+      "name": "ApplyOversized → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_351_applyoversized",
+      "name": "ApplyOversized → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_352_applyoversized",
+      "name": "ApplyOversized → TextInputWindowLimitException",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_353_run",
+      "name": "Run → CrateInfo",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_354_run",
+      "name": "Run → ManifestException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_355_finishclose",
+      "name": "FinishClose → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_356_recordsavepoint",
+      "name": "RecordSavepoint → _ensureActive",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_357_recoverpending",
+      "name": "RecoverPending → _splitsSurrogatePair",
+      "process_type": "intra_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_358_build",
+      "name": "Build → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_360_build",
+      "name": "Build → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_361_recoverpending",
+      "name": "RecoverPending → SyncMismatchException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_362_recoverpending",
+      "name": "RecoverPending → TextRangeRead",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_363_recoverpending",
+      "name": "RecoverPending → TextInputWindowLimitException",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_364_recordsavepoint",
+      "name": "RecordSavepoint → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_365_cancelcomposition",
+      "name": "CancelComposition → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_367_cancelcomposition",
+      "name": "CancelComposition → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_368_planacceptall",
+      "name": "PlanAcceptAll → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_370_finishaccept",
+      "name": "FinishAccept → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_371_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_373_finishclose",
+      "name": "FinishClose → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_374_planresolveconflict",
+      "name": "PlanResolveConflict → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_376_planacceptall",
+      "name": "PlanAcceptAll → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_377_applyoversized",
+      "name": "ApplyOversized → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_379_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_380_recoverpending",
+      "name": "RecoverPending → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_382_planresolveconflict",
+      "name": "PlanResolveConflict → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_383_finishaccept",
+      "name": "FinishAccept → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_385_applyoversized",
+      "name": "ApplyOversized → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_386_finishclose",
+      "name": "FinishClose → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_388_recoverpending",
+      "name": "RecoverPending → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_389_recordsavepoint",
+      "name": "RecordSavepoint → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_391_completion",
+      "name": "Completion → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_392_applyworkspaceedit",
+      "name": "ApplyWorkspaceEdit → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_394_definition",
+      "name": "Definition → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_395_columnselectionsutf1",
+      "name": "ColumnSelectionsUtf16 → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_397_semantictokens",
+      "name": "SemanticTokens → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_398_linedeleteranges",
+      "name": "LineDeleteRanges → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_400_start",
+      "name": "Start → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_401_overtypepasteranges",
+      "name": "OvertypePasteRanges → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_403_processsnapshot",
+      "name": "ProcessSnapshot → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_404_positionat",
+      "name": "PositionAt → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_406_sampleresourcestatus",
+      "name": "SampleResourceStatus → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_407_readlines",
+      "name": "ReadLines → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_409_recordsavepoint",
+      "name": "RecordSavepoint → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_410_readminimapsample",
+      "name": "ReadMinimapSample → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_412_savefile",
+      "name": "SaveFile → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_414_toggleblockcomment",
+      "name": "ToggleBlockComment → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_416_togglelinecomment",
+      "name": "ToggleLineComment → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_418_transposeranges",
+      "name": "TransposeRanges → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_420_trimtrailingwhitespa",
+      "name": "TrimTrailingWhitespace → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_422_worddeleteranges",
+      "name": "WordDeleteRanges → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_424_completion",
+      "name": "Completion → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_426_definition",
+      "name": "Definition → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_428_semantictokens",
+      "name": "SemanticTokens → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_430_start",
+      "name": "Start → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_432_workspacesymbols",
+      "name": "WorkspaceSymbols → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_434_processsnapshot",
+      "name": "ProcessSnapshot → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_436_sampleresourcestatus",
+      "name": "SampleResourceStatus → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "revealFocused",
+          "step": 1
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 2
+        },
+        {
+          "symbol": "revealFocused",
+          "step": 3
+        }
+      ]
+    }
+  ],
+  "partial": false,
+  "truncated": false,
+  "completeness": {
+    "countsMatch": true,
+    "originalPrefixMatches": true,
+    "affectedProcessesMatch": true,
+    "changedFilesMatch": true,
+    "riskMatches": true,
+    "uniqueIds": true,
+    "queryDegraded": false,
+    "observedSymbolCount": 19,
+    "observedProcessCount": 321
+  },
+  "arrayDigests": {
+    "changedSymbolsSha256": "928ef27d3eb39ca3f47bcddd97e6b569af87364e2aaa420af64c00bf0f24288a",
+    "affectedProcessesSha256": "dec06ab088d9aaf3ee378eba20b64105271d3daddd329c0e7adcebe0ed92b1b3",
+    "changedSymbolIdsSortedSha256": "16fa5fe45a946a879866c53808f770ba55d15bbd2431b6235d28503a358569eb",
+    "affectedProcessIdsSortedSha256": "1aad05d38bad073651214b8cd69ab0634130d503eca91702c18e033425b3bd51"
+  }
+}

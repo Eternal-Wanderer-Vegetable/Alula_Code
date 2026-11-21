@@ -1,0 +1,292 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "grouped-in-terminal": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 484.4624938964844,
+            "width": 220,
+            "height": 28,
+            "top": 484.4624938964844,
+            "right": 576.8000183105469,
+            "bottom": 512.4624938964844,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 484.4624938964844,
+            "width": 220,
+            "height": 28,
+            "top": 484.4624938964844,
+            "right": 805.6000366210938,
+            "bottom": 512.4624938964844,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "editor-drop-rejected": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 484.4624938964844,
+            "width": 220,
+            "height": 28,
+            "top": 484.4624938964844,
+            "right": 576.8000183105469,
+            "bottom": 512.4624938964844,
+            "left": 356.8000183105469
+          }
+        },
+        {
+          "label": "Search",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 484.4624938964844,
+            "width": 220,
+            "height": 28,
+            "top": 484.4624938964844,
+            "right": 805.6000366210938,
+            "bottom": 512.4624938964844,
+            "left": 585.6000366210938
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "grouped-in-source-control": {
+      "viewPart": "workbench.parts.auxiliarybar",
+      "viewPartClasses": "part auxiliarybar basepanel right pane-composite-part floating-part-outer-right floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.scm",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 806.7999877929688,
+            "y": 67.80000305175781,
+            "width": 281.3999938964844,
+            "height": 28,
+            "top": 67.80000305175781,
+            "right": 1088.1999816894531,
+            "bottom": 95.80000305175781,
+            "left": 806.7999877929688
+          }
+        },
+        {
+          "label": "Changes",
+          "box": {
+            "x": 806.7999877929688,
+            "y": 293.8000183105469,
+            "width": 281.3999938964844,
+            "height": 28,
+            "top": 293.8000183105469,
+            "right": 1088.1999816894531,
+            "bottom": 321.8000183105469,
+            "left": 806.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "source-editor-drop-rejected": {
+      "viewPart": "workbench.parts.auxiliarybar",
+      "viewPartClasses": "part auxiliarybar basepanel right pane-composite-part floating-part-outer-right floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.scm",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 806.7999877929688,
+            "y": 67.80000305175781,
+            "width": 281.3999938964844,
+            "height": 28,
+            "top": 67.80000305175781,
+            "right": 1088.1999816894531,
+            "bottom": 95.80000305175781,
+            "left": 806.7999877929688
+          }
+        },
+        {
+          "label": "Changes",
+          "box": {
+            "x": 806.7999877929688,
+            "y": 293.8000183105469,
+            "width": 281.3999938964844,
+            "height": 28,
+            "top": 293.8000183105469,
+            "right": 1088.1999816894531,
+            "bottom": 321.8000183105469,
+            "left": 806.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "independent-sidebar-search": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.views.service.sidebar.70440475-c99b-4f49-9f91-dd95b558385d",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "independent-sidebar-reselected": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.views.service.sidebar.70440475-c99b-4f49-9f91-dd95b558385d",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    }
+  },
+  "entryTarget": {
+    "point": [
+      25.079999732971192,
+      95.84000099182128
+    ],
+    "area": {
+      "x": 7.800000190734863,
+      "y": 38.79999923706055,
+      "width": 35.999999046325684,
+      "height": 124.00000381469727
+    },
+    "element": "action-label codicon codicon-run-view-icon"
+  },
+  "entryHover": {
+    "classes": "composite-bar",
+    "desc": "<div class=\"composite-bar\"><div class=\"monaco-action-bar vertical\"><ul class=\"actions-container\" role=\"tablist\" aria-label=\"Active View Switcher\"><li class=\"action-item icon checked\" role=\"tab\" draggable=\"true\" aria-label=\"\" aria-expanded=\"true\" aria-selected=\"true\" tabindex=\"0\" style=\"--insert-border-color: #bfbfbf;\"><a class=\"action-label codicon codicon-explorer-view-icon\" aria-label=\"Explorer (Ctrl+Shift+E)\" style=\"color: rgb(191, 191, 191);\"></a><div class=\"badge\" aria-hidden=\"true\" aria-label=\"Explorer (Ctrl+Shift+E)\" style=\"display: none;\"><div class=\"badge-content\" style=\"color: rgb(255, 255, 255); background-color: rgb(48, 126, 159);\"></div></div><div class=\"active-item-indicator\"></div></li><li class=\"action-item icon top right\" role=\"tab\" draggable=\"true\" aria-label=\"\" aria-expanded=\"false\" aria-selected=\"false\" tabindex=\"-1\" style=\"--insert-border-color: #bfbfbf;\"><a class=\"a"
+  },
+  "sourceContainerPreserved": true,
+  "previousExplorerReachable": true,
+  "exitCode": 0
+}

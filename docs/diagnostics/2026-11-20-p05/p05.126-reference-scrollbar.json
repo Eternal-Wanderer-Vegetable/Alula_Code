@@ -1,0 +1,250 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 1444,
+    "height": 907
+  },
+  "driver": "Owned Code-OSS CDP renderer input",
+  "cases": {
+    "short-hover": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 734.2000122070312,
+        "width": 8,
+        "height": 136,
+        "top": 734.2000122070312,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 734.2000122070312,
+        "width": 8,
+        "height": 136,
+        "top": 734.2000122070312,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "invisible scrollbar vertical",
+      "visibility": "visible",
+      "opacity": 0,
+      "thumbColor": "rgba(168, 169, 170, 0.52)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 734.2000122070312,
+        "width": 450.00006103515625,
+        "height": 136
+      },
+      "oldestVisible": false
+    },
+    "long-idle": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 261,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 731.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "invisible scrollbar vertical fade",
+      "visibility": "visible",
+      "opacity": 0,
+      "thumbColor": "rgba(168, 169, 170, 0.52)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": false
+    },
+    "long-hover": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 261,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 731.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "visible scrollbar vertical",
+      "visibility": "visible",
+      "opacity": 1,
+      "thumbColor": "rgba(168, 169, 170, 0.52)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": false
+    },
+    "thumb-hover": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 261,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 731.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "visible scrollbar vertical",
+      "visibility": "visible",
+      "opacity": 1,
+      "thumbColor": "rgba(168, 169, 170, 0.52)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": false
+    },
+    "thumb-pressed": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 261,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 731.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "visible scrollbar vertical",
+      "visibility": "visible",
+      "opacity": 1,
+      "thumbColor": "rgba(168, 169, 170, 0.61)",
+      "thumbClass": "slider active",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": false
+    },
+    "dragged-bottom": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 609.2000122070312,
+        "width": 8,
+        "height": 261,
+        "top": 609.2000122070312,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "visible scrollbar vertical",
+      "visibility": "visible",
+      "opacity": 1,
+      "thumbColor": "rgba(168, 169, 170, 0.56)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": true
+    },
+    "after-leave": {
+      "bar": {
+        "x": 1427.2000732421875,
+        "y": 470.20001220703125,
+        "width": 8,
+        "height": 400,
+        "top": 470.20001220703125,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "thumb": {
+        "x": 1427.2000732421875,
+        "y": 609.2000122070312,
+        "width": 8,
+        "height": 261,
+        "top": 609.2000122070312,
+        "right": 1435.2000732421875,
+        "bottom": 870.2000122070312,
+        "left": 1427.2000732421875
+      },
+      "barClass": "invisible scrollbar vertical fade",
+      "visibility": "visible",
+      "opacity": 0,
+      "thumbColor": "rgba(168, 169, 170, 0.52)",
+      "thumbClass": "slider",
+      "list": {
+        "x": 985.2000122070312,
+        "y": 470.20001220703125,
+        "width": 450.00006103515625,
+        "height": 400
+      },
+      "oldestVisible": true
+    }
+  },
+  "exitCode": 0
+}

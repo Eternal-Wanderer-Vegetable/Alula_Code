@@ -1,0 +1,1289 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "target": {
+    "id": "Class:app/lib/workbench/breadcrumb_navigation.dart:_BreadcrumbNavigationState",
+    "name": "_BreadcrumbNavigationState",
+    "type": "Class",
+    "filePath": "app/lib/workbench/breadcrumb_navigation.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 3,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 140,
+    "modules_affected": 20
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+  },
+  "affected_processes": [
+    {
+      "name": "InitState → _divideBudget",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 11,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → GitDiffSideBySideRow",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 11,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → DocumentLineOffset",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 9,
+      "total_hits": 9,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → ForRustTriple",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 9,
+      "total_hits": 9,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "EmitCall → LineOf",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 8,
+      "total_hits": 8,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyWorkspaceEdit → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → EditorFoldSymbol",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → EditorLogicalLine",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → SanitizeCommandHistoryEntries",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReviewWorkspaceEdit → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → Compute",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunBuildCommand → SourceSpanException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunBuildCommand → SourceSpanException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_applyIndentation → _hasComposition",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunBuildCommand → SourceSpanException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → EditorDocumentLineProjection",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → AuxiliaryFocusContextEvent",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → EditorClipboardMetadata",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunMain → _log",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Spawn → Send_message",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Adjust_number_under_caret → Bit",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyOversized → SyncMismatchException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _claimPickerAcceptance",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _isSeparatorAt",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _sourceCell",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "CancelComposition → SyncMismatchException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Combine_conflict → Change",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → _previewSelected",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → Event_file",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → GitDiffPatchOptions",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Paint → VisibleLineToDocumentBoundary",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RecoverPending → SyncMismatchException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → Flag",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_buildEditor → SnippetPlaceholderRange",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "planAcceptAll",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "planAcceptAllCombinations",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "planResolveConflict",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "Alula_lsp_shutdown_workspace → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _changeSelection",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _flexibleWeight",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _handleGlobalActionKey",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "DidUpdateWidget → ColumnSelectionState",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Line_delete_ranges_utf16 → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Overtype_paste_ranges_utf16 → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "QuitThroughNativeMenu → NativeAppIdentity",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → CargokitUserOptions",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ShowBulkEditPreview → BulkEditPreviewDocumentState",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Toggle_line_comment_ignores_blank_lines_in_mixed_selection → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "With_limits → Change",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "finishAccept",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "finishClose",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "recordSavepoint",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "Alula_lsp_start → DocRegistry",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_stop → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_resource_status → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_symbols → DocRegistry",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_edit_transaction → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyDrag → IsFlexibleNode",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _bulkAcceptButton",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _hasAdjacentChange",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Completion → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Create → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Definition → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → IsMaximized",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Line_offset_over_ffi_uses_utf16_and_reports_invalid_line → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Lsp_gated_ffi_returns_no_lsp_without_start → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MessageHandler → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Paint → EditorPrimaryScrollPosition",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ProcessSnapshot → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "QuitThroughAccessibilityMenu → Attribute",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ResetDivider → IsFlexibleNode",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → CanonicalPath",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SampleResourceStatus → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SemanticTokens → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Snapshot → Proc_dir",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Start → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Summarize_reports_peak_and_stable → Summary",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Transpose_ranges_over_ffi_are_versioned_and_utf16_safe → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_is_dirty → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_mark_saved → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_save_file → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_save_file_with_options → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_savepoint_matches → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_set_savepoint → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_did_open → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_did_save → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_merge_project_json → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_process_register → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_camel_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_pascal_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_snake_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_title_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_list_dir → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_read_file → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_read_file_document → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyWorkspaceEdit → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "AwakeFromNib → FindWebView",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _findMainWindowController",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _identity",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ColumnSelectionsUtf16 → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Dispose → _cancel",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Extract_workspace_symbols → Shared",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → EditorFoldSymbol",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "LineDeleteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → AuxiliaryEditorApp",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → Find_app_window",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MoveSidebarView → NormalizeActivityBarViewOrder",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "OvertypePasteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "PositionAt → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReadLines → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReadMinimapSample → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Save → _stableHash",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SaveFile → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Savepoint_tracks_exact_utf8_text_and_revert_without_bumping_version → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SelectSidebarView → NormalizeSidebarViewLocations",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ToggleBlockComment → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ToggleLineComment → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TogglePanelMaximization → LeafOf",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TransposeRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TrimTrailingWhitespace → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WordDeleteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WorkspaceSymbols → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WriteValue → WriteBytes",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "stream",
+      "type": "Function",
+      "filePath": "app/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 2
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "2026-10-29-p00",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "2026-11-18-p05",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Bench",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Bridge",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_128",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_129",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_133",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_135",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_138",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_139",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_157",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_158",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_202",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_262",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_263",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_264",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_265",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_266",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_267",
+      "hits": 1,
+      "impact": "indirect"
+    },
+    {
+      "name": "Cluster_268",
+      "hits": 1,
+      "impact": "indirect"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/workbench_page.dart",
+        "name": "workbench_page.dart",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:app/lib/main.dart",
+        "name": "main.dart",
+        "filePath": "app/lib/main.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "name": "Create",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+(node:39868) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

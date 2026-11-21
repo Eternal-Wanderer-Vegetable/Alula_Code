@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'layout_model.dart';
+import 'secondary_sidebar_layout.dart';
 
 class LayoutStore {
   LayoutStore({String? path}) : _overridePath = path;
@@ -30,7 +31,9 @@ class LayoutStore {
       final decoded = jsonDecode(file.readAsStringSync());
       if (decoded is! Map<String, Object?>) return null;
       final node = WbNode.fromJson(decoded);
-      return node is WbSplit ? node : null;
+      if (node is! WbSplit) return null;
+      node.ensureSecondarySidebar();
+      return node;
     } catch (_) {
       return null;
     }

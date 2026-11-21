@@ -1,0 +1,38 @@
+{
+  "summary": {
+    "changed_count": 2,
+    "affected_count": 1,
+    "changed_files": 14,
+    "risk_level": "medium"
+  },
+  "changed_symbols": [
+    {
+      "id": "Enum:app/lib/workbench/quick_input.dart:QuickInputValidationSeverity",
+      "name": "QuickInputValidationSeverity",
+      "type": "Enum",
+      "filePath": "app/lib/workbench/quick_input.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/quick_input.dart:QuickInputValidationMessage",
+      "name": "QuickInputValidationMessage",
+      "type": "Class",
+      "filePath": "app/lib/workbench/quick_input.dart",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_121_initstate",
+      "name": "InitState → QuickInputValidationMessage",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "QuickInputValidationMessage",
+          "step": 4
+        }
+      ]
+    }
+  ]
+}

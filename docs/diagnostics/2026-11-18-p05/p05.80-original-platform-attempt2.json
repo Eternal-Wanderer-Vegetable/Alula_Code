@@ -1,0 +1,352 @@
+{
+  "run_id": 44141648010,
+  "attempt": 2,
+  "sha": "9117a06ef5130c3513648b514a164af481082c64",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "id": 134508620489,
+      "name": "Windows x64 build and launch smoke",
+      "conclusion": "success",
+      "started_at": "2026-11-18T01:34:19Z",
+      "completed_at": "2026-11-18T01:43:53Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Rust core",
+          "conclusion": "success"
+        },
+        {
+          "name": "Resolve Flutter dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Windows Release bundle",
+          "conclusion": "success"
+        },
+        {
+          "name": "Add Rust core DLL",
+          "conclusion": "success"
+        },
+        {
+          "name": "Launch Windows app and capture visible client area",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run P03.7 Windows desktop interaction suite",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify native Windows move, copy, and external text drag/drop",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload Windows native drag/drop diagnostics",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify native Windows clipboard formats",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify Windows accessibility tree and smoke lifecycle",
+          "conclusion": "success"
+        },
+        {
+          "name": "Launch Windows native-titlebar mode and close gracefully",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134508620893,
+      "name": "macOS build, launch smoke, and app package",
+      "conclusion": "failure",
+      "started_at": "2026-11-18T01:34:21Z",
+      "completed_at": "2026-11-18T02:03:41Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Rust core",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build fake LSP fixture for real-FFI tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Flutter analyze and tests",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Build macOS Release bundle",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Verify native macOS clipboard formats",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Compile native macOS drag/drop input helper",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Grant accessibility permission to the drag/drop input helper",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Verify native macOS text drag/drop interaction",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Upload macOS native drag/drop interaction diagnostics",
+          "conclusion": "success"
+        },
+        {
+          "name": "Bundle and sign Rust core",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Launch macOS app",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Collect macOS startup diagnostics",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload macOS startup diagnostics",
+          "conclusion": "success"
+        },
+        {
+          "name": "Package macOS app",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134508622577,
+      "name": "Linux x64 build and launch smoke",
+      "conclusion": "success",
+      "started_at": "2026-11-17T17:52:03Z",
+      "completed_at": "2026-11-17T17:56:00Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install Linux desktop build dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Rust core",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Linux Release bundle",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify native Linux clipboard formats",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify native Linux move, copy, and external text drag/drop",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload Linux native drag/drop diagnostics",
+          "conclusion": "success"
+        },
+        {
+          "name": "Add Rust core and verify Linux bundle",
+          "conclusion": "success"
+        },
+        {
+          "name": "Launch Linux app under Xvfb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Launch Linux native-titlebar mode under Xvfb",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run subosito/flutter-action@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14389521532,
+      "name": "alula-windows-native-dnd-44141648010-2",
+      "created_at": "2026-11-18T01:43:15Z",
+      "size_in_bytes": 3849
+    },
+    {
+      "id": 14388169041,
+      "name": "alula-windows-x64-9117a06ef5130c3513648b514a164af481082c64",
+      "created_at": "2026-11-18T01:43:47Z",
+      "size_in_bytes": 15663506
+    },
+    {
+      "id": 14358130877,
+      "name": "alula-macos-startup-diagnostics-44141648010-1",
+      "created_at": "2026-11-17T18:27:59Z",
+      "size_in_bytes": 784
+    },
+    {
+      "id": 14356918144,
+      "name": "alula-macos-X64-9117a06ef5130c3513648b514a164af481082c64",
+      "created_at": "2026-11-17T18:28:05Z",
+      "size_in_bytes": 23237898
+    },
+    {
+      "id": 14355944935,
+      "name": "alula-macos-native-dnd-44141648010-1",
+      "created_at": "2026-11-17T18:26:41Z",
+      "size_in_bytes": 2803
+    },
+    {
+      "id": 14354119323,
+      "name": "alula-windows-x64-9117a06ef5130c3513648b514a164af481082c64",
+      "created_at": "2026-11-17T18:01:06Z",
+      "size_in_bytes": 15663509
+    },
+    {
+      "id": 14354089380,
+      "name": "alula-windows-native-dnd-44141648010-1",
+      "created_at": "2026-11-17T18:00:41Z",
+      "size_in_bytes": 2077
+    },
+    {
+      "id": 14353913922,
+      "name": "alula-linux-native-dnd-44141648010-1",
+      "created_at": "2026-11-17T17:55:26Z",
+      "size_in_bytes": 3305
+    },
+    {
+      "id": 14353339825,
+      "name": "alula-linux-x64-9117a06ef5130c3513648b514a164af481082c64",
+      "created_at": "2026-11-17T17:55:53Z",
+      "size_in_bytes": 14055325
+    }
+  ]
+}

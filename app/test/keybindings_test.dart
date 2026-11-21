@@ -5,6 +5,155 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('Breadcrumb keybindings', () {
+    test('punctuation names resolve to the same logical keys', () {
+      expect(parseChord('ctrl+shift+period'), parseChord('ctrl+shift+.'));
+      expect(parseChord('cmd+shift+semicolon'), parseChord('cmd+shift+;'));
+      expect(parseChord('.')!.key, LogicalKeyboardKey.period);
+      expect(parseChord(';')!.key, LogicalKeyboardKey.semicolon);
+    });
+
+    test('platform defaults retain context and navigation alternatives', () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final modifier = platform == TargetPlatform.macOS ? 'cmd' : 'ctrl';
+        final word = platform == TargetPlatform.macOS ? 'alt' : 'ctrl';
+        for (final entry in {
+          '$modifier+shift+;': 'breadcrumbs.focus',
+          '$modifier+shift+.': 'breadcrumbs.focusAndSelect',
+          'arrowright': 'breadcrumbs.focusNext',
+          '$word+arrowright': 'breadcrumbs.focusNextWithPicker',
+          'arrowleft': 'breadcrumbs.focusPrevious',
+          '$word+arrowleft': 'breadcrumbs.focusPreviousWithPicker',
+          'enter': 'breadcrumbs.selectFocused',
+          'arrowdown': 'breadcrumbs.selectFocused',
+          'escape': 'breadcrumbs.selectEditor',
+          'space': 'breadcrumbs.revealFocused',
+        }.entries) {
+          final expectedContext = switch (entry.value) {
+            'breadcrumbs.focus' ||
+            'breadcrumbs.focusAndSelect' =>
+              'breadcrumbsPossible',
+            'breadcrumbs.focusNext' ||
+            'breadcrumbs.focusPrevious' =>
+              'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+            'breadcrumbs.focusNextWithPicker' ||
+            'breadcrumbs.focusPreviousWithPicker' =>
+              'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+            _ => 'breadcrumbsVisible && breadcrumbsActive',
+          };
+          final binding = keys.bindingForChord(
+            parseChord(entry.key)!,
+            matchesWhen: (condition) =>
+                condition == null || condition == expectedContext,
+          )!;
+          expect(binding.commandId, entry.value,
+              reason: '$platform/${entry.key}');
+          expect(binding.when, expectedContext);
+        }
+        final outsidePicker = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition ==
+                  'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+        );
+        final outsidePickerNext = outsidePicker.entries.singleWhere(
+          (entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              (platform == TargetPlatform.macOS
+                  ? entry.key.alt
+                  : entry.key.control) &&
+              !entry.key.shift &&
+              (platform == TargetPlatform.macOS
+                  ? !entry.key.control && !entry.key.meta
+                  : !entry.key.alt && !entry.key.meta),
+        );
+        expect(outsidePickerNext.value.commandId, 'breadcrumbs.focusNext',
+            reason: '$platform keeps ordinary navigation outside picker');
+        final insidePicker = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition ==
+                  'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+        );
+        final insidePickerNext = insidePicker.entries.singleWhere(
+          (entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              (platform == TargetPlatform.macOS
+                  ? entry.key.alt
+                  : entry.key.control) &&
+              !entry.key.shift &&
+              (platform == TargetPlatform.macOS
+                  ? !entry.key.control && !entry.key.meta
+                  : !entry.key.alt && !entry.key.meta),
+        );
+        expect(
+            insidePickerNext.value.commandId, 'breadcrumbs.focusNextWithPicker',
+            reason: '$platform gives picker navigation precedence while open');
+        expect(
+          insidePicker.entries.any((entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              !entry.key.control &&
+              !entry.key.alt &&
+              !entry.key.shift &&
+              !entry.key.meta),
+          isFalse,
+          reason: 'bare arrows remain available to the popup menu',
+        );
+        final activeReveal = keys.resolveBindings(
+            matchesWhen: (condition) =>
+                condition == null ||
+                condition == 'breadcrumbsVisible && breadcrumbsActive');
+        final reveal = activeReveal.entries.singleWhere((entry) =>
+            entry.key.trigger == LogicalKeyboardKey.enter &&
+            !entry.key.shift &&
+            !entry.key.alt &&
+            (platform == TargetPlatform.macOS
+                ? entry.key.meta
+                : entry.key.control));
+        expect(reveal.value.commandId, 'breadcrumbs.revealFocused');
+        final inactive =
+            keys.resolveBindings(matchesWhen: (condition) => condition == null);
+        expect(
+            inactive.values.where(
+                (binding) => binding.commandId.startsWith('breadcrumbs.')),
+            isEmpty);
+        final active = keys.resolveBindings(
+            matchesWhen: (condition) =>
+                condition == null || condition.startsWith('breadcrumbs'));
+        expect(
+            active.values.where(
+                (binding) => binding.commandId.startsWith('breadcrumbs.')),
+            hasLength(11));
+      }
+    });
+
+    test('user removal and replacement apply to breadcrumb defaults', () {
+      final keys = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '[{"key":"ctrl+shift+;","command":"-breadcrumbs.focus"},'
+            '{"key":"ctrl+alt+b","command":"breadcrumbs.focus",'
+            '"when":"breadcrumbsPossible"}]',
+      );
+      expect(keys.bindingForChord(parseChord('ctrl+shift+;')!), isNull);
+      final resolved = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null || condition == 'breadcrumbsPossible');
+      final binding = resolved.entries
+          .singleWhere((entry) =>
+              entry.key.trigger == LogicalKeyboardKey.keyB &&
+              entry.key.control &&
+              entry.key.alt)
+          .value;
+      expect(binding.commandId, 'breadcrumbs.focus');
+      expect(binding.when, 'breadcrumbsPossible');
+    });
+  });
+
   group('parseChord', () {
     test('修饰键组合与裸键', () {
       final c = parseChord('ctrl+shift+p')!;
@@ -218,6 +367,76 @@ void main() {
       );
     });
 
+    test('sticky and editor close commands use the platform defaults', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+w')!),
+          'workbench.action.closeActiveEditor',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('w')!],
+          )?.commandId,
+          'workbench.action.closeAllEditors',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+w')!],
+          )?.commandId,
+          'workbench.action.closeAllGroups',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+shift+enter')!],
+          )?.commandId,
+          'workbench.action.toggleEditorSticky',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('u')!],
+          )?.commandId,
+          'workbench.action.closeUnmodifiedEditors',
+        );
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+alt+t')!),
+          'workbench.action.closeOtherEditors',
+        );
+      }
+      expect(mac.commandForChord(parseChord('cmd+w')!),
+          'workbench.action.closeActiveEditor');
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('w')!],
+        )?.commandId,
+        'workbench.action.closeAllEditors',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+w')!],
+        )?.commandId,
+        'workbench.action.closeAllGroups',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+shift+enter')!],
+        )?.commandId,
+        'workbench.action.toggleEditorSticky',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('u')!],
+        )?.commandId,
+        'workbench.action.closeUnmodifiedEditors',
+      );
+      expect(
+        mac.commandForChord(parseChord('cmd+alt+t')!),
+        'workbench.action.closeOtherEditors',
+      );
+    });
+
     test(
         'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
         () {
@@ -293,7 +512,46 @@ void main() {
         linux.commandForChord(parseChord('ctrl+shift+a')!),
         'editor.action.blockComment',
       );
-      expect(windows.commandForChord(parseChord('ctrl+shift+a')!), isNull);
+      expect(
+        windows.bindingForChord(
+          parseChord('ctrl+shift+a')!,
+          matchesWhen: (condition) => condition == null,
+        ),
+        isNull,
+      );
+    });
+
+    test('notification primary action default respects user binding precedence',
+        () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final keySpec =
+            platform == TargetPlatform.macOS ? 'cmd+shift+a' : 'ctrl+shift+a';
+        final chord = parseChord(keySpec)!;
+        final matching = keys.bindingForChord(
+          chord,
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition == KeybindingSet.notificationPrimaryActionWhen,
+        );
+        expect(matching?.commandId, 'notification.acceptPrimaryAction');
+        expect(matching?.when, KeybindingSet.notificationPrimaryActionWhen);
+
+        final rebound = KeybindingSet.load(
+          platform: platform,
+          userJson: '[{"key":"$keySpec","command":"file.save"}]',
+        );
+        expect(
+          rebound
+              .bindingForChord(chord, matchesWhen: (condition) => true)
+              ?.commandId,
+          'file.save',
+        );
+      }
     });
 
     test('copy-line defaults coexist with platform column-selection chords',
@@ -377,7 +635,10 @@ void main() {
         mac.commandForChord(parseChord('ctrl+shift+-')!),
         'workbench.action.navigateForward',
       );
-      expect(mac.commandForChord(parseChord('alt+arrowleft')!), isNull);
+      expect(
+          mac.resolveBindings(matchesWhen: (condition) => condition == null)[
+              parseChord('alt+arrowleft')!.toActivator()],
+          isNull);
       expect(mac.commandForChord(parseChord('alt+shift+arrowleft')!), isNull);
       expect(
         mac.commandForChord(parseChord('ctrl+alt+arrowleft')!),
@@ -420,11 +681,55 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
+      expect(resolved.keys.length, expectedChords + 16,
+          reason: 'tree find, breadcrumbs and notifications add contextual '
+              'bindings, including the accessible primary action');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
+      expect(
+          ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
+    });
+
+    test('New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N', () {
+      for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+        final keys = KeybindingSet.load(platform: platform);
+        expect(
+          keys.commandForChord(parseChord('ctrl+n')!),
+          'workbench.action.files.newUntitledFile',
+        );
+        expect(keys.shortcutFor('workbench.action.files.newUntitledFile'),
+            'Ctrl+N');
+      }
+
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        mac.commandForChord(parseChord('cmd+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        mac.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Meta+N',
+      );
+    });
+
+    test('New Text File respects a user keybinding override', () {
+      final keys = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson:
+            '[{"key":"ctrl+alt+n","command":"workbench.action.files.newUntitledFile"}]',
+      );
+      expect(
+        keys.commandForChord(parseChord('ctrl+alt+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(keys.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        keys.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Ctrl+Alt+N',
+      );
     });
 
     test('用户追加：新键位生效', () {
@@ -515,11 +820,7 @@ void main() {
 
     test('损坏 JSON：只用默认键位', () {
       final ks = KeybindingSet.load(userJson: '[{"key": broken');
-      final expectedChords = KeybindingSet.defaults.values.fold<int>(
-          0,
-          (n, v) =>
-              n +
-              v.split(',').where((spec) => parseChord(spec) != null).length);
+      final expectedChords = KeybindingSet.load().resolve().length;
       expect(ks.resolve().length, expectedChords);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
       expect(ks2.resolve().length, expectedChords);
@@ -534,7 +835,9 @@ void main() {
       expect(ks.commandForChord(parseChord('ctrl+x')!), isNull,
           reason: 'meta 修饰键非法被忽略');
     });
-    test('Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS', () {
+    test(
+        'Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS',
+        () {
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);
       final linux = KeybindingSet.load(platform: TargetPlatform.linux);
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

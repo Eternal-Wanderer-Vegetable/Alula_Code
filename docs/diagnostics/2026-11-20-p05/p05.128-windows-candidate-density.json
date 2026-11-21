@@ -1,0 +1,228 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows keyboard and client window resize",
+  "mode": "candidate",
+  "sourceProvenance": {
+    "productTree": "93c9be79f0799f4508ced43a3677b65ccdb19618",
+    "matchedSources": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "42906bff35756efd550a4e4ad85169391a05fd8f58de94115077aae5c935bbcd",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "023cbd691479734345ff5424e58c73125c6ff03a97c59c93213403b0317f708f",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "acaf215327b5e5d99aa1ccd7c61f2fd115ac85e27fe2c35a8ee98fd97cd5f9ec",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "productCommit": "8b016160e8125931456dae77999ca94bc72a1da8"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "c368a636e85a29db31fb7bab950936763465542b8b0f29ea633ca949e9208e76",
+  "fixtureSha256": "28836bdea6f445162c2d0d20e79df43a9efb4ca22f3ef0393278a8956c046140",
+  "trace": {
+    "initial": {
+      "request": "initial",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        123.0,
+        793.6,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "small-detail": {
+      "request": "small-detail",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        151.24,
+        93.0,
+        644.76,
+        326.0
+      ],
+      "row": [
+        151.24,
+        123.0,
+        644.76,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "small-plain": {
+      "request": "small-plain",
+      "active": 2,
+      "revision": 2,
+      "viewport": [
+        151.24,
+        93.0,
+        644.76,
+        326.0
+      ],
+      "row": [
+        151.24,
+        167.0,
+        644.76,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "tall-detail": {
+      "request": "tall-detail",
+      "active": 1,
+      "revision": 3,
+      "viewport": [
+        169.024,
+        93.0,
+        720.576,
+        414.0
+      ],
+      "row": [
+        169.024,
+        123.0,
+        720.576,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "tall-plain": {
+      "request": "tall-plain",
+      "active": 2,
+      "revision": 4,
+      "viewport": [
+        169.024,
+        93.0,
+        720.576,
+        414.0
+      ],
+      "row": [
+        169.024,
+        167.0,
+        720.576,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wide-detail": {
+      "request": "wide-detail",
+      "active": 1,
+      "revision": 5,
+      "viewport": [
+        280.0,
+        93.0,
+        880.0,
+        458.0
+      ],
+      "row": [
+        280.0,
+        123.0,
+        880.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wide-plain": {
+      "request": "wide-plain",
+      "active": 2,
+      "revision": 6,
+      "viewport": [
+        280.0,
+        93.0,
+        880.0,
+        458.0
+      ],
+      "row": [
+        280.0,
+        167.0,
+        880.0,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "captures": {
+    "small": {
+      "clientLogical": [
+        796.0,
+        587.2
+      ],
+      "viewportHeight": 233.0,
+      "viewportWidth": 493.52,
+      "detailHeight": 44.0,
+      "plainHeight": 22.0,
+      "memProbe": {
+        "samples": [
+          {
+            "privateBytes": 175398912,
+            "processCount": 1
+          },
+          {
+            "privateBytes": 175398912,
+            "processCount": 1
+          },
+          {
+            "privateBytes": 171536384,
+            "processCount": 1
+          },
+          {
+            "privateBytes": 171286528,
+            "processCount": 1
+          },
+          {
+            "privateBytes": 171810816,
+            "processCount": 1
+          }
+        ],
+        "medianPrivateMiB": 163.85
+      },
+      "image": "p05.128-windows-candidate-small.png",
+      "imageSha256": "806fdef52f310a38f0ad4b07954072dedc300e46d05b86c88e90ca8f41b72956"
+    },
+    "tall": {
+      "clientLogical": [
+        889.6,
+        833.6
+      ],
+      "viewportHeight": 321.0,
+      "viewportWidth": 551.552,
+      "detailHeight": 44.0,
+      "plainHeight": 22.0
+    },
+    "wide": {
+      "clientLogical": [
+        1160.0,
+        881.6
+      ],
+      "viewportHeight": 365.0,
+      "viewportWidth": 600.0,
+      "detailHeight": 44.0,
+      "plainHeight": 22.0
+    }
+  },
+  "checksPassed": true,
+  "exitCode": 0
+}

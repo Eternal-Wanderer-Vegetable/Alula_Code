@@ -1,0 +1,521 @@
+{
+  "product": "a8ae00621f360db2e6acb0592f798642e09b5be4",
+  "sourceHashes": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "dbdaad37ef48edb5622bd885ec9a7ba0cd95aa72d315333c3888fcfc6101924e",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "a060107fe56b6cc66cb08fe023c7ef77d5d717c88bd3b0d2f756da0e7075b56a",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  },
+  "reference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "browser": "Chrome/150.0.7871.250",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 986,
+      "height": 666
+    },
+    "regions": {
+      "root": {
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 986,
+          "height": 666,
+          "top": 0,
+          "right": 986,
+          "bottom": 666,
+          "left": 0
+        },
+        "styleTop": "0px",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      },
+      "title": {
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 986,
+          "height": 35,
+          "top": 0,
+          "right": 986,
+          "bottom": 35,
+          "left": 0
+        },
+        "styleTop": "auto",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      },
+      "status": {
+        "box": {
+          "x": 0,
+          "y": 638,
+          "width": 986,
+          "height": 28,
+          "top": 638,
+          "right": 986,
+          "bottom": 666,
+          "left": 0
+        },
+        "styleTop": "auto",
+        "zoom": "1",
+        "bodyMargin": "0px"
+      }
+    },
+    "cases": {
+      "bottom-right": {
+        "toastFirst": {
+          "x": 526.4,
+          "y": 481.2,
+          "width": 451.6,
+          "height": 69.6
+        },
+        "cards": [
+          {
+            "x": 526.4,
+            "y": 481.2,
+            "width": 451.6,
+            "height": 69.6
+          },
+          {
+            "x": 526.4,
+            "y": 554.8,
+            "width": 451.6,
+            "height": 35.6
+          },
+          {
+            "x": 526.4,
+            "y": 594.4,
+            "width": 451.6,
+            "height": 35.6
+          }
+        ],
+        "gaps": [
+          4.0,
+          4.0
+        ],
+        "center": {
+          "x": 526.4,
+          "y": 457.4,
+          "width": 451.6,
+          "height": 172.6
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 946,
+            "y": 640,
+            "width": 28,
+            "height": 24
+          }
+        ],
+        "toastFrame": {
+          "top": "477.2px",
+          "bottom": "32px",
+          "inlineTop": "",
+          "view": {
+            "x": 522.4,
+            "y": 477.2,
+            "width": 459.6,
+            "height": 156.8,
+            "top": 477.2,
+            "right": 982.0,
+            "bottom": 634.0,
+            "left": 522.4
+          }
+        },
+        "centerStyle": {
+          "top": "457.4px",
+          "bottom": "36px",
+          "inlineTop": "",
+          "view": {
+            "x": 526.4,
+            "y": 457.4,
+            "width": 451.6,
+            "height": 172.6,
+            "top": 457.4,
+            "right": 978.0,
+            "bottom": 630,
+            "left": 526.4
+          }
+        }
+      },
+      "bottom-left": {
+        "toastFirst": {
+          "x": 8,
+          "y": 481.2,
+          "width": 451.6,
+          "height": 69.6
+        },
+        "cards": [
+          {
+            "x": 8,
+            "y": 481.2,
+            "width": 451.6,
+            "height": 69.6
+          },
+          {
+            "x": 8,
+            "y": 554.8,
+            "width": 451.6,
+            "height": 35.6
+          },
+          {
+            "x": 8,
+            "y": 594.4,
+            "width": 451.6,
+            "height": 35.6
+          }
+        ],
+        "gaps": [
+          4.0,
+          4.0
+        ],
+        "center": {
+          "x": 8,
+          "y": 457.4,
+          "width": 451.6,
+          "height": 172.6
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 40,
+            "y": 640,
+            "width": 32,
+            "height": 24
+          }
+        ],
+        "toastFrame": {
+          "top": "477.2px",
+          "bottom": "32px",
+          "inlineTop": "",
+          "view": {
+            "x": 4,
+            "y": 477.2,
+            "width": 459.6,
+            "height": 156.8,
+            "top": 477.2,
+            "right": 463.6,
+            "bottom": 634.0,
+            "left": 4
+          }
+        },
+        "centerStyle": {
+          "top": "457.4px",
+          "bottom": "36px",
+          "inlineTop": "",
+          "view": {
+            "x": 8,
+            "y": 457.4,
+            "width": 451.6,
+            "height": 172.6,
+            "top": 457.4,
+            "right": 459.6,
+            "bottom": 630,
+            "left": 8
+          }
+        }
+      },
+      "top-right": {
+        "toastFirst": {
+          "x": 526.4,
+          "y": 36,
+          "width": 451.6,
+          "height": 69.6
+        },
+        "cards": [
+          {
+            "x": 526.4,
+            "y": 36,
+            "width": 451.6,
+            "height": 69.6
+          },
+          {
+            "x": 526.4,
+            "y": 109.6,
+            "width": 451.6,
+            "height": 35.6
+          },
+          {
+            "x": 526.4,
+            "y": 149.2,
+            "width": 451.6,
+            "height": 35.6
+          }
+        ],
+        "gaps": [
+          4.0,
+          4.0
+        ],
+        "center": {
+          "x": 526.4,
+          "y": 36,
+          "width": 451.6,
+          "height": 172.6
+        },
+        "bellCount": 1,
+        "bells": [
+          {
+            "x": 822,
+            "y": 6.5,
+            "width": 22,
+            "height": 22
+          }
+        ],
+        "toastFrame": {
+          "top": "32px",
+          "bottom": "477.2px",
+          "inlineTop": "38px",
+          "view": {
+            "x": 522.4,
+            "y": 32,
+            "width": 459.6,
+            "height": 156.8,
+            "top": 32,
+            "right": 982.0,
+            "bottom": 188.8,
+            "left": 522.4
+          }
+        },
+        "centerStyle": {
+          "top": "36px",
+          "bottom": "457.4px",
+          "inlineTop": "42px",
+          "view": {
+            "x": 526.4,
+            "y": 36,
+            "width": 451.6,
+            "height": 172.6,
+            "top": 36,
+            "right": 978.0,
+            "bottom": 208.6,
+            "left": 526.4
+          }
+        }
+      }
+    }
+  },
+  "alula": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+    "aotSha256": "eb545fe968a58fd993de9710616d609120b765cadf1ab8a78aa52fb520389e97",
+    "fixtureSha256": "d2db18017adfc7df34f4420aadd4174bef142cd1b30085f970298a3699370dfc",
+    "cases": {
+      "bottom-right": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          784.8,
+          652.8
+        ],
+        "toastBoundsLogical": [
+          528.8,
+          480.8,
+          977.6,
+          627.2
+        ],
+        "centerBoundsLogical": [
+          528.8,
+          450.4,
+          977.6,
+          627.2
+        ],
+        "toastLayout": {
+          "status-notifications": [
+            760.86,
+            645.8,
+            791.962,
+            659.8
+          ],
+          "notification-toast-3": [
+            527.2,
+            479.8,
+            979.2,
+            548.8
+          ],
+          "notification-toast-2": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-1": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ]
+        },
+        "centerLayout": {
+          "status-notifications": [
+            769.411,
+            645.8,
+            783.411,
+            659.8
+          ],
+          "notification-center": [
+            527.2,
+            448.8,
+            979.2,
+            628.8
+          ],
+          "notification-position": [
+            931.2,
+            457.8,
+            955.2,
+            481.8
+          ]
+        },
+        "exitCode": 0
+      },
+      "bottom-left": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          34.4,
+          652.8
+        ],
+        "toastBoundsLogical": [
+          9.6,
+          480.8,
+          458.4,
+          627.2
+        ],
+        "centerBoundsLogical": [
+          9.6,
+          450.4,
+          458.4,
+          627.2
+        ],
+        "toastLayout": {
+          "status-notifications": [
+            10.0,
+            645.8,
+            41.102,
+            659.8
+          ],
+          "notification-toast-3": [
+            8.0,
+            479.8,
+            460.0,
+            548.8
+          ],
+          "notification-toast-2": [
+            8.0,
+            552.8,
+            460.0,
+            588.8
+          ],
+          "notification-toast-1": [
+            8.0,
+            592.8,
+            460.0,
+            628.8
+          ]
+        },
+        "centerLayout": {
+          "status-notifications": [
+            10.0,
+            645.8,
+            24.0,
+            659.8
+          ],
+          "notification-center": [
+            8.0,
+            448.8,
+            460.0,
+            628.8
+          ],
+          "notification-position": [
+            412.0,
+            457.8,
+            436.0,
+            481.8
+          ]
+        },
+        "exitCode": 0
+      },
+      "top-right": {
+        "dpiScale": 1.25,
+        "clientLogical": [
+          987.2,
+          664.8
+        ],
+        "unreadBadgeLogical": [
+          972.8,
+          14.4
+        ],
+        "toastBoundsLogical": [
+          528.8,
+          37.6,
+          977.6,
+          184.0
+        ],
+        "centerBoundsLogical": [
+          528.8,
+          37.6,
+          977.6,
+          214.4
+        ],
+        "toastLayout": {
+          "title-notifications": [
+            948.098,
+            10.5,
+            979.2,
+            24.5
+          ],
+          "notification-toast-3": [
+            527.2,
+            36.0,
+            979.2,
+            105.0
+          ],
+          "notification-toast-2": [
+            527.2,
+            109.0,
+            979.2,
+            145.0
+          ],
+          "notification-toast-1": [
+            527.2,
+            149.0,
+            979.2,
+            185.0
+          ]
+        },
+        "centerLayout": {
+          "title-notifications": [
+            965.2,
+            10.5,
+            979.2,
+            24.5
+          ],
+          "notification-center": [
+            527.2,
+            36.0,
+            979.2,
+            216.0
+          ],
+          "notification-position": [
+            931.2,
+            45.0,
+            955.2,
+            69.0
+          ]
+        },
+        "exitCode": 0
+      }
+    }
+  }
+}

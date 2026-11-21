@@ -1,0 +1,88 @@
+{
+  "feature": "P05.96 / feat-148 Open Editors middle-click close",
+  "product_commit": "e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38",
+  "pull_request": {
+    "number": 3,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3",
+    "state": "open",
+    "draft": true,
+    "head_branch": "codex/vscode-parity-p05",
+    "head_sha": "e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38"
+  },
+  "pr_ci": {
+    "run_id": 44488427815,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44488427815",
+    "event": "pull_request",
+    "head_sha": "e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38",
+    "conclusion": "success",
+    "jobs": {
+      "Harness 文档结构校验": "success",
+      "Rust (ubuntu-latest)": "success",
+      "Rust (windows-latest)": "success",
+      "Flutter (analyze + test)": "success"
+    },
+    "flutter_analyze": "No issues found",
+    "flutter_tests": 1558
+  },
+  "platform_availability": {
+    "run_id": 44488418388,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44488418388",
+    "event": "push",
+    "head_sha": "e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38",
+    "linux_x64": {
+      "conclusion": "success",
+      "checks": [
+        "Release build",
+        "native clipboard formats",
+        "native move/copy/external text drag and drop",
+        "bundle integrity",
+        "Xvfb launch",
+        "native-titlebar launch"
+      ]
+    },
+    "windows_x64": {
+      "conclusion": "success",
+      "checks": [
+        "Release build and Rust DLL bundling",
+        "visible app launch",
+        "P03.7 desktop interaction suite",
+        "native move/copy/external text drag and drop",
+        "native clipboard formats",
+        "accessibility tree and smoke lifecycle",
+        "native-titlebar launch and graceful close"
+      ]
+    },
+    "macos": {
+      "status_at_capture": "in_progress",
+      "awaited": false,
+      "claim": "not verified"
+    }
+  },
+  "artifacts": [
+    {
+      "id": 14512042309,
+      "name": "alula-linux-x64-e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38",
+      "size_bytes": 14101236,
+      "digest": "sha256:df3baa873fca8c86bdde5542ae7d7b9f034eb977ae88fd1972a795a31e5376c9"
+    },
+    {
+      "id": 14512152054,
+      "name": "alula-linux-native-dnd-44488418388-1",
+      "size_bytes": 3303,
+      "digest": "sha256:ac3f55170be9574717662b83a5cd8108e2b6a7b689c3072e44d99b3db2b3e781"
+    },
+    {
+      "id": 14512162128,
+      "name": "alula-windows-x64-e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38",
+      "size_bytes": 15705244,
+      "digest": "sha256:d0665a75cfb750f5665c7d972a594cb80116165208d22f58141e5ab152a9260b"
+    },
+    {
+      "id": 14511653838,
+      "name": "alula-windows-native-dnd-44488418388-1",
+      "size_bytes": 3848,
+      "digest": "sha256:9a4d51b987f6e885555e2048e9f16680253ac3e32e87030dfb89de7a48198d45"
+    }
+  ],
+  "macos_device_validation": "deferred; there is currently no macOS device, and no macOS result is claimed"
+}

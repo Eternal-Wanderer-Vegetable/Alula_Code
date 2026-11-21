@@ -17,6 +17,8 @@ import 'package:irondash_message_channel/irondash_message_channel.dart';
 import 'package:super_native_extensions/src/native/context.dart'
     show setContextOverride;
 
+import 'helpers/file_paths.dart';
+
 Future<(Directory, Directory)> _createWorkspace(WidgetTester tester) async {
   debugDefaultTargetPlatformOverride = TargetPlatform.windows;
   tester.view.physicalSize = const Size(1100, 800);
@@ -49,7 +51,7 @@ Future<void> _mountWorkspace(
 
 Future<void> _rightClickNode(WidgetTester tester, String path) async {
   await tester.tap(
-    find.byKey(ValueKey('explorer-node:$path')),
+    explorerFileNode(path),
     kind: PointerDeviceKind.mouse,
     buttons: kSecondaryMouseButton,
   );
@@ -63,7 +65,7 @@ Future<void> _modifierClickNode(
 ) async {
   await tester.sendKeyDownEvent(modifier);
   await tester.tap(
-    find.byKey(ValueKey('explorer-node:$path')),
+    explorerFileNode(path),
     kind: PointerDeviceKind.mouse,
   );
   await tester.sendKeyUpEvent(modifier);
@@ -232,7 +234,7 @@ void main() {
         ..writeAsBytesSync(utf8.encode('\uFEFFdisk modified\r\nshared'));
       await _mountWorkspace(tester, temp, workspace);
 
-      await tester.tap(find.byKey(ValueKey('explorer-node:${original.path}')));
+      await tester.tap(explorerFileNode(original.path));
       await tester.pump(const Duration(milliseconds: 250));
       final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       await tester.showKeyboard(editor);
@@ -290,7 +292,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       await _mountWorkspace(tester, temp, workspace);
 
-      await tester.tap(find.byKey(ValueKey('explorer-node:${first.path}')));
+      await tester.tap(explorerFileNode(first.path));
       await tester.pump(const Duration(milliseconds: 250));
       await _modifierClickNode(
         tester,
@@ -576,7 +578,8 @@ void main() {
     }
   });
 
-  testWidgets('revert waits for a current diff after IME preedit commits on blur',
+  testWidgets(
+      'revert waits for a current diff after IME preedit commits on blur',
       (tester) async {
     try {
       final (temp, workspace) = await _createWorkspace(tester);
@@ -642,7 +645,7 @@ void main() {
         ..writeAsStringSync('modified source\nshared');
       await _mountWorkspace(tester, temp, workspace);
 
-      await tester.tap(find.byKey(ValueKey('explorer-node:${original.path}')));
+      await tester.tap(explorerFileNode(original.path));
       await tester.pump(const Duration(milliseconds: 250));
       final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       await tester.showKeyboard(editor);
@@ -689,7 +692,7 @@ void main() {
         ..writeAsStringSync('modified\nshared');
       await _mountWorkspace(tester, temp, workspace);
 
-      await tester.tap(find.byKey(ValueKey('explorer-node:${original.path}')));
+      await tester.tap(explorerFileNode(original.path));
       await tester.pump(const Duration(milliseconds: 250));
       final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       await tester.showKeyboard(editor);

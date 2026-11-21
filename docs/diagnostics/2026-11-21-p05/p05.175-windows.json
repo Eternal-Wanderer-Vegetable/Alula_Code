@@ -1,0 +1,1457 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "guarded real Win32 mouse and keys",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "136b6558b44d61559bad3a942684d8fa16582911",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_window.dart": "df436eaeeefa7ccabbd43b1999a58d9462b61e673245d81fede9422f3caf6c38",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "00e0c77333a15b67ee3770f215798811948d07ab1350fa4c36c7e61ad604f743",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "c426d0f94421ad3a67683784ab6aa721b98247e125c3c9e30c218b92e8bc4d8f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "30bc2fe937ed9c140cdd8fd8957180a471c30e2689f688c228f8d7188de3c6f4",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "f0844c5c2f8f53ca79bbe43310f6c09db53bc34ea0efff23756a868f80b99129",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "202eb2b42dd5e8159d07f03fc409a61b3b793c190e1e5f06d840e633228d1671",
+  "fixtureSha256": "c8a6ad63d300321c01dd63d2aad1aa657d4f7b84439768c9504e3362a7e50b69",
+  "trace": {
+    "main-opened": {
+      "main": {
+        "step": "main-opened",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1694.4,
+          106.4
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-2": [
+            306.4,
+            42.0,
+            488.890234375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            340.4,
+            45.5,
+            449.390234375,
+            62.5
+          ],
+          "tab-1": [
+            488.890234375,
+            42.0,
+            602.890234375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            522.890234375,
+            45.5,
+            559.640234375,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-2": "compact-sample.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              314.4,
+              102.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-175-auxiliary-compact-reference\\windows-1795272234465395800/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "main-edited": {
+      "main": {
+        "step": "main-edited",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          456.8,
+          163.2
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-2": [
+            306.4,
+            42.0,
+            497.05234375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            340.4,
+            45.5,
+            458.05234375,
+            62.5
+          ],
+          "tab-1": [
+            497.05234375,
+            42.0,
+            611.05234375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            531.05234375,
+            45.5,
+            567.80234375,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-2": "compact-sample.txt •",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              314.4,
+              102.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 5,
+            "dirty": true,
+            "selection": [
+              20,
+              20
+            ]
+          }
+        ],
+        "statuses": [
+          "compact-sample.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-175-auxiliary-compact-reference\\windows-1795272234465395800/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact NATIVE-DIRTYexample 😀\nSecond line\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expanded": {
+      "main": {
+        "step": "expanded",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          456.8,
+          163.2
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              314.4,
+              80.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-compact-sample.txt": {
+        "step": "expanded",
+        "slot": "child-compact-sample.txt",
+        "windowId": "7e675442-13bd-4d79-8934-4ae2b93422d3",
+        "bounds": [
+          1160.0,
+          92.0,
+          1880.0,
+          612.0
+        ],
+        "pointer": [
+          456.8,
+          163.2
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "auxiliary-title-row": [
+            0.0,
+            0.0,
+            705.6,
+            35.0
+          ],
+          "auxiliary-compact-mode-semantics": [
+            607.6,
+            0.0,
+            637.6,
+            35.0
+          ],
+          "auxiliary-compact-mode-button": [
+            607.6,
+            0.0,
+            637.6,
+            35.0
+          ],
+          "auxiliary-always-on-top-semantics": [
+            637.6,
+            0.0,
+            667.6,
+            35.0
+          ],
+          "auxiliary-always-on-top-button": [
+            637.6,
+            0.0,
+            667.6,
+            35.0
+          ],
+          "auxiliary-close-button": [
+            667.6,
+            0.0,
+            697.6,
+            35.0
+          ],
+          "auxiliary-editor-input": [
+            4.0,
+            39.0,
+            701.6,
+            478.4
+          ]
+        },
+        "controls": {
+          "auxiliary-compact-mode-semantics": {
+            "label": "紧凑模式",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-compact-mode-button": {
+            "tooltip": "启用紧凑模式",
+            "enabled": true
+          },
+          "auxiliary-always-on-top-semantics": {
+            "label": "始终置顶",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-always-on-top-button": {
+            "tooltip": "始终置顶",
+            "enabled": true
+          },
+          "auxiliary-close-button": {
+            "tooltip": "移回主窗口并关闭",
+            "enabled": true
+          }
+        },
+        "alwaysOnTop": false,
+        "labels": {},
+        "editors": [
+          {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 3,
+            "box": [
+              4.0,
+              39.0,
+              701.6,
+              478.4
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [
+          "compact-sample.txt •"
+        ]
+      }
+    },
+    "compact": {
+      "main": {
+        "step": "compact",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1789.6,
+          140.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              314.4,
+              80.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-compact-sample.txt": {
+        "step": "compact",
+        "slot": "child-compact-sample.txt",
+        "windowId": "7e675442-13bd-4d79-8934-4ae2b93422d3",
+        "bounds": [
+          1160.0,
+          92.0,
+          1880.0,
+          612.0
+        ],
+        "pointer": [
+          1789.6,
+          140.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "auxiliary-title-row": [
+            0.0,
+            0.0,
+            705.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-semantics": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-button": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-semantics": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-button": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-close-button": [
+            667.6,
+            0.0,
+            697.6,
+            30.0
+          ],
+          "auxiliary-editor-input": [
+            0.0,
+            30.0,
+            705.6,
+            482.4
+          ]
+        },
+        "controls": {
+          "auxiliary-compact-mode-semantics": {
+            "label": "紧凑模式",
+            "toggled": true,
+            "onTap": true
+          },
+          "auxiliary-compact-mode-button": {
+            "tooltip": "退出紧凑模式",
+            "enabled": true
+          },
+          "auxiliary-always-on-top-semantics": {
+            "label": "始终置顶",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-always-on-top-button": {
+            "tooltip": "始终置顶",
+            "enabled": true
+          },
+          "auxiliary-close-button": {
+            "tooltip": "移回主窗口并关闭",
+            "enabled": true
+          }
+        },
+        "alwaysOnTop": false,
+        "labels": {},
+        "editors": [
+          {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 3,
+            "box": [
+              0.0,
+              30.0,
+              705.6,
+              482.4
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": []
+      }
+    },
+    "compact-pinned": {
+      "main": {
+        "step": "compact-pinned",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1820.0,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              314.4,
+              80.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-compact-sample.txt": {
+        "step": "compact-pinned",
+        "slot": "child-compact-sample.txt",
+        "windowId": "7e675442-13bd-4d79-8934-4ae2b93422d3",
+        "bounds": [
+          1160.0,
+          92.0,
+          1880.0,
+          612.0
+        ],
+        "pointer": [
+          1820.0,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "auxiliary-title-row": [
+            0.0,
+            0.0,
+            705.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-semantics": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-button": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-semantics": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-button": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-close-button": [
+            667.6,
+            0.0,
+            697.6,
+            30.0
+          ],
+          "auxiliary-editor-input": [
+            0.0,
+            30.0,
+            705.6,
+            482.4
+          ]
+        },
+        "controls": {
+          "auxiliary-compact-mode-semantics": {
+            "label": "紧凑模式",
+            "toggled": true,
+            "onTap": true
+          },
+          "auxiliary-compact-mode-button": {
+            "tooltip": "退出紧凑模式",
+            "enabled": true
+          },
+          "auxiliary-always-on-top-semantics": {
+            "label": "始终置顶",
+            "toggled": true,
+            "onTap": true
+          },
+          "auxiliary-always-on-top-button": {
+            "tooltip": "取消始终置顶",
+            "enabled": true
+          },
+          "auxiliary-close-button": {
+            "tooltip": "移回主窗口并关闭",
+            "enabled": true
+          }
+        },
+        "alwaysOnTop": true,
+        "labels": {},
+        "editors": [
+          {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 3,
+            "box": [
+              0.0,
+              30.0,
+              705.6,
+              482.4
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": []
+      }
+    },
+    "compact-unpinned": {
+      "main": {
+        "step": "compact-unpinned",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1820.0,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              314.4,
+              80.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-compact-sample.txt": {
+        "step": "compact-unpinned",
+        "slot": "child-compact-sample.txt",
+        "windowId": "7e675442-13bd-4d79-8934-4ae2b93422d3",
+        "bounds": [
+          1160.0,
+          92.0,
+          1880.0,
+          612.0
+        ],
+        "pointer": [
+          1820.0,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "auxiliary-title-row": [
+            0.0,
+            0.0,
+            705.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-semantics": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-compact-mode-button": [
+            607.6,
+            0.0,
+            637.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-semantics": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-always-on-top-button": [
+            637.6,
+            0.0,
+            667.6,
+            30.0
+          ],
+          "auxiliary-close-button": [
+            667.6,
+            0.0,
+            697.6,
+            30.0
+          ],
+          "auxiliary-editor-input": [
+            0.0,
+            30.0,
+            705.6,
+            482.4
+          ]
+        },
+        "controls": {
+          "auxiliary-compact-mode-semantics": {
+            "label": "紧凑模式",
+            "toggled": true,
+            "onTap": true
+          },
+          "auxiliary-compact-mode-button": {
+            "tooltip": "退出紧凑模式",
+            "enabled": true
+          },
+          "auxiliary-always-on-top-semantics": {
+            "label": "始终置顶",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-always-on-top-button": {
+            "tooltip": "始终置顶",
+            "enabled": true
+          },
+          "auxiliary-close-button": {
+            "tooltip": "移回主窗口并关闭",
+            "enabled": true
+          }
+        },
+        "alwaysOnTop": false,
+        "labels": {},
+        "editors": [
+          {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 3,
+            "box": [
+              0.0,
+              30.0,
+              705.6,
+              482.4
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": []
+      }
+    },
+    "expanded-restored": {
+      "main": {
+        "step": "expanded-restored",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1789.6,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              314.4,
+              80.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-compact-sample.txt": {
+        "step": "expanded-restored",
+        "slot": "child-compact-sample.txt",
+        "windowId": "7e675442-13bd-4d79-8934-4ae2b93422d3",
+        "bounds": [
+          1160.0,
+          92.0,
+          1880.0,
+          612.0
+        ],
+        "pointer": [
+          1789.6,
+          137.6
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "7e675442-13bd-4d79-8934-4ae2b93422d3",
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "auxiliary-title-row": [
+            0.0,
+            0.0,
+            705.6,
+            35.0
+          ],
+          "auxiliary-compact-mode-semantics": [
+            607.6,
+            0.0,
+            637.6,
+            35.0
+          ],
+          "auxiliary-compact-mode-button": [
+            607.6,
+            0.0,
+            637.6,
+            35.0
+          ],
+          "auxiliary-always-on-top-semantics": [
+            637.6,
+            0.0,
+            667.6,
+            35.0
+          ],
+          "auxiliary-always-on-top-button": [
+            637.6,
+            0.0,
+            667.6,
+            35.0
+          ],
+          "auxiliary-close-button": [
+            667.6,
+            0.0,
+            697.6,
+            35.0
+          ],
+          "auxiliary-editor-input": [
+            4.0,
+            39.0,
+            701.6,
+            478.4
+          ]
+        },
+        "controls": {
+          "auxiliary-compact-mode-semantics": {
+            "label": "紧凑模式",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-compact-mode-button": {
+            "tooltip": "启用紧凑模式",
+            "enabled": true
+          },
+          "auxiliary-always-on-top-semantics": {
+            "label": "始终置顶",
+            "toggled": false,
+            "onTap": true
+          },
+          "auxiliary-always-on-top-button": {
+            "tooltip": "始终置顶",
+            "enabled": true
+          },
+          "auxiliary-close-button": {
+            "tooltip": "移回主窗口并关闭",
+            "enabled": true
+          }
+        },
+        "alwaysOnTop": false,
+        "labels": {},
+        "editors": [
+          {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 3,
+            "box": [
+              4.0,
+              39.0,
+              701.6,
+              478.4
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [
+          "compact-sample.txt •"
+        ]
+      }
+    },
+    "returned": {
+      "main": {
+        "step": "returned",
+        "slot": "main",
+        "windowId": "e224efc4-79b0-42d9-9ed4-a1c492565287",
+        "bounds": [
+          16.0,
+          38.4,
+          1140.8,
+          714.4
+        ],
+        "pointer": [
+          1849.6,
+          140.0
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "e224efc4-79b0-42d9-9ed4-a1c492565287"
+        ],
+        "boxes": {
+          "tab-1": [
+            306.4,
+            42.0,
+            420.4,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            340.4,
+            45.5,
+            377.15,
+            62.5
+          ],
+          "tab-4": [
+            420.4,
+            42.0,
+            611.05234375,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            454.4,
+            45.5,
+            572.05234375,
+            62.5
+          ]
+        },
+        "controls": {},
+        "labels": {
+          "editor-tab-label-editor-1": "未命名",
+          "editor-tab-label-editor-4": "compact-sample.txt •"
+        },
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 4,
+            "box": [
+              314.4,
+              102.0,
+              1015.9999999999999,
+              636.8
+            ],
+            "rust": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "mirror": "Compact NATIVE-DIRTYexample 😀\nSecond line\n",
+            "totalUtf16": 43,
+            "stateVersion": 1,
+            "dirty": true,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "statuses": [
+          "compact-sample.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 4,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              },
+              {
+                "id": 4,
+                "path": "E:\\temp\\alula-p05-175-auxiliary-compact-reference\\windows-1795272234465395800/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact NATIVE-DIRTYexample 😀\nSecond line\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "screenshots": {
+    "expanded": {
+      "child-compact-sample.txt": {
+        "name": "windows-expanded-child-compact-sample.txt.png",
+        "sha256": "9f76b1fb43a94a818612060334c6acfc17bfc749cf8596f8fe2bcac9e43e5bb5"
+      }
+    },
+    "compact": {
+      "child-compact-sample.txt": {
+        "name": "windows-compact-child-compact-sample.txt.png",
+        "sha256": "cd1158c860b4ea78402388e738d8cd1f3e3cd218a27a2248a0c713e518f77681"
+      }
+    },
+    "compact-pinned": {
+      "child-compact-sample.txt": {
+        "name": "windows-compact-pinned-child-compact-sample.txt.png",
+        "sha256": "4c14adf887adbce01a9a2375a2b3289ac3ea299fc0e6f4f9f05b1912b8d29deb"
+      }
+    },
+    "expanded-restored": {
+      "child-compact-sample.txt": {
+        "name": "windows-expanded-restored-child-compact-sample.txt.png",
+        "sha256": "4eb0df39970b084b926571e661482aaf8f6fb6fef90d728bbb194b81930544d2"
+      }
+    }
+  },
+  "memorySamples": {
+    "before-compact": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 410832896,
+          "pid": 15412,
+          "ppid": 56716,
+          "private": 406704128,
+          "pss": 406704128,
+          "working_set": 228438016
+        }
+      ],
+      "root_pid": 15412,
+      "total_private_bytes": 406704128,
+      "total_private_mib": 387.9,
+      "total_working_set_bytes": 228438016
+    },
+    "after-restore": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 419700736,
+          "pid": 15412,
+          "ppid": 56716,
+          "private": 393199616,
+          "pss": 393199616,
+          "working_set": 217665536
+        }
+      ],
+      "root_pid": 15412,
+      "total_private_bytes": 393199616,
+      "total_private_mib": 375.0,
+      "total_working_set_bytes": 217665536
+    }
+  },
+  "results": {
+    "compactAndRestored": true,
+    "nativeAlwaysOnTopOnAndOff": true,
+    "controlsAvailableInCompact": true,
+    "exactRestoredGeometry": true,
+    "documentAndSelectionPreserved": true,
+    "dirtyDocumentReturnedOnClose": true,
+    "diskSha256Unchanged": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "geometry": {
+      "expandedTitleHeight": 35.0,
+      "compactTitleHeight": 30.0,
+      "expandedEditorTop": 39.0,
+      "compactEditorTop": 30.0,
+      "expandedEditorHeight": 439.4,
+      "compactEditorHeight": 452.4
+    }
+  },
+  "checksPassed": true,
+  "cleanup": {
+    "exitCode": 0,
+    "gracefulClose": true
+  }
+}

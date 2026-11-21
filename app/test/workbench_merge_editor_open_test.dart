@@ -52,11 +52,14 @@ void main() {
     commands = null;
   });
 
-  tearDown(() async {
-    if (temp.existsSync()) await temp.delete(recursive: true);
-  });
-
   Future<void> mount(WidgetTester tester) async {
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() async {
+        if (temp.existsSync()) await temp.delete(recursive: true);
+      });
+    });
     await tester.pumpWidget(MaterialApp(
       home: WorkbenchPage(
         autoFolder: workspace.path,
@@ -212,7 +215,10 @@ void main() {
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('result.txt').first);
+    await tester.tap(find.descendant(
+      of: find.byKey(const ValueKey('tab-2')).first,
+      matching: find.text('result.txt'),
+    ));
     await tester.pump(const Duration(milliseconds: 350));
     final mergeViews = find.byType(RustTextInputField);
     expect(mergeViews, findsNWidgets(2));
@@ -322,7 +328,10 @@ void main() {
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('result.txt').first);
+    await tester.tap(find.descendant(
+      of: find.byKey(const ValueKey('tab-2')).first,
+      matching: find.text('result.txt'),
+    ));
     await tester.pump(const Duration(milliseconds: 350));
     final mergeViews = find.byType(RustTextInputField);
     expect(mergeViews, findsNWidgets(2));

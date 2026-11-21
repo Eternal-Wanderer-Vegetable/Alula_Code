@@ -1,0 +1,17 @@
+{
+  "feature": "feat-141",
+  "scope": "Scoped frame-end ScrollController disposal on workbench logical close",
+  "tests": [
+    {"case": "Split closeAllGroups without Breadcrumb commands", "assertions": ["No disposed-controller reattachment", "Rust UnknownDoc synchronously", "Controllers listener-capable before pump and disposed after frame", "Disk bytes unchanged"]},
+    {"case": "Split close after Breadcrumb focus/selectEditor", "assertions": ["Same safe release and document timing"]},
+    {"case": "Shared document final-view batch plus immediate Workbench teardown", "assertions": ["Shared final Rust document closes synchronously", "Every removed view controller releases even after owner teardown"]},
+    {"case": "Dirty Cancel", "assertions": ["Original input windows/controllers retain identity", "Controllers usable", "Unsaved emoji/CRLF content and dirty state preserved", "Disk bytes unchanged"]}
+  ],
+  "test_file": "app/test/editor_group_close_lifetime_test.dart",
+  "focused_combination_passed": 28,
+  "final_lifetime_passed": 4,
+  "full_flutter_passed": 1532,
+  "history": "Immediate controller release source dates to 96872ca on 2026-10-31; runtime behavior on that old commit was not tested",
+  "limits": ["No claim to fix historical OS crashes", "macOS native/visual/device validation deferred"],
+  "parents_remain_open": true
+}

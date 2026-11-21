@@ -1,0 +1,95 @@
+{
+  "summary": {
+    "changed_count": 12,
+    "affected_count": 0,
+    "changed_files": 9,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:app/test/open_editors_group_close_test.dart:_row",
+      "name": "_row",
+      "type": "Function",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/open_editors_group_close_test.dart:_group",
+      "name": "_group",
+      "type": "Function",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/open_editors_group_close_test.dart:_tab",
+      "name": "_tab",
+      "type": "Function",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/open_editors_group_close_test.dart:_dirtyDialog",
+      "name": "_dirtyDialog",
+      "type": "Variable",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/open_editors_group_close_test.dart:_closeSaved",
+      "name": "_closeSaved",
+      "type": "Variable",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/test/open_editors_group_close_test.dart:_closeAll",
+      "name": "_closeAll",
+      "type": "Variable",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/open_editors_group_close_test.dart:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/open_editors_group_close_test.dart:_deleteDirectoryWithRetry",
+      "name": "_deleteDirectoryWithRetry",
+      "type": "Function",
+      "filePath": "app/test/open_editors_group_close_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.87-open-editors-group-close.md:L1:P05.87 / feat-139 — Open Editors组菜单批量关闭",
+      "name": "P05.87 / feat-139 — Open Editors组菜单批量关闭",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.87-open-editors-group-close.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.87-review.md:L1:P05.87 scoped read-only review",
+      "name": "P05.87 scoped read-only review",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.87-review.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:progress.md:L8:P05 / feat-027 持续推进；P05.86已收尾，当前P05.87 OpenEditors组菜单关闭",
+      "name": "P05 / feat-027 持续推进；P05.86已收尾，当前P05.87 OpenEditors组菜单关闭",
+      "type": "Section",
+      "filePath": "progress.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:session-handoff.md:L33:Next Session First Step",
+      "name": "Next Session First Step",
+      "type": "Section",
+      "filePath": "session-handoff.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": []
+}

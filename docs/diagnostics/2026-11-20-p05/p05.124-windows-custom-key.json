@@ -1,0 +1,227 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "56353516c1d680e6f698f064d8f1940ed28e20be64cb87d16519815a0d01056a",
+  "fixtureSha256": "05c6e339c4ca9aa5b73a39272d54da10b549d03cef34b08ca07a425ca9b35081",
+  "observations": {
+    "fallback-before": {
+      "request": "fallback-before",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          486.79999999999995,
+          979.2,
+          555.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          559.8,
+          979.2,
+          628.8
+        ]
+      },
+      "focus": null,
+      "calls": [],
+      "centerVisible": false,
+      "items": [
+        2,
+        1
+      ]
+    },
+    "fallback-accepted": {
+      "request": "fallback-accepted",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          559.8,
+          979.2,
+          628.8
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": false,
+      "items": [
+        1
+      ]
+    },
+    "older-visible": {
+      "request": "older-visible",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-toast-3": [
+          527.2,
+          486.79999999999995,
+          979.2,
+          555.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          559.8,
+          979.2,
+          628.8
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": false,
+      "items": [
+        3,
+        1
+      ]
+    },
+    "older-focused": {
+      "request": "older-focused",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          457.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-item-3": [
+          528.2,
+          493.79999999999995,
+          978.2,
+          560.8
+        ],
+        "notification-item-1": [
+          528.2,
+          560.8,
+          978.2,
+          627.8
+        ]
+      },
+      "focus": 3,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        3,
+        1
+      ]
+    },
+    "newest-arrived": {
+      "request": "newest-arrived",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          390.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-item-4": [
+          528.2,
+          426.79999999999995,
+          978.2,
+          493.79999999999995
+        ],
+        "notification-item-3": [
+          528.2,
+          493.79999999999995,
+          978.2,
+          560.8
+        ],
+        "notification-item-1": [
+          528.2,
+          560.8,
+          978.2,
+          627.8
+        ]
+      },
+      "focus": 3,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        4,
+        3,
+        1
+      ]
+    },
+    "focus-accepted": {
+      "request": "focus-accepted",
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          457.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-item-4": [
+          528.2,
+          493.79999999999995,
+          978.2,
+          560.8
+        ],
+        "notification-item-1": [
+          528.2,
+          560.8,
+          978.2,
+          627.8
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first",
+        "focus-older-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        4,
+        1
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "productCommit": "9318a5fb7f433a368d678f40854c87f022f6510d",
+  "chord": "Ctrl+Shift+F8",
+  "input": "Native Windows keyboard and mouse events",
+  "artifactMatchedPriorInteractionStatus": true
+}

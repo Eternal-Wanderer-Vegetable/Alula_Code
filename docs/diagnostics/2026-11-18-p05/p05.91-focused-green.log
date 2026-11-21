@@ -1,0 +1,9 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart
+00:00 +0: inline close removes the inactive group including sticky editors and preserves other focus
+00:01 +1: dirty Cancel preserves the whole target group including sticky
+00:03 +2: returning to the original workspace leaves its old close stale
+00:05 +3: dirty Save writes before removing the group and its sticky view
+00:07 +4: shared dirty view closes its owner without prompting or releasing Rust identity
+00:08 +5: inline close removes a preexisting empty inactive group
+00:09 +6: single group has no inline close button and closing all retains it
+00:09 +7: All tests passed!

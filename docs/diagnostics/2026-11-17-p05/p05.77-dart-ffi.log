@@ -1,0 +1,63 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workspace_symbols_ffi_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/workspace_symbols_ffi_test.dart: ABI41 workspace symbols preserve ranges and cancel through real FFI
+00:01 +1: loading E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart
+00:01 +1: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: ABI 版本匹配
+00:01 +2: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI case conversion preserves full Unicode mappings and NUL
+00:01 +3: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI title case uses Unicode boundaries and preserves NUL
+00:01 +4: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI camel case uses Unicode boundaries and preserves NUL
+00:01 +5: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI snake case uses Unicode boundaries and preserves NUL
+00:01 +6: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI Pascal case preserves dots, Unicode, and NUL
+00:01 +7: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI numeric transform resolves bounded UTF-16 plans
+00:01 +8: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust FFI transpose resolves UTF-16 and CRLF boundary plans
+00:01 +9: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 示例词删除通过 FFI 可撤销并保存回读
+00:01 +10: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 示例行边界删除通过 FFI 标脏并保存回读
+00:01 +11: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 覆写粘贴范围通过 FFI 保留 UTF-16、BOM、emoji 与 CRLF
+00:01 +12: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: didClose 只关闭语言文档，不释放 Rust 文本缓冲区
+00:01 +13: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: LSP position conversions keep UTF-16, BOM, emoji and CRLF semantics
+00:01 +14: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 资源状态与进程登记桥接可往返
+00:01 +15: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 打开→插入→版本回执→resync 全文一致
+00:01 +16: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 权威文档 UTF-16 范围读取有界且不拆代理对
+00:01 +17: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 超长单行可按 UTF-16 页读取而不返回全文
+00:01 +18: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 按行 UTF-16 起点定位支持 BOM、emoji、CRLF 和末尾空行
+00:01 +19: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 一次返回有界矩形选择并保持 UTF-16 标量边界
+00:01 +20: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 行边界按 UTF-16 返回 smart Home、End 与 CRLF 位置
+00:01 +21: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 可视区批量按行读取保留 UTF-16 边界并支持长行窗口
+00:01 +22: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust minimap 抽样按文档版本返回有界均匀行前缀
+00:01 +23: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: Rust 符号 FFI 返回包含 BOM emoji CRLF 的闭合行范围
+00:01 +24: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 过期版本被拒绝并给出 Rust 当前版本
+00:01 +25: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 中文与 emoji 混排增量在 FFI 边界正确
+00:01 +26: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 先删后插的 op 序列在 Rust 侧按序生效
+00:01 +27: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 跨文档 FFI 事务成功提交且版本失败时整体不变
+00:01 +28: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 非法 UTF-16 边界（代理对中间）被 Rust 拒绝
+00:01 +29: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: 文件 FFI 往返保留 UTF-16 BOM 与 CRLF 元数据
+00:01 +30: E:/temp/alula-pr3-20261117/app/test/core_sync_test.dart: GBK 编码保存遇到不可表示字符时不覆盖目标文件
+00:01 +31: loading E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart
+00:02 +31: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: Dart ABI guard accepts v41 and rejects v40
+00:02 +32: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI projection reports unresolved and accepted conflicts
+00:02 +33: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI result ranges shift with Unicode choices and allow deletion
+00:02 +34: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI projection preserves BOM, emoji, CRLF, CR and final newline
+00:02 +35: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate returns a complete non-overlapping edit
+00:02 +36: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate preserves BOM and mixed line endings
+00:02 +37: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate reports bounded input and parse errors
+00:02 +38: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: typed combination candidate response rejects malformed envelopes
+00:02 +39: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI reports malformed and unknown-conflict requests
+00:02 +40: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: typed projection rejects conflict ranges that do not match result
+00:02 +41: All tests passed!
