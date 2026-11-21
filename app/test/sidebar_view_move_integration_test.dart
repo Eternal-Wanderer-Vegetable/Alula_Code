@@ -378,6 +378,90 @@ void main() {
     });
   }
 
+  for (final side in [
+    primarySidebarViewLocation,
+    secondarySidebarViewLocation
+  ]) {
+    testWidgets('$side search command reveals and focuses the existing input',
+        (tester) async {
+      tester.view.physicalSize = const Size(1480, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final secondary = side == secondarySidebarViewLocation;
+      final layout = WorkbenchLayout();
+      if (secondary) {
+        layout.moveSidebarView('search', side);
+        layout.moveSidebarView('git', side);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      layout.selectSidebarView('git');
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+      ));
+      await tester.pumpAndSettle();
+      final search = find.byKey(const ValueKey('search-input'));
+      final region = find.byKey(ValueKey(
+        'wb-region-${secondary ? secondarySidebarRegion : 'sidebar'}',
+      ));
+      final editor = find.byKey(const ValueKey('wb-region-editor'));
+
+      Future<void> chord(LogicalKeyboardKey key,
+          {bool shift = false, bool alt = false}) async {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        if (alt) await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        try {
+          await tester.sendKeyEvent(key);
+        } finally {
+          if (alt) await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+          if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        }
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> reveal() => chord(LogicalKeyboardKey.keyF, shift: true);
+      void expectFocused() {
+        expect(find.descendant(of: region, matching: search), findsOneWidget);
+        expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      }
+
+      expect(search, findsNothing);
+      await reveal();
+      expectFocused();
+      const query = 'preserved while reopening Search 😀';
+      await tester.enterText(search, query);
+      await chord(LogicalKeyboardKey.keyN);
+      await tester.tap(editor);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isFalse);
+
+      await reveal();
+      expectFocused();
+      await reveal();
+      expectFocused();
+      await chord(LogicalKeyboardKey.keyB, alt: secondary);
+      expect(search, findsNothing);
+      await reveal();
+      expectFocused();
+      expect(tester.widget<TextField>(search).controller!.text, query);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(
+          layoutStore.tryLoad()!.sidebarViewLocations?['search'] ??
+              primarySidebarViewLocation,
+          side);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('an Activity Bar view moves to an independent panel title entry',
       (tester) async {
     tester.view.physicalSize = const Size(1400, 980);

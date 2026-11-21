@@ -1231,7 +1231,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
-    reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
+    reg('view.search', '查看', '全局搜索…', () async => _revealSearchView());
     reg(
       'workbench.action.moveView',
       '查看',
@@ -20849,6 +20849,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
+  void _revealSearchView() {
+    const view = 'search';
+    final location = _layout.sidebarViewLocation(view);
+    if (location == panelSidebarViewLocation) {
+      _showPanelHostedView(view);
+      return;
+    }
+    final region = location == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    if (_layout.sidebarSelection(location) != view ||
+        _layout.isCollapsed(region)) {
+      _selectSidebarView(view);
+    }
+    if (!_layout.root.sidebarViewPlacements.containsKey(view)) {
+      _focusMovedSearchView(view, location);
+    }
+  }
+
   void _selectSidebarView(String view) {
     final location = _layout.sidebarViewLocation(view);
     if (location == panelSidebarViewLocation) {
