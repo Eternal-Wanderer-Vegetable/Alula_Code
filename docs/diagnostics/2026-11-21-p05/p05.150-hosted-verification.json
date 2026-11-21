@@ -1,0 +1,1087 @@
+{
+  "productSha": "fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+  "pullRequest": {
+    "headRefName": "codex/vscode-parity-p05",
+    "headRefOid": "fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3"
+  },
+  "ci": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "headSha": "fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+    "jobs": [
+      {
+        "completedAt": "2026-11-21T01:07:46Z",
+        "conclusion": "success",
+        "databaseId": 136672624925,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-21T01:06:00Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-21T01:06:03Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-21T01:06:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:11Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-11-21T01:06:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:19Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "number": 3,
+            "startedAt": "2026-11-21T01:06:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:28Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@v2",
+            "number": 4,
+            "startedAt": "2026-11-21T01:06:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:31Z",
+            "conclusion": "success",
+            "name": "Format",
+            "number": 5,
+            "startedAt": "2026-11-21T01:06:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:51Z",
+            "conclusion": "success",
+            "name": "Clippy（-D warnings）",
+            "number": 6,
+            "startedAt": "2026-11-21T01:06:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:22Z",
+            "conclusion": "success",
+            "name": "Tests",
+            "number": 7,
+            "startedAt": "2026-11-21T01:06:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:42Z",
+            "conclusion": "success",
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "number": 8,
+            "startedAt": "2026-11-21T01:07:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:42Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "number": 15,
+            "startedAt": "2026-11-21T01:07:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:45Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 16,
+            "startedAt": "2026-11-21T01:07:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:45Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-11-21T01:07:45Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848080923/job/136672624925"
+      },
+      {
+        "completedAt": "2026-11-21T01:06:09Z",
+        "conclusion": "success",
+        "databaseId": 136672625234,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-21T01:06:00Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-21T01:06:02Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-21T01:06:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:06Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-11-21T01:06:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:06Z",
+            "conclusion": "success",
+            "name": "Validate harness（AGENTS/feature_list/progress/init）",
+            "number": 3,
+            "startedAt": "2026-11-21T01:06:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:07Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 6,
+            "startedAt": "2026-11-21T01:06:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:07Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7,
+            "startedAt": "2026-11-21T01:06:07Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848080923/job/136672625234"
+      },
+      {
+        "completedAt": "2026-11-21T01:18:10Z",
+        "conclusion": "success",
+        "databaseId": 136672625342,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-21T01:06:00Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-21T01:06:03Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-21T01:06:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:06Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-11-21T01:06:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:06Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "number": 3,
+            "startedAt": "2026-11-21T01:06:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:09Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@v2",
+            "number": 4,
+            "startedAt": "2026-11-21T01:06:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:23Z",
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "number": 5,
+            "startedAt": "2026-11-21T01:06:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:33Z",
+            "conclusion": "success",
+            "name": "Build Rust core (libalula_core.so)",
+            "number": 6,
+            "startedAt": "2026-11-21T01:06:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:57Z",
+            "conclusion": "success",
+            "name": "Run subosito/flutter-action@v2",
+            "number": 7,
+            "startedAt": "2026-11-21T01:06:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:58Z",
+            "conclusion": "success",
+            "name": "Run flutter pub get",
+            "number": 8,
+            "startedAt": "2026-11-21T01:06:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:07:15Z",
+            "conclusion": "success",
+            "name": "Analyze",
+            "number": 9,
+            "startedAt": "2026-11-21T01:06:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:17:57Z",
+            "conclusion": "success",
+            "name": "Tests",
+            "number": 10,
+            "startedAt": "2026-11-21T01:07:15Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:18:06Z",
+            "conclusion": "success",
+            "name": "Verify native locale-aware Open Editors collation",
+            "number": 11,
+            "startedAt": "2026-11-21T01:17:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:18:07Z",
+            "conclusion": "success",
+            "name": "Post Run subosito/flutter-action@v2",
+            "number": 20,
+            "startedAt": "2026-11-21T01:18:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:18:07Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "number": 21,
+            "startedAt": "2026-11-21T01:18:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:18:07Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 22,
+            "startedAt": "2026-11-21T01:18:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:18:07Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 23,
+            "startedAt": "2026-11-21T01:18:07Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848080923/job/136672625342"
+      },
+      {
+        "completedAt": "2026-11-21T01:06:39Z",
+        "conclusion": "success",
+        "databaseId": 136672625475,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-21T01:06:00Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-21T01:06:02Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-21T01:06:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:05Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-11-21T01:06:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:06Z",
+            "conclusion": "success",
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "number": 3,
+            "startedAt": "2026-11-21T01:06:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:13Z",
+            "conclusion": "success",
+            "name": "Run Swatinem/rust-cache@v2",
+            "number": 4,
+            "startedAt": "2026-11-21T01:06:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:15Z",
+            "conclusion": "success",
+            "name": "Format",
+            "number": 5,
+            "startedAt": "2026-11-21T01:06:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:19Z",
+            "conclusion": "success",
+            "name": "Clippy（-D warnings）",
+            "number": 6,
+            "startedAt": "2026-11-21T01:06:15Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:36Z",
+            "conclusion": "success",
+            "name": "Tests",
+            "number": 7,
+            "startedAt": "2026-11-21T01:06:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:36Z",
+            "conclusion": "skipped",
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "number": 8,
+            "startedAt": "2026-11-21T01:06:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:37Z",
+            "conclusion": "success",
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "number": 15,
+            "startedAt": "2026-11-21T01:06:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:37Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 16,
+            "startedAt": "2026-11-21T01:06:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-21T01:06:37Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-11-21T01:06:37Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848080923/job/136672625475"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848080923",
+    "databaseId": 44848080923
+  },
+  "platformAvailabilityRuns": [
+    {
+      "conclusion": "",
+      "event": "push",
+      "headSha": "fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+      "jobs": [
+        {
+          "completedAt": "2026-11-21T01:10:38Z",
+          "conclusion": "success",
+          "databaseId": 136672603684,
+          "name": "Linux x64 build and launch smoke",
+          "startedAt": "2026-11-21T01:05:56Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-11-21T01:06:00Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-11-21T01:05:57Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:06Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-11-21T01:06:00Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:10Z",
+              "conclusion": "success",
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "number": 3,
+              "startedAt": "2026-11-21T01:06:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:13Z",
+              "conclusion": "success",
+              "name": "Run Swatinem/rust-cache@v2",
+              "number": 4,
+              "startedAt": "2026-11-21T01:06:10Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:55Z",
+              "conclusion": "success",
+              "name": "Install Linux desktop build dependencies",
+              "number": 5,
+              "startedAt": "2026-11-21T01:06:13Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:07:10Z",
+              "conclusion": "success",
+              "name": "Run subosito/flutter-action@v2",
+              "number": 6,
+              "startedAt": "2026-11-21T01:06:55Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:07:25Z",
+              "conclusion": "success",
+              "name": "Build Rust core",
+              "number": 7,
+              "startedAt": "2026-11-21T01:07:10Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:08:31Z",
+              "conclusion": "success",
+              "name": "Build Linux Release bundle",
+              "number": 8,
+              "startedAt": "2026-11-21T01:07:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:18Z",
+              "conclusion": "success",
+              "name": "Build Linux auxiliary focus smoke app",
+              "number": 9,
+              "startedAt": "2026-11-21T01:08:31Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:25Z",
+              "conclusion": "success",
+              "name": "Verify native Linux auxiliary-window focus handoff",
+              "number": 10,
+              "startedAt": "2026-11-21T01:09:18Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:25Z",
+              "conclusion": "success",
+              "name": "Upload Linux auxiliary focus diagnostics",
+              "number": 11,
+              "startedAt": "2026-11-21T01:09:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:34Z",
+              "conclusion": "success",
+              "name": "Verify native Linux Open Editors collation",
+              "number": 12,
+              "startedAt": "2026-11-21T01:09:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:47Z",
+              "conclusion": "success",
+              "name": "Verify native Linux clipboard formats",
+              "number": 13,
+              "startedAt": "2026-11-21T01:09:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:09Z",
+              "conclusion": "success",
+              "name": "Verify native Linux move, copy, and external text drag/drop",
+              "number": 14,
+              "startedAt": "2026-11-21T01:09:47Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:09Z",
+              "conclusion": "success",
+              "name": "Upload Linux native drag/drop diagnostics",
+              "number": 15,
+              "startedAt": "2026-11-21T01:10:09Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:10Z",
+              "conclusion": "success",
+              "name": "Add Rust core and verify Linux bundle",
+              "number": 16,
+              "startedAt": "2026-11-21T01:10:09Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:22Z",
+              "conclusion": "success",
+              "name": "Launch Linux app under Xvfb",
+              "number": 17,
+              "startedAt": "2026-11-21T01:10:10Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:34Z",
+              "conclusion": "success",
+              "name": "Launch Linux native-titlebar mode under Xvfb",
+              "number": 18,
+              "startedAt": "2026-11-21T01:10:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:35Z",
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 19,
+              "startedAt": "2026-11-21T01:10:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:36Z",
+              "conclusion": "success",
+              "name": "Post Run subosito/flutter-action@v2",
+              "number": 36,
+              "startedAt": "2026-11-21T01:10:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:36Z",
+              "conclusion": "success",
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "number": 37,
+              "startedAt": "2026-11-21T01:10:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:36Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 38,
+              "startedAt": "2026-11-21T01:10:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:36Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 39,
+              "startedAt": "2026-11-21T01:10:36Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686/job/136672603684"
+        },
+        {
+          "completedAt": "0001-01-01T00:00:00Z",
+          "conclusion": "",
+          "databaseId": 136672603842,
+          "name": "macOS build, launch smoke, and app package",
+          "startedAt": "2026-11-21T01:05:57Z",
+          "status": "in_progress",
+          "steps": [
+            {
+              "completedAt": "2026-11-21T01:06:01Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-11-21T01:05:57Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:07Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-11-21T01:06:01Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:34Z",
+              "conclusion": "success",
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "number": 3,
+              "startedAt": "2026-11-21T01:06:07Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:41Z",
+              "conclusion": "success",
+              "name": "Run Swatinem/rust-cache@v2",
+              "number": 4,
+              "startedAt": "2026-11-21T01:06:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:08:56Z",
+              "conclusion": "success",
+              "name": "Run subosito/flutter-action@v2",
+              "number": 5,
+              "startedAt": "2026-11-21T01:06:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:09:45Z",
+              "conclusion": "success",
+              "name": "Build Rust core",
+              "number": 6,
+              "startedAt": "2026-11-21T01:08:56Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:10:40Z",
+              "conclusion": "success",
+              "name": "Build fake LSP fixture for real-FFI tests",
+              "number": 7,
+              "startedAt": "2026-11-21T01:09:45Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Flutter analyze and tests",
+              "number": 8,
+              "startedAt": "2026-11-21T01:10:40Z",
+              "status": "in_progress"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Build macOS Release bundle",
+              "number": 9,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Verify native macOS clipboard formats",
+              "number": 10,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Compile native macOS drag/drop input helper",
+              "number": 11,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Grant accessibility permission to the drag/drop input helper",
+              "number": 12,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Verify native macOS text drag/drop interaction",
+              "number": 13,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Upload macOS native drag/drop interaction diagnostics",
+              "number": 14,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Bundle and sign Rust core",
+              "number": 15,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Launch macOS app",
+              "number": 16,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+              "number": 17,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Collect macOS startup diagnostics",
+              "number": 18,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Upload macOS startup diagnostics",
+              "number": 19,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Package macOS app",
+              "number": 20,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 21,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Post Run subosito/flutter-action@v2",
+              "number": 40,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "number": 41,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            },
+            {
+              "completedAt": "0001-01-01T00:00:00Z",
+              "conclusion": "",
+              "name": "Post Run actions/checkout@v4",
+              "number": 42,
+              "startedAt": "0001-01-01T00:00:00Z",
+              "status": "pending"
+            }
+          ],
+          "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686/job/136672603842"
+        },
+        {
+          "completedAt": "2026-11-21T01:17:14Z",
+          "conclusion": "success",
+          "databaseId": 136672604326,
+          "name": "Windows x64 build and launch smoke",
+          "startedAt": "2026-11-21T01:05:56Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-11-21T01:05:59Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-11-21T01:05:57Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:07Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-11-21T01:05:59Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:14Z",
+              "conclusion": "success",
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "number": 3,
+              "startedAt": "2026-11-21T01:06:07Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:06:21Z",
+              "conclusion": "success",
+              "name": "Run Swatinem/rust-cache@v2",
+              "number": 4,
+              "startedAt": "2026-11-21T01:06:14Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:07:44Z",
+              "conclusion": "success",
+              "name": "Run subosito/flutter-action@v2",
+              "number": 5,
+              "startedAt": "2026-11-21T01:06:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:08:26Z",
+              "conclusion": "success",
+              "name": "Build Rust core",
+              "number": 6,
+              "startedAt": "2026-11-21T01:07:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:08:30Z",
+              "conclusion": "success",
+              "name": "Resolve Flutter dependencies",
+              "number": 7,
+              "startedAt": "2026-11-21T01:08:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:11:48Z",
+              "conclusion": "success",
+              "name": "Build Windows Release bundle",
+              "number": 8,
+              "startedAt": "2026-11-21T01:08:30Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:03Z",
+              "conclusion": "success",
+              "name": "Build Windows auxiliary focus smoke app",
+              "number": 9,
+              "startedAt": "2026-11-21T01:11:48Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:12Z",
+              "conclusion": "success",
+              "name": "Verify native Windows auxiliary-window focus handoff",
+              "number": 10,
+              "startedAt": "2026-11-21T01:14:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:13Z",
+              "conclusion": "success",
+              "name": "Upload Windows auxiliary focus diagnostics",
+              "number": 11,
+              "startedAt": "2026-11-21T01:14:12Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:25Z",
+              "conclusion": "success",
+              "name": "Verify native Windows Open Editors collation",
+              "number": 12,
+              "startedAt": "2026-11-21T01:14:13Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:26Z",
+              "conclusion": "success",
+              "name": "Add Rust core DLL",
+              "number": 13,
+              "startedAt": "2026-11-21T01:14:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:14:34Z",
+              "conclusion": "success",
+              "name": "Launch Windows app and capture visible client area",
+              "number": 14,
+              "startedAt": "2026-11-21T01:14:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:15:59Z",
+              "conclusion": "success",
+              "name": "Run P03.7 Windows desktop interaction suite",
+              "number": 15,
+              "startedAt": "2026-11-21T01:14:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:16:34Z",
+              "conclusion": "success",
+              "name": "Verify native Windows move, copy, and external text drag/drop",
+              "number": 16,
+              "startedAt": "2026-11-21T01:15:59Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:16:35Z",
+              "conclusion": "success",
+              "name": "Upload Windows native drag/drop diagnostics",
+              "number": 17,
+              "startedAt": "2026-11-21T01:16:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:03Z",
+              "conclusion": "success",
+              "name": "Verify native Windows clipboard formats",
+              "number": 18,
+              "startedAt": "2026-11-21T01:16:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:03Z",
+              "conclusion": "success",
+              "name": "Verify Windows accessibility tree and smoke lifecycle",
+              "number": 19,
+              "startedAt": "2026-11-21T01:17:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:06Z",
+              "conclusion": "success",
+              "name": "Launch Windows native-titlebar mode and close gracefully",
+              "number": 20,
+              "startedAt": "2026-11-21T01:17:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:09Z",
+              "conclusion": "success",
+              "name": "Run actions/upload-artifact@v4",
+              "number": 21,
+              "startedAt": "2026-11-21T01:17:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:11Z",
+              "conclusion": "success",
+              "name": "Post Run subosito/flutter-action@v2",
+              "number": 40,
+              "startedAt": "2026-11-21T01:17:09Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:11Z",
+              "conclusion": "success",
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "number": 41,
+              "startedAt": "2026-11-21T01:17:11Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:13Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 42,
+              "startedAt": "2026-11-21T01:17:11Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-11-21T01:17:13Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 43,
+              "startedAt": "2026-11-21T01:17:13Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686/job/136672604326"
+        }
+      ],
+      "status": "in_progress",
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686",
+      "databaseId": 44848074686,
+      "artifacts": [
+        {
+          "id": 14684522137,
+          "name": "alula-windows-auxiliary-focus-44848074686-1",
+          "size_in_bytes": 693,
+          "digest": "sha256:b3441911c454f39450614d76ebd5a0dc2799efa55467c5610d0db130adf29b21",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14684522137/zip",
+          "expires_at": "2026-11-28T01:14:12Z"
+        },
+        {
+          "id": 14684422815,
+          "name": "alula-windows-x64-fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+          "size_in_bytes": 16408565,
+          "digest": "sha256:9cec6bb6349e151782a5559c657992e8a98e420451049c2d04b548e61da3291e",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14684422815/zip",
+          "expires_at": "2027-02-19T01:05:54Z"
+        },
+        {
+          "id": 14684293066,
+          "name": "alula-windows-native-dnd-44848074686-1",
+          "size_in_bytes": 3849,
+          "digest": "sha256:e9b47a2f61f94ccdfb44fbcd2d1165c67dfe87445ff71489233fd2cc5c081aec",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14684293066/zip",
+          "expires_at": "2026-11-28T01:16:34Z"
+        },
+        {
+          "id": 14684226923,
+          "name": "alula-linux-auxiliary-focus-44848074686-1",
+          "size_in_bytes": 698,
+          "digest": "sha256:2938685f1bf294030298c89b256416570e92f70678bf33d309d05233b44b3cf5",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14684226923/zip",
+          "expires_at": "2026-11-28T01:09:25Z"
+        },
+        {
+          "id": 14683563602,
+          "name": "alula-linux-native-dnd-44848074686-1",
+          "size_in_bytes": 3303,
+          "digest": "sha256:22fef87e1775aeeff76ef0c702068d253a873b2c7f2eea3b1bd4fafb6affc555",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14683563602/zip",
+          "expires_at": "2026-11-28T01:10:09Z"
+        },
+        {
+          "id": 14683498932,
+          "name": "alula-linux-x64-fe5fd41d10e49d7a6dd6d5d00fad862a82452c63",
+          "size_in_bytes": 14904644,
+          "digest": "sha256:f08b8459a688bd55d60c719801059001a6dae5c94b7a344f5335d06cc4ff2a1b",
+          "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14683498932/zip",
+          "expires_at": "2027-02-19T01:05:54Z"
+        }
+      ]
+    }
+  ],
+  "selectedPlatformEvidence": {
+    "Windows": {
+      "run": 44848074686,
+      "job": 136672604326,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686"
+    },
+    "Linux": {
+      "run": 44848074686,
+      "job": 136672603684,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44848074686"
+    }
+  },
+  "limits": {
+    "macOSPhysicalDevice": "deferred by user",
+    "linuxLocal": "WSL Xvfb with physical X11 key and pointer events"
+  }
+}
