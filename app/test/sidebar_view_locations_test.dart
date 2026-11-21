@@ -518,6 +518,62 @@ void main() {
     expect(changes, 1);
   });
 
+  test('moving a sidebar container persists the entire group atomically', () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const primary = primarySidebarViewLocation;
+    const secondary = secondarySidebarViewLocation;
+    for (final view in ['search', 'outline']) {
+      layout.moveSidebarView(view, panelSidebarViewLocation);
+      layout.moveSidebarView(view, primary,
+          sidebarPlacement: (container: 'explorer', before: view == 'search'));
+    }
+    layout.setSidebarGroupPaneWeights(
+        'explorer', {'explorer': 1, 'search': .8, 'outline': 1.2});
+    layout.setSidebarGroupPaneCollapsed('outline', true);
+    final placements = Map.of(layout.root.sidebarViewPlacements);
+    final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+    final observed = <List<String>>[];
+    layout.addListener(() {
+      observed.add([
+        for (final view in ['explorer', 'search', 'outline'])
+          layout.sidebarViewLocation(view),
+      ]);
+    });
+
+    expect(layout.moveSidebarView('search', secondary, moveSidebarGroup: true),
+        isFalse);
+    expect(layout.moveSidebarView('explorer', primary, moveSidebarGroup: true),
+        isFalse);
+    expect(
+        layout.moveSidebarView('explorer', panelSidebarViewLocation,
+            moveSidebarGroup: true),
+        isFalse);
+    expect(observed, isEmpty);
+
+    expect(
+        layout.moveSidebarView('explorer', secondary, moveSidebarGroup: true),
+        isTrue);
+    expect(observed, [
+      [secondary, secondary, secondary],
+    ]);
+    expect(layout.primarySidebarView, 'git');
+    expect(layout.secondarySidebarView, 'explorer');
+    expect(layout.root.sidebarViewPlacements, placements);
+    expect(layout.root.sidebarGroupPaneWeights, weights);
+    expect(layout.root.sidebarGroupCollapsedPanes, {'outline'});
+
+    final restored =
+        WorkbenchLayout(root: WbSplit.fromJson(layout.root.toJson()));
+    addTearDown(restored.dispose);
+    expect(restored.secondarySidebarView, 'explorer');
+    expect(restored.groupedSidebarViews('explorer', before: true), ['search']);
+    expect(
+        restored.groupedSidebarViews('explorer', before: false), ['outline']);
+    expect(restored.root.sidebarGroupPaneWeights, weights);
+    expect(restored.root.sidebarGroupCollapsedPanes, {'outline'});
+  });
+
   test('relative sidebar insertion saves order with the move', () {
     final layout = WorkbenchLayout();
     addTearDown(layout.dispose);

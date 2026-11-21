@@ -209,7 +209,8 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   /// source side's selection. When [panelTarget] or [sidebarTarget] identifies
   /// a pane in the destination group, place the view adjacent to that pane.
   /// [detachFromSidebarGroup] allows a grouped member to become an independent
-  /// entry on its current side.
+  /// entry on its current side. [moveSidebarGroup] moves a sidebar container
+  /// together with its panes and their existing layout.
   bool moveSidebarView(
     String view,
     String destination, {
@@ -218,6 +219,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     String? panelTarget,
     String? sidebarTarget,
     bool detachFromSidebarGroup = false,
+    bool moveSidebarGroup = false,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -234,6 +236,16 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       root.sidebarViewLocations,
     );
     final source = locations[view]!;
+    if (moveSidebarGroup &&
+        (source == destination ||
+            source == panelSidebarViewLocation ||
+            destination == panelSidebarViewLocation ||
+            panelPlacement != null ||
+            sidebarPlacement != null ||
+            detachFromSidebarGroup ||
+            root.sidebarViewPlacements.containsKey(view))) {
+      return false;
+    }
     if (source == destination &&
         (!detachFromSidebarGroup ||
             sidebarPlacement != null ||
@@ -276,11 +288,19 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       locations.remove(view);
     }
     locations[view] = destination;
+    if (moveSidebarGroup) {
+      for (final entry in root.sidebarViewPlacements.entries) {
+        if (entry.value.container == view) locations[entry.key] = destination;
+      }
+    } else {
+      root.sidebarViewPlacements.remove(view);
+      root.sidebarViewPlacements.removeWhere(
+        (_, placement) => placement.container == view,
+      );
+      root.sidebarGroupPaneWeights.remove(view);
+      root.sidebarGroupCollapsedPanes.remove(view);
+    }
     root.sidebarViewLocations = locations;
-    root.sidebarViewPlacements.remove(view);
-    root.sidebarViewPlacements.removeWhere(
-      (_, placement) => placement.container == view,
-    );
     if (sidebarPlacement != null) {
       if (sidebarOrder == null) {
         root.sidebarViewPlacements[view] = sidebarPlacement;
@@ -289,11 +309,9 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       }
     }
     final stillGrouped = root.sidebarGroupedPaneIds;
-    root.sidebarGroupPaneWeights.remove(view);
     root.sidebarGroupPaneWeights.removeWhere(
       (id, _) => !stillGrouped.contains(id),
     );
-    root.sidebarGroupCollapsedPanes.remove(view);
     root.sidebarGroupCollapsedPanes.removeWhere(
       (id) => !stillGrouped.contains(id),
     );

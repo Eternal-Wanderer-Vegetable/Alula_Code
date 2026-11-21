@@ -21011,11 +21011,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String destination, {
     bool fromDrag = false,
     bool detachFromSidebarGroup = false,
+    bool moveSidebarGroup = false,
   }) {
     if (!_layout.moveSidebarView(
       view,
       destination,
       detachFromSidebarGroup: detachFromSidebarGroup,
+      moveSidebarGroup: moveSidebarGroup,
     )) {
       return;
     }
@@ -22777,15 +22779,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildSidebarEntryDropTarget(String location, Widget child) {
+    String? viewFor(Object drag) {
+      if (location == secondarySidebarViewLocation &&
+          drag is ActivityBarViewDrag &&
+          _layout.sidebarViewLocation(drag.view) ==
+              primarySidebarViewLocation &&
+          _layout.root.sidebarViewPlacements.values.any(
+            (placement) => placement.container == drag.view,
+          )) {
+        return drag.view;
+      }
+      return _viewForSidebarDrop(location, drag);
+    }
+
     return DragTarget<Object>(
       key: ValueKey('grouped-panel-view-entry-drop-$location'),
-      onWillAcceptWithDetails: (details) =>
-          _viewForSidebarDrop(location, details.data) != null,
+      onWillAcceptWithDetails: (details) => viewFor(details.data) != null,
       onAcceptWithDetails: (details) {
-        final view = _viewForSidebarDrop(location, details.data);
-        if (view != null) {
-          _moveSidebarView(view, location, detachFromSidebarGroup: true);
-        }
+        final view = viewFor(details.data);
+        if (view == null) return;
+        final moveGroup = details.data is ActivityBarViewDrag;
+        _moveSidebarView(
+          view,
+          location,
+          detachFromSidebarGroup: !moveGroup,
+          moveSidebarGroup: moveGroup,
+        );
       },
       builder: (context, candidates, _) => Stack(
         fit: StackFit.passthrough,
