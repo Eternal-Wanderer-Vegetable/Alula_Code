@@ -22566,6 +22566,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _layout.setSidebarGroupPaneWeights(container, weights),
             onSetCollapsed: _layout.setSidebarGroupPaneCollapsed,
             onFocus: (view) => _focusSidebarRegion(location, view),
+            onReorder: (source, target, before) =>
+                _layout.reorderSidebarGroupPane(
+              container,
+              source,
+              target,
+              before: before,
+            ),
           ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

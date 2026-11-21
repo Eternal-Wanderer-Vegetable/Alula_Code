@@ -1162,6 +1162,160 @@ void main() {
     });
   }
 
+  for (final location in [
+    primarySidebarViewLocation,
+    secondarySidebarViewLocation,
+  ]) {
+    testWidgets('$location pane headers reorder only inside their group',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      if (location == secondarySidebarViewLocation) {
+        layout.moveSidebarView('explorer', location);
+        layout.showRegion(secondarySidebarRegion);
+      }
+      for (final view in ['search', 'git']) {
+        layout.moveSidebarView(view, panelSidebarViewLocation);
+        layout.moveSidebarView(view, location, sidebarPlacement: (
+          container: 'explorer',
+          before: view == 'search'
+        ));
+      }
+      layout.setSidebarGroupPaneWeights(
+        'explorer',
+        {'search': 1.18, 'explorer': 0.84, 'git': 0.98},
+      );
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final search = find.byKey(const ValueKey('search-input'));
+      final searchHeader =
+          find.byKey(ValueKey('sidebar-group-header-$location-search'));
+      final explorerHeader =
+          find.byKey(ValueKey('sidebar-group-header-$location-explorer'));
+      final searchPane = find.byKey(ValueKey('$location-sidebar-group-search'));
+      final explorerPane =
+          find.byKey(ValueKey('$location-sidebar-group-original-explorer'));
+      final gitPane = find.byKey(ValueKey('$location-sidebar-group-git'));
+      final before =
+          find.byKey(ValueKey('sidebar-group-drop-$location-explorer-before'));
+      final after =
+          find.byKey(ValueKey('sidebar-group-drop-$location-explorer-after'));
+
+      double height(Finder pane) => tester.getSize(pane).height;
+      bool searchFirst() =>
+          tester.getTopLeft(searchPane).dy < tester.getTopLeft(explorerPane).dy;
+      Future<TestGesture> dragTo(
+          Finder header, Finder body, double fraction) async {
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(header) + const Offset(32, 14),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveBy(const Offset(18, 0));
+        final size = tester.getSize(body);
+        await gesture.moveTo(
+          tester.getTopLeft(body) +
+              Offset(size.width * .6, size.height * fraction),
+        );
+        await tester.pump();
+        return gesture;
+      }
+
+      const input = 'search retained through reorder 😀';
+      await tester.enterText(search, input);
+      final originalSearchHeight = height(searchPane);
+      final originalExplorerHeight = height(explorerPane);
+      final gitRect = tester.getRect(gitPane);
+      final savedWeights = layoutStore.tryLoad()!.sidebarGroupPaneWeights;
+
+      final invalid = await dragTo(
+        searchHeader,
+        find.byKey(const ValueKey('wb-region-editor')),
+        .6,
+      );
+      expect(before, findsNothing);
+      expect(after, findsNothing);
+      await invalid.up();
+      await tester.pumpAndSettle();
+      expect(searchFirst(), isTrue);
+      final noOp = await dragTo(searchHeader, explorerPane, .25);
+      expect(before, findsOneWidget);
+      await noOp.up();
+      await tester.pumpAndSettle();
+      expect(searchFirst(), isTrue);
+
+      final canceled = await dragTo(searchHeader, explorerPane, .74);
+      expect(after, findsOneWidget);
+      await canceled.cancel();
+      await tester.pumpAndSettle();
+      expect(after, findsNothing);
+      expect(searchFirst(), isTrue);
+      final move = await dragTo(searchHeader, explorerPane, .74);
+      expect(after, findsOneWidget);
+      await move.up();
+      await tester.pumpAndSettle();
+      expect(searchFirst(), isFalse);
+      expect(height(searchPane), closeTo(originalSearchHeight, 0.05));
+      expect(height(explorerPane), closeTo(originalExplorerHeight, 0.05));
+      expect(tester.getRect(gitPane), gitRect);
+      expect(tester.widget<TextField>(search).controller!.text, input);
+
+      await tester.tap(searchHeader, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(search, findsNothing);
+      final moveClosed = await dragTo(searchHeader, explorerPane, .25);
+      expect(before, findsOneWidget);
+      await moveClosed.up();
+      await tester.pumpAndSettle();
+      expect(searchFirst(), isTrue);
+      expect(height(searchPane), 28);
+      expect(search, findsNothing);
+      await tester.tap(searchHeader, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(search).controller!.text, input);
+      expect(height(searchPane), closeTo(originalSearchHeight, 0.05));
+
+      final moveHost = await dragTo(explorerHeader, searchPane, .25);
+      await moveHost.up();
+      await tester.pumpAndSettle();
+      expect(searchFirst(), isFalse);
+      await tester.tap(searchHeader, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewPlacements['search'],
+          (container: 'explorer', before: false));
+      expect(saved.sidebarGroupPaneWeights, savedWeights);
+      expect(saved.sidebarGroupCollapsedPanes, {'search'});
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(searchFirst(), isFalse);
+      expect(height(searchPane), 28);
+      await tester.tap(searchHeader, kind: PointerDeviceKind.mouse);
+      await tester.pumpAndSettle();
+      expect(height(searchPane), closeTo(originalSearchHeight, 0.05));
+      expect(tester.getRect(gitPane), gitRect);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
       (tester) async {

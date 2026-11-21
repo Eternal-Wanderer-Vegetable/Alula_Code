@@ -86,6 +86,40 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
           if (entry.value == (container: container, before: before)) entry.key,
       ];
 
+  /// Reorder existing panes without changing their membership or state.
+  bool reorderSidebarGroupPane(
+    String container,
+    String source,
+    String target, {
+    required bool before,
+  }) {
+    final views = [
+      ...groupedSidebarViews(container, before: true),
+      container,
+      ...groupedSidebarViews(container, before: false),
+    ];
+    final from = views.indexOf(source);
+    final anchor = views.indexOf(target);
+    if (from < 0 || anchor < 0 || from == anchor) return false;
+
+    final insertion = anchor + (before ? 0 : 1) - (from < anchor ? 1 : 0);
+    if (insertion == from) return false;
+    views
+      ..removeAt(from)
+      ..insert(insertion, source);
+
+    final placements = root.sidebarViewPlacements;
+    placements.removeWhere((_, placement) => placement.container == container);
+    final host = views.indexOf(container);
+    for (var i = 0; i < views.length; i++) {
+      if (i != host) {
+        placements[views[i]] = (container: container, before: i < host);
+      }
+    }
+    notifyLayoutChanged();
+    return true;
+  }
+
   /// Persist the committed pane proportions for the current group only.
   bool setSidebarGroupPaneWeights(
       String container, Map<String, double> weights) {

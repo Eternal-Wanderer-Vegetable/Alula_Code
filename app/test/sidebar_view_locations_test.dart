@@ -298,6 +298,76 @@ void main() {
   });
 
 
+  test('reorder uses a relative target and preserves per-pane layout state',
+      () {
+    final layout = WorkbenchLayout();
+    layout.moveSidebarView('search', panelSidebarViewLocation);
+    layout.moveSidebarView(
+      'search',
+      primarySidebarViewLocation,
+      sidebarPlacement: (container: 'explorer', before: true),
+    );
+    layout.moveSidebarView('git', panelSidebarViewLocation);
+    layout.moveSidebarView(
+      'git',
+      primarySidebarViewLocation,
+      sidebarPlacement: (container: 'explorer', before: false),
+    );
+    layout.setSidebarGroupPaneCollapsed('search', true);
+    layout.setSidebarGroupPaneWeights(
+      'explorer',
+      {'search': 1.22, 'explorer': 0.78, 'git': 1.0},
+    );
+    final weights = Map.of(layout.root.sidebarGroupPaneWeights);
+    var changes = 0;
+    layout.addListener(() => changes++);
+
+    expect(
+      layout.reorderSidebarGroupPane('explorer', 'search', 'explorer',
+          before: true),
+      isFalse,
+    );
+    expect(
+      layout.reorderSidebarGroupPane('explorer', 'search', 'search',
+          before: true),
+      isFalse,
+    );
+    expect(
+      layout.reorderSidebarGroupPane('explorer', 'search', 'outline',
+          before: false),
+      isFalse,
+    );
+    expect(changes, 0);
+    expect(
+      layout.reorderSidebarGroupPane('explorer', 'search', 'git',
+          before: false),
+      isTrue,
+    );
+    expect(layout.groupedSidebarViews('explorer', before: true), isEmpty);
+    expect(layout.groupedSidebarViews('explorer', before: false),
+        ['git', 'search']);
+    expect(
+      layout.reorderSidebarGroupPane('explorer', 'explorer', 'search',
+          before: false),
+      isTrue,
+    );
+    expect(layout.groupedSidebarViews('explorer', before: true),
+        ['git', 'search']);
+    expect(layout.groupedSidebarViews('explorer', before: false), isEmpty);
+    expect(changes, 2);
+
+    final restored =
+        WorkbenchLayout(root: WbSplit.fromJson(layout.root.toJson()));
+    expect(restored.groupedSidebarViews('explorer', before: true),
+        ['git', 'search']);
+    expect(restored.root.sidebarGroupCollapsedPanes, {'search'});
+    expect(restored.root.sidebarGroupPaneWeights, weights);
+    expect(restored.primarySidebarView, 'explorer');
+    expect(restored.sidebarViewLocation('search'), primarySidebarViewLocation);
+    restored.dispose();
+    layout.dispose();
+  });
+
   test('group collapse round-trips and clears when a group is removed', () {
     final layout = WorkbenchLayout();
     expect(layout.root.toJson(), isNot(contains('sidebarGroupCollapsedPanes')));
