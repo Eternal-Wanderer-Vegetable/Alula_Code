@@ -2700,6 +2700,20 @@
         "feat-211",
         "feat-213"
       ],
+      "status": "done",
+      "evidence": "产品 10ef145f564053d740a2735add41beca027a469a 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证两个方向的侧栏分组标题直接迁移。Search 按目标 Outline 上半区或 Explorer 下半区插入，原源代码管理容器、目标权重及两个结果保留。专项 115/115，Flutter 1,719 passed / 2 skipped。同一 SHA 的 PR CI 44877241328 四项及 Platform Availability 44878132579 Windows 和同 SHA 44877236768 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.162-cross-sidebar-group.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-215",
+      "name": "P05.163 LAY-04/05 分组侧栏成员拖入面板标题区的独立入口",
+      "description": "固定版核对主次侧栏分组成员标题拖入面板标题区，创建独立入口并保留原容器。",
+      "dependencies": [
+        "feat-198",
+        "feat-211",
+        "feat-214"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

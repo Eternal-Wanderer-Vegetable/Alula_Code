@@ -1,0 +1,53 @@
+{
+  "productSha": "10ef145f564053d740a2735add41beca027a469a",
+  "sourceTree": "0e84e46096e4e4336b3fb93d981585066b74ec29",
+  "failedHostedRun": 44877236768,
+  "failedHostedJob": 136764517160,
+  "retryHostedRun": 44878132579,
+  "failedStep": "Verify native Windows move, copy, and external text drag/drop",
+  "hostedObserved": {
+    "windowForeground": true,
+    "sourcePayloadRequests": 1,
+    "dropOver": [
+      {
+        "x": 514.0,
+        "y": 498.0,
+        "operation": "move"
+      },
+      {
+        "x": 514.0,
+        "y": 498.0,
+        "operation": "move"
+      }
+    ],
+    "failure": "Timed out waiting for drop.json",
+    "dropCallbackRecorded": false
+  },
+  "localObserved": {
+    "firstAttempt": "Foreground activation rejected before pointer input",
+    "repeat": "Same driver with guarded foreground activation before built-in foreground check",
+    "fixtureBuild": "Windows Debug",
+    "devicePixelRatio": 1.25,
+    "move": {
+      "selectedText": "alpha",
+      "operation": "move",
+      "targetOffsetUtf16": 11
+    },
+    "copy": {
+      "selectedText": "alpha",
+      "operation": "copy",
+      "targetDocumentId": 7002,
+      "targetDocumentVersion": 4,
+      "targetOffsetUtf16": 6
+    },
+    "external": {
+      "text": "external text",
+      "targetDocumentId": 7002,
+      "targetDocumentVersion": 4,
+      "targetOffsetUtf16": 6
+    },
+    "exitCode": 0
+  },
+  "driverSha256": "17446dabe9f08d0865488af87e8c484f16903b14ddd8da3c95732366ebcd724f",
+  "fixtureSha256": "ddf74c4e0d6f87aa35609eb1a8119b40730369391ee132fb27960c9873a4860f"
+}
