@@ -2602,6 +2602,19 @@
         "feat-199",
         "feat-203"
       ],
+      "status": "done",
+      "evidence": "产品 `5e9cb5b4eef9c7737d632bf71606bacfea482fa6` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证底部和右侧面板分隔线主轴、228 逻辑像素下限、内容、显隐及重挂载。专项 99/99，Flutter 1,703 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44861987749 四项及 Platform Availability 44861984589 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.155-panel-group-sash.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-208",
+      "name": "P05.156 LAY-05/06 标准面板分组分隔线双击复位",
+      "description": "对照固定版底部和侧边面板组内分隔线的单击和双击，验收邻接窗格、内容、尺寸及显隐恢复。",
+      "dependencies": [
+        "feat-204",
+        "feat-207"
+      ],
       "status": "not-started",
       "evidence": "等待固定版对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
