@@ -27015,7 +27015,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final collapsed = {...?_layout.root.panelGroupCollapsedPanes[tab]};
 
-    Widget groupedView(String view, double _) {
+    Widget groupedView(String view, FocusNode focus) {
       final isOriginal = view == panelGroupOriginalPane;
       final folded = collapsed.contains(view);
       final compact = folded && axis == Axis.horizontal;
@@ -27055,10 +27055,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _PanelHostedViewDrag(view: final member)
               when _layout.root.panelViewPlacements[member]?.tab == tab =>
             member,
-          _ => null,
+          _ => _sidebarViewForPanelDrop(tab, data),
         },
-        onReorder: (source, target, before) =>
-            _layout.reorderPanelGroupPane(tab, source, target, before: before),
+        onReorder: (source, target, before) {
+          if (source == panelGroupOriginalPane ||
+              _layout.root.panelViewPlacements[source]?.tab == tab) {
+            _layout.reorderPanelGroupPane(tab, source, target, before: before);
+          } else {
+            _moveSidebarViewToPanelBody(
+              source,
+              tab,
+              before,
+              focus,
+              panelTarget: target,
+            );
+          }
+        },
         child: LayoutBuilder(
           builder: (context, constraints) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -27109,38 +27121,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       child: Builder(
         builder: (context) {
           final focus = Focus.of(context);
+          if (before.isNotEmpty || after.isNotEmpty) {
+            return PaneGroupSplit(
+              key: ValueKey('panel-view-group-${tab.name}'),
+              axis: axis,
+              minimums: {
+                for (final view in [
+                  ...before,
+                  panelGroupOriginalPane,
+                  ...after
+                ])
+                  view: 228,
+              },
+              weights: {...?_layout.root.panelGroupPaneWeights[tab]},
+              sashKeyPrefix: 'panel-group-sash-${tab.name}',
+              collapsed: collapsed,
+              collapsedExtent: 28,
+              buildPane: (view, _) => groupedView(view, focus),
+              onCommit: (weights) =>
+                  _layout.setPanelGroupPaneWeights(tab, weights),
+            );
+          }
           return Stack(
             fit: StackFit.expand,
             children: [
-              if (before.isEmpty && after.isEmpty)
-                original
-              else
-                PaneGroupSplit(
-                  key: ValueKey('panel-view-group-${tab.name}'),
-                  axis: axis,
-                  minimums: {
-                    for (final view in [
-                      ...before,
-                      panelGroupOriginalPane,
-                      ...after
-                    ])
-                      view: 228,
-                  },
-                  weights: {...?_layout.root.panelGroupPaneWeights[tab]},
-                  sashKeyPrefix: 'panel-group-sash-${tab.name}',
-                  collapsed: collapsed,
-                  collapsedExtent: 28,
-                  buildPane: groupedView,
-                  onCommit: (weights) =>
-                      _layout.setPanelGroupPaneWeights(tab, weights),
-                ),
+              original,
               Flex(
                 direction: axis,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   for (final before in const [true, false])
                     Expanded(
-                        child: _buildPanelBodyDropTarget(tab, before, focus)),
+                      child: _buildPanelBodyDropTarget(tab, before, focus),
+                    ),
                 ],
               ),
             ],
@@ -27191,50 +27204,60 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  String? _sidebarViewForPanelDrop(PanelViewTab tab, Object drag) {
+    if (_panelTab.index != tab.index) return null;
+    if (drag is ActivityBarViewDrag &&
+        _layout.sidebarViewLocation(drag.view) == primarySidebarViewLocation) {
+      return drag.view;
+    }
+    if (drag is SidebarGroupPaneDrag &&
+        _layout.sidebarViewLocation(drag.view) == drag.location &&
+        _layout.sidebarSelection(drag.location) == drag.container &&
+        _layout.root.sidebarViewPlacements[drag.view]?.container ==
+            drag.container) {
+      return drag.view;
+    }
+    return null;
+  }
+
+  void _moveSidebarViewToPanelBody(
+    String view,
+    PanelViewTab tab,
+    bool before,
+    FocusNode focus, {
+    String? panelTarget,
+  }) {
+    if (!_layout.moveSidebarView(
+      view,
+      panelSidebarViewLocation,
+      panelPlacement: (tab: tab, before: before),
+      panelTarget: panelTarget,
+    )) {
+      return;
+    }
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      if (_focusedSidebarView == view) {
+        _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+      }
+      if (view == 'outline') _refreshOutline();
+    });
+    focus.requestFocus();
+  }
+
   Widget _buildPanelBodyDropTarget(
     PanelViewTab tab,
     bool before,
     FocusNode focus,
   ) {
     final side = before ? 'before' : 'after';
-    String? viewFor(Object drag) {
-      if (_panelTab.index != tab.index) return null;
-      if (drag is ActivityBarViewDrag &&
-          _layout.sidebarViewLocation(drag.view) ==
-              primarySidebarViewLocation) {
-        return drag.view;
-      }
-      if (drag is SidebarGroupPaneDrag &&
-          _layout.sidebarViewLocation(drag.view) == drag.location &&
-          _layout.sidebarSelection(drag.location) == drag.container &&
-          _layout.root.sidebarViewPlacements[drag.view]?.container ==
-              drag.container) {
-        return drag.view;
-      }
-      return null;
-    }
-
     return DragTarget<Object>(
       key: ValueKey('panel-view-body-drop-${tab.name}-$side'),
-      onWillAcceptWithDetails: (details) => viewFor(details.data) != null,
+      onWillAcceptWithDetails: (details) =>
+          _sidebarViewForPanelDrop(tab, details.data) != null,
       onAcceptWithDetails: (details) {
-        final view = viewFor(details.data);
-        if (view == null) return;
-        if (!_layout.moveSidebarView(
-          view,
-          panelSidebarViewLocation,
-          panelPlacement: (tab: tab, before: before),
-        )) {
-          return;
-        }
-        setState(() {
-          _sidebarView = _layout.primarySidebarView;
-          if (_focusedSidebarView == view) {
-            _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
-          }
-          if (view == 'outline') _refreshOutline();
-        });
-        focus.requestFocus();
+        final view = _sidebarViewForPanelDrop(tab, details.data);
+        if (view != null) _moveSidebarViewToPanelBody(view, tab, before, focus);
       },
       builder: (context, candidates, _) => IgnorePointer(
         child: candidates.isEmpty

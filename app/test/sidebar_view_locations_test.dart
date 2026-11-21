@@ -482,6 +482,52 @@ void main() {
     layout.dispose();
   });
 
+  test('relative panel insertion keeps one atomic layout update', () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    const tab = PanelViewTab.diagnostics;
+    layout.moveSidebarView('outline', panelSidebarViewLocation,
+        panelPlacement: (tab: tab, before: true));
+    layout.moveSidebarView('git', panelSidebarViewLocation,
+        panelPlacement: (tab: PanelViewTab.syntax, before: false));
+    layout.setPanelGroupPaneWeights(tab, {'original': 1.4, 'outline': .6});
+    layout.setPanelGroupPaneCollapsed(tab, 'outline', true);
+    final oldWeights = Map.of(layout.root.panelGroupPaneWeights[tab]!);
+    final notifications = <List<String>>[];
+    layout.addListener(() {
+      notifications.add(layout.groupedPanelViews(tab, before: true));
+    });
+
+    expect(
+      layout.moveSidebarView('search', panelSidebarViewLocation,
+          panelPlacement: (tab: tab, before: true), panelTarget: 'git'),
+      isFalse,
+    );
+    expect(layout.sidebarViewLocation('search'), primarySidebarViewLocation);
+    expect(notifications, isEmpty);
+
+    expect(
+      layout.moveSidebarView('search', panelSidebarViewLocation,
+          panelPlacement: (tab: tab, before: true), panelTarget: 'original'),
+      isTrue,
+    );
+    expect(notifications, [
+      ['outline', 'search'],
+    ]);
+    expect(layout.standalonePanelViews, isEmpty);
+    expect(
+        layout.groupedPanelViews(PanelViewTab.syntax, before: false), ['git']);
+    expect(layout.root.panelGroupPaneWeights[tab], oldWeights);
+    expect(layout.root.panelGroupCollapsedPanes[tab], {'outline'});
+
+    final restored =
+        WorkbenchLayout(root: WbSplit.fromJson(layout.root.toJson()));
+    addTearDown(restored.dispose);
+    expect(
+        restored.groupedPanelViews(tab, before: true), ['outline', 'search']);
+    expect(restored.root.panelGroupPaneWeights[tab], oldWeights);
+  });
+
   test('Panel pane collapse persists per tab and clears with its group', () {
     final layout = WorkbenchLayout();
     const tab = PanelViewTab.diagnostics;

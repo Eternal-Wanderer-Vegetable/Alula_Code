@@ -119,21 +119,27 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     String target, {
     required bool before,
   }) {
-    final views = [
-      ...groupedPanelViews(tab, before: true),
-      panelGroupOriginalPane,
-      ...groupedPanelViews(tab, before: false),
-    ];
+    final views = _panelGroupOrder(tab);
     if (!_reorderPane(views, source, target, before)) return false;
 
+    _setPanelGroupOrder(tab, views);
+    notifyLayoutChanged();
+    return true;
+  }
+
+  List<String> _panelGroupOrder(PanelViewTab tab) => [
+        ...groupedPanelViews(tab, before: true),
+        panelGroupOriginalPane,
+        ...groupedPanelViews(tab, before: false),
+      ];
+
+  void _setPanelGroupOrder(PanelViewTab tab, List<String> views) {
     final placements = root.panelViewPlacements;
     placements.removeWhere((_, placement) => placement.tab == tab);
     final host = views.indexOf(panelGroupOriginalPane);
     for (var i = 0; i < views.length; i++) {
       if (i != host) placements[views[i]] = (tab: tab, before: i < host);
     }
-    notifyLayoutChanged();
-    return true;
   }
 
   /// Persist the committed pane proportions for the current group only.
@@ -194,12 +200,14 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   }
 
   /// Assign [view] to a side or panel. Select a replacement if it was the
-  /// source side's selection. Panel placements can use a standard tab.
+  /// source side's selection. When [panelTarget] identifies a pane in the
+  /// destination tab, place the view immediately before or after that pane.
   bool moveSidebarView(
     String view,
     String destination, {
     PanelViewPlacement? panelPlacement,
     SidebarViewPlacement? sidebarPlacement,
+    String? panelTarget,
   }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
@@ -225,6 +233,16 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
           root.sidebarViewPlacements.containsKey(container)) {
         return false;
       }
+    }
+
+    List<String>? panelOrder;
+    if (panelTarget != null) {
+      if (panelPlacement == null) return false;
+      final order = _panelGroupOrder(panelPlacement.tab);
+      final index = order.indexOf(panelTarget);
+      if (index < 0) return false;
+      order.insert(panelPlacement.before ? index : index + 1, view);
+      panelOrder = order;
     }
 
     final sourceSelection =
@@ -264,7 +282,13 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
         root.panelGroupCollapsedPanes.remove(previousPanelTab);
       }
     }
-    if (panelPlacement != null) root.panelViewPlacements[view] = panelPlacement;
+    if (panelPlacement != null) {
+      if (panelOrder == null) {
+        root.panelViewPlacements[view] = panelPlacement;
+      } else {
+        _setPanelGroupOrder(panelPlacement.tab, panelOrder);
+      }
+    }
 
     if (sourceSelection == view) {
       final sourceFallback = _firstViewAt(source, locations);
