@@ -87,8 +87,9 @@ void main() {
       final compactTitleSize =
           tester.getSize(find.byKey(const ValueKey('auxiliary-title-row')));
       final compactEditorRect = tester.getRect(inputFinder);
-      expect(originalTitleSize.height - compactTitleSize.height, 8);
-      expect(originalEditorRect.top - compactEditorRect.top, 12);
+      expect(originalTitleSize.height, 35);
+      expect(compactTitleSize.height, 30);
+      expect(originalEditorRect.top - compactEditorRect.top, 9);
       expect(originalEditorRect.left - compactEditorRect.left, 4);
       expect(find.text('notes.txt •'), findsNothing);
       expect(tester.widget<IconButton>(compactButton).tooltip, '退出紧凑模式');

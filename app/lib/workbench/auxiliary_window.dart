@@ -759,6 +759,11 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   Widget build(BuildContext context) {
     final doc = _doc;
     final inputWindow = _inputWindow;
+    final titleHeight = _compactMode ? 30.0 : 35.0;
+    final titleActionConstraints = BoxConstraints.tightFor(
+      width: 30,
+      height: titleHeight,
+    );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: false),
@@ -770,10 +775,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
             Container(
               key: const ValueKey('auxiliary-title-row'),
               color: const Color(0xFF181B20),
-              padding: EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: _compactMode ? 0 : 4,
-              ),
+              height: titleHeight,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
                   Expanded(
@@ -803,7 +806,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                         _compactMode ? Icons.fullscreen_exit : Icons.fullscreen,
                         size: 14,
                       ),
-                      visualDensity: VisualDensity.compact,
+                      constraints: titleActionConstraints,
+                      padding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.standard,
                     ),
                   ),
                   Semantics(
@@ -832,7 +837,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                       icon: const Icon(Icons.push_pin_outlined, size: 14),
                       selectedIcon: const Icon(Icons.push_pin, size: 14),
                       isSelected: _alwaysOnTop ?? false,
-                      visualDensity: VisualDensity.compact,
+                      constraints: titleActionConstraints,
+                      padding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.standard,
                     ),
                   ),
                   IconButton(
@@ -844,7 +851,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                             _sendClosedAndDestroy();
                           },
                     icon: const Icon(Icons.close, size: 14),
-                    visualDensity: VisualDensity.compact,
+                    constraints: titleActionConstraints,
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.standard,
                   ),
                 ],
               ),
