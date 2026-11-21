@@ -98,15 +98,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       container,
       ...groupedSidebarViews(container, before: false),
     ];
-    final from = views.indexOf(source);
-    final anchor = views.indexOf(target);
-    if (from < 0 || anchor < 0 || from == anchor) return false;
-
-    final insertion = anchor + (before ? 0 : 1) - (from < anchor ? 1 : 0);
-    if (insertion == from) return false;
-    views
-      ..removeAt(from)
-      ..insert(insertion, source);
+    if (!_reorderPane(views, source, target, before)) return false;
 
     final placements = root.sidebarViewPlacements;
     placements.removeWhere((_, placement) => placement.container == container);
@@ -115,6 +107,30 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
       if (i != host) {
         placements[views[i]] = (container: container, before: i < host);
       }
+    }
+    notifyLayoutChanged();
+    return true;
+  }
+
+  /// Reorder a standard Panel tab's panes without leaving that group.
+  bool reorderPanelGroupPane(
+    PanelViewTab tab,
+    String source,
+    String target, {
+    required bool before,
+  }) {
+    final views = [
+      ...groupedPanelViews(tab, before: true),
+      panelGroupOriginalPane,
+      ...groupedPanelViews(tab, before: false),
+    ];
+    if (!_reorderPane(views, source, target, before)) return false;
+
+    final placements = root.panelViewPlacements;
+    placements.removeWhere((_, placement) => placement.tab == tab);
+    final host = views.indexOf(panelGroupOriginalPane);
+    for (var i = 0; i < views.length; i++) {
+      if (i != host) placements[views[i]] = (tab: tab, before: i < host);
     }
     notifyLayoutChanged();
     return true;
@@ -309,6 +325,24 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
     return null;
   }
+}
+
+bool _reorderPane(
+  List<String> views,
+  String source,
+  String target,
+  bool before,
+) {
+  final from = views.indexOf(source);
+  final anchor = views.indexOf(target);
+  if (from < 0 || anchor < 0 || from == anchor) return false;
+
+  final insertion = anchor + (before ? 0 : 1) - (from < anchor ? 1 : 0);
+  if (insertion == from) return false;
+  views
+    ..removeAt(from)
+    ..insert(insertion, source);
+  return true;
 }
 
 bool _savePaneWeights(

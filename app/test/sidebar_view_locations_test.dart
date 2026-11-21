@@ -426,6 +426,62 @@ void main() {
     layout.dispose();
   });
 
+  test('Panel pane reorder keeps the original and member state in their tab',
+      () {
+    final layout = WorkbenchLayout();
+    const tab = PanelViewTab.diagnostics;
+    const otherTab = PanelViewTab.syntax;
+    for (final (view, owner, before) in [
+      ('search', tab, true),
+      ('git', tab, false),
+      ('outline', otherTab, true),
+    ]) {
+      layout.moveSidebarView(
+        view,
+        panelSidebarViewLocation,
+        panelPlacement: (tab: owner, before: before),
+      );
+    }
+    layout.setPanelGroupPaneCollapsed(tab, 'search', true);
+    layout.setPanelGroupPaneWeights(
+        tab, {'search': 1.3, 'git': .9, 'original': .8});
+    final weights = Map.of(layout.root.panelGroupPaneWeights[tab]!);
+    var changes = 0;
+    layout.addListener(() => changes++);
+
+    expect(
+        layout.reorderPanelGroupPane(tab, 'search', 'original', before: true),
+        isFalse);
+    expect(layout.reorderPanelGroupPane(tab, 'search', 'search', before: true),
+        isFalse);
+    expect(
+        layout.reorderPanelGroupPane(tab, 'search', 'outline', before: false),
+        isFalse);
+    expect(changes, 0);
+    expect(layout.reorderPanelGroupPane(tab, 'search', 'git', before: false),
+        isTrue);
+    expect(layout.groupedPanelViews(tab, before: false), ['git', 'search']);
+    expect(
+        layout.reorderPanelGroupPane(tab, 'original', 'search', before: false),
+        isTrue);
+    expect(layout.groupedPanelViews(tab, before: true), ['git', 'search']);
+    expect(layout.groupedPanelViews(otherTab, before: true), ['outline']);
+    expect(changes, 2);
+
+    final restored =
+        WorkbenchLayout(root: WbSplit.fromJson(layout.root.toJson()));
+    expect(restored.groupedPanelViews(tab, before: true), ['git', 'search']);
+    expect(restored.groupedPanelViews(tab, before: false), isEmpty);
+    expect(restored.root.panelGroupCollapsedPanes, {
+      tab: {'search'}
+    });
+    expect(restored.root.panelGroupPaneWeights[tab], weights);
+    expect(restored.root.panelViewPlacements['outline'],
+        (tab: otherTab, before: true));
+    restored.dispose();
+    layout.dispose();
+  });
+
   test('Panel pane collapse persists per tab and clears with its group', () {
     final layout = WorkbenchLayout();
     const tab = PanelViewTab.diagnostics;

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/gestures.dart' show kPrimaryButton;
 import 'package:flutter/material.dart';
 
+import 'pane_group_drop_target.dart';
 import 'pane_group_header.dart';
 import 'pane_group_split.dart';
 
@@ -66,10 +67,11 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
     return SizedBox(
       key: ValueKey('${widget.location}-sidebar-group-$role$view'),
       height: extent,
-      child: _SidebarGroupDropTarget(
-        group: _group,
+      child: PaneGroupDropTarget<_SidebarGroupPaneDrag>(
+        axis: Axis.vertical,
         view: view,
-        location: widget.location,
+        highlightKeyPrefix: 'sidebar-group-drop-${widget.location}-$view',
+        sourceFor: (data) => identical(data.group, _group) ? data.view : null,
         onReorder: widget.onReorder,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -117,84 +119,3 @@ class _SidebarGroupSplitState extends State<SidebarGroupSplit> {
 }
 
 typedef _SidebarGroupPaneDrag = ({Object group, String view});
-
-class _SidebarGroupDropTarget extends StatefulWidget {
-  const _SidebarGroupDropTarget({
-    required this.group,
-    required this.view,
-    required this.location,
-    required this.onReorder,
-    required this.child,
-  });
-
-  final Object group;
-  final String view;
-  final String location;
-  final void Function(String source, String target, bool before) onReorder;
-  final Widget child;
-
-  @override
-  State<_SidebarGroupDropTarget> createState() =>
-      _SidebarGroupDropTargetState();
-}
-
-class _SidebarGroupDropTargetState extends State<_SidebarGroupDropTarget> {
-  bool _before = true;
-
-  bool _accepts(_SidebarGroupPaneDrag source) =>
-      identical(source.group, widget.group) && source.view != widget.view;
-
-  bool _isBefore(Offset position) {
-    final target = context.findRenderObject()! as RenderBox;
-    return target.globalToLocal(position).dy < target.size.height / 2;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DragTarget<_SidebarGroupPaneDrag>(
-      onWillAcceptWithDetails: (details) => _accepts(details.data),
-      onMove: (details) {
-        if (!_accepts(details.data)) return;
-        final before = _isBefore(details.offset);
-        if (_before != before) setState(() => _before = before);
-      },
-      onAcceptWithDetails: (details) {
-        if (_accepts(details.data)) {
-          widget.onReorder(
-            details.data.view,
-            widget.view,
-            _isBefore(details.offset),
-          );
-        }
-      },
-      builder: (context, candidates, _) => Stack(
-        fit: StackFit.expand,
-        children: [
-          widget.child,
-          if (candidates.isNotEmpty)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: FractionallySizedBox(
-                  heightFactor: 0.5,
-                  alignment:
-                      _before ? Alignment.topCenter : Alignment.bottomCenter,
-                  child: DecoratedBox(
-                    key: ValueKey(
-                      'sidebar-group-drop-${widget.location}-${widget.view}-'
-                      '${_before ? 'before' : 'after'}',
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Color(0x30007ACC),
-                      border: Border.fromBorderSide(
-                        BorderSide(color: Color(0xFF55B8FF)),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}

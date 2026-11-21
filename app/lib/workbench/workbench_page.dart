@@ -118,6 +118,7 @@ import 'notifications.dart';
 import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 import 'panel_position.dart';
+import 'pane_group_drop_target.dart';
 import 'pane_group_header.dart';
 import 'pane_group_split.dart';
 import 'quick_input.dart';
@@ -26930,9 +26931,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             text: _sidebarViewLabel(view)),
       );
 
-  Widget _buildPanelHostedViewDrag(String view, Widget child) {
-    return Draggable<_PanelHostedViewDrag>(
-      data: _PanelHostedViewDrag(view),
+  Widget _buildPanelHostedViewDrag(String view, Widget child) =>
+      _buildPanelPaneDrag(
+          _PanelHostedViewDrag(view), _sidebarViewLabel(view), child);
+
+  Widget _buildPanelPaneDrag<T extends Object>(
+    T data,
+    String label,
+    Widget child,
+  ) {
+    return Draggable<T>(
+      data: data,
       maxSimultaneousDrags: 1,
       dragAnchorStrategy: pointerDragAnchorStrategy,
       feedback: Material(
@@ -26940,8 +26949,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         borderRadius: BorderRadius.circular(3),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(_sidebarViewLabel(view),
-              style: const TextStyle(fontSize: 12)),
+          child: Text(label, style: const TextStyle(fontSize: 12)),
         ),
       ),
       child: child,
@@ -27036,43 +27044,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           isOriginal ? null : view,
         ),
       );
-      return LayoutBuilder(
+      return PaneGroupDropTarget<Object>(
         key: ValueKey('panel-view-group-${tab.name}-$view'),
-        builder: (context, constraints) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: compact
-                  ? constraints.maxHeight
-                  : math.min(28.0, constraints.maxHeight),
-              child: isOriginal
-                  ? header
-                  : _buildPanelHostedViewDrag(
-                      view,
-                      KeyedSubtree(
-                        key: ValueKey('panel-view-group-title-$view'),
-                        child: header,
-                      ),
-                    ),
-            ),
-            Expanded(
-              child: Visibility(
-                visible: !folded,
-                maintainState: true,
-                child: _buildPanelGroupPane(
-                  key: ValueKey('panel-view-group-body-${tab.name}-$view'),
-                  minimumContentHeight: _groupViewMinimumContentHeight(view),
-                  child: isOriginal
-                      ? original
-                      : _buildSidebarViewRegion(
-                          panelSidebarViewLocation,
-                          view,
-                          autofocusSearch: false,
+        axis: axis,
+        view: view,
+        highlightKeyPrefix: 'panel-group-drop-${tab.name}-$view',
+        sourceFor: (data) => switch (data) {
+          _PanelOriginalPaneDrag(tab: final owner) when owner == tab =>
+            panelGroupOriginalPane,
+          _PanelHostedViewDrag(view: final member)
+              when _layout.root.panelViewPlacements[member]?.tab == tab =>
+            member,
+          _ => null,
+        },
+        onReorder: (source, target, before) =>
+            _layout.reorderPanelGroupPane(tab, source, target, before: before),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: compact
+                    ? constraints.maxHeight
+                    : math.min(28.0, constraints.maxHeight),
+                child: isOriginal
+                    ? _buildPanelPaneDrag(
+                        _PanelOriginalPaneDrag(tab),
+                        _standardPanelTitle(tab),
+                        header,
+                      )
+                    : _buildPanelHostedViewDrag(
+                        view,
+                        KeyedSubtree(
+                          key: ValueKey('panel-view-group-title-$view'),
+                          child: header,
                         ),
+                      ),
+              ),
+              Expanded(
+                child: Visibility(
+                  visible: !folded,
+                  maintainState: true,
+                  child: _buildPanelGroupPane(
+                    key: ValueKey('panel-view-group-body-${tab.name}-$view'),
+                    minimumContentHeight: _groupViewMinimumContentHeight(view),
+                    child: isOriginal
+                        ? original
+                        : _buildSidebarViewRegion(
+                            panelSidebarViewLocation,
+                            view,
+                            autofocusSearch: false,
+                          ),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
@@ -28043,6 +28070,12 @@ class _PanelHostedViewDrag {
   const _PanelHostedViewDrag(this.view);
 
   final String view;
+}
+
+class _PanelOriginalPaneDrag {
+  const _PanelOriginalPaneDrag(this.tab);
+
+  final PanelViewTab tab;
 }
 
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
