@@ -180,5 +180,48 @@
     "aotSha256": "202eb2b42dd5e8159d07f03fc409a61b3b793c190e1e5f06d840e633228d1671",
     "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
     "aotAndRunnerMatchEarlierScreenshot": true
+  },
+  "hostedArtifactInspection": {
+    "productSha": "0205034c94ea14819793993cd1a6797130b6c98b",
+    "run": 44928228908,
+    "mainReleaseCapture": {
+      "artifactId": 14716049213,
+      "imageSha256": "a07051cc2d6c9e39e29e43304863451bfbf733b8435d76bc358c64b4b8efbd1e",
+      "os": "Microsoft Windows Server 2025 Datacenter",
+      "build": "26100",
+      "dpi": 96,
+      "clientSize": [
+        1028,
+        711
+      ],
+      "windowVisible": true,
+      "visibleWorkbenchContentReviewed": true,
+      "gracefulClose": true,
+      "exitCode": 0
+    },
+    "auxiliaryDebugFocus": {
+      "artifactId": 14716966071,
+      "captureIncluded": false,
+      "sequence": [
+        "auxiliary",
+        "main",
+        "auxiliary",
+        "main"
+      ],
+      "revisions": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "keys": [
+        "groupId",
+        "revision",
+        "windowId"
+      ],
+      "documentSentinelAbsent": true
+    },
+    "releaseFlutterWindowsDllSha256": "eca1f8c9b1537bd585bbbcc62362df9ca7e69faa7d4e895688108af63ccea157",
+    "sameEngineDllInLocalP175AndP177Fixtures": true
   }
 }

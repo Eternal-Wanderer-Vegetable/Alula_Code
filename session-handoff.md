@@ -111,4 +111,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.177 证据提交的 CI。获准后使用相同 Windows 桌面和精确二进制，对比 P05.175 与 P05.177 的客户区，并复验最终布局。详见 [p05.177-auxiliary-active-editor-tab.md](docs/diagnostics/2026-11-22-p05/p05.177-auxiliary-active-editor-tab.md)。
+P05.177 证据提交 01163d2 的四项 CI 已通过（44929434775）。产品同 SHA 的 Windows 托管产物已复核 Release 主窗画面和辅助窗焦点。获准后在同一 Windows 11 桌面对比精确 P05.175 与 P05.177 的辅助窗默认画面和调整窗口后的画面，再复验最终布局和交互。详见 [p05.177-auxiliary-active-editor-tab.md](docs/diagnostics/2026-11-22-p05/p05.177-auxiliary-active-editor-tab.md)。
