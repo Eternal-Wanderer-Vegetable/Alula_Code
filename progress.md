@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.164 / feat-216。产品 585a4b8f3c1a1047ef4d7e661a29a6b124b45573 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对分组标题跨侧栏拖至活动栏或次侧栏标题。独立 Search 入口创建并聚焦，原源代码管理与目标 Explorer 入口可达，两处结果保留。专项 119/119，Flutter 1,723 passed / 2 skipped。同一 SHA 的 PR CI 44881993018 四项及 Platform Availability 44881988769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.164-grouped-sidebar-entry.md。
+
 - 2026-11-21 完成 P05.163 / feat-215。产品 6e2ab28b1bb656c3d2e188a4ae014ea5a39062d7 已推草稿 PR #3。固定版、Windows 实机和 Linux Xvfb 核对主次侧栏标题拖到面板标题区。Search 独立入口激活并聚焦输入，原侧栏分组保留，反复切换后有两处结果。专项 117/117，Flutter 1,721 passed / 2 skipped。同一 SHA 的 PR CI 44879949427 四项及 Platform Availability 44879945621 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.163-grouped-sidebar-panel-tab.md。
 
 - 2026-11-21 完成 P05.162 / feat-214。产品 10ef145f564053d740a2735add41beca027a469a 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证两个方向的侧栏分组标题直接迁移。Search 按目标 Outline 上半区或 Explorer 下半区插入，原源代码管理容器、目标权重及两个结果保留。专项 115/115，Flutter 1,719 passed / 2 skipped。同一 SHA 的 PR CI 44877241328 四项及 Platform Availability 44878132579 Windows 和同 SHA 44877236768 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.162-cross-sidebar-group.md。
@@ -2085,6 +2087,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 ```
 
 ## Next（下一步，按 docs/03）
+
+- 命令焦点专项待核对。P05.164 的 Windows 与 Xvfb 中，从编辑区调用 view.search 可重开独立侧栏 Search 并显示两处结果，输入框未获焦。固定版重开时聚焦 Search。详见 P05.164 证据。
 
 1. P04.119 / EDT-19i 是唯一活动切片；planner 和 CI test-gate amendment 已实现。等待新 SHA PR CI 与 Platform Availability，记录最终结论后再关闭切片。
 2. 新增的 Git panel 状态等待仅在现有 widget test 中，最大 10 秒；若 hosted 仍失败，先读取 runner/test 日志，不扩大到生产 Git/Workbench 代码，除非另行登记并重做 impact。完成该切片后再注册下一片 FFI/action。
