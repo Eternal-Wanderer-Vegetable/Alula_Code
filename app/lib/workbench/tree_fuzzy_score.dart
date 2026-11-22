@@ -32,7 +32,48 @@ class TreeFuzzyScore {
 
   final int score;
   final List<({int start, int end})> matches;
+
+  /// Projects matches onto whole characters in the original scored [word].
+  List<({int start, int end})> matchesInSource(String word) {
+    final ranges = <({int start, int end})>[];
+    for (final match in matches) {
+      var start = _sourceOffset(word, match.start, end: false);
+      var end = _sourceOffset(word, match.end, end: true);
+      if (splitsUtf16SurrogatePair(word, start)) start--;
+      if (splitsUtf16SurrogatePair(word, end)) end++;
+      if (ranges.isNotEmpty && start <= ranges.last.end) {
+        final previous = ranges.last;
+        ranges[ranges.length - 1] = (
+          start: previous.start,
+          end: end > previous.end ? end : previous.end
+        );
+      } else {
+        ranges.add((start: start, end: end));
+      }
+    }
+    return ranges;
+  }
 }
+
+// The fuzzy scorer uses JavaScript folding. A dotted capital I occupies
+// two units after folding and both units refer to the same original letter.
+int _sourceOffset(String value, int offset, {required bool end}) {
+  var expanded = 0;
+  for (var i = value.indexOf('\u0130');
+      i >= 0 && i + expanded < offset;
+      i = value.indexOf('\u0130', i + 1)) {
+    if (end && i + expanded + 1 == offset) break;
+    expanded++;
+  }
+  return offset - expanded;
+}
+
+/// Whether the offset bisects a UTF-16 surrogate pair.
+bool splitsUtf16SurrogatePair(String value, int offset) =>
+    offset > 0 &&
+    offset < value.length &&
+    (value.codeUnitAt(offset - 1) & 0xfc00) == 0xd800 &&
+    (value.codeUnitAt(offset) & 0xfc00) == 0xdc00;
 
 const _maxLen = 128;
 const _diagArrow = 1;

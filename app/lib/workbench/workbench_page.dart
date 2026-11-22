@@ -4255,24 +4255,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final grouped = value.startsWith(':');
         if (grouped) value = value.substring(1).trimLeft();
         var rows = projectDocumentSymbols(roots);
+        final scores = <DocumentSymbolNode, TreeFuzzyScore>{};
         if (value.isNotEmpty) {
           final matches = [
             for (final (index, row) in rows.indexed)
               if (treeFuzzyScore(value, row.symbol.name) case final match?)
-                (index: index, score: match.score, row: row),
+                (index: index, match: match, row: row),
           ];
           matches.sort((a, b) {
-            final score = b.score.compareTo(a.score);
+            final score = b.match.score.compareTo(a.match.score);
             return score == 0 ? a.index.compareTo(b.index) : score;
           });
           rows = [for (final match in matches) match.row];
+          for (final match in matches) {
+            scores[match.row.symbol] = match.match;
+          }
         }
         QuickItem itemFor(({DocumentSymbolNode symbol, int depth}) row) {
           final symbol = row.symbol;
+          final score = scores[symbol];
           return QuickItem(
             label: symbol.name,
             description: '${symbol.kind} · 行 ${symbol.line}',
             detail: row.depth == 0 ? null : '  ' * row.depth + symbol.name,
+            highlights: score == null
+                ? null
+                : () => (
+                      label: [
+                        for (final range in score.matchesInSource(symbol.name))
+                          TextRange(start: range.start, end: range.end),
+                      ],
+                      description: const [],
+                    ),
             onPreview: () => preview(symbol),
             onRun: () => accept(symbol),
             buttons: [

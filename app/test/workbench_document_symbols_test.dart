@@ -374,6 +374,19 @@ void main() {
     final input = find.descendant(of: panel, matching: find.byType(TextField));
     Finder row(String name) => find.byKey(ValueKey('qi-$name'));
     double y(String name) => tester.getTopLeft(row(name)).dy;
+    List<String?> marks(String name) {
+      final label = tester.widget<Text>(find.descendant(
+        of: row(name),
+        matching: find.byWidgetPredicate(
+            (w) => w is Text && (w.data ?? w.textSpan?.toPlainText()) == name),
+      ));
+      final spans = (label.textSpan as TextSpan?)?.children ?? const [];
+      return [
+        for (final span in spans.whereType<TextSpan>())
+          if (span.style?.fontWeight == FontWeight.bold) span.text,
+      ];
+    }
+
     Future<void> query(String value) async {
       await tester.enterText(input, value);
       await tester.pumpAndSettle();
@@ -405,6 +418,8 @@ void main() {
     await query('@n_b');
     expect(row('separator-符号 (2)'), findsOneWidget);
     expect(y('n_branch'), lessThan(y('nested_b')));
+    expect(marks('n_branch'), ['n_b']);
+    expect(marks('nested_b'), ['n', '_b']);
 
     await query('@ NB');
     expect(row('separator-符号 (2)'), findsOneWidget);
@@ -414,6 +429,8 @@ void main() {
     expect(row('separator-function (2)'), findsOneWidget);
     expect(row('separator-mod (2)'), findsNothing);
     expect(y('nested_a'), lessThan(y('nested_b')));
+    expect(marks('nested_a'), ['nest']);
+    expect(marks('nested_b'), ['nest']);
 
     await query('@:nested_b');
     expect(row('separator-function (1)'), findsOneWidget);

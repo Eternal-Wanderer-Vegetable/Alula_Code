@@ -171,26 +171,10 @@ class QuickOpenFileHighlighter {
       if (start < 0) return null;
       return [TextRange(start: start, end: start + exact.length)];
     }
-    final matches = treeFuzzyScore(term.text, value)?.matches;
-    return matches
-        ?.map((range) => TextRange(
-              start: _sourceOffset(value, range.start, end: false),
-              end: _sourceOffset(value, range.end, end: true),
-            ))
+    return treeFuzzyScore(term.text, value)
+        ?.matchesInSource(value)
+        .map((range) => TextRange(start: range.start, end: range.end))
         .toList();
-  }
-
-  // The fuzzy scorer uses JavaScript folding. A dotted capital I occupies
-  // two units after folding and both units refer to the same original letter.
-  static int _sourceOffset(String value, int offset, {required bool end}) {
-    var expanded = 0;
-    for (var i = value.indexOf('\u0130');
-        i >= 0 && i + expanded < offset;
-        i = value.indexOf('\u0130', i + 1)) {
-      if (end && i + expanded + 1 == offset) break;
-      expanded++;
-    }
-    return offset - expanded;
   }
 
   static List<TextRange> _mergeRanges(String value, List<TextRange> matches) {
@@ -201,9 +185,9 @@ class QuickOpenFileHighlighter {
       // The scorer can stop between the two code units of a character at
       // its scoring limit. Keep the whole character in a single text span.
       final start =
-          _splitsSurrogate(value, match.start) ? match.start - 1 : match.start;
+          splitsUtf16SurrogatePair(value, match.start) ? match.start - 1 : match.start;
       final end =
-          _splitsSurrogate(value, match.end) ? match.end + 1 : match.end;
+          splitsUtf16SurrogatePair(value, match.end) ? match.end + 1 : match.end;
       if (ranges.isNotEmpty && start <= ranges.last.end) {
         ranges[ranges.length - 1] = TextRange(
           start: ranges.last.start,
@@ -215,12 +199,6 @@ class QuickOpenFileHighlighter {
     }
     return ranges;
   }
-
-  static bool _splitsSurrogate(String value, int offset) =>
-      offset > 0 &&
-      offset < value.length &&
-      (value.codeUnitAt(offset - 1) & 0xfc00) == 0xd800 &&
-      (value.codeUnitAt(offset) & 0xfc00) == 0xdc00;
 }
 
 typedef QuickOpenMatch = ({String path, bool recent});

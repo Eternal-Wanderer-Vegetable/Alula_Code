@@ -3461,6 +3461,19 @@
       "evidence": "普通和分组文档符号查询按名称模糊匹配和排序，同分保留文档次序。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 280/280，Flutter 1,812 passed / 2 skipped。产品 f22a37f 的 CI 45083884112 四项及 Platform Availability 45083880244 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.218-symbol-match.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-271",
+      "name": "P05.219 CMD-04 文档符号名称命中高亮",
+      "description": "文档符号候选在名称列高亮评分器命中位置，复用文件选择器 Unicode 映射，保护完整字符。",
+      "dependencies": [
+        "feat-257",
+        "feat-270"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

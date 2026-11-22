@@ -88,4 +88,18 @@ void main() {
     expect(first.matches, [(start: 0, end: 1), (start: 3, end: 4)]);
     expect(() => first.matches.add((start: 2, end: 3)), throwsUnsupportedError);
   });
+
+  test(
+      'projects folded offsets and the scoring cap onto whole source characters',
+      () {
+    const folded = 'İki';
+    final match = treeFuzzyScore('k', folded)!;
+    expect(match.matches, [(start: 2, end: 3)]);
+    expect(match.matchesInSource(folded), [(start: 1, end: 2)]);
+
+    final boundary = '${'a' * 127}😀';
+    final capped = treeFuzzyScore(boundary, boundary)!;
+    expect(capped.matches.last.end, 128);
+    expect(capped.matchesInSource(boundary), [(start: 0, end: 129)]);
+  });
 }
