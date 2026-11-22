@@ -73,7 +73,8 @@ void main() {
     await tester.enterText(input, '@:zebra');
     await tester.pump();
     await tester.pump();
-    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function (1)')),
+        findsOneWidget);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     await accepting;
@@ -318,4 +319,100 @@ void main() {
         TargetPlatform.linux,
         TargetPlatform.macOS,
       }));
+
+  testWidgets('Document symbols group nested results once per kind',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-document-symbol-kinds');
+    const text = 'fn root_fn() {}\n'
+        'mod outer_a {\n  fn nested_a() {}\n  struct Packet;\n}\n'
+        'mod outer_b {\n  fn nested_b() {}\n}\n';
+    final file = File('${temp.path}/main.rs')..writeAsStringSync(text);
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 95,
+            'docs': [
+              {'id': 95, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byType(RustTextInputField);
+    await tester.tap(editor);
+    await tester.pump();
+    RustTextInputField active() => tester.widget<RustTextInputField>(editor);
+    final original = active().inputWindow.initialValue.selection;
+    final opening = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    Finder row(String name) => find.byKey(ValueKey('qi-$name'));
+    double y(String name) => tester.getTopLeft(row(name)).dy;
+    Future<void> query(String value) async {
+      await tester.enterText(input, value);
+      await tester.pumpAndSettle();
+    }
+
+    await query('@:');
+    expect(row('separator-function'), findsNothing);
+    for (final name in [
+      'separator-function (3)',
+      'root_fn',
+      'nested_a',
+      'nested_b',
+      'separator-mod (2)',
+      'outer_a',
+      'outer_b',
+      'separator-struct (1)',
+      'Packet',
+    ]) {
+      expect(row(name), findsOneWidget);
+    }
+    expect(y('separator-function (3)'), lessThan(y('root_fn')));
+    expect(y('root_fn'), lessThan(y('nested_a')));
+    expect(y('nested_a'), lessThan(y('nested_b')));
+    expect(y('nested_b'), lessThan(y('separator-mod (2)')));
+    expect(y('outer_b'), lessThan(y('separator-struct (1)')));
+
+    await query('@:nested_b');
+    expect(row('separator-function (1)'), findsOneWidget);
+    expect(row('separator-mod (1)'), findsOneWidget);
+    expect(row('separator-struct (1)'), findsNothing);
+    expect(row('nested_a'), findsNothing);
+    expect(active().inputWindow.initialValue.selection.extentOffset,
+        text.indexOf('fn nested_b'));
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+    expect(active().inputWindow.initialValue.selection, original);
+    expect(active().focusNode!.hasPrimaryFocus, isTrue);
+    expect(file.readAsStringSync(), text);
+  });
 }

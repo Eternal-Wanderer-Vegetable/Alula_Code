@@ -4247,17 +4247,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (value.startsWith('@')) value = value.substring(1);
         final grouped = value.startsWith(':');
         if (grouped) value = value.substring(1);
-        final rows = projectDocumentSymbols(roots, query: value,
-            sort: grouped ? DocumentSymbolSort.kind : DocumentSymbolSort.position);
-        String? lastKind;
-        final items = <QuickItem>[];
-        for (final row in rows) {
+        final rows = projectDocumentSymbols(roots, query: value);
+        QuickItem itemFor(({DocumentSymbolNode symbol, int depth}) row) {
           final symbol = row.symbol;
-          if (grouped && symbol.kind != lastKind) {
-            items.add(QuickItem(label: symbol.kind, kind: QuickItemKind.separator));
-            lastKind = symbol.kind;
-          }
-          items.add(QuickItem(label: symbol.name,
+          return QuickItem(
+            label: symbol.name,
             description: '${symbol.kind} · 行 ${symbol.line}',
             detail: row.depth == 0 ? null : '  ' * row.depth + symbol.name,
             onPreview: () => preview(symbol),
@@ -4271,9 +4265,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 onRun: () => accept(symbol, side: true),
               ),
             ],
-          ));
+          );
         }
-        return items;
+
+        if (!grouped) return [for (final row in rows) itemFor(row)];
+
+        final itemsByKind = <String, List<QuickItem>>{};
+        for (final row in rows) {
+          itemsByKind.putIfAbsent(row.symbol.kind, () => []).add(itemFor(row));
+        }
+        final kinds = itemsByKind.entries.toList()
+          ..sort((a, b) => a.key.compareTo(b.key));
+        return [
+          for (final kind in kinds) ...[
+            QuickItem(
+              label: '${kind.key} (${kind.value.length})',
+              kind: QuickItemKind.separator,
+            ),
+            ...kind.value,
+          ],
+        ];
       },
     );
     if (!accepted && valid()) {

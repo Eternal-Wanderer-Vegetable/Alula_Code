@@ -3422,6 +3422,19 @@
       "evidence": "文档符号 Alt+Enter、Ctrl/Cmd+Enter 与行尾按钮侧开，恢复源状态并保留右侧标签。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 271/271，Flutter 1,810 passed / 2 skipped。产品 3ceca5b 的 CI 45077277402 四项及 Platform Availability 45077269288 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.215-document-symbol-aside.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-268",
+      "name": "P05.216 CMD-04 文档符号全局类别分组和计数",
+      "description": "在 @: 模式中按类别合并跨父节点的候选，每个类别显示一项分隔与当前候选数，保留定位及取消。",
+      "dependencies": [
+        "feat-128",
+        "feat-267"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

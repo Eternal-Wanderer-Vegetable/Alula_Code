@@ -197,18 +197,21 @@ void main() {
 
     await route('@zebra', '转到符号（@名称，@: 按类别）');
     expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
-    expect(find.byKey(const ValueKey('qi-separator-function')), findsNothing);
+    expect(
+        find.byKey(const ValueKey('qi-separator-function (1)')), findsNothing);
     await close();
 
     await route('@:zebra', '转到符号（@名称，@: 按类别）');
     expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
-    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function (1)')),
+        findsOneWidget);
     await close();
 
     await route('@:zebra', '转到符号（@名称，@: 按类别）',
         earlierEdits: ['@', '@:', '@:z']);
     expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
-    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function (1)')),
+        findsOneWidget);
     await close();
 
     await route('#zebra', '工作区符号（#名称）');
@@ -242,7 +245,8 @@ void main() {
     final symbolFocus = tester.widget<TextField>(field).focusNode;
     await editPrefix('@:alpha', '转到符号（@名称，@: 按类别）');
     expect(tester.widget<TextField>(field).focusNode, same(symbolFocus));
-    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function (1)')),
+        findsOneWidget);
     await editPrefix('main.rs:3:1', '文件名、路径或 path:行:列');
     expect(controller.selection, original);
     await close();
