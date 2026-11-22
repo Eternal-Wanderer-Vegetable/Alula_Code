@@ -3351,8 +3351,8 @@
         "feat-260",
         "feat-261"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "无文本编辑器时行列和偏移入口展示提示，通过帮助可访问，Enter 保持提示，Escape 恢复焦点。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 241/241，Flutter 1,803 passed / 2 skipped。产品 092d8a4 的 CI 45066688450 四项及 Platform Availability 45066685552 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.210-goto-without-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
