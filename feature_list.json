@@ -3404,8 +3404,8 @@
         "feat-241",
         "feat-265"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "连续键入时保留完整快速访问查询，等待切换期间阻止旧候选接受。Windows 与 Linux 分别复验 12 和 60 毫秒输入节奏，每轮各 36 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 c8c8da5 的 CI 45074969186 四项及 Platform Availability 45074964422 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
