@@ -3038,8 +3038,8 @@
         "feat-126",
         "feat-238"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 AnythingQuickAccessProvider 按最近打开与文件结果分组，空查询跳过文件结果请求。",
+      "status": "done",
+      "evidence": "空查询仅显示可用最近文件，输入后分组并去重，方向键跨分组打开文件，成功打开后历史更新。Windows 实机及 Linux Xvfb + xfwm4 各 9 个观测点，专项 62/62，Flutter 1,769 passed / 2 skipped。产品 1b9a4f0 的 CI 45000995564 四项与 Platform Availability 45000992796 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.187-quick-open-groups.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

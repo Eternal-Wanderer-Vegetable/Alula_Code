@@ -1,0 +1,1011 @@
+{
+  "product": "1b9a4f04e39b074db6f3f04a5f1a6743b797c45e",
+  "tree": "29c721fc4ccade8d857d8839f355546b086bc2bb",
+  "sharedDriverSha256": "67fad5a714ad1fba46eebfb56183e0167bfe8233466b0a5b53b56bab3313f156",
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "29c721fc4ccade8d857d8839f355546b086bc2bb",
+    "aotSha256": "a1d6d69f8aa8f43876487bb40dae0fb857c2bcfe8f0200f04c16febb6df4a5f8",
+    "fixtureSha256": "54ee2335fb692aca075d2006ce93d2c6fd4f3075340d92a7ec9de40e4928e087",
+    "runnerSha256": "78a474726c457a54e26a6eea8b1b6f6bf921934c7a06a0d0f60f562e26bd31bd",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "editor-focused": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "blank-recent-only": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            835.0845947265625,
+            123.0,
+            857.0845947265625,
+            145.0
+          ]
+        }
+      },
+      "grouped-query": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            835.0845947265625,
+            123.0,
+            857.0845947265625,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            300.0,
+            145.0,
+            900.0,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            312.0,
+            153.0,
+            355.5999984741211,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            300.0,
+            171.0,
+            900.0,
+            193.0
+          ]
+        }
+      },
+      "clear-restores-recent-only": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            835.0845947265625,
+            123.0,
+            857.0845947265625,
+            145.0
+          ]
+        }
+      },
+      "grouped-query-again": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            835.0845947265625,
+            123.0,
+            857.0845947265625,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            300.0,
+            145.0,
+            900.0,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            312.0,
+            153.0,
+            355.5999984741211,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            300.0,
+            171.0,
+            900.0,
+            193.0
+          ]
+        }
+      },
+      "keyboard-accepted-file": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "opened-file-joins-history": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-unopened.txt",
+          "qi-button-needle-unopened.txt-0",
+          "qi-needle-recent.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-unopened.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-unopened.txt-0": [
+            853.7564086914062,
+            123.0,
+            875.7564086914062,
+            145.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            145.0,
+            900.0,
+            167.0
+          ]
+        }
+      },
+      "escape-restores-workbench": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      }
+    },
+    "diskSha256": {
+      "needle-recent.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "needle-unopened.txt": "7dae8f752129e06fb1563fb1f8c8f6d0d0973e04223dd88deb5d61dfe37caf9f"
+    },
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    }
+  },
+  "windows": {
+    "tree": "29c721fc4ccade8d857d8839f355546b086bc2bb",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "6aabb4220fcdb3eef9b48351348dd78114e40e057fe22cf04124cb0e7feddeee",
+    "fixtureSha256": "54ee2335fb692aca075d2006ce93d2c6fd4f3075340d92a7ec9de40e4928e087",
+    "runnerSha256": "ed0e9e91ce3421cc4319e116cd733a34762f182a8c3a01e243ba35ce2b3dc01c",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": false,
+        "boxes": {}
+      },
+      "editor-focused": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "blank-recent-only": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "grouped-query": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            200.39999999999998,
+            153.0,
+            243.99999847412107,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            188.39999999999998,
+            171.0,
+            788.4,
+            193.0
+          ]
+        }
+      },
+      "clear-restores-recent-only": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "grouped-query-again": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            200.39999999999998,
+            153.0,
+            243.99999847412107,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            188.39999999999998,
+            171.0,
+            788.4,
+            193.0
+          ]
+        }
+      },
+      "keyboard-accepted-file": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "opened-file-joins-history": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-unopened.txt",
+          "qi-button-needle-unopened.txt-0",
+          "qi-needle-recent.txt"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-unopened.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-unopened.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            167.0
+          ]
+        }
+      },
+      "escape-restores-workbench": {
+        "editors": [
+          {
+            "label": "needle-unopened.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      }
+    },
+    "dpi": 120,
+    "activation": {
+      "requested": true,
+      "accepted": false,
+      "foreground": false
+    },
+    "diskSha256": {
+      "needle-recent.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "needle-unopened.txt": "7dae8f752129e06fb1563fb1f8c8f6d0d0973e04223dd88deb5d61dfe37caf9f"
+    },
+    "exit": 0,
+    "passed": true
+  }
+}
