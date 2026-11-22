@@ -2954,8 +2954,8 @@
         "feat-151",
         "feat-232"
       ],
-      "status": "in-progress",
-      "evidence": "产品 cd8e73cfc0eab8476b53e4512063a5a2e8da1613；专项 46/46，Flutter 1,754 passed / 2 skipped，Linux xfwm4 五个场景及 Windows Release 构建通过。Windows 实机焦点复验待桌面可用。docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md",
+      "status": "done",
+      "evidence": "Windows 11 125% 普通与贴靠主窗 Alt+F4 恢复编辑，焦点切走及冲突样本通过。Linux xfwm4 五个场景，专项 46/46，Flutter 1,754 passed / 2 skipped。cd8e73c CI 44981197602 四项及 Platform Availability 44981195018 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

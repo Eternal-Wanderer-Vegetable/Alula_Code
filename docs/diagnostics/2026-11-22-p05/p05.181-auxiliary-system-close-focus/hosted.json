@@ -1,19 +1,19 @@
 {
-  "capturedUtc": "2026-11-22T03:40:00.690405+00:00",
+  "capturedUtc": "2026-11-22T04:07:56.861753+00:00",
   "productCommit": "cd8e73cfc0eab8476b53e4512063a5a2e8da1613",
   "pullRequestCI": {
     "databaseId": 44981197602,
     "name": "CI",
     "headSha": "cd8e73cfc0eab8476b53e4512063a5a2e8da1613",
-    "status": "in_progress",
-    "conclusion": "",
+    "status": "completed",
+    "conclusion": "success",
     "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981197602",
     "jobs": [
       {
         "id": 137081842560,
         "name": "Flutter (analyze + test)",
-        "status": "in_progress",
-        "conclusion": "",
+        "status": "completed",
+        "conclusion": "success",
         "steps": [
           {
             "name": "Build fake LSP fixture for real-FFI tests",
@@ -27,8 +27,8 @@
           },
           {
             "name": "Tests",
-            "status": "in_progress",
-            "conclusion": ""
+            "status": "completed",
+            "conclusion": "success"
           }
         ]
       },
@@ -84,8 +84,8 @@
       {
         "id": 137081834487,
         "name": "Windows x64 build and launch smoke",
-        "status": "in_progress",
-        "conclusion": "",
+        "status": "completed",
+        "conclusion": "success",
         "steps": [
           {
             "name": "Build Windows Release bundle",
@@ -152,5 +152,56 @@
       }
     ]
   },
-  "macOSPhysicalAcceptance": "deferred per user"
+  "macOSPhysicalAcceptance": "deferred per user",
+  "platformAvailabilityFirstAttemptJobs": [
+    {
+      "conclusion": "success",
+      "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981195018/job/137081834487",
+      "id": 137081834487,
+      "name": "Windows x64 build and launch smoke",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981195018/job/137081834642",
+      "id": 137081834642,
+      "name": "macOS build, launch smoke, and app package",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981195018/job/137081834643",
+      "id": 137081834643,
+      "name": "Linux x64 build and launch smoke",
+      "status": "completed"
+    }
+  ],
+  "platformAvailabilityRerun": {
+    "conclusion": null,
+    "head_sha": "cd8e73cfc0eab8476b53e4512063a5a2e8da1613",
+    "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981195018",
+    "id": 44981195018,
+    "run_attempt": 2,
+    "status": "in_progress"
+  },
+  "initialEvidenceCI": {
+    "conclusion": "success",
+    "head_sha": "33c3f24aa051d8724726705a48dac5b5e9aca383",
+    "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44981752553",
+    "id": 44981752553,
+    "run_attempt": 1,
+    "status": "completed"
+  },
+  "macOSFirstFailure": {
+    "jobId": 137081834642,
+    "test": "preserve-case toggle applies to regex current/all replacement and undo",
+    "path": "app/test/workbench_regex_replace_test.dart:572",
+    "expected": "bar FOO Foo",
+    "observed": "foo FOO Foo",
+    "suite": {
+      "passed": 1753,
+      "failed": 1,
+      "skipped": 2
+    }
+  }
 }
