@@ -22,8 +22,10 @@ import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
 import 'auxiliary_focus_context.dart';
 import 'auxiliary_window_transfer.dart';
+import 'commands.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
+import 'quick_input.dart';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
@@ -155,6 +157,13 @@ class _PreparedAuxiliaryDocumentTransfer {
 
 class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     with WindowListener {
+  static const _toggleCompactCommand =
+      'workbench.action.toggleCompactAuxiliaryWindow';
+  static const _enableCompactCommand =
+      'workbench.action.enableCompactAuxiliaryWindow';
+  static const _disableCompactCommand =
+      'workbench.action.disableCompactAuxiliaryWindow';
+
   AlulaDoc? _doc;
   RustTextInputWindow? _inputWindow;
   String? _path;
@@ -166,6 +175,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   bool? _alwaysOnTop;
   bool _changingAlwaysOnTop = false;
   bool _compactMode = false;
+  late final CommandService _compactCommands;
   String? _windowStateError;
   late final ScrollController _scrollController;
   final FocusNode _editorFocus = FocusNode(debugLabel: 'auxiliary editor');
@@ -191,6 +201,25 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _compactCommands = CommandService()
+      ..register(Command(
+        id: _toggleCompactCommand,
+        title: '切换窗口紧凑模式',
+        category: '查看',
+        run: () async => _setCompactMode(!_compactMode),
+      ))
+      ..register(Command(
+        id: _enableCompactCommand,
+        title: '启用紧凑模式',
+        category: '查看',
+        run: () async => _setCompactMode(true),
+      ))
+      ..register(Command(
+        id: _disableCompactCommand,
+        title: '退出紧凑模式',
+        category: '查看',
+        run: () async => _setCompactMode(false),
+      ));
     windowManager.addListener(this);
     unawaited(_preventNativeClose());
     unawaited(_connectFocusContext());
@@ -212,6 +241,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
     _scrollController.dispose();
     _editorFocus.dispose();
+    _compactCommands.dispose();
     super.dispose();
   }
 
@@ -660,8 +690,37 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
   }
 
-  void _toggleCompactMode() {
-    setState(() => _compactMode = !_compactMode);
+  void _setCompactMode(bool compact) {
+    if (!mounted || _compactMode == compact) return;
+    setState(() => _compactMode = compact);
+  }
+
+  void _runCompactLayoutAction() {
+    unawaited(_compactCommands.execute(
+      _compactMode ? _disableCompactCommand : _enableCompactCommand,
+    ));
+  }
+
+  Future<void> _showCompactCommandPalette() async {
+    if (_closing || _returningTab || _pendingTransfer != null) return;
+    final previousFocus = QuickInput.externalFocus();
+    final context = previousFocus?.context;
+    if (context == null || Navigator.maybeOf(context)?.canPop() != false) {
+      return;
+    }
+    final command = _compactCommands.byId(_toggleCompactCommand)!;
+    var accepted = false;
+    await QuickInput.show(
+      context,
+      hint: '输入命令名（> 前缀可省）',
+      queryPrefix: '>',
+      items: [QuickItem(label: command.label, commandId: command.id)],
+      commands: _compactCommands,
+      onCommandExecuted: (_) => accepted = true,
+    );
+    if (mounted && accepted && previousFocus?.context != null) {
+      previousFocus!.requestFocus();
+    }
   }
 
   Future<void> _openDocument() async {
@@ -1092,9 +1151,24 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       width: 30,
       height: titleHeight,
     );
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: false),
+      builder: (context, child) => CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.f1, includeRepeats: false):
+              () => unawaited(_showCompactCommandPalette()),
+          SingleActivator(
+            LogicalKeyboardKey.keyP,
+            control: !isMac,
+            meta: isMac,
+            shift: true,
+            includeRepeats: false,
+          ): () => unawaited(_showCompactCommandPalette()),
+        },
+        child: child!,
+      ),
       home: Scaffold(
         backgroundColor: const Color(0xFF14161A),
         body: Column(
@@ -1115,11 +1189,11 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                     label: '紧凑模式',
                     button: true,
                     toggled: _compactMode,
-                    onTap: _toggleCompactMode,
+                    onTap: _runCompactLayoutAction,
                     child: IconButton(
                       key: const ValueKey('auxiliary-compact-mode-button'),
                       tooltip: _compactMode ? '退出紧凑模式' : '启用紧凑模式',
-                      onPressed: _toggleCompactMode,
+                      onPressed: _runCompactLayoutAction,
                       icon: Icon(
                         _compactMode ? Icons.fullscreen_exit : Icons.fullscreen,
                         size: 14,

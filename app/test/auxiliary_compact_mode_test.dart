@@ -2,6 +2,7 @@ import 'dart:ui' show PointerDeviceKind, SemanticsRole, Tristate;
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/auxiliary_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -201,5 +202,90 @@ void main() {
       expect(calls, hasLength(callsBeforeToggle));
       expect(calls.where((call) => call.method == 'setAlwaysOnTop'), isEmpty);
     },
+  );
+
+  testWidgets(
+    'auxiliary command palette exposes its compact toggle and restores editor focus',
+    (tester) async {
+      const windowChannel = MethodChannel('window_manager');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(windowChannel, (call) async {
+        if (call.method == 'isFocused') return true;
+        if (call.method == 'isAlwaysOnTop') return false;
+        return null;
+      });
+      addTearDown(
+          () => messenger.setMockMethodCallHandler(windowChannel, null));
+
+      const text = 'seed 😀\r\nab\r\n';
+      final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 902182,
+        name: 'compact-command.txt',
+        text: text,
+        dirty: true,
+      );
+      await tester.pumpWidget(AuxiliaryEditorApp(payload: payload));
+      await tester.pumpAndSettle();
+
+      final field = tester.state<RustTextInputFieldState>(
+        find.byKey(const ValueKey('auxiliary-editor-input')),
+      );
+      final focus = field.widget.focusNode!;
+      focus.requestFocus();
+      const selection = TextSelection(baseOffset: 11, extentOffset: 7);
+      field.setSelection(selection);
+      await tester.pumpAndSettle();
+      final document = field.widget.inputWindow.document;
+      final version = document.version;
+      final title = find.byKey(const ValueKey('auxiliary-title-row'));
+      final toggle = find.text('查看: 切换窗口紧凑模式');
+
+      Future<void> openWithF1() async {
+        await tester.sendKeyEvent(LogicalKeyboardKey.f1);
+        await tester.pumpAndSettle();
+        expect(toggle, findsOneWidget);
+        expect(find.text('查看: 启用紧凑模式'), findsNothing);
+        expect(find.text('查看: 退出紧凑模式'), findsNothing);
+        expect(focus.hasFocus, isFalse);
+      }
+
+      await openWithF1();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(toggle, findsNothing);
+      expect(focus.hasFocus, isTrue);
+      expect(tester.getSize(title).height, 35);
+
+      await openWithF1();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(toggle, findsNothing);
+      expect(tester.getSize(title).height, 30);
+      expect(focus.hasFocus, isTrue);
+
+      final modifier = defaultTargetPlatform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+      expect(toggle, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(tester.getSize(title).height, 35);
+      expect(focus.hasFocus, isTrue);
+      expect(field.editingValue.selection, selection);
+      expect(document.resync().content, text);
+      expect(document.isDirty, isTrue);
+      expect(document.version, version);
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.linux,
+      TargetPlatform.windows,
+      TargetPlatform.macOS,
+    }),
   );
 }

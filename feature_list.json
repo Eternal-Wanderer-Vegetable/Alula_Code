@@ -2958,6 +2958,20 @@
       "evidence": "Windows 11 125% 普通与贴靠主窗 Alt+F4 恢复编辑，焦点切走及冲突样本通过。Linux xfwm4 五个场景，专项 46/46，Flutter 1,754 passed / 2 skipped。cd8e73c CI 44981197602 四项及 Platform Availability 44981195018 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-234",
+      "name": "P05.182 LAY-12/17 辅助窗紧凑模式的固定命令入口",
+      "description": "在辅助窗按固定命令 ID 执行紧凑模式切换与标题按钮的启用/退出，保留编辑器焦点、正文和选区。",
+      "dependencies": [
+        "feat-120",
+        "feat-124",
+        "feat-227"
+      ],
+      "status": "in-progress",
+      "evidence": "固定 Code-OSS auxiliaryEditorPart.ts 的切换动作 f1=true，仅辅助窗获焦时可用。启用、退出走按紧凑状态展示的 LayoutControlMenu 动作。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
