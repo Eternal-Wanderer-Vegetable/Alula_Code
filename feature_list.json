@@ -3299,8 +3299,8 @@
         "feat-253",
         "feat-257"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "普通查询结果页按文件名前缀、文件名命中和目录命中排序，保留最近文件与路径定位。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 233/233，Flutter 1,800 passed / 2 skipped。产品 b184972 的 CI 45058076816 四项及 Platform Availability 45058071369 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.206-quick-open-rank.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

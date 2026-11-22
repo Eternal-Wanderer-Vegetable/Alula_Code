@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.206 / feat-258 完成。产品 b1849726c3fcf75db737541ad8ed81c98e3b30bf。普通查询结果页按文件名前缀、文件名命中和目录命中排序，保留最近文件与路径定位。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 233/233，Flutter 1,800 passed / 2 skipped。产品 b184972 的 CI 45058076816 四项及 Platform Availability 45058071369 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.206-quick-open-rank.md。
+
 - P05.205 / feat-257 完成。产品 f21fd90326342e9be8d56fd226640b307ade81cd。文件名与可见父目录按查询高亮，保留 UTF-16 边界、文件路径和位置后缀。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 232/232，Flutter 1,799 passed / 2 skipped。产品 f21fd90 的 CI 45055764267 四项及 Platform Availability 45055759185 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.205-quick-open-highlights.md。
 
 - P05.204 / feat-256 完成。产品 4692201bffb020292b45e9714957fe6287cc902c。文件行展示单根工作区相对或外部父目录，保持原文件路径和行列定位。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 228/228，Flutter 1,795 passed / 2 skipped。产品 4692201 的 CI 45052840566 四项及 Platform Availability 45052836970 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.204-quick-open-path-labels.md。
