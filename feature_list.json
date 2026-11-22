@@ -3166,8 +3166,8 @@
         "feat-246",
         "feat-247"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "普通单击保留标签，Ctrl/Cmd 或 Alt 加单击复用侧开并使用最新位置。Windows 实机与 Linux Xvfb + xfwm4 各 16 个原生观测点，专项 142/142，Flutter 1,781 passed / 2 skipped。产品 3583225 的 CI 45032084941 四项及 Platform Availability 45032079768 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.196-quick-open-click-modifiers.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

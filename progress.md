@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.196 / feat-248 完成。产品 35832257d82574dad390ed49961690494c72060c。普通单击保留标签，Ctrl/Cmd 或 Alt 加单击复用侧开并使用最新位置。Windows 实机与 Linux Xvfb + xfwm4 各 16 个原生观测点，专项 142/142，Flutter 1,781 passed / 2 skipped。产品 3583225 的 CI 45032084941 四项及 Platform Availability 45032079768 Windows/Linux 通过。macOS 实机暂缓。本次 macOS 托管仍在运行。详见 docs/diagnostics/2026-11-22-p05/p05.196-quick-open-click-modifiers.md。
+
 - P05.195 / feat-247 完成。产品 31ad891420da9b0535c0f176fade744986fb4e02。普通 Enter 保留编辑器，Ctrl/Cmd+Enter 复用侧开并保留最新位置，Alt+Enter 回归通过。Windows 11 125% DPI 实机和隔离 Linux Xvfb + xfwm4 各 16 个原生观测点。 专项 142/142，Flutter 1,781 passed / 2 skipped。产品 31ad891 的 CI 45022254316 四项及 Platform Availability 45022251085 Windows/Linux 通过。macOS 实机暂缓。macOS 托管通过。详见 docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md。
 
 - P05.194 / feat-246 完成。产品 bc84315e2b32d7b3469adb4a19fdccbd604a9d18 已推草稿 PR #3。编辑位置后缀时保留候选、进行中的请求、选择与按钮焦点，使用最新位置接受或侧开。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 128/128，Flutter 1,779 passed / 2 skipped。产品 bc84315 的 CI 45018977348 四项与 Platform Availability 45018974947 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.193 证据 CI 45017576242 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md。
