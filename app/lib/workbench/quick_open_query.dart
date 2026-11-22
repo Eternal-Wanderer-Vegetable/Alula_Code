@@ -67,6 +67,8 @@ QuickOpenQuery parseQuickOpenQuery(String input) {
 
 typedef QuickOpenMatch = ({String path, bool recent});
 
+typedef _QuickOpenTerm = ({String text, String? exactLowercase});
+
 /// Asynchronous Quick Open search with bounded result storage and no index.
 ///
 /// Pages partition matching files in discovery order (MRU, direct path, then
@@ -115,10 +117,8 @@ class QuickOpenSearch {
     final rootPath = p.normalize(p.absolute(_native(root)));
     final pathQuery = _native(parseQuickOpenQuery(query).pathQuery);
     final pattern = pathQuery == '.' ? '' : pathQuery;
-    final terms = [
-      for (final piece in pattern.split(' '))
-        if (piece.isNotEmpty) piece,
-    ];
+    final terms = _prepareTerms(pattern);
+    final allowScoredMatches = pattern.isEmpty || terms.isNotEmpty;
     final recentKeys = {
       for (final path in excludedPaths) _key(p.normalize(_native(path))),
     };
@@ -165,7 +165,7 @@ class QuickOpenSearch {
         final key = _key(path);
         if (!recentKeys.add(key)) continue;
         if (key != (directPath == null ? null : _key(directPath)) &&
-            _score(terms, path, rootPath) == null) {
+            (!allowScoredMatches || _score(terms, path, rootPath) == null)) {
           continue;
         }
         final exists = await File(path).exists();
@@ -185,7 +185,7 @@ class QuickOpenSearch {
         if (add(directPath, null)) return finish();
       }
       // Absolute queries resolve directly; they need not open the workspace.
-      if (p.isAbsolute(pattern)) return finish();
+      if (!allowScoredMatches || p.isAbsolute(pattern)) return finish();
 
       await for (final path in _walk(rootPath, 0, generation)) {
         if (!current()) return [];
@@ -226,14 +226,44 @@ class QuickOpenSearch {
   static String _key(String path) =>
       Platform.isWindows ? path.toLowerCase() : path;
 
-  static int? _score(List<String> terms, String path, String root) {
+  static bool _isQuoted(String value) =>
+      value.length > 1 && value.startsWith('"') && value.endsWith('"');
+
+  static List<_QuickOpenTerm> _prepareTerms(String pattern) {
+    final terms = <_QuickOpenTerm>[];
+    for (final part in pattern.split(' ')) {
+      final text = part.replaceAll('"', '');
+      if (text.isEmpty) continue;
+      terms.add((
+        text: text,
+        exactLowercase: _isQuoted(part) ? text.toLowerCase() : null,
+      ));
+    }
+    if (terms.length == 1 &&
+        terms.single.exactLowercase == null &&
+        _isQuoted(pattern)) {
+      final text = terms.single.text;
+      terms[0] = (text: text, exactLowercase: text.toLowerCase());
+    }
+    return terms;
+  }
+
+  static int? _scoreTerm(_QuickOpenTerm term, String candidate) {
+    final exact = term.exactLowercase;
+    if (exact != null && !candidate.toLowerCase().contains(exact)) return null;
+    final score = treeFuzzyScore(term.text, candidate)?.score;
+    // The substring check also covers matches past the fuzzy score's window.
+    return score ?? (exact == null ? null : 0);
+  }
+
+  static int? _score(List<_QuickOpenTerm> terms, String path, String root) {
     if (terms.isEmpty) return 0;
     final name = p.basename(path);
     final relative = p.relative(path, from: root);
     var total = 0;
     for (final term in terms) {
-      var score = treeFuzzyScore(term, name)?.score;
-      final pathScore = treeFuzzyScore(term, relative)?.score;
+      var score = _scoreTerm(term, name);
+      final pathScore = _scoreTerm(term, relative);
       if (pathScore != null && (score == null || pathScore > score)) {
         score = pathScore;
       }

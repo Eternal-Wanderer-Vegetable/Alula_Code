@@ -206,6 +206,31 @@ void main() {
           [literal]);
     });
 
+    test('only a closed quoted term requires contiguous characters', () async {
+      final exact = await file('engine/line-parser.txt');
+      final fuzzy = await file('engine/p-a-r-s-e-r.txt');
+      final otherDirectory = await file('archive/line-parser.txt');
+      final recent = [fuzzy, exact];
+
+      expect(
+          await search.search(root.path, 'engine "parser', recentPaths: recent),
+          [fuzzy, exact]);
+      expect(
+          await search.search(root.path, 'engine "PARSER":2:3',
+              recentPaths: recent),
+          [exact]);
+      expect(await search.search(root.path, '" parser "'),
+          unorderedEquals([exact, otherDirectory]));
+      expect(
+          await search.search(root.path, '""', recentPaths: recent), isEmpty);
+    });
+
+    test('quoted path terms can match beyond the fuzzy scoring window',
+        () async {
+      final path = await file('a' * 135 + '/engine-marker/source.txt');
+      expect(await search.search(root.path, '"engine-marker"'), [path]);
+    });
+
     test('MRU preserves order, deduplicates normalized paths, skips missing',
         () async {
       final first = await file('one.dart');
