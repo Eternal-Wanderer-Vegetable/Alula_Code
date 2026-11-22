@@ -182,6 +182,26 @@ void main() {
       );
     });
 
+    test('publishes recent matches before walking the workspace', () async {
+      final recent = await file('needle-recent.txt');
+      final lateFile = p.join(root.path, 'needle-workspace.txt');
+      final partial = <QuickOpenMatch>[];
+      final matches = await search.searchMatches(
+        root.path,
+        'needle',
+        recentPaths: [recent],
+        onRecentMatches: (recentMatches) {
+          partial.addAll(recentMatches);
+          File(lateFile).writeAsStringSync('made after the recent result');
+        },
+      );
+      expect(partial, [(path: recent, recent: true)]);
+      expect(matches, [
+        (path: recent, recent: true),
+        (path: lateFile, recent: false),
+      ]);
+    });
+
     test('MRU and direct paths do not duplicate across page boundaries',
         () async {
       final recent = <String>[];

@@ -70,6 +70,7 @@ class QuickOpenSearch {
     List<String> recentPaths = const [],
     int page = 0,
     bool includeFileResults = true,
+    void Function(List<QuickOpenMatch>)? onRecentMatches,
   }) async {
     if (page < 0) {
       throw ArgumentError.value(page, 'page', 'Must be nonnegative');
@@ -116,10 +117,6 @@ class QuickOpenSearch {
           ? null
           : p.normalize(
               p.isAbsolute(pattern) ? pattern : p.join(rootPath, pattern));
-      final directExists =
-          directPath != null && await File(directPath).exists();
-      if (!current()) return [];
-
       for (final recent in recentPaths) {
         if (!current()) return [];
         final native = _native(recent);
@@ -137,6 +134,11 @@ class QuickOpenSearch {
       }
 
       if (!includeFileResults) return finish();
+      if (results.isNotEmpty && current()) onRecentMatches?.call(finish());
+
+      final directExists =
+          directPath != null && await File(directPath).exists();
+      if (!current()) return [];
 
       final directKey = directPath == null ? null : _key(directPath);
       if (directExists && !recentKeys.contains(directKey)) {

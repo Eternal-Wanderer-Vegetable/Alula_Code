@@ -95,6 +95,11 @@ class QuickInputNavigation {
   final Set<LogicalKeyboardKey> acceptOnRelease;
 }
 
+typedef QuickInputItemsProvider = Future<List<QuickItem>> Function(
+  String query,
+  ValueChanged<List<QuickItem>> publish,
+);
+
 class QuickInput {
   QuickInput._();
 
@@ -167,12 +172,19 @@ class QuickInput {
         inputActionBuilder,
     String? queryPrefix,
     Future<List<QuickItem>> Function(String query)? itemsProvider,
+    QuickInputItemsProvider? progressiveItemsProvider,
     VoidCallback? onClose,
     QuickInputNavigation? navigation,
   }) {
     if (validateInput != null && validateInputMessage != null) {
       throw ArgumentError('Only one QuickInput validator may be provided');
     }
+    if (itemsProvider != null && progressiveItemsProvider != null) {
+      throw ArgumentError('Only one QuickInput item provider may be provided');
+    }
+    final QuickInputItemsProvider? resolvedItemsProvider =
+        progressiveItemsProvider ??
+            (itemsProvider == null ? null : (query, _) => itemsProvider(query));
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
     // 焦点（上游 quickInput 取消恢复语义）；执行/返回都会接管后续焦点。
     final restoreTarget = restoreFocus ?? externalFocus();
@@ -214,7 +226,7 @@ class QuickInput {
               redirectOnInput: redirectOnInput,
               inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
-              itemsProvider: itemsProvider,
+              itemsProvider: resolvedItemsProvider,
               navigation: navigation,
               onDispose: notifyClosed,
               onHandled: () => handled = true,
@@ -280,7 +292,7 @@ class _QuickInputPanel extends StatefulWidget {
           BuildContext context, String value, VoidCallback refresh)?
       inputActionBuilder;
   final String? queryPrefix;
-  final Future<List<QuickItem>> Function(String query)? itemsProvider;
+  final QuickInputItemsProvider? itemsProvider;
   final QuickInputNavigation? navigation;
 
   @override
@@ -408,32 +420,54 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (provider == null) return;
     final generation = ++_itemsGeneration;
     final query = _controller.text;
+    bool current() =>
+        mounted &&
+        !_accepted &&
+        generation == _itemsGeneration &&
+        query == _controller.text;
+
     setState(() {
       _itemsLoading = true;
       _itemsError = null;
       _providedItems = const [];
       _filtered = const [];
     });
-    try {
-      final items = await provider(query);
-      if (!mounted ||
-          generation != _itemsGeneration ||
-          query != _controller.text) {
-        return;
-      }
-      _rowKeys.clear();
-      final oldButtonNodes =
-          _buttonFocusNodes.values.expand((nodes) => nodes).toList();
-      _buttonFocusNodes.clear();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        for (final node in oldButtonNodes) {
-          node.dispose();
-        }
+    var published = false;
+    void applyItems(List<QuickItem> items) {
+      if (!current()) return;
+      final selected =
+          published && _selected >= 0 && _selected < _filtered.length
+              ? _filtered[_selected]
+              : null;
+      final retained = published ? items.toSet() : const <QuickItem>{};
+      _rowKeys.removeWhere((item, _) => !retained.contains(item));
+      final oldButtonNodes = <FocusNode>[];
+      _buttonFocusNodes.removeWhere((item, nodes) {
+        if (retained.contains(item)) return false;
+        oldButtonNodes.addAll(nodes);
+        return true;
       });
+      if (oldButtonNodes.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          for (final node in oldButtonNodes) {
+            node.dispose();
+          }
+        });
+      }
       _providedItems = items;
-      _refilter(query);
+      _refilter(query, keepSelected: selected);
+    }
+
+    try {
+      final items = await provider(query, (partial) {
+        if (!current() || !_itemsLoading) return;
+        applyItems(partial);
+        published = true;
+      });
+      applyItems(items);
     } catch (error) {
-      if (!mounted || generation != _itemsGeneration) return;
+      if (!current()) return;
+      if (published) applyItems(const []);
       setState(() => _itemsError = '搜索失败：$error');
     } finally {
       if (mounted && generation == _itemsGeneration) {
@@ -522,7 +556,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
   }
 
-  void _refilter(String query) {
+  void _refilter(String query, {QuickItem? keepSelected}) {
     var q = query.trim();
     final prefix = widget.queryPrefix;
     if (prefix != null && q.startsWith(prefix)) {
@@ -555,12 +589,14 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       return byScore != 0 ? byScore : a.$3.compareTo(b.$3);
     });
     final filtered = scored.map((e) => e.$1).toList();
+    final selectedIndex =
+        keepSelected == null ? -1 : filtered.indexOf(keepSelected);
     final generation = ++_navigationGeneration;
     setState(() {
       _filtered = filtered;
-      _selected = _initialSelectionIndex();
+      _selected = selectedIndex >= 0 ? selectedIndex : _initialSelectionIndex();
     });
-    if (_scroll.hasClients && _scroll.offset != 0) {
+    if (selectedIndex < 0 && _scroll.hasClients && _scroll.offset != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_canNavigate(generation)) {
           _scroll.jumpTo(_scroll.position.minScrollExtent);
@@ -868,7 +904,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final item = _filtered[index];
     if (!_isSelectable(item) || !_enabled(item)) return;
     if (altEnter) {
-      final button = item.buttons.where((button) => button.altEnter).firstOrNull;
+      final button =
+          item.buttons.where((button) => button.altEnter).firstOrNull;
       if (button != null) {
         await _runItemButton(button);
         return;

@@ -72,6 +72,92 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+      'progressive results retain the active action and reject old updates',
+      (tester) async {
+    final pending = <String, Completer<List<QuickItem>>>{};
+    final publish = <String, ValueChanged<List<QuickItem>>>{};
+    var actionAccepted = false;
+    const first = QuickItem(label: 'first');
+    final second = QuickItem(
+      label: 'second',
+      buttons: [
+        QuickItemButton(
+          icon: Icons.open_in_new,
+          tooltip: 'open second',
+          onRun: () async => actionAccepted = true,
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => QuickInput.show(
+            context,
+            hint: 'query',
+            items: const [],
+            initialValue: 'old',
+            progressiveItemsProvider: (query, update) {
+              publish[query] = update;
+              return (pending[query] = Completer<List<QuickItem>>()).future;
+            },
+          ),
+          child: const Text('open'),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('open'));
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.enterText(find.byType(TextField), 'new');
+    await tester.pump();
+    publish['old']!([const QuickItem(label: 'obsolete')]);
+    pending['old']!.complete([const QuickItem(label: 'obsolete')]);
+    publish['new']!([first, second]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('qi-obsolete')), findsNothing);
+    expect(find.byKey(const ValueKey('qi-second')), findsOneWidget);
+    expect(find.byKey(const ValueKey('quick-input-loading')), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    final buttonFocus = FocusManager.instance.primaryFocus;
+    expect(find.byTooltip('open second'), findsOneWidget);
+
+    pending['new']!.complete([first, second, const QuickItem(label: 'file')]);
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus, same(buttonFocus));
+    expect(find.byKey(const ValueKey('qi-file')), findsOneWidget);
+    expect(find.byKey(const ValueKey('quick-input-loading')), findsNothing);
+    publish['new']!([const QuickItem(label: 'late')]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('qi-late')), findsNothing);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(actionAccepted, isTrue);
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+
+    var acceptedWhileLoading = false;
+    await tester.tap(find.text('open'));
+    await tester.pump(const Duration(milliseconds: 120));
+    publish['old']!([
+      QuickItem(
+        label: 'ready before scan',
+        onRun: () async => acceptedWhileLoading = true,
+      ),
+    ]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('quick-input-loading')), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(acceptedWhileLoading, isTrue);
+    publish['old']!([const QuickItem(label: 'after close')]);
+    pending['old']!.complete([const QuickItem(label: 'after close')]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('disposing the Navigator cancels a pending picker once',
       (tester) async {
     final pending = Completer<List<QuickItem>>();

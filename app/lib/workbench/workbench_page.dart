@@ -4610,27 +4610,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ],
       ),
-      itemsProvider: (query) async {
-        if (query != lastQuery) { page = 0; lastQuery = query; }
-        final requestedPage = page;
-        loading = true;
-        List<QuickOpenMatch> matches;
-        try {
-          matches = await search.searchMatches(
-            root,
-            query,
-            recentPaths: _recentHistory.files.map((entry) => entry.path).toList(),
-            page: requestedPage,
-            includeFileResults: query.trim().isNotEmpty,
-          );
-        } finally {
-          if (query == lastQuery && requestedPage == page) loading = false;
+      progressiveItemsProvider: (query, publish) async {
+        if (query != lastQuery) {
+          page = 0;
+          lastQuery = query;
         }
-        if (closed || !currentWorkspace() || query != lastQuery || requestedPage != page) return const [];
-        hasNext = search.hasMore;
+        final requestedPage = page;
+        bool currentRequest() =>
+            !closed &&
+            currentWorkspace() &&
+            query == lastQuery &&
+            requestedPage == page;
         final position = parseQuickOpenQuery(query);
-        final recent = matches.where((match) => match.recent);
-        final files = matches.where((match) => !match.recent);
+        final recentItems = <String, QuickItem>{};
         QuickItem item(String path) => QuickItem(
               label: _nameOf(path),
               description: path,
@@ -4645,16 +4637,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ],
             );
 
-        return [
-          if (recent.isNotEmpty) ...[
-            const QuickItem(label: '最近打开', kind: QuickItemKind.separator),
-            for (final match in recent) item(match.path),
-          ],
-          if (files.isNotEmpty) ...[
-            const QuickItem(label: '文件结果', kind: QuickItemKind.separator),
-            for (final match in files) item(match.path),
-          ],
-        ];
+        List<QuickItem> group(List<QuickOpenMatch> matches) {
+          final recent = matches.where((match) => match.recent);
+          final files = matches.where((match) => !match.recent);
+          return [
+            if (recent.isNotEmpty) ...[
+              const QuickItem(label: '最近打开', kind: QuickItemKind.separator),
+              for (final match in recent)
+                recentItems.putIfAbsent(match.path, () => item(match.path)),
+            ],
+            if (files.isNotEmpty) ...[
+              const QuickItem(label: '文件结果', kind: QuickItemKind.separator),
+              for (final match in files) item(match.path),
+            ],
+          ];
+        }
+
+        loading = true;
+        List<QuickOpenMatch> matches;
+        try {
+          matches = await search.searchMatches(
+            root,
+            query,
+            recentPaths: _recentHistory.files.map((entry) => entry.path).toList(),
+            page: requestedPage,
+            includeFileResults: query.trim().isNotEmpty,
+            onRecentMatches: (recent) {
+              if (currentRequest()) publish(group(recent));
+            },
+          );
+        } finally {
+          if (query == lastQuery && requestedPage == page) loading = false;
+        }
+        if (!currentRequest()) return const [];
+        hasNext = search.hasMore;
+        return group(matches);
       },
     );
   }

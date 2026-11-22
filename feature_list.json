@@ -3073,6 +3073,20 @@
       "evidence": "替换前缀后继续切换，删除前缀返回文件查询，切换时还原预览并保留原焦点。Windows 实机及 Linux Xvfb + xfwm4 各 17 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 9fc89a2 的 CI 45006362843 四项与 Platform Availability 45006359091 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.189-quick-access-switch.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-242",
+      "name": "P05.190 CMD-02 Quick Open 先呈现最近文件",
+      "description": "先发布最近文件候选，后台工作区扫描完成后补齐，保留选中和动作按钮焦点并隔离旧回包。",
+      "dependencies": [
+        "feat-126",
+        "feat-239",
+        "feat-241"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 AnythingQuickAccessProvider 分开发布最近项与追加文件结果。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
