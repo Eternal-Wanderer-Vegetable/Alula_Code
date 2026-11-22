@@ -3028,6 +3028,20 @@
       "evidence": "结果按钮与 Alt+Enter 复用或创建右侧组，验证行列位置、原视图与脏 Rust 文档共享、锁定目标和焦点。Windows 实机及 Linux Xvfb + xfwm4 各 13 个观测点，专项 66/66，Flutter 1,767 passed / 2 skipped。产品 42b8a1f 的 CI 44995328273 四项与 Platform Availability 44995326177 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-239",
+      "name": "P05.187 CMD-02 Quick Open 空查询与结果分组",
+      "description": "空查询仅展示最近打开的文件，查询后分组并去重工作区文件结果。",
+      "dependencies": [
+        "feat-113",
+        "feat-126",
+        "feat-238"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 AnythingQuickAccessProvider 按最近打开与文件结果分组，空查询跳过文件结果请求。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -4478,29 +4478,47 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (query != lastQuery) { page = 0; lastQuery = query; }
         final requestedPage = page;
         loading = true;
-        List<String> paths;
+        List<QuickOpenMatch> matches;
         try {
-          paths = await search.search(root, query,
-              recentPaths: _recentHistory.files.map((entry) => entry.path).toList(), page: requestedPage);
+          matches = await search.searchMatches(
+            root,
+            query,
+            recentPaths: _recentHistory.files.map((entry) => entry.path).toList(),
+            page: requestedPage,
+            includeFileResults: query.trim().isNotEmpty,
+          );
         } finally {
           if (query == lastQuery && requestedPage == page) loading = false;
         }
         if (closed || !currentWorkspace() || query != lastQuery || requestedPage != page) return const [];
         hasNext = search.hasMore;
         final position = parseQuickOpenQuery(query);
-        return [for (final path in paths) QuickItem(
-          label: _nameOf(path),
-          description: path,
-          onRun: () => openFile(path, position),
-          buttons: [
-            QuickItemButton(
-              icon: Icons.vertical_split,
-              tooltip: '在侧边打开',
-              altEnter: true,
-              onRun: () => openFile(path, position, side: true),
-            ),
+        final recent = matches.where((match) => match.recent);
+        final files = matches.where((match) => !match.recent);
+        QuickItem item(String path) => QuickItem(
+              label: _nameOf(path),
+              description: path,
+              onRun: () => openFile(path, position),
+              buttons: [
+                QuickItemButton(
+                  icon: Icons.vertical_split,
+                  tooltip: '在侧边打开',
+                  altEnter: true,
+                  onRun: () => openFile(path, position, side: true),
+                ),
+              ],
+            );
+
+        return [
+          if (recent.isNotEmpty) ...[
+            const QuickItem(label: '最近打开', kind: QuickItemKind.separator),
+            for (final match in recent) item(match.path),
           ],
-        )];
+          if (files.isNotEmpty) ...[
+            const QuickItem(label: '文件结果', kind: QuickItemKind.separator),
+            for (final match in files) item(match.path),
+          ],
+        ];
       },
     );
   }

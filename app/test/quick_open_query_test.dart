@@ -159,6 +159,29 @@ void main() {
           [first]);
     });
 
+    test('recent-only results skip file probing and workspace traversal',
+        () async {
+      final recent = await file('recent.txt');
+      final unopened = await file('unopened.txt');
+      final missingRoot = p.join(root.path, 'missing-root');
+      final hits = await search.searchMatches(
+        missingRoot,
+        '',
+        recentPaths: [recent, p.join(root.path, 'stale.txt')],
+        includeFileResults: false,
+      );
+      expect(hits, [(path: recent, recent: true)]);
+      expect(search.hasMore, isFalse);
+      expect(
+        await search.searchMatches(
+          root.path,
+          unopened,
+          includeFileResults: false,
+        ),
+        isEmpty,
+      );
+    });
+
     test('MRU and direct paths do not duplicate across page boundaries',
         () async {
       final recent = <String>[];

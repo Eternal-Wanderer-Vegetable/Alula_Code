@@ -4,6 +4,7 @@ import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
@@ -129,6 +130,89 @@ void main() {
     expect(controller.text, 'alpha\n😀beta\nlast');
     expect(controller.selection.extentOffset, 8);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
+  testWidgets('Quick Open separates recent files from workspace results',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-groups');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final recent = File('${root.path}/needle-recent.txt')
+      ..writeAsStringSync('recent document');
+    File('${root.path}/needle-unopened.txt').writeAsStringSync('workspace hit');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    final history =
+        RecentHistoryStore(path: '${session.resolvePath()}.recent-history');
+    expect(history.recordFile(recent.path), isTrue);
+    expect(history.recordFile('${root.path}/stale.txt'), isTrue);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await commands.execute('view.quickOpen');
+    await tester.pump(const Duration(milliseconds: 120));
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final recentHeader =
+        find.descendant(of: panel, matching: find.text('最近打开'));
+    final fileHeader = find.descendant(of: panel, matching: find.text('文件结果'));
+    final recentRow = find.byKey(const ValueKey('qi-needle-recent.txt'));
+    final unopenedRow = find.byKey(const ValueKey('qi-needle-unopened.txt'));
+
+    Future<void> waitFor(Finder item, {Finder? gone}) async {
+      bool pending() =>
+          item.evaluate().isEmpty || (gone?.evaluate().isNotEmpty ?? false);
+      for (var attempt = 0; attempt < 100 && pending(); attempt++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(item, findsOneWidget);
+    }
+
+    await waitFor(recentRow);
+    expect(recentHeader, findsOneWidget);
+    expect(fileHeader, findsNothing);
+    expect(unopenedRow, findsNothing);
+    expect(find.byKey(const ValueKey('qi-stale.txt')), findsNothing);
+
+    await tester.enterText(input, 'needle');
+    await waitFor(unopenedRow);
+    expect(recentRow, findsOneWidget);
+    expect(tester.getTopLeft(recentHeader).dy,
+        lessThan(tester.getTopLeft(recentRow).dy));
+    expect(tester.getTopLeft(recentRow).dy,
+        lessThan(tester.getTopLeft(fileHeader).dy));
+    expect(tester.getTopLeft(fileHeader).dy,
+        lessThan(tester.getTopLeft(unopenedRow).dy));
+
+    await tester.enterText(input, '');
+    await waitFor(recentRow, gone: unopenedRow);
+    expect(fileHeader, findsNothing);
+    expect(unopenedRow, findsNothing);
+
+    await tester.enterText(input, 'needle');
+    await waitFor(unopenedRow);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    final editors =
+        tester.widgetList<RustTextInputField>(find.byType(RustTextInputField));
+    expect(editors.any((editor) => editor.inputWindow.text == 'workspace hit'),
+        isTrue);
   });
 
   testWidgets('Quick Open opens to the right by Alt+Enter and row button',

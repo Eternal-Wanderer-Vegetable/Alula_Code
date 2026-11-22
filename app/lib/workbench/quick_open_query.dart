@@ -32,6 +32,8 @@ QuickOpenQuery parseQuickOpenQuery(String input) {
       column: column == null ? null : (column < 1 ? 1 : column));
 }
 
+typedef QuickOpenMatch = ({String path, bool recent});
+
 /// Asynchronous Quick Open search with bounded result storage and no index.
 ///
 /// Pages partition matching files in discovery order (MRU, direct path, then
@@ -53,6 +55,22 @@ class QuickOpenSearch {
 
   Future<List<String>> search(String root, String query,
       {List<String> recentPaths = const [], int page = 0}) async {
+    final matches = await searchMatches(
+      root,
+      query,
+      recentPaths: recentPaths,
+      page: page,
+    );
+    return [for (final match in matches) match.path];
+  }
+
+  Future<List<QuickOpenMatch>> searchMatches(
+    String root,
+    String query, {
+    List<String> recentPaths = const [],
+    int page = 0,
+    bool includeFileResults = true,
+  }) async {
     if (page < 0) {
       throw ArgumentError.value(page, 'page', 'Must be nonnegative');
     }
@@ -63,14 +81,14 @@ class QuickOpenSearch {
     final pathQuery = _native(parseQuickOpenQuery(query).pathQuery);
     final pattern = pathQuery == '.' ? '' : pathQuery;
     final recentKeys = <String>{};
-    final results = <({String path, int? score})>[];
+    final results = <({QuickOpenMatch match, int? score})>[];
     var skip = page * pageSize;
 
-    bool add(String path, int? score) {
+    bool add(String path, int? score, {bool recent = false}) {
       if (skip > 0) {
         skip--;
       } else if (results.length < pageSize) {
-        results.add((path: path, score: score));
+        results.add((match: (path: path, recent: recent), score: score));
       } else {
         hasMore = true;
         return true;
@@ -78,7 +96,7 @@ class QuickOpenSearch {
       return false;
     }
 
-    List<String> finish() {
+    List<QuickOpenMatch> finish() {
       if (!current()) return [];
       // MRU and exact paths retain priority and input order. Sorting only the
       // bounded filesystem page leaves every matching file reachable by paging.
@@ -86,15 +104,15 @@ class QuickOpenSearch {
       final ranked = results.where((entry) => entry.score != null).toList()
         ..sort((a, b) {
           final score = b.score!.compareTo(a.score!);
-          return score != 0 ? score : a.path.compareTo(b.path);
+          return score != 0 ? score : a.match.path.compareTo(b.match.path);
         });
-      return [...preferred, ...ranked].map((entry) => entry.path).toList();
+      return [...preferred, ...ranked].map((entry) => entry.match).toList();
     }
 
     try {
       // Resolve exact paths before traversing the workspace, including paths
       // outside it. All returned paths are normalized, native and absolute.
-      final directPath = pattern.isEmpty
+      final directPath = !includeFileResults || pattern.isEmpty
           ? null
           : p.normalize(
               p.isAbsolute(pattern) ? pattern : p.join(rootPath, pattern));
@@ -115,8 +133,10 @@ class QuickOpenSearch {
         }
         final exists = await File(path).exists();
         if (!current()) return [];
-        if (exists && add(path, null)) return finish();
+        if (exists && add(path, null, recent: true)) return finish();
       }
+
+      if (!includeFileResults) return finish();
 
       final directKey = directPath == null ? null : _key(directPath);
       if (directExists && !recentKeys.contains(directKey)) {
