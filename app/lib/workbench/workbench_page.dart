@@ -4653,6 +4653,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         bool currentRequest() =>
             !closed && currentWorkspace() && generation == searchGeneration;
         final recentItems = <String, QuickItem>{};
+        final highlighter = QuickOpenFileHighlighter(key.pattern);
         late final dirtyPaths = {
           for (final document in _allDocs)
             if (document.isDirty && document.path != null)
@@ -4661,14 +4662,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         QuickItem item(String path, {bool recent = false}) {
           final label = _nameOf(path);
           final dirty = dirtyPaths.contains(p.canonicalize(path));
+          final description = quickOpenDirectoryLabel(
+            path,
+            workspace: workspace,
+            userHome: userHome,
+          );
+          // Virtual rows only calculate highlights when first mounted.
+          late final highlights = highlighter.find(
+            path: path,
+            label: label,
+            description: description,
+          );
           return QuickItem(
             label: label,
             semanticsLabel: dirty ? '$label，有未保存的更改' : null,
-            description: quickOpenDirectoryLabel(
-              path,
-              workspace: workspace,
-              userHome: userHome,
-            ),
+            description: description,
+            highlights: () => highlights,
             onRun: () => openFile(path, location),
             onRunInBackground: (modifiers) => openFile(
               path,

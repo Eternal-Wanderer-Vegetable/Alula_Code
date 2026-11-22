@@ -3277,6 +3277,19 @@
       "evidence": "文件行展示单根工作区相对或外部父目录，保持原文件路径和行列定位。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 228/228，Flutter 1,795 passed / 2 skipped。产品 4692201 的 CI 45052840566 四项及 Platform Availability 45052836970 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.204-quick-open-path-labels.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-257",
+      "name": "P05.205 CMD-02 Quick Open 文件匹配高亮",
+      "description": "对文件名与可见目录的查询命中区间加粗着色，保留 Unicode 边界、路径定位和选择器行为。",
+      "dependencies": [
+        "feat-255",
+        "feat-256"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

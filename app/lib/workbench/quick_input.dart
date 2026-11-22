@@ -20,6 +20,12 @@ enum QuickItemKind {
   separator,
 }
 
+/// Optional UTF-16 match ranges supplied by the item's provider.
+typedef QuickItemHighlights = ({
+  List<TextRange> label,
+  List<TextRange> description,
+});
+
 /// 面板里的一个候选项。
 ///
 /// 分隔行与多选条目可以没有动作：`commandId`/`onRun` 都缺省时该行只参与
@@ -29,6 +35,7 @@ class QuickItem {
     required this.label,
     this.semanticsLabel,
     this.description,
+    this.highlights,
     this.detail,
     this.commandId,
     this.arguments,
@@ -46,6 +53,7 @@ class QuickItem {
   /// 与 label 同行、右侧暗色的补充列（上游 `QuickPickItem.description`）：
   /// 命令面板的快捷键、快速打开的路径都属于这一列。
   final String? description;
+  final QuickItemHighlights Function()? highlights;
 
   /// label 下方的第二行说明（上游 `QuickPickItem.detail`）。
   final String? detail;
@@ -1449,6 +1457,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final detail = item.detail;
     final hasDetail = detail != null && detail.isNotEmpty;
     final rowKey = _rowKeys.putIfAbsent(item, GlobalKey.new);
+    final highlights = item.highlights?.call();
     Widget row = InkWell(
       onTap: enabled
           ? () {
@@ -1490,7 +1499,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                   const SizedBox(width: 8),
                 ],
                 Expanded(
-                  child: Text(item.label,
+                  child: _quickItemText(item.label,
+                      ranges: highlights?.label,
                       semanticsLabel: item.semanticsLabel,
                       style: TextStyle(
                           fontSize: 12,
@@ -1501,7 +1511,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                   const SizedBox(width: 8),
                   Flexible(
                     flex: 2,
-                    child: Text(item.description!,
+                    child: _quickItemText(item.description!,
+                        ranges: highlights?.description,
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 11),
@@ -1591,4 +1602,40 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
           : row,
     );
   }
+}
+
+Widget _quickItemText(
+  String text, {
+  required List<TextRange>? ranges,
+  required TextStyle style,
+  required TextOverflow overflow,
+  String? semanticsLabel,
+  TextAlign? textAlign,
+}) {
+  if (ranges == null || ranges.isEmpty) {
+    return Text(text,
+        style: style,
+        overflow: overflow,
+        semanticsLabel: semanticsLabel,
+        textAlign: textAlign);
+  }
+
+  final spans = <TextSpan>[];
+  var offset = 0;
+  for (final range in ranges) {
+    if (range.start > offset) {
+      spans.add(TextSpan(text: text.substring(offset, range.start)));
+    }
+    spans.add(TextSpan(
+      text: text.substring(range.start, range.end),
+      style: const TextStyle(color: Color(0xff2aaaff), fontWeight: FontWeight.bold),
+    ));
+    offset = range.end;
+  }
+  if (offset < text.length) spans.add(TextSpan(text: text.substring(offset)));
+  return Text.rich(TextSpan(children: spans),
+      style: style,
+      overflow: overflow,
+      semanticsLabel: semanticsLabel,
+      textAlign: textAlign);
 }

@@ -5,6 +5,99 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
+  group('Quick Open file highlights', () {
+    Map<String, List<String>> highlighted(
+      String query,
+      String label, {
+      String? description,
+      String? path,
+    }) {
+      final matches = QuickOpenFileHighlighter(
+        parseQuickOpenQuery(query).pathQuery,
+      ).find(
+        path: path ?? p.absolute(label),
+        label: label,
+        description: description,
+      );
+      return {
+        'name': [
+          for (final r in matches.label) label.substring(r.start, r.end)
+        ],
+        'directory': [
+          for (final r in matches.description)
+            description!.substring(r.start, r.end),
+        ],
+      };
+    }
+
+    test('prefers the name and merges repeated terms in both columns', () {
+      final directory = p.join('lib', 'needle');
+      expect(
+          highlighted('nee lib nee*', 'needle.dart', description: directory), {
+        'name': ['nee'],
+        'directory': ['lib']
+      });
+      expect(highlighted('ndl', 'needle.dart', description: directory), {
+        'name': ['n', 'dl'],
+        'directory': <String>[]
+      });
+      expect(highlighted('.', 'needle.dart', description: directory),
+          {'name': <String>[], 'directory': <String>[]});
+    });
+
+    test('highlights a qualified query on both sides of the visible separator',
+        () {
+      final directory = p.join('lib', 'deep');
+      expect(
+        highlighted('lib/deep/needle:2:3', 'needle.dart',
+            description: directory),
+        {
+          'name': ['needle'],
+          'directory': [directory]
+        },
+      );
+      final exact = p.absolute('outside', 'needle.dart');
+      final parent = p.dirname(exact);
+      expect(
+        highlighted('$exact:2:3', 'needle.dart',
+            description: parent, path: exact),
+        {
+          'name': ['needle.dart'],
+          'directory': [parent]
+        },
+      );
+    });
+
+    test('uses contiguous matches for quotes beyond the fuzzy window', () {
+      expect(highlighted('"fix"', 'fizz_fix.dart'), {
+        'name': ['fix'],
+        'directory': <String>[]
+      });
+      expect(highlighted('"nd"', 'needle.dart'),
+          {'name': <String>[], 'directory': <String>[]});
+      expect(highlighted('"fix"', 'a' * 150 + 'fix.dart'), {
+        'name': ['fix'],
+        'directory': <String>[]
+      });
+    });
+
+    test('maps case expansion and leaves surrogate pairs intact', () {
+      expect(highlighted('z', 'İ😀z.dart'), {
+        'name': ['z'],
+        'directory': <String>[]
+      });
+      expect(highlighted('\u0307', 'İ😀z.dart'), {
+        'name': ['İ'],
+        'directory': <String>[]
+      });
+      final prefix = 'a' * 127 + '😀';
+      expect(highlighted(prefix, '$prefix.dart'), {
+        'name': [prefix],
+        'directory': <String>[]
+      });
+    });
+  });
+
   group('parseQuickOpenQuery', () {
     test('parses one-based colon line and column suffixes', () {
       final query = parseQuickOpenQuery('  lib/main.dart:12:7  ');

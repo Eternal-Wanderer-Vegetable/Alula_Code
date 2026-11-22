@@ -76,6 +76,14 @@ void main() {
       await tester.pump();
     }
     expect(row, findsOneWidget);
+    final name = tester.widget<Text>(find.descendant(
+      of: row,
+      matching: find.text('position.txt'),
+    ));
+    final span = name.textSpan! as TextSpan;
+    expect(span.toPlainText(), 'position.txt');
+    expect(
+        (span.children!.single as TextSpan).style!.fontWeight, FontWeight.bold);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     final editor =

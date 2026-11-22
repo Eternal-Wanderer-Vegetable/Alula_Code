@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:ui' show TextRange;
 
 import 'package:path/path.dart' as p;
 
@@ -95,6 +97,130 @@ String? quickOpenDirectoryLabel(
     return '${directory[0].toUpperCase()}${directory.substring(1)}';
   }
   return directory;
+}
+
+/// Highlight ranges for the visible columns of Quick Open file rows.
+class QuickOpenFileHighlighter {
+  QuickOpenFileHighlighter(String pathQuery)
+      : _pattern = QuickOpenSearch._native(pathQuery) {
+    _terms =
+        _pattern == '.' ? const [] : QuickOpenSearch._prepareTerms(_pattern);
+  }
+
+  final String _pattern;
+  late final List<_QuickOpenTerm> _terms;
+
+  ({List<TextRange> label, List<TextRange> description}) find({
+    required String path,
+    required String label,
+    required String? description,
+  }) {
+    if (p.isAbsolute(_pattern) && p.equals(p.normalize(_pattern), path)) {
+      return (
+        label: [TextRange(start: 0, end: label.length)],
+        description: description == null
+            ? const []
+            : [TextRange(start: 0, end: description.length)],
+      );
+    }
+
+    final preferLabel = !_pattern.contains(p.separator);
+    final labelMatches = <TextRange>[];
+    final descriptionMatches = <TextRange>[];
+    final directory = description ?? '';
+    final prefix = directory.isEmpty || directory.endsWith(p.separator)
+        ? directory
+        : '$directory${p.separator}';
+    final fullLabel = '$prefix$label';
+    for (final term in _terms) {
+      if (preferLabel || prefix.isEmpty) {
+        final matches = _matches(term, label);
+        if (matches != null) {
+          labelMatches.addAll(matches);
+          continue;
+        }
+      }
+      if (prefix.isEmpty) continue;
+      final matches = _matches(term, fullLabel);
+      if (matches == null) continue;
+      for (final match in matches) {
+        if (match.start < directory.length) {
+          descriptionMatches.add(TextRange(
+            start: match.start,
+            end: math.min(match.end, directory.length),
+          ));
+        }
+        if (match.end > prefix.length) {
+          labelMatches.add(TextRange(
+            start: math.max(0, match.start - prefix.length),
+            end: match.end - prefix.length,
+          ));
+        }
+      }
+    }
+    return (
+      label: _mergeRanges(label, labelMatches),
+      description: _mergeRanges(directory, descriptionMatches),
+    );
+  }
+
+  static List<TextRange>? _matches(_QuickOpenTerm term, String value) {
+    final exact = term.exactLowercase;
+    if (exact != null) {
+      final start = value.toLowerCase().indexOf(exact);
+      if (start < 0) return null;
+      return [TextRange(start: start, end: start + exact.length)];
+    }
+    final matches = treeFuzzyScore(term.text, value)?.matches;
+    return matches
+        ?.map((range) => TextRange(
+              start: _sourceOffset(value, range.start, end: false),
+              end: _sourceOffset(value, range.end, end: true),
+            ))
+        .toList();
+  }
+
+  // The fuzzy scorer uses JavaScript folding. A dotted capital I occupies
+  // two units after folding and both units refer to the same original letter.
+  static int _sourceOffset(String value, int offset, {required bool end}) {
+    var expanded = 0;
+    for (var i = value.indexOf('\u0130');
+        i >= 0 && i + expanded < offset;
+        i = value.indexOf('\u0130', i + 1)) {
+      if (end && i + expanded + 1 == offset) break;
+      expanded++;
+    }
+    return offset - expanded;
+  }
+
+  static List<TextRange> _mergeRanges(String value, List<TextRange> matches) {
+    if (matches.isEmpty) return const [];
+    matches.sort((a, b) => a.start.compareTo(b.start));
+    final ranges = <TextRange>[];
+    for (final match in matches) {
+      // The scorer can stop between the two code units of a character at
+      // its scoring limit. Keep the whole character in a single text span.
+      final start =
+          _splitsSurrogate(value, match.start) ? match.start - 1 : match.start;
+      final end =
+          _splitsSurrogate(value, match.end) ? match.end + 1 : match.end;
+      if (ranges.isNotEmpty && start <= ranges.last.end) {
+        ranges[ranges.length - 1] = TextRange(
+          start: ranges.last.start,
+          end: math.max(ranges.last.end, end),
+        );
+      } else {
+        ranges.add(TextRange(start: start, end: end));
+      }
+    }
+    return ranges;
+  }
+
+  static bool _splitsSurrogate(String value, int offset) =>
+      offset > 0 &&
+      offset < value.length &&
+      (value.codeUnitAt(offset - 1) & 0xfc00) == 0xd800 &&
+      (value.codeUnitAt(offset) & 0xfc00) == 0xdc00;
 }
 
 typedef QuickOpenMatch = ({String path, bool recent});
