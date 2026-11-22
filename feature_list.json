@@ -3054,8 +3054,8 @@
         "feat-237",
         "feat-239"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 QuickAccessController 在值变化时解析提供程序并保留已输入内容。",
+      "status": "done",
+      "evidence": "Ctrl+P 输入前缀进入现有提供程序，保留查询、预览取消焦点和带行列后缀的文件查询。Windows 实机及 Linux Xvfb + xfwm4 各 22 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 05cb77f 的 CI 45004159072 四项与 Platform Availability 45004156553 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.188-quick-open-prefixes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

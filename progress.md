@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.188 / feat-240 完成。产品 05cb77fd3583f094eb16f3372a5fbadb415df510 已推草稿 PR #3。Ctrl+P 输入前缀进入现有提供程序，保留查询、预览取消焦点和带行列后缀的文件查询。Windows 实机及 Linux Xvfb + xfwm4 各 22 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 05cb77f 的 CI 45004159072 四项与 Platform Availability 45004156553 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务正在运行。P05.187 证据 CI 45003007227 四项及产品三平台托管通过。详见 docs/diagnostics/2026-11-22-p05/p05.188-quick-open-prefixes.md。
+
 - P05.187 / feat-239 完成。产品 1b9a4f04e39b074db6f3f04a5f1a6743b797c45e 已推草稿 PR #3。空查询仅显示可用最近文件，输入后分组并去重，方向键跨分组打开文件，成功打开后历史更新。Windows 实机及 Linux Xvfb + xfwm4 各 9 个观测点，专项 62/62，Flutter 1,769 passed / 2 skipped。产品 1b9a4f0 的 CI 45000995564 四项与 Platform Availability 45000992796 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务正在运行。P05.186 最终证据 CI 44999213073 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.187-quick-open-groups.md。
 
 - P05.186 / feat-238 完成。产品 42b8a1f0322cc8f009311e442e03cf045a235d6e 已推草稿 PR #3。Alt+Enter 和结果按钮均可侧开。Windows 11 125% 与隔离 Linux Xvfb + xfwm4 验证右组创建、复用、锁组回避、共享文档、独立选区与后续输入。专项 66/66，全量 Flutter 1,767 passed / 2 skipped。同 SHA CI 44995328273 四项与 Platform Availability 44995326177 Windows/Linux 均通过。P05.185 证据 CI 44993374677 四项通过，Linux 环境已更正为 WSLg。macOS 托管任务通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md。
