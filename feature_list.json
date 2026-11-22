@@ -3234,8 +3234,8 @@
         "feat-242",
         "feat-246"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "目录和文件名词项全部匹配，保持最近结果和精确路径及位置后缀。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 224/224，Flutter 1,791 passed / 2 skipped。产品 0ae73dd 的 CI 45045808583 四项及 Platform Availability 45045803848 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.201-quick-open-terms.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
