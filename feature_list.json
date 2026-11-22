@@ -3152,8 +3152,8 @@
         "feat-238",
         "feat-246"
       ],
-      "status": "in-progress",
-      "evidence": "普通 Enter 保留编辑器，Ctrl/Cmd+Enter 复用侧开并保留最新位置，Alt+Enter 回归通过。隔离 Linux Xvfb + xfwm4 通过 16 个原生观测点。Windows Release 夹具已构建，当前本机前台为全屏应用，等待切回普通桌面后运行同一夹具。Windows 实机键鼠验收待完成。 专项 142/142，Flutter 1,781 passed / 2 skipped。产品 31ad891 的 CI 45022254316 四项及 Platform Availability 45022251085 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md",
+      "status": "done",
+      "evidence": "普通 Enter 保留编辑器，Ctrl/Cmd+Enter 复用侧开并保留最新位置，Alt+Enter 回归通过。Windows 11 125% DPI 实机和隔离 Linux Xvfb + xfwm4 各 16 个原生观测点。 专项 142/142，Flutter 1,781 passed / 2 skipped。产品 31ad891 的 CI 45022254316 四项及 Platform Availability 45022251085 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
