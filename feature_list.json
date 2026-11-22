@@ -3377,8 +3377,8 @@
         "feat-249",
         "feat-262"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "从空工作台普通确认打开的文件获得编辑器焦点，右方向键后台打开保留选择器焦点。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 244/244，Flutter 1,806 passed / 2 skipped。产品 0da2038 的 CI 45070537868 四项及 Platform Availability 45070535077 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.212-quick-open-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

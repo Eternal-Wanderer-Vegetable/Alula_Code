@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.212 / feat-264 完成。产品 0da2038cc7a8f8c1b42cf044e78c262fb9254f71。从空工作台普通确认打开的文件获得编辑器焦点，右方向键后台打开保留选择器焦点。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 244/244，Flutter 1,806 passed / 2 skipped。产品 0da2038 的 CI 45070537868 四项及 Platform Availability 45070535077 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.212-quick-open-focus.md。
+
 - P05.211 / feat-263 完成。产品 001150a20994b93dc847e31e297532f1bb1cf50f。固定默认 Ctrl/Cmd+Enter 侧开，右侧标签保留，源标签预览与选区和滚动保持原状态。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 243/243，Flutter 1,805 passed / 2 skipped。产品 001150a 的 CI 45068517830 四项及 Platform Availability 45068515236 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.211-goto-primary-aside.md。
 
 - P05.210 / feat-262 完成。产品 092d8a45b40b0b40788d44c66780a0ac74f0d41c。无文本编辑器时行列和偏移入口展示提示，通过帮助可访问，Enter 保持提示，Escape 恢复焦点。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 241/241，Flutter 1,803 passed / 2 skipped。产品 092d8a4 的 CI 45066688450 四项及 Platform Availability 45066685552 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.210-goto-without-editor.md。
@@ -2186,7 +2188,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-- CMD-02 待复验：Windows 空工作台中用文件选择器重开文件后，P05.210 一次采样发现文本视图已出现，编辑器焦点尚未取得。该观察点和明确聚焦后的位置验证见 P05.210 原生记录。
+- CMD-02 空工作台 Quick Open 前台确认焦点已在 P05.212 修复并原生复验。[证据](docs/diagnostics/2026-11-23-p05/p05.212-quick-open-focus.md)
 
 1. P04.119 / EDT-19i 是唯一活动切片；planner 和 CI test-gate amendment 已实现。等待新 SHA PR CI 与 Platform Availability，记录最终结论后再关闭切片。
 2. 新增的 Git panel 状态等待仅在现有 widget test 中，最大 10 秒；若 hosted 仍失败，先读取 runner/test 日志，不扩大到生产 Git/Workbench 代码，除非另行登记并重做 impact。完成该切片后再注册下一片 FFI/action。
