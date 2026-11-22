@@ -3110,8 +3110,8 @@
         "feat-239",
         "feat-243"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "未保存文件提供辅助标签，最近条目在非活动行显示圆点，悬停可移除历史并保留未保存的 Rust 编辑。Windows 实机和 Linux Xvfb + xfwm4 各 11 个观测点，专项 123/123，Flutter 1,775 passed / 2 skipped。产品 b47d02a 的 CI 45013967095 四项与 Platform Availability 45013963946 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.192-quick-open-dirty.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
