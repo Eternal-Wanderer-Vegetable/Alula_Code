@@ -20,6 +20,42 @@ void main() {
       expect(zero.column, 1);
     });
 
+    test('recognizes file positions and ranges with the reference separators',
+        () {
+      const path = r'C:\projects\文件 (draft)\notes.txt';
+      for (final suffix in [
+        '#20#3-40,5',
+        '(20,3-40,5)',
+        ' (20,3-40,5)',
+        ':line 20:3-40:5',
+      ]) {
+        final query = parseQuickOpenQuery('$path$suffix');
+        expect(query.pathQuery, path);
+        expect(query.line, 20);
+        expect(query.column, 3);
+        expect(query.endLine, 40);
+        expect(query.endColumn, 5);
+      }
+
+      final lineRange = parseQuickOpenQuery('file.txt:20-40');
+      expect(lineRange.column, isNull);
+      expect(lineRange.endLine, 40);
+      expect(lineRange.endColumn, isNull);
+      for (final suffix in [':8:', '#8-', ' (8,)', ':line 8']) {
+        final query = parseQuickOpenQuery('file.txt$suffix');
+        expect(query.pathQuery, 'file.txt');
+        expect(query.line, 8);
+        expect(query.column, isNull);
+        expect(query.endLine, isNull);
+      }
+      for (final suffix in [':', '#']) {
+        final query = parseQuickOpenQuery('file.txt$suffix');
+        expect(query.pathQuery, 'file.txt');
+        expect(query.line, 1);
+        expect(query.column, isNull);
+      }
+    });
+
     test('preserves Windows drives, UNC paths and other colons', () {
       for (final path in [
         r'C:\src\main.dart',

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
@@ -131,6 +132,86 @@ void main() {
     expect(controller.text, 'alpha\n😀beta\nlast');
     expect(controller.selection.extentOffset, 8);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
+  testWidgets('Quick Open selects UTF-16 locations and bounded ranges',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-range');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    const original = 'head\r\n\t😀beta\r\nlast';
+    final bytes = [0xef, 0xbb, 0xbf, ...utf8.encode(original)];
+    final file = File('${root.path}/position.txt')..writeAsBytesSync(bytes);
+    final longLine = '😀abc' * 5000;
+    final largeFile = File('${root.path}/large.txt')
+      ..writeAsStringSync('head\n$longLine\nlast');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    String? copied;
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'Clipboard.setData') {
+        copied = (call.arguments as Map)['text'] as String?;
+      }
+      return null;
+    });
+    addTearDown(() async {
+      messenger.setMockMethodCallHandler(SystemChannels.platform, null);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: SessionStore(path: '${temp.path}/session.json'),
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+
+    Future<TextSelection> openAt(String query, String name) async {
+      await commands.execute('view.quickOpen');
+      await tester.pump(const Duration(milliseconds: 120));
+      await tester.enterText(input, query);
+      final row = find.byKey(ValueKey('qi-$name'));
+      for (var i = 0; i < 100 && row.evaluate().isEmpty; i++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(row, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(panel, findsNothing);
+      return tester.widget<TextField>(editor).controller!.selection;
+    }
+
+    expect(await openAt('${file.path}#2,2', 'position.txt'),
+        const TextSelection.collapsed(offset: 6));
+    expect(await openAt('position.txt (2,2-2,3)', 'position.txt'),
+        const TextSelection(baseOffset: 6, extentOffset: 8));
+    expect(await openAt('position.txt:3:3-2:4', 'position.txt'),
+        const TextSelection(baseOffset: 8, extentOffset: 15));
+    expect(await openAt('position.txt:99:1', 'position.txt'),
+        const TextSelection.collapsed(offset: 17));
+    expect(file.readAsBytesSync(), bytes);
+
+    await openAt('large.txt:2-3:1', 'large.txt');
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.inputWindow.text.length, lessThan(longLine.length));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyC);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(copied?.length, longLine.length + 1);
+    expect(copied == '$longLine\n', isTrue);
+    expect(largeFile.readAsStringSync(), 'head\n$longLine\nlast');
   });
 
   testWidgets('Quick Open separates recent files from workspace results',

@@ -4,32 +4,65 @@ import 'package:path/path.dart' as p;
 
 import 'tree_fuzzy_score.dart';
 
-/// A file query with an optional one-based navigation suffix.
+/// A file query with an optional one-based position or selection.
 class QuickOpenQuery {
-  const QuickOpenQuery(this.pathQuery, {this.line, this.column});
+  const QuickOpenQuery(
+    this.pathQuery, {
+    this.line,
+    this.column,
+    this.endLine,
+    this.endColumn,
+  });
 
   final String pathQuery;
   final int? line;
   final int? column;
+  final int? endLine;
+  final int? endColumn;
 }
 
-/// Parses `filename:line[:column]`, preserving a Windows drive colon.
-/// Zero line/column values are clamped to one, as navigation is one-based.
+final _fileLocationSuffix = RegExp(
+  r'\s?[#:(](?:line )?([0-9]*)(?:[#:,]([0-9]*))?'
+  r'(?:-([0-9]*)(?:[#:,]([0-9]*))?)?\)?:?$',
+);
+
+/// Parses a Quick Open file position, preserving a Windows drive colon.
 QuickOpenQuery parseQuickOpenQuery(String input) {
   final text = input.trim();
-  final match = RegExp(r'^(.*?):([0-9]+)(?::([0-9]+))?$').firstMatch(text);
+  final match = _fileLocationSuffix.firstMatch(text);
   if (match == null ||
-      (match.group(1)!.length == 1 && RegExp(r'^[a-zA-Z]:').hasMatch(text))) {
+      (match.start == 1 && RegExp(r'^[a-zA-Z]:').hasMatch(text))) {
     return QuickOpenQuery(text);
   }
-  final line = int.tryParse(match.group(2)!);
-  final column = match.group(3) == null ? null : int.tryParse(match.group(3)!);
-  if (line == null || (match.group(3) != null && column == null)) {
+
+  final lineText = match[1]!;
+  final columnText = match[2] ?? '';
+  final endLineText = match[3] ?? '';
+  final endColumnText = match[4] ?? '';
+  if (lineText.isEmpty) {
+    if (match[3] != null) return QuickOpenQuery(text);
+    return QuickOpenQuery(text.substring(0, match.start), line: 1);
+  }
+
+  final line = int.tryParse(lineText);
+  final column = int.tryParse(columnText);
+  final endLine = int.tryParse(endLineText);
+  final endColumn = int.tryParse(endColumnText);
+  if (line == null ||
+      (columnText.isNotEmpty && column == null) ||
+      (endLineText.isNotEmpty && endLine == null) ||
+      (endColumnText.isNotEmpty && endColumn == null)) {
     return QuickOpenQuery(text);
   }
-  return QuickOpenQuery(match.group(1)!,
-      line: line < 1 ? 1 : line,
-      column: column == null ? null : (column < 1 ? 1 : column));
+
+  int? oneBased(int? coordinate) => coordinate == 0 ? 1 : coordinate;
+  return QuickOpenQuery(
+    text.substring(0, match.start),
+    line: oneBased(line),
+    column: oneBased(column),
+    endLine: oneBased(endLine),
+    endColumn: endLine == null ? null : oneBased(endColumn),
+  );
 }
 
 typedef QuickOpenMatch = ({String path, bool recent});

@@ -4557,19 +4557,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return;
       }
       if (position.line != null) {
-        final target = resolveGotoPosition(
-          doc.doc,
-          ':${position.line}:${position.column ?? 1}',
-          tabSize: doc.tabSize,
-        );
-        if (target != null) {
-          _setDocSelection(
-            doc,
-            TextSelection.collapsed(offset: target.offsetUtf16),
-          );
-        } else if (!side) {
-          return;
-        }
+        _selectQuickOpenLocation(doc, position);
       } else if (!side) {
         return;
       }
@@ -4704,6 +4692,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return group(matches);
       },
     );
+  }
+
+  void _selectQuickOpenLocation(OpenDoc doc, QuickOpenQuery query) {
+    _flushInput(doc);
+    final document = doc.doc;
+    final metadata = document.lineOffset(0);
+    int offsetAt(int line, int column, {bool extendPastSurrogate = false}) {
+      if (line > metadata.lineCount) return metadata.totalUtf16Length;
+      final resolved = document.positionOffset(line - 1, column - 1);
+      if (extendPastSurrogate && resolved.character == column - 2) {
+        final next = document.positionOffset(line - 1, column);
+        if (next.character == column) return next.offsetUtf16;
+      }
+      return resolved.offsetUtf16;
+    }
+
+    var startLine = query.line!;
+    var startColumn = query.column ?? 1;
+    var endLine = query.endLine ?? startLine;
+    var endColumn =
+        query.endLine == null ? startColumn : query.endColumn ?? 1;
+    if (startLine > endLine ||
+        (startLine == endLine && startColumn > endColumn)) {
+      (startLine, endLine) = (endLine, startLine);
+      (startColumn, endColumn) = (endColumn, startColumn);
+    }
+    final start = offsetAt(startLine, startColumn);
+    final end = startLine == endLine && startColumn == endColumn
+        ? start
+        : offsetAt(endLine, endColumn, extendPastSurrogate: true);
+    final selection = TextSelection(baseOffset: start, extentOffset: end);
+    final window = doc.inputWindow;
+    if (end - start > window.maxWindowUtf16 ~/ 2 &&
+        (start < window.startUtf16 || end > window.endUtf16)) {
+      _setCrossWindowLineSelection(doc, selection);
+    } else {
+      _setDocSelection(doc, selection);
+    }
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
