@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alula_app/workbench/quick_input.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,7 +73,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Ctrl+Enter keeps the default action without an opted-in button',
+  testWidgets('Accept modifiers are scoped to the opted-in action and gesture',
       (tester) async {
     final opened = <String>[];
     await tester.pumpWidget(MaterialApp(
@@ -100,18 +101,26 @@ void main() {
         ),
       ),
     ));
-    Future<void> accept(LogicalKeyboardKey modifier) async {
+    Future<void> accept(LogicalKeyboardKey modifier,
+        {bool click = false}) async {
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
       await tester.sendKeyDownEvent(modifier);
-      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      if (click) {
+        await tester.tap(find.byKey(const ValueKey('qi-target')),
+            kind: PointerDeviceKind.mouse);
+      } else {
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      }
       await tester.sendKeyUpEvent(modifier);
       await tester.pumpAndSettle();
     }
 
     await accept(LogicalKeyboardKey.controlLeft);
     await accept(LogicalKeyboardKey.altLeft);
-    expect(opened, ['row', 'side']);
+    await accept(LogicalKeyboardKey.controlLeft, click: true);
+    await accept(LogicalKeyboardKey.altLeft, click: true);
+    expect(opened, ['row', 'side', 'row', 'row']);
   });
 
   testWidgets('equivalent provider inputs preserve results and button focus',

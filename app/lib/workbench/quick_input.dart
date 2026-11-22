@@ -67,6 +67,7 @@ class QuickItemButton {
     required this.onRun,
     this.altEnter = false,
     this.ctrlCmdEnter = false,
+    this.acceptModifiedClick = false,
     this.refreshItems = false,
     this.alwaysVisible = false,
     this.hoverIcon,
@@ -81,6 +82,9 @@ class QuickItemButton {
 
   /// Use this button when accepting with Ctrl+Enter or Command+Enter.
   final bool ctrlCmdEnter;
+
+  /// Also applies the accept modifiers when clicking the row.
+  final bool acceptModifiedClick;
 
   /// Keeps the picker open and reloads its provider after this action.
   final bool refreshItems;
@@ -938,17 +942,18 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   Future<void> _runAt(
     int index, {
-    bool altEnter = false,
-    bool ctrlCmdEnter = false,
+    ({bool alt, bool ctrlCmd}) modifiers = (alt: false, ctrlCmd: false),
+    bool rowClick = false,
   }) async {
     if (index < 0 || index >= _filtered.length) return;
     final item = _filtered[index];
     if (!_isSelectable(item) || !_enabled(item)) return;
-    if (altEnter || ctrlCmdEnter) {
+    if (modifiers.alt || modifiers.ctrlCmd) {
       final button = item.buttons
           .where((button) =>
-              (altEnter && button.altEnter) ||
-              (ctrlCmdEnter && button.ctrlCmdEnter))
+              (!rowClick || button.acceptModifiedClick) &&
+              ((modifiers.alt && button.altEnter) ||
+                  (modifiers.ctrlCmd && button.ctrlCmdEnter)))
           .firstOrNull;
       if (button != null) {
         await _runItemButton(button);
@@ -1115,17 +1120,15 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
     if (event.logicalKey == LogicalKeyboardKey.enter ||
         event.logicalKey == LogicalKeyboardKey.numpadEnter) {
-      final altEnter = keyboard.isAltPressed;
-      final ctrlCmdEnter = keyboard.isControlPressed || keyboard.isMetaPressed;
+      final modifiers = (
+        alt: keyboard.isAltPressed,
+        ctrlCmd: keyboard.isControlPressed || keyboard.isMetaPressed,
+      );
       _afterPendingPages(() {
         if (widget.canSelectMany) {
           _accept();
         } else {
-          unawaited(_runAt(
-            _selected,
-            altEnter: altEnter,
-            ctrlCmdEnter: ctrlCmdEnter,
-          ));
+          unawaited(_runAt(_selected, modifiers: modifiers));
         }
       });
       return KeyEventResult.handled;
@@ -1345,7 +1348,15 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
               if (widget.canSelectMany) {
                 _togglePicked(item);
               } else {
-                _runAt(index);
+                final keyboard = HardwareKeyboard.instance;
+                unawaited(_runAt(
+                  index,
+                  rowClick: true,
+                  modifiers: (
+                    alt: keyboard.isAltPressed,
+                    ctrlCmd: keyboard.isControlPressed || keyboard.isMetaPressed,
+                  ),
+                ));
               }
             }
           : null,

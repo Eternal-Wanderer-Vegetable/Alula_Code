@@ -4638,6 +4638,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 tooltip: '在侧边打开',
                 altEnter: true,
                 ctrlCmdEnter: true,
+                acceptModifiedClick: true,
                 onRun: () => openFile(path, location, side: true),
               ),
               if (recent)

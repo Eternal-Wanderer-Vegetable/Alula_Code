@@ -3156,6 +3156,20 @@
       "evidence": "普通 Enter 保留编辑器，Ctrl/Cmd+Enter 复用侧开并保留最新位置，Alt+Enter 回归通过。Windows 11 125% DPI 实机和隔离 Linux Xvfb + xfwm4 各 16 个原生观测点。 专项 142/142，Flutter 1,781 passed / 2 skipped。产品 31ad891 的 CI 45022254316 四项及 Platform Availability 45022251085 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-248",
+      "name": "P05.196 CMD-02 Quick Open 鼠标修饰键侧开",
+      "description": "Ctrl/Cmd 或 Alt 加主键单击将文件打开到右侧组，沿用普通单击的文件查询及最新位置。",
+      "dependencies": [
+        "feat-238",
+        "feat-246",
+        "feat-247"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

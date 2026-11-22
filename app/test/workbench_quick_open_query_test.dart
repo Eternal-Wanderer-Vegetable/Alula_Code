@@ -559,7 +559,7 @@ void main() {
         contains('dirty.txt'));
   });
 
-  testWidgets('Quick Open keeps plain accepts and side-opens Ctrl or Cmd+Enter',
+  testWidgets('Quick Open keeps plain accepts and side-opens modified accepts',
       (tester) async {
     final temp =
         Directory.systemTemp.createTempSync('alula-quick-open-modifiers');
@@ -616,7 +616,7 @@ void main() {
         ));
 
     Future<void> pick(File file, String position,
-        {LogicalKeyboardKey? modifier}) async {
+        {LogicalKeyboardKey? modifier, bool click = false}) async {
       await commands.execute('view.quickOpen');
       await tester.pump(const Duration(milliseconds: 120));
       await tester.enterText(filter, '${file.path}$position');
@@ -628,7 +628,11 @@ void main() {
       }
       expect(row, findsOneWidget);
       if (modifier != null) await tester.sendKeyDownEvent(modifier);
-      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      if (click) {
+        await tester.tap(row, kind: PointerDeviceKind.mouse);
+      } else {
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      }
       if (modifier != null) await tester.sendKeyUpEvent(modifier);
       await tester.pumpAndSettle();
       expect(panel, findsNothing);
@@ -658,6 +662,28 @@ void main() {
     expect(reused.inputWindow.document.id, right.inputWindow.document.id);
     expect(reused.inputWindow.initialValue.selection.extentOffset, 14);
     expect(reused.focusNode!.hasPrimaryFocus, isTrue);
+    await tester.tap(sourceTab);
+    await tester.pumpAndSettle();
+    await pick(source, ':1:3', click: true);
+    expect(editor('editor').focusNode!.hasPrimaryFocus, isTrue);
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 2);
+
+    for (final modifier in [
+      LogicalKeyboardKey.controlLeft,
+      LogicalKeyboardKey.metaLeft,
+      LogicalKeyboardKey.altLeft,
+    ]) {
+      await tester.tap(sourceTab);
+      await tester.pumpAndSettle();
+      await pick(target, ':2:4', modifier: modifier, click: true);
+      final clicked = editor('editor-2');
+      expect(clicked.inputWindow.document.id, right.inputWindow.document.id);
+      expect(clicked.inputWindow.initialValue.selection.extentOffset, 9);
+      expect(clicked.focusNode!.hasPrimaryFocus, isTrue);
+      expect(find.byKey(const ValueKey('editor-body-drop-editor-3')),
+          findsNothing);
+    }
+
     expect(source.readAsStringSync(), 'main\neditor');
     expect(target.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });
