@@ -554,6 +554,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         path: '${widget.sessionStore.resolvePath()}.command-history',
       );
   CommandHistory _commandHistory = CommandHistory();
+  bool _commandHistoryClearPending = false;
 
   // ---------- 最近项目 MRU（LAY-19b） ----------
   late final RecentHistoryStore _recentHistoryStore = RecentHistoryStore(
@@ -1240,6 +1241,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg(showCommandsCommandId, '查看', '命令面板',
         () async => _showCommandPalette(),
         shortcut: _keybindings.shortcutFor(showCommandsCommandId));
+    reg('workbench.action.clearCommandHistory', '查看', '清除命令历史记录',
+        _clearCommandHistory);
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _revealSearchView());
@@ -3952,6 +3955,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _recordCommandPaletteAccept(String commandId) {
     _commandHistory.record(commandId);
     _commandHistoryStore.save(_commandHistory);
+  }
+
+  Future<void> _clearCommandHistory() async {
+    if (_commandHistoryClearPending) return;
+    _commandHistoryClearPending = true;
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('清除最近使用的命令？'),
+          content: const Text('此操作无法撤销。'),
+          actions: [
+            TextButton(
+              autofocus: true,
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('清除'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || confirmed != true) return;
+      if (_commandHistoryStore.clear()) {
+        _commandHistory = CommandHistory();
+      } else {
+        _commandHistory = _commandHistoryStore.load();
+        setState(() => _statusDetail = '清除命令历史记录失败');
+      }
+    } finally {
+      _commandHistoryClearPending = false;
+    }
   }
 
   bool _isCurrentActivityBarLocationCommand(

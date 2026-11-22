@@ -2986,6 +2986,19 @@
       "evidence": "Windows 11 125% 三组及 Linux xfwm4 两组原生验证，覆盖 F1、平台组合键、旧别名覆盖与移除、取消和文档保留。专项 177/177，Flutter 1,762 passed / 2 skipped。f6b8e41 的 CI 44987263595 四项、Platform Availability 44987261037 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.183-main-palette-entry.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-236",
+      "name": "P05.184 LAY-17 固定命令清除最近使用历史",
+      "description": "明确确认后清理命令面板 MRU 与可恢复 journal，覆盖取消、失败和重启。",
+      "dependencies": [
+        "feat-124",
+        "feat-235"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 commandsQuickAccess.ts 注册清除命令并确认。上游面板在执行前记录所接受的命令。Alula 命令历史由独立 journal 保存。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

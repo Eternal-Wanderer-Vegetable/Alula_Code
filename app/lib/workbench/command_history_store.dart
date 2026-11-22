@@ -41,6 +41,13 @@ class CommandHistoryStore {
     return SessionStore(path: path).save(payload);
   }
 
+  /// Replaces both recoverable generations so a damaged primary cannot
+  /// restore entries that were cleared.
+  bool clear() {
+    final empty = CommandHistory();
+    return save(empty) && save(empty);
+  }
+
   bool _oversized() {
     for (final file in [File(path), File('$path.bak'), File('$path.tmp')]) {
       try {
