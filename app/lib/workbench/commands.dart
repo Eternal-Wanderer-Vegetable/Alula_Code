@@ -8,6 +8,12 @@ import 'package:flutter/foundation.dart';
 
 import 'context_keys.dart';
 
+const showCommandsCommandId = 'workbench.action.showCommands';
+const commandPaletteCommandAliases = <String, String>{
+  'view.commandPalette': showCommandsCommandId,
+  'view.quickInput': showCommandsCommandId,
+};
+
 /// 一条可执行命令。
 class Command {
   const Command({

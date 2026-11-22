@@ -456,14 +456,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
-  static const _notificationCommandAliases = <String, String>{
+  static const _workbenchCommandAliases = <String, String>{
+    ...commandPaletteCommandAliases,
     'workbench.action.clearNotifications': 'notifications.clearAll',
     'workbench.action.toggleNotificationsDoNotDisturb':
         'notifications.toggleDoNotDisturbMode',
   };
 
   final CommandService _commands = CommandService(
-    registry: CommandRegistry(aliases: _notificationCommandAliases),
+    registry: CommandRegistry(aliases: _workbenchCommandAliases),
   );
   final ValueNotifier<EditorTabMode> _editorTabMode =
       ValueNotifier(EditorTabMode.multiple);
@@ -835,7 +836,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     final savedCommandIds = _commandHistoryStore.load().commandIds;
     _commandHistory = CommandHistory(commandIds: [
-      for (final id in savedCommandIds) _notificationCommandAliases[id] ?? id,
+      for (final id in savedCommandIds) _workbenchCommandAliases[id] ?? id,
     ]);
     _recentHistory = _recentHistoryStore.load();
     _completedWalkthroughSteps = _walkthroughProgressStore.load();
@@ -1236,8 +1237,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'editorActive');
     reg('file.selectEol', '文件', '选择行尾…', _selectLineEndingActive,
         enablement: 'editorActive');
-    reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
-        shortcut: 'Ctrl+Shift+P');
+    reg(showCommandsCommandId, '查看', '命令面板',
+        () async => _showCommandPalette(),
+        shortcut: _keybindings.shortcutFor(showCommandsCommandId));
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _revealSearchView());
@@ -1494,7 +1496,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _setActivityBarLocation(ActivityBarLocation.hidden);
       },
     );
-    reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
       '编辑器',

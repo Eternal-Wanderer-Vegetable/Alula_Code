@@ -5,6 +5,54 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('canonical command palette keybindings', () {
+    const command = 'workbench.action.showCommands';
+
+    test('F1 and the platform shortcut resolve to a single command', () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final primary =
+            platform == TargetPlatform.macOS ? 'cmd+shift+p' : 'ctrl+shift+p';
+        expect(keys.commandForChord(parseChord(primary)!), command);
+        expect(keys.commandForChord(parseChord('f1')!), command);
+        expect(
+            keys.shortcutFor('view.commandPalette'), keys.shortcutFor(command));
+        expect(keys.shortcutFor('view.quickInput'), keys.shortcutFor(command));
+        expect(keys.shortcutFor('view.panelDiagnostics'), isNull);
+      }
+    });
+
+    test('legacy command overrides and removals address the canonical command',
+        () {
+      final rebinding = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '[{"key":"alt+shift+p","command":"view.commandPalette"}]',
+      );
+      expect(rebinding.commandForChord(parseChord('alt+shift+p')!), command);
+      expect(rebinding.commandForChord(parseChord('f1')!), isNull);
+      expect(rebinding.commandForChord(parseChord('ctrl+shift+p')!), isNull);
+      expect(rebinding.shortcutFor(command), 'Shift+Alt+P');
+
+      final removal = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '[{"key":"f1","command":"-view.quickInput"}]',
+      );
+      expect(removal.commandForChord(parseChord('f1')!), isNull);
+      expect(removal.commandForChord(parseChord('ctrl+shift+p')!), command);
+
+      final explicitDiagnostics = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '[{"key":"f1","command":"view.panelDiagnostics"}]',
+      );
+      expect(explicitDiagnostics.commandForChord(parseChord('f1')!),
+          'view.panelDiagnostics');
+    });
+  });
+
   group('Breadcrumb keybindings', () {
     test('punctuation names resolve to the same logical keys', () {
       expect(parseChord('ctrl+shift+period'), parseChord('ctrl+shift+.'));
@@ -674,13 +722,18 @@ void main() {
     });
 
     test('默认表可解析且包含核心键位', () {
-      final ks = KeybindingSet.load();
+      final ks = KeybindingSet.load(platform: TargetPlatform.windows);
       final resolved = ks.resolve();
-      final expectedChords = KeybindingSet.defaults.values.fold<int>(
-          0,
-          (n, v) =>
-              n +
-              v.split(',').where((spec) => parseChord(spec) != null).length);
+      final expectedChords = KeybindingSet.defaultsFor(TargetPlatform.windows)
+          .values
+          .fold<int>(
+              0,
+              (n, v) =>
+                  n +
+                  v
+                      .split(',')
+                      .where((spec) => parseChord(spec) != null)
+                      .length);
       expect(resolved.keys.length, expectedChords + 16,
           reason: 'tree find, breadcrumbs and notifications add contextual '
               'bindings, including the accessible primary action');

@@ -22,6 +22,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show SingleActivator;
 
+import 'commands.dart';
+
 /// 解析后的键位：主键 + 修饰键。
 class KeyChord {
   const KeyChord({
@@ -248,7 +250,7 @@ class KeybindingSet {
 
   /// 默认键位表（命令 id → 键位串，逗号分隔可给一条命令多个键位）。
   static const Map<String, String> defaults = {
-    'view.commandPalette': 'ctrl+shift+p',
+    showCommandsCommandId: 'ctrl+shift+p,f1',
     'view.quickOpen': 'ctrl+p',
     'workbench.action.gotoLine': 'ctrl+g',
     'workbench.action.gotoSymbol': 'ctrl+shift+o',
@@ -322,7 +324,6 @@ class KeybindingSet {
     'editor.action.moveLinesDownAction': 'alt+arrowdown',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
-    'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
   };
@@ -415,6 +416,7 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result[showCommandsCommandId] = 'cmd+shift+p,f1';
         result['workbench.action.gotoSymbol'] = 'cmd+shift+o';
         result['workbench.action.showAllSymbols'] = 'cmd+t';
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
@@ -604,9 +606,12 @@ class KeybindingSet {
       final sequence = parseChordSequence(keySpec);
       final chord = sequence == null ? parseChord(keySpec) : null;
       if (chord == null && sequence == null) continue;
-      if (command.startsWith('-')) {
+      final remove = command.startsWith('-');
+      final requestedId = remove ? command.substring(1) : command;
+      final commandId =
+          commandPaletteCommandAliases[requestedId] ?? requestedId;
+      if (remove) {
         // Remove only this command's binding; another context may own the chord.
-        final commandId = command.substring(1);
         if (chord != null) {
           _removeCommandFromBinding(map, chord, commandId);
         } else if (sequences[sequence]?.commandId == commandId) {
@@ -614,11 +619,11 @@ class KeybindingSet {
         }
       } else {
         // Rebinding removes the command's defaults and earlier user bindings.
-        _removeCommandFromAll(map, command);
-        sequences.removeWhere((_, binding) => binding.commandId == command);
+        _removeCommandFromAll(map, commandId);
+        sequences.removeWhere((_, binding) => binding.commandId == commandId);
         final condition = entry['when'];
         final binding = KeybindingBinding(
-          commandId: command,
+          commandId: commandId,
           arguments: entry['args'],
           when: condition is String ? condition : null,
         );
@@ -704,13 +709,14 @@ class KeybindingSet {
   /// Rebinding removes the older entry, so the first remaining binding is the
   /// command's active display chord.
   String? shortcutFor(String commandId) {
+    final resolvedId = commandPaletteCommandAliases[commandId] ?? commandId;
     for (final e in _chordToCommands.entries) {
-      if (e.value.any((binding) => binding.commandId == commandId)) {
+      if (e.value.any((binding) => binding.commandId == resolvedId)) {
         return e.key.display;
       }
     }
     for (final e in _sequenceToCommand.entries) {
-      if (e.value.commandId == commandId) return e.key.display;
+      if (e.value.commandId == resolvedId) return e.key.display;
     }
     return null;
   }

@@ -2972,6 +2972,20 @@
       "evidence": "Windows 11 125% 与 Linux xfwm4 原生验证 F1、Ctrl+Shift+P、标题命令、主窗隔离、接收后继续输入。专项 62/62，Flutter 1,757 passed / 2 skipped。646a7ca 的 CI 44984802808 四项及 Platform Availability 44984800385 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.182-auxiliary-compact-commands.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-235",
+      "name": "P05.183 LAY-17 主窗规范命令面板入口",
+      "description": "固定 F1、平台组合键和规范命令 ID，回归既有菜单、旧用户键位与诊断命令。",
+      "dependencies": [
+        "feat-124",
+        "feat-175",
+        "feat-234"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 commandsQuickAccess.ts 注册 workbench.action.showCommands，主键位 Ctrl/Cmd+Shift+P，次键位 F1。P05.182 对照时主窗 F1 指向诊断面板。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
