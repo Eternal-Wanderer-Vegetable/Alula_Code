@@ -3009,8 +3009,8 @@
         "feat-126",
         "feat-235"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 HelpQuickAccessProvider 从提供程序注册表生成帮助项，接受项目或键入前缀时跳转。",
+      "status": "done",
+      "evidence": "帮助列出可用前缀和有效键位，支持选择和键入前缀跳转，保留查询与取消焦点。Windows 实机及 Linux xfwm4 原生交互各 15 个观测点，专项 42/42，Flutter 1,766 passed / 2 skipped。产品 d1e4bc1 的 CI 44992322568 四项、Platform Availability 44992320761 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
