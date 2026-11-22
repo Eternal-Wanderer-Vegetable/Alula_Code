@@ -12,7 +12,39 @@ const auxiliaryDocumentTransferAbortMethod =
     'alula_auxiliary_document_transfer_abort';
 const auxiliaryDocumentTransferStatusMethod =
     'alula_auxiliary_document_transfer_status';
+const auxiliaryTabReturnPrepareMethod = 'alula_auxiliary_tab_return_prepare';
+const auxiliaryTabReturnFinishMethod = 'alula_auxiliary_tab_return_finish';
 const maxAuxiliaryWindowBounds = 32;
+
+/// Only a same-application drag can carry this ticket. The document stays in
+/// the auxiliary engine until the drop target requests it over the window channel.
+class AuxiliaryTabDragTicket {
+  const AuxiliaryTabDragTicket(this.windowId, this.sequence);
+
+  static const _kind = 'alula.auxiliaryEditorTab';
+
+  final String windowId;
+  final int sequence;
+
+  Map<String, Object?> toLocalData() => {
+        'kind': _kind,
+        'windowId': windowId,
+        'sequence': sequence,
+      };
+
+  static AuxiliaryTabDragTicket? tryParse(Object? value) {
+    if (value is! Map || value['kind'] != _kind) return null;
+    final windowId = value['windowId'];
+    final sequence = value['sequence'];
+    if (windowId is! String ||
+        windowId.isEmpty ||
+        sequence is! int ||
+        sequence <= 0) {
+      return null;
+    }
+    return AuxiliaryTabDragTicket(windowId, sequence);
+  }
+}
 
 class AuxiliaryWindowBounds {
   const AuxiliaryWindowBounds({

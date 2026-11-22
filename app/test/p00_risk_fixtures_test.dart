@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 final String _fixtureRoot =
     '${Directory.current.parent.path}/tests/fixtures/rust-mini';
 
@@ -46,6 +48,8 @@ Future<void> _pressChord(
 }
 
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   late Directory temp;
   late LayoutStore layout;
   late SessionStore session;

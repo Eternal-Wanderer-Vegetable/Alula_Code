@@ -10,8 +10,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/file_paths.dart';
+import 'helpers/native_drag_drop.dart';
 
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   testWidgets('tree find filters unloaded files, restores the tree and focus',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-tree-find');

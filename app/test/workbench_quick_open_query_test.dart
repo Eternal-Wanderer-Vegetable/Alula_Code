@@ -9,7 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   testWidgets('Quick Open disables repeated page actions during loading',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-pages');

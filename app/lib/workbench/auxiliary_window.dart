@@ -13,6 +13,7 @@ import 'dart:ui' show SemanticsRole;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../bridge/alula_core.dart';
@@ -178,6 +179,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   bool _boundsReportRequested = false;
   String? _lastCommittedTransferId;
   _PreparedAuxiliaryDocumentTransfer? _pendingTransfer;
+  int _tabDragSequence = 0;
+  _AuxiliaryTabDrag? _tabDrag;
+
+  bool get _returningTab => _tabDrag?.snapshot != null;
 
   @override
   void initState() {
@@ -193,6 +198,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   @override
   void dispose() {
     windowManager.removeListener(this);
+    _tabDrag?.deadline?.cancel();
+    _tabDrag = null;
     _releaseDocuments();
     final windowController = _windowController;
     if (windowController != null) {
@@ -365,6 +372,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     final currentDocument = _doc;
     final currentInputWindow = _inputWindow;
     if (_closing ||
+        _returningTab ||
         currentDocument == null ||
         currentInputWindow == null ||
         currentInputWindow.hasComposition ||
@@ -531,6 +539,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         return _abortDocumentTransfer(arguments);
       case auxiliaryDocumentTransferStatusMethod:
         return _documentTransferStatus(arguments);
+      case auxiliaryTabReturnPrepareMethod:
+        return _prepareTabReturn(arguments);
+      case auxiliaryTabReturnFinishMethod:
+        return _finishTabReturn(arguments);
       default:
         return null;
     }
@@ -701,7 +713,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   String _statusMessage = '';
 
   Future<void> _sendClosedAndDestroy() async {
-    if (_closing) return;
+    if (_closing || _returningTab) return;
     _closing = true;
     try {
       await _focusEventQueue;
@@ -724,6 +736,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     } on Object {
       // 主窗口不可达：仅关闭本窗口（文档状态以磁盘/主窗会话为准）。
     }
+    await _closeNativeWindow();
+  }
+
+  Future<void> _closeNativeWindow() async {
     if (defaultTargetPlatform == TargetPlatform.linux) {
       // Unmap the GTK window while its rendering context is still alive.
       try {
@@ -768,8 +784,151 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     return null;
   }
 
+  DragItem? _provideTabDrag(DragItemRequest request) {
+    final controller = _windowController;
+    final document = _doc;
+    if (_closing ||
+        _returningTab ||
+        _pendingTransfer != null ||
+        !_focusContextConnected ||
+        controller == null ||
+        document == null ||
+        _tabDrag?.completed == false) {
+      return null;
+    }
+    final drag = _AuxiliaryTabDrag(
+      AuxiliaryTabDragTicket(controller.windowId, ++_tabDragSequence),
+      document,
+    );
+    _tabDrag = drag;
+    final completion = request.session.dragCompleted;
+    void onComplete() {
+      final operation = completion.value;
+      if (operation == null) return;
+      completion.removeListener(onComplete);
+      if (!mounted || !identical(_tabDrag, drag)) return;
+      drag.completed = true;
+      if (drag.accepted) {
+        _closeReturnedTab(drag);
+      } else if (drag.snapshot == null && operation != DropOperation.move) {
+        _tabDrag = null;
+      }
+    }
+
+    completion.addListener(onComplete);
+    return DragItem(localData: drag.ticket.toLocalData());
+  }
+
+  Map<String, Object?>? _prepareTabReturn(Object? sequence) {
+    final drag = _tabDrag;
+    final inputWindow = _inputWindow;
+    if (!mounted ||
+        _closing ||
+        _pendingTransfer != null ||
+        drag == null ||
+        drag.ticket.sequence != sequence ||
+        !identical(drag.document, _doc) ||
+        inputWindow == null ||
+        inputWindow.hasComposition ||
+        inputWindow.pendingCount != 0 ||
+        inputWindow.version != drag.document.version) {
+      return null;
+    }
+    if (drag.snapshot case final prepared?) return prepared;
+
+    final local = inputWindow.initialValue.selection;
+    final snapshot = AuxiliaryWindowPayload.forDocument(
+      name: _name,
+      path: _path,
+      text: drag.document.resync().content,
+      dirty: _dirty || drag.document.isDirty,
+    ).toMap()
+      ..['selectionBase'] = inputWindow.startUtf16 + local.baseOffset
+      ..['selectionExtent'] = inputWindow.startUtf16 + local.extentOffset;
+    drag.documentVersion = drag.document.version;
+    drag.restoreEditorFocus = _editorFocus.hasFocus;
+    if (drag.restoreEditorFocus) _editorFocus.unfocus();
+    setState(() => drag.snapshot = snapshot);
+    drag.deadline = Timer(const Duration(seconds: 10), () {
+      if (mounted && identical(_tabDrag, drag)) {
+        _abortTabReturn(drag);
+      }
+    });
+    return snapshot;
+  }
+
+  bool _finishTabReturn(Object? arguments) {
+    final drag = _tabDrag;
+    if (!mounted ||
+        arguments is! Map ||
+        arguments['accepted'] is! bool ||
+        drag == null ||
+        drag.snapshot == null ||
+        arguments['sequence'] != drag.ticket.sequence) {
+      return false;
+    }
+    if (drag.accepted) return arguments['accepted'] == true;
+    if (arguments['accepted'] == true) {
+      if (drag.document.version != drag.documentVersion) {
+        _abortTabReturn(drag);
+        return false;
+      }
+      drag.accepted = true;
+      if (drag.completed) _closeReturnedTab(drag);
+    } else {
+      _abortTabReturn(drag);
+    }
+    return true;
+  }
+
+  void _abortTabReturn(_AuxiliaryTabDrag drag) {
+    drag.deadline?.cancel();
+    setState(() {
+      _tabDrag = null;
+      if (drag.accepted) {
+        _statusMessage = '主窗口已接收文档，源窗口因拖放结束超时仍保留';
+      }
+    });
+    if (drag.restoreEditorFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted &&
+            !_closing &&
+            !_returningTab &&
+            _pendingTransfer == null) {
+          _editorFocus.requestFocus();
+        }
+      });
+    }
+  }
+
+  void _closeReturnedTab(_AuxiliaryTabDrag drag) {
+    if (_closing || !identical(_tabDrag, drag)) return;
+    _closing = true;
+    drag.deadline?.cancel();
+    // GTK emits drag completion while tearing down the drag icon surface.
+    // Let the source engine finish a frame before unmapping its native view.
+    Future<void> afterDrag() async {
+      if (defaultTargetPlatform == TargetPlatform.linux) {
+        await WidgetsBinding.instance.endOfFrame.timeout(
+          const Duration(seconds: 1),
+          onTimeout: () {},
+        );
+      }
+      if (mounted) await _closeNativeWindow();
+    }
+
+    unawaited(afterDrag().catchError((Object error) {
+      if (!mounted) return;
+      setState(() {
+        _tabDrag = null;
+        _closing = false;
+        _statusMessage = '文档已移回主窗口，辅助窗口关闭失败：$error';
+      });
+    }));
+  }
+
   Widget _buildActiveEditorTab() {
-    final enabled = !_closing && _pendingTransfer == null;
+    final enabled = !_closing && _pendingTransfer == null && !_returningTab;
     final activate = enabled ? _editorFocus.requestFocus : null;
     return Semantics(
       container: true,
@@ -789,6 +948,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
             container: true,
             explicitChildNodes: true,
             role: SemanticsRole.tab,
+            enabled: enabled,
             selected: true,
             label: _dirty ? '$_name，未保存' : _name,
             onTap: activate,
@@ -806,15 +966,29 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      EditorTabFileIcon(fileName: _name),
                       Flexible(
-                        child: ExcludeSemantics(
-                          child: Text(
-                            _name,
-                            key: const ValueKey('auxiliary-editor-tab-label'),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 13),
+                        child: DragItemWidget(
+                          dragItemProvider: _provideTabDrag,
+                          allowedOperations: () => const [DropOperation.move],
+                          child: DraggableWidget(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                EditorTabFileIcon(fileName: _name),
+                                Flexible(
+                                  child: ExcludeSemantics(
+                                    child: Text(
+                                      _name,
+                                      key: const ValueKey(
+                                          'auxiliary-editor-tab-label'),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -842,6 +1016,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   Widget build(BuildContext context) {
     final doc = _doc;
     final inputWindow = _inputWindow;
+    final inputLocked = _pendingTransfer != null || _returningTab;
     final titleHeight = _compactMode ? 30.0 : 35.0;
     final titleActionConstraints = BoxConstraints.tightFor(
       width: 30,
@@ -918,7 +1093,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                   IconButton(
                     key: const ValueKey('auxiliary-close-button'),
                     tooltip: '移回主窗口并关闭',
-                    onPressed: doc == null || _pendingTransfer != null
+                    onPressed: doc == null || inputLocked
                         ? null
                         : () {
                             _sendClosedAndDestroy();
@@ -966,10 +1141,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                           ? EdgeInsets.zero
                           : const EdgeInsets.all(4),
                       child: Focus(
-                        canRequestFocus: _pendingTransfer == null,
-                        descendantsAreFocusable: _pendingTransfer == null,
+                        canRequestFocus: !inputLocked,
+                        descendantsAreFocusable: !inputLocked,
                         child: AbsorbPointer(
-                          absorbing: _pendingTransfer != null,
+                          absorbing: inputLocked,
                           child: RustTextInputField(
                             key: const ValueKey('auxiliary-editor-input'),
                             inputWindow: inputWindow,
@@ -1007,4 +1182,17 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       ),
     );
   }
+}
+
+class _AuxiliaryTabDrag {
+  _AuxiliaryTabDrag(this.ticket, this.document);
+
+  final AuxiliaryTabDragTicket ticket;
+  final AlulaDoc document;
+  Map<String, Object?>? snapshot;
+  Timer? deadline;
+  int? documentVersion;
+  bool completed = false;
+  bool accepted = false;
+  bool restoreEditorFocus = false;
 }

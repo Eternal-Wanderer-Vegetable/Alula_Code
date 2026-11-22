@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<Object?> dispatchPlatformMethod(
@@ -32,6 +33,11 @@ Future<Object?> dispatchPlatformMethod(
     null,
   );
   return response == null ? null : codec.decodeEnvelope(response);
+}
+
+class _AuxiliaryDragSession extends Fake implements DragSession {
+  @override
+  final ValueNotifier<DropOperation?> dragCompleted = ValueNotifier(null);
 }
 
 void main() {
@@ -816,6 +822,168 @@ void main() {
           TargetPlatform.windows,
         }));
   });
+
+  testWidgets(
+    'auxiliary return abort keeps the source and commit waits for native drag completion',
+    (tester) async {
+      const windowsChannel = MethodChannel('mixin.one/desktop_multi_window');
+      const crossWindowChannel =
+          MethodChannel('mixin.one/desktop_multi_window/channels');
+      const windowManagerChannel = MethodChannel('window_manager');
+      const body = 'source dirty\r\n😀\n';
+      final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 902001,
+        mainWindowId: 'main',
+        name: 'return.txt',
+        text: body,
+        dirty: true,
+      );
+      final nativeCloseCalls = <String>[];
+      final legacyReturns = <Object?>[];
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(windowsChannel, (call) async {
+        if (call.method == 'getWindowDefinition') {
+          return {
+            'windowId': 'aux-return',
+            'windowArgument': payload.toArguments()
+          };
+        }
+        return null;
+      });
+      messenger.setMockMethodCallHandler(crossWindowChannel, (call) async {
+        if (call.method != 'invokeMethod' || call.arguments is! Map) {
+          return null;
+        }
+        final args = call.arguments as Map;
+        if (args['method'] == auxiliaryFocusContextMethod) {
+          return {'windowId': 'main', 'groupId': 'main:editor', 'revision': 1};
+        }
+        if (args['method'] == 'alula_auxiliary_closed') {
+          legacyReturns.add(args['arguments']);
+        }
+        return null;
+      });
+      messenger.setMockMethodCallHandler(windowManagerChannel, (call) async {
+        if (call.method == 'isAlwaysOnTop' || call.method == 'isFocused') {
+          return false;
+        }
+        if (call.method == 'hide' ||
+            call.method == 'close' ||
+            call.method == 'destroy') {
+          nativeCloseCalls.add(call.method);
+        }
+        return null;
+      });
+      addTearDown(() {
+        for (final channel in [
+          windowsChannel,
+          crossWindowChannel,
+          windowManagerChannel
+        ]) {
+          messenger.setMockMethodCallHandler(channel, null);
+        }
+      });
+      await tester.pumpWidget(AuxiliaryEditorApp(payload: payload));
+      await tester.pumpAndSettle();
+
+      final source = tester.widget<DragItemWidget>(find.byType(DragItemWidget));
+      final close = find.byKey(const ValueKey('auxiliary-close-button'));
+      final field =
+          tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      Future<Object?> message(String method, Object? args) =>
+          dispatchPlatformMethod(
+              tester,
+              crossWindowChannel.name,
+              MethodCall(
+                'methodCall',
+                {
+                  'channel': 'mixin.one/window_controller/aux-return',
+                  'method': method,
+                  'arguments': args
+                },
+              ));
+
+      Future<(AuxiliaryTabDragTicket, _AuxiliaryDragSession)> begin() async {
+        final session = _AuxiliaryDragSession();
+        addTearDown(session.dragCompleted.dispose);
+        final drag = await source.dragItemProvider(
+          DragItemRequest(location: const Offset(20, 40), session: session),
+        );
+        expect(drag, isNotNull);
+        final localData = drag!.localData as Map;
+        expect(
+            localData.keys, unorderedEquals(['kind', 'windowId', 'sequence']));
+        final ticket = AuxiliaryTabDragTicket.tryParse(localData);
+        expect(ticket?.windowId, 'aux-return');
+        return (ticket!, session);
+      }
+
+      final (cancelTicket, canceled) = await begin();
+      expect(
+          await message(
+              auxiliaryTabReturnPrepareMethod, cancelTicket.sequence + 1),
+          isNull);
+      final prepared =
+          await message(auxiliaryTabReturnPrepareMethod, cancelTicket.sequence)
+              as Map;
+      expect(prepared['text'], body);
+      expect(prepared['dirty'], isTrue);
+      await tester.pumpAndSettle();
+      expect(tester.widget<IconButton>(close).onPressed, isNull);
+      expect(
+          await message(auxiliaryTabReturnFinishMethod, {
+            'sequence': cancelTicket.sequence,
+            'accepted': false,
+          }),
+          isTrue);
+      canceled.dragCompleted.value = DropOperation.none;
+      await tester.pumpAndSettle();
+      expect(tester.widget<IconButton>(close).onPressed, isNotNull);
+      expect(field.inputWindow.document.resync().content, body);
+      expect(nativeCloseCalls, isEmpty);
+
+      final (timeoutTicket, timedOut) = await begin();
+      expect(
+        await message(auxiliaryTabReturnPrepareMethod, timeoutTicket.sequence),
+        isA<Map>(),
+      );
+      expect(
+          await message(auxiliaryTabReturnFinishMethod, {
+            'sequence': timeoutTicket.sequence,
+            'accepted': true,
+          }),
+          isTrue);
+      await tester.pump(const Duration(seconds: 10));
+      await tester.pumpAndSettle();
+      timedOut.dragCompleted.value = DropOperation.move;
+      expect(tester.widget<IconButton>(close).onPressed, isNotNull);
+      expect(field.inputWindow.document.resync().content, body);
+      expect(nativeCloseCalls, isEmpty);
+
+      final (moveTicket, moved) = await begin();
+      final movedSnapshot =
+          await message(auxiliaryTabReturnPrepareMethod, moveTicket.sequence)
+              as Map;
+      expect(movedSnapshot['text'], body);
+      expect(
+          await message(auxiliaryTabReturnFinishMethod, {
+            'sequence': moveTicket.sequence,
+            'accepted': true,
+          }),
+          isTrue);
+      expect(nativeCloseCalls, isEmpty);
+      moved.dragCompleted.value = DropOperation.move;
+      await tester.pumpAndSettle();
+      expect(nativeCloseCalls, [
+        if (defaultTargetPlatform == TargetPlatform.linux) 'hide',
+        defaultTargetPlatform == TargetPlatform.windows ? 'close' : 'destroy',
+      ]);
+      expect(legacyReturns, isEmpty);
+      expect(field.inputWindow.document.resync, throwsA(isA<AlulaException>()));
+    },
+    variant: const TargetPlatformVariant(
+        {TargetPlatform.windows, TargetPlatform.linux}),
+  );
 
   group('main-window move flow', () {
     late Directory temp;

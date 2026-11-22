@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 Finder _row(String region, int id) =>
     find.byKey(ValueKey('open-editors-doc-$region-$id'));
 
@@ -27,6 +29,8 @@ const _closeSaved = ValueKey('open-editors-group-close-saved');
 const _closeAll = ValueKey('open-editors-group-close-all');
 
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   late Directory temp;
   late Directory workspace;
   late LayoutStore layoutStore;

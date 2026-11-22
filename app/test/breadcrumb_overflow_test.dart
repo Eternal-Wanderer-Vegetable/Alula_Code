@@ -11,6 +11,8 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 Finder _segment(String region, int index) =>
     find.byKey(ValueKey('breadcrumbs-segment-$region-$index'));
 
@@ -48,6 +50,8 @@ Future<void> _deleteDirectoryWithRetry(Directory directory) async {
 }
 
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   testWidgets(
       'horizontal scrolling retains every segment and reveals last and previous focus',
       (tester) async {

@@ -10,6 +10,8 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 Finder _row(String region, int id) =>
     find.byKey(ValueKey('open-editors-doc-$region-$id'));
 
@@ -27,6 +29,8 @@ Finder _closeGroup(String region) =>
 const _dirtyDialog = ValueKey('editor-close-dirty-dialog');
 
 void main() {
+  setUpAll(mockNativeDragDrop);
+
   late Directory temp;
   late Directory workspace;
   late LayoutStore layoutStore;

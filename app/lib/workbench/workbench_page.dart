@@ -87,6 +87,7 @@ import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'auxiliary_focus_context.dart';
 import 'auxiliary_window_transfer.dart';
+import 'auxiliary_tab_drop_target.dart';
 import 'command_history.dart';
 import 'tree_find.dart';
 import 'goto_position.dart';
@@ -632,6 +633,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<int, ({FocusNode node, bool canRequestFocus})>
       _auxiliaryTransferSourceLocks = {};
   int _auxiliaryTransferSequence = 0;
+  final Set<String> _auxiliaryTabReturnsInFlight = {};
   StreamSubscription<void>? _auxiliaryWindowsSubscription;
   final AuxiliaryFocusContextRegistry _auxiliaryFocusRegistry =
       AuxiliaryFocusContextRegistry();
@@ -14724,6 +14726,189 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  bool _canReceiveAuxiliaryTab(
+    EditorGroup group,
+    AuxiliaryTabDragTicket ticket,
+  ) =>
+      mounted &&
+      !_disposing &&
+      _core != null &&
+      identical(_groups[group.region], group) &&
+      _auxiliaryWindowIds.contains(ticket.windowId) &&
+      !_auxiliaryTabReturnsInFlight.contains(ticket.windowId);
+
+  Future<void> _receiveAuxiliaryTab(
+    EditorGroup group,
+    AuxiliaryTabDragTicket ticket, {
+    OpenDoc? anchor,
+    required bool insertAfter,
+  }) async {
+    if (!_canReceiveAuxiliaryTab(group, ticket)) return;
+    _auxiliaryTabReturnsInFlight.add(ticket.windowId);
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    final source = WindowController.fromWindowId(ticket.windowId);
+    const deadline = Duration(seconds: 2);
+    var adopted = false;
+    try {
+      final snapshot = await source
+          .invokeMethod<Object?>(
+            auxiliaryTabReturnPrepareMethod,
+            ticket.sequence,
+          )
+          .timeout(deadline);
+      if (!mounted ||
+          _disposing ||
+          _quickOpenWorkspaceGeneration != workspaceGeneration ||
+          !identical(_groups[group.region], group) ||
+          !_auxiliaryWindowIds.contains(ticket.windowId) ||
+          snapshot is! Map) {
+        return;
+      }
+      adopted = _adoptAuxiliaryTab(group, snapshot, anchor, insertAfter);
+    } on Object catch (error) {
+      if (mounted && !_disposing) {
+        setState(() => _statusDetail = '无法接收辅助窗口的文档：$error');
+      }
+    } finally {
+      var acknowledged = false;
+      for (var attempt = 0; attempt < (adopted ? 2 : 1); attempt++) {
+        try {
+          acknowledged =
+              await source
+                  .invokeMethod<bool>(auxiliaryTabReturnFinishMethod, {
+                    'sequence': ticket.sequence,
+                    'accepted': adopted,
+                  })
+                  .timeout(deadline) ==
+              true;
+          break;
+        } on Object {
+          // The source retains its document until it receives an acknowledgement.
+        }
+      }
+      _auxiliaryTabReturnsInFlight.remove(ticket.windowId);
+      if (adopted && mounted && !_disposing) {
+        if (!acknowledged && _auxiliaryWindowIds.contains(ticket.windowId)) {
+          setState(() => _statusDetail = '文档已接收，仍待辅助窗口确认关闭');
+        } else {
+          try {
+            await windowManager.focus();
+          } on Object {
+            // The editor focus is also restored after the new view lays out.
+          }
+        }
+      }
+    }
+  }
+
+  bool _adoptAuxiliaryTab(
+    EditorGroup group,
+    Map<dynamic, dynamic> snapshot,
+    OpenDoc? anchor,
+    bool insertAfter,
+  ) {
+    final path = snapshot['path'];
+    final text = snapshot['text'];
+    final base = snapshot['selectionBase'];
+    final extent = snapshot['selectionExtent'];
+    if (snapshot['businessId'] != AuxiliaryWindowPayload.businessId ||
+        snapshot['name'] is! String ||
+        snapshot['dirty'] is! bool ||
+        (path != null && path is! String) ||
+        text is! String ||
+        base is! int ||
+        extent is! int ||
+        base < 0 ||
+        base > text.length ||
+        extent < 0 ||
+        extent > text.length) {
+      return false;
+    }
+    final anchorIndex = anchor == null ? -1 : group.docs.indexOf(anchor);
+    if (anchor != null && anchorIndex < 0) return false;
+
+    final previous = path is String && path.isNotEmpty
+        ? _groups.values
+              .expand((candidate) => candidate.docs)
+              .where((doc) => doc.path != null && _pathsEqual(doc.path!, path))
+              .firstOrNull
+        : null;
+    if (previous != null) {
+      _flushInput(previous, commitComposition: true);
+      if (previous.text != text || previous.isDirty != snapshot['dirty']) {
+        setState(() => _statusDetail = '主窗口已打开不同版本的同一文件，两边的内容已保留');
+        return false;
+      }
+    }
+    final existing = previous == null
+        ? null
+        : group.docs.where((doc) => doc.sameDocumentAs(previous)).firstOrNull;
+    final previousActive = _active;
+    if (previousActive != null && !identical(previousActive, existing)) {
+      _flushInput(previousActive, commitComposition: true);
+    }
+    final doc = existing ??
+        (previous == null
+            ? _createAuxiliaryTransferReturnDocument(snapshot)
+            : previous._copyTab());
+    if (doc == null) return false;
+
+    if (existing == null) {
+      try {
+        doc.replaceInputWindow(
+          extent,
+          selection: TextSelection(baseOffset: base, extentOffset: extent),
+        );
+      } on Object {
+        doc.disposeView();
+        rethrow;
+      }
+    }
+    setState(() {
+      if (existing == null) {
+        final stickyCount = group.docs
+            .takeWhile((doc) => group.stickyDocIds.contains(doc.id))
+            .length;
+        final requested = anchor == null
+            ? group.docs.length
+            : anchorIndex + (insertAfter ? 1 : 0);
+        group.docs.insert(
+          requested.clamp(stickyCount, group.docs.length).toInt(),
+          doc,
+        );
+      }
+      group.activeDocId = doc.id;
+      _focusedRegion = group.region;
+      _noteActiveDocument(group, doc.id);
+      _statusDetail = '已将编辑器移回主窗口';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(group, doc);
+    return true;
+  }
+
+  Widget _auxiliaryTabDropTarget(
+    EditorGroup group,
+    Widget child, {
+    OpenDoc? anchor,
+  }) => AuxiliaryTabDropTarget(
+    keyPrefix: anchor == null
+        ? 'auxiliary-return-group-${group.region}'
+        : 'auxiliary-return-tab-${group.region}-${anchor.id}',
+    mode: anchor == null
+        ? EditorDropOverlayMode.group
+        : EditorDropOverlayMode.tab,
+    canAccept: (ticket) => _canReceiveAuxiliaryTab(group, ticket),
+    onDrop: (ticket, insertAfter) => _receiveAuxiliaryTab(
+      group,
+      ticket,
+      anchor: anchor,
+      insertAfter: insertAfter,
+    ),
+    child: child,
+  );
+
   void _addAuxiliaryTransferReturnDocument(
     EditorGroup sourceGroup,
     OpenDoc document,
@@ -23531,7 +23716,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final activeMergeConflict = activeDoc == null
         ? null
         : _mergeConflictAtSelection(activeDoc);
-    return CallbackShortcuts(
+    final body = CallbackShortcuts(
       bindings: {
         if (!_breadcrumbs.isActive)
           const SingleActivator(LogicalKeyboardKey.escape): () =>
@@ -23713,6 +23898,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       ),
     );
+    return _auxiliaryTabDropTarget(g, body);
   }
 
   /// 面包屑（W2-3）：工作区相对路径拆段；点文件夹段在文件树中展开该目录。
@@ -25071,7 +25257,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
       ),
     );
-    return MouseRegion(
+    final target = MouseRegion(
       onEnter: (_) =>
           _editorTabHoveredTarget.value = (region: g.region, docId: d.id),
       onExit: (_) {
@@ -25188,6 +25374,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       ),
     );
+    return _auxiliaryTabDropTarget(g, target, anchor: d);
   }
 
   void _moveSelectedTabsInGroup(
