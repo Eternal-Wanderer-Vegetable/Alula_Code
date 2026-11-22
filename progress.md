@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.215 / feat-267 完成。产品 3ceca5bdd134ec68675536bd2622960ab0f272be。文档符号 Alt+Enter、Ctrl/Cmd+Enter 与行尾按钮侧开，恢复源状态并保留右侧标签。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 271/271，Flutter 1,810 passed / 2 skipped。产品 3ceca5b 的 CI 45077277402 四项及 Platform Availability 45077269288 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.215-document-symbol-aside.md。
+
 - P05.214 / feat-266 完成。产品 c8c8da50f78e31c66a255365e4a2c81882280089。连续键入时保留完整快速访问查询，等待切换期间阻止旧候选接受。Windows 与 Linux 分别复验 12 和 60 毫秒输入节奏，每轮各 36 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 c8c8da5 的 CI 45074969186 四项及 Platform Availability 45074964422 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md。
 
 - P05.213 / feat-265 完成。产品 9496aa0c680cfda3a65c7a9f3c66e190b2a60c00。空工作台文档符号入口显示指引，Enter 保持指引，Escape 恢复焦点。Windows 应用定向组合键和原生前缀、Linux 原生组合键和前缀各 15 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 9496aa0 的 CI 45072628579 四项及 Platform Availability 45072625440 Windows/Linux 通过。Windows 系统 Ctrl+Shift+O 仍待复验，macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md。
