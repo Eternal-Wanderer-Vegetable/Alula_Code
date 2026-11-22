@@ -3444,8 +3444,8 @@
         "feat-265",
         "feat-268"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "普通文档符号查询显示总数，按查询区分无符号与无匹配。Windows 实机与 Linux Xvfb + xfwm4 各 16 个观测点，专项 273/273，Flutter 1,812 passed / 2 skipped。产品 676761a 的 CI 45081543711 四项及 Platform Availability 45081540235 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.217-symbol-result-state.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

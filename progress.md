@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.217 / feat-269 完成。产品 676761ae5c02de9ac5ae03895d190a93ef470cbc。普通文档符号查询显示总数，按查询区分无符号与无匹配。Windows 实机与 Linux Xvfb + xfwm4 各 16 个观测点，专项 273/273，Flutter 1,812 passed / 2 skipped。产品 676761a 的 CI 45081543711 四项及 Platform Availability 45081540235 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.217-symbol-result-state.md。
+
 - P05.216 / feat-268 完成。产品 f06971c208ddfae25832b98b2c666bc0d2f40b61。文档符号 @: 模式全局分组并显示当前候选数。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 272/272，Flutter 1,811 passed / 2 skipped。产品 f06971c 的 CI 45079523934 四项及 Platform Availability 45079518857 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.216-symbol-kinds.md。
 
 - P05.215 / feat-267 完成。产品 3ceca5bdd134ec68675536bd2622960ab0f272be。文档符号 Alt+Enter、Ctrl/Cmd+Enter 与行尾按钮侧开，恢复源状态并保留右侧标签。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 271/271，Flutter 1,810 passed / 2 skipped。产品 3ceca5b 的 CI 45077277402 四项及 Platform Availability 45077269288 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.215-document-symbol-aside.md。
