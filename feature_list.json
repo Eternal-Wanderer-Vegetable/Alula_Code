@@ -3355,6 +3355,19 @@
       "evidence": "无文本编辑器时行列和偏移入口展示提示，通过帮助可访问，Enter 保持提示，Escape 恢复焦点。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 241/241，Flutter 1,803 passed / 2 skipped。产品 092d8a4 的 CI 45066688450 四项及 Platform Availability 45066685552 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.210-goto-without-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-263",
+      "name": "P05.211 CMD-03 位置选择器 Ctrl/Cmd+Enter 与保留侧开标签",
+      "description": "固定默认主修饰键确认侧开，Alt 入口同样保留目标标签，保持源预览标签和文档视图。",
+      "dependencies": [
+        "feat-261",
+        "feat-262"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

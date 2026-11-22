@@ -4309,7 +4309,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final result = await QuickInput.input(context,
       prompt: prompt,
       value: initialValue,
-      onAcceptModifiers: (modifiers) => openAside = modifiers.alt,
+      onAcceptModifiers: (modifiers) {
+        // The default Quick Access preferences keep the opened tab.
+        openAside = modifiers.alt || modifiers.ctrlCmd;
+      },
       inputActionBuilder: (context, value, refresh) => value.trim().startsWith('::')
           ? Semantics(toggled: _gotoZeroBasedOffset, child: IconButton(
               key: const ValueKey('goto-zero-based-offset'),
@@ -4392,7 +4395,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         [TextSelection.collapsed(offset: target.offsetUtf16)],
         recordHistory: false,
       );
-      setState(() => _statusDetail = '行 ${target.line + 1}，列 ${target.column + 1}');
+      setState(() {
+        if (openAside && destination.previewDocId == view.id) {
+          destination.previewDocId = null;
+          _scheduleStateSave();
+        }
+        _statusDetail = '行 ${target.line + 1}，列 ${target.column + 1}';
+      });
       _syncCommandContext();
       _focusEditorAfterLayout(destination, view);
     } on Object catch (error) {

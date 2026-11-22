@@ -111,7 +111,8 @@ void main() {
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });
 
-  testWidgets('Go to Position Alt+Enter opens a shared view on the right',
+  testWidgets(
+      'Position side shortcuts preserve the source and keep the right tab open',
       (tester) async {
     final temp =
         Directory.systemTemp.createTempSync('alula-goto-position-side');
@@ -126,6 +127,7 @@ void main() {
           {
             'region': 'editor',
             'active': 70,
+            'preview': 70,
             'docs': [
               {'id': 70, 'path': file.path},
             ],
@@ -163,16 +165,26 @@ void main() {
     TextSelection selection(String region) =>
         editor(region).inputWindow.initialValue.selection;
 
-    Future<void> aside(String command, String query, int position) async {
+    FontStyle? tabStyle(String region) => tester
+        .widget<Text>(find.byKey(ValueKey('editor-tab-label-$region-70')))
+        .style
+        ?.fontStyle;
+
+    Future<void> aside(
+      String command,
+      String query,
+      int position,
+      LogicalKeyboardKey key,
+    ) async {
       final original = selection('editor');
       final navigation = commands.execute(command);
       await tester.pumpAndSettle();
       await tester.enterText(input, query);
       await tester.pumpAndSettle();
       expect(selection('editor').extentOffset, position);
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyDownEvent(key);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyUpEvent(key);
       await tester.pumpAndSettle();
       expect(await navigation, CommandExecutionStatus.executed);
       expect(panel, findsNothing);
@@ -184,18 +196,35 @@ void main() {
         same(editor('editor').inputWindow.document),
       );
       expect(find.byType(RustTextInputField), findsNWidgets(2));
+      expect(tabStyle('editor'), FontStyle.italic);
+      expect(tabStyle('editor-2'), isNot(FontStyle.italic));
     }
 
     await tester.tap(editorField('editor'));
     await tester.pump();
-    await aside('workbench.action.gotoLine', ':2:3', 8);
+    expect(tabStyle('editor'), FontStyle.italic);
+    await aside(
+      'workbench.action.gotoLine',
+      ':2:3',
+      8,
+      LogicalKeyboardKey.altLeft,
+    );
 
     await tester.tap(find.byKey(const ValueKey('editor-tab-label-editor-70')));
     await tester.pumpAndSettle();
     expect(editor('editor').focusNode!.hasFocus, isTrue);
-    await aside('workbench.action.gotoOffset', '::10', 9);
+    final platform = Theme.of(tester.element(editorField('editor'))).platform;
+    final primary = platform == TargetPlatform.macOS
+        ? LogicalKeyboardKey.metaLeft
+        : LogicalKeyboardKey.controlLeft;
+    await aside('workbench.action.gotoOffset', '::10', 9, primary);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
-  });
+  },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      }));
 
   testWidgets('Position commands explain how to proceed without an editor',
       (tester) async {
