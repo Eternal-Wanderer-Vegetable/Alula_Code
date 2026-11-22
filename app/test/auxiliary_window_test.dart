@@ -993,6 +993,7 @@ void main() {
       const crossWindowChannel =
           MethodChannel('mixin.one/desktop_multi_window/channels');
       const nativeWindowChannel = MethodChannel('window_manager');
+      const focusChannel = MethodChannel('alula/auxiliary_close_focus');
       final messenger = tester.binding.defaultBinaryMessenger;
       const body = 'dirty 😀\r\nSecond line\n';
       final payload = AuxiliaryWindowPayload.forDocument(
@@ -1036,16 +1037,26 @@ void main() {
         if (call.method == 'isAlwaysOnTop' || call.method == 'isFocused') {
           return false;
         }
-        if (const {'hide', 'close', 'destroy'}.contains(call.method)) {
+        if (call.method == 'setPreventClose' &&
+            (call.arguments as Map)['isPreventClose'] != false) {
+          return null;
+        }
+        if (const {'hide', 'setPreventClose', 'close', 'destroy'}
+            .contains(call.method)) {
           nativeCloseCalls.add(call.method);
         }
         return null;
+      });
+      messenger.setMockMethodCallHandler(focusChannel, (call) async {
+        nativeCloseCalls.add(call.method);
+        throw PlatformException(code: 'focus-unavailable');
       });
       addTearDown(() {
         for (final channel in [
           windowsChannel,
           crossWindowChannel,
-          nativeWindowChannel
+          nativeWindowChannel,
+          focusChannel,
         ]) {
           messenger.setMockMethodCallHandler(channel, null);
         }
@@ -1111,6 +1122,9 @@ void main() {
         nativeCloseCalls,
         [
           if (defaultTargetPlatform == TargetPlatform.linux) 'hide',
+          'setPreventClose',
+          if (defaultTargetPlatform == TargetPlatform.windows)
+            'restoreMainIfSourceForeground',
           defaultTargetPlatform == TargetPlatform.windows ? 'close' : 'destroy',
         ],
       );

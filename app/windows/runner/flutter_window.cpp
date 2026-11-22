@@ -9,6 +9,14 @@
 #include "flutter/generated_plugin_registrant.h"
 #include "notification_accessibility.h"
 
+namespace {
+
+// The Windows runner owns one workbench window. The multi-window callback is
+// a C function pointer, so the auxiliary engines read its current handle here.
+HWND main_workbench_window = nullptr;
+
+}  // namespace
+
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
 
@@ -41,10 +49,29 @@ bool FlutterWindow::OnCreate() {
     }
     result->NotImplemented();
   });
+  main_workbench_window = GetHandle();
   DesktopMultiWindowSetWindowCreatedCallback([](void* controller) {
     auto* view_controller =
         reinterpret_cast<flutter::FlutterViewController*>(controller);
     RegisterPlugins(view_controller->engine());
+    const HWND source_view = view_controller->view()->GetNativeWindow();
+    flutter::MethodChannel<flutter::EncodableValue> close_focus_channel(
+        view_controller->engine()->messenger(), "alula/auxiliary_close_focus",
+        &flutter::StandardMethodCodec::GetInstance());
+    close_focus_channel.SetMethodCallHandler(
+        [source_view](const auto& call, auto result) {
+          if (call.method_name() != "restoreMainIfSourceForeground") {
+            result->NotImplemented();
+            return;
+          }
+          const HWND source = GetAncestor(source_view, GA_ROOT);
+          const HWND target = main_workbench_window;
+          if (source && source != target && IsWindowVisible(target) &&
+              !IsIconic(target) && GetForegroundWindow() == source) {
+            SetForegroundWindow(target);
+          }
+          result->Success();
+        });
   });
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
@@ -61,6 +88,7 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  main_workbench_window = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }

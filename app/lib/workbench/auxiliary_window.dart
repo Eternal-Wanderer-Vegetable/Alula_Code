@@ -13,6 +13,7 @@ import 'dart:ui' show SemanticsRole;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -616,7 +617,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
 
   @override
   void onWindowClose() {
-    unawaited(_sendClosedAndDestroy());
+    unawaited(_sendClosedAndDestroy(restoreMainFocus: true));
   }
 
   Future<void> _loadAlwaysOnTop() async {
@@ -714,7 +715,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
 
   String _statusMessage = '';
 
-  Future<void> _sendClosedAndDestroy() async {
+  Future<void> _sendClosedAndDestroy({bool restoreMainFocus = false}) async {
     if (_closing || _returningTab || _pendingTransfer != null) return;
     final document = _doc;
     final input = _inputWindow;
@@ -781,7 +782,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       return;
     }
     try {
-      await _closeNativeWindow();
+      await _closeNativeWindow(restoreMainFocus: restoreMainFocus && confirmed);
     } on Object catch (error) {
       _keepOpenAfterCloseFailure('辅助窗口关闭失败：$error');
     }
@@ -800,7 +801,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     });
   }
 
-  Future<void> _closeNativeWindow() async {
+  Future<void> _closeNativeWindow({bool restoreMainFocus = false}) async {
     if (defaultTargetPlatform == TargetPlatform.linux) {
       // Unmap the GTK window while its rendering context is still alive.
       try {
@@ -812,6 +813,14 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     await windowManager.setPreventClose(false);
     if (mounted) setState(_releaseDocuments);
     if (defaultTargetPlatform == TargetPlatform.windows) {
+      if (restoreMainFocus) {
+        try {
+          await const MethodChannel('alula/auxiliary_close_focus')
+              .invokeMethod<void>('restoreMainIfSourceForeground');
+        } on Exception {
+          // A native activation failure cannot undo the confirmed handoff.
+        }
+      }
       // destroy() posts WM_QUIT to the message loop shared with the main window.
       await windowManager.close();
     } else {
