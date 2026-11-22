@@ -84,4 +84,97 @@ void main() {
     expect(find.text('文件名、路径或 path:行:列'), findsOneWidget);
     await close();
   });
+
+  testWidgets('Quick Open routes typed prefixes to the existing providers',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-provider-prefix-');
+    final file = File('${temp.path}/main.rs')
+      ..writeAsStringSync('fn alpha() {}\n\nfn zebra() {}\n');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 95,
+            'docs': [
+              {'id': 95, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        commandHistoryStore:
+            CommandHistoryStore(path: '${temp.path}/history.json'),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField).first,
+    );
+    editor.focusNode!.requestFocus();
+    await tester.pump();
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final field = find.descendant(of: panel, matching: find.byType(TextField));
+
+    Future<void> route(String value, String hint,
+        {bool replaceFileQuery = false}) async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(tester.widget<TextField>(field).decoration?.hintText,
+          '文件名、路径或 path:行:列');
+      if (replaceFileQuery) {
+        await tester.enterText(field, 'main');
+        await tester.pump();
+      }
+      await tester.enterText(field, value);
+      await tester.pumpAndSettle();
+      expect(panel, findsOneWidget);
+      final input = tester.widget<TextField>(field);
+      expect(input.decoration?.hintText, hint);
+      expect(input.controller!.text, value);
+      expect(input.focusNode!.hasFocus, isTrue);
+    }
+
+    Future<void> close() async {
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(panel, findsNothing);
+      expect(editor.focusNode!.hasFocus, isTrue);
+    }
+
+    await route('>诊断面板', '输入命令名（> 前缀可省）', replaceFileQuery: true);
+    expect(find.text('查看: 诊断面板'), findsOneWidget);
+    await close();
+
+    await route(':2:1', '转到行/列（:行:列，::字符偏移）');
+    await close();
+
+    await route('@zebra', '转到符号（@名称，@: 按类别）');
+    expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function')), findsNothing);
+    await close();
+
+    await route('@:zebra', '转到符号（@名称，@: 按类别）');
+    expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    await close();
+
+    await route('#zebra', '工作区符号（#名称）');
+    await close();
+  });
 }

@@ -402,6 +402,13 @@ final RegExp _rustIdentifierPattern = RegExp(
   unicode: true,
 );
 
+typedef _QuickAccessEntry = ({
+  String prefix,
+  String title,
+  String command,
+  FutureOr<void> Function(String) run,
+});
+
 enum _EditorGroupMoveDirection {
   left(Axis.horizontal, true),
   right(Axis.horizontal, false),
@@ -4304,40 +4311,86 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return () => _showQuickAccessHelp(value, restoreFocus);
   }
 
+  List<_QuickAccessEntry> _quickAccessEntries(FocusNode? restoreFocus) => [
+        (
+          prefix: '',
+          title: '转到文件',
+          command: 'view.quickOpen',
+          run: (_) => _showQuickOpen(restoreFocus: restoreFocus),
+        ),
+        (
+          prefix: ':',
+          title: '转到行/列',
+          command: 'workbench.action.gotoLine',
+          run: (value) => _showGotoPosition(
+              initialValue: value, restoreFocus: restoreFocus),
+        ),
+        (
+          prefix: '>',
+          title: '显示并运行命令',
+          command: showCommandsCommandId,
+          run: (value) => _showCommandPalette(
+              initialValue: value, restoreFocus: restoreFocus),
+        ),
+        (
+          prefix: '@',
+          title: '转到编辑器中的符号',
+          command: 'workbench.action.gotoSymbol',
+          run: (value) => _showDocumentSymbols(
+              initialValue: value, restoreFocus: restoreFocus),
+        ),
+        (
+          prefix: '@:',
+          title: '按类别转到编辑器中的符号',
+          command: 'workbench.action.gotoSymbol',
+          run: (value) => _showDocumentSymbols(
+              initialValue: value, restoreFocus: restoreFocus),
+        ),
+        (
+          prefix: '#',
+          title: '转到工作区中的符号',
+          command: 'workbench.action.showAllSymbols',
+          run: (value) => _showWorkspaceSymbols(
+              initialValue: value, restoreFocus: restoreFocus),
+        ),
+      ];
+
+  Future<void> _openQuickAccessEntry(
+    _QuickAccessEntry entry,
+    String value,
+    FocusNode? restoreFocus,
+  ) async {
+    if (!mounted) return;
+    // Keep the original focus if an unavailable provider opens no picker.
+    if (restoreFocus?.context != null) restoreFocus!.requestFocus();
+    await entry.run(value);
+  }
+
+  VoidCallback? _quickAccessEntryRedirect(
+    String value,
+    List<_QuickAccessEntry> entries,
+    FocusNode? restoreFocus,
+  ) {
+    // Prefer @: over @ when both prefixes match.
+    for (final entry in entries.reversed) {
+      if (entry.prefix.isNotEmpty &&
+          value.startsWith(entry.prefix) &&
+          _commands.isEnabled(entry.command)) {
+        return () => unawaited(_openQuickAccessEntry(entry, value, restoreFocus));
+      }
+    }
+    return null;
+  }
+
   void _showQuickAccessHelp(String value, FocusNode? restoreFocus) {
     if (!mounted) return;
-    final providers = <(String, String, String, FutureOr<void> Function(String))>[
-      ('', '转到文件', 'view.quickOpen',
-        (_) => _showQuickOpen(restoreFocus: restoreFocus)),
-      (':', '转到行/列', 'workbench.action.gotoLine',
-        (input) => _showGotoPosition(initialValue: input, restoreFocus: restoreFocus)),
-      ('>', '显示并运行命令', showCommandsCommandId,
-        (input) => _showCommandPalette(initialValue: input, restoreFocus: restoreFocus)),
-      ('@', '转到编辑器中的符号', 'workbench.action.gotoSymbol',
-        (input) => _showDocumentSymbols(initialValue: input, restoreFocus: restoreFocus)),
-      ('@:', '按类别转到编辑器中的符号', 'workbench.action.gotoSymbol',
-        (input) => _showDocumentSymbols(initialValue: input, restoreFocus: restoreFocus)),
-      ('#', '转到工作区中的符号', 'workbench.action.showAllSymbols',
-        (input) => _showWorkspaceSymbols(initialValue: input, restoreFocus: restoreFocus)),
-    ].where((provider) => _commands.isEnabled(provider.$3)).toList();
-
-    Future<void> open(FutureOr<void> Function(String) provider, String input) async {
-      // A provider may report an unavailable editor or language service
-      // without opening a route. Keep the original focus in that case.
-      if (restoreFocus?.context != null) restoreFocus!.requestFocus();
-      await provider(input);
-    }
+    final entries = _quickAccessEntries(restoreFocus)
+        .where((entry) => _commands.isEnabled(entry.command))
+        .toList();
 
     VoidCallback? match(String query) {
       if (!query.startsWith('?')) return null;
-      final input = query.substring(1);
-      // Prefer @: over @ when both descriptors match.
-      for (final (prefix, _, _, provider) in providers.reversed) {
-        if (prefix.isNotEmpty && input.startsWith(prefix)) {
-          return () => unawaited(open(provider, input));
-        }
-      }
-      return null;
+      return _quickAccessEntryRedirect(query.substring(1), entries, restoreFocus);
     }
 
     if (match(value) case final redirect?) {
@@ -4352,12 +4405,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       restoreFocus: restoreFocus,
       redirectOnInput: match,
       items: [
-        for (final (prefix, title, command, run) in providers)
+        for (final entry in entries)
           QuickItem(
-            label: prefix.isEmpty ? '…' : prefix,
-            description: title,
-            detail: prefix == '@:' ? null : _keybindings.shortcutFor(command),
-            onRun: () => open(run, prefix),
+            label: entry.prefix.isEmpty ? '…' : entry.prefix,
+            description: entry.title,
+            detail: entry.prefix == '@:'
+                ? null
+                : _keybindings.shortcutFor(entry.command),
+            onRun: () => _openQuickAccessEntry(entry, entry.prefix, restoreFocus),
           ),
       ],
     ));
@@ -4367,6 +4422,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final root = _workspaceRoot ?? Directory.current.path;
     final search = QuickOpenSearch();
+    final entries = _quickAccessEntries(previousFocus);
     var page = 0;
     var lastQuery = '';
     var hasNext = false;
@@ -4451,7 +4507,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       context,
       hint: '文件名、路径或 path:行:列',
       restoreFocus: previousFocus,
-      redirectOnInput: (value) => _quickAccessHelpRedirect(value, previousFocus),
+      redirectOnInput: (value) =>
+          _quickAccessHelpRedirect(value, previousFocus) ??
+          _quickAccessEntryRedirect(value, entries, previousFocus),
       items: const [],
       onClose: () {
         cancelSearch();
