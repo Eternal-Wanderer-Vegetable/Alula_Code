@@ -3364,8 +3364,8 @@
         "feat-261",
         "feat-262"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "固定默认 Ctrl/Cmd+Enter 侧开，右侧标签保留，源标签预览与选区和滚动保持原状态。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 243/243，Flutter 1,805 passed / 2 skipped。产品 001150a 的 CI 45068517830 四项及 Platform Availability 45068515236 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.211-goto-primary-aside.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

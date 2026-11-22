@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.211 / feat-263 完成。产品 001150a20994b93dc847e31e297532f1bb1cf50f。固定默认 Ctrl/Cmd+Enter 侧开，右侧标签保留，源标签预览与选区和滚动保持原状态。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 243/243，Flutter 1,805 passed / 2 skipped。产品 001150a 的 CI 45068517830 四项及 Platform Availability 45068515236 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.211-goto-primary-aside.md。
+
 - P05.210 / feat-262 完成。产品 092d8a45b40b0b40788d44c66780a0ac74f0d41c。无文本编辑器时行列和偏移入口展示提示，通过帮助可访问，Enter 保持提示，Escape 恢复焦点。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 241/241，Flutter 1,803 passed / 2 skipped。产品 092d8a4 的 CI 45066688450 四项及 Platform Availability 45066685552 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.210-goto-without-editor.md。
 
 - P05.209 / feat-261 完成。产品 c08280bf71ef01adb0d899865855f8fc34428ed5。Alt+Enter 向右侧提交位置，共享文档并恢复源视图选区与滚动。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 240/240，Flutter 1,802 passed / 2 skipped。产品 c08280b 的 CI 45064387430 四项及 Platform Availability 45064383523 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.209-goto-position-aside.md。
