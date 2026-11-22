@@ -3180,8 +3180,8 @@
         "feat-246",
         "feat-247"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "右方向键后台固定标签。Ctrl/Cmd 和 Alt 侧开使用最新位置，保留选择器和原活动组。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 145/145，Flutter 1,784 passed / 2 skipped。产品 e6fc0de 的 CI 45035262715 四项及 Platform Availability 45035257942 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.197-quick-open-background-key.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
