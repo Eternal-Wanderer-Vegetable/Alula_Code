@@ -15181,9 +15181,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final receipt = _auxiliaryCloseReceipts[windowId];
     if (receipt != null) {
-      return receipt.sequence == sequence &&
-          (receipt.document == null ||
-              _groups.values.any((group) => group.docs.contains(receipt.document)));
+      final previous = receipt.document;
+      if (previous == null && receipt.sequence == sequence) return true;
+      if (previous != null &&
+          _groups.values.any((group) => group.docs.contains(previous))) {
+        return receipt.sequence == sequence;
+      }
+      _auxiliaryCloseReceipts.remove(windowId);
     }
 
     final path = snapshot['path'];

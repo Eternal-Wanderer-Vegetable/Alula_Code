@@ -676,7 +676,8 @@ void main() {
         (tester) async {
       await mountWorkbench(tester);
       await registerAuxiliaryWindow(tester);
-      Future<Object?> confirmReturn(String windowId, int sequence) =>
+      Future<Object?> confirmReturn(String windowId, int sequence,
+              {String body = 'recovered aux text'}) =>
           dispatchPlatformMethod(
             tester,
             'mixin.one/desktop_multi_window/channels',
@@ -688,7 +689,7 @@ void main() {
                 'windowId': windowId,
                 'sequence': sequence,
                 'name': 'closed-aux.rs',
-                'text': 'recovered aux text',
+                'text': body,
                 'dirty': true,
                 'selectionBase': 4,
                 'selectionExtent': 1,
@@ -705,6 +706,15 @@ void main() {
           .expand((group) => (group['docs'] as List).cast<Map>())
           .where((doc) => doc['text'] == 'recovered aux text');
       expect(returnedDocs, hasLength(1));
+      // The source is still alive if the earlier acknowledgement was lost.
+      // Removing the earlier main-window view must allow a fresh request.
+      final firstReturnId = returnedDocs.single['id'];
+      await tester.tap(find.byKey(ValueKey('close-tab-editor-$firstReturnId')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('editor-close-discard')));
+      await tester.pumpAndSettle();
+      expect(await confirmReturn('aux-1', 2, body: 'new auxiliary snapshot'),
+          isTrue);
       await tester.pumpAndSettle();
       await dragTab(tester, const Offset(2600, 700));
 

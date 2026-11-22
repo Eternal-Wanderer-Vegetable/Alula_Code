@@ -740,22 +740,22 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     var confirmed = false;
     const timeout = Duration(seconds: 2);
     try {
+      final snapshot = AuxiliaryWindowPayload.forDocument(
+        path: document == null ? widget.payload.path : _path,
+        name: document == null ? widget.payload.name : _name,
+        text: document?.resync().content ?? widget.payload.text,
+        dirty: dirty,
+      ).toMap()
+        ..['sequence'] = _closeReturnSequence
+        ..['selectionBase'] =
+            selection?.isValid == true ? start + selection!.baseOffset : 0
+        ..['selectionExtent'] =
+            selection?.isValid == true ? start + selection!.extentOffset : 0;
       await _focusEventQueue.timeout(timeout);
       final mainController = await _findMainWindowController().timeout(timeout);
       final windowId = _windowController?.windowId;
       if (mainController != null && windowId != null && mounted) {
-        final snapshot = AuxiliaryWindowPayload.forDocument(
-          path: document == null ? widget.payload.path : _path,
-          name: document == null ? widget.payload.name : _name,
-          text: document?.resync().content ?? widget.payload.text,
-          dirty: dirty,
-        ).toMap()
-          ..['windowId'] = windowId
-          ..['sequence'] = _closeReturnSequence
-          ..['selectionBase'] =
-              selection?.isValid == true ? start + selection!.baseOffset : 0
-          ..['selectionExtent'] =
-              selection?.isValid == true ? start + selection!.extentOffset : 0;
+        snapshot['windowId'] = windowId;
         for (var attempt = 0; attempt < 2; attempt++) {
           try {
             confirmed = await mainController
