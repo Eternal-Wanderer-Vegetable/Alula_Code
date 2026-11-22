@@ -3207,8 +3207,8 @@
         "feat-237",
         "feat-241"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "规范命令统一默认键位、起始查询与旧 ID。Windows 实机与 Linux Xvfb + xfwm4 各 18 个观测点，专项 217/217，Flutter 1,787 passed / 2 skipped。产品 e217e68 的 CI 45040365713 四项及 Platform Availability 45040362034 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.199-quick-open-action.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
