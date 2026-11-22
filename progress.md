@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.184 / feat-236 完成。产品 b8355eef526924f5682329504b4dc6a54e36b6f3 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 验证清除命令、取消保留、确认清空主 journal 与备份、编辑选区及后续输入。Windows 以无效主记录重启后空历史仍成立。专项 18/18，全量 Flutter 1,765 passed / 2 skipped。同 SHA CI 44989174352 四项与 Platform Availability 44989171964 Windows/Linux 通过。P05.183 证据 CI 44988207664 四项全绿。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.184-clear-palette-history.md。 下一步核对默认 Quick Access 帮助前缀和已接线入口。
+
 - P05.183 / feat-235 完成。产品 f6b8e41692d456015e75395736dcd9c1f5cfa7ba 已推草稿 PR #3。主窗 F1 与平台组合键调用 workbench.action.showCommands。旧 ID 覆盖、按键移除与诊断命令仍可用。Windows 实机三组、Linux xfwm4 两组通过，关闭面板后原编辑器恢复焦点，正文、选区及原文件保留。专项 177/177，全量 Flutter 1,762 passed / 2 skipped。同 SHA CI 44987263595 四项及 Platform Availability 44987261037 Windows/Linux 通过。macOS 托管在跑，macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.183-main-palette-entry.md。 下一步核对命令历史清除的确认和重启恢复。
 
 - P05.182 / feat-234 完成。产品 646a7ca207561dc0cc9c6931a724ff750ba2e31c 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 验证辅助窗 F1 和 Ctrl+Shift+P、Escape 与执行后的焦点、标题区启用和退出。主窗命令面板无紧凑命令。保留脏正文、选区及文件字节，Alt+F4 后可在主窗直接继续输入。专项 62/62，Flutter 1,757 passed / 2 skipped。同 SHA CI 44984802808 四项和 Platform Availability 44984800385 Windows/Linux 通过。macOS 托管首轮 Quit 观察失败并重跑，macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.182-auxiliary-compact-commands.md。 下一步核对主窗默认 F1 路由及规范 showCommands 命令。

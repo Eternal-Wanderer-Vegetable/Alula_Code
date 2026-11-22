@@ -2995,8 +2995,8 @@
         "feat-124",
         "feat-235"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 commandsQuickAccess.ts 注册清除命令并确认。上游面板在执行前记录所接受的命令。Alula 命令历史由独立 journal 保存。",
+      "status": "done",
+      "evidence": "Windows 11 125% 和 Linux xfwm4 验证取消保留、确认清理与编辑；Windows 无效主记录重启恢复空备份。专项 18/18，Flutter 1,765 passed / 2 skipped，b8355ee 的 CI 44989174352 四项与 Platform Availability 44989171964 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.184-clear-palette-history.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
