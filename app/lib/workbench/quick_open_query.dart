@@ -82,6 +82,7 @@ typedef _QuickOpenTerm = ({String text, String? exactLowercase});
 class QuickOpenSearch {
   static const pageSize = 200;
   static const maxDirectoryDepth = 128;
+  static final _scoringMarkers = RegExp(r'[*…\s"]');
 
   int _generation = 0;
   bool hasMore = false;
@@ -232,7 +233,10 @@ class QuickOpenSearch {
   static List<_QuickOpenTerm> _prepareTerms(String pattern) {
     final terms = <_QuickOpenTerm>[];
     for (final part in pattern.split(' ')) {
-      final text = part.replaceAll('"', '');
+      var text = part.replaceAll(_scoringMarkers, '');
+      if (text.length > 1 && text.endsWith('#')) {
+        text = text.substring(0, text.length - 1);
+      }
       if (text.isEmpty) continue;
       terms.add((
         text: text,

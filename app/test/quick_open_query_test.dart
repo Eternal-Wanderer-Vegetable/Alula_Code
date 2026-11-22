@@ -231,6 +231,26 @@ void main() {
       expect(await search.search(root.path, '"engine-marker"'), [path]);
     });
 
+    test('normalizes file query markers while retaining literal paths',
+        () async {
+      final matching = await file('engine/parse-driver.txt');
+      await file('engine/log.txt');
+      await file('archive/parse-driver.txt');
+
+      expect(
+          await search.search(root.path, 'ENG…INE parse-*driver#'), [matching]);
+      expect(await search.search(root.path, 'engi\tne "parse-*driver#"'),
+          [matching]);
+      expect(await search.search(root.path, '*… \t'), isEmpty);
+
+      final literal = await file('engine tools/version…#');
+      await file('engine tools/version-info.txt');
+      final results =
+          await search.search(root.path, 'engine tools/version…#:1:2');
+      expect(results.first, literal);
+      expect(results.where((path) => path == literal), hasLength(1));
+    });
+
     test('MRU preserves order, deduplicates normalized paths, skips missing',
         () async {
       final first = await file('one.dart');
