@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.194 / feat-246 完成。产品 bc84315e2b32d7b3469adb4a19fdccbd604a9d18 已推草稿 PR #3。编辑位置后缀时保留候选、进行中的请求、选择与按钮焦点，使用最新位置接受或侧开。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 128/128，Flutter 1,779 passed / 2 skipped。产品 bc84315 的 CI 45018977348 四项与 Platform Availability 45018974947 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.193 证据 CI 45017576242 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md。
+
 - P05.193 / feat-245 完成。产品 8a8d24e0f5b49ef54a74230cda058883f4b811fc 已推草稿 PR #3。井号、括号、line 字样与混合区间使用 UTF-16 定位，保留代理对边界并支持超长选区和侧开。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 100/100，Flutter 1,777 passed / 2 skipped。产品 8a8d24e 的 CI 45016283145 四项与 Platform Availability 45016279940 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.192 证据 CI 45014862927 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.193-quick-open-location.md。
 
 - P05.192 / feat-244 完成。产品 b47d02ac90b9ce3e4740ebdcc732634486e8a75e 已推草稿 PR #3。未保存文件提供辅助标签，最近条目在非活动行显示圆点，悬停可移除历史并保留未保存的 Rust 编辑。Windows 实机和 Linux Xvfb + xfwm4 各 11 个观测点，专项 123/123，Flutter 1,775 passed / 2 skipped。产品 b47d02a 的 CI 45013967095 四项与 Platform Availability 45013963946 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.191 证据 CI 45012816981 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.192-quick-open-dirty.md。

@@ -3138,8 +3138,8 @@
         "feat-243",
         "feat-245"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "编辑位置后缀时保留候选、进行中的请求、选择与按钮焦点，使用最新位置接受或侧开。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 128/128，Flutter 1,779 passed / 2 skipped。产品 bc84315 的 CI 45018977348 四项与 Platform Availability 45018974947 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
