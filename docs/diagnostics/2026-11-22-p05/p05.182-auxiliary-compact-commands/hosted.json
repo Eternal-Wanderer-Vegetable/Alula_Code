@@ -1,7 +1,7 @@
 {
   "productCommit": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
   "productTree": "8c76080121e2bd1dc51827abfd5a16700ac6932f",
-  "capturedUtc": "2026-11-22T04:37:41.555067+00:00",
+  "capturedUtc": "2026-11-22T05:03:33.305960+00:00",
   "pullRequestCI": {
     "attempt": 1,
     "conclusion": "success",
@@ -152,5 +152,54 @@
     "status": "in_progress",
     "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385"
   },
-  "macOSPhysicalAcceptance": "deferred per user"
+  "macOSPhysicalAcceptance": "deferred per user",
+  "platformAvailabilityFirstAttempt": {
+    "attempt": 1,
+    "conclusion": "failure",
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "id": 44984800385,
+    "jobs": [
+      {
+        "conclusion": "failure",
+        "failedSteps": [
+          "Launch macOS native-titlebar mode and verify native Quit menu"
+        ],
+        "id": 137092911269,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911269"
+      },
+      {
+        "conclusion": "success",
+        "failedSteps": [],
+        "id": 137092911451,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911451"
+      },
+      {
+        "conclusion": "success",
+        "failedSteps": [],
+        "id": 137092911474,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911474"
+      }
+    ],
+    "name": "Platform Availability",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385"
+  },
+  "macOSFirstFailure": {
+    "jobId": 137092911269,
+    "step": "Launch macOS native-titlebar mode and verify native Quit menu",
+    "observation": "observe-native-app timed out; cleanup encountered PermissionError [Errno 1]; native Quit probe reported app=alive, open=alive at its 20-second limit",
+    "qualification": "The hosted observation did not complete; the result does not establish a product cause."
+  },
+  "platformAvailabilityRerun": {
+    "id": 44984800385,
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "attempt": 2,
+    "status": "in_progress"
+  }
 }

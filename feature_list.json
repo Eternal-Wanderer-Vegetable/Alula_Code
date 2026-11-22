@@ -2982,8 +2982,8 @@
         "feat-175",
         "feat-234"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 commandsQuickAccess.ts 注册 workbench.action.showCommands，主键位 Ctrl/Cmd+Shift+P，次键位 F1。P05.182 对照时主窗 F1 指向诊断面板。",
+      "status": "done",
+      "evidence": "Windows 11 125% 三组及 Linux xfwm4 两组原生验证，覆盖 F1、平台组合键、旧别名覆盖与移除、取消和文档保留。专项 177/177，Flutter 1,762 passed / 2 skipped。f6b8e41 的 CI 44987263595 四项、Platform Availability 44987261037 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.183-main-palette-entry.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
