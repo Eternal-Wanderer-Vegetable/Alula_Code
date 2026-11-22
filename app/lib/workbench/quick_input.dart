@@ -193,6 +193,7 @@ class QuickInput {
     BuildContext context, {
     required String hint,
     required List<QuickItem> items,
+    String emptyMessage = '无匹配项',
     CommandService? commands,
     VoidCallback? onBack,
     FocusNode? restoreFocus,
@@ -254,6 +255,7 @@ class QuickInput {
             child: _QuickInputPanel(
               hint: hint,
               items: items,
+              emptyMessage: emptyMessage,
               commands: commands,
               onBack: onBack,
               canSelectMany: canSelectMany,
@@ -294,6 +296,7 @@ class _QuickInputPanel extends StatefulWidget {
   const _QuickInputPanel({
     required this.hint,
     required this.items,
+    required this.emptyMessage,
     this.commands,
     this.onBack,
     required this.canSelectMany,
@@ -321,6 +324,7 @@ class _QuickInputPanel extends StatefulWidget {
 
   final String hint;
   final List<QuickItem> items;
+  final String emptyMessage;
   final CommandService? commands;
   final VoidCallback? onBack;
   final bool canSelectMany;
@@ -1409,7 +1413,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                   ? Padding(
                       padding: const EdgeInsets.all(14),
                       child: Text(
-                          _itemsError ?? (_itemsLoading ? '正在搜索…' : '无匹配项'),
+                          _itemsError ??
+                              (_itemsLoading ? '正在搜索…' : widget.emptyMessage),
                           style: TextStyle(
                               color: Colors.grey.shade500, fontSize: 12)),
                     )

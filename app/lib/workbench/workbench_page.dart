@@ -2281,7 +2281,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _showWorkspaceSymbols,
         shortcut: _keybindings.shortcutFor('workbench.action.showAllSymbols'));
     reg('workbench.action.gotoSymbol', '转到', '转到编辑器中的符号…', _showDocumentSymbols,
-        enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoSymbol'));
     reg('workbench.action.gotoLine', '转到', '转到行/列…', _showGotoPosition,
         shortcut: _keybindings.shortcutFor('workbench.action.gotoLine'));
@@ -4151,21 +4150,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     FocusNode? restoreFocus,
     _QuickAccessRedirect? prefixRedirect,
   }) async {
+    const hint = '转到符号（@名称，@: 按类别）';
     final group = _focused;
     final doc = group.active;
-    if (doc == null) return;
+    final previousFocus = restoreFocus ??
+        (doc == null ? QuickInput.externalFocus() : _focusNodeFor(group, doc));
+    VoidCallback? redirect;
+    VoidCallback? inputRedirect(String value) {
+      final next = prefixRedirect == null
+          ? _quickAccessHelpRedirect(value, previousFocus)
+          : prefixRedirect(value);
+      return next == null ? null : () => redirect = next;
+    }
+
+    if (doc == null) {
+      await QuickInput.show(
+        context,
+        hint: hint,
+        initialValue: initialValue,
+        items: const [],
+        emptyMessage: '先打开提供符号信息的文本编辑器，再转到符号。',
+        restoreFocus: previousFocus,
+        redirectOnInput: inputRedirect,
+      );
+      if (mounted) redirect?.call();
+      return;
+    }
     _flushInput(doc, commitComposition: true);
     final snapshot = doc.doc.core.lsp.symbols(doc.id);
     if (snapshot == null || snapshot.version != doc.doc.version) {
       setState(() => _statusDetail = '当前文档没有可用符号');
       return;
     }
-    final previousFocus = restoreFocus ?? _focusNodeFor(group, doc);
     final roots = buildDocumentSymbolTree(snapshot.symbols);
     final original = doc.selectionSet.toList();
     final scroll = editorPrimaryScrollPosition(doc.editorScrollController)?.pixels;
     var accepted = false;
-    VoidCallback? redirect;
     bool valid() => mounted && identical(_active, doc) && doc.doc.version == snapshot.version;
     void preview(DocumentSymbolNode symbol) {
       if (!valid()) return;
@@ -4189,14 +4209,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _focusEditorAfterLayout(_focused, target);
     }
     await QuickInput.show(context,
-      hint: '转到符号（@名称，@: 按类别）', initialValue: initialValue, items: const [],
+      hint: hint, initialValue: initialValue, items: const [],
       restoreFocus: previousFocus,
-      redirectOnInput: (value) {
-        final next = prefixRedirect == null
-            ? _quickAccessHelpRedirect(value, previousFocus)
-            : prefixRedirect(value);
-        return next == null ? null : () => redirect = next;
-      },
+      redirectOnInput: inputRedirect,
       itemsProvider: (query) async {
         if (!valid()) return const [];
         var value = query.trim();

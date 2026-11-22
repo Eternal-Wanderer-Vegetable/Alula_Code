@@ -116,4 +116,99 @@ void main() {
         text.indexOf('fn alpha'));
     expect(file.readAsStringSync(), text);
   });
+
+  testWidgets('Document symbol picker guides an empty workbench',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-symbol-guidance');
+    final file = File('${temp.path}/main.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 95,
+            'docs': [
+              {'id': 95, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    final origin = FocusNode();
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      origin.dispose();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: Material(
+        child: Column(
+          children: [
+            Expanded(
+              child: WorkbenchPage(
+                layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+                sessionStore: session,
+                keybindingsStore:
+                    KeybindingsStore(path: '${temp.path}/keys.json'),
+                onCommandServiceReady: (value) => commands = value,
+              ),
+            ),
+            TextField(focusNode: origin),
+          ],
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    expect(editor, findsOneWidget);
+    expect(
+      await commands.execute('workbench.action.closeAllEditors'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pumpAndSettle();
+    expect(editor, findsNothing);
+    origin.requestFocus();
+    await tester.pump();
+    expect(origin.hasPrimaryFocus, isTrue);
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final guidance = find.text('先打开提供符号信息的文本编辑器，再转到符号。');
+    final opening = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    expect(guidance, findsOneWidget);
+    expect(tester.widget<TextField>(input).controller!.text, '@');
+    expect(tester.widget<TextField>(input).focusNode!.hasPrimaryFocus, isTrue);
+    await tester.enterText(input, '@:alpha');
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(guidance, findsOneWidget);
+    expect(tester.widget<TextField>(input).controller!.text, '@:alpha');
+    expect(editor, findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+    expect(origin.hasPrimaryFocus, isTrue);
+
+    expect(await commands.execute('workbench.action.quickOpen'),
+        CommandExecutionStatus.executed);
+    await tester.pumpAndSettle();
+    await tester.enterText(input, '@:beta');
+    await tester.pumpAndSettle();
+    expect(guidance, findsOneWidget);
+    expect(tester.widget<TextField>(input).controller!.text, '@:beta');
+    expect(tester.widget<TextField>(input).focusNode!.hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    expect(origin.hasPrimaryFocus, isTrue);
+    expect(file.readAsStringSync(), 'fn alpha() {}\n');
+  });
 }
