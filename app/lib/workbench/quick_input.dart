@@ -1141,22 +1141,31 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return KeyEventResult.ignored;
   }
 
-  KeyEventResult _onBackgroundKey(FocusNode node, KeyEvent event) {
-    if (event is! KeyDownEvent ||
-        event.logicalKey != LogicalKeyboardKey.arrowRight ||
+  bool _acceptInBackground(QuickItem item) {
+    final run = item.onRunInBackground;
+    if (run == null ||
         widget.inputMode ||
         widget.canSelectMany ||
         _accepted ||
-        _selected < 0 ||
-        _selected >= _filtered.length) {
-      return KeyEventResult.ignored;
-    }
-    final item = _filtered[_selected];
-    final run = item.onRunInBackground;
-    if (run == null ||
         !_isSelectable(item) ||
         !_enabled(item) ||
         ModalRoute.of(context)?.isCurrent != true) {
+      return false;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
+    unawaited(run((
+      alt: keyboard.isAltPressed,
+      ctrlCmd: isMac ? keyboard.isMetaPressed : keyboard.isControlPressed,
+    )));
+    return true;
+  }
+
+  KeyEventResult _onBackgroundKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.arrowRight ||
+        _selected < 0 ||
+        _selected >= _filtered.length) {
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
@@ -1172,11 +1181,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         return KeyEventResult.ignored;
       }
     }
-    unawaited(run((
-      alt: keyboard.isAltPressed,
-      ctrlCmd: isMac ? keyboard.isMetaPressed : keyboard.isControlPressed,
-    )));
-    return KeyEventResult.handled;
+    return _acceptInBackground(_filtered[_selected])
+        ? KeyEventResult.handled
+        : KeyEventResult.ignored;
   }
 
   @override
@@ -1391,7 +1398,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final detail = item.detail;
     final hasDetail = detail != null && detail.isNotEmpty;
     final rowKey = _rowKeys.putIfAbsent(item, GlobalKey.new);
-    final row = InkWell(
+    Widget row = InkWell(
       onTap: enabled
           ? () {
               if (widget.canSelectMany) {
@@ -1492,6 +1499,27 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         ),
       ),
     );
+    if (enabled && item.onRunInBackground != null && !widget.canSelectMany) {
+      row = GestureDetector(
+        excludeFromSemantics: true,
+        onTertiaryTapUp: (details) {
+          final box = rowKey.currentContext?.findRenderObject();
+          if (box is! RenderBox ||
+              !box.hasSize ||
+              !(Offset.zero & box.size)
+                  .contains(box.globalToLocal(details.globalPosition)) ||
+              index >= _filtered.length ||
+              !identical(_filtered[index], item) ||
+              !_acceptInBackground(item)) {
+            return;
+          }
+          _navigationGeneration++;
+          _selectIndex(index);
+          _focusNode.requestFocus();
+        },
+        child: row,
+      );
+    }
     return Listener(
       key: rowKey,
       onPointerHover: (_) {

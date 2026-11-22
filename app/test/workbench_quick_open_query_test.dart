@@ -8,7 +8,8 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
-import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kMiddleMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -833,6 +834,141 @@ void main() {
         TargetPlatform.linux,
         TargetPlatform.macOS,
       }));
+
+  testWidgets('Quick Open middle click opens the clicked file in background',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-middle');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final source = File('${root.path}/needle-first.txt')
+      ..writeAsStringSync('main\neditor');
+    final target = File('${root.path}/needle-second.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    expect(
+        session.save({
+          'v': 1,
+          'workspace': root.path,
+          'focused': 'editor',
+          'groups': [
+            {
+              'region': 'editor',
+              'active': 2,
+              'preview': 2,
+              'docs': [
+                {'id': 2, 'path': source.path},
+              ],
+            },
+          ],
+        }),
+        isTrue);
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    final sourceTab = find.byKey(const ValueKey('editor-tab-label-editor-2'));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    final first = find.byKey(const ValueKey('qi-needle-first.txt'));
+    final second = find.byKey(const ValueKey('qi-needle-second.txt'));
+    RustTextInputField editor(String region) =>
+        tester.widget<RustTextInputField>(find.descendant(
+          of: find.byKey(ValueKey('editor-body-drop-$region')),
+          matching: find.byType(RustTextInputField),
+        ));
+
+    Future<void> typeQuery(String value) async {
+      await tester.enterText(filter, value);
+      for (var i = 0; i < 100 && second.evaluate().isEmpty; i++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(first, findsOneWidget);
+      expect(second, findsOneWidget);
+    }
+
+    Future<void> middleClick(Finder result,
+        {LogicalKeyboardKey? modifier}) async {
+      if (modifier != null) await tester.sendKeyDownEvent(modifier);
+      final press = await tester.startGesture(
+        tester.getCenter(result),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton,
+      );
+      await press.up();
+      if (modifier != null) await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+    }
+
+    await commands.execute('view.quickOpen');
+    await tester.pump(const Duration(milliseconds: 120));
+    await typeQuery('needle:1:2');
+    final field = tester.widget<TextField>(filter);
+    final row = tester.getRect(first);
+    final canceled = await tester.startGesture(row.center,
+        kind: PointerDeviceKind.mouse, buttons: kMiddleMouseButton);
+    await canceled.cancel();
+    final outside = await tester.startGesture(
+        Offset(row.center.dx, row.top + 1),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton);
+    await outside.moveBy(const Offset(0, -3));
+    await outside.up();
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle, FontStyle.italic);
+
+    await middleClick(first);
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle,
+        isNot(FontStyle.italic));
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 1);
+    expect(field.focusNode!.hasPrimaryFocus, isTrue);
+
+    await typeQuery('needle:2:3');
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(field.focusNode!.hasPrimaryFocus, isFalse);
+    await middleClick(second, modifier: LogicalKeyboardKey.controlLeft);
+    final side = editor('editor-2');
+    expect(side.inputWindow.text, 'alpha\n😀beta\nlast');
+    expect(side.inputWindow.initialValue.selection.extentOffset, 8);
+    expect(field.focusNode!.hasPrimaryFocus, isTrue);
+    expect(field.controller!.text, 'needle:2:3');
+
+    await typeQuery('needle:3:2');
+    await middleClick(second, modifier: LogicalKeyboardKey.altLeft);
+    final reused = editor('editor-2');
+    expect(reused.inputWindow.document.id, side.inputWindow.document.id);
+    expect(reused.inputWindow.initialValue.selection.extentOffset, 14);
+    expect(
+        find.byKey(const ValueKey('editor-body-drop-editor-3')), findsNothing);
+    await tester.pump(const Duration(milliseconds: 900));
+    expect(session.tryLoad()!['focused'], 'editor');
+
+    await typeQuery('needle:1:3');
+    await tester.tap(first, kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    expect(editor('editor').focusNode!.hasPrimaryFocus, isTrue);
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 2);
+    expect(source.readAsStringSync(), 'main\neditor');
+    expect(target.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
 
   testWidgets('Quick Open opens to the right by Alt+Enter and row button',
       (tester) async {
