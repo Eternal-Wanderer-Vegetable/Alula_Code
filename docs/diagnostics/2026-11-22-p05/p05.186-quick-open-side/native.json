@@ -2598,7 +2598,2594 @@
     }
   },
   "windows": {
-    "status": "pending",
-    "reason": "interactive test desktop occupied"
+    "tree": "61063a778de4b066796eaeb364876f76f346e938",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "d28f78d990bb64efbbed6863a352ffd1ca422bfae10ccdd7d27aea8fbdecf463",
+    "fixtureSha256": "ea92af1ae2bf5f27eb786daf7ed839bceec3c052522bb40a6d616738c428844a",
+    "runnerSha256": "80ef937bdcce3e414c98ba25e6c2f284006f98d0c0bb30fc61466dec0177af5a",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            283.952,
+            75.0,
+            384.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            76.0,
+            215.5,
+            269.952,
+            232.5
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            237.5,
+            269.952,
+            254.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            456.442234375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            416.942234375,
+            62.5
+          ],
+          "tab-1": [
+            456.442234375,
+            42.0,
+            570.442234375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            490.442234375,
+            45.5,
+            527.192234375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": false,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "dirty-editor": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            283.952,
+            75.0,
+            384.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            76.0,
+            215.5,
+            269.952,
+            232.5
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            237.5,
+            269.952,
+            254.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "file-input-destination.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "text-destination.txt": [
+            200.39999999999998,
+            121.5,
+            389.73333333333335,
+            138.5
+          ],
+          "text-locked-target.txt": [
+            200.39999999999998,
+            143.5,
+            389.73333333333335,
+            160.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\compact-sample.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt": [
+            397.73333333333335,
+            122.0,
+            776.4000000000001,
+            138.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt": [
+            397.73333333333335,
+            144.0,
+            776.4000000000001,
+            160.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "result-destination.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "destination.txt:2:3",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            283.952,
+            75.0,
+            384.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            237.5,
+            269.952,
+            254.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "alt-enter-created": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "destination.txt 编辑器 2",
+            "documentId": 3,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            283.952,
+            75.0,
+            384.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            637.376,
+            75.0,
+            710.1875234375,
+            91.0
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            282.5,
+            269.952,
+            299.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            627.376,
+            42.0,
+            780.71584375,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            661.376,
+            45.5,
+            740.46584375,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 3,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "file-input-compact-sample.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "destination.txt 编辑器 2",
+            "documentId": 3,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            200.39999999999998,
+            121.5,
+            389.73333333333335,
+            138.5
+          ],
+          "text-destination.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "text-locked-target.txt": [
+            200.39999999999998,
+            143.5,
+            389.73333333333335,
+            160.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            627.376,
+            42.0,
+            780.71584375,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            661.376,
+            45.5,
+            740.46584375,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\compact-sample.txt": [
+            397.73333333333335,
+            122.0,
+            776.4000000000001,
+            138.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt": [
+            397.73333333333335,
+            144.0,
+            776.4000000000001,
+            160.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 3,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "result-compact-sample.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "destination.txt 编辑器 2",
+            "documentId": 3,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "alpha\n😀beta\nlast",
+            "mirror": "alpha\n😀beta\nlast",
+            "totalUtf16": 17,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "compact-sample.txt:1:2",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "text-destination.txt": [
+            637.376,
+            75.0,
+            710.1875234375,
+            91.0
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            282.5,
+            269.952,
+            299.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            273.952,
+            42.0,
+            464.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            627.376,
+            42.0,
+            780.71584375,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            661.376,
+            45.5,
+            740.46584375,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\compact-sample.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 3,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "row-button-shared": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            637.376,
+            75.0,
+            737.65871484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            301.5,
+            269.952,
+            318.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            652.14765625,
+            42.0,
+            842.8,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            498.8078125,
+            42.0,
+            652.14765625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            686.14765625,
+            45.5,
+            803.8,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          }
+        ]
+      },
+      "locked-right": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            637.376,
+            75.0,
+            737.65871484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "text-locked-target.txt": [
+            76.0,
+            301.5,
+            269.952,
+            318.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            652.14765625,
+            42.0,
+            842.8,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            498.8078125,
+            42.0,
+            652.14765625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            686.14765625,
+            45.5,
+            803.8,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "locked": true,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          }
+        ]
+      },
+      "file-input-locked-target.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "text-destination.txt": [
+            200.39999999999998,
+            121.5,
+            389.73333333333335,
+            138.5
+          ],
+          "text-locked-target.txt": [
+            200.39999999999998,
+            143.5,
+            389.73333333333335,
+            160.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            652.14765625,
+            42.0,
+            842.8,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            498.8078125,
+            42.0,
+            652.14765625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            686.14765625,
+            45.5,
+            803.8,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\compact-sample.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt": [
+            397.73333333333335,
+            122.0,
+            776.4000000000001,
+            138.0
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt": [
+            397.73333333333335,
+            144.0,
+            776.4000000000001,
+            160.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "locked": true,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          }
+        ]
+      },
+      "result-locked-target.txt": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "locked-target.txt",
+            "focused": true
+          }
+        ],
+        "boxes": {
+          "text-compact-sample.txt": [
+            637.376,
+            75.0,
+            737.65871484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "text-locked-target.txt": [
+            200.39999999999998,
+            99.5,
+            382.4,
+            116.5
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            623.376,
+            558.4
+          ],
+          "tab-2": [
+            652.14765625,
+            42.0,
+            842.8,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            623.376,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            627.376,
+            35.0,
+            976.8,
+            558.4
+          ],
+          "tab-3": [
+            498.8078125,
+            42.0,
+            652.14765625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            532.8078125,
+            45.5,
+            611.89765625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            686.14765625,
+            45.5,
+            803.8,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            627.376,
+            94.0,
+            976.8,
+            558.4
+          ],
+          "text-E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt": [
+            390.4,
+            100.0,
+            754.4,
+            116.0
+          ],
+          "quick-open-side": [
+            754.4,
+            97.0,
+            776.4,
+            119.0
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "locked": true,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          }
+        ]
+      },
+      "alt-enter-next-to-locked": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              485.952,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "locked-target.txt 编辑器 3",
+            "documentId": 4,
+            "box": [
+              505.952,
+              102.0,
+              709.952,
+              550.4
+            ],
+            "rust": "For a new group\n",
+            "mirror": "For a new group\n",
+            "totalUtf16": 16,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              729.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            731.952,
+            75.0,
+            832.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            627.3838125,
+            45.5,
+            706.47365625,
+            62.5
+          ],
+          "text-locked-target.txt": [
+            507.952,
+            75.0,
+            592.48373828125,
+            91.0
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            493.952,
+            558.4
+          ],
+          "tab-2": [
+            746.72365625,
+            42.0,
+            937.376,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            493.952,
+            558.4
+          ],
+          "editor-drop-area-editor-3": [
+            497.952,
+            35.0,
+            717.952,
+            558.4
+          ],
+          "tab-4": [
+            418.371921875,
+            42.0,
+            583.952,
+            64.0
+          ],
+          "editor-tab-label-editor-3-4": [
+            452.371921875,
+            45.5,
+            544.202,
+            62.5
+          ],
+          "editor-body-drop-editor-3": [
+            497.952,
+            94.0,
+            717.952,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            721.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-3": [
+            593.3838125,
+            42.0,
+            746.72365625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            627.3838125,
+            45.5,
+            706.47365625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            780.72365625,
+            45.5,
+            898.376,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            721.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "locked": true,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-3",
+            "active": 4,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 4,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "native-continue-edit": {
+        "editors": [
+          {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              485.952,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              32,
+              31
+            ]
+          },
+          {
+            "label": "locked-target.txt 编辑器 3",
+            "documentId": 4,
+            "box": [
+              505.952,
+              102.0,
+              709.952,
+              550.4
+            ],
+            "rust": "9For a new group\n",
+            "mirror": "9For a new group\n",
+            "totalUtf16": 17,
+            "stateVersion": 2,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          },
+          {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              729.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line78\n",
+            "mirror": "Compact example 😀\nSecond line78\n",
+            "totalUtf16": 33,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1,
+              1
+            ]
+          }
+        ],
+        "pickers": [],
+        "boxes": {
+          "text-compact-sample.txt": [
+            731.952,
+            75.0,
+            832.23471484375,
+            91.0
+          ],
+          "text-destination.txt": [
+            627.3838125,
+            45.5,
+            706.47365625,
+            62.5
+          ],
+          "text-locked-target.txt": [
+            507.952,
+            75.0,
+            592.48373828125,
+            91.0
+          ],
+          "editor-drop-area-editor": [
+            273.952,
+            35.0,
+            493.952,
+            558.4
+          ],
+          "tab-2": [
+            746.72365625,
+            42.0,
+            937.376,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            307.952,
+            45.5,
+            425.60434375,
+            62.5
+          ],
+          "tab-1": [
+            464.60434375,
+            42.0,
+            578.60434375,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            498.60434375,
+            45.5,
+            535.35434375,
+            62.5
+          ],
+          "editor-body-drop-editor": [
+            273.952,
+            94.0,
+            493.952,
+            558.4
+          ],
+          "editor-drop-area-editor-3": [
+            497.952,
+            35.0,
+            717.952,
+            558.4
+          ],
+          "tab-4": [
+            418.371921875,
+            42.0,
+            592.114109375,
+            64.0
+          ],
+          "editor-tab-label-editor-3-4": [
+            452.371921875,
+            45.5,
+            552.864109375,
+            62.5
+          ],
+          "editor-body-drop-editor-3": [
+            497.952,
+            94.0,
+            717.952,
+            558.4
+          ],
+          "editor-drop-area-editor-2": [
+            721.952,
+            35.0,
+            976.8000000000001,
+            558.4
+          ],
+          "tab-3": [
+            593.3838125,
+            42.0,
+            746.72365625,
+            64.0
+          ],
+          "editor-tab-label-editor-2-3": [
+            627.3838125,
+            45.5,
+            706.47365625,
+            62.5
+          ],
+          "editor-tab-label-editor-2-2": [
+            780.72365625,
+            45.5,
+            898.376,
+            62.5
+          ],
+          "editor-body-drop-editor-2": [
+            721.952,
+            94.0,
+            976.8000000000001,
+            558.4
+          ]
+        },
+        "nativeWindowFocused": true,
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-2",
+            "active": 2,
+            "locked": true,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 3,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\destination.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 2,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000/workspace/compact-sample.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "Compact example 😀\nSecond line78\n"
+              }
+            ]
+          },
+          {
+            "region": "editor-3",
+            "active": 4,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 4,
+                "path": "E:\\temp\\alula-p05-186-quick-open-side\\probe-1795332989318753000\\workspace\\locked-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "9For a new group\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "dpi": 120,
+    "diskSha256": {
+      "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "destination.txt": "7dae8f752129e06fb1563fb1f8c8f6d0d0973e04223dd88deb5d61dfe37caf9f",
+      "locked-target.txt": "ad79434ce4e739b8b26d27665049e71a25ebb63ce1284523f40c6496b0529a9a"
+    },
+    "exit": 0,
+    "passed": true
   }
 }

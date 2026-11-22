@@ -3024,8 +3024,8 @@
         "feat-185",
         "feat-237"
       ],
-      "status": "in-progress",
-      "evidence": "结果按钮与 Alt+Enter 实现右侧组打开。本地专项 66/66，Flutter 1,767 passed / 2 skipped，隔离 Linux Xvfb + xfwm4 原生 13 个观测点。产品 42b8a1f 的 CI 44995328273 四项及 Platform Availability 44995326177 Windows/Linux 通过。Windows 实机等待可交互桌面，macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md",
+      "status": "done",
+      "evidence": "结果按钮与 Alt+Enter 复用或创建右侧组，验证行列位置、原视图与脏 Rust 文档共享、锁定目标和焦点。Windows 实机及 Linux Xvfb + xfwm4 各 13 个观测点，专项 66/66，Flutter 1,767 passed / 2 skipped。产品 42b8a1f 的 CI 44995328273 四项与 Platform Availability 44995326177 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
