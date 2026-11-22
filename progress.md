@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.213 / feat-265 完成。产品 9496aa0c680cfda3a65c7a9f3c66e190b2a60c00。空工作台文档符号入口显示指引，Enter 保持指引，Escape 恢复焦点。Windows 应用定向组合键和原生前缀、Linux 原生组合键和前缀各 15 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 9496aa0 的 CI 45072628579 四项及 Platform Availability 45072625440 Windows/Linux 通过。Windows 系统 Ctrl+Shift+O 仍待复验，macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md。
+
 - P05.212 / feat-264 完成。产品 0da2038cc7a8f8c1b42cf044e78c262fb9254f71。从空工作台普通确认打开的文件获得编辑器焦点，右方向键后台打开保留选择器焦点。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 244/244，Flutter 1,806 passed / 2 skipped。产品 0da2038 的 CI 45070537868 四项及 Platform Availability 45070535077 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.212-quick-open-focus.md。
 
 - P05.211 / feat-263 完成。产品 001150a20994b93dc847e31e297532f1bb1cf50f。固定默认 Ctrl/Cmd+Enter 侧开，右侧标签保留，源标签预览与选区和滚动保持原状态。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 243/243，Flutter 1,805 passed / 2 skipped。产品 001150a 的 CI 45068517830 四项及 Platform Availability 45068515236 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.211-goto-primary-aside.md。
@@ -2187,6 +2189,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 ```
 
 ## Next（下一步，按 docs/03）
+
+- CMD-02 待复验：Linux X11 连续输入 @:zebra 时，P05.213 首轮在 Quick Access 提供程序切换期间丢了冒号；分步输入和完整值替换已通过。Windows 系统键路 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[证据](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
 
 - CMD-02 空工作台 Quick Open 前台确认焦点已在 P05.212 修复并原生复验。[证据](docs/diagnostics/2026-11-23-p05/p05.212-quick-open-focus.md)
 
