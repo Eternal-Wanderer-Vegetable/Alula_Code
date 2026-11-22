@@ -1,5 +1,8 @@
 #include "flutter_window.h"
 
+#include <flutter/method_channel.h>
+#include <flutter/standard_method_codec.h>
+
 #include <optional>
 
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
@@ -28,6 +31,16 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
   RegisterNotificationAccessibilityChannel(*flutter_controller_);
+  flutter::MethodChannel<flutter::EncodableValue> drag_input_channel(
+      flutter_controller_->engine()->messenger(), "alula/drag_input",
+      &flutter::StandardMethodCodec::GetInstance());
+  drag_input_channel.SetMethodCallHandler([](const auto& call, auto result) {
+    if (call.method_name() == "splitTogglePressed") {
+      result->Success(flutter::EncodableValue(GetAsyncKeyState(VK_MENU) < 0));
+      return;
+    }
+    result->NotImplemented();
+  });
   DesktopMultiWindowSetWindowCreatedCallback([](void* controller) {
     auto* view_controller =
         reinterpret_cast<flutter::FlutterViewController*>(controller);

@@ -941,6 +941,22 @@ void main() {
     await tester.pump();
     expect(editorFocus.hasFocus, isTrue);
 
+    // Native focus can arrive while Alt is already held during a drag.
+    final keyboard = HardwareKeyboard.instance;
+    keyboard.handleKeyEvent(const KeyDownEvent(
+      physicalKey: PhysicalKeyboardKey.altLeft,
+      logicalKey: LogicalKeyboardKey.altLeft,
+      timeStamp: Duration.zero,
+      synthesized: true,
+    ));
+    keyboard.handleKeyEvent(const KeyUpEvent(
+      physicalKey: PhysicalKeyboardKey.altLeft,
+      logicalKey: LogicalKeyboardKey.altLeft,
+      timeStamp: Duration.zero,
+    ));
+    await tester.pump();
+    expect(editorFocus.hasFocus, isTrue);
+
     await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
     await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);

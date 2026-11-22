@@ -70,6 +70,29 @@ static void accessibility_method_call(FlMethodChannel*,
             g_object_ref(call));
 }
 
+// Flutter keyboard events do not follow a native drag into another engine.
+static void drag_input_method_call(FlMethodChannel*,
+                                   FlMethodCall* call,
+                                   gpointer user_data) {
+  if (g_strcmp0(fl_method_call_get_name(call), "splitTogglePressed") != 0) {
+    fl_method_call_respond_not_implemented(call, nullptr);
+    return;
+  }
+  GtkWidget* widget = GTK_WIDGET(user_data);
+  GdkWindow* window = gtk_widget_get_window(widget);
+  GdkSeat* seat = gdk_display_get_default_seat(gtk_widget_get_display(widget));
+  GdkDevice* pointer = seat == nullptr ? nullptr : gdk_seat_get_pointer(seat);
+  if (window == nullptr || pointer == nullptr) {
+    fl_method_call_respond_success(call, nullptr, nullptr);
+    return;
+  }
+  GdkModifierType modifiers = static_cast<GdkModifierType>(0);
+  gdk_device_get_state(pointer, window, nullptr, &modifiers);
+  g_autoptr(FlValue) result =
+      fl_value_new_bool((modifiers & GDK_MOD1_MASK) != 0);
+  fl_method_call_respond_success(call, result, nullptr);
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
@@ -133,6 +156,12 @@ static void my_application_activate(GApplication* application) {
       "alula/accessibility", FL_METHOD_CODEC(accessibility_codec));
   fl_method_channel_set_method_call_handler(
       accessibility_channel, accessibility_method_call, nullptr, nullptr);
+
+  g_autoptr(FlMethodChannel) drag_input_channel = fl_method_channel_new(
+      fl_engine_get_binary_messenger(fl_view_get_engine(view)),
+      "alula/drag_input", FL_METHOD_CODEC(accessibility_codec));
+  fl_method_channel_set_method_call_handler(
+      drag_input_channel, drag_input_method_call, view, nullptr);
 
   desktop_multi_window_plugin_set_window_created_callback(
       [](FlPluginRegistry* registry) { fl_register_plugins(registry); });

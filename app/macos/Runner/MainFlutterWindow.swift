@@ -10,6 +10,16 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+    let dragInput = FlutterMethodChannel(
+      name: "alula/drag_input",
+      binaryMessenger: flutterViewController.engine.binaryMessenger)
+    dragInput.setMethodCallHandler { call, result in
+      guard call.method == "splitTogglePressed" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      result(NSEvent.modifierFlags.contains(.shift))
+    }
     FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
       RegisterGeneratedPlugins(registry: controller)
     }

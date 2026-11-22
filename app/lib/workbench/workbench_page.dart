@@ -14742,6 +14742,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     AuxiliaryTabDragTicket ticket, {
     OpenDoc? anchor,
     required bool insertAfter,
+    _EditorGroupMoveDirection? split,
   }) async {
     if (!_canReceiveAuxiliaryTab(group, ticket)) return;
     _auxiliaryTabReturnsInFlight.add(ticket.windowId);
@@ -14764,7 +14765,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           snapshot is! Map) {
         return;
       }
-      adopted = _adoptAuxiliaryTab(group, snapshot, anchor, insertAfter);
+      adopted = _adoptAuxiliaryTab(group, snapshot, anchor, insertAfter, split);
     } on Object catch (error) {
       if (mounted && !_disposing) {
         setState(() => _statusDetail = '无法接收辅助窗口的文档：$error');
@@ -14806,6 +14807,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Map<dynamic, dynamic> snapshot,
     OpenDoc? anchor,
     bool insertAfter,
+    _EditorGroupMoveDirection? split,
   ) {
     final path = snapshot['path'];
     final text = snapshot['text'];
@@ -14840,7 +14842,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return false;
       }
     }
-    final existing = previous == null
+    final existing = previous == null || split != null
         ? null
         : group.docs.where((doc) => doc.sameDocumentAs(previous)).firstOrNull;
     final previousActive = _active;
@@ -14864,27 +14866,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         rethrow;
       }
     }
+    // Finish document validation before making a layout change. A rejected
+    // transfer must leave both the source window and the destination intact.
+    final target = split == null ? group : _splitEditorGroupForDrop(group, split);
+    if (target == null) {
+      doc.disposeView();
+      return false;
+    }
     setState(() {
       if (existing == null) {
-        final stickyCount = group.docs
-            .takeWhile((doc) => group.stickyDocIds.contains(doc.id))
+        final stickyCount = target.docs
+            .takeWhile((doc) => target.stickyDocIds.contains(doc.id))
             .length;
         final requested = anchor == null
-            ? group.docs.length
+            ? target.docs.length
             : anchorIndex + (insertAfter ? 1 : 0);
-        group.docs.insert(
-          requested.clamp(stickyCount, group.docs.length).toInt(),
+        target.docs.insert(
+          requested.clamp(stickyCount, target.docs.length).toInt(),
           doc,
         );
       }
-      group.activeDocId = doc.id;
-      _focusedRegion = group.region;
-      _noteActiveDocument(group, doc.id);
+      target.activeDocId = doc.id;
+      _focusedRegion = target.region;
+      _noteActiveDocument(target, doc.id);
       _statusDetail = '已将编辑器移回主窗口';
       _scheduleStateSave();
     });
     _syncCommandContext();
-    _focusEditorAfterLayout(group, doc);
+    _focusEditorAfterLayout(target, doc);
     return true;
   }
 
@@ -14892,19 +14901,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     EditorGroup group,
     Widget child, {
     OpenDoc? anchor,
+    RenderBox? Function()? bodyBox,
   }) => AuxiliaryTabDropTarget(
-    keyPrefix: anchor == null
-        ? 'auxiliary-return-group-${group.region}'
-        : 'auxiliary-return-tab-${group.region}-${anchor.id}',
+    keyPrefix: bodyBox != null
+        ? 'auxiliary-return-body-${group.region}'
+        : anchor == null
+            ? 'auxiliary-return-group-${group.region}'
+            : 'auxiliary-return-tab-${group.region}-${anchor.id}',
     mode: anchor == null
         ? EditorDropOverlayMode.group
         : EditorDropOverlayMode.tab,
+    bodyOverlayAt: bodyBox == null
+        ? null
+        : (position, disableSplit) => _overlayForBodyDrop(
+              disableSplit ? null : _bodyDropZone(bodyBox(), position),
+            ),
     canAccept: (ticket) => _canReceiveAuxiliaryTab(group, ticket),
-    onDrop: (ticket, insertAfter) => _receiveAuxiliaryTab(
+    onDrop: (ticket, insertAfter, position, disableSplit) => _receiveAuxiliaryTab(
       group,
       ticket,
       anchor: anchor,
       insertAfter: insertAfter,
+      split: bodyBox == null || disableSplit
+          ? null
+          : _bodyDropZone(bodyBox(), position),
     ),
     child: child,
   );
@@ -23760,8 +23780,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _buildBreadcrumb(g),
             Expanded(
               child: Builder(
-                builder: (bodyContext) => DragTarget<int>(
-                  key: ValueKey('editor-body-drop-${g.region}'),
+                builder: (bodyContext) {
+                  final bodyTarget = DragTarget<int>(
+                   key: ValueKey('editor-body-drop-${g.region}'),
                   onWillAcceptWithDetails: (_) => true,
                   onAcceptWithDetails: (details) {
                     final box =
@@ -23887,7 +23908,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
                     );
                   },
-              ),
+                  );
+                  return _auxiliaryTabDropTarget(
+                    g,
+                    bodyTarget,
+                    bodyBox: () => bodyContext.findRenderObject() as RenderBox?,
+                  );
+                },
             ),
             ),
           ],
@@ -25901,19 +25928,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (source == null || !source.docs.any((doc) => doc.id == draggedId)) {
       return null;
     }
-    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
-    final splitToggled = isMac
-        ? HardwareKeyboard.instance.isShiftPressed
-        : HardwareKeyboard.instance.isAltPressed;
-    final zone = splitToggled ? null : _bodyDropZone(box, globalOffset);
+    final zone = _splitZoneForBodyDrop(box, globalOffset);
     if (identical(source, target) && zone == null) return null;
-    return switch (zone) {
+    return _overlayForBodyDrop(zone);
+  }
+
+  EditorDropOverlayMode _overlayForBodyDrop(_EditorGroupMoveDirection? zone) =>
+      switch (zone) {
       _EditorGroupMoveDirection.left => EditorDropOverlayMode.splitLeft,
       _EditorGroupMoveDirection.right => EditorDropOverlayMode.splitRight,
       _EditorGroupMoveDirection.up => EditorDropOverlayMode.splitUp,
       _EditorGroupMoveDirection.down => EditorDropOverlayMode.splitDown,
       null => EditorDropOverlayMode.center,
     };
+
+  _EditorGroupMoveDirection? _splitZoneForBodyDrop(
+    RenderBox? box,
+    Offset globalOffset,
+  ) {
+    final keyboard = HardwareKeyboard.instance;
+    final disableSplit = defaultTargetPlatform == TargetPlatform.macOS
+        ? keyboard.isShiftPressed
+        : keyboard.isAltPressed;
+    return disableSplit ? null : _bodyDropZone(box, globalOffset);
   }
 
   void _setEditorBodyDropHover(
@@ -26252,11 +26289,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (source == null) return;
     final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
     if (movingIndex < 0) return;
-    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
-    final splitToggled = isMac
-        ? HardwareKeyboard.instance.isShiftPressed
-        : HardwareKeyboard.instance.isAltPressed;
-    final zone = splitToggled ? null : _bodyDropZone(bodyBox, globalOffset);
+    final zone = _splitZoneForBodyDrop(bodyBox, globalOffset);
     if (zone == null) {
       // 拆分关闭或中心带：追加/合并（同组无操作）。
       if (identical(source, g)) return;
@@ -26271,19 +26304,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    // 边缘带：以目标组为基准按方向建相邻新组（上游 addGroup(groupView, direction)）。
-    var index = 2;
-    while (_groups.containsKey('editor-$index')) {
-      index++;
-    }
-    final freshRegion = 'editor-$index';
-    if (!_layout.splitRegion(g.region, freshRegion, zone.axis,
-        insertBefore: zone.insertBefore)) {
-      setState(() => _statusDetail = '拆分失败：区域 ${g.region} 不可拆分');
-      return;
-    }
-    _ensureGroupsFromLayout();
-    final target = _groups[freshRegion];
+    // 边缘带：以目标组为基准按方向建相邻新组。
+    final target = _splitEditorGroupForDrop(g, zone);
     if (target == null) return;
     _dropTabAcrossGroups(
       source,
@@ -26293,6 +26315,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       insertAfter: false,
       bodyDrop: true,
     );
+  }
+
+  EditorGroup? _splitEditorGroupForDrop(
+    EditorGroup group,
+    _EditorGroupMoveDirection zone,
+  ) {
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final freshRegion = 'editor-$index';
+    if (!_layout.splitRegion(group.region, freshRegion, zone.axis,
+        insertBefore: zone.insertBefore)) {
+      setState(() => _statusDetail = '拆分失败：区域 ${group.region} 不可拆分');
+      return null;
+    }
+    _ensureGroupsFromLayout();
+    return _groups[freshRegion];
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {

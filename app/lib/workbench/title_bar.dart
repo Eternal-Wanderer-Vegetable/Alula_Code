@@ -250,7 +250,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         event.logicalKey == LogicalKeyboardKey.altLeft ||
         event.logicalKey == LogicalKeyboardKey.altRight;
     if (event is KeyDownEvent && isAlt) {
-      if (!_altKeyDown) {
+      // A window can gain focus while Alt is already held for a native drag.
+      if (!_altKeyDown && !event.synthesized) {
         _altKeyDown = true;
         _altChordHasKey = false;
         _altPointerActivity = false;
