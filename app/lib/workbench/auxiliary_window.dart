@@ -160,6 +160,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   String _name = '未命名';
   bool _dirty = false;
   bool _closing = false;
+  int _closeReturnSequence = 0;
+  ({int? documentId, int? version})? _closeReturnVersion;
   bool? _alwaysOnTop;
   bool _changingAlwaysOnTop = false;
   bool _compactMode = false;
@@ -713,30 +715,89 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   String _statusMessage = '';
 
   Future<void> _sendClosedAndDestroy() async {
-    if (_closing || _returningTab) return;
-    _closing = true;
+    if (_closing || _returningTab || _pendingTransfer != null) return;
+    final document = _doc;
+    final input = _inputWindow;
+    if (input != null &&
+        (input.hasComposition ||
+            input.pendingCount != 0 ||
+            input.version != document?.version)) {
+      _keepOpenAfterCloseFailure('请完成当前编辑后再关闭，内容已保留');
+      return;
+    }
+
+    final version = document?.version;
+    final source = (documentId: document?.id, version: version);
+    if (_closeReturnVersion != source) {
+      _closeReturnVersion = source;
+      _closeReturnSequence++;
+    }
+
+    final dirty = _dirty || (document?.isDirty ?? widget.payload.dirty);
+    final selection = input?.initialValue.selection;
+    final start = input?.startUtf16 ?? 0;
+    setState(() => _closing = true);
+    var confirmed = false;
+    const timeout = Duration(seconds: 2);
     try {
-      await _focusEventQueue;
-      final mainController = await _findMainWindowController();
-      if (mainController != null) {
-        final doc = _doc;
-        final text = doc?.resync().content ?? widget.payload.text;
-        final closePayload = AuxiliaryWindowPayload.forDocument(
-          path: _path,
-          name: _name,
-          text: text,
-          dirty: _dirty || doc?.isDirty == true,
+      await _focusEventQueue.timeout(timeout);
+      final mainController = await _findMainWindowController().timeout(timeout);
+      final windowId = _windowController?.windowId;
+      if (mainController != null && windowId != null && mounted) {
+        final snapshot = AuxiliaryWindowPayload.forDocument(
+          path: document == null ? widget.payload.path : _path,
+          name: document == null ? widget.payload.name : _name,
+          text: document?.resync().content ?? widget.payload.text,
+          dirty: dirty,
         ).toMap()
-          ..['windowId'] = _windowController?.windowId ?? '';
-        await mainController.invokeMethod<void>(
-          'alula_auxiliary_closed',
-          closePayload,
-        );
+          ..['windowId'] = windowId
+          ..['sequence'] = _closeReturnSequence
+          ..['selectionBase'] =
+              selection?.isValid == true ? start + selection!.baseOffset : 0
+          ..['selectionExtent'] =
+              selection?.isValid == true ? start + selection!.extentOffset : 0;
+        for (var attempt = 0; attempt < 2; attempt++) {
+          try {
+            confirmed = await mainController
+                    .invokeMethod<bool>(
+                        auxiliaryWindowCloseReturnMethod, snapshot)
+                    .timeout(timeout) ==
+                true;
+            break;
+          } on TimeoutException {
+            // Retry the same snapshot and sequence if the reply was lost.
+          }
+        }
       }
     } on Object {
-      // 主窗口不可达：仅关闭本窗口（文档状态以磁盘/主窗会话为准）。
+      // An unavailable channel cannot authorize releasing unsaved content.
     }
-    await _closeNativeWindow();
+
+    if (!mounted) return;
+    if ((dirty && !confirmed) ||
+        !identical(document, _doc) ||
+        document?.version != version) {
+      _keepOpenAfterCloseFailure('主窗口未确认接收当前文档，未保存内容已保留');
+      return;
+    }
+    try {
+      await _closeNativeWindow();
+    } on Object catch (error) {
+      _keepOpenAfterCloseFailure('辅助窗口关闭失败：$error');
+    }
+  }
+
+  void _keepOpenAfterCloseFailure(String message) {
+    if (!mounted) return;
+    setState(() {
+      _closing = false;
+      _statusMessage = message;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_closing && !_returningTab && _doc != null) {
+        _editorFocus.requestFocus();
+      }
+    });
   }
 
   Future<void> _closeNativeWindow() async {
@@ -1016,7 +1077,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   Widget build(BuildContext context) {
     final doc = _doc;
     final inputWindow = _inputWindow;
-    final inputLocked = _pendingTransfer != null || _returningTab;
+    final inputLocked = _closing || _pendingTransfer != null || _returningTab;
     final titleHeight = _compactMode ? 30.0 : 35.0;
     final titleActionConstraints = BoxConstraints.tightFor(
       width: 30,

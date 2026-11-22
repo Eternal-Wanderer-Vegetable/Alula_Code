@@ -577,10 +577,11 @@ void main() {
                 Map<String, Object?>.from(request['arguments'] as Map),
               );
             }
-            if (request['method'] == 'alula_auxiliary_closed') {
+            if (request['method'] == auxiliaryWindowCloseReturnMethod) {
               returnedDocuments.add(
                 Map<String, Object?>.from(request['arguments'] as Map),
               );
+              return true;
             }
           }
           return null;
@@ -858,7 +859,7 @@ void main() {
         if (args['method'] == auxiliaryFocusContextMethod) {
           return {'windowId': 'main', 'groupId': 'main:editor', 'revision': 1};
         }
-        if (args['method'] == 'alula_auxiliary_closed') {
+        if (args['method'] == auxiliaryWindowCloseReturnMethod) {
           legacyReturns.add(args['arguments']);
         }
         return null;
@@ -983,6 +984,142 @@ void main() {
     },
     variant: const TargetPlatformVariant(
         {TargetPlatform.windows, TargetPlatform.linux}),
+  );
+
+  testWidgets(
+    'normal auxiliary close keeps dirty text until the main window confirms it',
+    (tester) async {
+      const windowsChannel = MethodChannel('mixin.one/desktop_multi_window');
+      const crossWindowChannel =
+          MethodChannel('mixin.one/desktop_multi_window/channels');
+      const nativeWindowChannel = MethodChannel('window_manager');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      const body = 'dirty 😀\r\nSecond line\n';
+      final payload = AuxiliaryWindowPayload.forDocument(
+        documentId: 902051,
+        mainWindowId: 'main',
+        name: 'unsaved-close.txt',
+        text: body,
+        dirty: true,
+      );
+      final nativeCloseCalls = <String>[];
+      final requests = <Map<String, Object?>>[];
+      var reply = 'unavailable';
+      final lateConfirmation = Completer<bool>();
+      messenger.setMockMethodCallHandler(windowsChannel, (call) async {
+        if (call.method == 'getWindowDefinition') {
+          return {
+            'windowId': 'aux-close',
+            'windowArgument': payload.toArguments(),
+          };
+        }
+        return null;
+      });
+      messenger.setMockMethodCallHandler(crossWindowChannel, (call) async {
+        if (call.method != 'invokeMethod') return null;
+        final request = call.arguments as Map;
+        if (request['method'] == auxiliaryFocusContextMethod) {
+          return {'windowId': 'main', 'groupId': 'main:editor', 'revision': 1};
+        }
+        if (request['method'] == auxiliaryWindowCloseReturnMethod) {
+          requests.add(Map<String, Object?>.from(request['arguments'] as Map));
+          if (reply == 'unavailable') {
+            throw PlatformException(code: 'main-unavailable');
+          }
+          return reply == 'pending'
+              ? lateConfirmation.future
+              : reply == 'accepted';
+        }
+        return null;
+      });
+      messenger.setMockMethodCallHandler(nativeWindowChannel, (call) async {
+        if (call.method == 'isAlwaysOnTop' || call.method == 'isFocused') {
+          return false;
+        }
+        if (const {'hide', 'close', 'destroy'}.contains(call.method)) {
+          nativeCloseCalls.add(call.method);
+        }
+        return null;
+      });
+      addTearDown(() {
+        for (final channel in [
+          windowsChannel,
+          crossWindowChannel,
+          nativeWindowChannel
+        ]) {
+          messenger.setMockMethodCallHandler(channel, null);
+        }
+      });
+      await tester.pumpWidget(AuxiliaryEditorApp(payload: payload));
+      await tester.pumpAndSettle();
+      final input =
+          tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      final tabClose = find.byKey(const ValueKey('auxiliary-editor-tab-close'));
+      final titleClose = find.byKey(const ValueKey('auxiliary-close-button'));
+
+      await tester.tap(tabClose);
+      await tester.pumpAndSettle();
+      expect(nativeCloseCalls, isEmpty);
+      expect(input.inputWindow.document.resync().content, body);
+      expect(input.inputWindow.document.isDirty, isTrue);
+      expect(find.byType(RustTextInputField), findsOneWidget);
+      expect(input.focusNode?.hasFocus, isTrue);
+
+      const more = 'still working 😀\r\nSecond line\n';
+      await tester.enterText(find.byType(TextField), more);
+      await tester.pumpAndSettle();
+      expect(input.inputWindow.document.resync().content, more);
+
+      reply = 'rejected';
+      await tester.tap(titleClose);
+      await tester.pumpAndSettle();
+      expect(nativeCloseCalls, isEmpty);
+      expect(input.inputWindow.document.resync().content, more);
+
+      reply = 'pending';
+      final listener =
+          tester.state(find.byType(AuxiliaryEditorApp)) as WindowListener;
+      final beforeTimeout = requests.length;
+      await tester.tap(titleClose);
+      await tester.pump();
+      listener.onWindowClose();
+      await tester.pump();
+      expect(requests, hasLength(beforeTimeout + 1));
+      expect(nativeCloseCalls, isEmpty);
+      expect(tester.widget<IconButton>(titleClose).onPressed, isNull);
+      await tester.pump(const Duration(seconds: 2));
+      expect(requests, hasLength(beforeTimeout + 2));
+      final sequence = requests.last['sequence'];
+      expect(requests[beforeTimeout]['sequence'], sequence);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(nativeCloseCalls, isEmpty);
+      expect(input.inputWindow.document.resync().content, more);
+
+      lateConfirmation.complete(true);
+      await tester.pumpAndSettle();
+      expect(nativeCloseCalls, isEmpty,
+          reason: 'late acknowledgements cannot close a retriable window');
+
+      reply = 'accepted';
+      listener.onWindowClose();
+      await tester.pumpAndSettle();
+      expect(requests.last['sequence'], sequence);
+      expect(requests.last['text'], more);
+      expect(requests.last['dirty'], isTrue);
+      expect(
+        nativeCloseCalls,
+        [
+          if (defaultTargetPlatform == TargetPlatform.linux) 'hide',
+          defaultTargetPlatform == TargetPlatform.windows ? 'close' : 'destroy',
+        ],
+      );
+      expect(input.inputWindow.document.resync, throwsA(isA<AlulaException>()));
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.linux,
+      TargetPlatform.windows,
+    }),
   );
 
   group('main-window move flow', () {

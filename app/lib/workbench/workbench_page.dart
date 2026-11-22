@@ -634,6 +634,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _auxiliaryTransferSourceLocks = {};
   int _auxiliaryTransferSequence = 0;
   final Set<String> _auxiliaryTabReturnsInFlight = {};
+  final Map<String, ({int sequence, OpenDoc? document})>
+      _auxiliaryCloseReceipts = {};
   StreamSubscription<void>? _auxiliaryWindowsSubscription;
   final AuxiliaryFocusContextRegistry _auxiliaryFocusRegistry =
       AuxiliaryFocusContextRegistry();
@@ -14548,28 +14550,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (call.method == auxiliaryWindowBoundsMethod) {
           final bounds = AuxiliaryWindowBounds.tryParse(call.arguments);
           if (bounds != null &&
-              _auxiliaryWindowIds.contains(bounds.windowId)) {
+              _auxiliaryWindowIds.contains(bounds.windowId) &&
+              !_auxiliaryCloseReceipts.containsKey(bounds.windowId)) {
             _auxiliaryWindowBounds.update(bounds);
           }
           return null;
         }
-        if (call.method == 'alula_auxiliary_closed') {
-          final args = call.arguments is Map
-              ? Map<String, Object?>.from(call.arguments as Map)
-              : <String, Object?>{};
-          final windowId = args['windowId'];
-          if (windowId is String && windowId.isNotEmpty) {
-            _auxiliaryWindowIds.remove(windowId);
-            _auxiliaryWindowBounds.remove(windowId);
-            final result =
-                _auxiliaryFocusRegistry.removeAuxiliaryWindow(windowId);
-            if (result.snapshotChanged) {
-              _notifyAuxiliaryFocusContextChanged();
-              await _broadcastAuxiliaryFocusSnapshot();
-            }
-          }
-          _reopenAuxiliaryDocument(args);
-          return null;
+        if (call.method == auxiliaryWindowCloseReturnMethod) {
+          return _confirmAuxiliaryCloseReturn(call.arguments);
         }
         if (call.method == auxiliaryFocusContextMethod) {
           final event = AuxiliaryFocusContextEvent.tryParse(call.arguments);
@@ -14643,6 +14631,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (liveIds.contains(windowId)) continue;
         _auxiliaryWindowIds.remove(windowId);
         _auxiliaryWindowBounds.remove(windowId);
+        _auxiliaryCloseReceipts.remove(windowId);
         snapshotChanged = _auxiliaryFocusRegistry
                 .removeAuxiliaryWindow(windowId)
                 .snapshotChanged ||
@@ -14735,6 +14724,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _core != null &&
       identical(_groups[group.region], group) &&
       _auxiliaryWindowIds.contains(ticket.windowId) &&
+      !_auxiliaryCloseReceipts.containsKey(ticket.windowId) &&
       !_auxiliaryTabReturnsInFlight.contains(ticket.windowId);
 
   Future<void> _receiveAuxiliaryTab(
@@ -14765,7 +14755,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           snapshot is! Map) {
         return;
       }
-      adopted = _adoptAuxiliaryTab(group, snapshot, anchor, insertAfter, split);
+      adopted =
+          _adoptAuxiliaryTab(group, snapshot, anchor, insertAfter, split) != null;
     } on Object catch (error) {
       if (mounted && !_disposing) {
         setState(() => _statusDetail = '无法接收辅助窗口的文档：$error');
@@ -14802,7 +14793,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  bool _adoptAuxiliaryTab(
+  OpenDoc? _adoptAuxiliaryTab(
     EditorGroup group,
     Map<dynamic, dynamic> snapshot,
     OpenDoc? anchor,
@@ -14824,10 +14815,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         base > text.length ||
         extent < 0 ||
         extent > text.length) {
-      return false;
+      return null;
     }
     final anchorIndex = anchor == null ? -1 : group.docs.indexOf(anchor);
-    if (anchor != null && anchorIndex < 0) return false;
+    if (anchor != null && anchorIndex < 0) return null;
 
     final previous = path is String && path.isNotEmpty
         ? _groups.values
@@ -14839,7 +14830,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _flushInput(previous, commitComposition: true);
       if (previous.text != text || previous.isDirty != snapshot['dirty']) {
         setState(() => _statusDetail = '主窗口已打开不同版本的同一文件，两边的内容已保留');
-        return false;
+        return null;
       }
     }
     final existing = previous == null || split != null
@@ -14853,7 +14844,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (previous == null
             ? _createAuxiliaryTransferReturnDocument(snapshot)
             : previous._copyTab());
-    if (doc == null) return false;
+    if (doc == null) return null;
 
     if (existing == null) {
       try {
@@ -14871,7 +14862,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final target = split == null ? group : _splitEditorGroupForDrop(group, split);
     if (target == null) {
       doc.disposeView();
-      return false;
+      return null;
     }
     setState(() {
       if (existing == null) {
@@ -14894,7 +14885,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _focusEditorAfterLayout(target, doc);
-    return true;
+    return doc;
   }
 
   Widget _auxiliaryTabDropTarget(
@@ -14978,6 +14969,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await _auxiliaryWindowHandlersReady.future;
     if (!mounted ||
         !_auxiliaryWindowIds.contains(targetWindowId) ||
+        _auxiliaryCloseReceipts.containsKey(targetWindowId) ||
         !group.docs.any((candidate) => identical(candidate, doc))) {
       return;
     }
@@ -15172,45 +15164,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 辅助窗口关闭恢复：按 path 重开（干净文件），未命名/脏文本以传递文本
   /// 恢复为对应脏态文档。
-  void _reopenAuxiliaryDocument(Map<String, Object?> args) {
-    final pathValue = args['path'] as String?;
-    final path = pathValue == null || pathValue.isEmpty ? null : pathValue;
-    final name = args['name'] as String? ?? '未命名';
-    final text = args['text'] as String? ?? '';
-    final dirty = args['dirty'] == true;
-    if (!mounted) return;
-    if (path != null && !dirty) {
+  bool _confirmAuxiliaryCloseReturn(Object? snapshot) {
+    if (_disposing || !mounted || _core == null || snapshot is! Map ||
+        snapshot['businessId'] != AuxiliaryWindowPayload.businessId ||
+        snapshot['dirty'] is! bool) {
+      return false;
+    }
+    final windowId = snapshot['windowId'];
+    final sequence = snapshot['sequence'];
+    if (windowId is! String ||
+        !_auxiliaryWindowIds.contains(windowId) ||
+        sequence is! int ||
+        sequence <= 0 ||
+        _auxiliaryTabReturnsInFlight.contains(windowId)) {
+      return false;
+    }
+    final receipt = _auxiliaryCloseReceipts[windowId];
+    if (receipt != null) {
+      return receipt.sequence == sequence &&
+          (receipt.document == null ||
+              _groups.values.any((group) => group.docs.contains(receipt.document)));
+    }
+
+    final path = snapshot['path'];
+    OpenDoc? document;
+    if (path is String && path.isNotEmpty && snapshot['dirty'] == false) {
+      // Clean named editors are reopened from disk as before.
       unawaited(_openFileByPath(path, pinPreview: false));
-      return;
+    } else {
+      document = _adoptAuxiliaryTab(_focused, snapshot, null, false, null);
+      if (document == null) return false;
     }
-    final core = _core;
-    if (core == null) return;
-    try {
-      final decoded = path != null ? _readDiskDocument(core, path) : null;
-      final id = _nextDocId++;
-      final coreDoc = core.openDoc(id, text);
-      coreDoc.setSavepoint(decoded?.content ?? '');
-      final doc = OpenDoc(
-        id: id,
-        name: name,
-        path: path,
-        doc: coreDoc,
-        fileOptions: decoded?.options ?? TextFileOptions.defaults,
-        savedFileOptions: decoded?.options ?? TextFileOptions.defaults,
-        dirtyDisk: dirty && decoded != null && text != decoded.content,
-        undoBudget: _undoHistoryBudget,
-      );
-      setState(() {
-        final group = _focused;
-        group.docs.add(doc);
-        group.activeDocId = id;
-        _noteActiveDocument(group, id);
-      });
-      _syncCommandContext();
-      _scheduleStateSave();
-    } on Object catch (error) {
-      setState(() => _statusDetail = '辅助窗口文档恢复失败：$error');
-    }
+    _auxiliaryCloseReceipts[windowId] = (sequence: sequence, document: document);
+    _auxiliaryWindowBounds.remove(windowId);
+    return true;
   }
 
   void _normalizeStickyOrder(EditorGroup group) {
@@ -26093,7 +26080,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Future<bool> _refreshAuxiliaryDropBounds() async {
     if (_auxiliaryWindowCreationsInProgress != 0) return false;
-    final windowIds = _auxiliaryWindowIds.toList();
+    final windowIds = _auxiliaryWindowIds
+        .where((id) => !_auxiliaryCloseReceipts.containsKey(id))
+        .toSet();
     if (windowIds.isEmpty) return true;
 
     // Native window placement can change without a move notification.
@@ -26105,9 +26094,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final bounds = AuxiliaryWindowBounds.tryParse(response);
       return bounds?.windowId == windowId ? bounds : null;
     }));
+    final currentIds = _auxiliaryWindowIds
+        .where((id) => !_auxiliaryCloseReceipts.containsKey(id))
+        .toSet();
     if (_auxiliaryWindowCreationsInProgress != 0 ||
-        _auxiliaryWindowIds.length != windowIds.length ||
-        !_auxiliaryWindowIds.containsAll(windowIds) ||
+        currentIds.length != windowIds.length ||
+        !currentIds.containsAll(windowIds) ||
         snapshots.contains(null)) {
       return false;
     }

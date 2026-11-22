@@ -676,20 +676,35 @@ void main() {
         (tester) async {
       await mountWorkbench(tester);
       await registerAuxiliaryWindow(tester);
-      await dispatchPlatformMethod(
-        tester,
-        'mixin.one/desktop_multi_window/channels',
-        const MethodCall('methodCall', {
-          'channel': 'mixin.one/window_controller/main',
-          'method': 'alula_auxiliary_closed',
-          'arguments': {
-            'windowId': 'aux-1',
-            'name': 'closed-aux.rs',
-            'text': 'recovered aux text',
-            'dirty': true,
-          },
-        }),
-      );
+      Future<Object?> confirmReturn(String windowId, int sequence) =>
+          dispatchPlatformMethod(
+            tester,
+            'mixin.one/desktop_multi_window/channels',
+            MethodCall('methodCall', {
+              'channel': 'mixin.one/window_controller/main',
+              'method': auxiliaryWindowCloseReturnMethod,
+              'arguments': {
+                'businessId': AuxiliaryWindowPayload.businessId,
+                'windowId': windowId,
+                'sequence': sequence,
+                'name': 'closed-aux.rs',
+                'text': 'recovered aux text',
+                'dirty': true,
+                'selectionBase': 4,
+                'selectionExtent': 1,
+              },
+            }),
+          );
+      expect(await confirmReturn('unknown-window', 1), isFalse);
+      expect(await confirmReturn('aux-1', 1), isTrue);
+      expect(await confirmReturn('aux-1', 1), isTrue);
+      expect(await confirmReturn('aux-1', 2), isFalse);
+      await tester.pump(const Duration(milliseconds: 700));
+      final returnedDocs = (sessionStore.tryLoad()!['groups'] as List)
+          .cast<Map>()
+          .expand((group) => (group['docs'] as List).cast<Map>())
+          .where((doc) => doc['text'] == 'recovered aux text');
+      expect(returnedDocs, hasLength(1));
       await tester.pumpAndSettle();
       await dragTab(tester, const Offset(2600, 700));
 

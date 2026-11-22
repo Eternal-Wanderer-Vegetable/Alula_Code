@@ -12,6 +12,7 @@ const auxiliaryDocumentTransferAbortMethod =
     'alula_auxiliary_document_transfer_abort';
 const auxiliaryDocumentTransferStatusMethod =
     'alula_auxiliary_document_transfer_status';
+const auxiliaryWindowCloseReturnMethod = 'alula_auxiliary_closed';
 const auxiliaryTabReturnPrepareMethod = 'alula_auxiliary_tab_return_prepare';
 const auxiliaryTabReturnFinishMethod = 'alula_auxiliary_tab_return_finish';
 const maxAuxiliaryWindowBounds = 32;
