@@ -3368,6 +3368,19 @@
       "evidence": "固定默认 Ctrl/Cmd+Enter 侧开，右侧标签保留，源标签预览与选区和滚动保持原状态。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 243/243，Flutter 1,805 passed / 2 skipped。产品 001150a 的 CI 45068517830 四项及 Platform Availability 45068515236 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.211-goto-primary-aside.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-264",
+      "name": "P05.212 CMD-02 普通 Quick Open 接受后的编辑器焦点",
+      "description": "空工作台用 Quick Open 普通确认后聚焦目标编辑器，后台打开继续保留选择器输入焦点。",
+      "dependencies": [
+        "feat-249",
+        "feat-262"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

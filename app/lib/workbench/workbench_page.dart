@@ -4675,8 +4675,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (position.line != null) {
         _selectQuickOpenLocation(doc, position);
-      } else if (!side) {
-        return;
       }
       if (!inBackground) _focusEditorAfterLayout(group, doc);
     }

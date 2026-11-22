@@ -903,6 +903,96 @@ void main() {
     expect(target.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });
 
+  testWidgets('Foreground Quick Open focuses a file from the empty workbench',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-focus');
+    final file = File('${temp.path}/source.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 70,
+            'docs': [
+              {'id': 70, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    final originFocus = FocusNode();
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      originFocus.dispose();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: Material(
+        child: Column(
+          children: [
+            Expanded(
+              child: WorkbenchPage(
+                layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+                sessionStore: session,
+                keybindingsStore:
+                    KeybindingsStore(path: '${temp.path}/keys.json'),
+                onCommandServiceReady: (value) => commands = value,
+              ),
+            ),
+            TextField(focusNode: originFocus),
+          ],
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byType(RustTextInputField);
+    expect(editor, findsOneWidget);
+    expect(
+      await commands.execute('workbench.action.closeAllEditors'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pumpAndSettle();
+    expect(editor, findsNothing);
+    originFocus.requestFocus();
+    await tester.pump();
+    expect(originFocus.hasPrimaryFocus, isTrue);
+
+    Future<void> waitFor(Finder finder) async {
+      for (var attempt = 0;
+          attempt < 100 && finder.evaluate().isEmpty;
+          attempt++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      expect(finder, findsOneWidget);
+    }
+
+    expect(
+      await commands.execute('workbench.action.quickOpen',
+          arguments: file.path),
+      CommandExecutionStatus.executed,
+    );
+    await waitFor(find.byKey(const ValueKey('qi-source.txt')));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    expect(tester.widget<TextField>(input).focusNode!.hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await waitFor(editor);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    final opened = tester.widget<RustTextInputField>(editor);
+    expect(opened.inputWindow.text, 'alpha\n😀beta\nlast');
+    expect(opened.focusNode!.hasPrimaryFocus, isTrue);
+    expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
   testWidgets('Quick Open holds recent membership while paging one query',
       (tester) async {
     final temp =
