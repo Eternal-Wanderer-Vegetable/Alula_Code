@@ -93,6 +93,7 @@ import 'tree_find.dart';
 import 'goto_position.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
+import 'tree_fuzzy_score.dart';
 import 'open_editors_sort_order.dart';
 import 'breadcrumb_navigation.dart';
 import 'command_history_store.dart';
@@ -4250,10 +4251,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemsProvider: (query) async {
         if (!valid()) return const [];
         var value = query.trim();
-        if (value.startsWith('@')) value = value.substring(1);
+        if (value.startsWith('@')) value = value.substring(1).trimLeft();
         final grouped = value.startsWith(':');
-        if (grouped) value = value.substring(1);
-        final rows = projectDocumentSymbols(roots, query: value);
+        if (grouped) value = value.substring(1).trimLeft();
+        var rows = projectDocumentSymbols(roots);
+        if (value.isNotEmpty) {
+          final matches = [
+            for (final (index, row) in rows.indexed)
+              if (treeFuzzyScore(value, row.symbol.name) case final match?)
+                (index: index, score: match.score, row: row),
+          ];
+          matches.sort((a, b) {
+            final score = b.score.compareTo(a.score);
+            return score == 0 ? a.index.compareTo(b.index) : score;
+          });
+          rows = [for (final match in matches) match.row];
+        }
         QuickItem itemFor(({DocumentSymbolNode symbol, int depth}) row) {
           final symbol = row.symbol;
           return QuickItem(

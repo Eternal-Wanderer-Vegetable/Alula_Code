@@ -320,13 +320,13 @@ void main() {
         TargetPlatform.macOS,
       }));
 
-  testWidgets('Document symbols group nested results once per kind',
+  testWidgets('Document symbols rank fuzzy results and group each kind once',
       (tester) async {
     final temp =
         Directory.systemTemp.createTempSync('alula-document-symbol-kinds');
     const text = 'fn root_fn() {}\n'
         'mod outer_a {\n  fn nested_a() {}\n  struct Packet;\n}\n'
-        'mod outer_b {\n  fn nested_b() {}\n}\n';
+        'mod outer_b {\n  fn nested_b() {}\n}\nfn n_branch() {}\n';
     final file = File('${temp.path}/main.rs')..writeAsStringSync(text);
     final session = SessionStore(path: '${temp.path}/session.json')
       ..save({
@@ -382,10 +382,11 @@ void main() {
     await query('@:');
     expect(row('separator-function'), findsNothing);
     for (final name in [
-      'separator-function (3)',
+      'separator-function (4)',
       'root_fn',
       'nested_a',
       'nested_b',
+      'n_branch',
       'separator-mod (2)',
       'outer_a',
       'outer_b',
@@ -394,15 +395,29 @@ void main() {
     ]) {
       expect(row(name), findsOneWidget);
     }
-    expect(y('separator-function (3)'), lessThan(y('root_fn')));
+    expect(y('separator-function (4)'), lessThan(y('root_fn')));
     expect(y('root_fn'), lessThan(y('nested_a')));
     expect(y('nested_a'), lessThan(y('nested_b')));
-    expect(y('nested_b'), lessThan(y('separator-mod (2)')));
+    expect(y('nested_b'), lessThan(y('n_branch')));
+    expect(y('n_branch'), lessThan(y('separator-mod (2)')));
     expect(y('outer_b'), lessThan(y('separator-struct (1)')));
+
+    await query('@n_b');
+    expect(row('separator-符号 (2)'), findsOneWidget);
+    expect(y('n_branch'), lessThan(y('nested_b')));
+
+    await query('@ NB');
+    expect(row('separator-符号 (2)'), findsOneWidget);
+    expect(y('n_branch'), lessThan(y('nested_b')));
+
+    await query('@:nest');
+    expect(row('separator-function (2)'), findsOneWidget);
+    expect(row('separator-mod (2)'), findsNothing);
+    expect(y('nested_a'), lessThan(y('nested_b')));
 
     await query('@:nested_b');
     expect(row('separator-function (1)'), findsOneWidget);
-    expect(row('separator-mod (1)'), findsOneWidget);
+    expect(row('separator-mod (1)'), findsNothing);
     expect(row('separator-struct (1)'), findsNothing);
     expect(row('nested_a'), findsNothing);
     expect(active().inputWindow.initialValue.selection.extentOffset,
