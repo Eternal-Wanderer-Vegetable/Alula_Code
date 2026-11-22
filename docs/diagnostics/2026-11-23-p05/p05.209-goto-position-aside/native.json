@@ -1,0 +1,1430 @@
+{
+  "product": "c08280bf71ef01adb0d899865855f8fc34428ed5",
+  "tree": "a2354b6cc66e7837795515d673eeeb4493dc66c5",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "a2354b6cc66e7837795515d673eeeb4493dc66c5",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "4a4e03bcd3fe7dee3e2c4ce6c9a637c02e9eb52dded24c7c1ece727a6700c9df",
+      "app/lib/workbench/quick_open_query.dart": "2cedc7cb4e1097195c420a92a884e0240dd258634c6073fa520f423b98c05c92",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/workbench_page.dart": "5c541d1b4668561ef852628a49406c15b07be3e1b5a826b1b2bf1f3316f6b0fe",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "c5ce33f079bbba6888fef3546e822fdef6d81c7c403e545c410611a8657ea337"
+  },
+  "sharedDriverSha256": "44077fb7fa47d144236a3ae1c16229926008611beb1bbb76e5089db468ca4482",
+  "isolatedX11Sha256": "0e60ee6da5fcda135bf16854382e75c72127afaf663fe5b7839ec74aa0f6230a",
+  "windows": {
+    "tree": "a2354b6cc66e7837795515d673eeeb4493dc66c5",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "560dc7d37ce532ff18096d20af2d0ff2f7bedb0411bdbce132595a409d243d44",
+    "fixtureSha256": "c5ce33f079bbba6888fef3546e822fdef6d81c7c403e545c410611a8657ea337",
+    "runnerSha256": "70d72e834fe28f20a8c405a8d00d5c7da055373dea34e74b7b43aa20275dad0e",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "dpi": 120,
+    "sourceSha256": "c6c97ac6ea3ac62f1968e6a09c3dd920bd1c9edb99fa7ae68d2c1b486bdebf1e",
+    "sourceDocumentId": 2,
+    "sourceScrollBeforeAside": 1247.4,
+    "sourceScrollAfterAside": 1247.6000000000001,
+    "sourceOrdinaryLineOffset": 13,
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "88cee7c703144e7a8cf336be8937944b7a9cde14ed37142b521dc7545cd39d0f",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              93,
+              93
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "line-picker-opens-in-source": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              93,
+              93
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 991720600,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "source-accepts-a-distant-line": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1247.4,
+            "startUtf16": 0,
+            "selection": [
+              706,
+              706
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "line-position-previews-in-source": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1247.4,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":2:3",
+            "controllerIdentity": 56764416,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "alt-enter-creates-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              706,
+              706
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "source-group-focused-for-offset": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              624,
+              624
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "offset-command-opens-in-source-group": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              624,
+              624
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 511518432,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "offset-previews-with-right-view-already-open": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::10",
+            "controllerIdentity": 511518432,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "alt-enter-reuses-the-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              624,
+              624
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "source-focused-before-plain-enter": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1247.6000000000001,
+            "startUtf16": 0,
+            "selection": [
+              624,
+              624
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "plain-enter-remains-in-source-group": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 41.600000000000136,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-case-offset-picker": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 41.600000000000136,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 507274427,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-case-offset-preview": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 41.600000000000136,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::9",
+            "controllerIdentity": 507274427,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-restores-source-and-leaves-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 41.600000000000136,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "a2354b6cc66e7837795515d673eeeb4493dc66c5",
+    "aotSha256": "7804943d3503d61f1ed1428437a9cc7f65e8fcca11b2a0d37375a8246c6561a1",
+    "fixtureSha256": "c5ce33f079bbba6888fef3546e822fdef6d81c7c403e545c410611a8657ea337",
+    "runnerSha256": "cb86623d0fa718866897e0c9db7f6bd37bd1eda2e21c074aa26a8cf75b666af4",
+    "sourceSha256": "c6c97ac6ea3ac62f1968e6a09c3dd920bd1c9edb99fa7ae68d2c1b486bdebf1e",
+    "sourceDocumentId": 2,
+    "sourceScrollBeforeAside": 1017.9999999999999,
+    "sourceScrollAfterAside": 1017.9999999999999,
+    "sourceOrdinaryLineOffset": 13,
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "rawReportSha256": "15f2dc1dfe1194f49b070a07ce6365c48c962378845d5cc1dc186c9cf1a4cc95",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              138,
+              138
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "line-picker-opens-in-source": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              138,
+              138
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 806298659,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "source-accepts-a-distant-line": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              706,
+              706
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "line-position-previews-in-source": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":2:3",
+            "controllerIdentity": 656309137,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true
+      },
+      "alt-enter-creates-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              706,
+              706
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "source-group-focused-for-offset": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              579,
+              579
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "offset-command-opens-in-source-group": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              579,
+              579
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 636983230,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "offset-previews-with-right-view-already-open": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::10",
+            "controllerIdentity": 636983230,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "alt-enter-reuses-the-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              579,
+              579
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "source-focused-before-plain-enter": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 1017.9999999999999,
+            "startUtf16": 0,
+            "selection": [
+              579,
+              579
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "plain-enter-remains-in-source-group": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 41.999999999999886,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-case-offset-picker": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 41.999999999999886,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 1039596155,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-case-offset-preview": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 41.999999999999886,
+            "startUtf16": 0,
+            "selection": [
+              8,
+              8
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::9",
+            "controllerIdentity": 1039596155,
+            "focused": true
+          }
+        ],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      },
+      "cancel-restores-source-and-leaves-right-view": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "scrollOffset": 41.999999999999886,
+            "startUtf16": 0,
+            "selection": [
+              13,
+              13
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          },
+          {
+            "label": "needle-root.txt 编辑器 2",
+            "documentId": 2,
+            "box": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1075,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "scrollOffset": 0.0,
+            "startUtf16": 0,
+            "selection": [
+              9,
+              9
+            ],
+            "textSha256": "a6609b05b7fc974fb9fe50cdc72bdbfeeb27f6f1c30450f5caea00bad0e42c1f"
+          }
+        ],
+        "pickers": [],
+        "focusedGroup": "editor-2",
+        "nativeWindowFocused": true
+      }
+    }
+  }
+}

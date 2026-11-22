@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.209 / feat-261 完成。产品 c08280bf71ef01adb0d899865855f8fc34428ed5。Alt+Enter 向右侧提交位置，共享文档并恢复源视图选区与滚动。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 240/240，Flutter 1,802 passed / 2 skipped。产品 c08280b 的 CI 45064387430 四项及 Platform Availability 45064383523 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.209-goto-position-aside.md。
+
 - P05.208 / feat-260 完成。产品 ee165c65281156677b7c5dcba6c71a138a3630ea。规范字符偏移命令和双冒号帮助入口复用位置预览、取消及 UTF-16 定位。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 239/239，Flutter 1,801 passed / 2 skipped。产品 ee165c6 的 CI 45062398477 四项及 Platform Availability 45062394435 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.208-goto-offset-entry.md。
 
 - P05.207 / feat-259 完成。产品 bf73c85cc855e6c16c4243efc8a76fbc374ab67a。同一匹配查询固定分页最近文件，保留后台写入、新查询刷新及显式移除。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 234/234，Flutter 1,801 passed / 2 skipped。产品 bf73c85 的 CI 45060315113 四项及 Platform Availability 45060311941 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.207-quick-open-mru-snapshot.md。
