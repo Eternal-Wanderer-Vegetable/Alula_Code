@@ -3142,6 +3142,20 @@
       "evidence": "编辑位置后缀时保留候选、进行中的请求、选择与按钮焦点，使用最新位置接受或侧开。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 128/128，Flutter 1,779 passed / 2 skipped。产品 bc84315 的 CI 45018977348 四项与 Platform Availability 45018974947 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-247",
+      "name": "P05.195 CMD-02 Quick Open Ctrl/Cmd+Enter 侧开",
+      "description": "使用默认 Ctrl/Cmd+Enter 接受文件到右侧编辑器组，与 Alt+Enter 共用侧开和最新位置。普通 Enter 保留原组标签。",
+      "dependencies": [
+        "feat-090",
+        "feat-238",
+        "feat-246"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

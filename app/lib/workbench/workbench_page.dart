@@ -4637,6 +4637,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 icon: Icons.vertical_split,
                 tooltip: '在侧边打开',
                 altEnter: true,
+                ctrlCmdEnter: true,
                 onRun: () => openFile(path, location, side: true),
               ),
               if (recent)

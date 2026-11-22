@@ -72,6 +72,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Ctrl+Enter keeps the default action without an opted-in button',
+      (tester) async {
+    final opened = <String>[];
+    await tester.pumpWidget(MaterialApp(
+      home: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => QuickInput.show(
+            context,
+            hint: 'query',
+            items: [
+              QuickItem(
+                label: 'target',
+                onRun: () async => opened.add('row'),
+                buttons: [
+                  QuickItemButton(
+                    icon: Icons.open_in_new,
+                    tooltip: 'side',
+                    altEnter: true,
+                    onRun: () async => opened.add('side'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          child: const Text('open'),
+        ),
+      ),
+    ));
+    Future<void> accept(LogicalKeyboardKey modifier) async {
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+    }
+
+    await accept(LogicalKeyboardKey.controlLeft);
+    await accept(LogicalKeyboardKey.altLeft);
+    expect(opened, ['row', 'side']);
+  });
+
   testWidgets('equivalent provider inputs preserve results and button focus',
       (tester) async {
     final pending = <String, Completer<List<QuickItem>>>{};

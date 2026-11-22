@@ -66,6 +66,7 @@ class QuickItemButton {
     required this.tooltip,
     required this.onRun,
     this.altEnter = false,
+    this.ctrlCmdEnter = false,
     this.refreshItems = false,
     this.alwaysVisible = false,
     this.hoverIcon,
@@ -77,6 +78,9 @@ class QuickItemButton {
 
   /// Use this button when the active row is accepted with Alt+Enter.
   final bool altEnter;
+
+  /// Use this button when accepting with Ctrl+Enter or Command+Enter.
+  final bool ctrlCmdEnter;
 
   /// Keeps the picker open and reloads its provider after this action.
   final bool refreshItems;
@@ -932,13 +936,20 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return true;
   }
 
-  Future<void> _runAt(int index, {bool altEnter = false}) async {
+  Future<void> _runAt(
+    int index, {
+    bool altEnter = false,
+    bool ctrlCmdEnter = false,
+  }) async {
     if (index < 0 || index >= _filtered.length) return;
     final item = _filtered[index];
     if (!_isSelectable(item) || !_enabled(item)) return;
-    if (altEnter) {
-      final button =
-          item.buttons.where((button) => button.altEnter).firstOrNull;
+    if (altEnter || ctrlCmdEnter) {
+      final button = item.buttons
+          .where((button) =>
+              (altEnter && button.altEnter) ||
+              (ctrlCmdEnter && button.ctrlCmdEnter))
+          .firstOrNull;
       if (button != null) {
         await _runItemButton(button);
         return;
@@ -1105,11 +1116,16 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (event.logicalKey == LogicalKeyboardKey.enter ||
         event.logicalKey == LogicalKeyboardKey.numpadEnter) {
       final altEnter = keyboard.isAltPressed;
+      final ctrlCmdEnter = keyboard.isControlPressed || keyboard.isMetaPressed;
       _afterPendingPages(() {
         if (widget.canSelectMany) {
           _accept();
         } else {
-          unawaited(_runAt(_selected, altEnter: altEnter));
+          unawaited(_runAt(
+            _selected,
+            altEnter: altEnter,
+            ctrlCmdEnter: ctrlCmdEnter,
+          ));
         }
       });
       return KeyEventResult.handled;

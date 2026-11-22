@@ -559,6 +559,109 @@ void main() {
         contains('dirty.txt'));
   });
 
+  testWidgets('Quick Open keeps plain accepts and side-opens Ctrl or Cmd+Enter',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-quick-open-modifiers');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final source = File('${root.path}/source.txt')
+      ..writeAsStringSync('main\neditor');
+    final target = File('${root.path}/target.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    expect(
+        session.save({
+          'v': 1,
+          'workspace': root.path,
+          'focused': 'editor',
+          'groups': [
+            {
+              'region': 'editor',
+              'active': 2,
+              'preview': 2,
+              'docs': [
+                {'id': 2, 'path': source.path},
+              ],
+            },
+          ],
+        }),
+        isTrue);
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    final sourceTab = find.byKey(const ValueKey('editor-tab-label-editor-2'));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    RustTextInputField editor(String region) =>
+        tester.widget<RustTextInputField>(find.descendant(
+          of: find.byKey(ValueKey('editor-body-drop-$region')),
+          matching: find.byType(RustTextInputField),
+        ));
+
+    Future<void> pick(File file, String position,
+        {LogicalKeyboardKey? modifier}) async {
+      await commands.execute('view.quickOpen');
+      await tester.pump(const Duration(milliseconds: 120));
+      await tester.enterText(filter, '${file.path}$position');
+      final row = find.byKey(ValueKey('qi-${file.uri.pathSegments.last}'));
+      for (var i = 0; i < 100 && row.evaluate().isEmpty; i++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(row, findsOneWidget);
+      if (modifier != null) await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      if (modifier != null) await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+      expect(panel, findsNothing);
+    }
+
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle, FontStyle.italic);
+    await pick(source, ':1:2');
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle,
+        isNot(FontStyle.italic));
+    expect(
+        find.byKey(const ValueKey('editor-body-drop-editor-2')), findsNothing);
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 1);
+
+    await pick(target, ':2:3', modifier: LogicalKeyboardKey.controlLeft);
+    final right = editor('editor-2');
+    expect(right.inputWindow.text, 'alpha\n😀beta\nlast');
+    expect(right.inputWindow.initialValue.selection.extentOffset, 8);
+    expect(right.focusNode!.hasPrimaryFocus, isTrue);
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 1);
+
+    await tester.tap(sourceTab);
+    await tester.pumpAndSettle();
+    await pick(target, ':3:2', modifier: LogicalKeyboardKey.metaLeft);
+    final reused = editor('editor-2');
+    expect(
+        find.byKey(const ValueKey('editor-body-drop-editor-3')), findsNothing);
+    expect(reused.inputWindow.document.id, right.inputWindow.document.id);
+    expect(reused.inputWindow.initialValue.selection.extentOffset, 14);
+    expect(reused.focusNode!.hasPrimaryFocus, isTrue);
+    expect(source.readAsStringSync(), 'main\neditor');
+    expect(target.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
   testWidgets('Quick Open opens to the right by Alt+Enter and row button',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-side');
