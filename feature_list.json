@@ -3247,8 +3247,8 @@
         "feat-246",
         "feat-253"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "闭合引号限定连续字符，移除闭合引号恢复模糊匹配，保留文件位置和精确路径。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 226/226，Flutter 1,793 passed / 2 skipped。产品 6d8877d 的 CI 45048316747 四项及 Platform Availability 45048313724 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.202-quick-open-quotes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
