@@ -215,6 +215,89 @@ void main() {
         isTrue);
   });
 
+  testWidgets(
+      'Quick Open removes the recent hit in place and keeps Open Recent',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-remove');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final recent = File('${root.path}/needle-recent.txt')
+      ..writeAsStringSync('recent document');
+    File('${root.path}/needle-unopened.txt').writeAsStringSync('workspace hit');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    final history =
+        RecentHistoryStore(path: '${session.resolvePath()}.recent-history');
+    expect(history.recordFile(recent.path), isTrue);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await commands.execute('view.quickOpen');
+    await tester.pump(const Duration(milliseconds: 120));
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final recentRow = find.byKey(const ValueKey('qi-needle-recent.txt'));
+    final unopenedRow = find.byKey(const ValueKey('qi-needle-unopened.txt'));
+    final remove = find.byTooltip('从最近打开中移除');
+
+    Future<void> waitFor(Finder item, {Finder? gone}) async {
+      for (var attempt = 0; attempt < 100; attempt++) {
+        if (item.evaluate().isNotEmpty &&
+            (gone == null || gone.evaluate().isEmpty)) {
+          break;
+        }
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(item, findsOneWidget);
+      if (gone != null) expect(gone, findsNothing);
+    }
+
+    await tester.enterText(input, 'needle');
+    await waitFor(unopenedRow);
+    expect(find.descendant(of: recentRow, matching: remove), findsOneWidget);
+    expect(find.descendant(of: unopenedRow, matching: remove), findsNothing);
+    await tester.tap(remove);
+    await waitFor(unopenedRow, gone: recentRow);
+    final field = tester.widget<TextField>(input);
+    expect(field.controller!.text, 'needle');
+    expect(field.focusNode!.hasFocus, isTrue);
+    expect(history.load().quickOpenFiles, isEmpty);
+    expect(history.load().files.single.label, 'needle-recent.txt');
+    expect(recent.readAsStringSync(), 'recent document');
+
+    await tester.enterText(input, 'needle-recent.txt');
+    await waitFor(recentRow);
+    expect(find.text('最近打开'), findsNothing);
+    expect(remove, findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('文件(F)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('打开最近'));
+    await tester.pumpAndSettle();
+    final openRecent = find.textContaining('needle-recent.txt — ');
+    expect(openRecent, findsOneWidget);
+    await tester.tap(openRecent);
+    await tester.pumpAndSettle();
+    expect(history.load().quickOpenFiles.single.label, 'needle-recent.txt');
+    expect(panel, findsNothing);
+  });
+
   testWidgets('Quick Open opens to the right by Alt+Enter and row button',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-side');

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/workbench/recent_history_store.dart';
+import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/file_paths.dart';
@@ -39,6 +40,45 @@ void main() {
         restored.workspaces.first.path,
         nativeTestPath(
             '${temp.path}/workspace-$maxRecentHistoryEntriesPerKind'));
+  });
+
+  test('Quick Open dismissal survives journal reload and MRU changes',
+      () async {
+    final first = File('${temp.path}/first.txt')..writeAsStringSync('first');
+    final second = File('${temp.path}/second.txt')..writeAsStringSync('second');
+    final third = File('${temp.path}/third.txt')..writeAsStringSync('third');
+    final workspace = Directory('${temp.path}/project')..createSync();
+    final journal = SessionStore(path: journalPath);
+    expect(
+        journal.save({
+          'format': 'alula-recent-history',
+          'version': 1,
+          'files': [first.path, second.path],
+          'workspaces': [workspace.path],
+        }),
+        isTrue);
+
+    final store = RecentHistoryStore(path: journalPath);
+    expect(store.load().quickOpenFiles.map((entry) => entry.label),
+        ['first.txt', 'second.txt']);
+    expect(store.hideFileFromQuickOpen(second.path), isTrue);
+    expect(store.hideFileFromQuickOpen(second.path), isTrue);
+    expect(store.recordFile(third.path), isTrue);
+    await first.delete();
+    await store.pruneMissingPaths();
+
+    final restored = RecentHistoryStore(path: journalPath);
+    final snapshot = restored.load();
+    expect(snapshot.files.map((entry) => entry.label),
+        ['third.txt', 'second.txt']);
+    expect(snapshot.workspaces.single.label, 'project');
+    expect(snapshot.quickOpenFiles.map((entry) => entry.label), ['third.txt']);
+    expect(journal.tryLoad()?['files'],
+        [nativeTestPath(third.path), nativeTestPath(second.path)]);
+
+    expect(restored.recordFile(second.path), isTrue);
+    expect(restored.load().quickOpenFiles.map((entry) => entry.label),
+        ['second.txt', 'third.txt']);
   });
 
   test('corrupt and oversized journals safely load as empty', () async {

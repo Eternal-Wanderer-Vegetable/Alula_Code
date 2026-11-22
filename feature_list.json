@@ -3087,6 +3087,20 @@
       "evidence": "先显示可用最近文件，后台结果补齐时保留选中和按钮焦点，拒绝旧查询及关闭后的回包。Windows 实机与 Linux Xvfb + xfwm4 各 10 个观测点，帧记录确认先后顺序。专项 70/70，Flutter 1,772 passed / 2 skipped。产品 a0465de 的 CI 45008935307 四项与 Platform Availability 45008932080 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.190-progressive-quick-open.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-243",
+      "name": "P05.191 CMD-02 移除 Quick Open 最近文件",
+      "description": "在 Quick Open 内原位移除最近条目，保留查询、输入焦点和打开最近记录；再次打开恢复最近排序。",
+      "dependencies": [
+        "feat-113",
+        "feat-239",
+        "feat-242"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

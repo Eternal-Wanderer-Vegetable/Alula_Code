@@ -4497,6 +4497,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final root = _workspaceRoot ?? Directory.current.path;
     final search = QuickOpenSearch();
     final entries = _quickAccessEntries(previousFocus);
+    final removedPaths = <String>{};
     var page = 0;
     var lastQuery = '';
     var hasNext = false;
@@ -4613,6 +4614,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       progressiveItemsProvider: (query, publish) async {
         if (query != lastQuery) {
           page = 0;
+          removedPaths.clear();
           lastQuery = query;
         }
         final requestedPage = page;
@@ -4623,7 +4625,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             requestedPage == page;
         final position = parseQuickOpenQuery(query);
         final recentItems = <String, QuickItem>{};
-        QuickItem item(String path) => QuickItem(
+        QuickItem item(String path, {bool recent = false}) => QuickItem(
               label: _nameOf(path),
               description: path,
               onRun: () => openFile(path, position),
@@ -4634,6 +4636,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   altEnter: true,
                   onRun: () => openFile(path, position, side: true),
                 ),
+                if (recent)
+                  QuickItemButton(
+                    icon: Icons.close,
+                    tooltip: '从最近打开中移除',
+                    refreshItems: true,
+                    onRun: () async {
+                      if (!currentRequest()) return;
+                      final saved =
+                          _recentHistoryStore.hideFileFromQuickOpen(path);
+                      if (saved) removedPaths.add(path);
+                      _finishRecentHistoryWrite(saved);
+                    },
+                  ),
               ],
             );
 
@@ -4644,7 +4659,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             if (recent.isNotEmpty) ...[
               const QuickItem(label: '最近打开', kind: QuickItemKind.separator),
               for (final match in recent)
-                recentItems.putIfAbsent(match.path, () => item(match.path)),
+                recentItems.putIfAbsent(
+                    match.path, () => item(match.path, recent: true)),
             ],
             if (files.isNotEmpty) ...[
               const QuickItem(label: '文件结果', kind: QuickItemKind.separator),
@@ -4659,7 +4675,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           matches = await search.searchMatches(
             root,
             query,
-            recentPaths: _recentHistory.files.map((entry) => entry.path).toList(),
+            recentPaths:
+                _recentHistory.quickOpenFiles.map((entry) => entry.path).toList(),
+            excludedPaths: removedPaths,
             page: requestedPage,
             includeFileResults: query.trim().isNotEmpty,
             onRecentMatches: (recent) {

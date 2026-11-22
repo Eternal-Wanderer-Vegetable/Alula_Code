@@ -19,10 +19,15 @@ const int maxRecentHistoryRecordBytes = 512 * 1024;
 enum RecentHistoryKind { file, workspace }
 
 class RecentHistoryEntry {
-  const RecentHistoryEntry({required this.path, required this.kind});
+  const RecentHistoryEntry({
+    required this.path,
+    required this.kind,
+    this.hiddenFromQuickOpen = false,
+  });
 
   final String path;
   final RecentHistoryKind kind;
+  final bool hiddenFromQuickOpen;
 
   String get label => p.basename(path);
 
@@ -45,6 +50,9 @@ class RecentHistorySnapshot {
   final List<RecentHistoryEntry> files;
   final List<RecentHistoryEntry> workspaces;
 
+  Iterable<RecentHistoryEntry> get quickOpenFiles =>
+      files.where((entry) => !entry.hiddenFromQuickOpen);
+
   bool get isEmpty => files.isEmpty && workspaces.isEmpty;
 }
 
@@ -62,8 +70,18 @@ class RecentHistoryStore {
         data['version'] != 1) {
       return const RecentHistorySnapshot();
     }
+    final hidden = data['quickOpenHiddenIndices'];
     return RecentHistorySnapshot(
-      files: _readEntries(data['files'], RecentHistoryKind.file),
+      files: _readEntries(
+        data['files'],
+        RecentHistoryKind.file,
+        hiddenIndices: hidden is List
+            ? hidden
+                .whereType<int>()
+                .take(maxRecentHistoryEntriesPerKind)
+                .toSet()
+            : const {},
+      ),
       workspaces: _readEntries(data['workspaces'], RecentHistoryKind.workspace),
     );
   }
@@ -72,6 +90,27 @@ class RecentHistoryStore {
 
   bool recordWorkspace(String path) =>
       _record(path, RecentHistoryKind.workspace);
+
+  /// Dismisses a file from Quick Open history, preserving Open Recent.
+  /// A later successful open records the file at the head of both lists.
+  bool hideFileFromQuickOpen(String rawPath) {
+    final normalized = _normalizePath(rawPath);
+    if (normalized == null) return false;
+    final current = load();
+    final index = current.files.indexWhere(
+      (entry) => _pathKey(entry.path) == _pathKey(normalized),
+    );
+    if (index < 0 || current.files[index].hiddenFromQuickOpen) return true;
+    final files = current.files.toList();
+    final entry = files[index];
+    files[index] = RecentHistoryEntry(
+      path: entry.path,
+      kind: entry.kind,
+      hiddenFromQuickOpen: true,
+    );
+    return _save(
+        RecentHistorySnapshot(files: files, workspaces: current.workspaces));
+  }
 
   bool remove(RecentHistoryEntry entry) {
     final current = load();
@@ -153,29 +192,40 @@ class RecentHistoryStore {
 
   List<RecentHistoryEntry> _readEntries(
     Object? raw,
-    RecentHistoryKind kind,
-  ) {
+    RecentHistoryKind kind, {
+    Set<int> hiddenIndices = const {},
+  }) {
     if (raw is! List) return const <RecentHistoryEntry>[];
     final entries = <RecentHistoryEntry>[];
     final keys = <String>{};
-    for (final value in raw) {
+    for (final (index, value) in raw.indexed) {
       if (value is! String) continue;
       final normalized = _normalizePath(value);
       if (normalized == null) continue;
       final key = _pathKey(normalized);
       if (!keys.add(key)) continue;
-      entries.add(RecentHistoryEntry(path: normalized, kind: kind));
+      entries.add(RecentHistoryEntry(
+        path: normalized,
+        kind: kind,
+        hiddenFromQuickOpen: hiddenIndices.contains(index),
+      ));
       if (entries.length == maxRecentHistoryEntriesPerKind) break;
     }
     return entries;
   }
 
   bool _save(RecentHistorySnapshot snapshot) {
-    final files = snapshot.files
+    final fileEntries = snapshot.files
         .where((entry) => entry.kind == RecentHistoryKind.file)
         .take(maxRecentHistoryEntriesPerKind)
-        .map((entry) => entry.path)
         .toList();
+    final files = [for (final entry in fileEntries) entry.path];
+    // Keep the v1 string arrays readable by older builds. Indices avoid
+    // duplicating paths and are written in the same atomic payload.
+    final hidden = [
+      for (final (index, entry) in fileEntries.indexed)
+        if (entry.hiddenFromQuickOpen) index,
+    ];
     final workspaces = snapshot.workspaces
         .where((entry) => entry.kind == RecentHistoryKind.workspace)
         .take(maxRecentHistoryEntriesPerKind)
@@ -186,12 +236,16 @@ class RecentHistoryStore {
       'version': 1,
       'files': files,
       'workspaces': workspaces,
+      if (hidden.isNotEmpty) 'quickOpenHiddenIndices': hidden,
     };
     while (utf8.encode(jsonEncode(payload)).length >
             maxRecentHistoryRecordBytes * 3 ~/ 4 &&
         (files.isNotEmpty || workspaces.isNotEmpty)) {
       if (files.length >= workspaces.length && files.isNotEmpty) {
         files.removeLast();
+        if (hidden.isNotEmpty && hidden.last == files.length) {
+          hidden.removeLast();
+        }
       } else {
         workspaces.removeLast();
       }

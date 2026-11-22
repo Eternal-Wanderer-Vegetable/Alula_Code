@@ -57,14 +57,14 @@ class QuickItem {
   final bool picked;
 }
 
-/// 行尾动作按钮（上游 quick pick item buttons）：点击执行按钮动作并关闭
-/// picker，不触发 item 的 onRun/commandId。
+/// Quick Pick row action. Runs independently of the row's onRun/commandId.
 class QuickItemButton {
   const QuickItemButton({
     required this.icon,
     required this.tooltip,
     required this.onRun,
     this.altEnter = false,
+    this.refreshItems = false,
   });
 
   final IconData icon;
@@ -73,6 +73,9 @@ class QuickItemButton {
 
   /// Use this button when the active row is accepted with Alt+Enter.
   final bool altEnter;
+
+  /// Keeps the picker open and reloads its provider after this action.
+  final bool refreshItems;
 }
 
 enum QuickInputValidationSeverity { info, warning, error }
@@ -955,6 +958,23 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   Future<void> _runItemButton(QuickItemButton button) async {
+    if (button.refreshItems) {
+      if (!mounted || _accepted || ModalRoute.of(context)?.isCurrent != true) {
+        return;
+      }
+      final generation = _itemsGeneration;
+      final query = _controller.text;
+      await button.onRun();
+      if (mounted &&
+          !_accepted &&
+          generation == _itemsGeneration &&
+          query == _controller.text &&
+          ModalRoute.of(context)?.isCurrent == true) {
+        _focusNode.requestFocus();
+        await _loadItems();
+      }
+      return;
+    }
     if (!_claimPickerAcceptance()) return;
     widget.onHandled();
     Navigator.of(context).pop();

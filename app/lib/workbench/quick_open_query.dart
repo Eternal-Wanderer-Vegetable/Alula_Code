@@ -70,6 +70,7 @@ class QuickOpenSearch {
     List<String> recentPaths = const [],
     int page = 0,
     bool includeFileResults = true,
+    Set<String> excludedPaths = const {},
     void Function(List<QuickOpenMatch>)? onRecentMatches,
   }) async {
     if (page < 0) {
@@ -81,7 +82,9 @@ class QuickOpenSearch {
     final rootPath = p.normalize(p.absolute(_native(root)));
     final pathQuery = _native(parseQuickOpenQuery(query).pathQuery);
     final pattern = pathQuery == '.' ? '' : pathQuery;
-    final recentKeys = <String>{};
+    final recentKeys = {
+      for (final path in excludedPaths) _key(p.normalize(_native(path))),
+    };
     final results = <({QuickOpenMatch match, int? score})>[];
     var skip = page * pageSize;
 
