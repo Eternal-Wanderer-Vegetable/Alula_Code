@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -107,6 +108,92 @@ void main() {
     await offsets;
     await tester.pump(const Duration(milliseconds: 600));
     expect(session.tryLoad()?['gotoLine.useZeroBasedOffset'], isTrue);
+    expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
+  testWidgets('Go to Position Alt+Enter opens a shared view on the right',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-goto-position-side');
+    final file = File('${temp.path}/source.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 70,
+            'docs': [
+              {'id': 70, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    Finder editorField(String region) => find.descendant(
+          of: find.byKey(ValueKey('editor-body-drop-$region')),
+          matching: find.byType(RustTextInputField),
+        );
+    RustTextInputField editor(String region) =>
+        tester.widget<RustTextInputField>(editorField(region));
+    TextSelection selection(String region) =>
+        editor(region).inputWindow.initialValue.selection;
+
+    Future<void> aside(String command, String query, int position) async {
+      final original = selection('editor');
+      final navigation = commands.execute(command);
+      await tester.pumpAndSettle();
+      await tester.enterText(input, query);
+      await tester.pumpAndSettle();
+      expect(selection('editor').extentOffset, position);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.pumpAndSettle();
+      expect(await navigation, CommandExecutionStatus.executed);
+      expect(panel, findsNothing);
+      expect(selection('editor'), original);
+      expect(selection('editor-2').extentOffset, position);
+      expect(editor('editor-2').focusNode!.hasFocus, isTrue);
+      expect(
+        editor('editor-2').inputWindow.document,
+        same(editor('editor').inputWindow.document),
+      );
+      expect(find.byType(RustTextInputField), findsNWidgets(2));
+    }
+
+    await tester.tap(editorField('editor'));
+    await tester.pump();
+    await aside('workbench.action.gotoLine', ':2:3', 8);
+
+    await tester.tap(find.byKey(const ValueKey('editor-tab-label-editor-70')));
+    await tester.pumpAndSettle();
+    expect(editor('editor').focusNode!.hasFocus, isTrue);
+    await aside('workbench.action.gotoOffset', '::10', 9);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });
 }

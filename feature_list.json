@@ -3329,6 +3329,19 @@
       "evidence": "规范字符偏移命令和双冒号帮助入口复用位置预览、取消及 UTF-16 定位。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 239/239，Flutter 1,801 passed / 2 skipped。产品 ee165c6 的 CI 45062398477 四项及 Platform Availability 45062394435 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.208-goto-offset-entry.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-261",
+      "name": "P05.209 CMD-03 位置选择器 Alt+Enter 侧开",
+      "description": "用 Alt+Enter 在右侧共享编辑器视图提交位置，保留源视图选区与滚动，复用已有右侧组。",
+      "dependencies": [
+        "feat-125",
+        "feat-260"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -134,6 +134,9 @@ typedef QuickInputItemsProvider = Future<List<QuickItem>> Function(
   ValueChanged<List<QuickItem>> publish,
 );
 
+/// Keyboard modifiers captured on acceptance before validation can yield.
+typedef QuickInputKeyModifiers = ({bool alt, bool ctrlCmd});
+
 class QuickInput {
   QuickInput._();
 
@@ -162,6 +165,7 @@ class QuickInput {
     List<String> history = const [],
     FocusNode? restoreFocus,
     VoidCallback? Function(String)? redirectOnInput,
+    ValueChanged<QuickInputKeyModifiers>? onAcceptModifiers,
   }) async {
     String? accepted;
     await show(
@@ -177,7 +181,10 @@ class QuickInput {
       inputHistory: history,
       restoreFocus: restoreFocus,
       redirectOnInput: redirectOnInput,
-      onInputAccepted: (value) => accepted = value,
+      onInputAcceptedWithModifiers: (value, modifiers) {
+        accepted = value;
+        onAcceptModifiers?.call(modifiers);
+      },
     );
     return accepted;
   }
@@ -200,6 +207,7 @@ class QuickInput {
         validateInputMessage,
     List<String> inputHistory = const [],
     ValueChanged<String>? onInputAccepted,
+    void Function(String, QuickInputKeyModifiers)? onInputAcceptedWithModifiers,
     ValueChanged<String>? onValueChanged,
     VoidCallback? Function(String)? redirectOnInput,
     Widget Function(BuildContext context, String value, VoidCallback refresh)?
@@ -258,6 +266,7 @@ class QuickInput {
               validateInputMessage: validateInputMessage,
               inputHistory: inputHistory,
               onInputAccepted: onInputAccepted,
+              onInputAcceptedWithModifiers: onInputAcceptedWithModifiers,
               onValueChanged: onValueChanged,
               redirectOnInput: redirectOnInput,
               inputActionBuilder: inputActionBuilder,
@@ -297,6 +306,7 @@ class _QuickInputPanel extends StatefulWidget {
     this.validateInputMessage,
     required this.inputHistory,
     this.onInputAccepted,
+    this.onInputAcceptedWithModifiers,
     this.onValueChanged,
     this.redirectOnInput,
     this.inputActionBuilder,
@@ -326,6 +336,8 @@ class _QuickInputPanel extends StatefulWidget {
       validateInputMessage;
   final List<String> inputHistory;
   final ValueChanged<String>? onInputAccepted;
+  final void Function(String, QuickInputKeyModifiers)?
+      onInputAcceptedWithModifiers;
   final ValueChanged<String>? onValueChanged;
   final VoidCallback? Function(String)? redirectOnInput;
   final Widget Function(
@@ -576,7 +588,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return validation?.severity != QuickInputValidationSeverity.error;
   }
 
-  Future<void> _acceptInput() async {
+  Future<void> _acceptInput(QuickInputKeyModifiers modifiers) async {
     if (_validating || _accepting || _accepted) return;
     _accepting = true;
     final route = ModalRoute.of(context);
@@ -592,6 +604,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       widget.onHandled();
       Navigator.of(context).pop();
       widget.onInputAccepted?.call(value);
+      widget.onInputAcceptedWithModifiers?.call(value, modifiers);
     } finally {
       _accepting = false;
     }
@@ -1119,7 +1132,10 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (widget.inputMode &&
         (event.logicalKey == LogicalKeyboardKey.enter ||
             event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
-      unawaited(_acceptInput());
+      unawaited(_acceptInput((
+        alt: keyboard.isAltPressed,
+        ctrlCmd: isMac ? keyboard.isMetaPressed : keyboard.isControlPressed,
+      )));
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowDown) {

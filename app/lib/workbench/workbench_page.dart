@@ -4247,7 +4247,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final previousFocus = restoreFocus ?? _focusNodeFor(group, doc);
     final version = doc.doc.version;
     final originalSelections = doc.selectionSet.toList();
-    final scrollOffset = doc.editorScrollController.hasClients ? doc.editorScrollController.offset : null;
+    final scrollOffset = doc.editorScrollController.hasClients
+        ? doc.editorScrollController.offset
+        : null;
+    void restorePreview() {
+      _setDocSelections(doc, originalSelections, recordHistory: false);
+      if (scrollOffset != null && doc.editorScrollController.hasClients) {
+        final position = doc.editorScrollController.position;
+        doc.editorScrollController
+            .jumpTo(scrollOffset.clamp(0, position.maxScrollExtent));
+      }
+    }
+
     void preview(String value) {
       if (!mounted || !identical(_active, doc) || doc.doc.version != version) {
         return;
@@ -4271,9 +4282,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     preview(initialValue);
     VoidCallback? redirect;
+    var openAside = false;
     final result = await QuickInput.input(context,
       prompt: '转到行/列（:行:列，::字符偏移）',
       value: initialValue,
+      onAcceptModifiers: (modifiers) => openAside = modifiers.alt,
       inputActionBuilder: (context, value, refresh) => value.trim().startsWith('::')
           ? Semantics(toggled: _gotoZeroBasedOffset, child: IconButton(
               key: const ValueKey('goto-zero-based-offset'),
@@ -4316,12 +4329,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     if (!mounted || !identical(_active, doc)) return;
     if (result == null) {
-      if (doc.doc.version == version) {
-        _setDocSelections(doc, originalSelections, recordHistory: false);
-        if (scrollOffset != null && doc.editorScrollController.hasClients) {
-          doc.editorScrollController.jumpTo(scrollOffset.clamp(0, doc.editorScrollController.position.maxScrollExtent));
-        }
-      }
+      if (doc.doc.version == version) restorePreview();
       if (redirect case final open?) {
         open();
       } else {
@@ -4334,12 +4342,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final target = resolveGotoPosition(doc.doc, result, tabSize: doc.tabSize,
           zeroBasedOffset: _gotoZeroBasedOffset);
       if (target == null) return;
-      doc.selectionHistory.record(originalSelections);
-      _setDocSelections(doc, [TextSelection.collapsed(offset: target.offsetUtf16)],
-          recordHistory: false);
+      var destination = group;
+      var view = doc;
+      if (openAside) {
+        restorePreview();
+        final right = _groups[_adjacentEditorRegion(
+          group.region,
+          _EditorGroupMoveDirection.right,
+        )];
+        if (right != null &&
+            (!right.locked ||
+                right.docs.any((candidate) => candidate.sameDocumentAs(doc)))) {
+          _copyDocAcrossGroups(group, right, doc.id, null, insertAfter: false);
+        } else {
+          _splitFocusedGroup();
+        }
+        final side = _focused;
+        final opened = side.active;
+        if (identical(side, group) ||
+            opened == null ||
+            !opened.sameDocumentAs(doc)) {
+          _focusEditorAfterLayout(group, doc);
+          return;
+        }
+        destination = side;
+        view = opened;
+      }
+
+      view.selectionHistory
+          .record(openAside ? view.selectionSet : originalSelections);
+      _setDocSelections(
+        view,
+        [TextSelection.collapsed(offset: target.offsetUtf16)],
+        recordHistory: false,
+      );
       setState(() => _statusDetail = '行 ${target.line + 1}，列 ${target.column + 1}');
       _syncCommandContext();
-      _focusEditorAfterLayout(group, doc);
+      _focusEditorAfterLayout(destination, view);
     } on Object catch (error) {
       setState(() => _statusDetail = '无法定位：$error');
     }
