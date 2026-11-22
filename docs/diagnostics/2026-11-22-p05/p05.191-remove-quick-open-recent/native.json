@@ -1,0 +1,1753 @@
+{
+  "product": "e3f89b6729c7fea3a3e1ef351eb29c624fdf77f3",
+  "tree": "15788987208aaf57840de4baea8b84c37f1183c9",
+  "sharedDriverSha256": "d4855bf76d832814aae06621c4b1ee8d1c5590f4eeee903dbc4b9425b00e15d0",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "15788987208aaf57840de4baea8b84c37f1183c9",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "3be720f2377d5189fdc2a6fee354a2635647da397edd15d5c1133e60801db101",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "52b81b5c1093cae767fe848c0b8afea7e935e237f1b2c74a3231a9efd144682f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "6309341cd727e8307f6ee067bfb4d2edd9737adbadfd7903391516dbc0eed9cd",
+      "app/lib/workbench/quick_open_query.dart": "9b0110bc712c904ce86b90df6da35a07345729a0e626109cfddd4d54968d04e0",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/workbench_page.dart": "9fe2d8c9865900ebe21b4b6cbb70b58bb2135f742b25714dac8ed25f5235c441",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "516b40539123a76cbd9063c09ac861f792d106c877101daa539b3a9cde723b05"
+  },
+  "earlierAttempts": {
+    "linux-remove-recent-menu-click.json": "87118b3bf603795ed8d34e7937e8f373747aaa622875cfbdb2515946d54ad279",
+    "linux-remove-recent-menu-hover.json": "9505f428e9ea6fc714d24e13155c04044b859090903ad69d9fd6af1c404cc873",
+    "linux-remove-recent-report.json": "40a922946020274fa3f3583a82baab4a54f8c934e478932f2826001898adf24f",
+    "windows-remove-recent-focus-lost.json": "b04c34db6eb82b252b88a4dd1952e55a6a7017167c5b71ace704a81ec5bea2b8",
+    "windows-remove-recent-initial.json": "057b3a0e56def6050c1004a4102f61226a961f34d346b0c1846538ce582f1bd1",
+    "windows-remove-recent-menu-click.json": "fb6d20e657f128655cf98f6a3bccf9d7d3bcbca97cefc0c333eef5cfe1657856",
+    "windows-remove-recent-menu-hover.json": "97e0dff9148bb265afb9fe9f2471d24fc376ff566c74306a471be0fb5cfec7b7",
+    "windows-remove-recent-report.json": "250fbce1893fdd3954c7d3b8ea3a5f0db068b67257eb95be41f26712285b7977"
+  },
+  "windows": {
+    "tree": "15788987208aaf57840de4baea8b84c37f1183c9",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "6e84549492188c603ed1194d492dcef216bc902fa27c600f901ad16fd87bff26",
+    "fixtureSha256": "516b40539123a76cbd9063c09ac861f792d106c877101daa539b3a9cde723b05",
+    "runnerSha256": "93387cdc3f6d9ac875066ed9de9aa41ba00d3e95993a5698faadda8eaa4de8d3",
+    "observedInitialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": false,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "editor-focused": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "blank-recent-with-remove": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            732.4,
+            123.0,
+            754.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "quick-remove-recent": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "query-with-recent-and-file": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            732.4,
+            123.0,
+            754.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "quick-remove-recent": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            200.39999999999998,
+            153.0,
+            243.99999847412107,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            188.39999999999998,
+            171.0,
+            788.4,
+            193.0
+          ]
+        }
+      },
+      "removed-in-place": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt",
+          "qi-button-needle-unopened.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "qi-separator-文件结果": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-文件结果": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-unopened.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-unopened.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "blank-after-removal": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "new-query-finds-file-on-disk": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle-recent.txt",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "qi-separator-文件结果": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-文件结果": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "escape-restores-editor": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "file-menu-open": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "menu-打开最近": [
+            272.0,
+            99.0,
+            402.1875,
+            115.0
+          ]
+        }
+      },
+      "open-recent-preserves-file": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "menu-打开最近": [
+            272.0,
+            99.0,
+            402.1875,
+            115.0
+          ],
+          "menu-needle-recent.txt — E:\\temp\\alula-p05-191-remove-quick-open-recent\\probe-1795342584185387400\\workspace": [
+            365.28632812499995,
+            99.0,
+            964.8,
+            115.0
+          ]
+        }
+      },
+      "file-menu-open-recent-accept": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "editor-focused-after-menu": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      },
+      "reopened-file-visible-again": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            732.4,
+            123.0,
+            754.4,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ],
+          "quick-remove-recent": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "exit-picker": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.1015625,
+            25.5
+          ]
+        }
+      }
+    },
+    "dpi": 120,
+    "activation": {
+      "requested": true,
+      "accepted": false,
+      "foreground": false
+    },
+    "diskSha256": {
+      "needle-recent.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "needle-unopened.txt": "7dae8f752129e06fb1563fb1f8c8f6d0d0973e04223dd88deb5d61dfe37caf9f"
+    },
+    "exit": 0,
+    "passed": true
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "15788987208aaf57840de4baea8b84c37f1183c9",
+    "aotSha256": "a99f93700cf3fd12a3f0fd43fb9795dcd84705d78fc8158706366623f96e8221",
+    "fixtureSha256": "516b40539123a76cbd9063c09ac861f792d106c877101daa539b3a9cde723b05",
+    "runnerSha256": "2082b109ded5f395eb9ddb1249be8092b16f69c02e9b466e748ca2727d72f1d0",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "editor-focused": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "blank-recent-with-remove": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            825.5292765299479,
+            123.0,
+            847.5292765299479,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ],
+          "quick-remove-recent": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ]
+        }
+      },
+      "query-with-recent-and-file": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1",
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            825.5292765299479,
+            123.0,
+            847.5292765299479,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ],
+          "quick-remove-recent": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ],
+          "qi-separator-文件结果": [
+            300.0,
+            145.0,
+            900.0,
+            171.0
+          ],
+          "quick-group-文件结果": [
+            312.0,
+            153.0,
+            355.5999984741211,
+            168.0
+          ],
+          "qi-needle-unopened.txt": [
+            300.0,
+            171.0,
+            900.0,
+            193.0
+          ]
+        }
+      },
+      "removed-in-place": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-needle-unopened.txt",
+          "qi-button-needle-unopened.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "qi-separator-文件结果": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-文件结果": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-unopened.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-unopened.txt-0": [
+            851.534423828125,
+            123.0,
+            873.534423828125,
+            145.0
+          ]
+        }
+      },
+      "blank-after-removal": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "new-query-finds-file-on-disk": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "needle-recent.txt",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "qi-separator-文件结果": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-文件结果": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            832.8626098632812,
+            123.0,
+            854.8626098632812,
+            145.0
+          ]
+        }
+      },
+      "escape-restores-editor": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "file-menu-open": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "menu-打开最近": [
+            272.0,
+            99.0,
+            403.2367248535156,
+            115.0
+          ]
+        }
+      },
+      "open-recent-preserves-file": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "menu-打开最近": [
+            272.0,
+            99.0,
+            403.2367248535156,
+            115.0
+          ],
+          "menu-needle-recent.txt — /tmp/alula-p05-177-xvfb-0cg7oust/workspace": [
+            483.2367248535156,
+            100.5,
+            840.8993225097656,
+            113.5
+          ]
+        }
+      },
+      "file-menu-open-recent-accept": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "editor-focused-after-menu": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      },
+      "reopened-file-visible-again": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-recent.txt",
+          "qi-button-needle-recent.txt-0",
+          "qi-button-needle-recent.txt-1"
+        ],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ],
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-needle-recent.txt": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-0": [
+            825.5292765299479,
+            123.0,
+            847.5292765299479,
+            145.0
+          ],
+          "qi-button-needle-recent.txt-1": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ],
+          "quick-remove-recent": [
+            847.5292765299479,
+            123.0,
+            869.5292765299479,
+            145.0
+          ]
+        }
+      },
+      "exit-picker": {
+        "editors": [
+          {
+            "label": "needle-recent.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n",
+            "totalUtf16": 31,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              30,
+              30
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-recent.txt"
+        ],
+        "globalRecent": [
+          "needle-recent.txt"
+        ],
+        "boxes": {
+          "menu-文件(F)": [
+            270.0,
+            9.5,
+            307.89610290527344,
+            25.5
+          ]
+        }
+      }
+    },
+    "diskSha256": {
+      "needle-recent.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+      "needle-unopened.txt": "7dae8f752129e06fb1563fb1f8c8f6d0d0973e04223dd88deb5d61dfe37caf9f"
+    },
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    }
+  }
+}

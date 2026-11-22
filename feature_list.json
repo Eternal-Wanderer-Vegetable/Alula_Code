@@ -3097,8 +3097,8 @@
         "feat-239",
         "feat-242"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "原位移除时保留查询与输入焦点，文件菜单的「打开最近」仍保留原项，新查询仍可找回磁盘文件。Windows 实机及 Linux Xvfb + xfwm4 各 14 个观测点，专项 74/74，Flutter 1,774 passed / 2 skipped。产品 e3f89b6 的 CI 45011610113 四项与 Platform Availability 45011607544 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.191-remove-quick-open-recent.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

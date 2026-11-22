@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.191 / feat-243 完成。产品 e3f89b6729c7fea3a3e1ef351eb29c624fdf77f3 已推草稿 PR #3。原位移除时保留查询与输入焦点，文件菜单的「打开最近」仍保留原项，新查询仍可找回磁盘文件。Windows 实机及 Linux Xvfb + xfwm4 各 14 个观测点，专项 74/74，Flutter 1,774 passed / 2 skipped。产品 e3f89b6 的 CI 45011610113 四项与 Platform Availability 45011607544 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.190 证据 CI 45010107194 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.191-remove-quick-open-recent.md。
+
 - P05.190 / feat-242 完成。产品 a0465de9bc86298a910fa70c1f842eac2f9d6b5a 已推草稿 PR #3。先显示可用最近文件，后台结果补齐时保留选中和按钮焦点，拒绝旧查询及关闭后的回包。Windows 实机与 Linux Xvfb + xfwm4 各 10 个观测点，帧记录确认先后顺序。专项 70/70，Flutter 1,772 passed / 2 skipped。产品 a0465de 的 CI 45008935307 四项与 Platform Availability 45008932080 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务正在运行。P05.189 证据 CI 45007496004 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.190-progressive-quick-open.md。
 
 - P05.189 / feat-241 完成。产品 9fc89a27b87e90dc573978ae5c7f9282d33d2b5f 已推草稿 PR #3。替换前缀后继续切换，删除前缀返回文件查询，切换时还原预览并保留原焦点。Windows 实机及 Linux Xvfb + xfwm4 各 17 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 9fc89a2 的 CI 45006362843 四项与 Platform Availability 45006359091 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务正在运行。P05.188 证据 CI 45005250377 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.189-quick-access-switch.md。
