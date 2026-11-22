@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.179 / feat-231 完成。产品 1f3f504fc52fba1ccc89af94524bef341d9ea162 已推草稿 PR #3。Windows 11 125% 实机验证右、下两种相邻建组。Linux xfwm4 验证四向边缘、Alt 中心回退、拒收与 P05.178 回归。修复主窗获得焦点时的合成 Alt 按下引发标题栏抢焦点。专项 47/47，Flutter 1,752 passed / 2 skipped，同 SHA CI 44974007130 四项与 Platform Availability 44974002421 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.179-auxiliary-tab-split.md。下一项 P05.180 / feat-232，正常关闭辅助窗口的未保存文档确认交接。
+
 - P05.178 / feat-230 完成。产品 d931478aa3af1bf173279d39221d536250211751 已推草稿 PR #3。固定版源码核对正文、标签落点和最后一组关闭。Windows 11 125% 原生拖放和 Linux xfwm4 验证两个落点、未保存文本、UTF-16 选区及后续输入。Windows 非编辑器落点、Linux Escape 取消与同路径冲突均保留源窗。专项 35/35，Flutter 1,751 passed / 2 skipped，同 SHA CI 44970867854 四项及 Platform Availability 44970865584 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.178-auxiliary-tab-return.md。下一项 P05.179 / feat-231，辅助窗标签拖到主窗组边缘建组。
 
 - P05.177 / feat-229 完成。产品 0205034c94ea14819793993cd1a6797130b6c98b 已推草稿 PR #3。Windows 11 125% 同机复验显示活动标签和正文，首次、紧凑、恢复和窗口调整均可见。Windows 和 Linux xfwm4 复验输入、保存点脏标、紧凑恢复、标签和系统关闭路径。本地 Flutter 1,749 passed / 2 skipped，同 SHA CI 44928231147 四项与 Platform Availability 44928228908 Windows/Linux 通过。早期白屏在本次未复现，原因未定。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.177-auxiliary-active-editor-tab.md。下一项 P05.178 / feat-230，辅助窗活动文本标签回拖主窗。
