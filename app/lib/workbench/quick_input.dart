@@ -27,6 +27,7 @@ enum QuickItemKind {
 class QuickItem {
   const QuickItem({
     required this.label,
+    this.semanticsLabel,
     this.description,
     this.detail,
     this.commandId,
@@ -39,6 +40,7 @@ class QuickItem {
   });
 
   final String label;
+  final String? semanticsLabel;
 
   /// 与 label 同行、右侧暗色的补充列（上游 `QuickPickItem.description`）：
   /// 命令面板的快捷键、快速打开的路径都属于这一列。
@@ -65,6 +67,8 @@ class QuickItemButton {
     required this.onRun,
     this.altEnter = false,
     this.refreshItems = false,
+    this.alwaysVisible = false,
+    this.hoverIcon,
   });
 
   final IconData icon;
@@ -76,6 +80,12 @@ class QuickItemButton {
 
   /// Keeps the picker open and reloads its provider after this action.
   final bool refreshItems;
+
+  /// Shows this action on rows that are not selected.
+  final bool alwaysVisible;
+
+  /// Overrides the button icon while the pointer is over its row.
+  final IconData? hoverIcon;
 }
 
 enum QuickInputValidationSeverity { info, warning, error }
@@ -316,6 +326,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   final _focusNode = FocusNode(debugLabel: 'quick-input-field');
   final _rowKeys = <QuickItem, GlobalKey>{};
   final _buttonFocusNodes = <QuickItem, List<FocusNode>>{};
+  QuickItem? _hoveredRow;
   final _picked = <QuickItem>{};
   var _filtered = const <QuickItem>[];
   var _selected = 0;
@@ -431,6 +442,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
     setState(() {
       _itemsLoading = true;
+      _hoveredRow = null;
       _itemsError = null;
       _providedItems = const [];
       _filtered = const [];
@@ -1327,6 +1339,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                 ],
                 Expanded(
                   child: Text(item.label,
+                      semanticsLabel: item.semanticsLabel,
                       style: TextStyle(
                           fontSize: 12,
                           color: enabled ? null : Colors.grey.shade600),
@@ -1343,22 +1356,29 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                         overflow: TextOverflow.ellipsis),
                   ),
                 ],
-                // 上游：item 按钮只在 hover/活动行显示（hover 会选中该行），
-                // 键盘用户 Tab 进入当前行的按钮、Enter 触发。
-                if (selected)
-                  for (final (buttonIndex, button) in item.buttons.indexed)
+                // Tab traverses the active row's actions.
+                for (final (buttonIndex, button) in item.buttons.indexed)
+                  if (selected || button.alwaysVisible)
                     SizedBox.square(
                       dimension: _rowHeight,
-                      child: IconButton(
-                        key: ValueKey('qi-button-${item.label}-$buttonIndex'),
-                        focusNode: _buttonNodesFor(item)[buttonIndex],
-                        tooltip: button.tooltip,
-                        padding: EdgeInsets.zero,
-                        iconSize: 14,
-                        onPressed:
-                            enabled ? () => _runItemButton(button) : null,
-                        icon: Icon(button.icon,
-                            size: 14, color: Colors.grey.shade400),
+                      child: ExcludeFocusTraversal(
+                        excluding: !selected,
+                        child: IconButton(
+                          key: ValueKey('qi-button-${item.label}-$buttonIndex'),
+                          focusNode: _buttonNodesFor(item)[buttonIndex],
+                          tooltip: button.tooltip,
+                          padding: EdgeInsets.zero,
+                          iconSize: 14,
+                          onPressed:
+                              enabled ? () => _runItemButton(button) : null,
+                          icon: Icon(
+                            _hoveredRow == item
+                                ? button.hoverIcon ?? button.icon
+                                : button.icon,
+                            size: 14,
+                            color: Colors.grey.shade400,
+                          ),
+                        ),
                       ),
                     ),
               ],
@@ -1385,7 +1405,17 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         _navigationGeneration++;
         _selectIndex(index);
       },
-      child: row,
+      child: item.buttons.any((button) => button.hoverIcon != null)
+          ? MouseRegion(
+              onEnter: (_) => setState(() => _hoveredRow = item),
+              onExit: (_) {
+                if (_hoveredRow == item) {
+                  setState(() => _hoveredRow = null);
+                }
+              },
+              child: row,
+            )
+          : row,
     );
   }
 }

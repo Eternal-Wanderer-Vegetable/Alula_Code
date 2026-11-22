@@ -3101,6 +3101,19 @@
       "evidence": "原位移除时保留查询与输入焦点，文件菜单的「打开最近」仍保留原项，新查询仍可找回磁盘文件。Windows 实机及 Linux Xvfb + xfwm4 各 14 个观测点，专项 74/74，Flutter 1,774 passed / 2 skipped。产品 e3f89b6 的 CI 45011610113 四项与 Platform Availability 45011607544 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.191-remove-quick-open-recent.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-244",
+      "name": "P05.192 CMD-02 Quick Open 未保存状态",
+      "description": "Quick Open 标记未保存文件，最近条目显示圆点并在悬停时显示移除按钮，移除后保留编辑内容。",
+      "dependencies": [
+        "feat-239",
+        "feat-243"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

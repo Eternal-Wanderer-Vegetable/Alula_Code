@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -296,6 +297,114 @@ void main() {
     await tester.pumpAndSettle();
     expect(history.load().quickOpenFiles.single.label, 'needle-recent.txt');
     expect(panel, findsNothing);
+  });
+
+  testWidgets('Quick Open marks unsaved files and removes their history safely',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-dirty');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final dirty = File('${root.path}/dirty.txt')..writeAsStringSync('original');
+    final clean = File('${root.path}/clean.txt')..writeAsStringSync('clean');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    expect(
+        session.save({
+          'v': 1,
+          'workspace': root.path,
+          'focused': 'editor',
+          'groups': [
+            {
+              'region': 'editor',
+              'active': 2,
+              'docs': [
+                {'id': 2, 'path': dirty.path},
+              ],
+            },
+          ],
+        }),
+        isTrue);
+    final history =
+        RecentHistoryStore(path: '${session.resolvePath()}.recent-history');
+    expect(history.recordFile(dirty.path), isTrue);
+    expect(history.recordFile(clean.path), isTrue);
+    late CommandService commands;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    tester.testTextInput.updateEditingValue(const TextEditingValue(
+      text: 'unsaved 😀',
+      selection: TextSelection.collapsed(offset: 10),
+    ));
+    await tester.pump();
+    await tester.pump();
+    final document = tester
+        .widget<RustTextInputField>(find.byType(RustTextInputField))
+        .inputWindow
+        .document;
+    expect(document.isDirty, isTrue);
+
+    await commands.execute('view.quickOpen');
+    await tester.pump(const Duration(milliseconds: 120));
+    final dirtyRow = find.byKey(const ValueKey('qi-dirty.txt'));
+    final cleanRow = find.byKey(const ValueKey('qi-clean.txt'));
+    final removeDirty = find.byKey(const ValueKey('qi-button-dirty.txt-1'));
+    final removeClean = find.byKey(const ValueKey('qi-button-clean.txt-1'));
+    for (var attempt = 0;
+        attempt < 100 && dirtyRow.evaluate().isEmpty;
+        attempt++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    expect(tester.getTopLeft(cleanRow).dy,
+        lessThan(tester.getTopLeft(dirtyRow).dy));
+    IconData? glyph(Finder button) =>
+        (tester.widget<IconButton>(button).icon as Icon).icon;
+    expect(glyph(removeClean), Icons.close);
+    expect(glyph(removeDirty), Icons.fiber_manual_record);
+    expect(find.byKey(const ValueKey('qi-button-dirty.txt-0')), findsNothing);
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel(RegExp('dirty.txt，有未保存的更改')), findsWidgets);
+    expect(find.bySemanticsLabel(RegExp('clean.txt，有未保存的更改')), findsNothing);
+
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await mouse.addPointer(location: tester.getCenter(dirtyRow));
+    addTearDown(mouse.removePointer);
+    await tester.pump();
+    expect(glyph(removeDirty), Icons.close);
+    await mouse.moveTo(tester.getCenter(cleanRow));
+    await tester.pump();
+    expect(glyph(removeDirty), Icons.fiber_manual_record);
+
+    await tester.tap(removeDirty);
+    for (var attempt = 0;
+        attempt < 100 && dirtyRow.evaluate().isNotEmpty;
+        attempt++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    expect(dirtyRow, findsNothing);
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+    expect(document.isDirty, isTrue);
+    expect(document.resync().content, 'unsaved 😀');
+    expect(dirty.readAsStringSync(), 'original');
+    expect(history.load().files.map((entry) => entry.label),
+        contains('dirty.txt'));
   });
 
   testWidgets('Quick Open opens to the right by Alt+Enter and row button',

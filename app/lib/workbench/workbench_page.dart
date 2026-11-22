@@ -4625,32 +4625,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             requestedPage == page;
         final position = parseQuickOpenQuery(query);
         final recentItems = <String, QuickItem>{};
-        QuickItem item(String path, {bool recent = false}) => QuickItem(
-              label: _nameOf(path),
-              description: path,
-              onRun: () => openFile(path, position),
-              buttons: [
+        late final dirtyPaths = {
+          for (final document in _allDocs)
+            if (document.isDirty && document.path != null)
+              p.canonicalize(document.path!),
+        };
+        QuickItem item(String path, {bool recent = false}) {
+          final label = _nameOf(path);
+          final dirty = dirtyPaths.contains(p.canonicalize(path));
+          return QuickItem(
+            label: label,
+            semanticsLabel: dirty ? '$label，有未保存的更改' : null,
+            description: path,
+            onRun: () => openFile(path, position),
+            buttons: [
+              QuickItemButton(
+                icon: Icons.vertical_split,
+                tooltip: '在侧边打开',
+                altEnter: true,
+                onRun: () => openFile(path, position, side: true),
+              ),
+              if (recent)
                 QuickItemButton(
-                  icon: Icons.vertical_split,
-                  tooltip: '在侧边打开',
-                  altEnter: true,
-                  onRun: () => openFile(path, position, side: true),
+                  icon: dirty ? Icons.fiber_manual_record : Icons.close,
+                  alwaysVisible: dirty,
+                  hoverIcon: dirty ? Icons.close : null,
+                  tooltip: '从最近打开中移除',
+                  refreshItems: true,
+                  onRun: () async {
+                    if (!currentRequest()) return;
+                    final saved =
+                        _recentHistoryStore.hideFileFromQuickOpen(path);
+                    if (saved) removedPaths.add(path);
+                    _finishRecentHistoryWrite(saved);
+                  },
                 ),
-                if (recent)
-                  QuickItemButton(
-                    icon: Icons.close,
-                    tooltip: '从最近打开中移除',
-                    refreshItems: true,
-                    onRun: () async {
-                      if (!currentRequest()) return;
-                      final saved =
-                          _recentHistoryStore.hideFileFromQuickOpen(path);
-                      if (saved) removedPaths.add(path);
-                      _finishRecentHistoryWrite(saved);
-                    },
-                  ),
-              ],
-            );
+            ],
+          );
+        }
 
         List<QuickItem> group(List<QuickOpenMatch> matches) {
           final recent = matches.where((match) => match.recent);
