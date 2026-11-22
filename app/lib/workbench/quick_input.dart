@@ -64,11 +64,15 @@ class QuickItemButton {
     required this.icon,
     required this.tooltip,
     required this.onRun,
+    this.altEnter = false,
   });
 
   final IconData icon;
   final String tooltip;
   final Future<void> Function() onRun;
+
+  /// Use this button when the active row is accepted with Alt+Enter.
+  final bool altEnter;
 }
 
 enum QuickInputValidationSeverity { info, warning, error }
@@ -859,11 +863,18 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return true;
   }
 
-  Future<void> _runAt(int index) async {
+  Future<void> _runAt(int index, {bool altEnter = false}) async {
     if (index < 0 || index >= _filtered.length) return;
     final item = _filtered[index];
-    if (!_isSelectable(item)) return;
-    if (!_enabled(item) || !_claimPickerAcceptance()) return;
+    if (!_isSelectable(item) || !_enabled(item)) return;
+    if (altEnter) {
+      final button = item.buttons.where((button) => button.altEnter).firstOrNull;
+      if (button != null) {
+        await _runItemButton(button);
+        return;
+      }
+    }
+    if (!_claimPickerAcceptance()) return;
     widget.onHandled();
     Navigator.of(context).pop();
     if (item.commandId case final id?) {
@@ -1006,11 +1017,12 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
     if (event.logicalKey == LogicalKeyboardKey.enter ||
         event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+      final altEnter = keyboard.isAltPressed;
       _afterPendingPages(() {
         if (widget.canSelectMany) {
           _accept();
         } else {
-          unawaited(_runAt(_selected));
+          unawaited(_runAt(_selected, altEnter: altEnter));
         }
       });
       return KeyEventResult.handled;

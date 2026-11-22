@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
-- P05.185 / feat-237 完成。产品 d1e4bc19264c9455be77021068bf87a7907d98d9 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 已验证帮助条目、键位、前缀跳转、预览回滚、原编辑焦点与后续输入。专项 42/42，全量 Flutter 1,766 passed / 2 skipped。同 SHA CI 44992322568 四项与 Platform Availability 44992320761 Windows/Linux 均通过。P05.184 证据 CI 44990129011 四项通过。采集时 macOS 托管任务正在运行。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md。
+- P05.185 / feat-237 完成。产品 d1e4bc19264c9455be77021068bf87a7907d98d9 已推草稿 PR #3。Windows 11 125% 与 Linux WSLg 已验证帮助条目、键位、前缀跳转、预览回滚、原编辑焦点与后续输入。专项 42/42，全量 Flutter 1,766 passed / 2 skipped。同 SHA CI 44992322568 四项与 Platform Availability 44992320761 Windows/Linux 均通过。P05.184 证据 CI 44990129011 四项通过。采集时 macOS 托管任务正在运行。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md。
 
 - P05.184 / feat-236 完成。产品 b8355eef526924f5682329504b4dc6a54e36b6f3 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 验证清除命令、取消保留、确认清空主 journal 与备份、编辑选区及后续输入。Windows 以无效主记录重启后空历史仍成立。专项 18/18，全量 Flutter 1,765 passed / 2 skipped。同 SHA CI 44989174352 四项与 Platform Availability 44989171964 Windows/Linux 通过。P05.183 证据 CI 44988207664 四项全绿。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.184-clear-palette-history.md。 下一步核对默认 Quick Access 帮助前缀和已接线入口。
 

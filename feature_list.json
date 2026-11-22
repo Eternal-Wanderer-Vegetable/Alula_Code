@@ -3010,7 +3010,22 @@
         "feat-235"
       ],
       "status": "done",
-      "evidence": "帮助列出可用前缀和有效键位，支持选择和键入前缀跳转，保留查询与取消焦点。Windows 实机及 Linux xfwm4 原生交互各 15 个观测点，专项 42/42，Flutter 1,766 passed / 2 skipped。产品 d1e4bc1 的 CI 44992322568 四项、Platform Availability 44992320761 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md",
+      "evidence": "帮助列出可用前缀和有效键位，支持选择和键入前缀跳转，保留查询与取消焦点。Windows 实机及 Linux WSLg 原生交互各 15 个观测点，专项 42/42，Flutter 1,766 passed / 2 skipped。产品 d1e4bc1 的 CI 44992322568 四项、Platform Availability 44992320761 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-238",
+      "name": "P05.186 CMD-02 Quick Open 文件侧开",
+      "description": "Quick Open 结果行按钮及 Alt+Enter 在右侧打开，保留源文档视图、共享 Rust 文档并应用目标行列。",
+      "dependencies": [
+        "feat-126",
+        "feat-184",
+        "feat-185",
+        "feat-237"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 AnythingQuickAccessProvider 的项按钮和 Alt 接受均路由 SIDE_GROUP，复用可用右侧组或创建新组。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

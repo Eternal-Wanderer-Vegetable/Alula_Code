@@ -4376,6 +4376,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final workspaceGeneration = _quickOpenWorkspaceGeneration;
     bool currentWorkspace() => mounted && _workspaceRoot == workspace &&
         _quickOpenWorkspaceGeneration == workspaceGeneration;
+    Future<void> openFile(
+      String path,
+      QuickOpenQuery position, {
+      bool side = false,
+    }) async {
+      if (!currentWorkspace()) return;
+      final source = _focused;
+      EditorGroup? destination;
+      EditorGroup? findSideGroup(OpenDoc? existing) {
+        if (!currentWorkspace() || !identical(source, _groups[source.region])) {
+          return null;
+        }
+        final adjacent = _adjacentEditorRegion(
+          source.region,
+          _EditorGroupMoveDirection.right,
+        );
+        final candidate = _groups[adjacent];
+        if (candidate != null &&
+            (!candidate.locked ||
+                (existing != null &&
+                    candidate.docs.any(existing.sameDocumentAs)))) {
+          return destination = candidate;
+        }
+        var index = 2;
+        while (_groups.containsKey('editor-$index')) {
+          index++;
+        }
+        final region = 'editor-$index';
+        if (!_layout.splitRegion(source.region, region, Axis.horizontal)) {
+          setState(() => _statusDetail = '无法创建右侧编辑器组');
+          return null;
+        }
+        return destination = _groups[region] = EditorGroup(region);
+      }
+
+      await _openFileByPath(path, targetForOpen: side ? findSideGroup : null);
+      if (!currentWorkspace()) return;
+      final group = side ? destination : _focused;
+      if (group == null) {
+        if (previousFocus?.context != null) previousFocus!.requestFocus();
+        return;
+      }
+      final doc = group.active;
+      if (!identical(group, _focused) ||
+          doc == null ||
+          doc.path == null ||
+          !_pathsEqual(doc.path!, path)) {
+        return;
+      }
+      if (position.line != null) {
+        final target = resolveGotoPosition(
+          doc.doc,
+          ':${position.line}:${position.column ?? 1}',
+          tabSize: doc.tabSize,
+        );
+        if (target != null) {
+          _setDocSelection(
+            doc,
+            TextSelection.collapsed(offset: target.offsetUtf16),
+          );
+        } else if (!side) {
+          return;
+        }
+      } else if (!side) {
+        return;
+      }
+      _focusEditorAfterLayout(group, doc);
+    }
+
     void cancelSearch() { closed = true; search.cancel(); }
     _quickOpenCancellations.add(cancelSearch);
     QuickInput.show(
@@ -4422,18 +4491,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return [for (final path in paths) QuickItem(
           label: _nameOf(path),
           description: path,
-          onRun: () async {
-            if (!currentWorkspace()) return;
-            await _openFileByPath(path);
-            if (!currentWorkspace() || position.line == null) return;
-            final doc = _active;
-            if (doc == null || doc.path == null || !_pathsEqual(doc.path!, path)) return;
-            final target = resolveGotoPosition(doc.doc,
-                ':${position.line}:${position.column ?? 1}', tabSize: doc.tabSize);
-            if (target == null) return;
-            _setDocSelection(doc, TextSelection.collapsed(offset: target.offsetUtf16));
-            _focusEditorAfterLayout(_focused, doc);
-          },
+          onRun: () => openFile(path, position),
+          buttons: [
+            QuickItemButton(
+              icon: Icons.vertical_split,
+              tooltip: '在侧边打开',
+              altEnter: true,
+              onRun: () => openFile(path, position, side: true),
+            ),
+          ],
         )];
       },
     );
@@ -13925,7 +13991,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String? expectedContent,
     bool asPreview = false,
     bool pinPreview = false,
+    EditorGroup? Function(OpenDoc? existing)? targetForOpen,
   }) async {
+    EditorGroup? targetGroup([OpenDoc? existing]) => targetForOpen == null
+        ? _editorGroupForImplicitOpen(existing: existing)
+        : targetForOpen(existing);
+
+
     _dismissWelcomeForOpen();
     if (!asPreview && !pinPreview) {
       _lastExplorerClickPath = null;
@@ -13984,7 +14056,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
           return;
         }
-        final target = _editorGroupForImplicitOpen(existing: existing);
+        final target = targetGroup(existing);
         if (target == null) return;
         final existingInTarget = target.docs
             .where((candidate) => candidate.sameDocumentAs(existing))
@@ -14070,7 +14142,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       _updateDirty(open);
-      final target = _editorGroupForImplicitOpen();
+      final target = targetGroup();
       if (target == null) {
         open.disposeView();
         return;
