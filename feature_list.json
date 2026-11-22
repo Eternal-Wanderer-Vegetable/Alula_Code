@@ -3290,6 +3290,19 @@
       "evidence": "文件名与可见父目录按查询高亮，保留 UTF-16 边界、文件路径和位置后缀。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 232/232，Flutter 1,799 passed / 2 skipped。产品 f21fd90 的 CI 45055764267 四项及 Platform Availability 45055759185 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.205-quick-open-highlights.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-258",
+      "name": "P05.206 CMD-02 Quick Open 文件名与前缀排序",
+      "description": "普通查询在当前结果页优先文件名前缀与名称命中，保留查询资格、最近文件、精确路径及分页。",
+      "dependencies": [
+        "feat-253",
+        "feat-257"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

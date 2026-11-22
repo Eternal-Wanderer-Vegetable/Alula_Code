@@ -277,6 +277,7 @@ class QuickOpenSearch {
     final pathQuery = _native(parseQuickOpenQuery(query).pathQuery);
     final pattern = pathQuery == '.' ? '' : pathQuery;
     final terms = _prepareTerms(pattern);
+    final preferLabel = !pattern.contains(p.separator);
     final allowScoredMatches = pattern.isEmpty || terms.isNotEmpty;
     final recentKeys = {
       for (final path in excludedPaths) _key(p.normalize(_native(path))),
@@ -324,7 +325,9 @@ class QuickOpenSearch {
         final key = _key(path);
         if (!recentKeys.add(key)) continue;
         if (key != (directPath == null ? null : _key(directPath)) &&
-            (!allowScoredMatches || _score(terms, path, rootPath) == null)) {
+            (!allowScoredMatches ||
+                _score(terms, path, rootPath, preferLabel: preferLabel) ==
+                    null)) {
           continue;
         }
         final exists = await File(path).exists();
@@ -352,7 +355,7 @@ class QuickOpenSearch {
         if (recentKeys.contains(key) || (directExists && key == directKey)) {
           continue;
         }
-        final score = _score(terms, path, rootPath);
+        final score = _score(terms, path, rootPath, preferLabel: preferLabel);
         if (score != null && add(path, score)) return finish();
       }
       return finish();
@@ -418,13 +421,32 @@ class QuickOpenSearch {
     return score ?? (exact == null ? null : 0);
   }
 
-  static int? _score(List<_QuickOpenTerm> terms, String path, String root) {
+  static int? _score(
+    List<_QuickOpenTerm> terms,
+    String path,
+    String root, {
+    required bool preferLabel,
+  }) {
     if (terms.isEmpty) return 0;
     final name = p.basename(path);
-    final relative = p.relative(path, from: root);
+    const labelPrefixWeight = 1 << 17;
+    const labelWeight = 1 << 16;
+    late final nameLower = name.toLowerCase();
+    late final relative = p.relative(path, from: root);
     var total = 0;
     for (final term in terms) {
-      var score = _scoreTerm(term, name);
+      final labelScore = _scoreTerm(term, name);
+      if (preferLabel && labelScore != null) {
+        // Keep the fixed version's name and name-prefix tiers above paths.
+        if (nameLower.startsWith(term.text.toLowerCase())) {
+          final prefixShare = (100 * term.text.length / name.length).round();
+          total += labelPrefixWeight + prefixShare + labelScore;
+        } else {
+          total += labelWeight + labelScore;
+        }
+        continue;
+      }
+      var score = labelScore;
       final pathScore = _scoreTerm(term, relative);
       if (pathScore != null && (score == null || pathScore > score)) {
         score = pathScore;

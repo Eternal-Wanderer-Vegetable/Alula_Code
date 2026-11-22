@@ -242,6 +242,22 @@ void main() {
       return p.normalize(entry.path);
     }
 
+    test('prefers filename prefixes, then filename matches, then paths',
+        () async {
+      final pathMatch = await file('needle/plain.txt');
+      final insideName = await file('src/part-needle-note.txt');
+      final longPrefix = await file('pkg/needle-custom-description.txt');
+      final shortPrefix = await file('pkg/needle-a.txt');
+      expect(await search.search(root.path, 'needle'),
+          [shortPrefix, longPrefix, insideName, pathMatch]);
+      expect(
+        await search.search(root.path, 'needle', recentPaths: [pathMatch]),
+        [pathMatch, shortPrefix, longPrefix, insideName],
+      );
+      expect(await search.search(root.path, 'needle/plain'), [pathMatch]);
+      expect(await search.search(root.path, pathMatch), [pathMatch]);
+    });
+
     test('all 431 files are reachable through bounded, disjoint pages',
         () async {
       final expected = <String>{};
