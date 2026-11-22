@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.207 / feat-259 完成。产品 bf73c85cc855e6c16c4243efc8a76fbc374ab67a。同一匹配查询固定分页最近文件，保留后台写入、新查询刷新及显式移除。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 234/234，Flutter 1,801 passed / 2 skipped。产品 bf73c85 的 CI 45060315113 四项及 Platform Availability 45060311941 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.207-quick-open-mru-snapshot.md。
+
 - P05.206 / feat-258 完成。产品 b1849726c3fcf75db737541ad8ed81c98e3b30bf。普通查询结果页按文件名前缀、文件名命中和目录命中排序，保留最近文件与路径定位。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 233/233，Flutter 1,800 passed / 2 skipped。产品 b184972 的 CI 45058076816 四项及 Platform Availability 45058071369 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.206-quick-open-rank.md。
 
 - P05.205 / feat-257 完成。产品 f21fd90326342e9be8d56fd226640b307ade81cd。文件名与可见父目录按查询高亮，保留 UTF-16 边界、文件路径和位置后缀。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 232/232，Flutter 1,799 passed / 2 skipped。产品 f21fd90 的 CI 45055764267 四项及 Platform Availability 45055759185 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.205-quick-open-highlights.md。
