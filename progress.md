@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.198 / feat-250 完成。产品 309e20721894ad324846f92b7c8e90f9cb1ee9dd。普通中键后台固定所点文件，Ctrl/Cmd 和 Alt 侧开用最新位置，保留原活动组并恢复输入焦点。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 146/146，Flutter 1,785 passed / 2 skipped。产品 309e207 的 CI 45037831414 四项及 Platform Availability 45037828431 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-22-p05/p05.198-quick-open-background-middle.md。
+
 - P05.197 / feat-249 完成。产品 e6fc0de84550d27d411213936a8fbcb5ea84b130。右方向键后台固定标签。Ctrl/Cmd 和 Alt 侧开使用最新位置，保留选择器和原活动组。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 145/145，Flutter 1,784 passed / 2 skipped。产品 e6fc0de 的 CI 45035262715 四项及 Platform Availability 45035257942 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-22-p05/p05.197-quick-open-background-key.md。
 
 - P05.196 / feat-248 完成。产品 35832257d82574dad390ed49961690494c72060c。普通单击保留标签，Ctrl/Cmd 或 Alt 加单击复用侧开并使用最新位置。Windows 实机与 Linux Xvfb + xfwm4 各 16 个原生观测点，专项 142/142，Flutter 1,781 passed / 2 skipped。产品 3583225 的 CI 45032084941 四项及 Platform Availability 45032079768 Windows/Linux 通过。macOS 实机暂缓。本次 macOS 托管仍在运行。详见 docs/diagnostics/2026-11-22-p05/p05.196-quick-open-click-modifiers.md。
