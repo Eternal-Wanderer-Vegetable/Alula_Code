@@ -3224,6 +3224,20 @@
       "evidence": "文件选择器内循环移动，释放主修饰键接受当前文件，首次松键和无结果时保留选择器。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 223/223，Flutter 1,790 passed / 2 skipped。产品 9470067 的 CI 45042952140 四项及 Platform Availability 45042948595 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.200-quick-open-key-cycle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-253",
+      "name": "P05.201 CMD-02 Quick Open 多词文件查询",
+      "description": "文件名和相对路径上的独立词项必须全部匹配，保留最近文件分组、含空格的精确路径和位置后缀。",
+      "dependencies": [
+        "feat-239",
+        "feat-242",
+        "feat-246"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -175,6 +175,37 @@ void main() {
       expect(await search.search(root.path, 'nonmatching'), isEmpty);
     });
 
+    test('requires every search term across filename and relative path',
+        () async {
+      final match = await file('engine/line-parser.txt');
+      final recentMatch = await file('engine/config-parser.txt');
+      final filenameOnly = await file('archive/line-parser.txt');
+      final directoryOnly = await file('engine/status.txt');
+
+      expect(await search.search(root.path, 'PARSER egn'),
+          unorderedEquals([match, recentMatch]));
+      expect(await search.search(root.path, 'parser engine absent'), isEmpty);
+
+      final early = <List<QuickOpenMatch>>[];
+      final results = await search.searchMatches(
+        root.path,
+        'ENGINE   parser:2:3',
+        recentPaths: [filenameOnly, recentMatch, directoryOnly],
+        onRecentMatches: early.add,
+      );
+      expect(early, [
+        [(path: recentMatch, recent: true)],
+      ]);
+      expect(results, [
+        (path: recentMatch, recent: true),
+        (path: match, recent: false),
+      ]);
+
+      final literal = await file('engine tools/line parser.txt');
+      expect(await search.search(root.path, 'engine tools/line parser.txt'),
+          [literal]);
+    });
+
     test('MRU preserves order, deduplicates normalized paths, skips missing',
         () async {
       final first = await file('one.dart');

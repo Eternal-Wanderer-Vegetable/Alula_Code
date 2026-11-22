@@ -115,6 +115,10 @@ class QuickOpenSearch {
     final rootPath = p.normalize(p.absolute(_native(root)));
     final pathQuery = _native(parseQuickOpenQuery(query).pathQuery);
     final pattern = pathQuery == '.' ? '' : pathQuery;
+    final terms = [
+      for (final piece in pattern.split(' '))
+        if (piece.isNotEmpty) piece,
+    ];
     final recentKeys = {
       for (final path in excludedPaths) _key(p.normalize(_native(path))),
     };
@@ -161,7 +165,7 @@ class QuickOpenSearch {
         final key = _key(path);
         if (!recentKeys.add(key)) continue;
         if (key != (directPath == null ? null : _key(directPath)) &&
-            _score(pattern, path, rootPath) == null) {
+            _score(terms, path, rootPath) == null) {
           continue;
         }
         final exists = await File(path).exists();
@@ -189,7 +193,7 @@ class QuickOpenSearch {
         if (recentKeys.contains(key) || (directExists && key == directKey)) {
           continue;
         }
-        final score = _score(pattern, path, rootPath);
+        final score = _score(terms, path, rootPath);
         if (score != null && add(path, score)) return finish();
       }
       return finish();
@@ -222,13 +226,20 @@ class QuickOpenSearch {
   static String _key(String path) =>
       Platform.isWindows ? path.toLowerCase() : path;
 
-  static int? _score(String pattern, String path, String root) {
-    if (pattern.isEmpty) return 0;
-    final nameScore = treeFuzzyScore(pattern, p.basename(path))?.score;
-    final pathScore =
-        treeFuzzyScore(pattern, p.relative(path, from: root))?.score;
-    if (nameScore == null) return pathScore;
-    if (pathScore == null) return nameScore;
-    return nameScore > pathScore ? nameScore : pathScore;
+  static int? _score(List<String> terms, String path, String root) {
+    if (terms.isEmpty) return 0;
+    final name = p.basename(path);
+    final relative = p.relative(path, from: root);
+    var total = 0;
+    for (final term in terms) {
+      var score = treeFuzzyScore(term, name)?.score;
+      final pathScore = treeFuzzyScore(term, relative)?.score;
+      if (pathScore != null && (score == null || pathScore > score)) {
+        score = pathScore;
+      }
+      if (score == null) return null;
+      total += score;
+    }
+    return total;
   }
 }
