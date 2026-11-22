@@ -58,6 +58,7 @@ void main() {
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField));
     expect(input, findsOneWidget);
+    expect(tester.widget<TextField>(input).controller!.text, ':');
     await tester.enterText(input, ':bad');
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel(RegExp(r'^错误')), findsWidgets,
@@ -87,11 +88,14 @@ void main() {
     await navigating;
     expect(controller.selection.extentOffset, 8);
     expect(controller.text, text);
-    final offsets = commands!.execute('workbench.action.gotoLine');
+    final offsets = commands!.execute('workbench.action.gotoOffset');
     await tester.pumpAndSettle();
     input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField));
+    expect(tester.widget<TextField>(input).controller!.text, '::');
+    expect(
+        find.byKey(const ValueKey('goto-zero-based-offset')), findsOneWidget);
     await tester.enterText(input, '::9');
     await tester.pumpAndSettle();
     expect(controller.selection.extentOffset, 8);

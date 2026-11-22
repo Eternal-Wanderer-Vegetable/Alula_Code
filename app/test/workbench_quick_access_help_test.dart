@@ -78,6 +78,21 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.f1);
     await tester.pumpAndSettle();
     await enter('?');
+    await tester.tap(find.text('转到字符偏移'));
+    await tester.pumpAndSettle();
+    final position = tester.widget<TextField>(field).controller!;
+    expect(position.text, '::');
+    await enter(':2');
+    expect(tester.widget<TextField>(field).controller, same(position));
+    await enter('::1');
+    expect(tester.widget<TextField>(field).controller, same(position));
+    expect(
+        find.byKey(const ValueKey('goto-zero-based-offset')), findsOneWidget);
+    await close();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.f1);
+    await tester.pumpAndSettle();
+    await enter('?');
     await tester.tap(find.text('转到文件'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -162,6 +177,11 @@ void main() {
     await close();
 
     await route(':2:1', '转到行/列（:行:列，::字符偏移）');
+    await close();
+
+    await route('::9', '转到行/列（:行:列，::字符偏移）');
+    expect(
+        find.byKey(const ValueKey('goto-zero-based-offset')), findsOneWidget);
     await close();
 
     await route('@zebra', '转到符号（@名称，@: 按类别）');

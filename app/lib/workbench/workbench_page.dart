@@ -2286,6 +2286,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('workbench.action.gotoLine', '转到', '转到行/列…', _showGotoPosition,
         enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoLine'));
+    reg('workbench.action.gotoOffset', '转到', '转到字符偏移…',
+        () => _showGotoPosition(initialValue: '::'),
+        enablement: 'editorActive',
+        shortcut: _keybindings.shortcutFor('workbench.action.gotoOffset'));
     reg('list.find', '列表', '查找', () async => _openTreeFind(),
         when: 'listFocus', enablement: 'workspaceOpen');
     reg('list.closeFind', '列表', '关闭查找', () async => _closeTreeFind(),
@@ -4286,6 +4290,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : const SizedBox.shrink(),
       restoreFocus: previousFocus,
       redirectOnInput: (value) {
+        // Both position prefixes use the same preview and cancellation state.
+        if (value.startsWith(':')) return null;
         final next = prefixRedirect == null
             ? _quickAccessHelpRedirect(value, previousFocus)
             : prefixRedirect(value);
@@ -4356,6 +4362,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           prefix: ':',
           title: '转到行/列',
           command: 'workbench.action.gotoLine',
+          run: (value, redirect) => _showGotoPosition(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
+        ),
+        (
+          prefix: '::',
+          title: '转到字符偏移',
+          command: 'workbench.action.gotoOffset',
           run: (value, redirect) => _showGotoPosition(
               initialValue: value,
               restoreFocus: restoreFocus,

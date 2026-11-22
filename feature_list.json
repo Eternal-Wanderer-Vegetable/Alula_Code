@@ -3316,6 +3316,19 @@
       "evidence": "同一匹配查询固定分页最近文件，保留后台写入、新查询刷新及显式移除。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 234/234，Flutter 1,801 passed / 2 skipped。产品 bf73c85 的 CI 45060315113 四项及 Platform Availability 45060311941 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.207-quick-open-mru-snapshot.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-260",
+      "name": "P05.208 CMD-03 Go to Offset 命令和帮助入口",
+      "description": "登记规范字符偏移命令和双冒号帮助入口，复用位置预览、取消与 UTF-16 定位。",
+      "dependencies": [
+        "feat-125",
+        "feat-237"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
