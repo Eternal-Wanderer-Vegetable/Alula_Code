@@ -3395,6 +3395,19 @@
       "evidence": "空工作台文档符号入口显示指引，Enter 保持指引，Escape 恢复焦点。Windows 应用定向组合键和原生前缀、Linux 原生组合键和前缀各 15 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 9496aa0 的 CI 45072628579 四项及 Platform Availability 45072625440 Windows/Linux 通过。Windows 系统 Ctrl+Shift+O 仍待复验，macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-266",
+      "name": "P05.214 CMD-02 连续键入时保留完整 Quick Access 查询",
+      "description": "输入切换快速访问提供程序的前缀后继续连续键入，保留完整查询，切换期间不执行旧候选。",
+      "dependencies": [
+        "feat-241",
+        "feat-265"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

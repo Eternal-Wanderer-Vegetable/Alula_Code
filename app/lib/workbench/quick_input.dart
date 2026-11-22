@@ -366,6 +366,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   static const _rowHeight = 22.0;
   static const _detailRowHeight = _rowHeight * 2;
   static const _listPadding = EdgeInsets.only(top: 4, bottom: 3);
+  static const _inputRedirectDelay = Duration(milliseconds: 50);
 
   final _controller = TextEditingController();
   final _scroll = ScrollController();
@@ -390,6 +391,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   int _historyIndex = -1;
   String _historyDraft = '';
   String _lastInputText = '';
+  Timer? _inputRedirect;
   bool _accepting = false;
   bool _accepted = false;
   int _itemsGeneration = 0;
@@ -442,6 +444,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   void dispose() {
+    _inputRedirect?.cancel();
     if (widget.navigation?.acceptOnRelease.isNotEmpty == true) {
       HardwareKeyboard.instance.removeHandler(_onNavigationKeyRelease);
     }
@@ -469,13 +472,19 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   void _onInputChanged() {
     final query = _controller.text;
     final previous = _lastInputText;
-    if (previous == query) return;
+    if (_accepted || previous == query) return;
     _lastInputText = query;
+    _inputRedirect?.cancel();
+    _inputRedirect = null;
     if (widget.redirectOnInput?.call(query) case final redirect?) {
-      if (!_claimPickerAcceptance()) return;
-      widget.onHandled();
-      Navigator.of(context).pop();
-      redirect();
+      // Keep the field focused while the rest of a typed prefix/query arrives.
+      _inputRedirect = Timer(_inputRedirectDelay, () {
+        _inputRedirect = null;
+        if (!_claimPickerAcceptance()) return;
+        widget.onHandled();
+        Navigator.of(context).pop();
+        redirect();
+      });
       return;
     }
     final keepItems = widget.itemsProvider != null &&
@@ -593,7 +602,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   Future<void> _acceptInput(QuickInputKeyModifiers modifiers) async {
-    if (_validating || _accepting || _accepted) return;
+    if (_validating || _accepting || _accepted || _inputRedirect != null) {
+      return;
+    }
     _accepting = true;
     final route = ModalRoute.of(context);
     final value = _controller.text;
@@ -601,6 +612,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       if (!await (_validationTask ?? _validate()) ||
           !mounted ||
           route?.isCurrent != true ||
+          _inputRedirect != null ||
           value != _controller.text) {
         return;
       }
@@ -970,7 +982,10 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   bool _claimPickerAcceptance() {
-    if (_accepted || !mounted || ModalRoute.of(context)?.isCurrent != true) {
+    if (_accepted ||
+        _inputRedirect != null ||
+        !mounted ||
+        ModalRoute.of(context)?.isCurrent != true) {
       return false;
     }
     _accepted = true;
@@ -1041,6 +1056,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   Future<void> _runItemButton(QuickItemButton button) async {
+    if (_inputRedirect != null) return;
     if (button.refreshItems) {
       if (!mounted || _accepted || ModalRoute.of(context)?.isCurrent != true) {
         return;
@@ -1182,6 +1198,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         widget.inputMode ||
         widget.canSelectMany ||
         _accepted ||
+        _inputRedirect != null ||
         !_isSelectable(item) ||
         !_enabled(item) ||
         ModalRoute.of(context)?.isCurrent != true) {

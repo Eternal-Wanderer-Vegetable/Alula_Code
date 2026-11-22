@@ -144,7 +144,8 @@ void main() {
     final field = find.descendant(of: panel, matching: find.byType(TextField));
 
     Future<void> route(String value, String hint,
-        {bool replaceFileQuery = false}) async {
+        {bool replaceFileQuery = false,
+        List<String> earlierEdits = const []}) async {
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
@@ -156,7 +157,17 @@ void main() {
         await tester.enterText(field, 'main');
         await tester.pump();
       }
-      await tester.enterText(field, value);
+      if (earlierEdits.isEmpty) {
+        await tester.enterText(field, value);
+      } else {
+        final controller = tester.widget<TextField>(field).controller!;
+        for (final text in [...earlierEdits, value]) {
+          controller.value = TextEditingValue(
+              text: text,
+              selection: TextSelection.collapsed(offset: text.length));
+        }
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      }
       await tester.pumpAndSettle();
       expect(panel, findsOneWidget);
       final input = tester.widget<TextField>(field);
@@ -194,6 +205,12 @@ void main() {
     expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
     await close();
 
+    await route('@:zebra', '转到符号（@名称，@: 按类别）',
+        earlierEdits: ['@', '@:', '@:z']);
+    expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    await close();
+
     await route('#zebra', '工作区符号（#名称）');
     await close();
 
@@ -206,7 +223,7 @@ void main() {
 
     Future<void> editPrefix(String value, String expectedHint) async {
       await tester.enterText(field, value);
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
       await tester.pump(const Duration(milliseconds: 120));
       expect(panel, findsOneWidget);
       final input = tester.widget<TextField>(field);
@@ -232,6 +249,7 @@ void main() {
 
     await route('?', '显示快速访问入口');
     await editPrefix('main.rs', '文件名、路径或 path:行:列');
+    await tester.enterText(field, '@');
     await close();
     expect(controller.selection, original);
   });
