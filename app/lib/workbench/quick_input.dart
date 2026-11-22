@@ -186,6 +186,7 @@ class QuickInput {
     String? queryPrefix,
     Future<List<QuickItem>> Function(String query)? itemsProvider,
     QuickInputItemsProvider? progressiveItemsProvider,
+    Object Function(String query)? itemsQueryKey,
     VoidCallback? onClose,
     QuickInputNavigation? navigation,
   }) {
@@ -240,6 +241,7 @@ class QuickInput {
               inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
               itemsProvider: resolvedItemsProvider,
+              itemsQueryKey: itemsQueryKey,
               navigation: navigation,
               onDispose: notifyClosed,
               onHandled: () => handled = true,
@@ -277,6 +279,7 @@ class _QuickInputPanel extends StatefulWidget {
     this.inputActionBuilder,
     this.queryPrefix,
     this.itemsProvider,
+    this.itemsQueryKey,
     this.navigation,
     required this.onDispose,
     required this.onHandled,
@@ -306,6 +309,9 @@ class _QuickInputPanel extends StatefulWidget {
       inputActionBuilder;
   final String? queryPrefix;
   final QuickInputItemsProvider? itemsProvider;
+
+  /// Equal keys keep the current results and any active provider request.
+  final Object Function(String query)? itemsQueryKey;
   final QuickInputNavigation? navigation;
 
   @override
@@ -413,20 +419,31 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   void _onCommandsChanged() => _refilter(_controller.text);
 
+  Object _itemsQueryKey(String query) =>
+      widget.itemsQueryKey?.call(query) ?? query;
+
   void _onInputChanged() {
-    if (_lastInputText == _controller.text) return;
-    _lastInputText = _controller.text;
-    if (widget.redirectOnInput?.call(_controller.text) case final redirect?) {
+    final query = _controller.text;
+    final previous = _lastInputText;
+    if (previous == query) return;
+    _lastInputText = query;
+    if (widget.redirectOnInput?.call(query) case final redirect?) {
       if (!_claimPickerAcceptance()) return;
       widget.onHandled();
       Navigator.of(context).pop();
       redirect();
       return;
     }
-    _refilter(_controller.text);
-    widget.onValueChanged?.call(_controller.text);
+    final keepItems = widget.itemsProvider != null &&
+        _itemsQueryKey(previous) == _itemsQueryKey(query);
+    if (keepItems) {
+      setState(() {});
+    } else {
+      _refilter(query);
+    }
+    widget.onValueChanged?.call(query);
     if (_hasValidator) unawaited(_validate());
-    if (widget.itemsProvider != null) unawaited(_loadItems());
+    if (widget.itemsProvider != null && !keepItems) unawaited(_loadItems());
   }
 
   Future<void> _loadItems() async {
@@ -434,11 +451,12 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (provider == null) return;
     final generation = ++_itemsGeneration;
     final query = _controller.text;
+    final key = _itemsQueryKey(query);
     bool current() =>
         mounted &&
         !_accepted &&
         generation == _itemsGeneration &&
-        query == _controller.text;
+        key == _itemsQueryKey(_controller.text);
 
     setState(() {
       _itemsLoading = true;
@@ -975,12 +993,12 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         return;
       }
       final generation = _itemsGeneration;
-      final query = _controller.text;
+      final key = _itemsQueryKey(_controller.text);
       await button.onRun();
       if (mounted &&
           !_accepted &&
           generation == _itemsGeneration &&
-          query == _controller.text &&
+          key == _itemsQueryKey(_controller.text) &&
           ModalRoute.of(context)?.isCurrent == true) {
         _focusNode.requestFocus();
         await _loadItems();

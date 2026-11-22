@@ -4498,11 +4498,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final search = QuickOpenSearch();
     final entries = _quickAccessEntries(previousFocus);
     final removedPaths = <String>{};
+    ({String pattern, bool includeFileResults}) queryKey(String value) => (
+          pattern: parseQuickOpenQuery(value).pathQuery,
+          includeFileResults: value.trim().isNotEmpty,
+        );
+    var location = parseQuickOpenQuery(initialValue);
     var page = 0;
-    var lastQuery = '';
+    var lastQueryKey = queryKey(initialValue);
     var hasNext = false;
     var closed = false;
     var loading = false;
+    var searchGeneration = 0;
     final workspace = _workspaceRoot;
     final workspaceGeneration = _quickOpenWorkspaceGeneration;
     bool currentWorkspace() => mounted && _workspaceRoot == workspace &&
@@ -4571,6 +4577,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '文件名、路径或 path:行:列',
       initialValue: initialValue,
       restoreFocus: previousFocus,
+      itemsQueryKey: queryKey,
+      onValueChanged: (value) => location = parseQuickOpenQuery(value),
       redirectOnInput: (value) => _quickAccessEntryRedirect(
         value,
         entries,
@@ -4600,18 +4608,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
       ),
       progressiveItemsProvider: (query, publish) async {
-        if (query != lastQuery) {
+        final key = queryKey(query);
+        if (key != lastQueryKey) {
           page = 0;
           removedPaths.clear();
-          lastQuery = query;
+          lastQueryKey = key;
         }
         final requestedPage = page;
+        final generation = ++searchGeneration;
         bool currentRequest() =>
-            !closed &&
-            currentWorkspace() &&
-            query == lastQuery &&
-            requestedPage == page;
-        final position = parseQuickOpenQuery(query);
+            !closed && currentWorkspace() && generation == searchGeneration;
         final recentItems = <String, QuickItem>{};
         late final dirtyPaths = {
           for (final document in _allDocs)
@@ -4625,13 +4631,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             label: label,
             semanticsLabel: dirty ? '$label，有未保存的更改' : null,
             description: path,
-            onRun: () => openFile(path, position),
+            onRun: () => openFile(path, location),
             buttons: [
               QuickItemButton(
                 icon: Icons.vertical_split,
                 tooltip: '在侧边打开',
                 altEnter: true,
-                onRun: () => openFile(path, position, side: true),
+                onRun: () => openFile(path, location, side: true),
               ),
               if (recent)
                 QuickItemButton(
@@ -4679,13 +4685,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _recentHistory.quickOpenFiles.map((entry) => entry.path).toList(),
             excludedPaths: removedPaths,
             page: requestedPage,
-            includeFileResults: query.trim().isNotEmpty,
+            includeFileResults: key.includeFileResults,
             onRecentMatches: (recent) {
               if (currentRequest()) publish(group(recent));
             },
           );
         } finally {
-          if (query == lastQuery && requestedPage == page) loading = false;
+          if (generation == searchGeneration) loading = false;
         }
         if (!currentRequest()) return const [];
         hasNext = search.hasMore;

@@ -3128,6 +3128,20 @@
       "evidence": "井号、括号、line 字样与混合区间使用 UTF-16 定位，保留代理对边界并支持超长选区和侧开。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 100/100，Flutter 1,777 passed / 2 skipped。产品 8a8d24e 的 CI 45016283145 四项与 Platform Availability 45016279940 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.193-quick-open-location.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-246",
+      "name": "P05.194 CMD-02 Quick Open 位置后缀复用候选",
+      "description": "仅改位置时复用结果和进行中的搜索，保留条目及按钮焦点，按最新位置打开。",
+      "dependencies": [
+        "feat-242",
+        "feat-243",
+        "feat-245"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

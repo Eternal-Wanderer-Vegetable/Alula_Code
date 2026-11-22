@@ -72,6 +72,96 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('equivalent provider inputs preserve results and button focus',
+      (tester) async {
+    final pending = <String, Completer<List<QuickItem>>>{};
+    final publish = <String, ValueChanged<List<QuickItem>>>{};
+    final action = Completer<void>();
+    late String latestInput;
+    String? activatedWith;
+    const first = QuickItem(label: 'first');
+    final second = QuickItem(
+      label: 'second',
+      buttons: [
+        QuickItemButton(
+          icon: Icons.refresh,
+          tooltip: 'refresh second',
+          refreshItems: true,
+          onRun: () async {
+            activatedWith = latestInput;
+            await action.future;
+          },
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp(
+      home: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => QuickInput.show(
+            context,
+            hint: 'query',
+            items: const [],
+            initialValue: 'file:1',
+            itemsQueryKey: (query) => query.split(':').first,
+            onValueChanged: (value) => latestInput = value,
+            progressiveItemsProvider: (query, update) {
+              publish[query] = update;
+              return (pending[query] = Completer<List<QuickItem>>()).future;
+            },
+          ),
+          child: const Text('open'),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('open'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 120));
+    final controller =
+        tester.widget<TextField>(find.byType(TextField)).controller!;
+    controller.text = 'file:2';
+    await tester.pump();
+    expect(pending.keys, ['file:1']);
+    publish['file:1']!([first, second]);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    final focus = FocusManager.instance.primaryFocus;
+    final button = find.byKey(const ValueKey('qi-button-second-0'));
+    expect(tester.widget<IconButton>(button).focusNode, same(focus));
+
+    controller.text = 'file:3';
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus, same(focus));
+    expect(pending.keys, ['file:1']);
+    pending['file:1']!
+        .complete([first, second, const QuickItem(label: 'last')]);
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus, same(focus));
+    expect(find.text('last'), findsOneWidget);
+
+    await tester.tap(button);
+    expect(activatedWith, 'file:3');
+    controller.text = 'file:4';
+    await tester.pump();
+    expect(pending.keys, ['file:1']);
+    action.complete();
+    await tester.pump();
+    expect(pending.keys, ['file:1', 'file:4']);
+
+    controller.text = 'other:1';
+    await tester.pump();
+    publish['file:4']!([const QuickItem(label: 'stale partial')]);
+    pending['file:4']!.complete([const QuickItem(label: 'stale final')]);
+    pending['other:1']!.complete([const QuickItem(label: 'new file query')]);
+    await tester.pump();
+    expect(find.text('new file query'), findsOneWidget);
+    expect(find.text('stale partial'), findsNothing);
+    expect(find.text('stale final'), findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+  });
+
   testWidgets(
       'progressive results retain the active action and reject old updates',
       (tester) async {

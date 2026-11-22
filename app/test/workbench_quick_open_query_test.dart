@@ -214,6 +214,77 @@ void main() {
     expect(largeFile.readAsStringSync(), 'head\n$longLine\nlast');
   });
 
+  testWidgets('Quick Open keeps the active file while its location changes',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-reuse');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final first = File('${root.path}/needle-first.txt')
+      ..writeAsStringSync('head\nfirst');
+    final second = File('${root.path}/needle-second.txt')
+      ..writeAsStringSync('head\nsecond');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    final history =
+        RecentHistoryStore(path: '${session.resolvePath()}.recent-history');
+    expect(history.recordFile(second.path), isTrue);
+    expect(history.recordFile(first.path), isTrue);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await commands.execute('view.quickOpen');
+    await tester.pump(const Duration(milliseconds: 120));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final row = find.byKey(const ValueKey('qi-needle-second.txt'));
+    final loading = find.byKey(const ValueKey('quick-input-loading'));
+    await tester.enterText(input, 'needle');
+    for (var i = 0;
+        i < 100 && (row.evaluate().isEmpty || loading.evaluate().isNotEmpty);
+        i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    expect(row, findsOneWidget);
+    expect(loading, findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    final sideButton =
+        find.byKey(const ValueKey('qi-button-needle-second.txt-0'));
+    final focus = tester.widget<IconButton>(sideButton).focusNode;
+
+    await tester.enterText(input, 'needle:');
+    await tester.pump();
+    expect(tester.widget<IconButton>(sideButton).focusNode, same(focus));
+    expect(loading, findsNothing);
+    await tester.enterText(input, 'needle:2:3');
+    await tester.pump();
+    expect(tester.widget<IconButton>(sideButton).focusNode, same(focus));
+    expect(loading, findsNothing);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    final editor = tester.widget<TextField>(
+        find.byKey(const ValueKey('rust-bounded-text-input')));
+    expect(editor.controller!.text, 'head\nsecond');
+    expect(
+        editor.controller!.selection, const TextSelection.collapsed(offset: 7));
+  });
+
   testWidgets('Quick Open separates recent files from workspace results',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-groups');
