@@ -3408,6 +3408,20 @@
       "evidence": "连续键入时保留完整快速访问查询，等待切换期间阻止旧候选接受。Windows 与 Linux 分别复验 12 和 60 毫秒输入节奏，每轮各 36 个观测点。专项 268/268，Flutter 1,807 passed / 2 skipped。产品 c8c8da5 的 CI 45074969186 四项及 Platform Availability 45074964422 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-267",
+      "name": "P05.215 CMD-04 文档符号侧开快捷键与保留右侧标签",
+      "description": "文档符号选择器 Alt+Enter 和 Ctrl/Cmd+Enter 向右侧定位，保留目标标签并恢复源预览，重复使用右侧视图。",
+      "dependencies": [
+        "feat-128",
+        "feat-263",
+        "feat-266"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -4194,19 +4194,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Future<void> accept(DocumentSymbolNode symbol, {bool side = false}) async {
       if (accepted || !valid()) return;
       accepted = true;
+      var destination = group;
+      var target = doc;
       if (side) {
         _setDocSelections(doc, original, recordHistory: false);
-        final sourcePosition = editorPrimaryScrollPosition(doc.editorScrollController);
+        final sourcePosition =
+            editorPrimaryScrollPosition(doc.editorScrollController);
         if (scroll != null && sourcePosition != null) {
           sourcePosition.jumpTo(scroll.clamp(0, sourcePosition.maxScrollExtent));
         }
-        _splitFocusedGroup();
+        final right = _groups[_adjacentEditorRegion(
+          group.region,
+          _EditorGroupMoveDirection.right,
+        )];
+        if (right != null &&
+            (!right.locked ||
+                right.docs.any((candidate) => candidate.sameDocumentAs(doc)))) {
+          _copyDocAcrossGroups(group, right, doc.id, null, insertAfter: false);
+        } else {
+          _splitFocusedGroup();
+        }
+        destination = _focused;
+        final opened = destination.active;
+        if (identical(destination, group) ||
+            opened == null ||
+            !opened.sameDocumentAs(doc)) {
+          _focusEditorAfterLayout(group, doc);
+          return;
+        }
+        target = opened;
+        if (destination.previewDocId == target.id) {
+          setState(() => destination.previewDocId = null);
+          _scheduleStateSave();
+          _syncCommandContext();
+        }
       }
-      final target = _active;
-      if (target == null || !target.sameDocumentAs(doc)) return;
-      target.selectionHistory.record(original);
-      _setDocSelections(target, [TextSelection.collapsed(offset: symbol.startUtf16)], recordHistory: false);
-      _focusEditorAfterLayout(_focused, target);
+      target.selectionHistory.record(side ? target.selectionSet : original);
+      _setDocSelections(
+        target,
+        [TextSelection.collapsed(offset: symbol.startUtf16)],
+        recordHistory: false,
+      );
+      _focusEditorAfterLayout(destination, target);
     }
     await QuickInput.show(context,
       hint: hint, initialValue: initialValue, items: const [],
@@ -4233,8 +4262,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             detail: row.depth == 0 ? null : '  ' * row.depth + symbol.name,
             onPreview: () => preview(symbol),
             onRun: () => accept(symbol),
-            buttons: [QuickItemButton(icon: Icons.vertical_split, tooltip: '在侧边打开符号',
-                onRun: () => accept(symbol, side: true))],
+            buttons: [
+              QuickItemButton(
+                icon: Icons.vertical_split,
+                tooltip: '在侧边打开符号',
+                altEnter: true,
+                ctrlCmdEnter: true,
+                onRun: () => accept(symbol, side: true),
+              ),
+            ],
           ));
         }
         return items;
