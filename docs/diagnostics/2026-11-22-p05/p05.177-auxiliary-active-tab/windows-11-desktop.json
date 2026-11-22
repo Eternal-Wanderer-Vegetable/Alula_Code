@@ -1,0 +1,1215 @@
+{
+  "captureDate": "2026-11-22",
+  "environment": "Windows 11 Pro for Workstations build 26200",
+  "monitorScalePercent": 125,
+  "method": "window screenshots and native mouse/keyboard from Codex Windows desktop control; fixture reads from each Alula engine",
+  "productCommit": "0205034c94ea14819793993cd1a6797130b6c98b",
+  "productTree": "5f914937be26222f33247f4ef57a4931378f7065",
+  "candidateReleaseBuildTree": "fca57e959fd89bab10ecc11f2dade951526b72a4",
+  "releaseAotSha256": "d126e198410abeea4b454110db45508ecfd5d71f11ac5be4ba39acd8d2c5b802",
+  "controlAotSha256": "202eb2b42dd5e8159d07f03fc409a61b3b793c190e1e5f06d840e633228d1671",
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "engineSha256": "eca1f8c9b1537bd585bbbcc62362df9ca7e69faa7d4e895688108af63ccea157",
+  "diskSha256ForAllThreeRuns": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+  "visibleAuxiliaryInControlAndBothCandidateRuns": true,
+  "whiteClientReproducedInThisRun": false,
+  "earlyWhiteClientCauseResolved": false,
+  "controlExitCode": 0,
+  "candidateFirstRunAuxiliaryClosedAndMainReturned": true,
+  "candidateFirstRunHarnessExitCode": 1,
+  "candidateRepeatRunCloseRoute": "Alt+F4 on auxiliary, subsequent edit on main, Alt+F4 on main",
+  "candidateRepeatRunExitCode": 0,
+  "directCommitVersionDelta": 1,
+  "directCommitText": "NA",
+  "outputViewportMatchesPinnedReference": false,
+  "reference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "measuredRectanglesLogicalPixels": {
+      "tab": {
+        "x": 0.0,
+        "y": 35.0,
+        "width": 171.69775390625,
+        "height": 31.0
+      },
+      "closeSlot": {
+        "x": 145.19775390625,
+        "y": 40.5,
+        "width": 20.0,
+        "height": 20.0
+      }
+    },
+    "deltaFromPinnedLogicalPixels": {
+      "tab": {
+        "x": 0.0,
+        "y": 0.024997711181640625,
+        "width": -0.0022430419921875,
+        "height": 0.0
+      },
+      "closeSlot": {
+        "x": -0.0022430419921875,
+        "y": 0.024997711181640625,
+        "width": 0.0,
+        "height": 0.0
+      }
+    },
+    "matchedSlotAtSameViewportInWindowsOffscreenProbe": true
+  },
+  "windowScreenshots": {
+    "control": {
+      "bytes": 15648,
+      "width": 787,
+      "height": 594,
+      "sha256": "344bbc307e99e82ba7de8403a6f27d3f59dc4cd326ca6830b80e277e1d2697fb"
+    },
+    "clean": {
+      "bytes": 18223,
+      "width": 787,
+      "height": 594,
+      "sha256": "de8f9359002e15cc137ddb4f38de8db37d04da178b08f5cd55ae3647318c6cd6"
+    },
+    "dirty": {
+      "bytes": 16956,
+      "width": 787,
+      "height": 594,
+      "sha256": "82555d37ce301fe02099e807e2572509e1c6bce903d8ff34b81b2a4e0a806c3b"
+    },
+    "compact": {
+      "bytes": 15332,
+      "width": 787,
+      "height": 594,
+      "sha256": "b764e2f958cd11c13241d87df9071a2cc55e9a88b1f738468032278a60daf1b0"
+    },
+    "compactRestored": {
+      "bytes": 17112,
+      "width": 787,
+      "height": 594,
+      "sha256": "7d76a8ff65be178c493b42459444f8f19ee3d013f47303c7e04a211d385dca3e"
+    },
+    "maximized": {
+      "bytes": 45207,
+      "width": 2048,
+      "height": 1104,
+      "sha256": "59bb3bf5228e7eadb578915df5d29eaf111114b595046746ffba5756eb2246d7"
+    },
+    "nativeRestored": {
+      "bytes": 17308,
+      "width": 787,
+      "height": 594,
+      "sha256": "f645ccf188719e6aa482c3b139301d4628d7997fcc20af14a5d65b22184e8ac1"
+    },
+    "repeatAuxiliary": {
+      "bytes": 16999,
+      "sha256": "863d5224399d86a75bd83f73030d420d769baf8054df760616ecddbfb4498f9d"
+    },
+    "repeatReturnedMain": {
+      "bytes": 33798,
+      "sha256": "49b984fa53bc38ea1d4cdda99635094b00a36b47fd1f5f6480f0cbdd46b2df95"
+    }
+  },
+  "trace": {
+    "dirty-first": {
+      "step": "dirty-first",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": false
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": true,
+          "selection": [
+            18,
+            18
+          ]
+        }
+      ]
+    },
+    "native-digit": {
+      "step": "native-digit",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt，未保存",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀NA\nSecond line\n",
+          "mirror": "Compact example 😀NA\nSecond line\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    "savepoint-restored": {
+      "step": "savepoint-restored",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": false
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 4,
+          "dirty": false,
+          "editorFocused": true,
+          "selection": [
+            18,
+            18
+          ]
+        }
+      ]
+    },
+    "expanded-dirty": {
+      "step": "expanded-dirty",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt，未保存",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            19,
+            18
+          ]
+        }
+      ]
+    },
+    "compact": {
+      "step": "compact",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          30.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          30.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          30.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          30.0
+        ],
+        "auxiliary-editor-input": [
+          0.0,
+          30.0,
+          785.6,
+          562.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": true,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "退出紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {},
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            0.0,
+            30.0,
+            785.6,
+            562.4
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            19,
+            18
+          ]
+        }
+      ]
+    },
+    "expanded-restored": {
+      "step": "expanded-restored",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt，未保存",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            19,
+            18
+          ]
+        }
+      ]
+    },
+    "native-maximized": {
+      "step": "native-maximized",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        -7.2,
+        -7.2,
+        2055.2000000000003,
+        1111.2
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          1950.0,
+          0.0,
+          1980.0,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          1980.0,
+          0.0,
+          2010.0,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          2010.0,
+          0.0,
+          2040.0,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          2048.0,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          2044.0,
+          1076.8
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt，未保存",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            2044.0,
+            1076.8
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            19,
+            18
+          ]
+        }
+      ]
+    },
+    "native-restored": {
+      "step": "native-restored",
+      "slot": "child-compact-sample.txt",
+      "windowId": "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8",
+      "bounds": [
+        9.6,
+        9.6,
+        809.6,
+        609.6
+      ],
+      "windowCount": 2,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+        "b98165ae-c1e4-4c1a-9edb-392d6a44ebc8"
+      ],
+      "boxes": {
+        "auxiliary-title-row": [
+          0.0,
+          0.0,
+          785.6,
+          35.0
+        ],
+        "auxiliary-compact-mode-button": [
+          687.6,
+          0.0,
+          717.6,
+          35.0
+        ],
+        "auxiliary-always-on-top-button": [
+          717.6,
+          0.0,
+          747.6,
+          35.0
+        ],
+        "auxiliary-close-button": [
+          747.6,
+          0.0,
+          777.6,
+          35.0
+        ],
+        "auxiliary-editor-tab-strip": [
+          0.0,
+          35.0,
+          785.6,
+          67.0
+        ],
+        "auxiliary-editor-active-tab": [
+          0.0,
+          35.0,
+          171.69775390625,
+          66.0
+        ],
+        "auxiliary-editor-tab-close": [
+          145.19775390625,
+          40.5,
+          165.19775390625,
+          60.5
+        ],
+        "auxiliary-editor-input": [
+          4.0,
+          71.0,
+          781.6,
+          558.4
+        ]
+      },
+      "controls": {
+        "auxiliary-compact-mode-semantics": {
+          "label": "紧凑模式",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-compact-mode-button": {
+          "tooltip": "启用紧凑模式",
+          "enabled": true
+        },
+        "auxiliary-always-on-top-semantics": {
+          "label": "始终置顶",
+          "role": null,
+          "selected": null,
+          "toggled": false,
+          "onTap": true
+        },
+        "auxiliary-always-on-top-button": {
+          "tooltip": "始终置顶",
+          "enabled": true
+        },
+        "auxiliary-close-button": {
+          "tooltip": "移回主窗口并关闭",
+          "enabled": true
+        },
+        "auxiliary-editor-active-tab": {
+          "label": "compact-sample.txt，未保存",
+          "role": "tab",
+          "selected": true,
+          "toggled": null,
+          "onTap": true
+        },
+        "auxiliary-editor-tab-close": {
+          "enabled": true,
+          "dirtyGlyph": true
+        }
+      },
+      "alwaysOnTop": false,
+      "labels": {
+        "auxiliary-editor-tab-label": "compact-sample.txt"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 3,
+          "box": [
+            4.0,
+            71.0,
+            781.6,
+            558.4
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            19,
+            18
+          ]
+        }
+      ]
+    },
+    "returned-main": {
+      "step": "returned-main",
+      "slot": "main",
+      "windowId": "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9",
+      "bounds": [
+        9.6,
+        9.6,
+        729.6,
+        669.6
+      ],
+      "windowCount": 1,
+      "windowIds": [
+        "ad464a2b-3fa9-4339-aa0c-49abc5aaafe9"
+      ],
+      "boxes": {},
+      "controls": {},
+      "labels": {
+        "editor-tab-label-editor-1": "未命名",
+        "editor-tab-label-editor-4": "compact-sample.txt •"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 4,
+          "box": [
+            230.0,
+            102.0,
+            699.2,
+            620.8
+          ],
+          "rust": "Compact example 😀2\nSecond line\n",
+          "mirror": "Compact example 😀2\nSecond line\n",
+          "totalUtf16": 32,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "main-edited-after-system-close": {
+      "step": "main-edited-after-system-close",
+      "slot": "main",
+      "windowId": "bc2ef181-9962-45d3-a8f4-1e8782a4ab05",
+      "bounds": [
+        9.6,
+        9.6,
+        729.6,
+        669.6
+      ],
+      "windowCount": 1,
+      "windowIds": [
+        "bc2ef181-9962-45d3-a8f4-1e8782a4ab05"
+      ],
+      "boxes": {},
+      "controls": {},
+      "labels": {
+        "editor-tab-label-editor-1": "未命名",
+        "editor-tab-label-editor-4": "compact-sample.txt •"
+      },
+      "editors": [
+        {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 4,
+          "box": [
+            230.0,
+            102.0,
+            699.2,
+            620.8
+          ],
+          "rust": "Compact example 😀34\nSecond line\n",
+          "mirror": "Compact example 😀34\nSecond line\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ]
+        }
+      ]
+    }
+  },
+  "ownedFixtureObservationLimitSeconds": 240
+}

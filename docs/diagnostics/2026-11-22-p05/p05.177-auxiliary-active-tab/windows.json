@@ -169,7 +169,9 @@
       255
     ],
     "beforeDirtySlotGDIAndPrintWindowWhite": true,
-    "finalCandidateDeviceScreenshotPending": true
+    "finalCandidateDeviceScreenshotPending": false,
+    "sameDeviceRetest": "windows-11-desktop.json",
+    "whiteClientReproducedInSameDeviceRetest": false
   },
   "finalRelease": {
     "AotSha256": "d126e198410abeea4b454110db45508ecfd5d71f11ac5be4ba39acd8d2c5b802",
