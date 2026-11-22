@@ -402,11 +402,13 @@ final RegExp _rustIdentifierPattern = RegExp(
   unicode: true,
 );
 
+typedef _QuickAccessRedirect = VoidCallback? Function(String);
+
 typedef _QuickAccessEntry = ({
   String prefix,
   String title,
   String command,
-  FutureOr<void> Function(String) run,
+  FutureOr<void> Function(String, _QuickAccessRedirect) run,
 });
 
 enum _EditorGroupMoveDirection {
@@ -3925,7 +3927,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  void _showCommandPalette({String initialValue = '', FocusNode? restoreFocus}) {
+  void _showCommandPalette({
+    String initialValue = '',
+    FocusNode? restoreFocus,
+    _QuickAccessRedirect? prefixRedirect,
+  }) {
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final currentLocation = _layout.activityBarLocation;
     final available = [
@@ -3948,7 +3954,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       queryPrefix: '>',
       initialValue: initialValue,
       restoreFocus: previousFocus,
-      redirectOnInput: (value) => _quickAccessHelpRedirect(value, previousFocus),
+      redirectOnInput: prefixRedirect ??
+          (value) => _quickAccessHelpRedirect(value, previousFocus),
       onCommandExecuted: _recordCommandPaletteAccept,
       items: [
         if (recentIds.isNotEmpty)
@@ -4019,6 +4026,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _showWorkspaceSymbols({
     String initialValue = '#',
     FocusNode? restoreFocus,
+    _QuickAccessRedirect? prefixRedirect,
   }) async {
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final source = _active;
@@ -4037,7 +4045,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '工作区符号（#名称）',
       initialValue: initialValue,
       restoreFocus: previousFocus,
-      redirectOnInput: (value) => _quickAccessHelpRedirect(value, previousFocus),
+      redirectOnInput: prefixRedirect ??
+          (value) => _quickAccessHelpRedirect(value, previousFocus),
       items: const [],
       onClose: () {
         closed = true;
@@ -4132,6 +4141,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _showDocumentSymbols({
     String initialValue = '@',
     FocusNode? restoreFocus,
+    _QuickAccessRedirect? prefixRedirect,
   }) async {
     final group = _focused;
     final doc = group.active;
@@ -4174,7 +4184,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '转到符号（@名称，@: 按类别）', initialValue: initialValue, items: const [],
       restoreFocus: previousFocus,
       redirectOnInput: (value) {
-        final next = _quickAccessHelpRedirect(value, previousFocus);
+        final next = prefixRedirect == null
+            ? _quickAccessHelpRedirect(value, previousFocus)
+            : prefixRedirect(value);
         return next == null ? null : () => redirect = next;
       },
       itemsProvider: (query) async {
@@ -4216,6 +4228,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _showGotoPosition({
     String initialValue = ':',
     FocusNode? restoreFocus,
+    _QuickAccessRedirect? prefixRedirect,
   }) async {
     final group = _focused;
     final doc = group.active;
@@ -4225,6 +4238,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final version = doc.doc.version;
     final originalSelections = doc.selectionSet.toList();
     final scrollOffset = doc.editorScrollController.hasClients ? doc.editorScrollController.offset : null;
+    void preview(String value) {
+      if (!mounted || !identical(_active, doc) || doc.doc.version != version) {
+        return;
+      }
+      try {
+        final target = resolveGotoPosition(
+          doc.doc,
+          value,
+          tabSize: doc.tabSize,
+          zeroBasedOffset: _gotoZeroBasedOffset,
+        );
+        if (target != null) {
+          _setDocSelections(
+            doc,
+            [TextSelection.collapsed(offset: target.offsetUtf16)],
+            recordHistory: false,
+          );
+        }
+      } on Object catch (_) {}
+    }
+
+    preview(initialValue);
     VoidCallback? redirect;
     final result = await QuickInput.input(context,
       prompt: '转到行/列（:行:列，::字符偏移）',
@@ -4245,20 +4280,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : const SizedBox.shrink(),
       restoreFocus: previousFocus,
       redirectOnInput: (value) {
-        final next = _quickAccessHelpRedirect(value, previousFocus);
+        final next = prefixRedirect == null
+            ? _quickAccessHelpRedirect(value, previousFocus)
+            : prefixRedirect(value);
         return next == null ? null : () => redirect = next;
       },
-      onValueChanged: (value) {
-        if (!mounted || !identical(_active, doc) || doc.doc.version != version) return;
-        try {
-          final target = resolveGotoPosition(doc.doc, value, tabSize: doc.tabSize,
-              zeroBasedOffset: _gotoZeroBasedOffset);
-          if (target != null) {
-            _setDocSelections(doc, [TextSelection.collapsed(offset: target.offsetUtf16)],
-                recordHistory: false);
-          }
-        } on Object catch (_) {}
-      },
+      onValueChanged: preview,
       validateInputMessage: (value) {
         if (!identical(_active, doc) || doc.doc.version != version) {
           return const QuickInputValidationMessage('文档已变化，请重新打开定位',
@@ -4316,81 +4343,123 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           prefix: '',
           title: '转到文件',
           command: 'view.quickOpen',
-          run: (_) => _showQuickOpen(restoreFocus: restoreFocus),
+          run: (value, _) => _showQuickOpen(
+              initialValue: value, restoreFocus: restoreFocus),
         ),
         (
           prefix: ':',
           title: '转到行/列',
           command: 'workbench.action.gotoLine',
-          run: (value) => _showGotoPosition(
-              initialValue: value, restoreFocus: restoreFocus),
+          run: (value, redirect) => _showGotoPosition(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
         ),
         (
           prefix: '>',
           title: '显示并运行命令',
           command: showCommandsCommandId,
-          run: (value) => _showCommandPalette(
-              initialValue: value, restoreFocus: restoreFocus),
+          run: (value, redirect) => _showCommandPalette(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
         ),
         (
           prefix: '@',
           title: '转到编辑器中的符号',
           command: 'workbench.action.gotoSymbol',
-          run: (value) => _showDocumentSymbols(
-              initialValue: value, restoreFocus: restoreFocus),
+          run: (value, redirect) => _showDocumentSymbols(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
         ),
         (
           prefix: '@:',
           title: '按类别转到编辑器中的符号',
           command: 'workbench.action.gotoSymbol',
-          run: (value) => _showDocumentSymbols(
-              initialValue: value, restoreFocus: restoreFocus),
+          run: (value, redirect) => _showDocumentSymbols(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
         ),
         (
           prefix: '#',
           title: '转到工作区中的符号',
           command: 'workbench.action.showAllSymbols',
-          run: (value) => _showWorkspaceSymbols(
-              initialValue: value, restoreFocus: restoreFocus),
+          run: (value, redirect) => _showWorkspaceSymbols(
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              prefixRedirect: redirect),
         ),
       ];
 
   Future<void> _openQuickAccessEntry(
     _QuickAccessEntry entry,
     String value,
+    List<_QuickAccessEntry> entries,
     FocusNode? restoreFocus,
   ) async {
     if (!mounted) return;
     // Keep the original focus if an unavailable provider opens no picker.
     if (restoreFocus?.context != null) restoreFocus!.requestFocus();
-    await entry.run(value);
+    await entry.run(
+      value,
+      (next) => _quickAccessEntryRedirect(
+        next,
+        entries,
+        restoreFocus,
+        currentCommand: entry.command,
+      ),
+    );
   }
 
-  VoidCallback? _quickAccessEntryRedirect(
+  _QuickAccessEntry? _quickAccessPrefixedEntry(
     String value,
     List<_QuickAccessEntry> entries,
-    FocusNode? restoreFocus,
   ) {
     // Prefer @: over @ when both prefixes match.
     for (final entry in entries.reversed) {
       if (entry.prefix.isNotEmpty &&
           value.startsWith(entry.prefix) &&
           _commands.isEnabled(entry.command)) {
-        return () => unawaited(_openQuickAccessEntry(entry, value, restoreFocus));
+        return entry;
       }
     }
     return null;
   }
 
+  VoidCallback? _quickAccessEntryRedirect(
+    String value,
+    List<_QuickAccessEntry> entries,
+    FocusNode? restoreFocus, {
+    required String? currentCommand,
+  }) {
+    if (_quickAccessHelpRedirect(value, restoreFocus) case final help?) {
+      return help;
+    }
+    final entry = _quickAccessPrefixedEntry(value, entries) ?? entries.first;
+    if (entry.command == currentCommand || !_commands.isEnabled(entry.command)) {
+      return null;
+    }
+    return () =>
+        unawaited(_openQuickAccessEntry(entry, value, entries, restoreFocus));
+  }
+
   void _showQuickAccessHelp(String value, FocusNode? restoreFocus) {
     if (!mounted) return;
-    final entries = _quickAccessEntries(restoreFocus)
-        .where((entry) => _commands.isEnabled(entry.command))
-        .toList();
+    final entries = _quickAccessEntries(restoreFocus);
 
     VoidCallback? match(String query) {
-      if (!query.startsWith('?')) return null;
-      return _quickAccessEntryRedirect(query.substring(1), entries, restoreFocus);
+      if (!query.startsWith('?')) {
+        return _quickAccessEntryRedirect(query, entries, restoreFocus,
+            currentCommand: null);
+      }
+      final input = query.substring(1);
+      final entry = _quickAccessPrefixedEntry(input, entries);
+      return entry == null
+          ? null
+          : () => unawaited(
+              _openQuickAccessEntry(entry, input, entries, restoreFocus));
     }
 
     if (match(value) case final redirect?) {
@@ -4406,19 +4475,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       redirectOnInput: match,
       items: [
         for (final entry in entries)
-          QuickItem(
-            label: entry.prefix.isEmpty ? '…' : entry.prefix,
-            description: entry.title,
-            detail: entry.prefix == '@:'
-                ? null
-                : _keybindings.shortcutFor(entry.command),
-            onRun: () => _openQuickAccessEntry(entry, entry.prefix, restoreFocus),
-          ),
+          if (_commands.isEnabled(entry.command))
+            QuickItem(
+              label: entry.prefix.isEmpty ? '…' : entry.prefix,
+              description: entry.title,
+              detail: entry.prefix == '@:'
+                  ? null
+                  : _keybindings.shortcutFor(entry.command),
+              onRun: () => _openQuickAccessEntry(
+                  entry, entry.prefix, entries, restoreFocus),
+            ),
       ],
     ));
   }
 
-  void _showQuickOpen({FocusNode? restoreFocus}) {
+  void _showQuickOpen({
+    String initialValue = '',
+    FocusNode? restoreFocus,
+  }) {
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final root = _workspaceRoot ?? Directory.current.path;
     final search = QuickOpenSearch();
@@ -4506,10 +4580,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     QuickInput.show(
       context,
       hint: '文件名、路径或 path:行:列',
+      initialValue: initialValue,
       restoreFocus: previousFocus,
-      redirectOnInput: (value) =>
-          _quickAccessHelpRedirect(value, previousFocus) ??
-          _quickAccessEntryRedirect(value, entries, previousFocus),
+      redirectOnInput: (value) => _quickAccessEntryRedirect(
+        value,
+        entries,
+        previousFocus,
+        currentCommand: 'view.quickOpen',
+      ),
       items: const [],
       onClose: () {
         cancelSearch();

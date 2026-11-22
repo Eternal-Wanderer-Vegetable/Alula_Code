@@ -3058,6 +3058,21 @@
       "evidence": "Ctrl+P 输入前缀进入现有提供程序，保留查询、预览取消焦点和带行列后缀的文件查询。Windows 实机及 Linux Xvfb + xfwm4 各 22 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 05cb77f 的 CI 45004159072 四项与 Platform Availability 45004156553 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.188-quick-open-prefixes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-241",
+      "name": "P05.189 CMD-02 编辑前缀后继续切换 Quick Access 入口",
+      "description": "已切换的 Quick Access 入口追踪前缀编辑，替换或删除前缀时保留查询、撤销预览并恢复原焦点。",
+      "dependencies": [
+        "feat-125",
+        "feat-128",
+        "feat-237",
+        "feat-240"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 QuickAccessController 在输入变化时按提供程序身份切换，包括删除前缀后的文件入口。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

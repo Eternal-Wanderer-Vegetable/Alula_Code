@@ -176,5 +176,43 @@ void main() {
 
     await route('#zebra', '工作区符号（#名称）');
     await close();
+
+    final editorField = tester.widget<TextField>(
+        find.byKey(const ValueKey('rust-bounded-text-input')));
+    final controller = editorField.controller!;
+    const original = TextSelection(baseOffset: 1, extentOffset: 4);
+    controller.selection = original;
+    await tester.pump();
+
+    Future<void> editPrefix(String value, String expectedHint) async {
+      await tester.enterText(field, value);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(panel, findsOneWidget);
+      final input = tester.widget<TextField>(field);
+      expect(input.decoration?.hintText, expectedHint);
+      expect(input.controller!.text, value);
+      expect(input.focusNode!.hasFocus, isTrue);
+    }
+
+    await route('>诊断面板', '输入命令名（> 前缀可省）');
+    await editPrefix(':3:1', '转到行/列（:行:列，::字符偏移）');
+    expect(
+        controller.selection.extentOffset, controller.text.indexOf('fn zebra'));
+    await editPrefix('@alpha', '转到符号（@名称，@: 按类别）');
+    expect(find.byKey(const ValueKey('qi-alpha')), findsOneWidget);
+    expect(controller.selection.extentOffset, 0);
+    final symbolFocus = tester.widget<TextField>(field).focusNode;
+    await editPrefix('@:alpha', '转到符号（@名称，@: 按类别）');
+    expect(tester.widget<TextField>(field).focusNode, same(symbolFocus));
+    expect(find.byKey(const ValueKey('qi-separator-function')), findsOneWidget);
+    await editPrefix('main.rs:3:1', '文件名、路径或 path:行:列');
+    expect(controller.selection, original);
+    await close();
+
+    await route('?', '显示快速访问入口');
+    await editPrefix('main.rs', '文件名、路径或 path:行:列');
+    await close();
+    expect(controller.selection, original);
   });
 }
