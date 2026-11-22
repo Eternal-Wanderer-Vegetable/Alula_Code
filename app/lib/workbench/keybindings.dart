@@ -251,7 +251,7 @@ class KeybindingSet {
   /// 默认键位表（命令 id → 键位串，逗号分隔可给一条命令多个键位）。
   static const Map<String, String> defaults = {
     showCommandsCommandId: 'ctrl+shift+p,f1',
-    'view.quickOpen': 'ctrl+p',
+    quickOpenCommandId: 'ctrl+p,ctrl+e',
     'workbench.action.gotoLine': 'ctrl+g',
     'workbench.action.gotoSymbol': 'ctrl+shift+o',
     'workbench.action.showAllSymbols': 'ctrl+t',
@@ -417,6 +417,7 @@ class KeybindingSet {
     switch (platform) {
       case TargetPlatform.macOS:
         result[showCommandsCommandId] = 'cmd+shift+p,f1';
+        result[quickOpenCommandId] = 'cmd+p';
         result['workbench.action.gotoSymbol'] = 'cmd+shift+o';
         result['workbench.action.showAllSymbols'] = 'cmd+t';
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
@@ -609,7 +610,7 @@ class KeybindingSet {
       final remove = command.startsWith('-');
       final requestedId = remove ? command.substring(1) : command;
       final commandId =
-          commandPaletteCommandAliases[requestedId] ?? requestedId;
+          quickAccessCommandAliases[requestedId] ?? requestedId;
       if (remove) {
         // Remove only this command's binding; another context may own the chord.
         if (chord != null) {
@@ -709,7 +710,7 @@ class KeybindingSet {
   /// Rebinding removes the older entry, so the first remaining binding is the
   /// command's active display chord.
   String? shortcutFor(String commandId) {
-    final resolvedId = commandPaletteCommandAliases[commandId] ?? commandId;
+    final resolvedId = quickAccessCommandAliases[commandId] ?? commandId;
     for (final e in _chordToCommands.entries) {
       if (e.value.any((binding) => binding.commandId == resolvedId)) {
         return e.key.display;

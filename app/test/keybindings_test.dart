@@ -5,6 +5,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  const quickOpenId = 'workbench.action.quickOpen';
+
+  test('Quick Open registers the canonical platform shortcuts', () {
+    for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+      final keys = KeybindingSet.load(platform: platform);
+      expect(keys.commandForChord(parseChord('ctrl+p')!), quickOpenId);
+      expect(keys.commandForChord(parseChord('ctrl+e')!), quickOpenId);
+      expect(keys.shortcutFor(quickOpenId), 'Ctrl+P');
+      expect(keys.shortcutFor('view.quickOpen'), 'Ctrl+P');
+    }
+    final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+    expect(mac.commandForChord(parseChord('cmd+p')!), quickOpenId);
+    expect(mac.commandForChord(parseChord('ctrl+p')!), isNull);
+    expect(mac.commandForChord(parseChord('cmd+e')!), isNot(quickOpenId));
+    expect(mac.shortcutFor('view.quickOpen'), parseChord('cmd+p')!.display);
+  });
+
   group('canonical command palette keybindings', () {
     const command = 'workbench.action.showCommands';
 
@@ -788,12 +805,14 @@ void main() {
     test('用户追加：新键位生效', () {
       final ks = KeybindingSet.load(
           userJson: '[{"key": "ctrl+alt+f", "command": "view.quickOpen"}]');
-      expect(ks.commandForChord(parseChord('ctrl+alt+f')!), 'view.quickOpen',
+      expect(ks.commandForChord(parseChord('ctrl+alt+f')!), quickOpenId,
           reason: '新键位生效');
       expect(ks.commandForChord(parseChord('ctrl+p')!), isNull,
           reason: '重绑定语义：同命令旧默认键位让位');
+      expect(ks.commandForChord(parseChord('ctrl+e')!), isNull);
       expect(ks.shortcutFor('view.quickOpen'), 'Ctrl+Alt+F',
           reason: '展示跟随用户重绑定');
+      expect(ks.shortcutFor(quickOpenId), 'Ctrl+Alt+F');
     });
 
     test('用户键位可覆盖与移除双段默认键位', () {
@@ -836,14 +855,14 @@ void main() {
               '"args":{"path":"src/main.rs"},"when":"editorTextFocus"}]');
       final chord = parseChord('ctrl+alt+f')!;
       final binding = ks.bindingForChord(chord)!;
-      expect(binding.commandId, 'view.quickOpen');
+      expect(binding.commandId, quickOpenId);
       expect(binding.arguments, {'path': 'src/main.rs'});
       expect(binding.when, 'editorTextFocus');
       expect(
         ks
             .resolveBindings(matchesWhen: (condition) => condition == null)
             .values
-            .where((binding) => binding.commandId == 'view.quickOpen'),
+            .where((binding) => binding.commandId == quickOpenId),
         isEmpty,
       );
       expect(
@@ -851,23 +870,26 @@ void main() {
             .resolveBindings(
                 matchesWhen: (condition) => condition == 'editorTextFocus')
             .values
-            .where((binding) => binding.commandId == 'view.quickOpen'),
+            .where((binding) => binding.commandId == quickOpenId),
         hasLength(1),
       );
     });
 
     test('用户移除：-command 删掉匹配的默认键位', () {
       final ks = KeybindingSet.load(
-          userJson: '[{"key": "ctrl+p", "command": "-view.quickOpen"}]');
+        platform: TargetPlatform.windows,
+        userJson: '[{"key": "ctrl+p", "command": "-view.quickOpen"}]',
+      );
       expect(ks.commandForChord(parseChord('ctrl+p')!), isNull,
           reason: '默认 Ctrl+P 已被移除');
-      expect(ks.shortcutFor('view.quickOpen'), isNull);
+      expect(ks.commandForChord(parseChord('ctrl+e')!), quickOpenId);
+      expect(ks.shortcutFor('view.quickOpen'), 'Ctrl+E');
     });
 
     test('移除不匹配的键位串：无操作', () {
       final ks = KeybindingSet.load(
           userJson: '[{"key": "ctrl+q", "command": "-view.quickOpen"}]');
-      expect(ks.commandForChord(parseChord('ctrl+p')!), 'view.quickOpen',
+      expect(ks.commandForChord(parseChord('ctrl+p')!), quickOpenId,
           reason: '键位不匹配不移除');
     });
 

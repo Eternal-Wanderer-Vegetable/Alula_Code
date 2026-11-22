@@ -466,7 +466,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   static const _workbenchCommandAliases = <String, String>{
-    ...commandPaletteCommandAliases,
+    ...quickAccessCommandAliases,
     'workbench.action.clearNotifications': 'notifications.clearAll',
     'workbench.action.toggleNotificationsDoNotDisturb':
         'notifications.toggleDoNotDisturbMode',
@@ -1252,8 +1252,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: _keybindings.shortcutFor(showCommandsCommandId));
     reg('workbench.action.clearCommandHistory', '查看', '清除命令历史记录',
         _clearCommandHistory);
-    reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
-        shortcut: 'Ctrl+P');
+    reg(
+      quickOpenCommandId,
+      '查看',
+      '快速打开文件…',
+      _runQuickOpenAction,
+      shortcut: _keybindings.shortcutFor(quickOpenCommandId),
+      runWithArguments: _runQuickOpenAction,
+    );
     reg('view.search', '查看', '全局搜索…', () async => _revealSearchView());
     reg(
       'workbench.action.moveView',
@@ -4342,7 +4348,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (
           prefix: '',
           title: '转到文件',
-          command: 'view.quickOpen',
+          command: quickOpenCommandId,
           run: (value, _) => _showQuickOpen(
               initialValue: value, restoreFocus: restoreFocus),
         ),
@@ -4489,6 +4495,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ));
   }
 
+  Future<void> _runQuickOpenAction([Object? arguments]) async {
+    final value = arguments is String ? arguments : '';
+    final restoreFocus = QuickInput.externalFocus();
+    final entries = _quickAccessEntries(restoreFocus);
+    _quickAccessEntryRedirect(
+      value,
+      entries,
+      restoreFocus,
+      currentCommand: null,
+    )?.call();
+  }
+
   void _showQuickOpen({
     String initialValue = '',
     FocusNode? restoreFocus,
@@ -4595,7 +4613,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         value,
         entries,
         previousFocus,
-        currentCommand: 'view.quickOpen',
+        currentCommand: quickOpenCommandId,
       ),
       items: const [],
       onClose: () {

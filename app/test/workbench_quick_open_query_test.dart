@@ -19,6 +19,93 @@ import 'helpers/native_drag_drop.dart';
 void main() {
   setUpAll(mockNativeDragDrop);
 
+  testWidgets('canonical Quick Open routes default keys and argument prefixes',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-action');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final file = File('${root.path}/position.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: SessionStore(path: '${temp.path}/session.json'),
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final command = commands.byId('workbench.action.quickOpen');
+    expect(command, isNotNull);
+    expect(commands.byId('view.quickOpen'), same(command));
+    expect(commands.all.where((item) => item.id == 'view.quickOpen'), isEmpty);
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    TextField input() => tester.widget<TextField>(filter);
+    for (final key in [LogicalKeyboardKey.keyP, LogicalKeyboardKey.keyE]) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(key);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(input().decoration?.hintText, '文件名、路径或 path:行:列');
+      expect(input().controller!.text, isEmpty);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(panel, findsNothing);
+    }
+
+    final query = '${file.path}:2:3';
+    expect(
+      await commands.execute('workbench.action.quickOpen', arguments: query),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(input().controller!.text, query);
+    final row = find.byKey(const ValueKey('qi-position.txt'));
+    for (var i = 0; i < 100 && row.evaluate().isEmpty; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+    }
+    expect(row, findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    final editor =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(editor.inputWindow.initialValue.selection.extentOffset, 8);
+
+    expect(
+      await commands.execute('view.quickOpen', arguments: ':3:2'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pumpAndSettle();
+    expect(input().decoration?.hintText, '转到行/列（:行:列，::字符偏移）');
+    expect(input().controller!.text, ':3:2');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+
+    expect(
+      await commands.execute('workbench.action.quickOpen',
+          arguments: {'unsupported': true}),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(input().decoration?.hintText, '文件名、路径或 path:行:列');
+    expect(input().controller!.text, isEmpty);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+  }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
+
   testWidgets('Quick Open disables repeated page actions during loading',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-pages');

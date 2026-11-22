@@ -14,6 +14,12 @@ const commandPaletteCommandAliases = <String, String>{
   'view.quickInput': showCommandsCommandId,
 };
 
+const quickOpenCommandId = 'workbench.action.quickOpen';
+const quickAccessCommandAliases = <String, String>{
+  ...commandPaletteCommandAliases,
+  'view.quickOpen': quickOpenCommandId,
+};
+
 /// 一条可执行命令。
 class Command {
   const Command({

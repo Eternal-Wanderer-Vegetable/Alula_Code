@@ -3197,6 +3197,20 @@
       "evidence": "普通中键后台固定所点文件，Ctrl/Cmd 和 Alt 侧开用最新位置，保留原活动组并恢复输入焦点。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 146/146，Flutter 1,785 passed / 2 skipped。产品 309e207 的 CI 45037831414 四项及 Platform Availability 45037828431 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.198-quick-open-background-middle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-251",
+      "name": "P05.199 CMD-02 Quick Open 规范命令和默认键位",
+      "description": "注册 workbench.action.quickOpen，接入各平台默认键位与起始查询参数，兼容已有 view.quickOpen 绑定。",
+      "dependencies": [
+        "feat-235",
+        "feat-237",
+        "feat-241"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
