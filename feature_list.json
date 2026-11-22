@@ -3431,8 +3431,8 @@
         "feat-128",
         "feat-267"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "文档符号 @: 模式全局分组并显示当前候选数。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 272/272，Flutter 1,811 passed / 2 skipped。产品 f06971c 的 CI 45079523934 四项及 Platform Availability 45079518857 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.216-symbol-kinds.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
