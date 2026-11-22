@@ -4517,8 +4517,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       String path,
       QuickOpenQuery position, {
       bool side = false,
+      bool inBackground = false,
     }) async {
-      if (!currentWorkspace()) return;
+      if (!currentWorkspace() || (inBackground && closed)) return;
       final source = _focused;
       EditorGroup? destination;
       EditorGroup? findSideGroup(OpenDoc? existing) {
@@ -4548,15 +4549,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return destination = _groups[region] = EditorGroup(region);
       }
 
-      await _openFileByPath(path, targetForOpen: side ? findSideGroup : null);
+      EditorGroup? findDestination(OpenDoc? existing) {
+        if (side) return findSideGroup(existing);
+        return destination = _editorGroupForImplicitOpen(existing: existing);
+      }
+
+      await _openFileByPath(
+        path,
+        inBackground: inBackground,
+        targetForOpen: side || inBackground ? findDestination : null,
+      );
       if (!currentWorkspace()) return;
-      final group = side ? destination : _focused;
+      final group = side || inBackground ? destination : _focused;
       if (group == null) {
-        if (previousFocus?.context != null) previousFocus!.requestFocus();
+        if (!inBackground && previousFocus?.context != null) {
+          previousFocus!.requestFocus();
+        }
         return;
       }
       final doc = group.active;
-      if (!identical(group, _focused) ||
+      if ((!inBackground && !identical(group, _focused)) ||
           doc == null ||
           doc.path == null ||
           !_pathsEqual(doc.path!, path)) {
@@ -4567,7 +4579,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       } else if (!side) {
         return;
       }
-      _focusEditorAfterLayout(group, doc);
+      if (!inBackground) _focusEditorAfterLayout(group, doc);
     }
 
     void cancelSearch() { closed = true; search.cancel(); }
@@ -4632,6 +4644,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             semanticsLabel: dirty ? '$label，有未保存的更改' : null,
             description: path,
             onRun: () => openFile(path, location),
+            onRunInBackground: (modifiers) => openFile(
+              path,
+              location,
+              side: modifiers.alt || modifiers.ctrlCmd,
+              inBackground: true,
+            ),
             buttons: [
               QuickItemButton(
                 icon: Icons.vertical_split,
@@ -14226,6 +14244,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String? expectedContent,
     bool asPreview = false,
     bool pinPreview = false,
+    bool inBackground = false,
     EditorGroup? Function(OpenDoc? existing)? targetForOpen,
   }) async {
     EditorGroup? targetGroup([OpenDoc? existing]) => targetForOpen == null
@@ -14241,7 +14260,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final core = _core;
     if (core == null) return;
     // LAY-13a：配置编辑器路径按 useModal 偏好以模态对话框打开（不进标签）。
-    if (expectedContent == null &&
+    if (!inBackground &&
+        expectedContent == null &&
         _findOpenDocumentByPath(path) == null &&
         !(_modalEditorDoc?.path == path) &&
         _modalEditorUseMode.opensAutomatically(path)) {
@@ -14305,14 +14325,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         setState(() {
           if (!target.docs.contains(view)) target.docs.add(view);
           target.activeDocId = view.id;
-          _noteActiveDocument(target, view.id);
+          _noteActiveDocument(target, view.id, activateGroup: !inBackground);
           if (target.previewDocId == view.id &&
               (pinPreview || !asPreview)) {
             target.previewDocId = null;
           } else if (asPreview && existingInTarget == null && !view.isDirty) {
             target.previewDocId = view.id;
           }
-          _focusedRegion = target.region;
+          if (!inBackground) _focusedRegion = target.region;
         });
         _scheduleStateSave();
         _syncCommandContext();
@@ -14328,7 +14348,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       try {
         file = core.workspace.readFileDocument(path);
       } on AlulaException catch (error) {
-        if (error.code != 'BinaryFile' && error.code != 'UnsupportedEncoding') {
+        if (inBackground ||
+            (error.code != 'BinaryFile' &&
+                error.code != 'UnsupportedEncoding')) {
           setState(() => _statusDetail = '打开失败：${error.code}');
           return;
         }
@@ -14384,11 +14406,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (asPreview) _replaceCleanPreviewBeforeOpen(target);
       setState(() {
-        _focusedRegion = target.region;
+        if (!inBackground) _focusedRegion = target.region;
         target.docs.add(open);
         target.activeDocId = id;
-        _noteActiveDocument(target, id);
-        target.previewDocId = asPreview && !open.isDirty ? id : null;
+        _noteActiveDocument(target, id, activateGroup: !inBackground);
+        if (!inBackground) {
+          target.previewDocId = asPreview && !open.isDirty ? id : null;
+        }
       });
       _scheduleSyntaxRefresh(id);
       _syncCommandContext();
@@ -14424,11 +14448,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : 'file:///$p';
   }
 
-  void _noteActiveDocument(EditorGroup group, int? documentId) {
+  void _noteActiveDocument(
+    EditorGroup group,
+    int? documentId, {
+    bool activateGroup = true,
+  }) {
     if (documentId == null) return;
     group.recentDocIds.remove(documentId);
     group.recentDocIds.insert(0, documentId);
-    group.lastActivationOrder = ++_editorActivationClock;
+    _editorActivationClock++;
+    if (activateGroup) group.lastActivationOrder = _editorActivationClock;
     final tab = group.docs.where((doc) => doc.id == documentId).firstOrNull;
     if (tab != null) {
       for (final view in tab._tabViews) {

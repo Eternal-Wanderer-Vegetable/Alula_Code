@@ -33,6 +33,7 @@ class QuickItem {
     this.commandId,
     this.arguments,
     this.onRun,
+    this.onRunInBackground,
     this.onPreview,
     this.buttons = const <QuickItemButton>[],
     this.kind = QuickItemKind.defaultItem,
@@ -51,6 +52,10 @@ class QuickItem {
   final String? commandId;
   final Object? arguments;
   final Future<void> Function()? onRun;
+
+  /// Opens this item while keeping the picker and its current focus.
+  final Future<void> Function(({bool alt, bool ctrlCmd}) modifiers)?
+      onRunInBackground;
   final VoidCallback? onPreview;
   final List<QuickItemButton> buttons;
   final QuickItemKind kind;
@@ -1136,6 +1141,44 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return KeyEventResult.ignored;
   }
 
+  KeyEventResult _onBackgroundKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.arrowRight ||
+        widget.inputMode ||
+        widget.canSelectMany ||
+        _accepted ||
+        _selected < 0 ||
+        _selected >= _filtered.length) {
+      return KeyEventResult.ignored;
+    }
+    final item = _filtered[_selected];
+    final run = item.onRunInBackground;
+    if (run == null ||
+        !_isSelectable(item) ||
+        !_enabled(item) ||
+        ModalRoute.of(context)?.isCurrent != true) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
+    if (keyboard.isShiftPressed || (!isMac && keyboard.isMetaPressed)) {
+      return KeyEventResult.ignored;
+    }
+    if (_focusNode.hasPrimaryFocus) {
+      final value = _controller.value;
+      if (!value.selection.isCollapsed ||
+          value.selection.extentOffset != value.text.length ||
+          (value.isComposingRangeValid && !value.composing.isCollapsed)) {
+        return KeyEventResult.ignored;
+      }
+    }
+    unawaited(run((
+      alt: keyboard.isAltPressed,
+      ctrlCmd: isMac ? keyboard.isMetaPressed : keyboard.isControlPressed,
+    )));
+    return KeyEventResult.handled;
+  }
+
   @override
   Widget build(BuildContext context) {
     final showMultiSelectControls = widget.canSelectMany && !widget.inputMode;
@@ -1306,7 +1349,13 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         ],
       ),
     );
-    if (widget.navigation == null) return panel;
+    if (widget.navigation == null) {
+      return Focus(
+        canRequestFocus: false,
+        onKeyEvent: _onBackgroundKey,
+        child: panel,
+      );
+    }
     return Semantics(
       label: widget.hint,
       child: Focus(
