@@ -3342,6 +3342,19 @@
       "evidence": "Alt+Enter 向右侧提交位置，共享文档并恢复源视图选区与滚动。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 240/240，Flutter 1,802 passed / 2 skipped。产品 c08280b 的 CI 45064387430 四项及 Platform Availability 45064383523 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.209-goto-position-aside.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-262",
+      "name": "P05.210 CMD-03 无活动文本编辑器时的位置提示",
+      "description": "关闭所有文本编辑器后，行列和字符偏移入口仍可访问，说明如何继续并保留取消焦点。",
+      "dependencies": [
+        "feat-260",
+        "feat-261"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

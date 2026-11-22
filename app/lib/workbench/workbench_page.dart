@@ -2284,11 +2284,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoSymbol'));
     reg('workbench.action.gotoLine', '转到', '转到行/列…', _showGotoPosition,
-        enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoLine'));
     reg('workbench.action.gotoOffset', '转到', '转到字符偏移…',
         () => _showGotoPosition(initialValue: '::'),
-        enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoOffset'));
     reg('list.find', '列表', '查找', () async => _openTreeFind(),
         when: 'listFocus', enablement: 'workspaceOpen');
@@ -4240,11 +4238,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     FocusNode? restoreFocus,
     _QuickAccessRedirect? prefixRedirect,
   }) async {
+    const prompt = '转到行/列（:行:列，::字符偏移）';
     final group = _focused;
     final doc = group.active;
-    if (doc == null) return;
-    _flushInput(doc, commitComposition: true);
-    final previousFocus = restoreFocus ?? _focusNodeFor(group, doc);
+    if (doc != null) _flushInput(doc, commitComposition: true);
+    final previousFocus = restoreFocus ??
+        (doc == null ? QuickInput.externalFocus() : _focusNodeFor(group, doc));
+    VoidCallback? redirect;
+    VoidCallback? inputRedirect(String value) {
+      // Both position prefixes use the same input and preview state.
+      if (value.startsWith(':')) return null;
+      final next = prefixRedirect == null
+          ? _quickAccessHelpRedirect(value, previousFocus)
+          : prefixRedirect(value);
+      return next == null ? null : () => redirect = next;
+    }
+
+    if (doc == null) {
+      await QuickInput.input(
+        context,
+        prompt: prompt,
+        value: initialValue,
+        restoreFocus: previousFocus,
+        redirectOnInput: inputRedirect,
+        validateInputMessage: (_) => const QuickInputValidationMessage(
+          '先打开文本编辑器，再转到行列或字符偏移。',
+          QuickInputValidationSeverity.error,
+        ),
+      );
+      if (mounted) redirect?.call();
+      return;
+    }
     final version = doc.doc.version;
     final originalSelections = doc.selectionSet.toList();
     final scrollOffset = doc.editorScrollController.hasClients
@@ -4281,10 +4305,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     preview(initialValue);
-    VoidCallback? redirect;
     var openAside = false;
     final result = await QuickInput.input(context,
-      prompt: '转到行/列（:行:列，::字符偏移）',
+      prompt: prompt,
       value: initialValue,
       onAcceptModifiers: (modifiers) => openAside = modifiers.alt,
       inputActionBuilder: (context, value, refresh) => value.trim().startsWith('::')
@@ -4302,14 +4325,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ))
           : const SizedBox.shrink(),
       restoreFocus: previousFocus,
-      redirectOnInput: (value) {
-        // Both position prefixes use the same preview and cancellation state.
-        if (value.startsWith(':')) return null;
-        final next = prefixRedirect == null
-            ? _quickAccessHelpRedirect(value, previousFocus)
-            : prefixRedirect(value);
-        return next == null ? null : () => redirect = next;
-      },
+      redirectOnInput: inputRedirect,
       onValueChanged: preview,
       validateInputMessage: (value) {
         if (!identical(_active, doc) || doc.doc.version != version) {

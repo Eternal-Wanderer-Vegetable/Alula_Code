@@ -196,4 +196,103 @@ void main() {
     await aside('workbench.action.gotoOffset', '::10', 9);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });
+
+  testWidgets('Position commands explain how to proceed without an editor',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-goto-no-editor');
+    final file = File('${temp.path}/source.txt')..writeAsStringSync('source');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 70,
+            'docs': [
+              {'id': 70, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    final previousFocus = FocusNode();
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      previousFocus.dispose();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: Material(
+        child: Column(
+          children: [
+            Expanded(
+              child: WorkbenchPage(
+                layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+                sessionStore: session,
+                keybindingsStore:
+                    KeybindingsStore(path: '${temp.path}/keys.json'),
+                onCommandServiceReady: (value) => commands = value,
+              ),
+            ),
+            TextField(focusNode: previousFocus),
+          ],
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byType(RustTextInputField);
+    expect(editor, findsOneWidget);
+    expect(
+      await commands.execute('workbench.action.closeAllEditors'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pumpAndSettle();
+    expect(editor, findsNothing);
+    previousFocus.requestFocus();
+    await tester.pump();
+    expect(previousFocus.hasPrimaryFocus, isTrue);
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final guidance = find.text('先打开文本编辑器，再转到行列或字符偏移。');
+
+    Future<void> check(String prefix) async {
+      expect(tester.widget<TextField>(input).controller!.text, prefix);
+      expect(guidance, findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('goto-zero-based-offset')), findsNothing);
+      await tester.enterText(input, '${prefix}12');
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(guidance, findsOneWidget);
+      expect(find.byType(RustTextInputField), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(panel, findsNothing);
+      expect(previousFocus.hasPrimaryFocus, isTrue);
+    }
+
+    for (final (command, prefix) in const [
+      ('workbench.action.gotoLine', ':'),
+      ('workbench.action.gotoOffset', '::'),
+    ]) {
+      final navigation = commands.execute(command);
+      await tester.pumpAndSettle();
+      await check(prefix);
+      expect(await navigation, CommandExecutionStatus.executed);
+    }
+
+    await commands.execute('workbench.action.quickOpen', arguments: '?');
+    await tester.pumpAndSettle();
+    expect(find.text('转到行/列'), findsOneWidget);
+    await tester.tap(find.text('转到字符偏移'));
+    await tester.pumpAndSettle();
+    await check('::');
+    expect(file.readAsStringSync(), 'source');
+  });
 }
