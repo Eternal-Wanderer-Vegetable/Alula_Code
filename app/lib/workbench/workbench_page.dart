@@ -4239,6 +4239,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     await QuickInput.show(context,
       hint: hint, initialValue: initialValue, items: const [],
+      emptyMessageForQuery: (query) {
+        final value = query.trim();
+        return value.isEmpty || value == '@'
+            ? '当前编辑器没有符号。'
+            : '没有匹配的文档符号。';
+      },
       restoreFocus: previousFocus,
       redirectOnInput: inputRedirect,
       itemsProvider: (query) async {
@@ -4268,7 +4274,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
         }
 
-        if (!grouped) return [for (final row in rows) itemFor(row)];
+        if (!grouped) {
+          return [
+            if (rows.isNotEmpty)
+              QuickItem(
+                label: '符号 (${rows.length})',
+                kind: QuickItemKind.separator,
+              ),
+            for (final row in rows) itemFor(row),
+          ];
+        }
 
         final itemsByKind = <String, List<QuickItem>>{};
         for (final row in rows) {

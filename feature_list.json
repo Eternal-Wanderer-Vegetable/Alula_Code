@@ -3435,6 +3435,19 @@
       "evidence": "文档符号 @: 模式全局分组并显示当前候选数。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 272/272，Flutter 1,811 passed / 2 skipped。产品 f06971c 的 CI 45079523934 四项及 Platform Availability 45079518857 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.216-symbol-kinds.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-269",
+      "name": "P05.217 CMD-04 文档符号总数和空态提示",
+      "description": "普通 @ 查询显示候选总数，按当前查询区分无文档符号与无匹配符号，保留取消和焦点。",
+      "dependencies": [
+        "feat-265",
+        "feat-268"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

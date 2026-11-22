@@ -415,4 +415,88 @@ void main() {
     expect(active().focusNode!.hasPrimaryFocus, isTrue);
     expect(file.readAsStringSync(), text);
   });
+
+  testWidgets('Document symbols show total counts and distinct empty states',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-document-symbol-empty');
+    const content = 'fn alpha() {}\n\nfn zebra() {}\n';
+    const emptyContent = '// No symbols 😀\n';
+    final file = File('${temp.path}/main.rs')..writeAsStringSync(content);
+    final empty = File('${temp.path}/empty.rs')
+      ..writeAsStringSync(emptyContent);
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 95,
+            'docs': [
+              {'id': 95, 'path': file.path},
+              {'id': 96, 'path': empty.path},
+            ],
+          },
+        ],
+      });
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byType(RustTextInputField);
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    await tester.tap(editor);
+    await tester.pump();
+    final populated = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('qi-separator-符号 (2)')), findsOneWidget);
+    await tester.enterText(input, '@zebra');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('qi-separator-符号 (1)')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-zebra')), findsOneWidget);
+    await tester.enterText(input, '@:missing');
+    await tester.pumpAndSettle();
+    expect(find.text('没有匹配的文档符号。'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(panel, findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await populated, CommandExecutionStatus.executed);
+
+    await tester.tap(find.byKey(const ValueKey('editor-tab-label-editor-96')));
+    await tester.pumpAndSettle();
+    final emptyPicker = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    expect(find.text('当前编辑器没有符号。'), findsOneWidget);
+    await tester.enterText(input, '@:');
+    await tester.pumpAndSettle();
+    expect(find.text('没有匹配的文档符号。'), findsOneWidget);
+    await tester.enterText(input, '@');
+    await tester.pumpAndSettle();
+    expect(find.text('当前编辑器没有符号。'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await emptyPicker, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+    expect(tester.widget<RustTextInputField>(editor).focusNode!.hasPrimaryFocus,
+        isTrue);
+    expect(file.readAsStringSync(), content);
+    expect(empty.readAsStringSync(), emptyContent);
+  });
 }
