@@ -2999,6 +2999,20 @@
       "evidence": "Windows 11 125% 和 Linux xfwm4 验证取消保留、确认清理与编辑；Windows 无效主记录重启恢复空备份。专项 18/18，Flutter 1,765 passed / 2 skipped，b8355ee 的 CI 44989174352 四项与 Platform Availability 44989171964 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.184-clear-palette-history.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-237",
+      "name": "P05.185 LAY-17 Quick Access 帮助前缀",
+      "description": "使用 ? 列出可用入口，从帮助项或键入的前缀进入现有提供程序，保留查询和焦点。",
+      "dependencies": [
+        "feat-124",
+        "feat-126",
+        "feat-235"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 HelpQuickAccessProvider 从提供程序注册表生成帮助项，接受项目或键入前缀时跳转。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

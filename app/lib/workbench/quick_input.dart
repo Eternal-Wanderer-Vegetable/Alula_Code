@@ -118,6 +118,7 @@ class QuickInput {
         inputActionBuilder,
     List<String> history = const [],
     FocusNode? restoreFocus,
+    VoidCallback? Function(String)? redirectOnInput,
   }) async {
     String? accepted;
     await show(
@@ -132,6 +133,7 @@ class QuickInput {
       inputActionBuilder: inputActionBuilder,
       inputHistory: history,
       restoreFocus: restoreFocus,
+      redirectOnInput: redirectOnInput,
       onInputAccepted: (value) => accepted = value,
     );
     return accepted;
@@ -156,6 +158,7 @@ class QuickInput {
     List<String> inputHistory = const [],
     ValueChanged<String>? onInputAccepted,
     ValueChanged<String>? onValueChanged,
+    VoidCallback? Function(String)? redirectOnInput,
     Widget Function(BuildContext context, String value, VoidCallback refresh)?
         inputActionBuilder,
     String? queryPrefix,
@@ -204,6 +207,7 @@ class QuickInput {
               inputHistory: inputHistory,
               onInputAccepted: onInputAccepted,
               onValueChanged: onValueChanged,
+              redirectOnInput: redirectOnInput,
               inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
               itemsProvider: itemsProvider,
@@ -240,6 +244,7 @@ class _QuickInputPanel extends StatefulWidget {
     required this.inputHistory,
     this.onInputAccepted,
     this.onValueChanged,
+    this.redirectOnInput,
     this.inputActionBuilder,
     this.queryPrefix,
     this.itemsProvider,
@@ -266,6 +271,7 @@ class _QuickInputPanel extends StatefulWidget {
   final List<String> inputHistory;
   final ValueChanged<String>? onInputAccepted;
   final ValueChanged<String>? onValueChanged;
+  final VoidCallback? Function(String)? redirectOnInput;
   final Widget Function(
           BuildContext context, String value, VoidCallback refresh)?
       inputActionBuilder;
@@ -380,6 +386,13 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   void _onInputChanged() {
     if (_lastInputText == _controller.text) return;
     _lastInputText = _controller.text;
+    if (widget.redirectOnInput?.call(_controller.text) case final redirect?) {
+      if (!_claimPickerAcceptance()) return;
+      widget.onHandled();
+      Navigator.of(context).pop();
+      redirect();
+      return;
+    }
     _refilter(_controller.text);
     widget.onValueChanged?.call(_controller.text);
     if (_hasValidator) unawaited(_validate());
