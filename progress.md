@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.180 / feat-232 完成。产品 1119c910bd9bd7a52100e10993c17c5b270f8961 已推草稿 PR #3。Windows 和 Linux 三个辅助窗关闭入口均能交还脏正文和 UTF-16 选区。同路径冲突与主窗不可达保留源窗，超时重试与迟到确认通过回归。Windows 贴靠摆位中一轮系统关闭未自动给主窗焦点，激活标签后可编辑，登记为 P05.181。专项 41/41，Flutter 1,754 passed / 2 skipped，同 SHA CI 44977861786 四项与 Platform Availability 44977859156 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.180-auxiliary-close-return.md。下一项 P05.181 / feat-233，辅助窗系统关闭后的 Windows 焦点交接。
+
 - P05.179 / feat-231 完成。产品 1f3f504fc52fba1ccc89af94524bef341d9ea162 已推草稿 PR #3。Windows 11 125% 实机验证右、下两种相邻建组。Linux xfwm4 验证四向边缘、Alt 中心回退、拒收与 P05.178 回归。修复主窗获得焦点时的合成 Alt 按下引发标题栏抢焦点。专项 47/47，Flutter 1,752 passed / 2 skipped，同 SHA CI 44974007130 四项与 Platform Availability 44974002421 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.179-auxiliary-tab-split.md。下一项 P05.180 / feat-232，正常关闭辅助窗口的未保存文档确认交接。
 
 - P05.178 / feat-230 完成。产品 d931478aa3af1bf173279d39221d536250211751 已推草稿 PR #3。固定版源码核对正文、标签落点和最后一组关闭。Windows 11 125% 原生拖放和 Linux xfwm4 验证两个落点、未保存文本、UTF-16 选区及后续输入。Windows 非编辑器落点、Linux Escape 取消与同路径冲突均保留源窗。专项 35/35，Flutter 1,751 passed / 2 skipped，同 SHA CI 44970867854 四项及 Platform Availability 44970865584 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.178-auxiliary-tab-return.md。下一项 P05.179 / feat-231，辅助窗标签拖到主窗组边缘建组。

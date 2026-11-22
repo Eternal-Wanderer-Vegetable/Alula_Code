@@ -2941,8 +2941,21 @@
         "feat-228",
         "feat-230"
       ],
+      "status": "done",
+      "evidence": "产品 1119c910bd9bd7a52100e10993c17c5b270f8961 已推草稿 PR #3。Windows 和 Linux 三个辅助窗关闭入口均能交还脏正文和 UTF-16 选区。同路径冲突与主窗不可达保留源窗，超时重试与迟到确认通过回归。Windows 贴靠摆位中一轮系统关闭未自动给主窗焦点，激活标签后可编辑，登记为 P05.181。专项 41/41，Flutter 1,754 passed / 2 skipped，同 SHA CI 44977861786 四项与 Platform Availability 44977859156 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.180-auxiliary-close-return.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-233",
+      "name": "P05.181 LAY-12/20 辅助窗系统关闭后的 Windows 焦点交接",
+      "description": "复验普通和贴靠窗口在确认文档交接后的系统焦点，修复确认的差异，并验证不会抢走用户切换后的焦点。",
+      "dependencies": [
+        "feat-151",
+        "feat-232"
+      ],
       "status": "not-started",
-      "evidence": "依赖已满足。旧关闭路径在窗口通道异常后仍释放文档。先用独立夹具复现。",
+      "evidence": "P05.180 最终 Windows 125% 试验中，一轮贴靠主窗的 Alt+F4 成功交还脏文档及选区，主窗原生焦点为 false。需复测普通和贴靠窗口并定位。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
