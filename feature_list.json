@@ -3025,7 +3025,7 @@
         "feat-237"
       ],
       "status": "in-progress",
-      "evidence": "固定版 AnythingQuickAccessProvider 的项按钮和 Alt 接受均路由 SIDE_GROUP，复用可用右侧组或创建新组。",
+      "evidence": "结果按钮与 Alt+Enter 实现右侧组打开。本地专项 66/66，Flutter 1,767 passed / 2 skipped，隔离 Linux Xvfb + xfwm4 原生 13 个观测点。产品 42b8a1f 的 CI 44995328273 四项及 Platform Availability 44995326177 Windows/Linux 通过。Windows 实机等待可交互桌面，macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

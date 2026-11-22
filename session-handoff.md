@@ -8,6 +8,8 @@ Last Updated: 2026-11-22
 
 ## Current State
 
+- P05.186 / feat-238 已实现并验证本地与 Linux，Windows 实机待验证。产品 42b8a1f0322cc8f009311e442e03cf045a235d6e 已推草稿 PR #3。结果按钮与 Alt+Enter 实现右侧组打开。本地专项 66/66，Flutter 1,767 passed / 2 skipped，隔离 Linux Xvfb + xfwm4 原生 13 个观测点。产品 42b8a1f 的 CI 44995328273 四项及 Platform Availability 44995326177 Windows/Linux 通过。Windows 实机等待可交互桌面，macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md。
+
 - P05.185 / feat-237 完成。产品 d1e4bc19264c9455be77021068bf87a7907d98d9 已推草稿 PR #3。Windows 11 125% 与 Linux WSLg 已验证帮助条目、键位、前缀跳转、预览回滚、原编辑焦点与后续输入。专项 42/42，全量 Flutter 1,766 passed / 2 skipped。同 SHA CI 44992322568 四项与 Platform Availability 44992320761 Windows/Linux 均通过。P05.184 证据 CI 44990129011 四项通过。采集时 macOS 托管任务正在运行。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md。
 
 - P05.184 / feat-236 完成。产品 b8355eef526924f5682329504b4dc6a54e36b6f3 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 验证清除命令、取消保留、确认清空主 journal 与备份、编辑选区及后续输入。Windows 以无效主记录重启后空历史仍成立。专项 18/18，全量 Flutter 1,765 passed / 2 skipped。同 SHA CI 44989174352 四项与 Platform Availability 44989171964 Windows/Linux 通过。P05.183 证据 CI 44988207664 四项全绿。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.184-clear-palette-history.md。
@@ -119,6 +121,8 @@ Last Updated: 2026-11-22
 
 ## Blockers / Limits
 
+P05.186 Windows 实机等待普通桌面，避免干预当前全屏窗口。
+
 P05.184 的 macOS 托管原生 Quit 观察与 P05.182 第二轮相同，在 20 秒上限达到时 app 与 open 仍存活。P05.183 同一托管检查通过。
 
 P05.181 的 macOS 托管首轮 Flutter 正则替换测试失败，Platform Availability 44981195018 第二轮三平台通过。
@@ -126,6 +130,8 @@ P05.181 的 macOS 托管首轮 Flutter 正则替换测试失败，Platform Avail
 macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。P05.123 规范命令验证已完成。P05.125 默认无障碍组合键通过 Linux Xvfb 和 Windows Release 原生状态桥验证。P05.124 已在恢复输入后的 Windows 桌面验证自定义键位及 Narrator 默认键，P05.126 已在固定版、Linux Xvfb 和 Windows 实机验收滚动条。通知无障碍视图按 docs/11 ACC-02 归 P14。
 
 ## Files
+
+[P05.186 已采证据](docs/diagnostics/2026-11-22-p05/p05.186-quick-open-side.md)。
 
 [P05.185 快速访问帮助](docs/diagnostics/2026-11-22-p05/p05.185-quick-access-help.md)。
 
@@ -145,4 +151,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-先核对 P05.185 证据提交 CI。继续按 docs/03 和 docs/plans/p05-completion.md 的 LAY/CMD 范围一次推进一个依赖已满足的子项，核对固定版 Quick Open 的文件侧开与当前 P05.74 实现。PR #3 保持 OPEN/DRAFT，macOS 实机暂缓。
+P05.186 先复验 Windows 实机，用户已批准向隔离的 Alula 夹具窗口发送输入。Release 已构建。用 E:/Temp/alula-p05-186-quick-open-side/windows-side.py 验证键位、结果行按钮、锁组与文档焦点，并将结果登记。启动前检查前台为可交互的普通桌面。产品 CI 44995328273 四项及 Windows/Linux 托管 44995326177 已通过。PR #3 保持 OPEN/DRAFT，macOS 实机暂缓。
