@@ -8,6 +8,8 @@ Last Updated: 2026-11-22
 
 ## Current State
 
+- P05.195 / feat-247 实现已推送，等待 Windows 实机验收。产品 31ad891420da9b0535c0f176fade744986fb4e02。普通 Enter 保留编辑器，Ctrl/Cmd+Enter 复用侧开并保留最新位置，Alt+Enter 回归通过。隔离 Linux Xvfb + xfwm4 通过 16 个原生观测点。Windows Release 夹具已构建，当前本机前台为全屏应用，等待切回普通桌面后运行同一夹具。Windows 实机键鼠验收待完成。 专项 142/142，Flutter 1,781 passed / 2 skipped。产品 31ad891 的 CI 45022254316 四项及 Platform Availability 45022251085 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。详见 docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md。
+
 - P05.194 / feat-246 完成。产品 bc84315e2b32d7b3469adb4a19fdccbd604a9d18 已推草稿 PR #3。编辑位置后缀时保留候选、进行中的请求、选择与按钮焦点，使用最新位置接受或侧开。Windows 实机与 Linux Xvfb + xfwm4 各 14 个观测点，专项 128/128，Flutter 1,779 passed / 2 skipped。产品 bc84315 的 CI 45018977348 四项与 Platform Availability 45018974947 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.193 证据 CI 45017576242 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md。
 
 - P05.193 / feat-245 完成。产品 8a8d24e0f5b49ef54a74230cda058883f4b811fc 已推草稿 PR #3。井号、括号、line 字样与混合区间使用 UTF-16 定位，保留代理对边界并支持超长选区和侧开。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 100/100，Flutter 1,777 passed / 2 skipped。产品 8a8d24e 的 CI 45016283145 四项与 Platform Availability 45016279940 Windows/Linux 通过。macOS 实机暂缓。采集时 macOS 托管任务仍在运行。P05.192 证据 CI 45014862927 四项通过。详见 docs/diagnostics/2026-11-22-p05/p05.193-quick-open-location.md。
@@ -145,6 +147,8 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.195 Quick Open Ctrl/Cmd+Enter 侧开](docs/diagnostics/2026-11-22-p05/p05.195-quick-open-modifiers.md)。
+
 [P05.194 Quick Open 位置后缀复用候选](docs/diagnostics/2026-11-22-p05/p05.194-quick-open-reuse.md)。
 
 [P05.193 Quick Open 文件位置与区间](docs/diagnostics/2026-11-22-p05/p05.193-quick-open-location.md)。
@@ -181,4 +185,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-先核对 P05.194 证据提交的 CI。按 docs/03 和 docs/plans/p05-completion.md 继续一个依赖已满足的 CMD 子项，核对固定版 Quick Open 接受文件时预览、固定及修饰键规则。PR #3 保持 OPEN/DRAFT，macOS 实机暂缓。
+普通桌面恢复后核对前台窗口类型，使用 E:/Temp/alula-p05-195-quick-open-modifiers/windows-modifiers.py 复验产品 31ad891。Windows 通过后登记原生结果和收尾 CI。 PR #3 保持 OPEN/DRAFT，macOS 实机暂缓。
