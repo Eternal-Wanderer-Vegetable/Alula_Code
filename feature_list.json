@@ -3069,8 +3069,8 @@
         "feat-237",
         "feat-240"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 QuickAccessController 在输入变化时按提供程序身份切换，包括删除前缀后的文件入口。",
+      "status": "done",
+      "evidence": "替换前缀后继续切换，删除前缀返回文件查询，切换时还原预览并保留原焦点。Windows 实机及 Linux Xvfb + xfwm4 各 17 个观测点，专项 68/68，Flutter 1,770 passed / 2 skipped。产品 9fc89a2 的 CI 45006362843 四项与 Platform Availability 45006359091 Windows/Linux 通过。macOS 实机暂缓。docs/diagnostics/2026-11-22-p05/p05.189-quick-access-switch.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
