@@ -1,0 +1,590 @@
+{
+  "slice": "P05.181 / feat-233",
+  "productCommit": "cd8e73cfc0eab8476b53e4512063a5a2e8da1613",
+  "productTree": "9d1972a30cb08f5212b9bd5fa1cd8a300c597f52",
+  "baselineWindows": {
+    "product": "1119c910bd9bd7a52100e10993c17c5b270f8961",
+    "source": "../p05.180-auxiliary-close-return/native.json",
+    "system": {
+      "source": {
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 8,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            21,
+            20
+          ],
+          "totalUtf16": 34,
+          "rust": "Compact example 😀678\nSecond line\n",
+          "mirror": "Compact example 😀678\nSecond line\n"
+        },
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "bounds": [
+          29.6,
+          160.0,
+          709.6,
+          660.0
+        ]
+      },
+      "main": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 9,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            21,
+            20
+          ],
+          "totalUtf16": 34,
+          "rust": "Compact example 😀678\nSecond line\n",
+          "mirror": "Compact example 😀678\nSecond line\n"
+        },
+        "windowCount": 1,
+        "nativeWindowFocused": false,
+        "bounds": [
+          1018.4,
+          0.0,
+          2053.6,
+          1109.6
+        ]
+      }
+    },
+    "observation": "The main window had been snapped during fixture repositioning. One system close returned text and selection to the main window; native focus was off in the snapshot. The editor accepted typing after tab activation.",
+    "causalAttribution": "The geometry and foreground context were not controlled across the historical samples."
+  },
+  "windows": {
+    "releaseBuild": "passed",
+    "aotSha256": "c279467456eba88f54fce2f885cc4c6c7823b05e51b0b85d30748e327d02e271",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "builtTree": "0fd5f00523b3af15c6156d5c072b85202d20d261",
+    "sourceSha256": {
+      "app/lib/workbench/auxiliary_window.dart": "100e3cb679c198aff46dbf139a63d12c59fb0a167b7fd910b09ae234d41736c7",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a"
+    },
+    "fixtureSha256": "6f0b12a25cbdbfce3b585c1f21691f03c974dce8ddad7fce2625c0a204c16263",
+    "scope": "isolation fixture with product workbench and auxiliary engine",
+    "physicalAcceptance": "pending",
+    "samples": [],
+    "pendingReason": "A full-screen foreground window covered the fixture and the pointer did not reach its verified target. The input guard stopped before clicking."
+  },
+  "linux": {
+    "platform": "WSL, Xvfb and xfwm4",
+    "aotSha256": "e51887cbe8fa7df496210f28c7ad3efa73b6bd64e9497455f05d084bc3506f25",
+    "fixtureSha256": "6f0b12a25cbdbfce3b585c1f21691f03c974dce8ddad7fce2625c0a204c16263",
+    "driverSha256": "a79248b499e75227a10e8649a77196b814a073b5c022de20b73efec5f76b4501",
+    "cases": {
+      "tab": {
+        "passed": true,
+        "source": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              71.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 6,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "after": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 1,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "continued": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "totalUtf16": 56,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              43,
+              43
+            ]
+          }
+        },
+        "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        }
+      },
+      "title": {
+        "passed": true,
+        "source": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              71.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 5,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "after": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 1,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "continued": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "totalUtf16": 56,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              43,
+              43
+            ]
+          }
+        },
+        "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        }
+      },
+      "system": {
+        "passed": true,
+        "source": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              71.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 5,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "after": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 1,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "continued": {
+          "bounds": [
+            20.0,
+            48.0,
+            848.0,
+            860.0
+          ],
+          "windowCount": 1,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 主编辑器",
+            "documentId": 5,
+            "box": [
+              246.23999999999998,
+              102.0,
+              523.12,
+              780.0000000000001
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVEDAFTER-RETURN\nSecond line\n",
+            "totalUtf16": 56,
+            "stateVersion": 3,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              43,
+              43
+            ]
+          }
+        },
+        "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        }
+      },
+      "conflict": {
+        "passed": true,
+        "source": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              71.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 6,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "after": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              101.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 6,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "continued": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              101.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVEDPOST-REFUSAL\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVEDPOST-REFUSAL\nSecond line\n",
+            "totalUtf16": 56,
+            "stateVersion": 10,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              43,
+              43
+            ]
+          }
+        },
+        "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        }
+      },
+      "unavailable": {
+        "passed": true,
+        "source": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              71.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 5,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "after": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              101.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVED\nSecond line\n",
+            "totalUtf16": 44,
+            "stateVersion": 5,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              31,
+              30
+            ]
+          }
+        },
+        "continued": {
+          "bounds": [
+            883.0,
+            80.0,
+            1506.0,
+            772.0
+          ],
+          "windowCount": 2,
+          "nativeFocus": true,
+          "editor": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "box": [
+              4.0,
+              101.0,
+              619.0,
+              688.0
+            ],
+            "rust": "Compact example 😀CLOSE-UNSAVEDPOST-REFUSAL\nSecond line\n",
+            "mirror": "Compact example 😀CLOSE-UNSAVEDPOST-REFUSAL\nSecond line\n",
+            "totalUtf16": 56,
+            "stateVersion": 9,
+            "dirty": true,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              43,
+              43
+            ]
+          }
+        },
+        "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        }
+      }
+    }
+  },
+  "macOSPhysicalAcceptance": "deferred per user"
+}

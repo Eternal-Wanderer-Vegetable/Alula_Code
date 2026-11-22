@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.181 / feat-233 实现已推草稿 PR #3，产品 cd8e73cfc0eab8476b53e4512063a5a2e8da1613。Windows 在收到接收确认并且源辅助窗仍在前台时请求激活主窗。专项 46/46，完整 Flutter 1,754 passed / 2 skipped，Linux xfwm4 五种场景与 Windows Release 构建通过。Windows 实机夹具在全屏遮挡时停止，普通、贴靠和切走后的焦点验证待复验。P05.180 文档 CI 44978774676 全绿。证据 docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md。
+
 - P05.180 / feat-232 完成。产品 1119c910bd9bd7a52100e10993c17c5b270f8961 已推草稿 PR #3。Windows 和 Linux 三个辅助窗关闭入口均能交还脏正文和 UTF-16 选区。同路径冲突与主窗不可达保留源窗，超时重试与迟到确认通过回归。Windows 贴靠摆位中一轮系统关闭未自动给主窗焦点，激活标签后可编辑，登记为 P05.181。专项 41/41，Flutter 1,754 passed / 2 skipped，同 SHA CI 44977861786 四项与 Platform Availability 44977859156 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.180-auxiliary-close-return.md。下一项 P05.181 / feat-233，辅助窗系统关闭后的 Windows 焦点交接。
 
 - P05.179 / feat-231 完成。产品 1f3f504fc52fba1ccc89af94524bef341d9ea162 已推草稿 PR #3。Windows 11 125% 实机验证右、下两种相邻建组。Linux xfwm4 验证四向边缘、Alt 中心回退、拒收与 P05.178 回归。修复主窗获得焦点时的合成 Alt 按下引发标题栏抢焦点。专项 47/47，Flutter 1,752 passed / 2 skipped，同 SHA CI 44974007130 四项与 Platform Availability 44974002421 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.179-auxiliary-tab-split.md。下一项 P05.180 / feat-232，正常关闭辅助窗口的未保存文档确认交接。

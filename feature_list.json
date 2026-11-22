@@ -2954,8 +2954,8 @@
         "feat-151",
         "feat-232"
       ],
-      "status": "not-started",
-      "evidence": "P05.180 最终 Windows 125% 试验中，一轮贴靠主窗的 Alt+F4 成功交还脏文档及选区，主窗原生焦点为 false。需复测普通和贴靠窗口并定位。",
+      "status": "in-progress",
+      "evidence": "产品 cd8e73cfc0eab8476b53e4512063a5a2e8da1613；专项 46/46，Flutter 1,754 passed / 2 skipped，Linux xfwm4 五个场景及 Windows Release 构建通过。Windows 实机焦点复验待桌面可用。docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
