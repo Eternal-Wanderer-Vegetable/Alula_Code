@@ -106,6 +106,124 @@ void main() {
     expect(panel, findsNothing);
   }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
 
+  testWidgets(
+      'Quick Open cycles file shortcuts and accepts on modifier release',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-quick-open-cycle');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final source = File('${root.path}/needle-first.txt')
+      ..writeAsStringSync('main\neditor');
+    final target = File('${root.path}/needle-second.txt')
+      ..writeAsStringSync('alpha\r\n😀beta\r\nlast');
+    final session = SessionStore(path: '${temp.path}/session.json');
+    final recent =
+        RecentHistoryStore(path: '${session.resolvePath()}.recent-history');
+    expect(recent.recordFile(target.path), isTrue);
+    expect(recent.recordFile(source.path), isTrue);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: root.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    final isMac =
+        Theme.of(tester.element(find.byType(WorkbenchPage))).platform ==
+            TargetPlatform.macOS;
+    final primary =
+        isMac ? LogicalKeyboardKey.metaLeft : LogicalKeyboardKey.controlLeft;
+    final first = find.byKey(const ValueKey('qi-needle-first.txt'));
+    final second = find.byKey(const ValueKey('qi-needle-second.txt'));
+
+    Future<void> waitFor(Finder finder) async {
+      for (var i = 0; i < 100 && finder.evaluate().isEmpty; i++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(finder, findsOneWidget);
+    }
+
+    void expectSelected(Finder row) {
+      expect(tester.widget<Container>(row).color, const Color(0xFF2F3542));
+    }
+
+    await tester.sendKeyDownEvent(primary);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+    await tester.pump(const Duration(milliseconds: 120));
+    await waitFor(second);
+    expectSelected(first);
+    await tester.sendKeyUpEvent(primary);
+    await tester.pumpAndSettle();
+    expect(panel, findsOneWidget);
+
+    await tester.enterText(filter, 'needle:2:3');
+    await tester.pump();
+    await waitFor(second);
+    await tester.sendKeyDownEvent(primary);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+    await tester.pump();
+    expectSelected(second);
+    await tester.sendKeyEvent(
+        isMac ? LogicalKeyboardKey.keyP : LogicalKeyboardKey.keyE);
+    await tester.pump();
+    expectSelected(first);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+    await tester.pump();
+    expectSelected(second);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(tester.widget<TextField>(filter).controller!.text, 'needle:2:3');
+    await tester.sendKeyUpEvent(primary);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+    final editor =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(editor.inputWindow.text, 'alpha\n😀beta\nlast');
+    expect(editor.inputWindow.initialValue.selection.extentOffset, 8);
+    expect(editor.focusNode!.hasPrimaryFocus, isTrue);
+    expect(
+        find.byKey(const ValueKey('editor-body-drop-editor-2')), findsNothing);
+
+    await commands.execute('workbench.action.quickOpen',
+        arguments: 'nonmatching-needle-path-404');
+    await tester.pump(const Duration(milliseconds: 120));
+    await waitFor(find.text('无匹配项'));
+    await tester.sendKeyDownEvent(primary);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+    await tester.sendKeyUpEvent(primary);
+    await tester.pumpAndSettle();
+    expect(panel, findsOneWidget);
+    await tester.enterText(filter, 'needle');
+    await tester.pump();
+    await waitFor(second);
+    await tester.sendKeyDownEvent(primary);
+    await tester.sendKeyUpEvent(primary);
+    await tester.pump();
+    expect(panel, findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(panel, findsNothing);
+  },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      }));
+
   testWidgets('Quick Open disables repeated page actions during loading',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-quick-open-pages');

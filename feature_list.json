@@ -3211,6 +3211,19 @@
       "evidence": "规范命令统一默认键位、起始查询与旧 ID。Windows 实机与 Linux Xvfb + xfwm4 各 18 个观测点，专项 217/217，Flutter 1,787 passed / 2 skipped。产品 e217e68 的 CI 45040365713 四项及 Platform Availability 45040362034 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-22-p05/p05.199-quick-open-action.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-252",
+      "name": "P05.200 CMD-02 Quick Open 文件选择器键盘循环",
+      "description": "文件选择器内用重复 Ctrl/Cmd+P 和 Windows/Linux Ctrl+E 循环选择，Shift 反向，松开主修饰键接受。",
+      "dependencies": [
+        "feat-239",
+        "feat-251"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

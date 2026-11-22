@@ -4605,6 +4605,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     QuickInput.show(
       context,
       hint: '文件名、路径或 path:行:列',
+      quickNavigateKeys: Theme.of(context).platform == TargetPlatform.macOS
+          ? const [LogicalKeyboardKey.keyP]
+          : const [LogicalKeyboardKey.keyP, LogicalKeyboardKey.keyE],
       initialValue: initialValue,
       restoreFocus: previousFocus,
       itemsQueryKey: queryKey,

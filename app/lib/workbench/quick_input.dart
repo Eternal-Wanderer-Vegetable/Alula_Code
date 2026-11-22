@@ -202,6 +202,7 @@ class QuickInput {
     Object Function(String query)? itemsQueryKey,
     VoidCallback? onClose,
     QuickInputNavigation? navigation,
+    List<LogicalKeyboardKey> quickNavigateKeys = const [],
   }) {
     if (validateInput != null && validateInputMessage != null) {
       throw ArgumentError('Only one QuickInput validator may be provided');
@@ -256,6 +257,7 @@ class QuickInput {
               itemsProvider: resolvedItemsProvider,
               itemsQueryKey: itemsQueryKey,
               navigation: navigation,
+              quickNavigateKeys: quickNavigateKeys,
               onDispose: notifyClosed,
               onHandled: () => handled = true,
             ),
@@ -294,6 +296,7 @@ class _QuickInputPanel extends StatefulWidget {
     this.itemsProvider,
     this.itemsQueryKey,
     this.navigation,
+    required this.quickNavigateKeys,
     required this.onDispose,
     required this.onHandled,
   });
@@ -327,6 +330,9 @@ class _QuickInputPanel extends StatefulWidget {
   final Object Function(String query)? itemsQueryKey;
   final QuickInputNavigation? navigation;
 
+  /// Base keys used with the platform's primary modifier in a visible picker.
+  final List<LogicalKeyboardKey> quickNavigateKeys;
+
   @override
   State<_QuickInputPanel> createState() => _QuickInputPanelState();
 }
@@ -341,6 +347,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   final _scroll = ScrollController();
   final _viewportKey = GlobalKey();
   int _navigationGeneration = 0;
+  bool _quickNavigateArmed = false;
   Future<void>? _pendingPages;
   final _focusNode = FocusNode(debugLabel: 'quick-input-field');
   final _rowKeys = <QuickItem, GlobalKey>{};
@@ -722,7 +729,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     return true;
   }
 
-  void _moveSelection(int delta) {
+  void _moveSelection(int delta, {bool wrap = false}) {
     final generation = ++_navigationGeneration;
     if (_filtered.isEmpty) return;
     var index = _selected;
@@ -730,7 +737,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     for (var step = 0; step < _filtered.length; step++) {
       final next = index + delta;
       if (next < 0 || next >= _filtered.length) {
-        if (widget.navigation == null) return;
+        if (widget.navigation == null && !wrap) return;
         wrapped = true;
         index = next % _filtered.length;
       } else {
@@ -1186,6 +1193,45 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         : KeyEventResult.ignored;
   }
 
+  KeyEventResult _onPickerKey(FocusNode node, KeyEvent event) {
+    if (widget.quickNavigateKeys.isEmpty ||
+        widget.inputMode ||
+        widget.canSelectMany) {
+      return _onBackgroundKey(node, event);
+    }
+
+    final key = event.logicalKey;
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
+    if (_quickNavigateArmed && event is KeyUpEvent) {
+      final releasedPrimary = isMac
+          ? key == LogicalKeyboardKey.metaLeft ||
+              key == LogicalKeyboardKey.metaRight
+          : key == LogicalKeyboardKey.controlLeft ||
+              key == LogicalKeyboardKey.controlRight;
+      if (releasedPrimary) {
+        _quickNavigateArmed = false;
+        if (!event.synthesized) {
+          unawaited(_runAt(_selected));
+          return KeyEventResult.handled;
+        }
+      }
+    }
+    if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+        !event.synthesized &&
+        widget.quickNavigateKeys.contains(key)) {
+      final keyboard = HardwareKeyboard.instance;
+      final hasPrimary = isMac
+          ? keyboard.isMetaPressed && !keyboard.isControlPressed
+          : keyboard.isControlPressed && !keyboard.isMetaPressed;
+      if (hasPrimary && !keyboard.isAltPressed) {
+        _quickNavigateArmed = true;
+        _moveSelection(keyboard.isShiftPressed ? -1 : 1, wrap: true);
+        return KeyEventResult.handled;
+      }
+    }
+    return _onBackgroundKey(node, event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final showMultiSelectControls = widget.canSelectMany && !widget.inputMode;
@@ -1359,7 +1405,12 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (widget.navigation == null) {
       return Focus(
         canRequestFocus: false,
-        onKeyEvent: _onBackgroundKey,
+        onKeyEvent: _onPickerKey,
+        onFocusChange: widget.quickNavigateKeys.isEmpty
+            ? null
+            : (hasFocus) {
+                if (!hasFocus) _quickNavigateArmed = false;
+              },
         child: panel,
       );
     }
