@@ -92,6 +92,42 @@ void main() {
     });
   });
 
+  test('Quick Open describes the parent relative to its workspace or home', () {
+    final parent = p.normalize(Directory.systemTemp.path);
+    final workspace = p.join(parent, 'Workspace');
+    final nested = p.join(workspace, 'Lib', 'Nested', 'code.txt');
+    final outside = p.join(parent, 'Workspace-other', 'other.txt');
+
+    expect(
+        quickOpenDirectoryLabel(p.join(workspace, 'file.txt'),
+            workspace: workspace),
+        isNull);
+    expect(quickOpenDirectoryLabel(nested, workspace: workspace),
+        p.join('Lib', 'Nested'));
+    expect(quickOpenDirectoryLabel(outside, workspace: workspace),
+        p.dirname(outside));
+    expect(quickOpenDirectoryLabel(nested), p.dirname(nested));
+    expect(
+      quickOpenDirectoryLabel(outside, workspace: workspace, userHome: parent),
+      Platform.isWindows ? p.dirname(outside) : p.join('~', 'Workspace-other'),
+    );
+    expect(
+        quickOpenDirectoryLabel(p.join(parent, 'home.txt'),
+            workspace: workspace, userHome: parent),
+        parent);
+
+    final differentlyCasedWorkspace = p.join(parent, 'WORKSPACE');
+    expect(
+      quickOpenDirectoryLabel(nested, workspace: differentlyCasedWorkspace),
+      Platform.isWindows || Platform.isMacOS
+          ? p.join('Lib', 'Nested')
+          : p.dirname(nested),
+    );
+    if (Platform.isWindows) {
+      expect(quickOpenDirectoryLabel(r'c:\other\file.txt'), r'C:\other');
+    }
+  });
+
   group('QuickOpenSearch', () {
     late Directory root;
     late QuickOpenSearch search;

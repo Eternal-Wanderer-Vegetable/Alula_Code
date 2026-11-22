@@ -4528,6 +4528,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     var loading = false;
     var searchGeneration = 0;
     final workspace = _workspaceRoot;
+    final userHome = Platform.environment['HOME'];
     final workspaceGeneration = _quickOpenWorkspaceGeneration;
     bool currentWorkspace() => mounted && _workspaceRoot == workspace &&
         _quickOpenWorkspaceGeneration == workspaceGeneration;
@@ -4663,7 +4664,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return QuickItem(
             label: label,
             semanticsLabel: dirty ? '$label，有未保存的更改' : null,
-            description: path,
+            description: quickOpenDirectoryLabel(
+              path,
+              workspace: workspace,
+              userHome: userHome,
+            ),
             onRun: () => openFile(path, location),
             onRunInBackground: (modifiers) => openFile(
               path,

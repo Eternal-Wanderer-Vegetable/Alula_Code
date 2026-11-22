@@ -65,6 +65,38 @@ QuickOpenQuery parseQuickOpenQuery(String input) {
   );
 }
 
+/// The parent directory shown beside a Quick Open file result.
+String? quickOpenDirectoryLabel(
+  String path, {
+  String? workspace,
+  String? userHome,
+}) {
+  final directory = p.normalize(p.dirname(p.absolute(path)));
+  final comparedDirectory =
+      Platform.isMacOS ? directory.toLowerCase() : directory;
+
+  String? relativeDirectory(String root) {
+    final parent = p.normalize(p.absolute(root));
+    final comparedRoot = Platform.isMacOS ? parent.toLowerCase() : parent;
+    if (p.equals(comparedRoot, comparedDirectory)) return '';
+    if (!p.isWithin(comparedRoot, comparedDirectory)) return null;
+    return p.joinAll(p.split(directory).skip(p.split(parent).length));
+  }
+
+  if (workspace != null) {
+    final relative = relativeDirectory(workspace);
+    if (relative != null) return relative.isEmpty ? null : relative;
+  }
+  if (!Platform.isWindows && userHome != null && userHome.isNotEmpty) {
+    final relative = relativeDirectory(userHome);
+    if (relative != null && relative.isNotEmpty) return p.join('~', relative);
+  }
+  if (Platform.isWindows && directory.length > 1 && directory[1] == ':') {
+    return '${directory[0].toUpperCase()}${directory.substring(1)}';
+  }
+  return directory;
+}
+
 typedef QuickOpenMatch = ({String path, bool recent});
 
 typedef _QuickOpenTerm = ({String text, String? exactLowercase});
