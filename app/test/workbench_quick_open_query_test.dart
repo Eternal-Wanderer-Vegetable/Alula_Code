@@ -5,6 +5,7 @@ import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/quick_open_query.dart';
 import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
@@ -900,6 +901,128 @@ void main() {
 
     expect(source.readAsStringSync(), 'main\neditor');
     expect(target.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
+  });
+
+  testWidgets('Quick Open holds recent membership while paging one query',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-quick-open-mru-snapshot');
+    final root = Directory('${temp.path}/workspace')..createSync();
+    final source = File('${root.path}/source.txt')..writeAsStringSync('source');
+    for (var i = 0; i < QuickOpenSearch.pageSize + 2; i++) {
+      final index = i.toString().padLeft(3, '0');
+      File('${root.path}/orbit-$index.txt').writeAsStringSync('result $index');
+    }
+    final session = SessionStore(path: '${temp.path}/session.json');
+    expect(
+      session.save({
+        'v': 1,
+        'workspace': root.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 2,
+            'docs': [
+              {'id': 2, 'path': source.path},
+            ],
+          },
+        ],
+      }),
+      isTrue,
+    );
+    final history = RecentHistoryStore(
+      path: '${session.resolvePath()}.recent-history',
+    );
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    final next = find.byKey(const ValueKey('quick-open-next-page'));
+    final previous = find.byKey(const ValueKey('quick-open-previous-page'));
+    final loading = find.byKey(const ValueKey('quick-input-loading'));
+    final recentGroup = find.byKey(const ValueKey('qi-separator-最近打开'));
+
+    List<String> visibleResults() => tester
+        .widgetList<Container>(find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.key is ValueKey<String> &&
+              (widget.key! as ValueKey<String>).value.startsWith('qi-orbit-'),
+        ))
+        .map((row) => (row.key! as ValueKey<String>).value.substring(3))
+        .toList();
+
+    Future<void> waitUntil(bool Function() ready) async {
+      for (var i = 0; i < 100 && !ready(); i++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 20));
+      }
+      expect(ready(), isTrue);
+    }
+
+    bool firstPageReady() =>
+        next.evaluate().isNotEmpty &&
+        previous.evaluate().isEmpty &&
+        loading.evaluate().isEmpty &&
+        tester.widget<IconButton>(next).onPressed != null;
+    bool lastPageReady() =>
+        previous.evaluate().isNotEmpty &&
+        next.evaluate().isEmpty &&
+        loading.evaluate().isEmpty &&
+        visibleResults().length == 2;
+
+    await commands.execute('workbench.action.quickOpen', arguments: 'orbit');
+    await tester.pump(const Duration(milliseconds: 120));
+    await waitUntil(firstPageReady);
+    await tester.tap(next);
+    await waitUntil(lastPageReady);
+    final initialLastPage = visibleResults();
+
+    final field = tester.widget<TextField>(filter);
+    field.focusNode!.requestFocus();
+    field.controller!.selection = const TextSelection.collapsed(offset: 5);
+    await tester.pump();
+    final acceptedName = initialLastPage.first;
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await waitUntil(() => history
+        .load()
+        .quickOpenFiles
+        .any((e) => e.path.endsWith(acceptedName)));
+    expect(panel, findsOneWidget);
+    expect(field.focusNode!.hasPrimaryFocus, isTrue);
+
+    await tester.enterText(filter, 'orbit:2:3');
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(visibleResults(), initialLastPage);
+    await tester.tap(previous);
+    await waitUntil(firstPageReady);
+    expect(recentGroup, findsNothing);
+    await tester.tap(next);
+    await waitUntil(lastPageReady);
+    expect(visibleResults(), initialLastPage);
+
+    await tester.enterText(filter, 'orbit*');
+    await waitUntil(() =>
+        firstPageReady() &&
+        recentGroup.evaluate().isNotEmpty &&
+        visibleResults().firstOrNull == acceptedName);
+    expect(tester.widget<TextField>(filter).controller!.text, 'orbit*');
   });
 
   testWidgets('Quick Open opens in background with the right arrow',

@@ -4523,6 +4523,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     var location = parseQuickOpenQuery(initialValue);
     var page = 0;
     var lastQueryKey = queryKey(initialValue);
+    List<String>? recentFileSnapshot;
     var hasNext = false;
     var closed = false;
     var loading = false;
@@ -4646,9 +4647,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (key != lastQueryKey) {
           page = 0;
           removedPaths.clear();
+          recentFileSnapshot = null;
           lastQueryKey = key;
         }
         final requestedPage = page;
+        // Background opens can update live history while paging this query.
+        final recentPaths = recentFileSnapshot ??= _recentHistory.quickOpenFiles
+            .map((entry) => entry.path)
+            .toList(growable: false);
         final generation = ++searchGeneration;
         bool currentRequest() =>
             !closed && currentWorkspace() && generation == searchGeneration;
@@ -4736,8 +4742,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           matches = await search.searchMatches(
             root,
             query,
-            recentPaths:
-                _recentHistory.quickOpenFiles.map((entry) => entry.path).toList(),
+            recentPaths: recentPaths,
             excludedPaths: removedPaths,
             page: requestedPage,
             includeFileResults: key.includeFileResults,

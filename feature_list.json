@@ -3303,6 +3303,19 @@
       "evidence": "普通查询结果页按文件名前缀、文件名命中和目录命中排序，保留最近文件与路径定位。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 233/233，Flutter 1,800 passed / 2 skipped。产品 b184972 的 CI 45058076816 四项及 Platform Availability 45058071369 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.206-quick-open-rank.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-259",
+      "name": "P05.207 CMD-02 Quick Open 分页最近文件快照",
+      "description": "同一匹配查询的分页使用固定的最近文件清单，后台打开只影响下一次匹配查询，显式移除仍生效。",
+      "dependencies": [
+        "feat-126",
+        "feat-249"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
