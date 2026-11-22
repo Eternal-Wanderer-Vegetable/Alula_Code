@@ -3273,8 +3273,8 @@
         "feat-239",
         "feat-255"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、原生与托管验收。",
+      "status": "done",
+      "evidence": "文件行展示单根工作区相对或外部父目录，保持原文件路径和行列定位。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 228/228，Flutter 1,795 passed / 2 skipped。产品 4692201 的 CI 45052840566 四项及 Platform Availability 45052836970 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.204-quick-open-path-labels.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

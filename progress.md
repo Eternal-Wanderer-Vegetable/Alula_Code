@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.204 / feat-256 完成。产品 4692201bffb020292b45e9714957fe6287cc902c。文件行展示单根工作区相对或外部父目录，保持原文件路径和行列定位。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 228/228，Flutter 1,795 passed / 2 skipped。产品 4692201 的 CI 45052840566 四项及 Platform Availability 45052836970 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.204-quick-open-path-labels.md。
+
 - P05.203 / feat-255 完成。产品 7507e2b919127f60fdf916cedb210cbbbb85fae3。规范化查询修饰符，保留连续匹配、字面精确路径和位置后缀。Windows 实机与 Linux Xvfb + xfwm4 各 12 个观测点，专项 227/227，Flutter 1,794 passed / 2 skipped。产品 7507e2b 的 CI 45050706958 四项及 Platform Availability 45050703609 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.203-quick-open-markers.md。
 
 - P05.202 / feat-254 完成。产品 6d8877d32e28ee5f0603fdd57d30dd257ade0ecb。闭合引号限定连续字符，移除闭合引号恢复模糊匹配，保留文件位置和精确路径。Windows 实机与 Linux Xvfb + xfwm4 各 11 个观测点，专项 226/226，Flutter 1,793 passed / 2 skipped。产品 6d8877d 的 CI 45048316747 四项及 Platform Availability 45048313724 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.202-quick-open-quotes.md。
