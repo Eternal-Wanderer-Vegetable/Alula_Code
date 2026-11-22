@@ -2968,8 +2968,8 @@
         "feat-124",
         "feat-227"
       ],
-      "status": "in-progress",
-      "evidence": "固定 Code-OSS auxiliaryEditorPart.ts 的切换动作 f1=true，仅辅助窗获焦时可用。启用、退出走按紧凑状态展示的 LayoutControlMenu 动作。",
+      "status": "done",
+      "evidence": "Windows 11 125% 与 Linux xfwm4 原生验证 F1、Ctrl+Shift+P、标题命令、主窗隔离、接收后继续输入。专项 62/62，Flutter 1,757 passed / 2 skipped。646a7ca 的 CI 44984802808 四项及 Platform Availability 44984800385 Windows/Linux 通过。docs/diagnostics/2026-11-22-p05/p05.182-auxiliary-compact-commands.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

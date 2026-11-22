@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
-- P05.181 / feat-233 完成。产品 cd8e73cfc0eab8476b53e4512063a5a2e8da1613 已在草稿 PR #3。Windows 11 125% 普通与贴靠主窗 Alt+F4 均先取得主窗原生焦点，接收后保留脏正文、UTF-16 选区并可直接输入。切到主窗后关闭辅助窗，以及非活动测试桌面的外部前台保持与冲突拒收均通过。专项 46/46，Flutter 1,754 passed / 2 skipped，Linux xfwm4 五种场景通过。产品 CI 44981197602 四项及 Platform Availability 44981195018 Windows/Linux 通过。macOS 托管首轮正则替换测试失败，同 SHA 重跑中，macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md。
+- P05.182 / feat-234 完成。产品 646a7ca207561dc0cc9c6931a724ff750ba2e31c 已推草稿 PR #3。Windows 11 125% 与 Linux xfwm4 验证辅助窗 F1 和 Ctrl+Shift+P、Escape 与执行后的焦点、标题区启用和退出。主窗命令面板无紧凑命令。保留脏正文、选区及文件字节，Alt+F4 后可在主窗直接继续输入。专项 62/62，Flutter 1,757 passed / 2 skipped。同 SHA CI 44984802808 四项和 Platform Availability 44984800385 Windows/Linux 通过。macOS 托管在跑，macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.182-auxiliary-compact-commands.md。 下一步核对主窗默认 F1 路由及规范 showCommands 命令。
+
+- P05.181 / feat-233 完成。产品 cd8e73cfc0eab8476b53e4512063a5a2e8da1613 已在草稿 PR #3。Windows 11 125% 普通与贴靠主窗 Alt+F4 均先取得主窗原生焦点，接收后保留脏正文、UTF-16 选区并可直接输入。切到主窗后关闭辅助窗，以及非活动测试桌面的外部前台保持与冲突拒收均通过。专项 46/46，Flutter 1,754 passed / 2 skipped，Linux xfwm4 五种场景通过。产品 CI 44981197602 四项及 Platform Availability 44981195018 Windows/Linux 通过。macOS 托管首轮正则替换测试失败，同 SHA 第二轮全通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.181-auxiliary-system-close-focus.md。
 
 - P05.180 / feat-232 完成。产品 1119c910bd9bd7a52100e10993c17c5b270f8961 已推草稿 PR #3。Windows 和 Linux 三个辅助窗关闭入口均能交还脏正文和 UTF-16 选区。同路径冲突与主窗不可达保留源窗，超时重试与迟到确认通过回归。Windows 贴靠摆位中一轮系统关闭未自动给主窗焦点，激活标签后可编辑，登记为 P05.181。专项 41/41，Flutter 1,754 passed / 2 skipped，同 SHA CI 44977861786 四项与 Platform Availability 44977859156 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-22-p05/p05.180-auxiliary-close-return.md。下一项 P05.181 / feat-233，辅助窗系统关闭后的 Windows 焦点交接。
 
