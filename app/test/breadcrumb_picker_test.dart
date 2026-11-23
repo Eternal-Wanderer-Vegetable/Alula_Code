@@ -568,6 +568,89 @@ void main() {
   );
 
   testWidgets(
+    'symbol breadcrumb Space and the Alt disclosure toggle the intended subtree',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final file = File('${workspace.path}/src/main.rs')
+        ..writeAsStringSync(
+          'mod outer {\n    mod section {\n        fn inner() {}\n    }\n}\n'
+          'mod closed {\n    fn other_child() {}\n}\n',
+        );
+      await mountPage(tester);
+
+      final field = _fieldForDocument(tester, 10);
+      final input = find.descendant(
+        of: find.byKey(field.key!),
+        matching: find.byType(TextField),
+      );
+      final controller = tester.widget<TextField>(input).controller!;
+      final position = controller.text.indexOf('outer');
+      field.focusNode!.requestFocus();
+      controller.selection = TextSelection.collapsed(offset: position);
+      await tester.pumpAndSettle();
+      await tester.tap(_breadcrumbSegment('editor', 'outer'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      Finder entry(String name) =>
+          find.descendant(of: rows, matching: find.textContaining(' $name'));
+      final outer = entry('outer');
+      final section = entry('section');
+      final inner = entry('inner');
+      final other = entry('other_child');
+      final outerRow = find.ancestor(of: outer, matching: rows);
+      expect(section, findsNothing);
+
+      Future<void> space({bool recursive = false}) async {
+        if (recursive) await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        if (recursive) await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.pumpAndSettle();
+      }
+
+      await space();
+      expect(section, findsOneWidget);
+      expect(inner, findsNothing);
+      await space();
+      expect(section, findsNothing);
+
+      await space(recursive: true);
+      expect(section, findsOneWidget);
+      expect(inner, findsOneWidget,
+          reason: 'Alt+Space expands every branch below the focused symbol');
+      expect(other, findsNothing);
+      expect(Focus.of(tester.element(outer)).hasPrimaryFocus, isTrue);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.tap(find.descendant(
+        of: outerRow,
+        matching: find.byIcon(Icons.expand_more),
+      ));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.pumpAndSettle();
+      expect(section, findsNothing);
+      await space();
+      expect(section, findsOneWidget);
+      expect(inner, findsNothing,
+          reason: 'a recursive collapse also resets the descendant branches');
+
+      for (var i = 0; i < 3; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+        await tester.pumpAndSettle();
+      }
+      await space();
+      expect(inner, findsOneWidget);
+      expect(controller.selection.extentOffset, position);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(controller.selection.extentOffset, controller.text.indexOf('fn inner'));
+      expect(file.readAsStringSync(), controller.text);
+    },
+  );
+
+  testWidgets(
     'the breadcrumb path picker expands a directory and navigates to its child',
     (tester) async {
       await prepareWorkspace(tester);

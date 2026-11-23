@@ -141,14 +141,12 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       widget.loadFolder != null &&
       (widget.item.value?.startsWith('reveal:') ?? false);
 
-  @override
-  void initState() {
-    super.initState();
+  List<PopupMenuItem<String>>? get _visibleChildren {
     final symbol = _symbol;
-    if (symbol != null &&
-        (widget.expandedSymbols?.contains(symbol.value) ?? false)) {
-      _children = symbol.children;
-    }
+    if (symbol == null) return _children;
+    return widget.expandedSymbols?.contains(symbol.value) == true
+        ? symbol.children
+        : null;
   }
 
   @override
@@ -158,20 +156,53 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
   }
 
   void _expand() {
-    final children = _symbol?.children ??
+    final symbol = _symbol;
+    if (symbol != null) {
+      _setSymbolExpanded(symbol, true, recursive: false);
+      return;
+    }
+    final children =
         widget.loadFolder!(widget.item.value!.substring('reveal:'.length));
-    if (_symbol != null) widget.expandedSymbols?.add(widget.item.value!);
     setState(() => _children = children);
   }
 
   void _collapse() {
-    if (_symbol != null) widget.expandedSymbols?.remove(widget.item.value);
+    final symbol = _symbol;
+    if (symbol != null) {
+      _setSymbolExpanded(symbol, false, recursive: false);
+      return;
+    }
     setState(() => _children = null);
   }
 
-  void _toggle() {
+  void _setSymbolExpanded(
+    BreadcrumbSymbolMenuItem symbol,
+    bool expanded, {
+    required bool recursive,
+  }) {
+    final expandedSymbols = widget.expandedSymbols;
+    if (expandedSymbols == null) return;
+    final pending = [symbol];
+    setState(() {
+      while (pending.isNotEmpty) {
+        final item = pending.removeLast();
+        if (item.children.isEmpty) continue;
+        if (expanded) {
+          expandedSymbols.add(item.value!);
+        } else {
+          expandedSymbols.remove(item.value);
+        }
+        if (recursive) pending.addAll(item.children);
+      }
+    });
+  }
+
+  void _toggle({bool recursive = false}) {
     _rowFocus.requestFocus();
-    if (_children == null) {
+    final symbol = _symbol;
+    if (symbol != null) {
+      _setSymbolExpanded(symbol, _visibleChildren == null, recursive: recursive);
+    } else if (_children == null) {
       _expand();
     } else {
       _collapse();
@@ -190,13 +221,19 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
-    if (widget.loadFolder != null || _symbol != null) {
+    final symbol = _symbol;
+    if (symbol != null && key == LogicalKeyboardKey.space) {
+      if (_hasChildren) _toggle(recursive: keyboard.isAltPressed);
+      return KeyEventResult.handled;
+    }
+    if (widget.loadFolder != null || symbol != null) {
+      final children = _visibleChildren;
       final plain = !keyboard.isControlPressed &&
           !keyboard.isMetaPressed &&
           !keyboard.isAltPressed &&
           !keyboard.isShiftPressed;
       if (plain && key == LogicalKeyboardKey.arrowLeft) {
-        if (_children != null) {
+        if (children != null) {
           _collapse();
         } else {
           widget.focusParent?.call();
@@ -204,9 +241,9 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
         return KeyEventResult.handled;
       }
       if (plain && key == LogicalKeyboardKey.arrowRight) {
-        if (_hasChildren && _children == null) {
+        if (_hasChildren && children == null) {
           _expand();
-        } else if (_children?.isNotEmpty ?? false) {
+        } else if (children?.isNotEmpty ?? false) {
           FocusScope.of(context).nextFocus();
         }
         return KeyEventResult.handled;
@@ -242,18 +279,21 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
     widget.onRoute(ModalRoute.of(context));
     Widget label = widget.item.child!;
     final symbol = _symbol;
+    final children = _visibleChildren;
     if ((widget.loadFolder != null || symbol != null) && widget.item.enabled) {
       Widget disclosure = const SizedBox(width: 18);
       if (_hasChildren) {
         disclosure = Icon(
-          _children == null ? Icons.chevron_right : Icons.expand_more,
+          children == null ? Icons.chevron_right : Icons.expand_more,
           size: 18,
         );
         if (symbol != null) {
           disclosure = InkResponse(
             canRequestFocus: false,
             radius: 12,
-            onTap: _toggle,
+            onTap: () => _toggle(
+              recursive: HardwareKeyboard.instance.isAltPressed,
+            ),
             child: disclosure,
           );
         }
@@ -264,7 +304,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
         child: Row(children: [disclosure, Expanded(child: label)]),
       );
       if (symbol != null && _hasChildren) {
-        label = Semantics(expanded: _children != null, child: label);
+        label = Semantics(expanded: children != null, child: label);
       }
     }
     final content = Focus(
@@ -298,7 +338,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       child: _directory
           ? _BreadcrumbDirectoryMenuItem(
               value: widget.item.value,
-              expanded: _children != null,
+              expanded: children != null,
               onToggle: _toggle,
               child: content,
             )
@@ -314,7 +354,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         row,
-        for (final item in _children ?? const <PopupMenuItem<String>>[])
+        for (final item in children ?? const <PopupMenuItem<String>>[])
           BreadcrumbMenuEntry(
             key: ValueKey(item.value),
             item: item,
