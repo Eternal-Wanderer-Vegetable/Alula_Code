@@ -3722,6 +3722,20 @@
       "evidence": "工作区内同级项和展开的子项应用六个默认排除项，遵循本地提供程序大小写规则。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 eb633dab 的 CI 45152054753 四项和 Platform Availability 45152041961 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.237-breadcrumb-default-excludes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-290",
+      "name": "P05.238 CMD-06 符号选择器初选当前面包屑",
+      "description": "从符号段打开选择器时，按当前版本的符号位置初选该段，切换相邻符号段会更新初选，Enter 定位且 Esc 恢复所属编辑器与原选区。",
+      "dependencies": [
+        "feat-145",
+        "feat-146",
+        "feat-284"
+      ],
+      "status": "in-progress",
+      "evidence": "旧版符号选择器未初选当前段的回归已复现，修复后当前版本 Rust 符号、初选和 Enter 定位的控件用例通过。等待完整门禁及原生和托管验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

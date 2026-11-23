@@ -24936,7 +24936,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (index < pathSegments.length) {
             return _onBreadcrumbSegmentTap(g, pathSegments, index);
           }
-          return _showBreadcrumbSymbolPicker(g);
+          return _showBreadcrumbSymbolPicker(
+            g,
+            active,
+            symbolPath[index - pathSegments.length],
+          );
         },
         onRevealDirectory: (index) async {
           if (index >= pathSegments.length) {
@@ -25329,9 +25333,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     WidgetsBinding.instance.scheduleFrame();
   }
 
-  Future<void> _showBreadcrumbSymbolPicker(EditorGroup group) async {
-    final doc = group.active;
-    if (doc == null) return;
+  Future<void> _showBreadcrumbSymbolPicker(
+    EditorGroup group,
+    OpenDoc doc,
+    BreadcrumbSymbolPathEntry selectedSymbol,
+  ) async {
+    if (!identical(_groups[group.region], group) ||
+        !identical(group.active, doc) ||
+        group.breadcrumbSymbolDocumentKey != '${doc.id}#${doc.doc.version}' ||
+        !group.breadcrumbSymbolPath.contains(selectedSymbol)) {
+      return;
+    }
     // 点击时直查 LSP（不依赖大纲缓存，任意组即时可用）。
     final r = doc.doc.core.lsp.symbols(doc.id);
     final symbols = [
@@ -25343,15 +25355,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           line: (s['line'] as num?)?.toInt() ?? 0,
         )
     ];
-    final selection = await _showBreadcrumbMenu(group, doc, [
-        if (symbols.isEmpty)
-          const PopupMenuItem(enabled: false, child: Text('未发现符号')),
-        for (final sym in symbols)
-          PopupMenuItem(
-            value: 'symbol:${sym.startUtf16}:${sym.name}',
-            child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
-          ),
-    ]);
+    final items = <PopupMenuItem<String>>[
+      if (symbols.isEmpty)
+        const PopupMenuItem(enabled: false, child: Text('未发现符号')),
+      for (final sym in symbols)
+        PopupMenuItem(
+          value: 'symbol:${sym.startUtf16}:${sym.name}',
+          child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
+        ),
+    ];
+    final selectedValue =
+        'symbol:${selectedSymbol.startUtf16}:${selectedSymbol.name}';
+    final selection = await _showBreadcrumbMenu(
+      group,
+      doc,
+      items,
+      initialValue: items.any((item) => item.represents(selectedValue))
+          ? selectedValue
+          : null,
+    );
     if (!mounted || selection == null) return;
     final sourceVersion = doc.doc.version;
     final sourceRegion = group.region;

@@ -342,7 +342,12 @@ void main() {
         matching: find.textContaining('inner'),
       );
       expect(innerEntry, findsOneWidget);
-      await tester.tap(innerEntry);
+      expect(
+        Focus.of(tester.element(innerEntry)).hasPrimaryFocus,
+        isTrue,
+        reason: 'the opened symbol segment determines the initial picker row',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       await tester.pumpAndSettle();
       expect(controller.selection.extentOffset, inner['start_utf16']);
       expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget);
