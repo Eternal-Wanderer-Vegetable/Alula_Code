@@ -553,4 +553,91 @@ void main() {
     expect(file.readAsStringSync(), content);
     expect(empty.readAsStringSync(), emptyContent);
   });
+
+  testWidgets('Document symbols initially reveal the symbol at the caret',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-document-symbol-caret');
+    final text = [
+      '// emoji 😀\n',
+      for (var index = 0; index < 55; index++) 'fn filler_$index() {}\n',
+      'mod outer_b {\n  fn nested_b() {\n    let local = 1;\n  }\n}\n',
+    ].join();
+    final file = File('${temp.path}/main.rs')..writeAsStringSync(text);
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 95,
+            'docs': [
+              {'id': 95, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: session,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (value) => commands = value,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    final editor = find.byType(RustTextInputField);
+    final field = find.byKey(const ValueKey('rust-bounded-text-input'));
+    final controller = tester.widget<TextField>(field).controller!;
+    final original = TextSelection.collapsed(offset: text.indexOf('local') + 2);
+    final declaration = text.indexOf('fn nested_b');
+    await tester.tap(editor);
+    controller.selection = original;
+    await tester.pumpAndSettle();
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final opening = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    expect(controller.selection.extentOffset, declaration);
+    expect(find.byKey(const ValueKey('qi-nested_b')).hitTestable(),
+        findsOneWidget);
+
+    await tester.enterText(input, '@filler_0');
+    await tester.pumpAndSettle();
+    expect(controller.selection.extentOffset, text.indexOf('fn filler_0'));
+    await tester.enterText(input, '@');
+    await tester.pumpAndSettle();
+    expect(controller.selection.extentOffset, text.indexOf('fn filler_0'));
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+    expect(controller.selection, original);
+
+    final reopened = commands.execute('workbench.action.gotoSymbol');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('qi-nested_b')).hitTestable(),
+        findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(await reopened, CommandExecutionStatus.executed);
+    expect(controller.selection.extentOffset, declaration);
+    expect(tester.widget<RustTextInputField>(editor).focusNode!.hasPrimaryFocus,
+        isTrue);
+    expect(file.readAsStringSync(), text);
+  });
 }

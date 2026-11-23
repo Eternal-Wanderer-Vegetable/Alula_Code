@@ -3487,6 +3487,19 @@
       "evidence": "文档符号支持名称和直接容器组合查询，显示两列实际命中。Windows 实机与 Linux Xvfb + xfwm4 各 27 个观测点，专项 281/281，Flutter 1,813 passed / 2 skipped。产品 88d46d6 的 CI 45088364191 四项及 Platform Availability 45088358155 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.220-symbol-container.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-273",
+      "name": "P05.221 CMD-04 初次打开文档符号时选中光标所在符号",
+      "description": "无查询打开文档符号选择器时选中当前光标所在的符号并滚入可视区，保留查询变化与取消行为。",
+      "dependencies": [
+        "feat-128",
+        "feat-272"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

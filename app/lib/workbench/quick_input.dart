@@ -44,6 +44,7 @@ class QuickItem {
     this.onPreview,
     this.buttons = const <QuickItemButton>[],
     this.kind = QuickItemKind.defaultItem,
+    this.initiallyActive = false,
     this.picked = false,
   });
 
@@ -67,6 +68,9 @@ class QuickItem {
   final VoidCallback? onPreview;
   final List<QuickItemButton> buttons;
   final QuickItemKind kind;
+
+  /// Prefers this row when the provider first presents its results.
+  final bool initiallyActive;
 
   /// 多选模式的初始勾选状态（上游 `QuickPickItem.picked`）。
   final bool picked;
@@ -685,12 +689,21 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final filtered = scored.map((e) => e.$1).toList();
     final selectedIndex =
         keepSelected == null ? -1 : filtered.indexOf(keepSelected);
+    final preferredIndex = selectedIndex < 0 && widget.itemsProvider != null
+        ? filtered.indexWhere((item) => item.initiallyActive && _isSelectable(item))
+        : -1;
     final generation = ++_navigationGeneration;
     setState(() {
       _filtered = filtered;
-      _selected = selectedIndex >= 0 ? selectedIndex : _initialSelectionIndex();
+      if (selectedIndex >= 0) {
+        _selected = selectedIndex;
+      } else {
+        _selected = preferredIndex >= 0 ? preferredIndex : _initialSelectionIndex();
+      }
     });
-    if (selectedIndex < 0 && _scroll.hasClients && _scroll.offset != 0) {
+    if (preferredIndex >= 0) {
+      unawaited(_revealGroup(generation, preferredIndex, down: true));
+    } else if (selectedIndex < 0 && _scroll.hasClients && _scroll.offset != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_canNavigate(generation)) {
           _scroll.jumpTo(_scroll.position.minScrollExtent);

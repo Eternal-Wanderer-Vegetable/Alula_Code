@@ -4186,6 +4186,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final containers = documentSymbolContainers(roots);
     final original = doc.selectionSet.toList();
     final scroll = editorPrimaryScrollPosition(doc.editorScrollController)?.pixels;
+    DocumentSymbolNode? symbolAtCaret;
+    if (roots.isNotEmpty && initialValue.trim() == '@') {
+      final caret = doc.selection.extentOffset;
+      try {
+        final line = doc.doc.lineBoundary(caret).line + 1;
+        final symbol = documentSymbolAtLine(roots, line);
+        if (symbol != null && symbol.startUtf16 <= caret) symbolAtCaret = symbol;
+      } on AlulaException {
+        symbolAtCaret = null;
+      }
+    }
+    var firstQuery = true;
     var accepted = false;
     bool valid() => mounted && identical(_active, doc) && doc.doc.version == snapshot.version;
     void preview(DocumentSymbolNode symbol) {
@@ -4250,6 +4262,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       redirectOnInput: inputRedirect,
       itemsProvider: (query) async {
         if (!valid()) return const [];
+        final preferredSymbol = firstQuery && query.trim() == '@'
+            ? symbolAtCaret
+            : null;
+        firstQuery = false;
         var value = query.trim();
         if (value.startsWith('@')) value = value.substring(1).trimLeft();
         final grouped = value.startsWith(':');
@@ -4280,6 +4296,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final location = '${symbol.kind} · 行 ${symbol.line}';
           return QuickItem(
             label: symbol.name,
+            initiallyActive: identical(symbol, preferredSymbol),
             description: container ?? location,
             detail: container == null ? null : location,
             highlights: score == null
