@@ -3596,6 +3596,20 @@
       "evidence": "本地专项 284/284，Flutter 1,823 passed / 2 skipped。Windows 实机 28 个、Linux 原生 44 个观测点通过。关闭全部编辑器后仍可使用活跃工作区服务搜索并定位，退出时回收服务。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-281",
+      "name": "P05.229 CMD-06 面包屑显示开关与键盘恢复",
+      "description": "规范显示开关同步外观菜单与编辑组，跨会话恢复，并用固定默认快捷键重新开启、聚焦并选择面包屑。",
+      "dependencies": [
+        "feat-140",
+        "feat-145",
+        "feat-147"
+      ],
+      "status": "in-progress",
+      "evidence": "固定前置构建的控件回归确认未注册 breadcrumbs.toggle。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

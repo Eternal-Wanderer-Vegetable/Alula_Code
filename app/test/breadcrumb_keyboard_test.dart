@@ -484,4 +484,70 @@ void main() {
     expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
     expect(otherFile.readAsStringSync(), 'fn other() {}\n');
   });
+
+  testWidgets('breadcrumb visibility persists and the shortcut enables picking',
+      (tester) async {
+    await mount(tester);
+    expect(_segment('editor', 0), findsOneWidget);
+    expect(_segment('editor-2', 0), findsOneWidget);
+    expect(commands.byId('breadcrumbs.toggle'), isNotNull);
+    expect(commands.context['config.breadcrumbs.enabled'], isTrue);
+
+    await shortcut(tester, LogicalKeyboardKey.period);
+    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(await commands.execute('breadcrumbs.toggle'),
+        CommandExecutionStatus.executed);
+    await tester.pumpAndSettle();
+    expect(_segment('editor', 0), findsNothing);
+    expect(_segment('editor-2', 0), findsNothing);
+    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
+    expect(commands.context['breadcrumbsPossible'], isTrue);
+    expect(commands.context['breadcrumbsVisible'], isFalse);
+    expect(commands.context['breadcrumbsActive'], isFalse);
+    expect(commands.isEnabled('breadcrumbs.focusAndSelect'), isFalse);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
+    final sessionStore = SessionStore(path: '${temp.path}/session.json');
+    expect(sessionStore.tryLoad()?['breadcrumbs.enabled'], isFalse);
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: workspace.path,
+        layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+        sessionStore: sessionStore,
+        keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+        onCommandServiceReady: (service) => commands = service,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pumpAndSettle();
+    expect(_segment('editor', 0), findsNothing);
+    expect(_segment('editor-2', 0), findsNothing);
+    expect(commands.context['config.breadcrumbs.enabled'], isFalse);
+    _field(tester, 10).focusNode!.requestFocus();
+    await tester.pump();
+
+    final primary = defaultTargetPlatform == TargetPlatform.macOS
+        ? LogicalKeyboardKey.metaLeft
+        : LogicalKeyboardKey.controlLeft;
+    await tester.sendKeyDownEvent(primary);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.greater,
+        platform: 'macos', physicalKey: PhysicalKeyboardKey.period);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(primary);
+    await tester.pumpAndSettle();
+    expect(_segment('editor', 0), findsOneWidget);
+    expect(_segment('editor-2', 0), findsOneWidget);
+    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(commands.context['config.breadcrumbs.enabled'], isTrue);
+    await key(tester, LogicalKeyboardKey.escape);
+    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
+    expect(_field(tester, 10).inputWindow.document.isDirty, isFalse);
+    expect(sessionStore.tryLoad()?['breadcrumbs.enabled'], isTrue);
+    expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
+    expect(otherFile.readAsStringSync(), 'fn other() {}\n');
+  });
 }

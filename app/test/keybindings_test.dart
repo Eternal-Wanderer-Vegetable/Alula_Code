@@ -102,7 +102,7 @@ void main() {
           final expectedContext = switch (entry.value) {
             'breadcrumbs.focus' ||
             'breadcrumbs.focusAndSelect' =>
-              'breadcrumbsPossible',
+              'breadcrumbsVisible',
             'breadcrumbs.focusNext' ||
             'breadcrumbs.focusPrevious' =>
               'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
@@ -120,6 +120,12 @@ void main() {
               reason: '$platform/${entry.key}');
           expect(binding.when, expectedContext);
         }
+        final enableBreadcrumbs = keys.bindingForChord(
+          parseChord('$modifier+shift+.')!,
+          matchesWhen: (condition) =>
+              condition == 'config.breadcrumbs.enabled == false',
+        );
+        expect(enableBreadcrumbs?.commandId, 'breadcrumbs.toggleToOn');
         final outsidePicker = keys.resolveBindings(
           matchesWhen: (condition) =>
               condition == null ||

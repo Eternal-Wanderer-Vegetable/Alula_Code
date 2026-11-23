@@ -351,8 +351,9 @@ class KeybindingSet {
         'notificationFocus && notificationToastsVisible',
     'notifications.focusLastToast':
         'notificationFocus && notificationToastsVisible',
-    'breadcrumbs.focus': 'breadcrumbsPossible',
-    'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
+    'breadcrumbs.focus': 'breadcrumbsVisible',
+    'breadcrumbs.focusAndSelect': 'breadcrumbsVisible',
+    'breadcrumbs.toggleToOn': 'config.breadcrumbs.enabled == false',
     'breadcrumbs.focusNext':
         'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
     'breadcrumbs.focusPrevious':
@@ -386,6 +387,8 @@ class KeybindingSet {
         'breadcrumbs.focus':
             platform == TargetPlatform.macOS ? 'cmd+shift+;' : 'ctrl+shift+;',
         'breadcrumbs.focusAndSelect':
+            platform == TargetPlatform.macOS ? 'cmd+shift+.' : 'ctrl+shift+.',
+        'breadcrumbs.toggleToOn':
             platform == TargetPlatform.macOS ? 'cmd+shift+.' : 'ctrl+shift+.',
         'breadcrumbs.focusNext': platform == TargetPlatform.macOS
             ? 'arrowright,alt+arrowright'

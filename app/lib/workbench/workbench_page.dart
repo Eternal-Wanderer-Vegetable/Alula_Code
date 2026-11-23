@@ -635,6 +635,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final FocusNode _openEditorsDirtyCountFocus =
       FocusNode(debugLabel: 'open-editors-dirty-count');
   final BreadcrumbNavigationController _breadcrumbs = BreadcrumbNavigationController();
+  bool _breadcrumbsEnabled = true;
   bool _breadcrumbPickerOpen = false;
   bool _breadcrumbPickerFocused = false;
   ModalRoute<dynamic>? _breadcrumbPickerRoute;
@@ -901,6 +902,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'workbench.action.files.newUntitledFile',
       ),
     );
+    reg('breadcrumbs.toggle', '查看', '切换面包屑',
+        () async => _setBreadcrumbsEnabled(!_breadcrumbsEnabled));
+    reg('breadcrumbs.toggleToOn', '面包屑', '开启并选择面包屑',
+        _enableAndSelectBreadcrumbs);
     reg('breadcrumbs.focus', '面包屑', '聚焦面包屑',
         () async => _breadcrumbs.focusLast(_focused.region),
         when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
@@ -3650,9 +3655,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'config.breadcrumbs.enabled': _breadcrumbsEnabled,
       'breadcrumbsPossible': active?.path != null && _workspaceRoot != null,
-      'breadcrumbsVisible': active?.path != null && _workspaceRoot != null,
-      'breadcrumbsActive': _breadcrumbs.isActive,
+      'breadcrumbsVisible':
+          _breadcrumbsEnabled && active?.path != null && _workspaceRoot != null,
+      'breadcrumbsActive': _breadcrumbsEnabled && _breadcrumbs.isActive,
       'breadcrumbsPickerOpen': _breadcrumbPickerOpen,
       'breadcrumbsPickerFocused': _breadcrumbPickerFocused,
       'listFocus': _treeFocusNode.hasFocus || _treeFind.inputFocus.hasFocus,
@@ -3945,7 +3952,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final currentLocation = _layout.activityBarLocation;
     final available = [
       for (final c in _commands.all)
-        if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation)) c,
+        if (c.id != 'breadcrumbs.toggleToOn' &&
+            !_isCurrentActivityBarLocationCommand(c.id, currentLocation))
+          c,
     ];
     final byId = {for (final c in available) c.id: c};
     // LAY-17c：空查询时最近使用的命令排在前面（其余保持注册顺序）；输入查询后
@@ -5288,6 +5297,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
         if (_splitInGroupVertical) 'splitInGroupVertical': true,
+        'breadcrumbs.enabled': _breadcrumbsEnabled,
         'gotoLine.useZeroBasedOffset': _gotoZeroBasedOffset,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -5434,6 +5444,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
     _splitInGroupVertical = data['splitInGroupVertical'] == true;
+    _breadcrumbsEnabled = data['breadcrumbs.enabled'] != false;
     _gotoZeroBasedOffset = data['gotoLine.useZeroBasedOffset'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -19366,9 +19377,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
       return KeyEventResult.handled;
     }
-    return _handleNotificationPrimaryShortcut(currentChord)
+    return _handleNotificationPrimaryShortcut(currentChord) ||
+            _handleShiftedBreadcrumbShortcut(event, currentChord)
         ? KeyEventResult.handled
         : KeyEventResult.ignored;
+  }
+
+  bool _handleShiftedBreadcrumbShortcut(KeyEvent event, KeyChord chord) {
+    if (!chord.shift ||
+        chord.key != LogicalKeyboardKey.greater ||
+        event.physicalKey != PhysicalKeyboardKey.period) {
+      return false;
+    }
+    final matchesWhen = _commands.context.matches;
+    // GTK can deliver Shift+Period as Greater. An explicit Greater binding
+    // still owns the event, and the physical key distinguishes other layouts.
+    if (_keybindings.bindingForChord(chord, matchesWhen: matchesWhen) != null) {
+      return false;
+    }
+    final binding = _keybindings.bindingForChord(
+      KeyChord(
+        key: LogicalKeyboardKey.period,
+        control: chord.control,
+        shift: true,
+        alt: chord.alt,
+        meta: chord.meta,
+      ),
+      matchesWhen: matchesWhen,
+    );
+    if (binding == null ||
+        (binding.commandId != 'breadcrumbs.focusAndSelect' &&
+            binding.commandId != 'breadcrumbs.toggleToOn') ||
+        !_commands.isEnabled(binding.commandId)) {
+      return false;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
+    return true;
   }
 
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
@@ -22516,6 +22560,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             checkedListenable: _layout,
                             checkedBuilder: () => _zenMode,
                           ),
+                          TitleMenuItem(
+                            '面包屑(&&B)',
+                            commandId: 'breadcrumbs.toggle',
+                            checkedListenable: _commands,
+                            checkedBuilder: () => _breadcrumbsEnabled,
+                          ),
                           TitleMenuItem.submenu('活动栏位置(&&A)', children: [
                             TitleMenuItem('侧边(&&D)',
                                 commandId:
@@ -24830,10 +24880,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return _auxiliaryTabDropTarget(g, body);
   }
 
+  void _setBreadcrumbsEnabled(bool enabled) {
+    if (_breadcrumbsEnabled == enabled) return;
+    if (!enabled && _breadcrumbs.isActive) _breadcrumbs.selectEditor();
+    setState(() => _breadcrumbsEnabled = enabled);
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  Future<void> _enableAndSelectBreadcrumbs() async {
+    if (!_breadcrumbsEnabled) {
+      _setBreadcrumbsEnabled(true);
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    if (!mounted || _disposing || !_breadcrumbsEnabled) return;
+    _breadcrumbs.focusLast(_focused.region, select: true);
+  }
+
   /// 面包屑（W2-3）：工作区相对路径拆段；点文件夹段在文件树中展开该目录。
   Widget _buildBreadcrumb(EditorGroup g) {
     final active = g.active;
-    if (active == null || active.path == null || _workspaceRoot == null) {
+    if (!_breadcrumbsEnabled ||
+        active == null ||
+        active.path == null ||
+        _workspaceRoot == null) {
       return const SizedBox.shrink();
     }
     final normRoot = _normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '');
