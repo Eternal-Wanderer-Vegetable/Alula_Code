@@ -447,6 +447,107 @@ void main() {
   );
 
   testWidgets(
+    'the breadcrumb path picker applies the default workspace file exclusions',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final src = Directory('${workspace.path}/src');
+      for (final name in ['.git', '.svn', '.hg', '.jj']) {
+        Directory('${src.path}/$name').createSync();
+      }
+      for (final name in ['.DS_Store', 'Thumbs.db', '.git-notes']) {
+        File('${src.path}/$name').writeAsStringSync(name);
+      }
+      final nested = Directory('${src.path}/nested');
+      Directory('${nested.path}/.JJ').createSync();
+      File('${nested.path}/Thumbs.db').writeAsStringSync('nested metadata');
+
+      await mountPage(tester);
+      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      Finder entry(String label) => find.descendant(
+            of: rows,
+            matching: find.text(label),
+          );
+
+      expect(entry('main.rs'), findsOneWidget);
+      expect(entry('.git-notes'), findsOneWidget);
+      for (final name in [
+        '.git/',
+        '.svn/',
+        '.hg/',
+        '.jj/',
+        '.DS_Store',
+        'Thumbs.db',
+      ]) {
+        expect(entry(name), findsNothing);
+      }
+
+      await tester.tap(entry('nested/'));
+      await tester.pumpAndSettle();
+      expect(entry('util.rs'), findsOneWidget);
+      expect(entry('Thumbs.db'), findsNothing);
+      expect(
+        entry('.JJ/'),
+        defaultTargetPlatform == TargetPlatform.linux
+            ? findsOneWidget
+            : findsNothing,
+      );
+
+      await tester.tap(entry('util.rs'));
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(_breadcrumbSegment('editor', 'util.rs'), findsOneWidget);
+      expect(
+        File('${nested.path}/Thumbs.db').readAsStringSync(),
+        'nested metadata',
+      );
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.linux,
+      TargetPlatform.windows,
+    }),
+  );
+
+  testWidgets(
+    'workspace exclusions do not apply to an external breadcrumb path',
+    (tester) async {
+      await prepareWorkspace(tester);
+      final outside = Directory('${workspace.path}-outside')..createSync();
+      final source = File('${outside.path}/source.rs')
+        ..writeAsStringSync('fn source() {}\n');
+      Directory('${outside.path}/.git').createSync();
+      File('${outside.path}/Thumbs.db').writeAsStringSync('external metadata');
+      layoutStore.save(defaultLayout());
+      sessionStore.save({
+        'v': 1,
+        'editorTabMode': 'multiple',
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'docs': [
+              {'id': 10, 'path': source.path},
+            ],
+            'active': 10,
+          },
+        ],
+      });
+      await mountPage(tester);
+      await tester.tap(_breadcrumbSegment('editor', 'source.rs'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      for (final name in ['.git/', 'Thumbs.db', 'source.rs']) {
+        expect(find.descendant(of: rows, matching: find.text(name)),
+            findsOneWidget);
+      }
+    },
+  );
+
+  testWidgets(
     'Cmd+Enter opens the focused breadcrumb file in a side group',
     (tester) async {
       await prepareWorkspace(tester);

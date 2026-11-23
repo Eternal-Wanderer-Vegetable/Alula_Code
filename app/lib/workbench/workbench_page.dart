@@ -25218,6 +25218,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (doc == null) return;
     final workspace = _workspaceRoot;
     final version = doc.doc.version;
+    // The local-file provider uses case-sensitive matching only on Linux.
+    const defaults = {'.git', '.svn', '.hg', '.jj', '.DS_Store', 'Thumbs.db'};
+    final caseSensitive = defaultTargetPlatform == TargetPlatform.linux;
+    final excludedNames = caseSensitive
+        ? defaults
+        : {for (final name in defaults) name.toLowerCase()};
 
     List<TreeNode> childrenOf(String path, {List<TreeNode>? cached}) {
       var children = cached;
@@ -25235,7 +25241,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return const [];
         }
       }
-      return List<TreeNode>.of(children, growable: false)
+      return children
+          .where((child) {
+            if (workspace == null) return true;
+            final name = caseSensitive ? child.name : child.name.toLowerCase();
+            return !excludedNames.contains(name) ||
+                !_isStrictWorkspaceChild(workspace, child.path);
+          })
+          .toList(growable: false)
         ..sort((first, second) {
           if (first.isDir != second.isDir) return first.isDir ? -1 : 1;
           return compareBreadcrumbFileNames(first.name, second.name);

@@ -3708,6 +3708,20 @@
       "evidence": "目录在原路径选择器中展开、收起，左右键在父子项间导航。Windows 实机及 Linux 原生各 15 个观测点，窄回归 31/31，工作台集成 1/1，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 e0374b7e 的 CI 45148007945 四项和 Platform Availability 45148001540 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.236-breadcrumb-inline-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-289",
+      "name": "P05.237 CMD-06 路径选择器默认排除项",
+      "description": "对工作区内路径选择器的同级项与展开子项应用固定桌面版的六个默认排除项，遵循本地文件提供程序大小写规则。",
+      "dependencies": [
+        "feat-286",
+        "feat-287",
+        "feat-288"
+      ],
+      "status": "in-progress",
+      "evidence": "旧实现会显示 .git/，修复后的 Linux/Windows 控件用例和工作区外路径用例通过，等待完整门禁及原生和托管验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
