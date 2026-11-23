@@ -27,6 +27,9 @@ class BreadcrumbNavigationController extends ChangeNotifier {
 
   bool get isActive => _pickerShowing || (_active?._focus.hasFocus ?? false);
 
+  Rect? focusedSegmentBounds(String region) =>
+      _groups[region]?._focusedSegmentBounds();
+
   void focusLast(String region, {bool select = false}) {
     if (_pickerShowing) return;
     final group = _groups[region];
@@ -159,11 +162,64 @@ class BreadcrumbNavigation extends StatefulWidget {
 class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
   final FocusNode _focus = FocusNode(debugLabel: 'breadcrumb');
   final ScrollController _scroll = ScrollController();
-  final GlobalKey _focusedSegment = GlobalKey();
+  final _segmentKeys = <GlobalKey>[];
   BoxConstraints? _viewportConstraints;
   int? _index;
   bool _opening = false;
   bool _revealPending = false;
+
+  RenderBox? get _focusedSegmentBox {
+    final index = _index;
+    if (index == null || index >= _segmentKeys.length) return null;
+    final object = _segmentKeys[index].currentContext?.findRenderObject();
+    return object is RenderBox && object.attached && object.hasSize
+        ? object
+        : null;
+  }
+
+  double _revealOffset(RenderBox segment) {
+    final viewport = RenderAbstractViewport.of(segment);
+    final position = _scroll.position;
+    final start = viewport.getOffsetToReveal(segment, 0).offset;
+    final end = viewport.getOffsetToReveal(segment, 1).offset;
+    // Reveal the leading edge of an oversized item; its remaining text stays
+    // reachable by scrolling. Otherwise move only enough to show the item.
+    final target = segment.size.width > position.viewportDimension ||
+            start < position.pixels
+        ? start
+        : end > position.pixels
+            ? end
+            : position.pixels;
+    return target.clamp(position.minScrollExtent, position.maxScrollExtent);
+  }
+
+  Rect? _focusedSegmentBounds() {
+    if (!mounted || !_scroll.hasClients) return null;
+    final segment = _focusedSegmentBox;
+    if (segment == null) return null;
+    final RenderObject viewport = RenderAbstractViewport.of(segment);
+    if (viewport is! RenderBox || !viewport.hasSize) return null;
+
+    // Menu opening and focus are synchronous. Project the same scroll
+    // adjustment that the reveal callback will apply after the frame.
+    final position = _scroll.position;
+    final delta = position.pixels - _revealOffset(segment);
+    final horizontal = position.axisDirection == AxisDirection.left
+        ? -delta
+        : delta;
+    final segmentBounds = MatrixUtils.transformRect(
+      segment.getTransformTo(null),
+      Offset(horizontal, 0) & segment.size,
+    );
+    final viewportBounds = MatrixUtils.transformRect(
+      viewport.getTransformTo(null),
+      Offset.zero & viewport.size,
+    );
+    final visibleBounds = segmentBounds.intersect(viewportBounds);
+    return visibleBounds.isFinite && !visibleBounds.isEmpty
+        ? visibleBounds
+        : null;
+  }
 
   void _scheduleReveal() {
     if (_revealPending || _index == null) return;
@@ -173,23 +229,10 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
       if (!mounted || (!_focus.hasFocus && !_opening) || !_scroll.hasClients) {
         return;
       }
-      final segment = _focusedSegment.currentContext?.findRenderObject();
-      if (segment is! RenderBox || !segment.hasSize) return;
-      final viewport = RenderAbstractViewport.of(segment);
-      final position = _scroll.position;
-      final start = viewport.getOffsetToReveal(segment, 0).offset;
-      final end = viewport.getOffsetToReveal(segment, 1).offset;
-      // Reveal the leading edge of an oversized item; its remaining text stays
-      // reachable by scrolling. Otherwise move only enough to show the item.
-      final target = segment.size.width > position.viewportDimension ||
-              start < position.pixels
-          ? start
-          : end > position.pixels
-              ? end
-              : position.pixels;
-      final offset =
-          target.clamp(position.minScrollExtent, position.maxScrollExtent);
-      if (offset != position.pixels) _scroll.jumpTo(offset);
+      final segment = _focusedSegmentBox;
+      if (segment == null) return;
+      final offset = _revealOffset(segment);
+      if (offset != _scroll.position.pixels) _scroll.jumpTo(offset);
     });
     WidgetsBinding.instance.ensureVisualUpdate();
   }
@@ -320,6 +363,13 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
           if (mounted) setState(() {});
         },
         child: LayoutBuilder(builder: (context, constraints) {
+          final length = widget.segments.length;
+          if (_segmentKeys.length > length) {
+            _segmentKeys.removeRange(length, _segmentKeys.length);
+          }
+          while (_segmentKeys.length < length) {
+            _segmentKeys.add(GlobalKey());
+          }
           if (_viewportConstraints != constraints) {
             _viewportConstraints = constraints;
             _scheduleReveal();
@@ -347,7 +397,7 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
                         selectFocused();
                       },
                       child: DecoratedBox(
-                        key: _index == i ? _focusedSegment : null,
+                        key: _segmentKeys[i],
                         decoration: BoxDecoration(
                           border: Border(
                               bottom: BorderSide(

@@ -550,4 +550,39 @@ void main() {
     expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
     expect(otherFile.readAsStringSync(), 'fn other() {}\n');
   });
+
+  testWidgets('breadcrumb pickers are positioned next to their owning segments',
+      (tester) async {
+    await mount(tester);
+
+    void expectPickerAtSegment(String region) {
+      final selected = find.descendant(
+        of: find.byKey(ValueKey('breadcrumb-$region')),
+        matching: find.byWidgetPredicate((widget) =>
+            widget is Semantics && widget.properties.selected == true),
+      );
+      expect(selected, findsOneWidget);
+      final segment = tester.getRect(selected);
+      final row = tester.getRect(find.byType(PopupMenuItem<String>).first);
+      expect(row.right, greaterThan(segment.left),
+          reason: 'the picker overlaps the owning segment horizontally');
+      expect(row.left, lessThan(segment.right));
+      expect(row.top, inInclusiveRange(segment.bottom, segment.bottom + 24));
+    }
+
+    await tester.tap(_segment('editor-2', 0));
+    await tester.pumpAndSettle();
+    expectPickerAtSegment('editor-2');
+    await key(tester, LogicalKeyboardKey.escape);
+    expect(_field(tester, 20).focusNode!.hasFocus, isTrue);
+
+    await tester.tap(find.byKey(_field(tester, 10).key!));
+    await tester.pumpAndSettle();
+    await shortcut(tester, LogicalKeyboardKey.period);
+    expectPickerAtSegment('editor');
+    await key(tester, LogicalKeyboardKey.escape);
+    expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
+    expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
+    expect(otherFile.readAsStringSync(), 'fn other() {}\n');
+  });
 }

@@ -3610,6 +3610,21 @@
       "evidence": "外观菜单和命令面板使用同一显示开关，编辑组同步并保存状态。Windows 实机 18 个、Linux 原生 18 个观测点。窄回归 63/63，专项 311/311，Flutter 1,824 passed / 2 skipped。产品 216b7d0 的 CI 45118849730 四项及 Platform Availability 45118846071 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.229-breadcrumb-visibility.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-282",
+      "name": "P05.230 CMD-06 面包屑选择器锚点",
+      "description": "文件夹和符号选择器随当前编辑组的所选面包屑段定位，计算滚动后可见段并保有键鼠与侧开焦点路由。",
+      "dependencies": [
+        "feat-144",
+        "feat-146",
+        "feat-147",
+        "feat-281"
+      ],
+      "status": "in-progress",
+      "evidence": "前置构建控件回归确认右组段左边 1519.76 时，选择器行右边仍为 176。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

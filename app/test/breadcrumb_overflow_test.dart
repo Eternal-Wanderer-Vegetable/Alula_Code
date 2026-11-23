@@ -97,15 +97,28 @@ void main() {
     await tester.pumpAndSettle();
     expect(scroll.offset, greaterThan(0));
     expect(tester.getRect(_segment('test', 4)).left, lessThan(initialEnd));
+    void expectProjectedBounds(Rect? projected, int index) {
+      final visibleSegment = tester
+          .getRect(_segment('test', index))
+          .intersect(tester.getRect(_viewport('test')));
+      expect(projected, isNotNull);
+      expect(projected!.left, closeTo(visibleSegment.left, 0.5));
+      expect(projected.right, closeTo(visibleSegment.right, 0.5));
+    }
+
     navigation.focusLast('test');
+    final lastAnchor = navigation.focusedSegmentBounds('test');
     await tester.pumpAndSettle();
     _expectVisible(tester, 'test', 4);
+    expectProjectedBounds(lastAnchor, 4);
     navigation.move(-1);
     await tester.pumpAndSettle();
     _expectVisible(tester, 'test', 3);
     navigation.move(-1);
+    final longAnchor = navigation.focusedSegmentBounds('test');
     await tester.pumpAndSettle();
     _expectVisible(tester, 'test', 2, oversized: true);
+    expectProjectedBounds(longAnchor, 2);
     // The full oversized label remains reachable by a pointer scroll.
     final beforeDrag = scroll.offset;
     await tester.drag(_viewport('test'), const Offset(-100, 0));

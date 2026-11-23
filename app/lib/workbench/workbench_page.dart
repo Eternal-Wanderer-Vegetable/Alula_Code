@@ -25056,6 +25056,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final root = _workspaceRoot;
     final path = doc.path;
     final version = doc.doc.version;
+    final position = _breadcrumbPickerPosition(group.region);
+    if (position == null) return null;
     setState(() => _focusedRegion = group.region);
     _syncCommandContext();
     _scheduleStateSave();
@@ -25144,7 +25146,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       FocusManager.instance.addListener(_syncBreadcrumbPickerFocus);
       final action = await showMenu<String>(
         context: context,
-        position: _breadcrumbPickerPosition(),
+        position: position,
         items: [
           for (var i = 0; i < items.length; i++)
             if (items[i] case final PopupMenuItem<String> item)
@@ -25358,22 +25360,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
-  RelativeRect _breadcrumbPickerPosition() {
+  RelativeRect? _breadcrumbPickerPosition(String region) {
     final overlay = Overlay.of(context).context.findRenderObject();
-    if (overlay is! RenderBox) {
-      return const RelativeRect.fromLTRB(0, 0, 0, 0);
+    final segment = _breadcrumbs.focusedSegmentBounds(region);
+    if (overlay is! RenderBox || !overlay.hasSize || segment == null) {
+      return null;
     }
-    final box = context.findRenderObject();
-    final local = box is RenderBox && box.hasSize
-        ? box.localToGlobal(const Offset(8, 60))
-        : const Offset(8, 60);
-    final position = overlay.globalToLocal(local);
-    return RelativeRect.fromLTRB(
-      position.dx,
-      position.dy,
-      overlay.size.width - position.dx,
-      overlay.size.height - position.dy,
+    const gap = Offset(0, 8);
+    final anchor = Rect.fromPoints(
+      overlay.globalToLocal(segment.bottomLeft + gap),
+      overlay.globalToLocal(segment.bottomRight + gap),
     );
+    return RelativeRect.fromRect(anchor, Offset.zero & overlay.size);
   }
 
   void _revealInExplorer(List<String> segments, int index) {
