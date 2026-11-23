@@ -3592,8 +3592,8 @@
         "feat-274",
         "feat-279"
       ],
-      "status": "in-progress",
-      "evidence": "本地专项 284/284，Flutter 1,823 passed / 2 skipped。Linux 原生复验三组共 44 个观测点，关闭全部编辑器后仍能查询和定位符号。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。Windows Release 已构建，桌面实测待恢复。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md",
+      "status": "done",
+      "evidence": "本地专项 284/284，Flutter 1,823 passed / 2 skipped。Windows 实机 28 个、Linux 原生 44 个观测点通过。关闭全部编辑器后仍可使用活跃工作区服务搜索并定位，退出时回收服务。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
