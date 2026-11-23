@@ -784,4 +784,115 @@ void main() {
         TargetPlatform.linux,
         TargetPlatform.macOS,
       }));
+
+  testWidgets('workspace symbol ties use name collation and kind order',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-workspace-symbol-order');
+    final directory = Directory('${temp.path}/src')..createSync();
+    final file = File('${directory.path}/entry.rs')
+      ..writeAsStringSync('pub struct Entry;\n');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 110,
+            'docs': [
+              {'id': 110, 'path': file.path}
+            ],
+          },
+        ],
+      });
+    Map<String, Object?> symbol(String name, String fileName, int kind) => {
+          'name': name,
+          'kind': kind,
+          'uri': Uri.file('${directory.path}/$fileName').toString(),
+          'line': 0,
+          'character': 0,
+          'endLine': 0,
+          'endCharacter': name.length,
+        };
+    final choices = {
+      'SortProbe': [
+        symbol('SortProbe', 'struct_rank.rs', 23),
+        symbol('SortProbe', 'struct_second.rs', 23),
+        symbol('SortProbe', 'enum_rank.rs', 10),
+      ],
+      'RankProbe': [
+        symbol('ZRankProbe', 'struct_rank.rs', 23),
+        symbol('ÅRankProbe', 'enum_rank.rs', 23),
+      ],
+    };
+    final queries = <String>[];
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+      layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+      sessionStore: session,
+      keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+      onCommandServiceReady: (value) => commands = value,
+      workspaceSymbolRequest: (id, query, signal) async {
+        queries.add(query);
+        return choices[query] ?? [];
+      },
+    )));
+    await tester.pump(const Duration(milliseconds: 600));
+    final opening = commands.execute('workbench.action.showAllSymbols');
+    await tester.pumpAndSettle();
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    Finder label(String text) => find.descendant(
+        of: panel,
+        matching: find.byWidgetPredicate(
+            (w) => w is Text && (w.data ?? w.textSpan?.toPlainText()) == text));
+    final enumPath = 'src${Platform.pathSeparator}enum_rank.rs';
+    final structPath = 'src${Platform.pathSeparator}struct_rank.rs';
+    final secondPath = 'src${Platform.pathSeparator}struct_second.rs';
+    Future<void> query(String text) async {
+      await tester.enterText(input, text);
+      await tester.pumpAndSettle();
+    }
+
+    double y(String text) => tester.getTopLeft(label(text)).dy;
+
+    await query('#SortProbe');
+    expect(find.byKey(const ValueKey('qi-SortProbe')), findsNWidgets(3));
+    expect(y(enumPath), lessThan(y(structPath)));
+    expect(y(structPath), lessThan(y(secondPath)));
+
+    // Exercise the real locale collation for this pinned en-US sample.
+    await runZoned(
+      () => query('#RankProbe'),
+      zoneValues: {#test.allowFormatting: true},
+    );
+    expect(y('ÅRankProbe'), lessThan(y('ZRankProbe')));
+
+    for (final separator in ['/', r'\']) {
+      await query('#SortProbe src${separator}enum_rank.rs');
+      expect(queries.last, 'SortProbe');
+      expect(find.byKey(const ValueKey('qi-SortProbe')), findsOneWidget);
+      expect(label(enumPath), findsOneWidget);
+      expect(label(structPath), findsNothing);
+      final description = tester.widget<Text>(label(enumPath));
+      final spans = (description.textSpan as TextSpan?)?.children ?? const [];
+      expect([
+        for (final span in spans.whereType<TextSpan>())
+          if (span.style?.fontWeight == FontWeight.bold) span.text,
+      ], [
+        enumPath
+      ]);
+    }
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+  });
 }

@@ -30,6 +30,7 @@ import 'package:flutter/semantics.dart'
     show CustomSemanticsAction, SemanticsBinding, SemanticsService;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
+import 'package:intl4x/collation.dart';
 import 'package:path/path.dart' as p;
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
@@ -4054,6 +4055,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return _groups[region] = EditorGroup(region);
   }
 
+  static final _workspaceSymbolCollation = Collation();
+
+  // LSP kind codes start at one. Code-OSS breaks equal-name ties by icon ID.
+  static const _workspaceSymbolKindIds = [
+    'symbol-file',
+    'symbol-module',
+    'symbol-namespace',
+    'symbol-package',
+    'symbol-class',
+    'symbol-method',
+    'symbol-property',
+    'symbol-field',
+    'symbol-constructor',
+    'symbol-enum',
+    'symbol-interface',
+    'symbol-function',
+    'symbol-variable',
+    'symbol-constant',
+    'symbol-string',
+    'symbol-number',
+    'symbol-boolean',
+    'symbol-array',
+    'symbol-object',
+    'symbol-key',
+    'symbol-null',
+    'symbol-enum-member',
+    'symbol-struct',
+    'symbol-event',
+    'symbol-operator',
+    'symbol-type-parameter',
+  ];
+
+  static String _workspaceSymbolKindId(int? kind) =>
+      kind != null && kind >= 1 && kind <= _workspaceSymbolKindIds.length
+          ? _workspaceSymbolKindIds[kind - 1]
+          : 'symbol-property';
+
   Future<void> _showWorkspaceSymbols({
     String initialValue = '#',
     FocusNode? restoreFocus,
@@ -4090,7 +4128,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return const [];
       }
       emptyMessage = '没有匹配的工作区符号。';
-      final matcher = DocumentSymbolQuery(query);
+      final alternateSeparator = Platform.isWindows ? '/' : r'\';
+      final matcher = DocumentSymbolQuery(
+        query.replaceAll(alternateSeparator, Platform.pathSeparator),
+      );
       final matches = <({
         Map<String, Object?> symbol,
         String name,
@@ -4126,9 +4167,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       matches.sort((left, right) {
         final byScore = right.match.score.compareTo(left.match.score);
         if (byScore != 0) return byScore;
-        final byName =
-            left.name.toLowerCase().compareTo(right.name.toLowerCase());
-        return byName != 0 ? byName : left.order.compareTo(right.order);
+        final byName = _workspaceSymbolCollation.compare(
+          left.name.toLowerCase(),
+          right.name.toLowerCase(),
+        );
+        if (byName != 0) return byName;
+        final byKind = _workspaceSymbolCollation.compare(
+          _workspaceSymbolKindId(left.symbol['kind'] as int?),
+          _workspaceSymbolKindId(right.symbol['kind'] as int?),
+        );
+        return byKind != 0 ? byKind : left.order.compareTo(right.order);
       });
       Future<void> open(
         Map<String, Object?> symbol, {
