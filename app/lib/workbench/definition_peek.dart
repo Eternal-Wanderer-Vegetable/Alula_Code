@@ -18,7 +18,51 @@ typedef DefinitionPeekLine = ({
   String text,
   int highlightStart,
   int highlightEnd,
+  int? targetCharacter,
 });
+
+typedef _ReferenceRange = ({
+  int line,
+  int character,
+  int endLine,
+  int endCharacter,
+});
+
+typedef _PeekResultRow = ({String? file, int? entryIndex});
+
+String _referenceFileKey(String path) {
+  final normalized = p.normalize(path);
+  return Platform.isWindows ? normalized.toLowerCase() : normalized;
+}
+
+_ReferenceRange _referenceRange(DefinitionTarget target) => (
+      line: target.line,
+      character: target.character,
+      endLine: target.endLine ?? target.line,
+      endCharacter: target.endCharacter ?? target.character,
+    );
+
+List<DefinitionPeekEntry> distinctPeekReferences(
+  Iterable<DefinitionPeekEntry> entries,
+) {
+  final seen = <(String, _ReferenceRange)>{};
+  return [
+    for (final entry in entries)
+      if (seen
+          .add((_referenceFileKey(entry.path), _referenceRange(entry.target))))
+        entry,
+  ];
+}
+
+int _compareReferenceRanges(_ReferenceRange left, _ReferenceRange right) {
+  final line = left.line.compareTo(right.line);
+  if (line != 0) return line;
+  final character = left.character.compareTo(right.character);
+  if (character != 0) return character;
+  final endLine = left.endLine.compareTo(right.endLine);
+  if (endLine != 0) return endLine;
+  return left.endCharacter.compareTo(right.endCharacter);
+}
 
 const _contextBefore = 3;
 const _previewLines = 9;
@@ -32,10 +76,22 @@ int _firstPreviewLine(DefinitionTarget target) =>
 int _firstPreviewColumn(DefinitionTarget target) =>
     target.character < _lineWidth ? 0 : target.character - _lineWidth ~/ 3;
 
-DefinitionPeekLine _previewLine(int number, String text, int start, int end) {
+DefinitionPeekLine _previewLine(
+  int number,
+  String text,
+  int start,
+  int end, {
+  int? targetCharacter,
+}) {
   final low = _scalarBoundary(text, start.clamp(0, text.length));
   final high = _scalarBoundary(text, end.clamp(low, text.length));
-  return (number: number, text: text, highlightStart: low, highlightEnd: high);
+  return (
+    number: number,
+    text: text,
+    highlightStart: low,
+    highlightEnd: high,
+    targetCharacter: targetCharacter,
+  );
 }
 
 DefinitionTarget _referenceTargetWithoutBom(
@@ -112,8 +168,13 @@ List<DefinitionPeekLine> definitionPeekOpenDocument(
   );
   return [
     for (final line in lines.lines)
-      _previewLine(line.line + 1, line.text, low.offsetUtf16 - line.startUtf16,
-          high.offsetUtf16 - line.startUtf16),
+      _previewLine(
+        line.line + 1,
+        line.text,
+        low.offsetUtf16 - line.startUtf16,
+        high.offsetUtf16 - line.startUtf16,
+        targetCharacter: line.line == target.line ? low.character : null,
+      ),
   ];
 }
 
@@ -157,8 +218,15 @@ List<DefinitionPeekLine> definitionPeekFile(DefinitionPeekEntry entry) {
           : line == endLine
               ? endCharacter - column
               : until - from;
-      lines.add(
-          _previewLine(line + 1, text.substring(from, until), start, finish));
+      lines.add(_previewLine(
+        line + 1,
+        text.substring(from, until),
+        start,
+        finish,
+        targetCharacter: line == target.line
+            ? target.character.clamp(0, end - offset)
+            : null,
+      ));
     }
     if (newline < 0) break;
     offset = newline + 1;
@@ -192,6 +260,7 @@ class DefinitionPeek extends StatefulWidget {
     required this.onClose,
     required this.onRemoved,
     this.kind = LocationPeekKind.definition,
+    this.workspace,
   });
 
   final List<DefinitionPeekEntry> entries;
@@ -201,6 +270,7 @@ class DefinitionPeek extends StatefulWidget {
   final VoidCallback onClose;
   final VoidCallback onRemoved;
   final LocationPeekKind kind;
+  final String? workspace;
 
   @override
   State<DefinitionPeek> createState() => _DefinitionPeekState();
@@ -211,6 +281,10 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   final _listFocus = FocusNode(debugLabel: 'definition-peek-list');
   final _resultsScroll = ScrollController();
   var _selected = 0;
+  String? _focusedFile;
+  late final Map<String, List<int>> _fileGroups;
+  final _expandedFiles = <String>{};
+  late List<_PeekResultRow> _rows;
   late Future<List<DefinitionPeekLine>> _preview;
   bool _readingPreview = false;
   ({
@@ -221,9 +295,22 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   @override
   void initState() {
     super.initState();
+    _fileGroups = widget.kind == LocationPeekKind.references
+        ? _groupReferences()
+        : const {};
+    if (_fileGroups.length > 1) {
+      _expandedFiles.add(_fileGroups.entries
+          .firstWhere(
+            (group) => group.value.contains(_selected),
+          )
+          .key);
+    }
+    _rows = _visibleRows();
     _preview = _requestPreview(widget.entries.first);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _listFocus.requestFocus();
+      if (!mounted) return;
+      _listFocus.requestFocus();
+      _revealRow(_focusedRowIndex);
     });
   }
 
@@ -262,15 +349,73 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     }
   }
 
+  Map<String, List<int>> _groupReferences() {
+    final byFile = <String, List<int>>{};
+    for (var i = 0; i < widget.entries.length; i++) {
+      final key = _referenceFileKey(widget.entries[i].path);
+      byFile.putIfAbsent(key, () => []).add(i);
+    }
+    final groups = <String, List<int>>{};
+    for (final key in byFile.keys.toList()..sort()) {
+      final indices = byFile[key]!;
+      final path = widget.entries[indices.first].path;
+      indices.sort((left, right) => _compareReferenceRanges(
+            _referenceRange(widget.entries[left].target),
+            _referenceRange(widget.entries[right].target),
+          ));
+      groups[path] = indices;
+    }
+    return groups;
+  }
+
+  List<_PeekResultRow> _visibleRows() {
+    if (_fileGroups.length <= 1) {
+      final indices = _fileGroups.values.firstOrNull ??
+          List.generate(widget.entries.length, (index) => index);
+      return [for (final index in indices) (file: null, entryIndex: index)];
+    }
+    return [
+      for (final group in _fileGroups.entries) ...[
+        (file: group.key, entryIndex: null),
+        if (_expandedFiles.contains(group.key))
+          for (final index in group.value) (file: group.key, entryIndex: index),
+      ],
+    ];
+  }
+
+  int get _focusedRowIndex => _rows.indexWhere((row) => _focusedFile == null
+      ? row.entryIndex == _selected
+      : row.entryIndex == null && row.file == _focusedFile);
+
   void _select(int next) {
-    if (next == _selected) return;
+    if (next < 0 || next >= _rows.length || next == _focusedRowIndex) return;
+    final row = _rows[next];
+    final entryIndex = row.entryIndex;
     setState(() {
-      _selected = next;
-      _preview = _requestPreview(widget.entries[next]);
+      _focusedFile = entryIndex == null ? row.file : null;
+      if (entryIndex != null && entryIndex != _selected) {
+        _selected = entryIndex;
+        _preview = _requestPreview(widget.entries[entryIndex]);
+      }
     });
-    if (!_resultsScroll.hasClients) return;
+    _revealRow(next);
+  }
+
+  void _toggleFile(String file) {
+    setState(() {
+      _focusedFile = file;
+      if (!_expandedFiles.remove(file)) _expandedFiles.add(file);
+      _rows = _visibleRows();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _revealRow(_focusedRowIndex);
+    });
+  }
+
+  void _revealRow(int row) {
+    if (row < 0 || !_resultsScroll.hasClients) return;
     final position = _resultsScroll.position;
-    final top = next * _rowHeight;
+    final top = row * _rowHeight;
     final bottom = top + _rowHeight;
     final offset = top < position.pixels
         ? top
@@ -282,20 +427,54 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
-    if (event.logicalKey == LogicalKeyboardKey.escape) {
+    final key = event.logicalKey;
+    if (key == LogicalKeyboardKey.escape) {
       widget.onClose();
       return KeyEventResult.handled;
     }
     if (!_listFocus.hasFocus) return KeyEventResult.ignored;
-    final key = event.logicalKey;
+    final index = _focusedRowIndex;
+    if (index < 0) return KeyEventResult.ignored;
     if (key == LogicalKeyboardKey.arrowUp ||
         key == LogicalKeyboardKey.arrowDown) {
       final delta = key == LogicalKeyboardKey.arrowUp ? -1 : 1;
-      _select((_selected + delta).clamp(0, widget.entries.length - 1));
+      _select((index + delta).clamp(0, _rows.length - 1));
       return KeyEventResult.handled;
     }
+    final row = _rows[index];
+    final entryIndex = row.entryIndex;
+    final file = row.file;
     if (key == LogicalKeyboardKey.enter && event is KeyDownEvent) {
-      widget.onOpen(widget.entries[_selected]);
+      if (entryIndex != null) {
+        widget.onOpen(widget.entries[entryIndex]);
+      } else if (file != null) {
+        _toggleFile(file);
+      }
+      return KeyEventResult.handled;
+    }
+    if (file == null) return KeyEventResult.ignored;
+    final keyboard = HardwareKeyboard.instance;
+    if (keyboard.isAltPressed ||
+        keyboard.isControlPressed ||
+        keyboard.isMetaPressed ||
+        keyboard.isShiftPressed) {
+      return KeyEventResult.ignored;
+    }
+    if (key == LogicalKeyboardKey.arrowLeft) {
+      if (entryIndex != null) {
+        _select(_rows
+            .indexWhere((row) => row.file == file && row.entryIndex == null));
+      } else if (_expandedFiles.contains(file)) {
+        _toggleFile(file);
+      }
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowRight && entryIndex == null) {
+      if (_expandedFiles.contains(file)) {
+        _select(index + 1);
+      } else {
+        _toggleFile(file);
+      }
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
@@ -345,59 +524,134 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
                   children: [
                     Expanded(flex: 3, child: _buildPreview(context)),
                     const VerticalDivider(width: 1),
-                    Expanded(
-                      flex: 2,
-                      child: Focus(
-                        focusNode: _listFocus,
-                        child: ListView.builder(
-                          controller: _resultsScroll,
-                          itemExtent: _rowHeight,
-                          itemCount: widget.entries.length,
-                          itemBuilder: (context, index) {
-                            final entry = widget.entries[index];
-                            final target = entry.target;
-                            return Semantics(
-                              selected: index == _selected,
-                              label: '${entry.path}:${target.line + 1}',
-                              child: InkWell(
-                                canRequestFocus: false,
-                                onTap: () {
-                                  _listFocus.requestFocus();
-                                  _select(index);
-                                },
-                                onDoubleTap: () => widget.onOpen(entry),
-                                child: ColoredBox(
-                                  color: index == _selected
-                                      ? colors.primaryContainer
-                                      : Colors.transparent,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            p.basename(entry.path),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Text(
-                                            '${target.line + 1}:${target.character + 1}'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                    Expanded(flex: 2, child: _buildResults(context)),
                   ],
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResults(BuildContext context) {
+    if (widget.kind == LocationPeekKind.definition) return _resultList(context);
+    return FutureBuilder<List<DefinitionPeekLine>>(
+      future: _preview,
+      builder: (context, snapshot) {
+        final column = snapshot.connectionState == ConnectionState.done
+            ? snapshot.data
+                ?.where((line) => line.targetCharacter != null)
+                .firstOrNull
+                ?.targetCharacter
+            : null;
+        return _resultList(context, previewCharacter: column);
+      },
+    );
+  }
+
+  Widget _resultList(BuildContext context, {int? previewCharacter}) {
+    final colors = Theme.of(context).colorScheme;
+    return Focus(
+      focusNode: _listFocus,
+      child: ListView.builder(
+        controller: _resultsScroll,
+        itemExtent: _rowHeight,
+        itemCount: _rows.length,
+        itemBuilder: (context, index) {
+          final row = _rows[index];
+          final entryIndex = row.entryIndex;
+          if (entryIndex == null) return _buildFileRow(row.file!, colors);
+          final entry = widget.entries[entryIndex];
+          final target = entry.target;
+          final selected = _focusedFile == null && entryIndex == _selected;
+          final character = entryIndex == _selected
+              ? previewCharacter ?? target.character
+              : target.character;
+          final position = '${target.line + 1}:${character + 1}';
+          return Semantics(
+            key: ValueKey('peek-result:$entryIndex'),
+            selected: selected,
+            label: '${entry.path}:${target.line + 1}',
+            child: InkWell(
+              canRequestFocus: false,
+              onTap: () {
+                _listFocus.requestFocus();
+                _select(index);
+              },
+              onDoubleTap: () => widget.onOpen(entry),
+              child: ColoredBox(
+                color: selected ? colors.primaryContainer : Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: row.file == null ? 8 : 28,
+                    right: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      if (row.file == null)
+                        Expanded(
+                          child: Text(
+                            p.basename(entry.path),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      Text(position),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFileRow(String path, ColorScheme colors) {
+    final expanded = _expandedFiles.contains(path);
+    final selected = path == _focusedFile;
+    final count = _fileGroups[path]!.length;
+    final directory = p.dirname(path);
+    final workspace = widget.workspace;
+    final parent =
+        workspace == null ? directory : p.relative(directory, from: workspace);
+    return Semantics(
+      key: ValueKey('references-file:$path'),
+      label: '$path，$count 个引用',
+      expanded: expanded,
+      selected: selected,
+      child: InkWell(
+        canRequestFocus: false,
+        onTap: () {
+          _listFocus.requestFocus();
+          _toggleFile(path);
+        },
+        child: ExcludeSemantics(
+          child: ColoredBox(
+            color: selected ? colors.primaryContainer : Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: [
+                  Icon(expanded ? Icons.expand_more : Icons.chevron_right,
+                      size: 16),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      parent == '.'
+                          ? p.basename(path)
+                          : '${p.basename(path)}  $parent',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text('$count'),
+                ],
+              ),
+            ),
           ),
         ),
       ),

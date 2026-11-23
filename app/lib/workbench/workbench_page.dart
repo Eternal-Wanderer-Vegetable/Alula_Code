@@ -21358,11 +21358,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       )
           ? _referenceSymbolAt(active, offset, result.targets)
           : null;
-      List<DefinitionPeekEntry> entriesFor(ReferencesResult result) => [
+      List<DefinitionPeekEntry> entriesFor(ReferencesResult result) =>
+          distinctPeekReferences([
             for (final target in result.targets)
               if (_pathFromFileUri(target.uri) case final path?)
                 (path: path, target: target, referenceSymbol: referenceSymbol),
-          ];
+          ]);
 
       var entries = entriesFor(result);
       if (entries.isEmpty) {
@@ -21558,6 +21559,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         key: ObjectKey(peek),
         entries: peek.entries,
         kind: peek.kind,
+        workspace: peek.workspace,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
         onClose: () => _closeDefinitionPeek(peek),

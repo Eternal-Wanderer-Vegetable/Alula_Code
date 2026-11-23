@@ -10,6 +10,7 @@ import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart' show ReferencesRequest;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show SemanticsProperties;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -522,6 +523,200 @@ void main() {
       tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
       isTrue,
     );
+  });
+
+  testWidgets('References Peek groups files and navigates the focused result',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-reference-tree');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn caller() { task(); }\n';
+    const alphaText = 'fn alpha() { task(); }\n';
+    const zetaText = 'fn b() { task(); }\nfn c() { task(); }\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync(alphaText);
+    final zeta = File('${workspace.path}/zeta.rs')..writeAsStringSync(zetaText);
+    final later = DefinitionTarget(
+      uri: zeta.uri.toString(),
+      line: 1,
+      character: 9,
+      endLine: 1,
+      endCharacter: 13,
+    );
+    final early = DefinitionTarget(
+      uri: zeta.uri.toString(),
+      line: 0,
+      character: 9,
+      endLine: 0,
+      endCharacter: 13,
+    );
+    final other = DefinitionTarget(
+      uri: alpha.uri.toString(),
+      line: 0,
+      character: alphaText.indexOf('task'),
+      endLine: 0,
+      endCharacter: alphaText.indexOf('task') + 4,
+    );
+    var singleFile = false;
+    final calls = <bool>[];
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) async {
+        calls.add(includeDeclaration);
+        return ReferencesResult(
+          version: version,
+          targets: [later, early, if (!singleFile) other, early],
+        );
+      },
+    );
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: source.indexOf('task'));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+
+    final peek = find.byKey(const ValueKey('references-peek'));
+    Finder group(File file) =>
+        find.byKey(ValueKey('references-file:${file.path}'));
+    Finder leaf(int entry) => find.byKey(ValueKey('peek-result:$entry'));
+    SemanticsProperties semantics(Finder node) =>
+        tester.widget<Semantics>(node).properties;
+    final alphaGroup = group(alpha);
+    final zetaGroup = group(zeta);
+    expect(peek, findsOneWidget);
+    expect(find.text('引用 (3)'), findsOneWidget);
+    expect(semantics(alphaGroup).expanded, isFalse);
+    expect(semantics(zetaGroup).expanded, isTrue);
+    expect(tester.getTopLeft(alphaGroup).dy,
+        lessThan(tester.getTopLeft(zetaGroup).dy));
+    expect(semantics(leaf(0)).selected, isTrue);
+    expect(
+        tester.getTopLeft(leaf(1)).dy, lessThan(tester.getTopLeft(leaf(0)).dy));
+    expect(leaf(2), findsNothing);
+
+    Future<void> press(LogicalKeyboardKey key) async {
+      await tester.sendKeyEvent(key);
+      await tester.pumpAndSettle();
+    }
+
+    await press(LogicalKeyboardKey.arrowLeft);
+    expect(semantics(zetaGroup).selected, isTrue);
+    await press(LogicalKeyboardKey.arrowLeft);
+    expect(semantics(zetaGroup).expanded, isFalse);
+    expect(leaf(0), findsNothing);
+    expect(leaf(1), findsNothing);
+    await tester.tap(zetaGroup);
+    await tester.pumpAndSettle();
+    expect(semantics(zetaGroup).expanded, isTrue);
+    await press(LogicalKeyboardKey.arrowRight);
+    expect(semantics(leaf(1)).selected, isTrue);
+
+    await press(LogicalKeyboardKey.arrowLeft);
+    await press(LogicalKeyboardKey.arrowLeft);
+    await press(LogicalKeyboardKey.arrowUp);
+    expect(semantics(alphaGroup).selected, isTrue);
+    await press(LogicalKeyboardKey.arrowRight);
+    expect(semantics(alphaGroup).expanded, isTrue);
+    await press(LogicalKeyboardKey.arrowRight);
+    expect(semantics(leaf(2)).selected, isTrue);
+    await press(LogicalKeyboardKey.enter);
+    expect(peek, findsNothing);
+    expect(_activeController(tester).text, alphaText);
+    expect(_activeController(tester).selection.extentOffset,
+        alphaText.indexOf('task'));
+    expect(
+        tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+        isTrue);
+
+    singleFile = true;
+    await _runPaletteCommand(tester, '速览引用');
+    await tester.pumpAndSettle();
+    expect(calls, [true, true]);
+    expect(peek, findsOneWidget);
+    expect(find.text('引用 (2)'), findsOneWidget);
+    expect(zetaGroup, findsNothing);
+    expect(semantics(leaf(0)).selected, isTrue);
+    expect(
+        tester.getTopLeft(leaf(1)).dy, lessThan(tester.getTopLeft(leaf(0)).dy));
+  });
+
+  testWidgets('selected reference row uses the resolved UTF-16 column',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-reference-column');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn task() {}\nfn call() { task(); }\n';
+    const target = '\uFEFF/* 🦊 */ fn elsewhere() { task(); }\r\n';
+    final local = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final remote = File('${workspace.path}/target.rs')
+      ..writeAsStringSync(target);
+    final reported = target.indexOf('task');
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) async =>
+          ReferencesResult(
+        version: version,
+        targets: [
+          DefinitionTarget(
+            uri: remote.uri.toString(),
+            line: 0,
+            character: reported,
+            endLine: 0,
+            endCharacter: reported + 4,
+          ),
+          DefinitionTarget(
+            uri: local.uri.toString(),
+            line: 0,
+            character: 3,
+            endLine: 0,
+            endCharacter: 7,
+          ),
+          DefinitionTarget(
+            uri: local.uri.toString(),
+            line: 1,
+            character: 12,
+            endLine: 1,
+            endCharacter: 16,
+          ),
+        ],
+      ),
+    );
+    _activeController(tester).selection =
+        const TextSelection.collapsed(offset: 3);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+
+    final row = find.byKey(const ValueKey('peek-result:0'));
+    final resolved =
+        find.descendant(of: row, matching: find.text('1:$reported'));
+    final watch = Stopwatch()..start();
+    while (resolved.evaluate().isEmpty &&
+        watch.elapsed < const Duration(seconds: 5)) {
+      await tester.runAsync(() => Future<void>.delayed(
+            const Duration(milliseconds: 25),
+          ));
+      await tester.pump();
+    }
+    expect(resolved, findsOneWidget);
+    expect(tester.widget<Semantics>(row).properties.selected, isTrue);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset, 3);
   });
 
   testWidgets('reference results are ignored once the source caret moves',
