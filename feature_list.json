@@ -3761,8 +3761,8 @@
         "feat-290",
         "feat-291"
       ],
-      "status": "in-progress",
-      "evidence": "平铺的回归和重开时丢失子分支折叠的回归均已复现，修复后 Rust 符号控件用例通过。等待全量、Windows/Linux 原生及托管验证。",
+      "status": "done",
+      "evidence": "初选时展开祖先，保留同一弹层内分支折叠，支持父子方向键、展开箭头及符号确认。Windows 实机及 Linux 原生各 14 个观测点，窄回归 36/36，专项 320/320，编辑器 29/29，Flutter 1,833 passed / 2 skipped。产品 4707a876 的 CI 45171848489 四项和 Platform Availability 45171834415 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.240-breadcrumb-symbol-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
