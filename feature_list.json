@@ -3945,8 +3945,8 @@
       "dependencies": [
         "feat-306"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "按 Enter 显式接受定义或引用结果时，当前目标预览转为常规标签。Windows 33 步与 Linux 30 步验证默认键位、目标 UTF-16 落点、焦点、保留标签和输入回归。专项 90/90，Flutter 1,851 passed / 2 skipped。产品 7e362fae 的 CI 45285306951 四项和 Platform Availability 45285296565 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.255-peek-accept-tab.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
