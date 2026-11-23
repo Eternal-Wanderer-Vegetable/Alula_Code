@@ -1,0 +1,1086 @@
+{
+  "product": "d7967997099b54bec48d90e4977174ea1f0c8ab7",
+  "tree": "86ba67b4d797971c8b2e2ce3b5b5cba110c52e2e",
+  "abi": 43,
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "86ba67b4d797971c8b2e2ce3b5b5cba110c52e2e",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "157a91690bef4b656b547128419649ee42ff7cea1968e1d878ff1aa4e0b482f0",
+      "app/lib/bridge/alula_ffi.dart": "d6cb93b858a9c3c4d605a38133a17f80fc4024925c094922ea82915b05b9fcc6",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "128f17afd4826c15d3d654242855d34406a04a9a365b1d0a108ba2490f816771",
+      "app/lib/workbench/definition_peek.dart": "aede8b9982e2862e40fd589e10b88de5f460bd65e87b13d8da94268ae5907fc9",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "c8977844114f9a3a6e4a13c7a2f7e2d3ad7eb6be235cc670f6861fc33ae2b700",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "27a9b684e847f4d9e1dd47922f84831d7c8ca73252b36f4cd4393f240b058f58",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "2d4a8abfa3753fccb1473776216532e37e96f44b326bf5f4e3e8437475fa1d29",
+      "crates/editor-core/src/ffi.rs": "62960b20395ea8d0d4f90019dfca337be3a6aa410421ebdf3b22f6b59ce09ac6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "113e72e8ac6328c64335411b5f438e8d76708c770f13de17cae9769c6b929512",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "acf446bd1cf10d8c7c57ce529798b49d939f0053c708ec186952b41505f344fd",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0"
+    },
+    "rustProduct": "74fbfad8515dccb473ff15998c52113a5405af1f",
+    "nativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "fixtureSha256": "b7aae80b03562b7b9766681e497ab31db952b4365d803a87c19044506634c7b7"
+  },
+  "fixtureSha256": "b7aae80b03562b7b9766681e497ab31db952b4365d803a87c19044506634c7b7",
+  "acceptanceDriverSha256": "15d66ac93d196988ae536ce1398b48a0487b16005d1435b94a708271083d4686",
+  "diskSha256": {
+    "src/lib.rs": "75fb2711167eacb71e95dc78448c52693941ea0fa4b14c3ae8a1508759b2960a",
+    "src/consumer.rs": "3f69a9007587927b47fe8fce7b55b2f35dec98c2532de0e612fd212a75935f31",
+    "Cargo.toml": "4b69c4fb7a5ae4dbd30a664b2df25dd704d35164b7ac64a54985def9f8deca38"
+  },
+  "localLogsSha256": {
+    "p05-251-core.log": "f6555f6c46d5546fd4a411c425bc90d1848379022414d378e96e6950e93fb337",
+    "p05-251-analyze.log": "ef2a954701bd6a6a4fd16e49e4b9ff5ee1e0707db3c280b857e2cdbe965d76f1",
+    "p05-251-focused.log": "a72e128d654ceea0d76aa2595b6d3f53696b0be83b3c669a42d7c466a1e21719",
+    "p05-251-first.log": "68b2264c94cabd2ab04e806e6baf18d099e1eb106d97cf89a86b2aace0ec6114",
+    "p05-251-detach-failed.log": "daeb51b05cc00ac3dcf02ba3647aa43c3836ebac34b2badee67d0940ec945e50",
+    "p05-251-full.log": "63489b361ec47751ee7362580ced40ac065a0babfc00d00b22ef2c996939a4f6",
+    "p05-251-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-251-linux-native.log": "ade76ac05bcd136f894f4cfe96f080966b615e360a578f9b591afbf6ac178c53",
+    "windows-build.log": "51ea7c4ce618875cb2a6adf3696b9a30f7470d99dffbe21b3faf4e7c62236a59"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 21,
+      "affected_count": 1,
+      "changed_files": 8,
+      "risk_level": "medium",
+      "sha256": "d2276bec7af933fd531c3aa13d865d3fdc59dd65d41dd7dfcb05ed78f80be258",
+      "flows": [
+        {
+          "id": "proc_136_dispose",
+          "name": "Dispose → _sendReadOnlyFocus",
+          "process_type": "cross_community",
+          "step_count": 4,
+          "changed_steps": [
+            {
+              "symbol": "_sendReadOnlyFocus",
+              "step": 4
+            },
+            {
+              "symbol": "_setReadOnlyFocus",
+              "step": 3
+            }
+          ]
+        }
+      ]
+    },
+    "staged": {
+      "changed_count": 21,
+      "affected_count": 1,
+      "changed_files": 8,
+      "risk_level": "medium",
+      "sha256": "d2276bec7af933fd531c3aa13d865d3fdc59dd65d41dd7dfcb05ed78f80be258",
+      "flows": [
+        {
+          "id": "proc_136_dispose",
+          "name": "Dispose → _sendReadOnlyFocus",
+          "process_type": "cross_community",
+          "step_count": 4,
+          "changed_steps": [
+            {
+              "symbol": "_sendReadOnlyFocus",
+              "step": 4
+            },
+            {
+              "symbol": "_setReadOnlyFocus",
+              "step": 3
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "linuxMemory": {
+    "ready": {
+      "mainPrivateMiB": 246.0,
+      "treePrivateMiB": 246.0,
+      "processCount": 1
+    },
+    "references-tree-open": {
+      "mainPrivateMiB": 247.2,
+      "treePrivateMiB": 824.5,
+      "processCount": 4
+    },
+    "references-preview": {
+      "mainPrivateMiB": 241.8,
+      "treePrivateMiB": 819.2,
+      "processCount": 4
+    },
+    "preview-next-cross": {
+      "mainPrivateMiB": 247.7,
+      "treePrivateMiB": 825.2,
+      "processCount": 4
+    },
+    "definition-preview": {
+      "mainPrivateMiB": 240.0,
+      "treePrivateMiB": 817.7,
+      "processCount": 4
+    }
+  },
+  "windowsBaselineDiagnosis": {
+    "manifest": {
+      "parentProduct": "a1635d2ab3a819cc1cc474ad3cdb74507735b3bb",
+      "stockAotSha256": "56f506f24cef558765156b705415e3e64eb078a3589f6182916225f0312d4a38",
+      "baseTree": "199171c4080656441f39028adda1574807d542eb",
+      "aotSha256": "56F506F24CEF558765156B705415E3E64EB078A3589F6182916225F0312D4A38",
+      "nativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+      "flutterWindowTracer": "59CB208CBCE8CA44DB9DC77C5FBF87E8BC999EBE074B608F00244ADA8AF01556",
+      "flutterWindowStock": "429898B849DD5710E4F6CB7214CFF1A4EC7171E62700D1E86DC8E9E00EB8667A",
+      "exeSha256": "E790A7D146F7DE5AFCAB5D810E4C77BD33D5BBAA61504BCF6D6DAD61DCA2A9EA",
+      "fixtureSha256": "C2FC3F9986C43F711974D80AB53B3DC18B247F488AF02CA47E01121F24E03579"
+    },
+    "reportSha256": "157bb97cf7eacd9c41873a63a559cfe6cc8009c3aafe66983d2e5fe2737b7e6a",
+    "nativeLogSha256": "5c59dc47a4e539847ab44c367020dd058ccc4e6e8adc8023ddc221f97afbf0ba",
+    "windowMessages": [
+      "msg=0100 key=73 flags=3e0001 lang=0804 ime=1 composition_bytes=0 conversion=401",
+      "msg=0100 key=e5 flags=2d0001 lang=0804 ime=1 composition_bytes=2 conversion=401",
+      "msg=010d key=0 flags=0 lang=0804 ime=1 composition_bytes=2 conversion=401",
+      "msg=0100 key=e5 flags=580001 lang=0804 ime=1 composition_bytes=2 conversion=401",
+      "msg=0101 key=7b flags=c0580001 lang=0804 ime=1 composition_bytes=2 conversion=401"
+    ],
+    "activeNativeFocus": {
+      "available": true,
+      "isRoot": false,
+      "isChild": true,
+      "focusClass": "FLUTTERVIEW",
+      "activeOwned": true,
+      "flags": 0,
+      "imeOpen": null,
+      "imeCompositionBytes": null,
+      "keyboardLanguage": "0x804"
+    },
+    "flutterKeyCountBeforeAndAfterScanCode": [
+      19,
+      19
+    ]
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "reportSha256": "65acf8cdef0ff857dfef219a506ae80a7036f3ac8eb79e71a66c8d3cb5c3e55d",
+    "observations": 21,
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "aotSha256": "d81d91c9d1e09264623833f613454b0ba9f7d24386b20d6b07cede358640f50b",
+    "runnerSha256": "86eb44d105b9969cf8b5e2bbdac58d26d92ced2a3fa6c8cb09a2282a3f993883",
+    "command": {
+      "id": "togglePeekWidgetFocus",
+      "defaultShortcut": "ctrl+k F2"
+    },
+    "peekFocus": {
+      "providers": {
+        "provider-many": [
+          [
+            "consumer.rs",
+            0,
+            47
+          ],
+          [
+            "lib.rs",
+            3,
+            43
+          ],
+          [
+            "lib.rs",
+            1,
+            7
+          ]
+        ],
+        "provider-local": [
+          [
+            "lib.rs",
+            5,
+            29
+          ],
+          [
+            "lib.rs",
+            4,
+            7
+          ]
+        ]
+      },
+      "references-tree-open": {
+        "kind": "references",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          23,
+          23
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-preview": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          23,
+          23
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "preview-next-local": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:4",
+        "position": "4:44",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-type-read-only": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:4",
+        "position": "4:44",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "preview-next-cross": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-back-to-tree": {
+        "kind": "references",
+        "focus": "tree",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-preview-again": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-close": {
+        "editorFocused": true,
+        "selection": [
+          46,
+          46
+        ]
+      },
+      "definition-tree-open": {
+        "kind": "definition",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-preview": {
+        "kind": "definition",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-back-to-tree": {
+        "kind": "definition",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-preview-again": {
+        "kind": "definition",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-close": {
+        "editorFocused": true,
+        "selection": [
+          120,
+          120
+        ]
+      }
+    },
+    "printableInput": "Windows SendInput scancode",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      }
+    ],
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-many": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-local": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "at-many": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-tree-open": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-preview": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "preview-next-local": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-type-read-only": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "preview-next-cross": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-back-to-tree": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-preview-again": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "references-close": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "history-return": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "definition-tree-open": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "definition-preview": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "definition-back-to-tree": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "definition-preview-again": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "definition-close": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-ime-compose": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-ime-commit": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-ime-undo": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "rawScanCodes": [
+      45,
+      49,
+      23
+    ],
+    "editorIme": {
+      "composingText": "ni",
+      "composingRange": [
+        120,
+        122
+      ],
+      "preInputSelection": [
+        120,
+        120
+      ],
+      "committedText": "你",
+      "postCommitSelection": [
+        121,
+        121
+      ],
+      "undoSelection": [
+        120,
+        120
+      ],
+      "originalRestored": true,
+      "versions": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "linux": {
+    "reportSha256": "9a3404862a05b2af605699d03868eb8dfac1e6a79210def956b331db5be9847c",
+    "observations": 18,
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "aotSha256": "0114407c9285b67dc956586d32709e2268fadd0c782c9cb9672761775d277d5b",
+    "runnerSha256": "9db050ac98e7ef87e6fa50ea70194e99ef834f016673b347c28d2ad9cd0bf114",
+    "command": {
+      "id": "togglePeekWidgetFocus",
+      "defaultShortcut": "ctrl+k F2"
+    },
+    "peekFocus": {
+      "providers": {
+        "provider-many": [
+          [
+            "consumer.rs",
+            0,
+            47
+          ],
+          [
+            "lib.rs",
+            3,
+            43
+          ],
+          [
+            "lib.rs",
+            1,
+            7
+          ]
+        ],
+        "provider-local": [
+          [
+            "lib.rs",
+            5,
+            29
+          ],
+          [
+            "lib.rs",
+            4,
+            7
+          ]
+        ]
+      },
+      "references-tree-open": {
+        "kind": "references",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          23,
+          23
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-preview": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          23,
+          23
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "preview-next-local": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:4",
+        "position": "4:44",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-type-read-only": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:4",
+        "position": "4:44",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "preview-next-cross": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-back-to-tree": {
+        "kind": "references",
+        "focus": "tree",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-preview-again": {
+        "kind": "references",
+        "focus": "preview",
+        "activeFile": "consumer.rs",
+        "selection": [
+          46,
+          46
+        ],
+        "selectedLeaf": "consumer.rs:1",
+        "position": "1:47",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "references-close": {
+        "editorFocused": true,
+        "selection": [
+          46,
+          46
+        ]
+      },
+      "definition-tree-open": {
+        "kind": "definition",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-preview": {
+        "kind": "definition",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-back-to-tree": {
+        "kind": "definition",
+        "focus": "tree",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-preview-again": {
+        "kind": "definition",
+        "focus": "preview",
+        "activeFile": "lib.rs",
+        "selection": [
+          120,
+          120
+        ],
+        "selectedLeaf": "lib.rs:2",
+        "position": "2:8",
+        "previewReadOnly": true,
+        "version": 1
+      },
+      "definition-close": {
+        "editorFocused": true,
+        "selection": [
+          120,
+          120
+        ]
+      }
+    },
+    "printableInput": "X11 XTEST text",
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 3321,
+            "ppid": 3320,
+            "private": 257957888,
+            "pss": 284724224,
+            "working_set": 337113088
+          }
+        ],
+        "root_pid": 3321,
+        "total_private_bytes": 257957888,
+        "total_private_mib": 246.0,
+        "total_working_set_bytes": 337113088
+      },
+      "references-tree-open": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 3321,
+            "ppid": 3320,
+            "private": 259158016,
+            "pss": 285959168,
+            "working_set": 338530304
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 3473,
+            "ppid": 3321,
+            "private": 595820544,
+            "pss": 602624000,
+            "working_set": 618725376
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3649,
+            "ppid": 3473,
+            "private": 4755456,
+            "pss": 11938816,
+            "working_set": 27947008
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3648,
+            "ppid": 3473,
+            "private": 4825088,
+            "pss": 12008448,
+            "working_set": 28016640
+          }
+        ],
+        "root_pid": 3321,
+        "total_private_bytes": 864559104,
+        "total_private_mib": 824.5,
+        "total_working_set_bytes": 1013219328
+      },
+      "references-preview": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 3321,
+            "ppid": 3320,
+            "private": 253587456,
+            "pss": 280388608,
+            "working_set": 332959744
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 3473,
+            "ppid": 3321,
+            "private": 595820544,
+            "pss": 602624000,
+            "working_set": 618725376
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3649,
+            "ppid": 3473,
+            "private": 4755456,
+            "pss": 11938816,
+            "working_set": 27947008
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3648,
+            "ppid": 3473,
+            "private": 4825088,
+            "pss": 12008448,
+            "working_set": 28016640
+          }
+        ],
+        "root_pid": 3321,
+        "total_private_bytes": 858988544,
+        "total_private_mib": 819.2,
+        "total_working_set_bytes": 1007648768
+      },
+      "preview-next-cross": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 3321,
+            "ppid": 3320,
+            "private": 259739648,
+            "pss": 286541824,
+            "working_set": 339111936
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 3473,
+            "ppid": 3321,
+            "private": 595959808,
+            "pss": 602763264,
+            "working_set": 618864640
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3649,
+            "ppid": 3473,
+            "private": 4755456,
+            "pss": 11939840,
+            "working_set": 27947008
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3648,
+            "ppid": 3473,
+            "private": 4825088,
+            "pss": 12009472,
+            "working_set": 28016640
+          }
+        ],
+        "root_pid": 3321,
+        "total_private_bytes": 865280000,
+        "total_private_mib": 825.2,
+        "total_working_set_bytes": 1013940224
+      },
+      "definition-preview": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 3321,
+            "ppid": 3320,
+            "private": 251617280,
+            "pss": 278531072,
+            "working_set": 330989568
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 3473,
+            "ppid": 3321,
+            "private": 596246528,
+            "pss": 603042816,
+            "working_set": 619085824
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3649,
+            "ppid": 3473,
+            "private": 4755456,
+            "pss": 11943936,
+            "working_set": 27947008
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 3648,
+            "ppid": 3473,
+            "private": 4825088,
+            "pss": 12013568,
+            "working_set": 28016640
+          }
+        ],
+        "root_pid": 3321,
+        "total_private_bytes": 857444352,
+        "total_private_mib": 817.7,
+        "total_working_set_bytes": 1006039040
+      }
+    }
+  }
+}
