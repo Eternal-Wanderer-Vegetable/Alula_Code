@@ -242,6 +242,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
     required this.scrollController,
     required this.paintBackgrounds,
     this.textSpan,
+    this.fillBackgroundLines = false,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -254,6 +255,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
   final EdgeInsets padding;
   final ScrollController? scrollController;
   final bool paintBackgrounds;
+  final bool fillBackgroundLines;
   final TextSpan? textSpan;
 
   @override
@@ -288,6 +290,22 @@ class EditorRangeDecorationPainter extends CustomPainter {
         continue;
       }
       final boxes = painter.getBoxesForSelection(resolved.range);
+      final backgroundColor = decoration.backgroundColor;
+      if (paintBackgrounds &&
+          fillBackgroundLines &&
+          backgroundColor != null &&
+          boxes.isNotEmpty) {
+        canvas.drawRect(
+          Rect.fromLTRB(
+            0,
+            boxes.first.top + origin.dy,
+            size.width,
+            boxes.last.bottom + origin.dy,
+          ),
+          Paint()..color = backgroundColor,
+        );
+        continue;
+      }
       for (final box in boxes) {
         final rect = box.toRect().shift(origin);
         if (paintBackgrounds) {
@@ -344,7 +362,8 @@ class EditorRangeDecorationPainter extends CustomPainter {
       oldDelegate.textScaler != textScaler ||
       oldDelegate.padding != padding ||
       oldDelegate.scrollController != scrollController ||
-      oldDelegate.paintBackgrounds != paintBackgrounds;
+      oldDelegate.paintBackgrounds != paintBackgrounds ||
+      oldDelegate.fillBackgroundLines != fillBackgroundLines;
 }
 
 double editorGutterWidth({

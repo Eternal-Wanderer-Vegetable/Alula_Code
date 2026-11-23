@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/bridge/alula_core.dart';
+import 'package:alula_app/editor/editor_rendering.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_model.dart';
@@ -400,6 +401,86 @@ void main() {
       expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget,
           reason: 'the fresh versioned symbol snapshot restores the path');
       expect(_breadcrumbSegment('editor', 'inner'), findsOneWidget);
+      expect(file.readAsBytesSync(), utf8.encode(source));
+    },
+  );
+
+  testWidgets(
+    'symbol breadcrumb focus previews the range and Escape restores the view',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final source =
+          '// 🦊\r\nfn near() {}\r\n'
+          '${List.filled(140, '// preview padding\r\n').join()}'
+          'fn far() {\r\n    let value = 1;\r\n}\r\n'
+          '${List.filled(1100, '// bounded preview padding\r\n').join()}'
+          'fn beyond() {\r\n    let other = 2;\r\n}\r\n';
+      final file = File('${workspace.path}/src/main.rs')
+        ..writeAsStringSync(source);
+      await mountPage(tester);
+
+      final field = _fieldForDocument(tester, 10);
+      final doc = field.inputWindow.document;
+      final text = doc.resync().content;
+      final input = find.descendant(
+        of: find.byKey(field.key!),
+        matching: find.byType(TextField),
+      );
+      final controller = tester.widget<TextField>(input).controller!;
+      final sourceText = controller.text;
+      final original = TextSelection(
+        baseOffset: text.indexOf('near'),
+        extentOffset: text.indexOf('near') + 2,
+      );
+      field.focusNode!.requestFocus();
+      controller.selection = original;
+      await tester.pumpAndSettle();
+      final originalPixels = field.scrollController!.offset;
+      expect(_breadcrumbSegment('editor', 'near'), findsOneWidget);
+
+      await tester.tap(_breadcrumbSegment('editor', 'near'));
+      await tester.pumpAndSettle();
+      Future<RustTextInputField> preview(String name) async {
+        final row = find.descendant(
+          of: find.byType(PopupMenuItem<String>),
+          matching: find.textContaining(name),
+        );
+        expect(row, findsOneWidget);
+        Focus.of(tester.element(row)).requestFocus();
+        await tester.pumpAndSettle();
+        final visible = tester
+            .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+            .singleWhere((w) => w.key != field.key);
+        final painter = tester
+            .widgetList<CustomPaint>(find.byType(CustomPaint))
+            .map((w) => w.painter)
+            .whereType<EditorRangeDecorationPainter>()
+            .singleWhere((painter) => painter.fillBackgroundLines);
+        expect(painter.decorations.single.startUtf16, text.indexOf('fn $name'));
+        expect(visible.inputWindow.text, contains('fn $name'));
+        expect(field.scrollController!.offset, closeTo(originalPixels, 0.01));
+        expect(controller.selection, original);
+        expect(controller.text, sourceText);
+        return visible;
+      }
+
+      final far = await preview('far');
+      expect(far.scrollController!.offset, greaterThan(originalPixels),
+          reason: 'focus on a distant symbol previews its lines');
+      final beyond = await preview('beyond');
+      expect(beyond.inputWindow.startUtf16,
+          greaterThan(field.inputWindow.endUtf16));
+      expect(beyond.inputWindow.text.length,
+          lessThanOrEqualTo(field.inputWindow.maxWindowUtf16));
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(field.scrollController!.offset, closeTo(originalPixels, 0.01));
+      expect(controller.selection, original);
+      expect(find.byType(RustTextInputField), findsOneWidget);
+      expect(doc.resync().content, text);
+      expect(field.focusNode!.hasFocus, isTrue);
       expect(file.readAsBytesSync(), utf8.encode(source));
     },
   );

@@ -25033,6 +25033,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     OpenDoc doc,
     List<PopupMenuEntry<String>> items, {
     String? initialValue,
+    ValueChanged<String>? onItemFocus,
     List<PopupMenuItem<String>> Function(String path)? loadFolder,
   }) async {
     if (!identical(_groups[group.region], group) || !identical(group.active, doc)) return null;
@@ -25144,6 +25145,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
                 loadFolder: loadFolder,
+                onItemFocus: onItemFocus == null
+                    ? null
+                    : (value) {
+                        if (mounted &&
+                            !_disposing &&
+                            visible &&
+                            pickerRoute?.isCurrent == true &&
+                            root == _workspaceRoot &&
+                            path == doc.path &&
+                            identical(_groups[group.region], group) &&
+                            identical(group.active, doc) &&
+                            doc.doc.version == version) {
+                          onItemFocus(value);
+                        }
+                      },
                 onRoute: (route) {
                   pickerRoute ??= route;
                   if (route == null) return;
@@ -25344,36 +25360,53 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !group.breadcrumbSymbolPath.contains(selectedSymbol)) {
       return;
     }
+    final version = doc.doc.version;
     // 点击时直查 LSP（不依赖大纲缓存，任意组即时可用）。
-    final r = doc.doc.core.lsp.symbols(doc.id);
-    final symbols = [
-      for (final s in r?.symbols ?? const <Map<String, Object?>>[])
-        (
-          kind: s['kind'] as String? ?? '',
-          name: s['name'] as String? ?? '',
-          startUtf16: (s['start_utf16'] as num?)?.toInt() ?? 0,
-          line: (s['line'] as num?)?.toInt() ?? 0,
-        )
-    ];
+    final snapshot = doc.doc.core.lsp.symbols(doc.id);
+    final symbols = {
+      if (snapshot != null && snapshot.version == version)
+        for (final row in snapshot.symbols)
+          'symbol:${(row['start_utf16'] as num?)?.toInt() ?? 0}:${row['name'] ?? ''}':
+              (
+                kind: row['kind'] as String? ?? '',
+                name: row['name'] as String? ?? '',
+                startLine: (row['line'] as num?)?.toInt() ?? 0,
+                endLine: (row['end_line'] as num?)?.toInt() ?? 0,
+              ),
+    };
     final items = <PopupMenuItem<String>>[
       if (symbols.isEmpty)
         const PopupMenuItem(enabled: false, child: Text('未发现符号')),
-      for (final sym in symbols)
+      for (final MapEntry(key: value, value: symbol) in symbols.entries)
         PopupMenuItem(
-          value: 'symbol:${sym.startUtf16}:${sym.name}',
-          child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
+          value: value,
+          child: Text('${_outlineKindBadge(symbol.kind)} ${symbol.name}'),
         ),
     ];
     final selectedValue =
         'symbol:${selectedSymbol.startUtf16}:${selectedSymbol.name}';
-    final selection = await _showBreadcrumbMenu(
-      group,
-      doc,
-      items,
-      initialValue: items.any((item) => item.represents(selectedValue))
-          ? selectedValue
-          : null,
-    );
+    final previewField = doc.inputFieldKey.currentState;
+    ({String value, bool openAside})? selection;
+    try {
+      selection = await _showBreadcrumbMenu(
+        group,
+        doc,
+        items,
+        initialValue: symbols.containsKey(selectedValue) ? selectedValue : null,
+        onItemFocus: (value) {
+          final symbol = symbols[value];
+          if (symbol != null) {
+            previewField?.previewSymbolLines(
+              firstLine: symbol.startLine,
+              lastLine: symbol.endLine,
+              documentVersion: version,
+            );
+          }
+        },
+      );
+    } finally {
+      previewField?.clearSymbolPreview();
+    }
     if (!mounted || selection == null) return;
     final sourceVersion = doc.doc.version;
     final sourceRegion = group.region;

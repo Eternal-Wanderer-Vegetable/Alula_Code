@@ -3736,6 +3736,20 @@
       "evidence": "符号选择器初选当前版本的所选段，切换段时更新初选。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 f0b3c5b1 的 CI 45156593418 四项和 Platform Availability 45156587598 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-291",
+      "name": "P05.239 CMD-06 符号选择器临时预览",
+      "description": "符号行获得焦点时显示当前文档版本的整行高亮并滚入视口。远处符号使用一个有界只读预览，关闭或确认选择时释放预览，并保留源视图、选区与文档内容。",
+      "dependencies": [
+        "feat-145",
+        "feat-146",
+        "feat-290"
+      ],
+      "status": "in-progress",
+      "evidence": "旧版未滚动的回归已复现。修复后的控件测试覆盖当前文本窗口内及窗口外符号、整行绘制和 Esc 恢复。等待本地全量、Windows/Linux 原生及托管。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

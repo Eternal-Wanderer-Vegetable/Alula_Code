@@ -79,6 +79,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     required this.first,
     this.loadFolder,
     this.focusParent,
+    this.onItemFocus,
     this.depth = 0,
   });
 
@@ -90,6 +91,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   final ValueChanged<String> onRevealAside;
   final List<PopupMenuItem<String>> Function(String path)? loadFolder;
   final VoidCallback? focusParent;
+  final ValueChanged<String>? onItemFocus;
   final int depth;
 
   @override
@@ -223,6 +225,14 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       canRequestFocus: false,
       skipTraversal: true,
       onKeyEvent: _handleKeyEvent,
+      onFocusChange: widget.onItemFocus == null
+          ? null
+          : (focused) {
+              final value = widget.item.value;
+              if (focused && widget.item.enabled && value != null) {
+                widget.onItemFocus!(value);
+              }
+            },
       child: _directory
           ? _BreadcrumbDirectoryMenuItem(
               value: widget.item.value,

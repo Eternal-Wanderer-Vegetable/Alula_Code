@@ -386,7 +386,127 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _reportedFoldVersion = -1;
   List<EditorDocumentLineRange> _reportedFoldRanges = const [];
 
+  RustTextInputWindow? _symbolPreviewWindow;
+  ScrollController? _symbolPreviewScroll;
+  GlobalKey<RustTextInputFieldState>? _symbolPreviewKey;
+  EditorRangeDecoration? _symbolPreviewRange;
+
   TextEditingValue get editingValue => _controller.value;
+
+  /// Shows a bounded, non-interactive view without moving the editing caret.
+  void previewSymbolLines({
+    required int firstLine,
+    required int lastLine,
+    required int documentVersion,
+  }) {
+    final source = widget.inputWindow;
+    if (!mounted ||
+        firstLine < 1 ||
+        lastLine < firstLine ||
+        source.version != documentVersion ||
+        source.document.version != documentVersion) {
+      return;
+    }
+    final document = source.document;
+    try {
+      final start = document.lineOffset(firstLine - 1);
+      final end = lastLine < start.lineCount
+          ? document.lineOffset(lastLine).offsetUtf16
+          : start.totalUtf16Length;
+      if (end <= start.offsetUtf16) return;
+
+      var preview = _symbolPreviewWindow;
+      if (preview == null ||
+          !identical(preview.document, document) ||
+          preview.version != documentVersion ||
+          start.offsetUtf16 < preview.startUtf16 ||
+          start.offsetUtf16 >= preview.endUtf16) {
+        final startsInSource = start.offsetUtf16 >= source.startUtf16 &&
+            start.offsetUtf16 < source.endUtf16;
+        preview = startsInSource
+            ? RustTextInputWindow.open(
+                document,
+                startUtf16: source.startUtf16,
+                maxWindowUtf16: source.maxWindowUtf16,
+              )
+            : RustTextInputWindow.openAround(
+                document,
+                selectionUtf16: start.offsetUtf16,
+                maxWindowUtf16: source.maxWindowUtf16,
+              );
+        _symbolPreviewScroll ??= ScrollController(
+          initialScrollOffset:
+              startsInSource ? editorScrollOffset(widget.scrollController) : 0,
+        );
+      }
+      final range = EditorRangeDecoration(
+        documentVersion: documentVersion,
+        startUtf16: start.offsetUtf16,
+        endUtf16: end,
+        backgroundColor:
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.16),
+      );
+      setState(() {
+        _symbolPreviewWindow = preview;
+        _symbolPreviewKey ??= GlobalKey<RustTextInputFieldState>();
+        _symbolPreviewRange = range;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !identical(_symbolPreviewRange, range)) return;
+        final field = _symbolPreviewKey?.currentState;
+        if (field == null) return;
+        field.setState(() => field._symbolPreviewRange = range);
+        field._revealSymbolPreview(range);
+      });
+    } on AlulaException {
+      clearSymbolPreview();
+    }
+  }
+
+  void clearSymbolPreview() {
+    final scroll = _symbolPreviewScroll;
+    if (!mounted || scroll == null) return;
+    setState(() {
+      _symbolPreviewRange = null;
+      _symbolPreviewWindow = null;
+      _symbolPreviewScroll = null;
+      _symbolPreviewKey = null;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => scroll.dispose());
+  }
+
+  void _revealSymbolPreview(EditorRangeDecoration range) {
+    final position = editorPrimaryScrollPosition(widget.scrollController);
+    final editable = _findEditableRenderObject(context);
+    if (position == null ||
+        !position.haveDimensions ||
+        editable == null ||
+        !editable.hasSize ||
+        widget.inputWindow.version != range.documentVersion) {
+      return;
+    }
+    final window = widget.inputWindow;
+    Rect caretAt(int offset) => editable.getLocalRectForCaret(
+          TextPosition(
+            offset: (offset - window.startUtf16)
+                .clamp(0, window.text.length)
+                .toInt(),
+            affinity: TextAffinity.upstream,
+          ),
+        );
+    final first = caretAt(range.startUtf16);
+    final last = caretAt(range.endUtf16);
+    final height = position.viewportDimension;
+    if (first.top >= 0 && last.bottom <= height) return;
+    final center = last.bottom - first.top > height
+        ? first.center.dy
+        : (first.top + last.bottom) / 2;
+    position.jumpTo(
+      (position.pixels + center - height / 2)
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble(),
+    );
+  }
 
   @visibleForTesting
   bool get hasActiveMouseDragAutoScrollTimer =>
@@ -1875,7 +1995,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         : showGutter
             ? 18.0
             : 0.0;
-    return Column(
+    final previewWindow = _symbolPreviewWindow;
+    final previewRange = _symbolPreviewRange;
+    final currentPreview = previewRange != null &&
+        previewRange.documentVersion == widget.inputWindow.version &&
+        previewRange.documentVersion == widget.inputWindow.document.version;
+    final editor = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
@@ -1899,6 +2024,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                   final editorContent = Stack(
                     fit: StackFit.expand,
                     children: [
+                      if (currentPreview && previewWindow == null)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: EditorRangeDecorationPainter(
+                                text: editingValue.text,
+                                textSpan: editorTextSpan,
+                                windowVersion: widget.inputWindow.version,
+                                windowStartUtf16: widget.inputWindow.startUtf16,
+                                decorations: [previewRange],
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                paintBackgrounds: true,
+                                fillBackgroundLines: true,
+                              ),
+                            ),
+                          ),
+                        ),
                       if (widget.rangeDecorations.any(
                           (decoration) => decoration.backgroundColor != null))
                         Positioned.fill(
@@ -2186,6 +2332,44 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           ),
       ],
     );
+    if (previewWindow == null ||
+        !currentPreview ||
+        !identical(previewWindow.document, widget.inputWindow.document)) {
+      return editor;
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        editor,
+        Positioned.fill(
+          child: ExcludeSemantics(
+            child: ExcludeFocus(
+              child: IgnorePointer(
+                child: ColoredBox(
+                  color: theme.colorScheme.surface,
+                  child: RustTextInputField(
+                    key: _symbolPreviewKey,
+                    inputWindow: previewWindow,
+                    scrollController: _symbolPreviewScroll,
+                    style: widget.style,
+                    fontFamilyFallback: widget.fontFamilyFallback,
+                    decoration: widget.decoration,
+                    showLineNumbers: widget.showLineNumbers,
+                    showIndentGuides: widget.showIndentGuides,
+                    wordWrap: widget.wordWrap,
+                    syntaxTokens: widget.syntaxTokens,
+                    syntaxVersion: widget.syntaxVersion,
+                    syntaxTokenColor: widget.syntaxTokenColor,
+                    whitespaceMode: widget.whitespaceMode,
+                    tabSize: widget.tabSize,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -2205,6 +2389,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       ..removeListener(_handleFoldSelectionChanged)
       ..dispose();
     _foldSymbolsTimer?.cancel();
+    _symbolPreviewScroll?.dispose();
     _disposeOwnedFocusNode();
     _disposeOwnedHorizontalScrollController();
     super.dispose();
