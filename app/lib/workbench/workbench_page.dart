@@ -4089,9 +4089,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return const [];
       }
       emptyMessage = '没有匹配的工作区符号。';
-      symbols.sort((left, right) =>
-          (fuzzyScore(query, right['name'] as String) ?? -1)
-              .compareTo(fuzzyScore(query, left['name'] as String) ?? -1));
+      final matcher = DocumentSymbolQuery(query);
+      final matches = <({
+        Map<String, Object?> symbol,
+        String name,
+        String description,
+        DocumentSymbolMatch match,
+        int order,
+      })>[];
+      for (final (index, symbol) in symbols.indexed) {
+        final name = symbol['name'] as String;
+        final uri = symbol['uri'] as String;
+        final path = _pathFromFileUri(uri);
+        final directory =
+            path == null ? null : quickOpenDirectoryLabel(path, workspace: root);
+        final fileLabel = path == null
+            ? uri
+            : directory == null
+                ? _nameOf(path)
+                : '$directory${Platform.pathSeparator}${_nameOf(path)}';
+        final container = (symbol['containerName'] as String?)?.trim();
+        final description = container == null || container.isEmpty
+            ? fileLabel
+            : '$container • $fileLabel';
+        if (matcher.match(name, description) case final match?) {
+          matches.add((
+            symbol: symbol,
+            name: name,
+            description: description,
+            match: match,
+            order: index,
+          ));
+        }
+      }
+      matches.sort((left, right) {
+        final byScore = right.match.score.compareTo(left.match.score);
+        if (byScore != 0) return byScore;
+        final byName =
+            left.name.toLowerCase().compareTo(right.name.toLowerCase());
+        return byName != 0 ? byName : left.order.compareTo(right.order);
+      });
       Future<void> open(Map<String, Object?> symbol,
           {bool side = false}) async {
         if (!mounted || _workspaceRoot != root) return;
@@ -4135,20 +4172,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
 
       return [
-        for (final symbol in symbols)
+        for (final row in matches)
           QuickItem(
-            label: symbol['name'] as String,
-            description:
-                symbol['containerName'] as String? ?? symbol['uri'] as String,
-            detail: '${symbol['uri']}:${(symbol['line'] as int) + 1}',
-            onRun: () => open(symbol),
+            label: row.name,
+            description: row.description,
+            detail: '行 ${(row.symbol['line'] as int) + 1}',
+            highlights: () => (
+              label: [
+                for (final range in row.match.name.matchesInSource(row.name))
+                  TextRange(start: range.start, end: range.end),
+              ],
+              description: [
+                for (final range in row.match.containerRanges)
+                  TextRange(start: range.start, end: range.end),
+              ],
+            ),
+            onRun: () => open(row.symbol),
             buttons: [
               QuickItemButton(
                   icon: Icons.vertical_split,
                   tooltip: '在侧边打开工作区符号',
                   altEnter: true,
                   ctrlCmdEnter: true,
-                  onRun: () => open(symbol, side: true))
+                  onRun: () => open(row.symbol, side: true))
             ],
           )
       ];
@@ -4184,11 +4230,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           emptyMessage = '输入符号名称以搜索工作区';
           return const [];
         }
+        final separator = query.indexOf(' ');
+        final providerQuery =
+            separator < 0 ? query : query.substring(0, separator);
         final pending = Completer<void>();
         cancellation = pending;
         final request = widget.workspaceSymbolRequest
-                ?.call(source.id, query, pending.future) ??
-            core.lsp.workspaceSymbols(source.id, query,
+                ?.call(source.id, providerQuery, pending.future) ??
+            core.lsp.workspaceSymbols(source.id, providerQuery,
                 cancelSignal: pending.future);
         return itemsForRequest(query, requestGeneration, request);
       },

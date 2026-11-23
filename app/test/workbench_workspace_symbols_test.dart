@@ -170,6 +170,7 @@ void main() {
       });
     CommandService? commands;
     final queries = <String>[];
+    var staleRange = false;
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump(const Duration(milliseconds: 100));
@@ -192,7 +193,7 @@ void main() {
             'uri': Uri.file(target.path).toString(),
             'line': 1,
             'character': 2,
-            'endLine': query == 'stale' ? 99 : 1,
+            'endLine': staleRange ? 99 : 1,
             'endCharacter': 8,
             'containerName': 'fixture'
           }
@@ -243,12 +244,13 @@ void main() {
     expect(controller.selection, const TextSelection.collapsed(offset: 7));
     expect(queries, ['missing', 'target']);
     final oldSelection = controller.selection;
+    staleRange = true;
     final stale = commands!.execute('workbench.action.showAllSymbols');
     await tester.pump(const Duration(milliseconds: 120));
     final staleInput = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField));
-    await tester.enterText(staleInput, '#stale');
+    await tester.enterText(staleInput, '#target');
     await tester.pump();
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -482,5 +484,118 @@ void main() {
     await tester.pumpAndSettle();
     expect(await opening, CommandExecutionStatus.executed);
     expect(panel, findsNothing);
+  });
+
+  testWidgets(
+      'workspace symbol compound queries keep path and name matches separate',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-workspace-symbol-query');
+    final directory = Directory('${temp.path}/src')..createSync();
+    final file = File('${directory.path}/entry.rs')
+      ..writeAsStringSync('pub struct Entry;\n');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 100,
+            'docs': [
+              {'id': 100, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    Map<String, Object?> symbol(
+            String name, String fileName, String container) =>
+        {
+          'name': name,
+          'kind': 23,
+          'uri': Uri.file('${directory.path}/$fileName').toString(),
+          'line': 0,
+          'character': 0,
+          'endLine': 0,
+          'endCharacter': name.length,
+          'containerName': container,
+        };
+    final symbols = List<Map<String, Object?>>.unmodifiable([
+      symbol('CandleProbeWidget', 'target.rs', 'alpha'),
+      symbol('Unrelated', 'target.rs', 'alpha'),
+      symbol('CandleProbeMirror', 'mirror.rs', 'beta'),
+    ]);
+    final queries = <String>[];
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+      layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+      sessionStore: session,
+      keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+      onCommandServiceReady: (value) => commands = value,
+      workspaceSymbolRequest: (id, query, signal) async {
+        queries.add(query);
+        return symbols;
+      },
+    )));
+    await tester.pump(const Duration(milliseconds: 600));
+    final opening = commands.execute('workbench.action.showAllSymbols');
+    await tester.pumpAndSettle();
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    Finder row(String name) => find.byKey(ValueKey('qi-$name'));
+    List<String?> marks(String name, String text) {
+      final label = tester.widget<Text>(find.descendant(
+        of: row(name),
+        matching: find.byWidgetPredicate(
+            (w) => w is Text && (w.data ?? w.textSpan?.toPlainText()) == text),
+      ));
+      final spans = (label.textSpan as TextSpan?)?.children ?? const [];
+      return [
+        for (final span in spans.whereType<TextSpan>())
+          if (span.style?.fontWeight == FontWeight.bold) span.text,
+      ];
+    }
+
+    Future<void> query(String value) async {
+      await tester.enterText(input, value);
+      await tester.pumpAndSettle();
+    }
+
+    const widget = 'CandleProbeWidget';
+    const mirror = 'CandleProbeMirror';
+    final description = 'alpha • src${Platform.pathSeparator}target.rs';
+    await query('#CandleProbe target.rs');
+    expect(queries, ['CandleProbe']);
+    expect(row(widget), findsOneWidget);
+    expect(row(mirror), findsNothing);
+    expect(row('Unrelated'), findsNothing);
+    expect(marks(widget, widget), ['CandleProbe']);
+    expect(marks(widget, description), ['target.rs']);
+
+    await query('#Candle Probe');
+    expect(queries.last, 'Candle');
+    expect(row(widget), findsOneWidget);
+    expect(row(mirror), findsOneWidget);
+    expect(row('Unrelated'), findsNothing);
+    expect(tester.getTopLeft(row(mirror)).dy,
+        lessThan(tester.getTopLeft(row(widget)).dy));
+    expect(marks(widget, widget), ['CandleProbe']);
+    expect(marks(widget, description), isEmpty);
+
+    await query('#CandleProbe missing.rs');
+    expect(queries.last, 'CandleProbe');
+    expect(row(widget), findsNothing);
+    expect(row(mirror), findsNothing);
+    expect(find.text('没有匹配的工作区符号。'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
   });
 }
