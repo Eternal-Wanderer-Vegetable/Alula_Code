@@ -3861,8 +3861,8 @@
       "dependencies": [
         "feat-299"
       ],
-      "status": "in-progress",
-      "evidence": "固定版结果结构、定向、Windows/Linux 原生键鼠和托管检查待登记。",
+      "status": "done",
+      "evidence": "多文件按路径和范围排序并去重，单文件保留平铺。两端复验展开、折叠、行焦点、首行 BOM 坐标和跨文件返回。Windows/Linux 各 20 个原生观测点。专项 78/78，Flutter 1,847 passed / 2 skipped。产品 8b31486f 的 CI 45251073750 四项和 Platform Availability 45251063253 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.248-reference-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
