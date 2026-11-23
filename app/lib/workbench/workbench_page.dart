@@ -19388,10 +19388,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
       return KeyEventResult.handled;
     }
-    return _handleNotificationPrimaryShortcut(currentChord) ||
-            _handleShiftedBreadcrumbShortcut(event, currentChord)
-        ? KeyEventResult.handled
-        : KeyEventResult.ignored;
+    if (_handleNotificationPrimaryShortcut(currentChord) ||
+        _handleShiftedBreadcrumbShortcut(event, currentChord)) {
+      return KeyEventResult.handled;
+    }
+    // GTK reports Shift+Minus as Underscore. Resolve against the active
+    // minus binding so removing or changing the shortcut still takes effect.
+    if (defaultTargetPlatform == TargetPlatform.linux &&
+        shift &&
+        key == LogicalKeyboardKey.underscore &&
+        event.physicalKey == PhysicalKeyboardKey.minus) {
+      final binding = _keybindings.bindingForChord(
+        KeyChord(
+          key: LogicalKeyboardKey.minus,
+          control: ctrl,
+          shift: shift,
+          alt: alt,
+          meta: meta,
+        ),
+        matchesWhen: _commands.context.matches,
+      );
+      if (binding != null &&
+          binding.commandId == 'workbench.action.navigateForward' &&
+          isEnabled(binding.commandId)) {
+        _runCommand(binding.commandId, arguments: binding.arguments);
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   bool _handleShiftedBreadcrumbShortcut(KeyEvent event, KeyChord chord) {
@@ -21520,6 +21544,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       TextSelection.collapsed(offset: position.offsetUtf16),
     );
     _syncCommandContext();
+    final owner = _ownerOfView(active);
+    if (owner != null) _focusEditorAfterLayout(owner, active);
     return true;
   }
 

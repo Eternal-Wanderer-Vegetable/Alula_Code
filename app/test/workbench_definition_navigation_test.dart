@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 Future<void> _openWorkspace(
   WidgetTester tester,
   Directory temp,
@@ -83,6 +85,8 @@ Future<void> _runPaletteCommand(WidgetTester tester, String query) async {
 }
 
 void main() {
+  setUp(mockNativeDragDrop);
+
   testWidgets(
       'LSP definition opens a cross-file target and back/forward restore it',
       (tester) async {
@@ -146,6 +150,10 @@ void main() {
     );
   });
 
+  const navigationPlatforms = TargetPlatformVariant({
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+  });
   testWidgets(
       'multiple definition targets open a peek and confirm the selected row',
       (tester) async {
@@ -243,12 +251,52 @@ void main() {
         normalized.indexOf('beta()'));
     expect(sourceFile.readAsBytesSync(), sourceBytes);
     expect(secondary.readAsBytesSync(), secondBytes);
-  });
 
-  const peekPlatforms = TargetPlatformVariant({
-    TargetPlatform.windows,
-    TargetPlatform.linux,
-  });
+    Future<void> moveInHistory({required bool forward}) async {
+      if (defaultTargetPlatform == TargetPlatform.linux) {
+        final modifier =
+            forward ? LogicalKeyboardKey.shiftLeft : LogicalKeyboardKey.altLeft;
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyDownEvent(modifier);
+        await tester.sendKeyEvent(
+          forward ? LogicalKeyboardKey.underscore : LogicalKeyboardKey.minus,
+          physicalKey: PhysicalKeyboardKey.minus,
+          // The legacy Linux test map cannot encode the shifted key value.
+          platform: forward ? 'macos' : null,
+          character: forward ? '_' : '-',
+        );
+        await tester.sendKeyUpEvent(modifier);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      } else {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyEvent(
+          forward
+              ? LogicalKeyboardKey.arrowRight
+              : LogicalKeyboardKey.arrowLeft,
+        );
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      }
+      await tester.pumpAndSettle();
+    }
+
+    FocusNode activeFocus() => tester
+        .widget<RustTextInputField>(find.byType(RustTextInputField))
+        .focusNode!;
+
+    await moveInHistory(forward: false);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+    expect(activeFocus().hasPrimaryFocus, isTrue,
+        reason: 'back restores input focus to the source editor');
+
+    await moveInHistory(forward: true);
+    expect(_activeController(tester).text, normalized);
+    expect(_activeController(tester).selection.extentOffset,
+        normalized.indexOf('beta()'));
+    expect(activeFocus().hasPrimaryFocus, isTrue,
+        reason: 'forward restores input focus to the target editor');
+  }, variant: navigationPlatforms);
+
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {
     final platform = defaultTargetPlatform;
@@ -300,7 +348,7 @@ void main() {
     expect(peek, findsNothing);
     expect(_activeController(tester).selection.extentOffset,
         source.lastIndexOf('target()'));
-  }, variant: peekPlatforms);
+  }, variant: navigationPlatforms);
 
   testWidgets('definition response is ignored after its source version changes',
       (tester) async {
@@ -447,5 +495,12 @@ void main() {
     await tester.pump();
     await _runPaletteCommand(tester, '转到上次编辑位置');
     expect(_activeController(tester).selection.extentOffset, editOffset);
+    expect(
+      tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField))
+          .focusNode!
+          .hasPrimaryFocus,
+      isTrue,
+    );
   });
 }
