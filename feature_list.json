@@ -3704,8 +3704,8 @@
         "feat-286",
         "feat-287"
       ],
-      "status": "in-progress",
-      "evidence": "旧版点击目录后原选择器中未出现嵌套文件的回归已复现，改动后窄回归 31/31 和工作台集成 1/1 通过。等待完整门禁、Windows/Linux 原生及托管验证。",
+      "status": "done",
+      "evidence": "目录在原路径选择器中展开、收起，左右键在父子项间导航。Windows 实机及 Linux 原生各 15 个观测点，窄回归 31/31，工作台集成 1/1，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 e0374b7e 的 CI 45148007945 四项和 Platform Availability 45148001540 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.236-breadcrumb-inline-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

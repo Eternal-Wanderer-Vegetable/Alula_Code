@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
+- P05.236 / feat-288 完成。目录在原路径选择器中展开、收起，左右键在父子项间导航。Windows 实机及 Linux 原生各 15 个观测点，窄回归 31/31，工作台集成 1/1，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 e0374b7e 的 CI 45148007945 四项和 Platform Availability 45148001540 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.236-breadcrumb-inline-tree.md。
+
 - P05.235 / feat-287 完成。目录优先，同类名称按系统 locale 数字排序及 UTF-16 平手消歧。Windows 实机及 Linux 原生各 5 个观测点，窄回归 31/31，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 b5be4783 的 CI 45143211844 四项和 Platform Availability 45143205410 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.235-breadcrumb-path-order.md。
 
 - P05.234 / feat-286 完成。目录段在父目录列出同级项并初选自身。Windows 实机及 Linux 原生各 7 个观测点，窄回归 30/30，专项 314/314，Flutter 1,827 passed / 2 skipped。产品 0952cc0a 的 CI 45139866380 四项和 Platform Availability 45139859695 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.234-breadcrumb-folder-siblings.md。
