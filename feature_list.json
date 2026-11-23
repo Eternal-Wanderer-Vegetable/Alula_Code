@@ -3509,8 +3509,8 @@
         "feat-129",
         "feat-269"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "工作区符号选择器区分无提供程序、输入指引与无匹配，Enter 保留输入。修复文件挂接后验证真实提供程序可跨文件往返。Windows 实机与 Linux Xvfb + xfwm4 各 17 个原生观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 b86cf7c 的 CI 45093615306 四项及 Platform Availability 45093611856 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.222-workspace-symbol-state.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

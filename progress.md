@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.222 / feat-274 完成。产品 b86cf7cf9c21b9d97e86dae59d6b7f466afb6eee。工作区符号选择器区分无提供程序、输入指引与无匹配，Enter 保留输入。修复文件挂接后验证真实提供程序可跨文件往返。Windows 实机与 Linux Xvfb + xfwm4 各 17 个原生观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 b86cf7c 的 CI 45093615306 四项及 Platform Availability 45093611856 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.222-workspace-symbol-state.md。
+
 - P05.221 / feat-273 完成。产品 9b1cd2f15a3eddaa92f85853680ed50df9de080c。首次无查询打开时选中并滚入光标所在符号。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 9b1cd2f 的 CI 45090480668 四项及 Platform Availability 45090477090 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.221-symbol-caret.md。
 
 - P05.220 / feat-272 完成。产品 88d46d6279652bb8c6f0351dbe5dd8382f0f1baf。文档符号支持名称和直接容器组合查询，显示两列实际命中。Windows 实机与 Linux Xvfb + xfwm4 各 27 个观测点，专项 281/281，Flutter 1,813 passed / 2 skipped。产品 88d46d6 的 CI 45088364191 四项及 Platform Availability 45088358155 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.220-symbol-container.md。
