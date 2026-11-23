@@ -719,6 +719,117 @@ void main() {
     expect(_activeController(tester).selection.extentOffset, 3);
   });
 
+  testWidgets('Peek shortcuts keep references open across files and wrap',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-reference-step');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn task() {}\nfn call() { let _ = "😀"; task(); }\n';
+    const remote = '/* 🦊 */ fn other() { task(); }\n';
+    final local = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final target = File('${workspace.path}/target.rs')
+      ..writeAsStringSync('\uFEFF${remote.replaceAll('\n', '\r\n')}');
+    final targetBytes = target.readAsBytesSync();
+    final declaration = source.indexOf('task');
+    final usage = source.lastIndexOf('task');
+    final remoteUsage = remote.indexOf('task');
+    DefinitionTarget reference(File file, int line, int column) =>
+        DefinitionTarget(
+          uri: file.uri.toString(),
+          line: line,
+          character: column,
+          endLine: line,
+          endCharacter: column + 4,
+        );
+
+    var requests = 0;
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) async {
+        requests++;
+        return ReferencesResult(version: version, targets: [
+          reference(target, 0, remoteUsage + 1),
+          reference(local, 1, usage - source.indexOf('\n') - 1),
+          reference(local, 0, declaration),
+        ]);
+      },
+    );
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: declaration + 1);
+    await tester.pump();
+
+    final peek = find.byKey(const ValueKey('references-peek'));
+    FocusNode editorFocus() =>
+        tester.widget<TextField>(_activeTextField()).focusNode!;
+    FocusNode listFocus() => tester
+        .widget<Focus>(
+          find.descendant(
+            of: peek,
+            matching: find.byWidgetPredicate((widget) =>
+                widget is Focus &&
+                widget.focusNode?.debugLabel == 'definition-peek-list'),
+          ),
+        )
+        .focusNode!;
+    Finder row(int index) => find.byKey(ValueKey('peek-result:$index'));
+
+    Future<void> press(LogicalKeyboardKey key, {bool shift = false}) async {
+      if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(key);
+      if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+    }
+
+    void expectReference(String text, int position, int index,
+        {bool editorOwnsFocus = false}) {
+      expect(peek, findsOneWidget);
+      expect(_activeController(tester).text, text);
+      expect(_activeController(tester).selection.extentOffset, position);
+      expect(tester.widget<Semantics>(row(index)).properties.selected, isTrue);
+      expect(editorFocus().hasPrimaryFocus, editorOwnsFocus);
+      expect(listFocus().hasPrimaryFocus, !editorOwnsFocus);
+    }
+
+    await press(LogicalKeyboardKey.f4);
+    expect(peek, findsNothing);
+    expect(requests, 0);
+    await press(LogicalKeyboardKey.f12, shift: true);
+    await press(LogicalKeyboardKey.f4);
+    expectReference(source, usage, 1);
+    await press(LogicalKeyboardKey.f12);
+    expectReference(remote, remoteUsage, 0);
+    for (final path in [local.path, target.path]) {
+      final group = find.byKey(ValueKey('references-file:$path'));
+      expect(tester.widget<Semantics>(group).properties.expanded, isTrue);
+    }
+    await press(LogicalKeyboardKey.f4, shift: true);
+    expectReference(source, usage, 1);
+    await press(LogicalKeyboardKey.f4);
+    expectReference(remote, remoteUsage, 0);
+    await press(LogicalKeyboardKey.f12);
+    expectReference(source, declaration, 2);
+
+    editorFocus().requestFocus();
+    await tester.pumpAndSettle();
+    await press(LogicalKeyboardKey.f12, shift: true);
+    expectReference(remote, remoteUsage, 0, editorOwnsFocus: true);
+
+    await tester.tap(row(0));
+    await tester.pumpAndSettle();
+    await press(LogicalKeyboardKey.escape);
+    expect(peek, findsNothing);
+    expect(editorFocus().hasPrimaryFocus, isTrue);
+    expect(_activeController(tester).selection.extentOffset, remoteUsage);
+    await press(LogicalKeyboardKey.f4);
+    expect(requests, 1);
+    expect(target.readAsBytesSync(), targetBytes);
+  });
+
   testWidgets('reference results are ignored once the source caret moves',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-stale-reference');

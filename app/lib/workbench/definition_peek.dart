@@ -54,6 +54,25 @@ List<DefinitionPeekEntry> distinctPeekReferences(
   ];
 }
 
+Map<String, List<int>> groupPeekReferences(List<DefinitionPeekEntry> entries) {
+  final byFile = <String, List<int>>{};
+  for (var i = 0; i < entries.length; i++) {
+    final key = _referenceFileKey(entries[i].path);
+    byFile.putIfAbsent(key, () => []).add(i);
+  }
+  final groups = <String, List<int>>{};
+  for (final key in byFile.keys.toList()..sort()) {
+    final indices = byFile[key]!;
+    final path = entries[indices.first].path;
+    indices.sort((left, right) => _compareReferenceRanges(
+          _referenceRange(entries[left].target),
+          _referenceRange(entries[right].target),
+        ));
+    groups[path] = indices;
+  }
+  return groups;
+}
+
 int _compareReferenceRanges(_ReferenceRange left, _ReferenceRange right) {
   final line = left.line.compareTo(right.line);
   if (line != 0) return line;
@@ -261,6 +280,10 @@ class DefinitionPeek extends StatefulWidget {
     required this.onRemoved,
     this.kind = LocationPeekKind.definition,
     this.workspace,
+    this.referenceGroups,
+    this.expandedReferenceFiles,
+    this.navigatedReference,
+    this.focusResults = true,
   });
 
   final List<DefinitionPeekEntry> entries;
@@ -271,6 +294,10 @@ class DefinitionPeek extends StatefulWidget {
   final VoidCallback onRemoved;
   final LocationPeekKind kind;
   final String? workspace;
+  final Map<String, List<int>>? referenceGroups;
+  final Set<String>? expandedReferenceFiles;
+  final int? navigatedReference;
+  final bool focusResults;
 
   @override
   State<DefinitionPeek> createState() => _DefinitionPeekState();
@@ -283,7 +310,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   var _selected = 0;
   String? _focusedFile;
   late final Map<String, List<int>> _fileGroups;
-  final _expandedFiles = <String>{};
+  late final Set<String> _expandedFiles;
   late List<_PeekResultRow> _rows;
   late Future<List<DefinitionPeekLine>> _preview;
   bool _readingPreview = false;
@@ -295,21 +322,36 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   @override
   void initState() {
     super.initState();
-    _fileGroups = widget.kind == LocationPeekKind.references
-        ? _groupReferences()
-        : const {};
+    _fileGroups = widget.referenceGroups ??
+        (widget.kind == LocationPeekKind.references
+            ? groupPeekReferences(widget.entries)
+            : const {});
+    _expandedFiles = widget.expandedReferenceFiles ?? <String>{};
+    _showEntry(widget.navigatedReference ?? 0);
+  }
+
+  @override
+  void didUpdateWidget(DefinitionPeek oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final reference = widget.navigatedReference;
+    if (reference != null && reference != oldWidget.navigatedReference) {
+      _showEntry(reference);
+    }
+  }
+
+  void _showEntry(int index) {
+    _selected = index;
+    _focusedFile = null;
     if (_fileGroups.length > 1) {
       _expandedFiles.add(_fileGroups.entries
-          .firstWhere(
-            (group) => group.value.contains(_selected),
-          )
+          .firstWhere((group) => group.value.contains(index))
           .key);
     }
     _rows = _visibleRows();
-    _preview = _requestPreview(widget.entries.first);
+    _preview = _requestPreview(widget.entries[index]);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _listFocus.requestFocus();
+      if (widget.focusResults) _listFocus.requestFocus();
       _revealRow(_focusedRowIndex);
     });
   }
@@ -347,25 +389,6 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     } finally {
       _readingPreview = false;
     }
-  }
-
-  Map<String, List<int>> _groupReferences() {
-    final byFile = <String, List<int>>{};
-    for (var i = 0; i < widget.entries.length; i++) {
-      final key = _referenceFileKey(widget.entries[i].path);
-      byFile.putIfAbsent(key, () => []).add(i);
-    }
-    final groups = <String, List<int>>{};
-    for (final key in byFile.keys.toList()..sort()) {
-      final indices = byFile[key]!;
-      final path = widget.entries[indices.first].path;
-      indices.sort((left, right) => _compareReferenceRanges(
-            _referenceRange(widget.entries[left].target),
-            _referenceRange(widget.entries[right].target),
-          ));
-      groups[path] = indices;
-    }
-    return groups;
   }
 
   List<_PeekResultRow> _visibleRows() {

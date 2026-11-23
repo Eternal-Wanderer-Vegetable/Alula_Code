@@ -18,6 +18,8 @@ const quickOpenCommandId = 'workbench.action.quickOpen';
 const quickAccessCommandAliases = <String, String>{
   ...commandPaletteCommandAliases,
   'view.quickOpen': quickOpenCommandId,
+  'goToNextReferenceFromEmbeddedEditor': 'goToNextReference',
+  'goToPreviousReferenceFromEmbeddedEditor': 'goToPreviousReference',
 };
 
 /// 一条可执行命令。

@@ -289,6 +289,8 @@ class KeybindingSet {
     'editor.action.commentLine': 'ctrl+/',
     'editor.action.blockComment': 'alt+shift+a',
     'editor.action.trimTrailingWhitespace': 'ctrl+k ctrl+x',
+    'goToNextReference': 'f4',
+    'goToPreviousReference': 'shift+f4',
     'editor.gotoDef': 'f12',
     'editor.action.goToReferences': 'shift+f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
@@ -336,6 +338,8 @@ class KeybindingSet {
   static const Map<String, String> defaultWhen = {
     'editor.action.peekDefinition': 'editorTextFocus',
     'editor.action.goToReferences': 'editorTextFocus',
+    'goToNextReference': 'referenceSearchVisible && editorTextFocus',
+    'goToPreviousReference': 'referenceSearchVisible && editorTextFocus',
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
@@ -372,6 +376,8 @@ class KeybindingSet {
 
   /// Platform-specific defaults with an explicit Merge Editor context.
   static Map<String, String> contextualDefaultsFor(TargetPlatform platform) => {
+        'goToNextReference': 'f12',
+        'goToPreviousReference': 'shift+f12',
         'editor.action.peekDefinition':
             platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',
         'mergeEditor.acceptMerge':

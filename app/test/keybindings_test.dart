@@ -1,5 +1,6 @@
 // KeybindingSet 单测：键位串解析、默认表、用户覆盖（追加/移除/损坏回退）。
 // 对应 docs/09 W3-2；纯逻辑测试。
+import 'package:alula_app/workbench/context_keys.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -749,14 +750,11 @@ void main() {
       final resolved = ks.resolve();
       final expectedChords = KeybindingSet.defaultsFor(TargetPlatform.windows)
           .values
-          .fold<int>(
-              0,
-              (n, v) =>
-                  n +
-                  v
-                      .split(',')
-                      .where((spec) => parseChord(spec) != null)
-                      .length);
+          .expand((value) => value.split(','))
+          .map(parseChord)
+          .whereType<KeyChord>()
+          .toSet()
+          .length;
       expect(resolved.keys.length, expectedChords + 17,
           reason: 'tree find, breadcrumbs, notifications and Peek Definition '
               'add contextual bindings');
@@ -770,6 +768,49 @@ void main() {
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
+    });
+
+    test('reference navigation shortcuts override F12 only inside Peek', () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final context = ContextKeyService();
+        addTearDown(context.dispose);
+        String? command(String chord,
+            {required bool peek, bool editor = true}) {
+          context.setValues({
+            'referenceSearchVisible': peek,
+            'editorTextFocus': editor,
+          });
+          return keys
+              .bindingForChord(parseChord(chord)!, matchesWhen: context.matches)
+              ?.commandId;
+        }
+
+        expect(command('f4', peek: false), isNull);
+        expect(command('f4', peek: true, editor: false), isNull);
+        expect(command('shift+f4', peek: false), isNull);
+        expect(command('f12', peek: false), 'editor.gotoDef');
+        expect(
+            command('shift+f12', peek: false), 'editor.action.goToReferences');
+        expect(command('f4', peek: true), 'goToNextReference');
+        expect(keys.shortcutFor('goToNextReference'), 'F4');
+        expect(keys.shortcutFor('goToPreviousReference'), 'Shift+F4');
+        expect(command('f12', peek: true), 'goToNextReference');
+        expect(command('shift+f4', peek: true), 'goToPreviousReference');
+        expect(command('shift+f12', peek: true), 'goToPreviousReference');
+      }
+
+      final remapped = KeybindingSet.load(userJson: '''[
+        {"key":"ctrl+shift+f4","command":"goToPreviousReferenceFromEmbeddedEditor"},
+        {"key":"f4","command":"-goToNextReferenceFromEmbeddedEditor"}
+      ]''');
+      expect(remapped.commandForChord(parseChord('ctrl+shift+f4')!),
+          'goToPreviousReference');
+      expect(remapped.commandForChord(parseChord('f4')!), isNull);
     });
 
     test('New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N', () {

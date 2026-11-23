@@ -748,6 +748,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
   _DefinitionPeekSession? _definitionPeek;
+  bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
       _pendingColumnSelectionStarts = {};
@@ -1862,6 +1863,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '速览引用',
       () => _gotoReferences(peek: true),
       enablement: 'editorActive',
+    );
+    reg(
+      'goToNextReference',
+      '导航',
+      '转到下一条引用',
+      () => _stepPeekReference(forward: true),
+      shortcut: _keybindings.shortcutFor('goToNextReference'),
+      when: 'referenceSearchVisible',
+    );
+    reg(
+      'goToPreviousReference',
+      '导航',
+      '转到上一条引用',
+      () => _stepPeekReference(forward: false),
+      shortcut: _keybindings.shortcutFor('goToPreviousReference'),
+      when: 'referenceSearchVisible',
     );
     reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
         shortcut: 'Alt+←');
@@ -21206,7 +21223,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     final request = ++_definitionRequestSequence;
     final workspace = _workspaceRoot;
-    if (_definitionPeek != null) setState(() => _definitionPeek = null);
+    if (_definitionPeek != null) _setDefinitionPeek(null);
     bool current() =>
         mounted &&
         identical(_active, active) &&
@@ -21259,15 +21276,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 (path: path, target: target, referenceSymbol: null),
           ];
           if (entries.isNotEmpty && (peek || entries.length > 1)) {
-            setState(() {
-              _definitionPeek = _DefinitionPeekSession(
-                source: active,
-                sourceVersion: sourceVersion,
-                sourceOffset: offset,
-                workspace: workspace,
-                entries: entries,
-              );
-            });
+            _setDefinitionPeek(_DefinitionPeekSession(
+              source: active,
+              sourceVersion: sourceVersion,
+              sourceOffset: offset,
+              workspace: workspace,
+              entries: entries,
+            ));
             return;
           }
           if (peek) {
@@ -21302,7 +21317,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     final request = ++_definitionRequestSequence;
     final workspace = _workspaceRoot;
-    if (_definitionPeek != null) setState(() => _definitionPeek = null);
+    if (_definitionPeek != null) _setDefinitionPeek(null);
     _flushInput(active, commitComposition: true);
     final selection = active.selection;
     final offset = math.max(0, selection.baseOffset);
@@ -21380,16 +21395,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       if (peek || entries.length > 1) {
-        setState(() {
-          _definitionPeek = _DefinitionPeekSession(
-            source: active,
-            sourceVersion: version,
-            sourceOffset: offset,
-            workspace: workspace,
-            entries: entries,
-            kind: LocationPeekKind.references,
-          );
-        });
+        _setDefinitionPeek(_DefinitionPeekSession(
+          source: active,
+          sourceVersion: version,
+          sourceOffset: offset,
+          workspace: workspace,
+          entries: entries,
+          kind: LocationPeekKind.references,
+        ));
         return;
       }
 
@@ -21544,6 +21557,103 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return true;
   }
 
+  void _setDefinitionPeek(_DefinitionPeekSession? session) {
+    setState(() => _definitionPeek = session);
+    _commands.context.setValue(
+      'referenceSearchVisible',
+      session?.kind == LocationPeekKind.references,
+    );
+  }
+
+  int _nearestPeekReference(_DefinitionPeekSession session, List<int> order) {
+    final sourceUri = session.source.uri ?? '';
+    final position = session.source.doc.positionAt(session.sourceOffset);
+    var nearest = order.first;
+    var longestPrefix = -1;
+    var closestDistance = 0;
+    for (final index in order) {
+      final target = session.entries[index].target;
+      var prefix = 0;
+      while (prefix < sourceUri.length &&
+          prefix < target.uri.length &&
+          sourceUri.codeUnitAt(prefix) == target.uri.codeUnitAt(prefix)) {
+        prefix++;
+      }
+      final distance = (target.line - position.line).abs() * 100 +
+          (target.character - position.character).abs();
+      if (prefix > longestPrefix ||
+          (prefix == longestPrefix && distance < closestDistance)) {
+        nearest = index;
+        longestPrefix = prefix;
+        closestDistance = distance;
+      }
+    }
+    return nearest;
+  }
+
+  Future<void> _stepPeekReference({required bool forward}) async {
+    final session = _definitionPeek;
+    if (_steppingPeekReference ||
+        session == null ||
+        session.kind != LocationPeekKind.references ||
+        !_isCurrentDefinitionPeek(session)) {
+      return;
+    }
+    final source = session.source;
+    final owner = _ownerOfView(source);
+    if (owner == null) return;
+    final editorWasFocused = _focusNodeFor(owner, source).hasFocus;
+    final order = [
+      for (final group in session.referenceGroups.values) ...group,
+    ];
+    final anchor =
+        session.navigatedReference ?? _nearestPeekReference(session, order);
+    final next =
+        order[(order.indexOf(anchor) + (forward ? 1 : -1)) % order.length];
+    final reference = session.entries[next];
+
+    _steppingPeekReference = true;
+    try {
+      final opened = await _navigateToDefinition(
+        source,
+        session.sourceOffset,
+        reference.target,
+        kind: session.kind,
+        referenceSymbol: reference.referenceSymbol,
+      );
+      if (!mounted || !identical(_definitionPeek, session)) return;
+      final target = _active;
+      if (!opened || target == null || _workspaceRoot != session.workspace) {
+        setState(() => _statusDetail = '无法打开引用位置');
+        return;
+      }
+
+      _setDefinitionPeek(_DefinitionPeekSession(
+        source: target,
+        sourceVersion: target.doc.version,
+        sourceOffset: target.selection.extentOffset,
+        workspace: session.workspace,
+        entries: session.entries,
+        kind: session.kind,
+        referenceGroups: session.referenceGroups,
+        expandedReferenceFiles: session.expandedReferenceFiles,
+        navigatedReference: next,
+        focusResults: !editorWasFocused,
+      ));
+      final targetOwner = _ownerOfView(target);
+      if (editorWasFocused && targetOwner != null) {
+        _focusEditorAfterLayout(targetOwner, target);
+      }
+    } finally {
+      _steppingPeekReference = false;
+      if (mounted &&
+          identical(_definitionPeek, session) &&
+          !_isCurrentDefinitionPeek(session)) {
+        _setDefinitionPeek(null);
+      }
+    }
+  }
+
   Widget? _buildDefinitionPeek(OpenDoc active) {
     final peek = _definitionPeek;
     if (peek == null ||
@@ -21556,17 +21666,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ? 'definition-peek'
           : 'references-peek'),
       child: DefinitionPeek(
-        key: ObjectKey(peek),
+        key: ObjectKey(peek.entries),
         entries: peek.entries,
         kind: peek.kind,
         workspace: peek.workspace,
+        referenceGroups: peek.referenceGroups,
+        expandedReferenceFiles: peek.expandedReferenceFiles,
+        navigatedReference: peek.navigatedReference,
+        focusResults: peek.focusResults,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
         onClose: () => _closeDefinitionPeek(peek),
         onRemoved: () {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && identical(_definitionPeek, peek)) {
-              setState(() => _definitionPeek = null);
+            if (mounted &&
+                identical(_definitionPeek, peek) &&
+                !_steppingPeekReference) {
+              _setDefinitionPeek(null);
             }
           });
         },
@@ -21598,7 +21714,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _closeDefinitionPeek(_DefinitionPeekSession session) {
     if (!identical(_definitionPeek, session)) return;
-    setState(() => _definitionPeek = null);
+    _setDefinitionPeek(null);
     final source = session.source;
     final owner = _ownerOfView(source);
     if (owner != null && identical(_active, source)) {
@@ -21611,7 +21727,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     DefinitionPeekEntry entry,
   ) async {
     if (!_isCurrentDefinitionPeek(session)) return;
-    setState(() => _definitionPeek = null);
+    _setDefinitionPeek(null);
     final navigated = await _navigateToDefinition(
       session.source,
       session.sourceOffset,
@@ -30093,14 +30209,22 @@ class TreeNode {
 }
 
 class _DefinitionPeekSession {
-  const _DefinitionPeekSession({
+  _DefinitionPeekSession({
     required this.source,
     required this.sourceVersion,
     required this.sourceOffset,
     required this.workspace,
     required this.entries,
     this.kind = LocationPeekKind.definition,
-  });
+    Map<String, List<int>>? referenceGroups,
+    Set<String>? expandedReferenceFiles,
+    this.navigatedReference,
+    this.focusResults = true,
+  })  : referenceGroups = referenceGroups ??
+            (kind == LocationPeekKind.references
+                ? groupPeekReferences(entries)
+                : const {}),
+        expandedReferenceFiles = expandedReferenceFiles ?? <String>{};
 
   final OpenDoc source;
   final int sourceVersion;
@@ -30108,4 +30232,8 @@ class _DefinitionPeekSession {
   final String? workspace;
   final List<DefinitionPeekEntry> entries;
   final LocationPeekKind kind;
+  final Map<String, List<int>> referenceGroups;
+  final Set<String> expandedReferenceFiles;
+  final int? navigatedReference;
+  final bool focusResults;
 }
