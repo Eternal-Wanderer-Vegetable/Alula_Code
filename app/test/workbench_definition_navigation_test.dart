@@ -14,6 +14,7 @@ import 'package:flutter/semantics.dart' show SemanticsProperties;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
 import 'helpers/native_drag_drop.dart';
 
 Future<void> _openWorkspace(
@@ -362,6 +363,16 @@ void main() {
     await tester.pump();
 
     final peek = find.byKey(const ValueKey('definition-peek'));
+    Finder tab(String name) => find.descendant(
+          of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Text && widget.data?.startsWith(name) == true,
+          ),
+        );
+    void expectPreview(String name) => expect(
+          tester.widget<Text>(tab(name)).style?.fontStyle,
+          FontStyle.italic,
+        );
     Finder row(int index) => find.byKey(ValueKey('peek-result:$index'));
     Finder group(File file) =>
         find.byKey(ValueKey('references-file:${file.path}'));
@@ -389,6 +400,7 @@ void main() {
 
     await press(LogicalKeyboardKey.f12);
     expectResult(source, source.indexOf('resolve'), 2);
+    expectPreview('main.rs');
     expect(semantics(group(alpha)).label, endsWith('2 个定义'));
     expect(semantics(group(alpha)).expanded, isTrue);
     expect(semantics(group(beta)).expanded, isFalse);
@@ -397,8 +409,12 @@ void main() {
 
     await press(LogicalKeyboardKey.f4);
     expectResult(alphaText, alphaText.indexOf('later'), 1);
+    expectPreview('alpha.rs');
+    expect(tab('main.rs'), findsNothing);
     await press(LogicalKeyboardKey.f12);
     expectResult(betaText, 3, 0);
+    expectPreview('beta.rs');
+    expect(tab('alpha.rs'), findsNothing);
     expect(semantics(group(alpha)).expanded, isTrue);
     expect(semantics(group(beta)).expanded, isTrue);
     await _pressPeekFocusChord(tester);
@@ -423,6 +439,38 @@ void main() {
     await press(LogicalKeyboardKey.f12);
     expect(requests, 2);
     expectResult(alphaText, 3, 2);
+    expectPreview('alpha.rs');
+    expect(tab('beta.rs'), findsNothing);
+
+    await press(LogicalKeyboardKey.escape);
+    await openPinnedExplorerFile(tester, find.text('beta.rs'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(tab('beta.rs')).style?.fontStyle,
+        isNot(FontStyle.italic));
+    await tester.tap(_activeTextField());
+    const changedBeta = '$betaText// unsaved\n';
+    await tester.enterText(_activeTextField(), changedBeta);
+    await tester.pumpAndSettle();
+    expect(_activeController(tester).text, changedBeta);
+
+    await tester.tap(find.text('alpha.rs').first);
+    await tester.pumpAndSettle();
+    await tester.tap(_activeTextField());
+    _activeController(tester).selection =
+        const TextSelection.collapsed(offset: 3);
+    await tester.pump();
+    await press(LogicalKeyboardKey.f12);
+    await press(LogicalKeyboardKey.f4);
+    expectResult(alphaText, alphaText.indexOf('later'), 1);
+    await press(LogicalKeyboardKey.f4);
+    expectResult(changedBeta, 3, 0);
+    expect(tester.widget<Text>(tab('beta.rs')).style?.fontStyle,
+        isNot(FontStyle.italic));
+    expectPreview('alpha.rs');
+    await press(LogicalKeyboardKey.f4);
+    expectResult(alphaText, 3, 2);
+    expect(tab('beta.rs'), findsOneWidget);
+    expect(beta.readAsStringSync(), betaText);
   });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',

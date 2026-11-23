@@ -3925,6 +3925,18 @@
       "evidence": "定义速览共用按文件结果树与 F4/F12、Shift+F4/Shift+F12 循环定位。Windows 28 步和 Linux 25 步通过，覆盖真实 Rust 提供程序的单条定义、引用速览和退出焦点。专项 82/82，Flutter 1,851 passed / 2 skipped。产品 8fd5edb5 的 CI 45277504965 四项和 Platform Availability 45277491428 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.253-definition-peek-cycle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-306",
+      "name": "P05.254 CMD-08 速览循环定位复用预览标签",
+      "description": "定义和引用速览循环定位用同组预览标签打开新文件。验证同文件、替换干净预览、已固定和未保存标签保留、导航历史及焦点。",
+      "dependencies": [
+        "feat-305"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -21524,6 +21524,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     DefinitionTarget definition, {
     LocationPeekKind kind = LocationPeekKind.definition,
     String? referenceSymbol,
+    bool asPreview = false,
   }) async {
     final path = _pathFromFileUri(definition.uri);
     if (path == null) return false;
@@ -21532,8 +21533,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _focusedRegion = sourceGroup.region);
     _syncCommandContext();
 
+    // Opening another preview may close the source view.
+    final from = _navigationLocation(source, sourceOffset, sourceGroup.region);
     final sameFile = source.path != null && _pathsEqual(source.path!, path);
-    if (!sameFile) await _openFileByPath(path);
+    if (!sameFile) await _openFileByPath(path, asPreview: asPreview);
     if (!mounted || (sameFile && !identical(_active, source))) return false;
     final target = sameFile ? source : _active;
     if (target == null ||
@@ -21553,7 +21556,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     final targetGroup = _ownerOfView(target);
     if (targetGroup == null) return false;
-    final from = _navigationLocation(source, sourceOffset, sourceGroup.region);
     final to = NavigationLocation(
       uri: target.uri,
       path: target.path,
@@ -21669,6 +21671,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         reference.target,
         kind: session.kind,
         referenceSymbol: reference.referenceSymbol,
+        asPreview: true,
       );
       if (!mounted || !identical(_definitionPeek, session)) return;
       final target = _active;
