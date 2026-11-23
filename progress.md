@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.226 / feat-278 完成。产品 521618c46582be75700108d79a02b23ea544b6fc。工作区符号右方向键和中键可后台接受，保留查询及输入焦点，并按提供程序的文本来源修正 UTF-8 BOM 首行位置。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 290/290，Flutter 1,822 passed / 2 skipped。产品 521618c 的 CI 45105686729 四项及 Platform Availability 45105682536 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.226-workspace-symbol-background.md。
+
 - P05.225 / feat-277 完成。产品 97f5533c61b1a88a2f566732983fb2f4a5350520。工作区符号按首词向提供程序查询，按名称、容器和路径筛选、排序并显示命中。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 287/287，Flutter 1,819 passed / 2 skipped。产品 97f5533 的 CI 45101852094 四项及 Platform Availability 45101844605 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.225-workspace-symbol-query.md。
 
 - P05.224 / feat-276 完成。产品 292882da0149815480c00b7d66ee0f4d32ae6f86。工作区符号空查询首帧显示指引，清空查询取消旧请求。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 286/286，Flutter 1,818 passed / 2 skipped。产品 292882d 的 CI 45099251562 四项及 Platform Availability 45099247494 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.224-workspace-symbol-idle.md。

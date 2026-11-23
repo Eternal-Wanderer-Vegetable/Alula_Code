@@ -3565,8 +3565,8 @@
         "feat-275",
         "feat-277"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "工作区符号右方向键和中键可后台接受，保留查询及输入焦点，并按提供程序的文本来源修正 UTF-8 BOM 首行位置。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 290/290，Flutter 1,822 passed / 2 skipped。产品 521618c 的 CI 45105686729 四项及 Platform Availability 45105682536 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.226-workspace-symbol-background.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
