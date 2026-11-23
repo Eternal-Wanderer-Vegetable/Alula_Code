@@ -57,6 +57,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 120));
     expect(find.text('当前工作区没有可用符号提供程序'), findsOneWidget);
     expect(find.text('Source'), findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(input, findsOneWidget);
+    expect(tester.widget<TextField>(input).focusNode!.hasPrimaryFocus, isTrue);
+    expect(find.byKey(const ValueKey('qi-当前工作区没有可用符号提供程序')), findsNothing);
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pump(const Duration(milliseconds: 120));
     await opening;
@@ -174,6 +179,7 @@ void main() {
       onCommandServiceReady: (value) => commands = value,
       workspaceSymbolRequest: (id, query, cancel) async {
         queries.add(query);
+        if (query == 'missing') return [];
         return [
           {
             'name': 'target',
@@ -194,6 +200,17 @@ void main() {
     final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField));
+    await tester.pumpAndSettle();
+    expect(find.text('输入符号名称以搜索工作区'), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-输入符号名称以搜索工作区')), findsNothing);
+    expect(queries, isEmpty);
+    await tester.enterText(input, '#missing');
+    await tester.pumpAndSettle();
+    expect(find.text('没有匹配的工作区符号。'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(input, findsOneWidget);
+    expect(tester.widget<TextField>(input).focusNode!.hasPrimaryFocus, isTrue);
     await tester.enterText(input, '#target');
     await tester.pump();
     await tester.pump();
@@ -220,7 +237,7 @@ void main() {
         .controller!;
     expect(controller.selection,
         const TextSelection(baseOffset: 7, extentOffset: 13));
-    expect(queries, ['target']);
+    expect(queries, ['missing', 'target']);
     final oldSelection = controller.selection;
     final stale = commands!.execute('workbench.action.showAllSymbols');
     await tester.pump(const Duration(milliseconds: 120));

@@ -4042,6 +4042,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Completer<void>? cancellation;
     var generation = 0;
     var closed = false;
+    var emptyMessage = '输入符号名称以搜索工作区';
     void cancel() {
       final pending = cancellation;
       if (pending != null && !pending.isCompleted) pending.complete();
@@ -4055,6 +4056,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       redirectOnInput: prefixRedirect ??
           (value) => _quickAccessHelpRedirect(value, previousFocus),
       items: const [],
+      emptyMessageForQuery: (_) => emptyMessage,
       onClose: () {
         closed = true;
         generation++;
@@ -4067,11 +4069,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             core == null ||
             (widget.workspaceSymbolRequest == null &&
                 (!source.lspAttached || !_lspReady))) {
-          return const [QuickItem(label: '当前工作区没有可用符号提供程序')];
+          emptyMessage = '当前工作区没有可用符号提供程序';
+          return const [];
         }
         final query =
             value.startsWith('#') ? value.substring(1).trim() : value.trim();
-        if (query.isEmpty) return const [QuickItem(label: '输入符号名称以搜索工作区')];
+        if (query.isEmpty) {
+          emptyMessage = '输入符号名称以搜索工作区';
+          return const [];
+        }
         cancellation = Completer<void>();
         final symbols = await (widget.workspaceSymbolRequest
                 ?.call(source.id, query, cancellation!.future) ??
@@ -4084,8 +4090,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return const [];
         }
         if (symbols == null) {
-          return const [QuickItem(label: '当前提供程序不支持工作区符号或请求已取消')];
+          emptyMessage = '当前提供程序不支持工作区符号或请求已取消';
+          return const [];
         }
+        emptyMessage = '没有匹配的工作区符号。';
         symbols.sort((left, right) =>
             (fuzzyScore(query, right['name'] as String) ?? -1)
                 .compareTo(fuzzyScore(query, left['name'] as String) ?? -1));
@@ -14663,8 +14671,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _scheduleSyntaxRefresh(id);
       _syncCommandContext();
       _scheduleStateSave();
-      if (_lspReady) {
+      final workspaceRoot = _workspaceRoot;
+      if (_lspReady && workspaceRoot != null) {
         try {
+          core.lsp.start(id, workspaceRoot, const ['rust-analyzer']);
           core.lsp.setUri(id, open.uri!);
           core.lsp.didOpen(id, languageId: _languageIdOf(path));
           open.lspAttached = true;
@@ -17051,6 +17061,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final d in _allDocs) {
         if (!d.isUntitled && !d.lspAttached) {
           try {
+            core.lsp.start(d.id, root, const ['rust-analyzer']);
             core.lsp.setUri(d.id, d.uri!);
             core.lsp.didOpen(d.id, languageId: _languageIdOf(d.path!));
             d.lspAttached = true;
