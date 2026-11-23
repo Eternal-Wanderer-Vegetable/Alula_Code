@@ -488,6 +488,129 @@ void main() {
     expect(tab('beta.rs'), findsOneWidget);
   });
 
+  testWidgets('Peek opens the selected result to the side and remains usable',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-peek-open-side');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { resolve(); }\n';
+    const target = '/* 🦊 */ fn resolve() {}\n';
+    final main = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final remote = File('${workspace.path}/target.rs')
+      ..writeAsStringSync('\uFEFF${target.replaceAll('\n', '\r\n')}');
+    final targetOffset = target.indexOf('resolve');
+    final sourceOffset = source.indexOf('resolve');
+    var requests = 0;
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async {
+      requests++;
+      return DefinitionResult(
+        version: version,
+        uri: requests == 1 ? remote.uri.toString() : main.uri.toString(),
+        line: 0,
+        character: requests == 1 ? targetOffset : 3,
+        endCharacter: requests == 1 ? targetOffset + 'resolve'.length : 7,
+        alternatives: requests == 1
+            ? [
+                DefinitionTarget(
+                    uri: main.uri.toString(), line: 0, character: 3)
+              ]
+            : const [],
+      );
+    });
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    final remoteGroup = find.byKey(ValueKey('references-file:${remote.path}'));
+    final sourceGroup = find.byKey(ValueKey('references-file:${main.path}'));
+    final remoteRow = find.byKey(const ValueKey('peek-result:0'));
+    final sourceRow = find.byKey(const ValueKey('peek-result:1'));
+    TextField editor(String label) => tester.widget<TextField>(
+          find.descendant(
+            of: find.byWidgetPredicate((widget) =>
+                widget is RustTextInputField && widget.semanticsLabel == label),
+            matching: find.byType(TextField),
+          ),
+        );
+    Future<void> selectResult(Finder row) async {
+      await tester.ensureVisible(row);
+      await tester.tap(row);
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pumpAndSettle();
+      expect(FocusManager.instance.primaryFocus?.debugLabel,
+          'definition-peek-list');
+    }
+
+    Future<void> selectFileResult(Finder group, Finder row) async {
+      await tester.ensureVisible(group);
+      await tester.tap(group);
+      await tester.pumpAndSettle();
+      if (tester.widget<Semantics>(group).properties.expanded != true) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+        await tester.pumpAndSettle();
+      }
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(tester.widget<Semantics>(row).properties.selected, isTrue);
+    }
+
+    Future<void> openSide() async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+    }
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.pumpAndSettle();
+    expect(peek, findsOneWidget);
+    await selectFileResult(remoteGroup, remoteRow);
+    await openSide();
+
+    TextField right() => editor('target.rs 编辑器 2');
+    TextField left() => editor('main.rs 主编辑器');
+    expect(peek, findsOneWidget);
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    expect(right().focusNode!.hasPrimaryFocus, isTrue);
+    expect(right().controller!.text, target);
+    expect(right().controller!.selection.extentOffset, targetOffset);
+    expect(left().controller!.selection.extentOffset, sourceOffset);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.pumpAndSettle();
+    expect(requests, 2);
+    expect(peek, findsOneWidget);
+    final jumped = editor('main.rs 编辑器 2');
+    expect(jumped.controller!.selection.extentOffset, 3);
+    expect(jumped.focusNode!.hasPrimaryFocus, isTrue);
+    expect(left().controller!.selection.extentOffset, sourceOffset);
+
+    await selectResult(remoteRow);
+    await openSide();
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    expect(right().focusNode!.hasPrimaryFocus, isTrue);
+
+    await selectFileResult(sourceGroup, sourceRow);
+    await openSide();
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    final sideCopy = editor('main.rs 编辑器 2');
+    expect(sideCopy.focusNode!.hasPrimaryFocus, isTrue);
+    expect(sideCopy.controller!.selection.extentOffset, 3);
+    expect(left().controller!.selection.extentOffset, sourceOffset);
+    expect(peek, findsOneWidget);
+
+    await selectResult(remoteRow);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(left().focusNode!.hasPrimaryFocus, isTrue);
+    expect(left().controller!.selection.extentOffset, sourceOffset);
+  });
+
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {
     final platform = defaultTargetPlatform;

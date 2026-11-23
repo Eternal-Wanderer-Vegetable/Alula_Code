@@ -3682,6 +3682,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout.restoreEditorGroups();
     }
     final active = _active;
+    final peek = _definitionPeek;
+    final peekVisible = peek != null && _isCurrentDefinitionPeek(peek);
     final recentTarget = active == null
         ? null
         : (group: _focused, document: active._shared);
@@ -3709,6 +3711,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'referenceSearchVisible': peekVisible,
+      'peekWidgetVisible': peekVisible,
       'activeEditorCanSplitInGroup':
           active != null && active._splitEditor == null && mergeSession == null,
       'sideBySideEditorActive':
@@ -21238,7 +21242,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     final request = ++_definitionRequestSequence;
     final workspace = _workspaceRoot;
-    if (_definitionPeek != null) _setDefinitionPeek(null);
+    if (identical(_definitionPeek?.source, active)) _setDefinitionPeek(null);
     bool current() =>
         mounted &&
         identical(_active, active) &&
@@ -21309,8 +21313,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             offset,
             entries.firstOrNull?.target ?? definition,
           );
-          if (!navigated && mounted) {
+          if (!mounted) return;
+          if (!navigated) {
             setState(() => _statusDetail = '无法打开定义位置');
+            return;
+          }
+          final target = _active;
+          if (target != null) {
+            final owner = _ownerOfView(target);
+            if (owner != null) _focusEditorAfterLayout(owner, target);
           }
           return;
         }
@@ -21332,7 +21343,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     final request = ++_definitionRequestSequence;
     final workspace = _workspaceRoot;
-    if (_definitionPeek != null) _setDefinitionPeek(null);
+    if (identical(_definitionPeek?.source, active)) _setDefinitionPeek(null);
     _flushInput(active, commitComposition: true);
     final selection = active.selection;
     final offset = math.max(0, selection.baseOffset);
@@ -21525,6 +21536,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     LocationPeekKind kind = LocationPeekKind.definition,
     String? referenceSymbol,
     bool asPreview = false,
+    bool sideBySide = false,
   }) async {
     final path = _pathFromFileUri(definition.uri);
     if (path == null) return false;
@@ -21535,10 +21547,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     // Opening another preview may close the source view.
     final from = _navigationLocation(source, sourceOffset, sourceGroup.region);
-    final sameFile = source.path != null && _pathsEqual(source.path!, path);
-    if (!sameFile) await _openFileByPath(path, asPreview: asPreview);
-    if (!mounted || (sameFile && !identical(_active, source))) return false;
-    final target = sameFile ? source : _active;
+    final reuseSource =
+        !sideBySide && source.path != null && _pathsEqual(source.path!, path);
+    if (!reuseSource) {
+      await _openFileByPath(
+        path,
+        asPreview: asPreview,
+        targetForOpen: sideBySide
+            ? (existing) => _quickAccessSideGroup(sourceGroup, existing)
+            : null,
+      );
+    }
+    if (!mounted || (reuseSource && !identical(_active, source))) return false;
+    final target = reuseSource ? source : _active;
     if (target == null ||
         target.path == null ||
         !_pathsEqual(target.path!, path)) {
@@ -21555,7 +21576,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       location.character,
     );
     final targetGroup = _ownerOfView(target);
-    if (targetGroup == null) return false;
+    if (targetGroup == null ||
+        (sideBySide && identical(targetGroup, sourceGroup))) {
+      return false;
+    }
     final to = NavigationLocation(
       uri: target.uri,
       path: target.path,
@@ -21712,7 +21736,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final peek = _definitionPeek;
     if (peek == null ||
         !identical(peek.source, active) ||
-        !_isCurrentDefinitionPeek(peek)) {
+        !_isCurrentDefinitionPeek(peek, requireActive: false)) {
       return null;
     }
     return KeyedSubtree(
@@ -21732,6 +21756,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         focusTarget: peek.focusTarget,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
+        onOpenToSide: (entry) =>
+            unawaited(_openDefinitionPeekToSide(peek, entry)),
+        onFocusChange: (focused) {
+          if (focused) _focusDefinitionPeekSource(peek);
+        },
         onClose: () => _closeDefinitionPeek(peek),
         onRemoved: () {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -21762,11 +21791,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return compute(definitionPeekFile, entry);
   }
 
-  bool _isCurrentDefinitionPeek(_DefinitionPeekSession session) =>
+  bool _isCurrentDefinitionPeek(
+    _DefinitionPeekSession session, {
+    bool requireActive = true,
+  }) =>
       identical(_definitionPeek, session) &&
-      identical(_active, session.source) &&
+      (requireActive
+          ? identical(_active, session.source)
+          : _ownerOfView(session.source) != null) &&
       _workspaceRoot == session.workspace &&
       session.source.doc.version == session.sourceVersion;
+
+  void _focusDefinitionPeekSource(_DefinitionPeekSession session) {
+    if (!mounted || !_isCurrentDefinitionPeek(session, requireActive: false)) {
+      return;
+    }
+    final owner = _ownerOfView(session.source);
+    if (owner == null || _focusedRegion == owner.region) return;
+    setState(() => _focusedRegion = owner.region);
+    _syncCommandContext();
+  }
+
+  Future<void> _openDefinitionPeekToSide(
+    _DefinitionPeekSession session,
+    DefinitionPeekEntry entry,
+  ) async {
+    if (!_isCurrentDefinitionPeek(session)) return;
+    final navigated = await _navigateToDefinition(
+      session.source,
+      session.sourceOffset,
+      entry.target,
+      kind: session.kind,
+      referenceSymbol: entry.referenceSymbol,
+      sideBySide: true,
+    );
+    if (!mounted || !identical(_definitionPeek, session)) return;
+    if (!navigated) {
+      setState(() => _statusDetail = '无法在侧边打开${session.kind.label}位置');
+      return;
+    }
+    final target = _active;
+    if (target == null) return;
+    final owner = _ownerOfView(target);
+    if (owner != null) _focusEditorAfterLayout(owner, target);
+  }
 
   void _closeDefinitionPeek(_DefinitionPeekSession session) {
     if (!identical(_definitionPeek, session)) return;

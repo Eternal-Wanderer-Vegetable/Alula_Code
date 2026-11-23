@@ -3949,6 +3949,18 @@
       "evidence": "按 Enter 显式接受定义或引用结果时，当前目标预览转为常规标签。Windows 33 步与 Linux 30 步验证默认键位、目标 UTF-16 落点、焦点、保留标签和输入回归。专项 90/90，Flutter 1,851 passed / 2 skipped。产品 7e362fae 的 CI 45285306951 四项和 Platform Availability 45285296565 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.255-peek-accept-tab.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-308",
+      "name": "P05.256 CMD-08 速览结果树默认键位侧开",
+      "description": "速览结果树的默认 Ctrl+Enter 侧开叶项，复用右侧组并保留来源速览。验证同文件跨组视图、跨文件 UTF-16 落点、右侧焦点、普通 F12 与返回树的键盘操作。",
+      "dependencies": [
+        "feat-307"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

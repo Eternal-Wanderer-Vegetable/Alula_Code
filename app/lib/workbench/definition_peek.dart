@@ -336,6 +336,8 @@ class DefinitionPeek extends StatefulWidget {
     required this.onOpen,
     required this.onClose,
     required this.onRemoved,
+    this.onOpenToSide,
+    this.onFocusChange,
     this.kind = LocationPeekKind.definition,
     this.workspace,
     this.referenceGroups,
@@ -350,6 +352,8 @@ class DefinitionPeek extends StatefulWidget {
   final Future<List<DefinitionPeekLine>> Function(DefinitionPeekEntry)
       loadPreview;
   final ValueChanged<DefinitionPeekEntry> onOpen;
+  final ValueChanged<DefinitionPeekEntry>? onOpenToSide;
+  final ValueChanged<bool>? onFocusChange;
   final VoidCallback onClose;
   final VoidCallback onRemoved;
   final LocationPeekKind kind;
@@ -536,7 +540,18 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     final row = _rows[index];
     final entryIndex = row.entryIndex;
     final file = row.file;
+    final keyboard = HardwareKeyboard.instance;
     if (key == LogicalKeyboardKey.enter && event is KeyDownEvent) {
+      final openToSide = widget.onOpenToSide;
+      if (openToSide != null &&
+          keyboard.isControlPressed &&
+          !keyboard.isAltPressed &&
+          !keyboard.isMetaPressed &&
+          !keyboard.isShiftPressed) {
+        if (entryIndex == null) return KeyEventResult.ignored;
+        openToSide(widget.entries[entryIndex]);
+        return KeyEventResult.handled;
+      }
       if (entryIndex != null) {
         widget.onOpen(widget.entries[entryIndex]);
       } else if (file != null) {
@@ -545,7 +560,6 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       return KeyEventResult.handled;
     }
     if (file == null) return KeyEventResult.ignored;
-    final keyboard = HardwareKeyboard.instance;
     if (keyboard.isAltPressed ||
         keyboard.isControlPressed ||
         keyboard.isMetaPressed ||
@@ -577,6 +591,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     final colors = Theme.of(context).colorScheme;
     return Focus(
       onKeyEvent: _handleKey,
+      onFocusChange: widget.onFocusChange,
       child: Material(
         elevation: 6,
         color: colors.surface,
