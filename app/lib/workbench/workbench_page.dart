@@ -25004,53 +25004,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Platform.isWindows ? absolute.toLowerCase() : absolute;
   }
 
-  /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
+  /// 从所选路径的父目录加载同级项，并初选该文件或目录。
   Future<void> _onBreadcrumbSegmentTap(
     EditorGroup group,
     List<String> segments,
     int index,
   ) async {
-    if (index == segments.length - 1) {
-      final filePath = group.active?.path;
-      if (filePath == null) return;
-      final parent = File(filePath).parent;
-      await _showBreadcrumbFolderPicker(
-        group,
-        segments.sublist(0, index),
-        index - 1,
-        TreeNode(name: parent.path, path: parent.path, isDir: true),
-        focusPickedFile: true,
-        initialFocusPath: filePath,
-      );
-      return;
+    final filePath = group.active?.path;
+    if (filePath == null) return;
+    var selectedPath = filePath;
+    var parent = File(filePath).parent;
+    for (var segment = segments.length - 1; segment > index; segment--) {
+      selectedPath = parent.path;
+      parent = parent.parent;
     }
-    final node = _findTreeNodeByRelPrefix(segments, index);
-    if (node == null) {
-      _revealInExplorer(segments, index);
-      return;
-    }
-    // 上游 FileItem → BreadcrumbsFilePicker：目录段列出子项（懒加载目录
-    // 由 picker 现场读取磁盘）。
-    await _showBreadcrumbFolderPicker(group, segments, index, node);
-  }
-
-  TreeNode? _findTreeNodeByRelPrefix(List<String> segments, int index) {
-    final root = _workspaceRoot;
-    if (root == null) return null;
-    final prefix = segments.sublist(0, index + 1).join('/');
-    final wanted = _normPath('$root/$prefix');
-    TreeNode? find(List<TreeNode> nodes) {
-      for (final node in nodes) {
-        if (_normPath(node.path) == wanted) return node;
-        if (node.children != null) {
-          final hit = find(node.children!);
-          if (hit != null) return hit;
-        }
-      }
-      return null;
-    }
-
-    return find(_treeRoots);
+    await _showBreadcrumbFolderPicker(
+      group,
+      segments.sublist(0, index),
+      index - 1,
+      TreeNode(name: parent.path, path: parent.path, isDir: true),
+      focusPickedFile: true,
+      initialFocusPath: selectedPath,
+    );
   }
 
   Future<({String value, bool openAside})?> _showBreadcrumbMenu(
@@ -25267,21 +25242,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final initialPath = initialFocusPath == null
         ? null
         : _canonicalPath(initialFocusPath);
-    final initialFile = initialPath == null
+    final initialItem = initialPath == null
         ? null
         : children
-            .where((child) =>
-                !child.isDir && _canonicalPath(child.path) == initialPath)
+            .where((child) => _canonicalPath(child.path) == initialPath)
             .firstOrNull;
+    String itemValue(TreeNode child) =>
+        '${child.isDir ? 'reveal' : 'open'}:${child.path}';
     final selection = await _showBreadcrumbMenu(group, doc, [
         if (children.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('空文件夹')),
         for (final child in children)
           PopupMenuItem(
-            value: '${child.isDir ? 'reveal' : 'open'}:${child.path}',
+            value: itemValue(child),
             child: Text(child.isDir ? '${child.name}/' : child.name),
           ),
-    ], initialValue: initialFile == null ? null : 'open:${initialFile.path}');
+    ], initialValue: initialItem == null ? null : itemValue(initialItem));
     if (!mounted || selection == null) return;
     final childPath = selection.value.split(':').sublist(1).join(':');
     final child = children.where((c) => c.path == childPath).firstOrNull;

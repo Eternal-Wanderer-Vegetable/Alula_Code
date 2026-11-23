@@ -446,7 +446,7 @@ void main() {
         reason: '回到单组且组 1 仍有 Cargo.toml');
   });
 
-  testWidgets('W2-3 面包屑：路径段展示 + 点击文件夹段展开文件树', (tester) async {
+  testWidgets('W2-3 面包屑：路径段展示和目录选择后展开文件树', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -474,11 +474,20 @@ void main() {
     expect(find.text('main.rs'), findsNWidgets(2),
         reason: '树已收起，剩标签 + 面包屑两处');
 
-    // 点击面包屑的 src 段 → 文件树重新展开到该目录
     await tester.tap(find.descendant(of: bc, matching: find.text('src')));
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
+    final folder = find.descendant(
+      of: find.byType(PopupMenuItem<String>),
+      matching: find.text('src/'),
+    );
+    expect(folder, findsOneWidget);
+    expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
+    expect(find.text('main.rs'), findsNWidgets(2));
+
+    await tester.tap(folder);
+    await tester.pumpAndSettle();
     expect(find.text('main.rs'), findsNWidgets(3),
-        reason: '面包屑点击应展开文件树，main.rs 回到 树+标签+面包屑 三处');
+        reason: '选择目录后，main.rs 应出现在文件树、标签和面包屑中');
   });
 
   testWidgets('W2-4 journal：重启恢复标签与未保存内容', (tester) async {

@@ -205,7 +205,8 @@ void main() {
     await tester.tap(_segment('editor', 0));
     await tester.pumpAndSettle();
     expectSelected(tester, 0);
-    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('src/'), findsOneWidget);
+    expect(find.text('lib.rs'), findsNothing);
     expect(commands.context['breadcrumbsPickerOpen'], isTrue);
     expect(commands.context['breadcrumbsPickerFocused'], isTrue);
     expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isTrue);
@@ -236,7 +237,8 @@ void main() {
 
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
     expectSelected(tester, 0);
-    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('src/'), findsOneWidget);
+    expect(find.text('lib.rs'), findsNothing);
     expect(find.text('fn main'), findsNothing);
     final folderRow = find.byType(PopupMenuItem<String>).first;
     expect(tester.getTopLeft(folderRow).dx,
@@ -326,6 +328,8 @@ void main() {
       'Enter and Down open folder picker and picked file keeps its group',
       (tester) async {
     await mount(tester);
+    final sibling = File('${workspace.path}/sibling.rs')
+      ..writeAsStringSync('fn sibling() {}\n');
     for (final openKey in [
       LogicalKeyboardKey.enter,
       LogicalKeyboardKey.arrowDown,
@@ -334,28 +338,28 @@ void main() {
       await key(tester, LogicalKeyboardKey.arrowLeft);
       await key(tester, LogicalKeyboardKey.arrowLeft);
       await key(tester, openKey);
-      expect(find.text('lib.rs'), findsOneWidget);
+      expect(find.text('sibling.rs'), findsOneWidget);
       if (openKey == LogicalKeyboardKey.enter) {
         await key(tester, LogicalKeyboardKey.escape);
         expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
         expect(commands.context['breadcrumbsPickerOpen'], isFalse);
       }
     }
-    await tester.tap(find.text('lib.rs'));
+    await tester.tap(find.text('sibling.rs'));
     for (var attempt = 0; attempt < 50; attempt++) {
       await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 20)));
       await tester.pumpAndSettle();
       if (tester
           .widgetList<RustTextInputField>(find.byType(RustTextInputField))
-          .any((field) => field.semanticsLabel?.startsWith('lib.rs') == true)) {
+          .any((field) => field.semanticsLabel?.startsWith('sibling.rs') == true)) {
         break;
       }
     }
     expect(
         find.descendant(
           of: find.byKey(const ValueKey('breadcrumb-editor')),
-          matching: find.text('lib.rs'),
+          matching: find.text('sibling.rs'),
         ),
         findsOneWidget);
     expect(
@@ -368,8 +372,7 @@ void main() {
         'fn other() {}\n');
     expect(commands.context['breadcrumbsPickerOpen'], isFalse);
     expect(commands.context['breadcrumbsPickerFocused'], isFalse);
-    expect(File('${workspace.path}/src/lib.rs').readAsStringSync(),
-        'fn library() {}\n');
+    expect(sibling.readAsStringSync(), 'fn sibling() {}\n');
     expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
   });
 
@@ -384,7 +387,7 @@ void main() {
 
     await tester.tap(_segment('editor', 0));
     await tester.pumpAndSettle();
-    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('src/'), findsOneWidget);
     expect(commands.context['editorDirty'], isTrue,
         reason: 'the picker owner is active before its pending result');
     await key(tester, LogicalKeyboardKey.escape);
@@ -424,7 +427,7 @@ void main() {
     await key(tester, LogicalKeyboardKey.arrowLeft);
     await key(tester, LogicalKeyboardKey.arrowLeft);
     await key(tester, LogicalKeyboardKey.enter);
-    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('src/'), findsOneWidget);
     await key(tester, LogicalKeyboardKey.tab);
     final focused = FocusManager.instance.primaryFocus;
     expect(focused, isNotNull);

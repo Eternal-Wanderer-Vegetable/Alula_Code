@@ -152,33 +152,32 @@ void main() {
   }
 
   testWidgets(
-    'the folder breadcrumb segment opens a picker of tree children',
+    'the folder breadcrumb lists siblings and focuses the current folder',
     (tester) async {
       await prepareWorkspace(tester);
       await seedWorkspaceAndOpen(tester);
+      File('${workspace.path}/notes.txt').writeAsStringSync('workspace notes\n');
       await mountPage(tester);
 
-      // Click the src folder segment: the picker lists its children.
       await tester.tap(_breadcrumbSegment('editor', 'src'));
       await tester.pumpAndSettle();
-      // ignore: avoid_print
-      print('PICKERDBG texts=${[
-        for (final t in tester.widgetList<Text>(find.byType(Text)))
-          if (t.data != null) t.data
-      ].take(40)}');
-      expect(find.text('main.rs'), findsWidgets);
-      expect(find.text('lib.rs'), findsOneWidget);
-      expect(find.text('nested/'), findsOneWidget);
 
-      // Selecting lib.rs opens it in the editor.
-      await tester.tap(find.text('lib.rs').last);
+      final rows = find.byType(PopupMenuItem<String>);
+      final folder = find.descendant(of: rows, matching: find.text('src/'));
+      final sibling = find.descendant(of: rows, matching: find.text('notes.txt'));
+      expect(folder, findsOneWidget);
+      expect(sibling, findsOneWidget);
+      expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
+      expect(find.descendant(of: rows, matching: find.text('lib.rs')), findsNothing);
+
+      await tester.tap(sibling);
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 700));
       await tester.pumpAndSettle();
-      final opened = tester
+      final siblingField = tester
           .widgetList<RustTextInputField>(find.byType(RustTextInputField))
-          .any((field) => field.semanticsLabel?.startsWith('lib.rs') == true);
-      expect(opened, isTrue, reason: 'the picked file opens in the editor');
+          .singleWhere((field) => field.semanticsLabel!.startsWith('notes.txt'));
+      expect(siblingField.focusNode!.hasFocus, isTrue);
     },
   );
 
@@ -357,7 +356,7 @@ void main() {
   );
 
   testWidgets(
-    'a folder without children shows an empty state and reveal still works',
+    'choosing a directory in the file picker reveals it in Explorer',
     (tester) async {
       await prepareWorkspace(tester);
       await seedWorkspaceAndOpen(tester);
@@ -365,7 +364,7 @@ void main() {
 
       // The nested folder was never expanded in the tree; selecting it in
       // the picker reveals and expands it in the file tree.
-      await tester.tap(_breadcrumbSegment('editor', 'src'));
+      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('nested/'));
       await tester.pumpAndSettle();
@@ -405,12 +404,12 @@ void main() {
       final sourcePath = File('${workspace.path}/src/side/z_source.rs');
       final originalBytes = sourcePath.readAsBytesSync();
 
-      await tester.tap(_breadcrumbSegment('editor', 'side'));
+      await tester.tap(_breadcrumbSegment('editor', 'z_source.rs'));
       await tester.pumpAndSettle();
       expect(find.text('a_target.rs'), findsOneWidget);
       expect(find.text('z_source.rs'), findsWidgets);
 
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
       await tester.pump();
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       try {
@@ -513,7 +512,7 @@ void main() {
       await seedNestedOnlyAndOpen();
       await mountPage(tester);
 
-      await tester.tap(_breadcrumbSegment('editor', 'src'));
+      await tester.tap(_breadcrumbSegment('editor', 'nested'));
       await tester.pumpAndSettle();
       expect(find.text('nested/'), findsOneWidget);
       debugDefaultTargetPlatformOverride = TargetPlatform.linux;
@@ -552,10 +551,10 @@ void main() {
       final originalText = document.resync().content;
       final originalVersion = document.version;
 
-      await tester.tap(_breadcrumbSegment('editor', 'side'));
+      await tester.tap(_breadcrumbSegment('editor', 'z_source.rs'));
       await tester.pumpAndSettle();
       expect(find.text('a_target.rs'), findsOneWidget);
-      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
       await tester.pump();
 
       document.apply([TextOp.insert(originalText.codeUnits.length, '!')]);

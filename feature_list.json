@@ -3666,6 +3666,20 @@
       "evidence": "文件段显示同级项并初选当前文件，独立符号入口保持。Windows 实机及 Linux 原生各 7 个观测点，窄回归 30/30，专项 314/314，Flutter 1,827 passed / 2 skipped。产品 175486f 的 CI 45135275790 四项和 Platform Availability 45135269711 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.233-breadcrumb-file-siblings.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-286",
+      "name": "P05.234 CMD-06 目录段的同级路径选择器",
+      "description": "目录段列出所在父目录的同级路径并初选所选目录。与文件段共用路径定位，保留显式目录展开和选择器焦点切换行为。",
+      "dependencies": [
+        "feat-142",
+        "feat-284",
+        "feat-285"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版目录段以父目录为输入。旧版控件测试点击 src 仅列其子项，菜单中缺少 src/。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
