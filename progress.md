@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.221 / feat-273 完成。产品 9b1cd2f15a3eddaa92f85853680ed50df9de080c。首次无查询打开时选中并滚入光标所在符号。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 9b1cd2f 的 CI 45090480668 四项及 Platform Availability 45090477090 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.221-symbol-caret.md。
+
 - P05.220 / feat-272 完成。产品 88d46d6279652bb8c6f0351dbe5dd8382f0f1baf。文档符号支持名称和直接容器组合查询，显示两列实际命中。Windows 实机与 Linux Xvfb + xfwm4 各 27 个观测点，专项 281/281，Flutter 1,813 passed / 2 skipped。产品 88d46d6 的 CI 45088364191 四项及 Platform Availability 45088358155 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.220-symbol-container.md。
 
 - P05.219 / feat-271 完成。产品 2648fe7755c7a9132abcb4add64913852c1f01dd。文档符号名称列显示实际命中，复用文件选择器 Unicode 范围映射。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 281/281，Flutter 1,813 passed / 2 skipped。产品 2648fe7 的 CI 45085917828 四项及 Platform Availability 45085915128 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.219-symbol-highlights.md。

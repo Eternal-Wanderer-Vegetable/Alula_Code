@@ -3496,8 +3496,8 @@
         "feat-128",
         "feat-272"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "首次无查询打开时选中并滚入光标所在符号。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 9b1cd2f 的 CI 45090480668 四项及 Platform Availability 45090477090 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.221-symbol-caret.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -1,0 +1,1655 @@
+{
+  "product": "9b1cd2f15a3eddaa92f85853680ed50df9de080c",
+  "tree": "c634489eee938f59b38a14dc55555e5595af6a07",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "c634489eee938f59b38a14dc55555e5595af6a07",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "7f5f4e6582b3dc9ca597a0b9f51ce234a93c2de40f46ab32e7230411f2b9a7dd",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "57205d5378b84ce50399bbe8ced0256e0af6728ebe98e9e43b12cddd805d73a9",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "be3b784882d3131dc96e2a8fbec667f88938345f285b3ac70c2eec75e2748890"
+  },
+  "sharedDriverSha256": "57a640994f46ae2676f432d2a44b0dfa8b8d5bab58fe9d5b817e29dd93006b3c",
+  "isolatedX11Sha256": "4acf068cfddeb21eebb253c93e245cdfe7b72f0c7ca6182facd8e4fc81b5085c",
+  "windows": {
+    "tree": "c634489eee938f59b38a14dc55555e5595af6a07",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "ae2d2db853a8ee53220b94521fc7d8fd3f757e34833cddf6e3c7a6ae704bde3c",
+    "fixtureSha256": "be3b784882d3131dc96e2a8fbec667f88938345f285b3ac70c2eec75e2748890",
+    "runnerSha256": "b4dd0f2c2a25bf32cc98fde9fbbcf650ff14ea769b6f5dd99e588fe6eeb5671e",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "caret": {
+      "bodyLine": 64,
+      "originalOffsetUtf16": 1096,
+      "targetOffsetUtf16": 1076,
+      "firstRowOffsetUtf16": 12
+    },
+    "diskSha256": {
+      "needle-root.rs": "ea96423abe25e228c111847e4ed711e2f8185442d75ac4c08be9e2619e56ad01"
+    },
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "bad9bfda8cbb60aee43147a5b04a50b7b3e163464098f249a4fdfaea002c6a66",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              180,
+              180
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "position-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              180,
+              180
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 448139998,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "caret-inside-symbol-body": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "initial-caret-symbol-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 779359300,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "initial-caret-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 554342823,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-filler_42",
+          "qi-filler_43",
+          "qi-filler_44",
+          "qi-filler_45",
+          "qi-filler_46",
+          "qi-filler_47",
+          "qi-filler_48",
+          "qi-filler_49",
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-button-nested_b-0",
+          "qi-n_branch"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-n_branch"
+        ],
+        "quickActive": "qi-nested_b",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "filtered-filler": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              28
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@filler_0",
+            "controllerIdentity": 554342823,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (6)",
+          "qi-filler_0",
+          "qi-button-filler_0-0",
+          "qi-filler_10",
+          "qi-filler_20",
+          "qi-filler_30",
+          "qi-filler_40",
+          "qi-filler_50"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_0",
+          "qi-filler_10",
+          "qi-filler_20",
+          "qi-filler_30",
+          "qi-filler_40",
+          "qi-filler_50"
+        ],
+        "quickActive": "qi-filler_0",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "clear-query-keeps-normal-order": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              12,
+              12
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 554342823,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (62)",
+          "qi-root_fn",
+          "qi-button-root_fn-0",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11",
+          "qi-filler_12",
+          "qi-filler_13",
+          "qi-filler_14",
+          "qi-filler_15",
+          "qi-filler_16",
+          "qi-filler_17",
+          "qi-filler_18",
+          "qi-filler_19"
+        ],
+        "quickVisibleRows": [
+          "qi-root_fn",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7"
+        ],
+        "quickActive": "qi-root_fn",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "escape-restores-original-caret": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "reopen-prefers-original-symbol-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 406818109,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "reopen-prefers-original-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 460541539,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-filler_42",
+          "qi-filler_43",
+          "qi-filler_44",
+          "qi-filler_45",
+          "qi-filler_46",
+          "qi-filler_47",
+          "qi-filler_48",
+          "qi-filler_49",
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-button-nested_b-0",
+          "qi-n_branch"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-n_branch"
+        ],
+        "quickActive": "qi-nested_b",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "accepted-caret-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "position-picker-before-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 997342157,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "caret-outside-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-keeps-first-row-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 1009234299,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-keeps-first-row": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              12,
+              12
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 845249856,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (62)",
+          "qi-root_fn",
+          "qi-button-root_fn-0",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11",
+          "qi-filler_12",
+          "qi-filler_13",
+          "qi-filler_14",
+          "qi-filler_15",
+          "qi-filler_16",
+          "qi-filler_17",
+          "qi-filler_18",
+          "qi-filler_19"
+        ],
+        "quickVisibleRows": [
+          "qi-root_fn",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7"
+        ],
+        "quickActive": "qi-root_fn",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-escape-restores-caret": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "c634489eee938f59b38a14dc55555e5595af6a07",
+    "aotSha256": "dbc64e4b2f388f77af165f9aad8eaf7fc5e07db03ec5fd7842d736004a6af573",
+    "fixtureSha256": "be3b784882d3131dc96e2a8fbec667f88938345f285b3ac70c2eec75e2748890",
+    "runnerSha256": "25b3b9fd1dde8bf7de7d8aa20858d5cd15ad975fd2a215ab40cd0bb9df55f921",
+    "characterDelayMs": 12,
+    "caret": {
+      "bodyLine": 64,
+      "originalOffsetUtf16": 1096,
+      "targetOffsetUtf16": 1076,
+      "firstRowOffsetUtf16": 12
+    },
+    "diskSha256": {
+      "needle-root.rs": "ea96423abe25e228c111847e4ed711e2f8185442d75ac4c08be9e2619e56ad01"
+    },
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "rawReportSha256": "00f2908461795bd88653a9cf8e5d5a612b1bd1db75f9272281604164274728f2",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              269,
+              269
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "position-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              269,
+              269
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 991998133,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "caret-inside-symbol-body": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "initial-caret-symbol-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 51215262,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "initial-caret-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 706499087,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-filler_38",
+          "qi-filler_39",
+          "qi-filler_40",
+          "qi-filler_41",
+          "qi-filler_42",
+          "qi-filler_43",
+          "qi-filler_44",
+          "qi-filler_45",
+          "qi-filler_46",
+          "qi-filler_47",
+          "qi-filler_48",
+          "qi-filler_49",
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-button-nested_b-0",
+          "qi-n_branch"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-n_branch"
+        ],
+        "quickActive": "qi-nested_b",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "filtered-filler": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              28
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@filler_0",
+            "controllerIdentity": 706499087,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (6)",
+          "qi-filler_0",
+          "qi-button-filler_0-0",
+          "qi-filler_10",
+          "qi-filler_20",
+          "qi-filler_30",
+          "qi-filler_40",
+          "qi-filler_50"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_0",
+          "qi-filler_10",
+          "qi-filler_20",
+          "qi-filler_30",
+          "qi-filler_40",
+          "qi-filler_50"
+        ],
+        "quickActive": "qi-filler_0",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "clear-query-keeps-normal-order": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              12,
+              12
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 706499087,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (62)",
+          "qi-root_fn",
+          "qi-button-root_fn-0",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11",
+          "qi-filler_12",
+          "qi-filler_13",
+          "qi-filler_14",
+          "qi-filler_15",
+          "qi-filler_16",
+          "qi-filler_17",
+          "qi-filler_18",
+          "qi-filler_19",
+          "qi-filler_20",
+          "qi-filler_21",
+          "qi-filler_22",
+          "qi-filler_23"
+        ],
+        "quickVisibleRows": [
+          "qi-root_fn",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11"
+        ],
+        "quickActive": "qi-root_fn",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "escape-restores-original-caret": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "reopen-prefers-original-symbol-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1096,
+              1096
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 231263799,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "reopen-prefers-original-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 69349533,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-filler_38",
+          "qi-filler_39",
+          "qi-filler_40",
+          "qi-filler_41",
+          "qi-filler_42",
+          "qi-filler_43",
+          "qi-filler_44",
+          "qi-filler_45",
+          "qi-filler_46",
+          "qi-filler_47",
+          "qi-filler_48",
+          "qi-filler_49",
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-button-nested_b-0",
+          "qi-n_branch"
+        ],
+        "quickVisibleRows": [
+          "qi-filler_50",
+          "qi-filler_51",
+          "qi-filler_52",
+          "qi-filler_53",
+          "qi-filler_54",
+          "qi-outer_a",
+          "qi-nested_a",
+          "qi-Packet",
+          "qi-outer_b",
+          "qi-nested_b",
+          "qi-n_branch"
+        ],
+        "quickActive": "qi-nested_b",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "accepted-caret-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "position-picker-before-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              1076,
+              1076
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 1068080793,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "caret-outside-symbol": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-keeps-first-row-file-picker": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 781794478,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.rs",
+          "qi-button-needle-root.rs-0",
+          "qi-button-needle-root.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickVisibleRows": [
+          "qi-needle-root.rs",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.rs",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-keeps-first-row": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              12,
+              12
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "controllerIdentity": 1052488467,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-符号 (62)",
+          "qi-root_fn",
+          "qi-button-root_fn-0",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11",
+          "qi-filler_12",
+          "qi-filler_13",
+          "qi-filler_14",
+          "qi-filler_15",
+          "qi-filler_16",
+          "qi-filler_17",
+          "qi-filler_18",
+          "qi-filler_19",
+          "qi-filler_20",
+          "qi-filler_21",
+          "qi-filler_22",
+          "qi-filler_23"
+        ],
+        "quickVisibleRows": [
+          "qi-root_fn",
+          "qi-filler_0",
+          "qi-filler_1",
+          "qi-filler_2",
+          "qi-filler_3",
+          "qi-filler_4",
+          "qi-filler_5",
+          "qi-filler_6",
+          "qi-filler_7",
+          "qi-filler_8",
+          "qi-filler_9",
+          "qi-filler_10",
+          "qi-filler_11"
+        ],
+        "quickActive": "qi-root_fn",
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      },
+      "outside-symbol-escape-restores-caret": {
+        "editors": [
+          {
+            "label": "needle-root.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 1134,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "370d9800547574796fdd7be24165ba2f6c910d911cb00ec7611a38b40541527b"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickVisibleRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "symbolStatus": null
+      }
+    },
+    "processTreeSamples": {
+      "source-editor-focused": {
+        "n_processes": 1,
+        "total_private_bytes": 245035008,
+        "total_working_set_bytes": 336805888
+      },
+      "initial-caret-symbol": {
+        "n_processes": 1,
+        "total_private_bytes": 277065728,
+        "total_working_set_bytes": 369082368
+      },
+      "filtered-filler": {
+        "n_processes": 1,
+        "total_private_bytes": 280690688,
+        "total_working_set_bytes": 372707328
+      },
+      "clear-query-keeps-normal-order": {
+        "n_processes": 1,
+        "total_private_bytes": 273108992,
+        "total_working_set_bytes": 365125632
+      },
+      "accepted-caret-symbol": {
+        "n_processes": 1,
+        "total_private_bytes": 277487616,
+        "total_working_set_bytes": 369545216
+      }
+    }
+  }
+}
