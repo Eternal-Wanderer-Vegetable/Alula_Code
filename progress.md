@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.250 / feat-302 完成。定义与引用速览能用 Ctrl/Cmd+K F2 在结果树和只读预览间切换。Windows/Linux 各 18 个原生观测点，验证预览焦点跨文件、文字输入及 Esc。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 a1635d2a 的 CI 45263334280 四项和 Platform Availability 45263325177 Windows/Linux 通过。macOS 实机暂缓。 Windows 字母扫描码投递差异待查。详见 docs/diagnostics/2026-11-24-p05/p05.250-peek-focus.md。
+
 - P05.249 / feat-301 完成。四个默认快捷键在引用速览内按排序正反循环，跨文件保留速览、展开组和当前焦点。Windows/Linux 各 24 个原生观测点。专项 80/80，Flutter 1,849 passed / 2 skipped。产品 5063e624 的 CI 45257440610 四项和 Platform Availability 45257426726 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.249-reference-navigation.md。
 
 - P05.248 / feat-300 完成。多文件按路径和范围排序并去重，单文件保留平铺。两端复验展开、折叠、行焦点、首行 BOM 坐标和跨文件返回。Windows/Linux 各 20 个原生观测点。专项 78/78，Flutter 1,847 passed / 2 skipped。产品 8b31486f 的 CI 45251073750 四项和 Platform Availability 45251063253 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.248-reference-tree.md。
@@ -17,7 +19,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。继续 CMD-08 的速览树和预览编辑器焦点切换，并复验默认快捷键。后续按固定控制器核对定义速览的同一键位、速览初次选择与未固定标签定位。
+- 下一步。复核 Windows 中文键盘布局下的字母扫描码投递差异，追查字母键和随后功能键在进入 Flutter 前的路径。后续按固定控制器核对定义速览的同一键位、速览初次选择与未固定标签定位。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

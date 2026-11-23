@@ -3885,8 +3885,8 @@
       "dependencies": [
         "feat-301"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "定义与引用速览能用 Ctrl/Cmd+K F2 在结果树和只读预览间切换。Windows/Linux 各 18 个原生观测点，验证预览焦点跨文件、文字输入及 Esc。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 a1635d2a 的 CI 45263334280 四项和 Platform Availability 45263325177 Windows/Linux 通过。macOS 实机暂缓。 Windows 字母扫描码投递差异待查。 docs/diagnostics/2026-11-24-p05/p05.250-peek-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
