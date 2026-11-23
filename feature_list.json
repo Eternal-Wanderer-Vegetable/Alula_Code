@@ -3746,8 +3746,8 @@
         "feat-146",
         "feat-290"
       ],
-      "status": "in-progress",
-      "evidence": "旧版未滚动的回归已复现。修复后的控件测试覆盖当前文本窗口内及窗口外符号、整行绘制和 Esc 恢复。等待本地全量、Windows/Linux 原生及托管。",
+      "status": "done",
+      "evidence": "符号行焦点临时滚动并高亮范围，窗口外使用一个有界只读视图，取消及确认后恢复源视图。Windows 实机及 Linux 原生各 9 个观测点，专项 319/319，编辑器 29/29，Flutter 1,832 passed / 2 skipped。产品 faa22b67 的 CI 45167340889 四项和 Platform Availability 45167329876 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.239-breadcrumb-symbol-preview.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

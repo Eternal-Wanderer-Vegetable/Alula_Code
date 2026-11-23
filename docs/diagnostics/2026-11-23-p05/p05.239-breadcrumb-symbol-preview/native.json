@@ -1,0 +1,1363 @@
+{
+  "product": "faa22b67e7a7a84fe655b7674b6ccc38a91271ab",
+  "tree": "d9a2390105fc90e6aa70376e6704446cbab22ea2",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "references": [
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts",
+        "lines": [
+          106,
+          115,
+          489,
+          517
+        ],
+        "sha256": "c866baa8040b70fe24970e10dafe12bd5cdb0a9789b06cf414bbb7c94088d2a2"
+      },
+      {
+        "path": "src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsOutline.ts",
+        "lines": [
+          235,
+          244
+        ],
+        "sha256": "0a0662dbe7a0874d47e8497fd4ec93c88dc05e6c9e719cb40e1ddd9b2641a4f1"
+      },
+      {
+        "path": "src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolEditor.ts",
+        "lines": [
+          44,
+          65
+        ],
+        "sha256": "32494293a528004eab7e38d035e6e1069c5a82b6c2d6939c1d030d831b699b37"
+      }
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "d9a2390105fc90e6aa70376e6704446cbab22ea2",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "63b08c42b1fe63e53699cb11bb68c786280619e2cc954903cba538f7057a3160",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "18a94e6e566286fa8d138100ff6d01c063c030193d1f02ee17089da2cf65a930",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "fa7a7d0f56291b9ae5f761d243ad33162f3abbde936d75716cf7f44adbad8565"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "a898f75439347289778e69bb5b3f8018d75d6b000ba2e44416121b9decbda163",
+    "first-implemented": "1dbaacfb29258d8e5093de5589b2ff1e71a421f4bfbc7d1804c08e4572d7603b",
+    "first-analyze": "cedcc8b1533bbac709ac108b659ea15f7f31ace5864d04f017a88547d08a4494",
+    "focused": "34ad7c6218f8c5920deae82f046179ef31cce8ccabd31fd9d80145c72f2f941e",
+    "editor-renderer": "b70f10263a1ee024d919e7d5124d096e0f91f9334feffc5a4f74b1ac3a8a26d8",
+    "analyze": "b858d9d8f9f5be662b154fa4468b7b4602850a4cc67cc24c84f07dc74b0e9e74",
+    "full": "d802b0597fb312b52b4050de044ce63c630678dea3b9d6a527969c1efeceb3a2"
+  },
+  "graph": {
+    "_BreadcrumbMenuEntryState-build": {
+      "target": "build",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "4df4265ae5b20aa5d9993c8218f21b8afdba8e5d900c0dc7469c8dc5fec9f659"
+    },
+    "breadcrumb_navigation-BreadcrumbMenuEntry": {
+      "target": "BreadcrumbMenuEntry",
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "cbee73c9f4bfaada28b3a5a950423375a5d19d4cdd5ec206efc2ab5b4979a639"
+    },
+    "breadcrumb_navigation-_BreadcrumbMenuEntryState": {
+      "target": "_BreadcrumbMenuEntryState",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "48e54769e3be2a9b74e1fc2e528929a2fff5221e1ac7d7ed9111d8ed4e13559e"
+    },
+    "breadcrumb_picker_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b692bdae62ceb49a4d91aa4ee7ac2c957005e8c2c6aa24ee05f8d37da985ebc5"
+    },
+    "editor_rendering-EditorRangeDecoration": {
+      "target": "EditorRangeDecoration",
+      "risk": "HIGH",
+      "summary": {
+        "direct": 12,
+        "processes_affected": 1,
+        "modules_affected": 4
+      },
+      "sha256": "e902a59f486de439180895aabcfa49a132d6e5ef700a6a17179a216b91b3a676"
+    },
+    "editor_rendering-EditorRangeDecorationPainter": {
+      "target": "EditorRangeDecorationPainter",
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "e818aa843c5470a76d6b199509232836be56a4835441ad89525eb345112d2295"
+    },
+    "field-build": {
+      "target": "build",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "field-dispose": {
+      "target": "dispose",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "eb005badf46e2be488f10b54fb165256081f23d8642a6ac4edeb3add73d26f5d"
+    },
+    "field-file": {
+      "target": "rust_text_input_field.dart",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "563e6de12c0cc7f02dde1b148c8c1ca02dec4f7e2ce459c5e534304a49b7d0cc"
+    },
+    "painter-paint": {
+      "target": "paint",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "e7c5c5dfaa3c846c78346eca184e929950ecf7302e6c3d49be4adf3c707fdd36"
+    },
+    "painter-shouldRepaint": {
+      "target": "shouldRepaint",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "7ef2aa36771535c657258833944dc9ba14b9ef6d26d07b94363dcefb538d8ca3"
+    },
+    "rust_text_input_field-RustTextInputFieldState": {
+      "target": "RustTextInputFieldState",
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "aabfea8717fac81db78918c3fb88308dd0c7f154b19703fd1a1d700b75d5eb5b"
+    },
+    "workbench_page-_showBreadcrumbMenu": {
+      "target": "_showBreadcrumbMenu",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "3b75bbea044848ff79bf0b453e0ce6ff2d7461bac0a9949c966f9ee348c6db5e"
+    },
+    "workbench_page-_showBreadcrumbSymbolPicker": {
+      "target": "_showBreadcrumbSymbolPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "86668d6fc2a3642ae27cc0c681405582a26c061b8a0db78f843867948387e3b9"
+    },
+    "all": {
+      "changed_count": 20,
+      "affected_count": 1,
+      "changed_files": 7,
+      "risk_level": "medium",
+      "sha256": "44a0f1dcfde5b2374a1f3cccaf593cf0250a3dfcdce9b41693dd0d091725bde8"
+    },
+    "staged": {
+      "changed_count": 20,
+      "affected_count": 1,
+      "changed_files": 7,
+      "risk_level": "medium",
+      "sha256": "44a0f1dcfde5b2374a1f3cccaf593cf0250a3dfcdce9b41693dd0d091725bde8"
+    }
+  },
+  "macosPhysical": "deferred",
+  "acceptanceDriverSha256": "3bd1e3206050b35bf8fdf38c5a42fbbdb838eb51e3799641890b4a3725e80701",
+  "windows": {
+    "tree": "d9a2390105fc90e6aa70376e6704446cbab22ea2",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "e917b4d085175630258adf4556b8ebfedca754ef982cd3d6650c0a6ffd982183",
+    "fixtureSha256": "fa7a7d0f56291b9ae5f761d243ad33162f3abbde936d75716cf7f44adbad8565",
+    "runnerSha256": "7515d4ed0a37bd09298ffd0387a3b223ee89634d167f97c50cabb97ac2910f52",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1531,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1531,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true
+      },
+      {
+        "point": [
+          1413,
+          292
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1413,
+          292
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true
+      },
+      {
+        "point": [
+          1413,
+          292
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1413,
+          292
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true
+      }
+    ],
+    "diskSha256": {
+      "src/lib.rs": "bd55d040319f69433bc2e6bb37ec6f10dba1410aa4b620784311d90801406213",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "symbolPreview": {
+      "ranges": {
+        "near-preview": {
+          "name": "near",
+          "startUtf16": 6,
+          "endUtf16": 19,
+          "route": 336562145,
+          "previewWindowStart": 0,
+          "previewScroll": 0.0,
+          "rangeY": 21.200000000000017,
+          "viewportHeight": 432.4
+        },
+        "far-preview": {
+          "name": "far",
+          "startUtf16": 2679,
+          "endUtf16": 2711,
+          "route": 336562145,
+          "previewWindowStart": 0,
+          "previewScroll": 2807.9000000000005,
+          "rangeY": 174.0,
+          "viewportHeight": 432.4
+        },
+        "beyond-preview": {
+          "name": "beyond",
+          "startUtf16": 32411,
+          "endUtf16": 32446,
+          "route": 336562145,
+          "previewWindowStart": 24219,
+          "previewScroll": 6035.6,
+          "rangeY": 348.40000000000003,
+          "viewportHeight": 432.4
+        },
+        "reopened-preview": {
+          "name": "near",
+          "startUtf16": 6,
+          "endUtf16": 19,
+          "route": 778622586,
+          "previewWindowStart": 0,
+          "previewScroll": 0.0,
+          "rangeY": 21.200000000000017,
+          "viewportHeight": 432.4
+        },
+        "reopened-far": {
+          "name": "far",
+          "startUtf16": 2679,
+          "endUtf16": 2711,
+          "route": 778622586,
+          "previewWindowStart": 0,
+          "previewScroll": 2807.9000000000005,
+          "rangeY": 174.0,
+          "viewportHeight": 432.4
+        }
+      },
+      "selectedUtf16": 2679,
+      "beforeSelection": [
+        17,
+        17
+      ],
+      "originalScroll": 0.0,
+      "utf8Bom": true,
+      "crlf": 1248
+    },
+    "exit": 0,
+    "passed": true,
+    "reportSha256": "231458cb1979456223da1fc06479223a39601a68fd7ba79af2da0f0bf27de246",
+    "observations": 9,
+    "steps": {
+      "ready": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "caret-near": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "near-preview": {
+        "focusedRows": [
+          "fn near"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 6,
+            "end": 19,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "far-preview": {
+        "focusedRows": [
+          "fn far"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 2679,
+            "end": 2711,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2807.9000000000005,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "beyond-preview": {
+        "focusedRows": [
+          "fn beyond"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 32411,
+            "end": 32446,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              32411,
+              32411
+            ],
+            "startUtf16": 24219,
+            "scrollPixels": 6035.6,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "7c3cf2c9eab7c5e95baf0905ffd1cfb81aed5d7a34a0c67e1650b98dc50c91d6"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "reopened-preview": {
+        "focusedRows": [
+          "fn near"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 6,
+            "end": 19,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "reopened-far": {
+        "focusedRows": [
+          "fn far"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 2679,
+            "end": 2711,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2807.9000000000005,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "far-confirmed": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              2679,
+              2679
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2570.6,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "d9a2390105fc90e6aa70376e6704446cbab22ea2",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 6319,
+            "ppid": 6318,
+            "private": 272023552,
+            "pss": 298934272,
+            "working_set": 351199232
+          }
+        ],
+        "root_pid": 6319,
+        "total_private_bytes": 272023552,
+        "total_private_mib": 259.4,
+        "total_working_set_bytes": 351199232
+      },
+      "far-preview": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 6319,
+            "ppid": 6318,
+            "private": 290582528,
+            "pss": 317763584,
+            "working_set": 371113984
+          }
+        ],
+        "root_pid": 6319,
+        "total_private_bytes": 290582528,
+        "total_private_mib": 277.1,
+        "total_working_set_bytes": 371113984
+      },
+      "beyond-preview": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 6319,
+            "ppid": 6318,
+            "private": 280100864,
+            "pss": 307280896,
+            "working_set": 360632320
+          }
+        ],
+        "root_pid": 6319,
+        "total_private_bytes": 280100864,
+        "total_private_mib": 267.1,
+        "total_working_set_bytes": 360632320
+      },
+      "far-confirmed": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 6319,
+            "ppid": 6318,
+            "private": 280580096,
+            "pss": 307759104,
+            "working_set": 361111552
+          }
+        ],
+        "root_pid": 6319,
+        "total_private_bytes": 280580096,
+        "total_private_mib": 267.6,
+        "total_working_set_bytes": 361111552
+      }
+    },
+    "aotSha256": "94c1091eb54e6e6f1d3716e79a79005c37b6c8455a1713c2a8a200fa61efca87",
+    "fixtureSha256": "fa7a7d0f56291b9ae5f761d243ad33162f3abbde936d75716cf7f44adbad8565",
+    "runnerSha256": "13b41eb36ca2e5080c8f250115adc3433319d8bfccc4c17c8484f56ab750cc97",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "bd55d040319f69433bc2e6bb37ec6f10dba1410aa4b620784311d90801406213",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "symbolPreview": {
+      "ranges": {
+        "near-preview": {
+          "name": "near",
+          "startUtf16": 6,
+          "endUtf16": 19,
+          "route": 951339740,
+          "previewWindowStart": 0,
+          "previewScroll": 0.0,
+          "rangeY": 21.0,
+          "viewportHeight": 662.0000000000001
+        },
+        "far-preview": {
+          "name": "far",
+          "startUtf16": 2679,
+          "endUtf16": 2711,
+          "route": 951339740,
+          "previewWindowStart": 0,
+          "previewScroll": 2693.0,
+          "rangeY": 289.0,
+          "viewportHeight": 662.0000000000001
+        },
+        "beyond-preview": {
+          "name": "beyond",
+          "startUtf16": 32411,
+          "endUtf16": 32446,
+          "route": 951339740,
+          "previewWindowStart": 24219,
+          "previewScroll": 5806.0,
+          "rangeY": 578.0,
+          "viewportHeight": 662.0000000000001
+        },
+        "reopened-preview": {
+          "name": "near",
+          "startUtf16": 6,
+          "endUtf16": 19,
+          "route": 566071459,
+          "previewWindowStart": 0,
+          "previewScroll": 0.0,
+          "rangeY": 21.0,
+          "viewportHeight": 662.0000000000001
+        },
+        "reopened-far": {
+          "name": "far",
+          "startUtf16": 2679,
+          "endUtf16": 2711,
+          "route": 566071459,
+          "previewWindowStart": 0,
+          "previewScroll": 2693.0,
+          "rangeY": 289.0,
+          "viewportHeight": 662.0000000000001
+        }
+      },
+      "selectedUtf16": 2679,
+      "beforeSelection": [
+        17,
+        17
+      ],
+      "originalScroll": 0.0,
+      "utf8Bom": true,
+      "crlf": 1248
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "reportSha256": "0fa997fadb1ed9187829e6cd6596cfa54f46ff2fde3060569388039825d6623e",
+    "observations": 9,
+    "steps": {
+      "ready": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "caret-near": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "near-preview": {
+        "focusedRows": [
+          "fn near"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 6,
+            "end": 19,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "far-preview": {
+        "focusedRows": [
+          "fn far"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 2679,
+            "end": 2711,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2693.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "beyond-preview": {
+        "focusedRows": [
+          "fn beyond"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 32411,
+            "end": 32446,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              32411,
+              32411
+            ],
+            "startUtf16": 24219,
+            "scrollPixels": 5806.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "7c3cf2c9eab7c5e95baf0905ffd1cfb81aed5d7a34a0c67e1650b98dc50c91d6"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "reopened-preview": {
+        "focusedRows": [
+          "fn near"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 6,
+            "end": 19,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "reopened-far": {
+        "focusedRows": [
+          "fn far"
+        ],
+        "symbolPreviewHighlights": [
+          {
+            "start": 2679,
+            "end": 2711,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              17,
+              17
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16383,
+              16383
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2693.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "fc3a3f686f154fb3dba0ead397173cf00526e84fbbdb52cd25f772e3050efe6d"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      },
+      "far-confirmed": {
+        "focusedRows": [],
+        "symbolPreviewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              2679,
+              2679
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 2341.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "c07ce4dd2ea19c7e03c7613345030405c60a8b9040713755e8331df8f1458fc1"
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1,
+            "windowBoundUtf16": 16384,
+            "mirrorSha256": "d8464d970072a1aa7880e41de8838e75675ab60dae621b486cf43c7ca4b0d8e4"
+          }
+        ]
+      }
+    }
+  }
+}

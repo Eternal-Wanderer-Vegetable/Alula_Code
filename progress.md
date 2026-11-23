@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
+- P05.239 / feat-291 完成。符号行焦点临时滚动并高亮范围，窗口外使用一个有界只读视图，取消及确认后恢复源视图。Windows 实机及 Linux 原生各 9 个观测点，专项 319/319，编辑器 29/29，Flutter 1,832 passed / 2 skipped。产品 faa22b67 的 CI 45167340889 四项和 Platform Availability 45167329876 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.239-breadcrumb-symbol-preview.md。
+
 - P05.238 / feat-290 完成。符号选择器初选当前版本的所选段，切换段时更新初选。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 f0b3c5b1 的 CI 45156593418 四项和 Platform Availability 45156587598 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md。
 
 - P05.237 / feat-289 完成。工作区内同级项和展开的子项应用六个默认排除项，遵循本地提供程序大小写规则。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 eb633dab 的 CI 45152054753 四项和 Platform Availability 45152041961 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.237-breadcrumb-default-excludes.md。
