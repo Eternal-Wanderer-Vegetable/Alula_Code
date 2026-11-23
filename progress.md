@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.219 / feat-271 完成。产品 2648fe7755c7a9132abcb4add64913852c1f01dd。文档符号名称列显示实际命中，复用文件选择器 Unicode 范围映射。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 281/281，Flutter 1,813 passed / 2 skipped。产品 2648fe7 的 CI 45085917828 四项及 Platform Availability 45085915128 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.219-symbol-highlights.md。
+
 - P05.218 / feat-270 完成。产品 f22a37f7817f322e6345de46999c0c1c361a7657。普通和分组文档符号查询按名称模糊匹配和排序，同分保留文档次序。Windows 实机与 Linux Xvfb + xfwm4 各 15 个观测点，专项 280/280，Flutter 1,812 passed / 2 skipped。产品 f22a37f 的 CI 45083884112 四项及 Platform Availability 45083880244 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.218-symbol-match.md。
 
 - P05.217 / feat-269 完成。产品 676761ae5c02de9ac5ae03895d190a93ef470cbc。普通文档符号查询显示总数，按查询区分无符号与无匹配。Windows 实机与 Linux Xvfb + xfwm4 各 16 个观测点，专项 273/273，Flutter 1,812 passed / 2 skipped。产品 676761a 的 CI 45081543711 四项及 Platform Availability 45081540235 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.217-symbol-result-state.md。
