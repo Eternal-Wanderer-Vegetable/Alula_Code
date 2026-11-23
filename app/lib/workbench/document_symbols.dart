@@ -1,3 +1,5 @@
+import 'tree_fuzzy_score.dart';
+
 /// A document symbol with a UTF-16 offset and one-based, inclusive line range.
 class DocumentSymbolNode {
   DocumentSymbolNode({
@@ -263,4 +265,80 @@ int _compare(
     if (name != 0) return name;
   }
   return _comparePosition(a, b);
+}
+
+typedef DocumentSymbolMatch = ({
+  int score,
+  TreeFuzzyScore name,
+  List<({int start, int end})> containerRanges,
+});
+
+/// Matches a picker query against a symbol name and its enclosing symbol.
+class DocumentSymbolQuery {
+  DocumentSymbolQuery(String query)
+      : _wholePattern = _normalize(query),
+        _terms = query
+            .split(' ')
+            .map(_normalize)
+            .where((term) => term.isNotEmpty)
+            .toList(growable: false);
+
+  static final _ignored = RegExp(r'[*…\s"]');
+  final String _wholePattern;
+  final List<String> _terms;
+
+  static String _normalize(String value) {
+    final normalized = value.replaceAll(_ignored, '');
+    return normalized.length > 1 && normalized.endsWith('#')
+        ? normalized.substring(0, normalized.length - 1)
+        : normalized;
+  }
+
+  DocumentSymbolMatch? match(String name, String? container) {
+    final whole = treeFuzzyScore(_wholePattern, name);
+    if (whole != null) {
+      return (score: whole.score, name: whole, containerRanges: const []);
+    }
+    if (_terms.length < 2 || container == null) return null;
+
+    final nameMatch = treeFuzzyScore(_terms.first, name);
+    if (nameMatch == null) return null;
+    var score = nameMatch.score;
+    // Collect source units once even when several terms cover the same range.
+    final covered = <int>{};
+    for (final term in _terms.skip(1)) {
+      final match = treeFuzzyScore(term, container);
+      if (match == null) return null;
+      score += match.score;
+      for (final range in match.matchesInSource(container)) {
+        for (var offset = range.start; offset < range.end; offset++) {
+          covered.add(offset);
+        }
+      }
+    }
+    final ranges = <({int start, int end})>[];
+    for (final offset in covered.toList()..sort()) {
+      if (ranges.isNotEmpty && ranges.last.end == offset) {
+        ranges[ranges.length - 1] = (start: ranges.last.start, end: offset + 1);
+      } else {
+        ranges.add((start: offset, end: offset + 1));
+      }
+    }
+    return (score: score, name: nameMatch, containerRanges: ranges);
+  }
+}
+
+/// The immediate enclosing symbol name for each non-root node.
+Map<DocumentSymbolNode, String> documentSymbolContainers(
+    List<DocumentSymbolNode> roots) {
+  final containers = <DocumentSymbolNode, String>{};
+  final pending = roots.toList();
+  while (pending.isNotEmpty) {
+    final parent = pending.removeLast();
+    for (final child in parent.children) {
+      containers[child] = parent.name;
+      pending.add(child);
+    }
+  }
+  return containers;
 }

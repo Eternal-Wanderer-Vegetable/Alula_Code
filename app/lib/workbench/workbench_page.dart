@@ -93,7 +93,6 @@ import 'tree_find.dart';
 import 'goto_position.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
-import 'tree_fuzzy_score.dart';
 import 'open_editors_sort_order.dart';
 import 'breadcrumb_navigation.dart';
 import 'command_history_store.dart';
@@ -4184,6 +4183,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final roots = buildDocumentSymbolTree(snapshot.symbols);
+    final containers = documentSymbolContainers(roots);
     final original = doc.selectionSet.toList();
     final scroll = editorPrimaryScrollPosition(doc.editorScrollController)?.pixels;
     var accepted = false;
@@ -4255,11 +4255,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final grouped = value.startsWith(':');
         if (grouped) value = value.substring(1).trimLeft();
         var rows = projectDocumentSymbols(roots);
-        final scores = <DocumentSymbolNode, TreeFuzzyScore>{};
+        final scores = <DocumentSymbolNode, DocumentSymbolMatch>{};
         if (value.isNotEmpty) {
+          final query = DocumentSymbolQuery(value);
           final matches = [
             for (final (index, row) in rows.indexed)
-              if (treeFuzzyScore(value, row.symbol.name) case final match?)
+              if (query.match(row.symbol.name, containers[row.symbol])
+                  case final match?)
                 (index: index, match: match, row: row),
           ];
           matches.sort((a, b) {
@@ -4274,18 +4276,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         QuickItem itemFor(({DocumentSymbolNode symbol, int depth}) row) {
           final symbol = row.symbol;
           final score = scores[symbol];
+          final container = containers[symbol];
+          final location = '${symbol.kind} · 行 ${symbol.line}';
           return QuickItem(
             label: symbol.name,
-            description: '${symbol.kind} · 行 ${symbol.line}',
-            detail: row.depth == 0 ? null : '  ' * row.depth + symbol.name,
+            description: container ?? location,
+            detail: container == null ? null : location,
             highlights: score == null
                 ? null
                 : () => (
                       label: [
-                        for (final range in score.matchesInSource(symbol.name))
+                        for (final range
+                            in score.name.matchesInSource(symbol.name))
                           TextRange(start: range.start, end: range.end),
                       ],
-                      description: const [],
+                      description: [
+                        for (final range in score.containerRanges)
+                          TextRange(start: range.start, end: range.end),
+                      ],
                     ),
             onPreview: () => preview(symbol),
             onRun: () => accept(symbol),

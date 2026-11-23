@@ -320,7 +320,8 @@ void main() {
         TargetPlatform.macOS,
       }));
 
-  testWidgets('Document symbols rank fuzzy results and group each kind once',
+  testWidgets(
+      'Document symbols match names and containers with separate highlights',
       (tester) async {
     final temp =
         Directory.systemTemp.createTempSync('alula-document-symbol-kinds');
@@ -374,11 +375,12 @@ void main() {
     final input = find.descendant(of: panel, matching: find.byType(TextField));
     Finder row(String name) => find.byKey(ValueKey('qi-$name'));
     double y(String name) => tester.getTopLeft(row(name)).dy;
-    List<String?> marks(String name) {
+    List<String?> marks(String name, {String? column}) {
+      final text = column ?? name;
       final label = tester.widget<Text>(find.descendant(
         of: row(name),
         matching: find.byWidgetPredicate(
-            (w) => w is Text && (w.data ?? w.textSpan?.toPlainText()) == name),
+            (w) => w is Text && (w.data ?? w.textSpan?.toPlainText()) == text),
       ));
       final spans = (label.textSpan as TextSpan?)?.children ?? const [];
       return [
@@ -424,6 +426,26 @@ void main() {
     await query('@ NB');
     expect(row('separator-符号 (2)'), findsOneWidget);
     expect(y('n_branch'), lessThan(y('nested_b')));
+
+    await query('@nest outer_b');
+    expect(row('separator-符号 (1)'), findsOneWidget);
+    expect(row('nested_a'), findsNothing);
+    expect(marks('nested_b'), ['nest']);
+    expect(marks('nested_b', column: 'outer_b'), ['outer_b']);
+
+    await query('@:nest out b');
+    expect(row('separator-function (1)'), findsOneWidget);
+    expect(row('nested_a'), findsNothing);
+    expect(marks('nested_b', column: 'outer_b'), ['out', 'b']);
+
+    await query('@n b');
+    expect(row('separator-符号 (2)'), findsOneWidget);
+    expect(y('n_branch'), lessThan(y('nested_b')));
+    expect(marks('nested_b', column: 'outer_b'), isEmpty);
+
+    await query('@nest outer_missing');
+    expect(find.text('没有匹配的文档符号。'), findsOneWidget);
+    expect(row('nested_b'), findsNothing);
 
     await query('@:nest');
     expect(row('separator-function (2)'), findsOneWidget);
