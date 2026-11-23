@@ -67,14 +67,14 @@
       "affected_count": 0,
       "changed_files": 4,
       "risk_level": "low",
-      "sha256": "3531b537b46cff55c9c60c17f4019d97ecbbab96eb9ebf6b8b072d253ae1105b"
+      "sha256": "4d8249684da9563942b964e9b647ff2dde0020de8c9f01d6613ae2426ea326e3"
     },
     "staged": {
       "changed_count": 5,
       "affected_count": 0,
       "changed_files": 4,
       "risk_level": "low",
-      "sha256": "3531b537b46cff55c9c60c17f4019d97ecbbab96eb9ebf6b8b072d253ae1105b"
+      "sha256": "4d8249684da9563942b964e9b647ff2dde0020de8c9f01d6613ae2426ea326e3"
     }
   },
   "linuxShiftedMinusReproduction": {
@@ -3780,5 +3780,60 @@
         ]
       }
     }
+  },
+  "gitNexusRecheck": {
+    "product": "615bc6cf5cf39958688eaf83182096644a4c0f5e",
+    "tree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+    "parent": "4e01c645e109b00a364a91f7f5e7b8d4139c729a",
+    "changedSymbols": [
+      {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L1:03 · 里程碑计划与验收标准",
+        "name": "03 · 里程碑计划与验收标准",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L3:当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+        "name": "当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L12:N.1 当前状态与依赖",
+        "name": "N.1 当前状态与依赖",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L29:P01 受控切片（当前调度依据）",
+        "name": "P01 受控切片（当前调度依据）",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      }
+    ],
+    "affectedProcesses": [],
+    "shortcutImpact": {
+      "target": "_handleCommandChord",
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 2
+      }
+    },
+    "workbenchDiffSha256": "a2e1ac660d7fe08a246b2bf85e2a5c998516e4949adca92057683bdf421c7933",
+    "partial": false,
+    "truncated": false
   }
 }

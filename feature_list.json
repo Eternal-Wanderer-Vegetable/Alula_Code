@@ -3836,8 +3836,8 @@
         "feat-295",
         "feat-297"
       ],
-      "status": "in-progress",
-      "evidence": "本地定向、Windows/Linux 真实提供程序及托管检查待登记。",
+      "status": "done",
+      "evidence": "通过真实 LSP 查询跨文件引用，ABI 43。Windows/Linux rust-analyzer 均返回两个用法及可选的一处声明，UTF-16 范围一致。专项 63/63，Flutter 1,841 passed / 2 skipped。产品 74fbfad8 的 CI 45235508108 四项及 Platform Availability 45235501209 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.246-references-provider.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

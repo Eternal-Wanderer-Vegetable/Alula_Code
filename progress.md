@@ -5,11 +5,13 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.246 / feat-298 完成。通过真实 LSP 查询跨文件引用，ABI 43。Windows/Linux rust-analyzer 均返回两个用法及可选的一处声明，UTF-16 范围一致。专项 63/63，Flutter 1,841 passed / 2 skipped。产品 74fbfad8 的 CI 45235508108 四项及 Platform Availability 45235501209 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.246-references-provider.md。
+
 - P05.245 / feat-297 完成。历史后退、前进与上次编辑位置恢复后聚焦实际编辑视图。Windows 实机和 Linux 原生各 14 个观测点，校验跨文件往返、删除、撤销、磁盘哈希。Linux 默认前进接受 GTK 的 Shift+Minus 事件。专项 93/93，Flutter 1,841 passed / 2 skipped。产品 615bc6cf 的 CI 45226628208 四项及 Platform Availability 45226615787 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.245-navigation-history-focus.md。
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。推进 References 提供程序及 Peek 交互。
+- 下一步。将版本化 References 查询接到 Shift+F12 和 Peek References 入口，并验证引用候选、焦点和导航。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
