@@ -8,6 +8,8 @@ Last Updated: 2026-11-23
 
 ## Current State
 
+- P05.238 / feat-290 推进中。本地全量门禁通过，Flutter 1,831 passed / 2 skipped。Linux 原生 8 个观测点和 Windows 无桌面控件测试 1/1 通过。产品 f0b3c5b1 的 CI 45156593418 四项及 Platform Availability 45156587598 Windows/Linux 通过。Windows 桌面实测在用户按 Esc 后等待恢复，macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md。
+
 - P05.237 / feat-289 完成。工作区内同级项和展开的子项应用六个默认排除项，遵循本地提供程序大小写规则。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 eb633dab 的 CI 45152054753 四项和 Platform Availability 45152041961 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.237-breadcrumb-default-excludes.md。
 
 - P05.236 / feat-288 完成。目录在原路径选择器中展开、收起，左右键在父子项间导航。Windows 实机及 Linux 原生各 15 个观测点，窄回归 31/31，工作台集成 1/1，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 e0374b7e 的 CI 45148007945 四项和 Platform Availability 45148001540 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.236-breadcrumb-inline-tree.md。
@@ -233,6 +235,8 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.238 阶段证据](docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md)。
+
 [P05.237 路径选择器默认排除项](docs/diagnostics/2026-11-23-p05/p05.237-breadcrumb-default-excludes.md)。
 
 [P05.236 路径选择器内目录展开](docs/diagnostics/2026-11-23-p05/p05.236-breadcrumb-inline-tree.md)。
@@ -355,4 +359,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.237 收尾证据 CI，按 docs/03 与 docs/11 继续选择依赖已满足的面包屑选择器子项。PR #3 保持草稿，macOS 实机暂缓。
+Windows 桌面复验等待用户恢复后继续。核对 P05.238 的产品与收尾证据 CI、Windows 原生报告和 Linux 原生报告，然后登记验收。PR #3 保持草稿，macOS 实机暂缓。

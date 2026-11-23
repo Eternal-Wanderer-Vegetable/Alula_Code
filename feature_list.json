@@ -3733,7 +3733,7 @@
         "feat-284"
       ],
       "status": "in-progress",
-      "evidence": "旧版符号选择器未初选当前段的回归已复现，修复后当前版本 Rust 符号、初选和 Enter 定位的控件用例通过。等待完整门禁及原生和托管验证。",
+      "evidence": "本地全量门禁通过，Flutter 1,831 passed / 2 skipped。Linux 原生 8 个观测点和 Windows 无桌面控件测试 1/1 通过。产品 f0b3c5b1 的 CI 45156593418 四项及 Platform Availability 45156587598 Windows/Linux 通过。Windows 桌面实测在用户按 Esc 后等待恢复，macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
