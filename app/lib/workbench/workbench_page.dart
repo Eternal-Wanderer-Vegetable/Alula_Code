@@ -21798,7 +21798,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final active = _active;
     if (active == null) return;
     final owner = _ownerOfView(active);
-    if (owner != null) _focusEditorAfterLayout(owner, active);
+    if (owner == null) return;
+    if (navigated && owner.previewDocId == active.id) {
+      setState(() => owner.previewDocId = null);
+      _scheduleStateSave();
+    }
+    _focusEditorAfterLayout(owner, active);
   }
 
   NavigationLocation _navigationLocation(

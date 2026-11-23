@@ -3937,6 +3937,18 @@
       "evidence": "定义和引用速览跨文件循环定位用同组干净预览，保留已有固定与未保存标签。Windows 28 步和 Linux 25 步验证替换、实际落点、历史返回、焦点和输入回归。专项 90/90，Flutter 1,851 passed / 2 skipped。产品 031504fa 的 CI 45281689853 四项和 Platform Availability 45281681398 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.254-peek-preview-tabs.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-307",
+      "name": "P05.255 CMD-08 显式接受速览结果时保留目标标签",
+      "description": "显式接受定义或引用结果时，将目标组内的目标预览转为常规标签。验证同文件接受、后续干净预览、焦点与目标 UTF-16 位置。",
+      "dependencies": [
+        "feat-306"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

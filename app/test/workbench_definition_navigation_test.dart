@@ -471,6 +471,21 @@ void main() {
     expectResult(alphaText, 3, 2);
     expect(tab('beta.rs'), findsOneWidget);
     expect(beta.readAsStringSync(), betaText);
+
+    await press(LogicalKeyboardKey.enter);
+    expect(peek, findsNothing);
+    expect(tester.widget<Text>(tab('alpha.rs')).style?.fontStyle,
+        isNot(FontStyle.italic));
+    expect(_activeController(tester).selection.extentOffset, 3);
+    expect(
+        tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+        isTrue);
+
+    await tester.tap(find.text('main.rs').first);
+    await tester.pumpAndSettle();
+    expectPreview('main.rs');
+    expect(tab('alpha.rs'), findsOneWidget);
+    expect(tab('beta.rs'), findsOneWidget);
   });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
