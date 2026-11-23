@@ -3621,8 +3621,8 @@
         "feat-147",
         "feat-281"
       ],
-      "status": "in-progress",
-      "evidence": "前置构建控件回归确认右组段左边 1519.76 时，选择器行右边仍为 176。",
+      "status": "done",
+      "evidence": "选择器跟随所属编辑组已选段，覆盖当前行和横向滚动后的锚点。Windows 实机与 Linux 原生各 6 个观测点，窄回归 28/28，专项 312/312，Flutter 1,825 passed / 2 skipped。产品 69102ad 的 CI 45125210014 四项和 Platform Availability 45125205157 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.230-breadcrumb-picker-anchor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

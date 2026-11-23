@@ -3,7 +3,9 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-22 更新）
+## Current State（当前状态，2026-11-23 更新）
+
+- P05.230 / feat-282 完成。选择器跟随所属编辑组已选段，覆盖当前行和横向滚动后的锚点。Windows 实机与 Linux 原生各 6 个观测点，窄回归 28/28，专项 312/312，Flutter 1,825 passed / 2 skipped。产品 69102ad 的 CI 45125210014 四项和 Platform Availability 45125205157 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.230-breadcrumb-picker-anchor.md。
 
 - P05.229 / feat-281 完成。外观菜单和命令面板使用同一显示开关，编辑组同步并保存状态。Windows 实机 18 个、Linux 原生 18 个观测点。窄回归 63/63，专项 311/311，Flutter 1,824 passed / 2 skipped。产品 216b7d0 的 CI 45118849730 四项及 Platform Availability 45118846071 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.229-breadcrumb-visibility.md。
 
