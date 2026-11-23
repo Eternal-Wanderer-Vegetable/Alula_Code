@@ -270,6 +270,23 @@ enum LocationPeekKind {
   final String label;
 }
 
+enum LocationPeekFocusTarget { results, preview, source }
+
+/// The owning workbench can return focus to either pane after changing files.
+class LocationPeekFocus {
+  final results = FocusNode(debugLabel: 'definition-peek-list');
+  final preview = FocusNode(debugLabel: 'definition-peek-preview');
+
+  void toggle() {
+    (preview.hasFocus ? results : preview).requestFocus();
+  }
+
+  void dispose() {
+    preview.dispose();
+    results.dispose();
+  }
+}
+
 class DefinitionPeek extends StatefulWidget {
   const DefinitionPeek({
     super.key,
@@ -283,7 +300,8 @@ class DefinitionPeek extends StatefulWidget {
     this.referenceGroups,
     this.expandedReferenceFiles,
     this.navigatedReference,
-    this.focusResults = true,
+    this.focusController,
+    this.focusTarget = LocationPeekFocusTarget.results,
   });
 
   final List<DefinitionPeekEntry> entries;
@@ -297,7 +315,8 @@ class DefinitionPeek extends StatefulWidget {
   final Map<String, List<int>>? referenceGroups;
   final Set<String>? expandedReferenceFiles;
   final int? navigatedReference;
-  final bool focusResults;
+  final LocationPeekFocus? focusController;
+  final LocationPeekFocusTarget focusTarget;
 
   @override
   State<DefinitionPeek> createState() => _DefinitionPeekState();
@@ -305,7 +324,10 @@ class DefinitionPeek extends StatefulWidget {
 
 class _DefinitionPeekState extends State<DefinitionPeek> {
   static const _rowHeight = 32.0;
-  final _listFocus = FocusNode(debugLabel: 'definition-peek-list');
+  LocationPeekFocus? _localFocus;
+  LocationPeekFocus get _focus =>
+      widget.focusController ?? (_localFocus ??= LocationPeekFocus());
+  FocusNode get _listFocus => _focus.results;
   final _resultsScroll = ScrollController();
   var _selected = 0;
   String? _focusedFile;
@@ -351,7 +373,14 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     _preview = _requestPreview(widget.entries[index]);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      if (widget.focusResults) _listFocus.requestFocus();
+      switch (widget.focusTarget) {
+        case LocationPeekFocusTarget.results:
+          _listFocus.requestFocus();
+        case LocationPeekFocusTarget.preview:
+          _focus.preview.requestFocus();
+        case LocationPeekFocusTarget.source:
+          break;
+      }
       _revealRow(_focusedRowIndex);
     });
   }
@@ -361,7 +390,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     _pendingPreview?.result.complete(const []);
     _pendingPreview = null;
     _resultsScroll.dispose();
-    _listFocus.dispose();
+    _localFocus?.dispose();
     widget.onRemoved();
     super.dispose();
   }
@@ -683,7 +712,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
 
   Widget _buildPreview(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return FutureBuilder<List<DefinitionPeekLine>>(
+    final content = FutureBuilder<List<DefinitionPeekLine>>(
       key: const ValueKey('definition-peek-preview'),
       future: _preview,
       builder: (context, snapshot) {
@@ -697,32 +726,46 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
         return SingleChildScrollView(
           key: ValueKey(_selected),
           padding: const EdgeInsets.all(8),
-          child: SelectionArea(
-            child: Text.rich(
-              TextSpan(
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-                children: [
-                  for (final line in lines) ...[
-                    TextSpan(
-                      text: '${line.number.toString().padLeft(4)}  ',
-                      style: TextStyle(color: colors.onSurfaceVariant),
-                    ),
-                    TextSpan(text: line.text.substring(0, line.highlightStart)),
-                    TextSpan(
-                      text: line.text
-                          .substring(line.highlightStart, line.highlightEnd),
-                      style:
-                          TextStyle(backgroundColor: colors.tertiaryContainer),
-                    ),
-                    TextSpan(
-                        text: '${line.text.substring(line.highlightEnd)}\n'),
-                  ],
+          child: Text.rich(
+            TextSpan(
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+              children: [
+                for (final line in lines) ...[
+                  TextSpan(
+                    text: '${line.number.toString().padLeft(4)}  ',
+                    style: TextStyle(color: colors.onSurfaceVariant),
+                  ),
+                  TextSpan(text: line.text.substring(0, line.highlightStart)),
+                  TextSpan(
+                    text: line.text
+                        .substring(line.highlightStart, line.highlightEnd),
+                    style: TextStyle(backgroundColor: colors.tertiaryContainer),
+                  ),
+                  TextSpan(text: '${line.text.substring(line.highlightEnd)}\n'),
                 ],
-              ),
+              ],
             ),
           ),
         );
       },
+    );
+    return ListenableBuilder(
+      listenable: _focus.preview,
+      builder: (context, child) => DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color:
+                _focus.preview.hasFocus ? colors.primary : Colors.transparent,
+          ),
+        ),
+        child: child,
+      ),
+      child: SelectionArea(
+        key: const ValueKey('definition-peek-preview-focus'),
+        focusNode: _focus.preview,
+        child: content,
+      ),
     );
   }
 }

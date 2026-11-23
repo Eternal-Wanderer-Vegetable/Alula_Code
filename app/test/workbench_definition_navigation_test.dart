@@ -71,6 +71,23 @@ Future<void> _closeNamedTab(WidgetTester tester, String name) async {
   await tester.pump(const Duration(milliseconds: 100));
 }
 
+FocusNode _peekPreviewFocus(WidgetTester tester) => tester
+    .widget<SelectionArea>(
+      find.byKey(const ValueKey('definition-peek-preview-focus')),
+    )
+    .focusNode!;
+
+Future<void> _pressPeekFocusChord(WidgetTester tester) async {
+  final modifier = defaultTargetPlatform == TargetPlatform.macOS
+      ? LogicalKeyboardKey.metaLeft
+      : LogicalKeyboardKey.controlLeft;
+  await tester.sendKeyDownEvent(modifier);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+  await tester.sendKeyUpEvent(modifier);
+  await tester.sendKeyEvent(LogicalKeyboardKey.f2);
+  await tester.pumpAndSettle();
+}
+
 Future<void> _runPaletteCommand(WidgetTester tester, String query) async {
   await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
   await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
@@ -347,6 +364,17 @@ void main() {
           matching: find.byKey(const ValueKey('definition-peek-preview')),
         ),
         findsOneWidget);
+    expect(
+        FocusManager.instance.primaryFocus?.debugLabel, 'definition-peek-list');
+    await _pressPeekFocusChord(tester);
+    expect(_peekPreviewFocus(tester).hasPrimaryFocus, isTrue);
+    expect(
+      find.descendant(of: peek, matching: find.byType(TextField)),
+      findsNothing,
+    );
+    await _pressPeekFocusChord(tester);
+    expect(
+        FocusManager.instance.primaryFocus?.debugLabel, 'definition-peek-list');
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(peek, findsNothing);
@@ -786,22 +814,34 @@ void main() {
     }
 
     void expectReference(String text, int position, int index,
-        {bool editorOwnsFocus = false}) {
+        {bool editorOwnsFocus = false, bool previewOwnsFocus = false}) {
       expect(peek, findsOneWidget);
       expect(_activeController(tester).text, text);
       expect(_activeController(tester).selection.extentOffset, position);
       expect(tester.widget<Semantics>(row(index)).properties.selected, isTrue);
       expect(editorFocus().hasPrimaryFocus, editorOwnsFocus);
-      expect(listFocus().hasPrimaryFocus, !editorOwnsFocus);
+      expect(_peekPreviewFocus(tester).hasPrimaryFocus, previewOwnsFocus);
+      expect(
+          listFocus().hasPrimaryFocus, !editorOwnsFocus && !previewOwnsFocus);
     }
 
     await press(LogicalKeyboardKey.f4);
     expect(peek, findsNothing);
     expect(requests, 0);
     await press(LogicalKeyboardKey.f12, shift: true);
+    expect(listFocus().hasPrimaryFocus, isTrue);
+    await _pressPeekFocusChord(tester);
+    expect(_peekPreviewFocus(tester).hasPrimaryFocus, isTrue);
+    expect(listFocus().hasPrimaryFocus, isFalse);
+    expect(editorFocus().hasPrimaryFocus, isFalse);
+    await press(LogicalKeyboardKey.keyX);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset, declaration + 1);
     await press(LogicalKeyboardKey.f4);
-    expectReference(source, usage, 1);
+    expectReference(source, usage, 1, previewOwnsFocus: true);
     await press(LogicalKeyboardKey.f12);
+    expectReference(remote, remoteUsage, 0, previewOwnsFocus: true);
+    await _pressPeekFocusChord(tester);
     expectReference(remote, remoteUsage, 0);
     for (final path in [local.path, target.path]) {
       final group = find.byKey(ValueKey('references-file:$path'));
@@ -821,6 +861,9 @@ void main() {
 
     await tester.tap(row(0));
     await tester.pumpAndSettle();
+    expectReference(remote, remoteUsage, 0);
+    await _pressPeekFocusChord(tester);
+    expectReference(remote, remoteUsage, 0, previewOwnsFocus: true);
     await press(LogicalKeyboardKey.escape);
     expect(peek, findsNothing);
     expect(editorFocus().hasPrimaryFocus, isTrue);

@@ -813,6 +813,34 @@ void main() {
       expect(remapped.commandForChord(parseChord('f4')!), isNull);
     });
 
+    test('Peek focus uses a scoped platform chord', () {
+      for (final (platform, modifier) in [
+        (TargetPlatform.windows, 'ctrl'),
+        (TargetPlatform.linux, 'ctrl'),
+        (TargetPlatform.macOS, 'cmd'),
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final sequence = parseChordSequence('$modifier+k f2')!;
+        final binding = keys.bindingForSequence(sequence.chords)!;
+        expect(binding.commandId, 'togglePeekWidgetFocus');
+        final context = ContextKeyService();
+        addTearDown(context.dispose);
+
+        bool hasFocusChord() => keys.hasSequencePrefix(
+              sequence.chords.first,
+              matchesWhen: context.matches,
+              isCommandEnabled: (id) => id == binding.commandId,
+            );
+
+        context.setValue('editorTextFocus', true);
+        expect(hasFocusChord(), isFalse);
+        context.setValue('peekWidgetVisible', true);
+        expect(hasFocusChord(), isTrue);
+        context.setValue('editorTextFocus', false);
+        expect(hasFocusChord(), isFalse);
+      }
+    });
+
     test('New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N', () {
       for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
         final keys = KeybindingSet.load(platform: platform);

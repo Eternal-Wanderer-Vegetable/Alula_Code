@@ -289,6 +289,7 @@ class KeybindingSet {
     'editor.action.commentLine': 'ctrl+/',
     'editor.action.blockComment': 'alt+shift+a',
     'editor.action.trimTrailingWhitespace': 'ctrl+k ctrl+x',
+    'togglePeekWidgetFocus': 'ctrl+k f2',
     'goToNextReference': 'f4',
     'goToPreviousReference': 'shift+f4',
     'editor.gotoDef': 'f12',
@@ -338,6 +339,7 @@ class KeybindingSet {
   static const Map<String, String> defaultWhen = {
     'editor.action.peekDefinition': 'editorTextFocus',
     'editor.action.goToReferences': 'editorTextFocus',
+    'togglePeekWidgetFocus': 'peekWidgetVisible && editorTextFocus',
     'goToNextReference': 'referenceSearchVisible && editorTextFocus',
     'goToPreviousReference': 'referenceSearchVisible && editorTextFocus',
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
@@ -442,6 +444,7 @@ class KeybindingSet {
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
+        result['togglePeekWidgetFocus'] = 'cmd+k f2';
         result['workbench.action.toggleSplitEditorInGroup'] = r'cmd+k cmd+shift+\';
         result['workbench.action.moveActiveEditorGroupLeft'] =
             'cmd+k arrowleft';

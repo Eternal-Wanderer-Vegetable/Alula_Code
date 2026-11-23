@@ -747,6 +747,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
+  final _definitionPeekFocus = LocationPeekFocus();
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
@@ -1863,6 +1864,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '速览引用',
       () => _gotoReferences(peek: true),
       enablement: 'editorActive',
+    );
+    reg(
+      'togglePeekWidgetFocus',
+      '导航',
+      '切换速览焦点',
+      () async {
+        final session = _definitionPeek;
+        if (session != null && _isCurrentDefinitionPeek(session)) {
+          _definitionPeekFocus.toggle();
+        }
+      },
+      shortcut: _keybindings.shortcutFor('togglePeekWidgetFocus'),
+      when: 'peekWidgetVisible',
     );
     reg(
       'goToNextReference',
@@ -19363,8 +19377,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _awaitingMoveSelectionChord = false;
   KeyChord? _pendingChordPrefix;
 
-  KeyEventResult _handleCommandChord(KeyEvent event,
-      {bool notificationOnly = false}) {
+  KeyEventResult _handleCommandChord(
+    KeyEvent event, {
+    Set<String>? permittedCommands,
+  }) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final keyboard = HardwareKeyboard.instance;
     final key = event.logicalKey;
@@ -19373,8 +19389,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final alt = keyboard.isAltPressed;
     final meta = keyboard.isMetaPressed;
     bool isEnabled(String id) =>
-        (!notificationOnly || id == 'notifications.showList') &&
-        _commands.isEnabled(id);
+        (permittedCommands?.contains(id) ?? true) && _commands.isEnabled(id);
 
     // GTK can report the shifted backslash key as the resulting pipe.
     final chordKey = shift &&
@@ -21559,10 +21574,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _setDefinitionPeek(_DefinitionPeekSession? session) {
     setState(() => _definitionPeek = session);
-    _commands.context.setValue(
-      'referenceSearchVisible',
-      session?.kind == LocationPeekKind.references,
-    );
+    _commands.context.setValues({
+      'referenceSearchVisible': session?.kind == LocationPeekKind.references,
+      'peekWidgetVisible': session != null,
+    });
   }
 
   int _nearestPeekReference(_DefinitionPeekSession session, List<int> order) {
@@ -21602,7 +21617,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final source = session.source;
     final owner = _ownerOfView(source);
     if (owner == null) return;
-    final editorWasFocused = _focusNodeFor(owner, source).hasFocus;
+    final focusTarget = _definitionPeekFocus.preview.hasFocus
+        ? LocationPeekFocusTarget.preview
+        : _focusNodeFor(owner, source).hasFocus
+            ? LocationPeekFocusTarget.source
+            : LocationPeekFocusTarget.results;
     final order = [
       for (final group in session.referenceGroups.values) ...group,
     ];
@@ -21638,10 +21657,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         referenceGroups: session.referenceGroups,
         expandedReferenceFiles: session.expandedReferenceFiles,
         navigatedReference: next,
-        focusResults: !editorWasFocused,
+        focusTarget: focusTarget,
       ));
       final targetOwner = _ownerOfView(target);
-      if (editorWasFocused && targetOwner != null) {
+      if (focusTarget == LocationPeekFocusTarget.source &&
+          targetOwner != null) {
         _focusEditorAfterLayout(targetOwner, target);
       }
     } finally {
@@ -21673,7 +21693,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         referenceGroups: peek.referenceGroups,
         expandedReferenceFiles: peek.expandedReferenceFiles,
         navigatedReference: peek.navigatedReference,
-        focusResults: peek.focusResults,
+        focusController: _definitionPeekFocus,
+        focusTarget: peek.focusTarget,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
         onClose: () => _closeDefinitionPeek(peek),
@@ -22779,6 +22800,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       d.disposeView();
     }
     _auxiliaryTransferSourceLocks.clear();
+    _definitionPeekFocus.dispose();
     for (final n in _editorFocusNodes.values) {
       n.dispose();
     }
@@ -22929,8 +22951,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
         child: Focus(
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
-          onKeyEvent: (_, event) =>
-              _handleCommandChord(event, notificationOnly: true),
+          onKeyEvent: (_, event) => _handleCommandChord(
+            event,
+            permittedCommands: const {
+              'notifications.showList',
+              'togglePeekWidgetFocus',
+            },
+          ),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -30219,7 +30246,7 @@ class _DefinitionPeekSession {
     Map<String, List<int>>? referenceGroups,
     Set<String>? expandedReferenceFiles,
     this.navigatedReference,
-    this.focusResults = true,
+    this.focusTarget = LocationPeekFocusTarget.results,
   })  : referenceGroups = referenceGroups ??
             (kind == LocationPeekKind.references
                 ? groupPeekReferences(entries)
@@ -30235,5 +30262,5 @@ class _DefinitionPeekSession {
   final Map<String, List<int>> referenceGroups;
   final Set<String> expandedReferenceFiles;
   final int? navigatedReference;
-  final bool focusResults;
+  final LocationPeekFocusTarget focusTarget;
 }
