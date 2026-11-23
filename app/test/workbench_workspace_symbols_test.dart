@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -10,7 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/native_drag_drop.dart';
+
 void main() {
+  setUp(mockNativeDragDrop);
+
   testWidgets(
       'workspace symbol picker reports unavailable provider without fake results',
       (tester) async {
@@ -235,8 +240,7 @@ void main() {
         .widget<TextField>(
             find.byKey(const ValueKey('rust-bounded-text-input')))
         .controller!;
-    expect(controller.selection,
-        const TextSelection(baseOffset: 7, extentOffset: 13));
+    expect(controller.selection, const TextSelection.collapsed(offset: 7));
     expect(queries, ['missing', 'target']);
     final oldSelection = controller.selection;
     final stale = commands!.execute('workbench.action.showAllSymbols');
@@ -258,4 +262,135 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(target.readAsStringSync(), 'head\r\n😀target\r\n');
   });
+
+  testWidgets(
+      'workspace symbol side shortcuts reuse the right group and preserve the source',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-workspace-symbol-side');
+    const sourceText = 'fn source() {}\n';
+    const targetText = 'head\r\n😀target\r\n';
+    final source = File('${temp.path}/source.rs')
+      ..writeAsStringSync(sourceText);
+    final target = File('${temp.path}/target.rs')
+      ..writeAsStringSync(targetText);
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 96,
+            'preview': 96,
+            'docs': [
+              {'id': 96, 'path': source.path}
+            ],
+          }
+        ],
+      });
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+      layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+      sessionStore: session,
+      keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+      onCommandServiceReady: (value) => commands = value,
+      workspaceSymbolRequest: (id, query, signal) async => [
+        {
+          'name': 'target',
+          'kind': 12,
+          'uri': Uri.file(target.path).toString(),
+          'line': 1,
+          'character': 2,
+          'endLine': 1,
+          'endCharacter': 8,
+        },
+      ],
+    )));
+    await tester.pump(const Duration(milliseconds: 600));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    Finder field(String region) => find.descendant(
+          of: find.byKey(ValueKey('editor-body-drop-$region')),
+          matching: find.byType(RustTextInputField),
+        );
+    RustTextInputField editor(String region) =>
+        tester.widget<RustTextInputField>(field(region));
+    final sourceTab = find.byKey(const ValueKey('editor-tab-label-editor-96'));
+
+    Future<void> aside(LogicalKeyboardKey? modifier) async {
+      await tester.tap(sourceTab);
+      await tester.pumpAndSettle();
+      final sourceEditor = editor('editor');
+      expect(sourceEditor.focusNode!.hasPrimaryFocus, isTrue);
+      final sourceSelection = sourceEditor.inputWindow.initialValue.selection;
+      final opening = commands.execute('workbench.action.showAllSymbols');
+      await tester.pumpAndSettle();
+      await tester.enterText(input, '#target');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('qi-target')), findsOneWidget);
+      if (modifier == null) {
+        await tester.tap(find.byKey(const ValueKey('qi-button-target-0')));
+      } else {
+        await tester.sendKeyDownEvent(modifier);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.sendKeyUpEvent(modifier);
+      }
+      for (var frame = 0; frame < 50; frame++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+        if (field('editor-2').evaluate().isNotEmpty &&
+            editor('editor-2').focusNode!.hasPrimaryFocus) {
+          break;
+        }
+      }
+      await tester.pumpAndSettle();
+      expect(await opening, CommandExecutionStatus.executed);
+      expect(panel, findsNothing);
+      expect(find.byType(RustTextInputField), findsNWidgets(2));
+      expect(editor('editor').inputWindow.document.id, 96);
+      expect(
+          editor('editor').inputWindow.initialValue.selection, sourceSelection);
+      expect(tester.widget<Text>(sourceTab).style?.fontStyle, FontStyle.italic);
+      final right = editor('editor-2');
+      expect(right.focusNode!.hasPrimaryFocus, isTrue);
+      expect(right.inputWindow.initialValue.selection,
+          const TextSelection.collapsed(offset: 7));
+      final targetTab = find.byKey(ValueKey(
+          'editor-tab-label-editor-2-${right.inputWindow.document.id}'));
+      expect(tester.widget<Text>(targetTab).style?.fontStyle,
+          isNot(FontStyle.italic));
+      expect(find.byKey(const ValueKey('editor-tab-label-editor-2-96')),
+          findsNothing);
+    }
+
+    await aside(LogicalKeyboardKey.altLeft);
+    final right = editor('editor-2').focusNode;
+    final platform = Theme.of(tester.element(field('editor'))).platform;
+    await aside(platform == TargetPlatform.macOS
+        ? LogicalKeyboardKey.metaLeft
+        : LogicalKeyboardKey.controlLeft);
+    expect(editor('editor-2').focusNode, same(right));
+    await aside(null);
+    expect(editor('editor-2').focusNode, same(right));
+    expect(source.readAsStringSync(), sourceText);
+    expect(target.readAsStringSync(), targetText);
+  },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      }));
 }

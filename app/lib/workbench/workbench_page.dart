@@ -4030,6 +4030,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return target == currentLocation;
   }
 
+  EditorGroup? _quickAccessSideGroup(EditorGroup source, OpenDoc? existing) {
+    if (!identical(source, _groups[source.region])) return null;
+    final adjacent = _adjacentEditorRegion(
+      source.region,
+      _EditorGroupMoveDirection.right,
+    );
+    final candidate = _groups[adjacent];
+    if (candidate != null &&
+        (!candidate.locked ||
+            (existing != null && candidate.docs.any(existing.sameDocumentAs)))) {
+      return candidate;
+    }
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final region = 'editor-$index';
+    if (!_layout.splitRegion(source.region, region, Axis.horizontal)) {
+      setState(() => _statusDetail = '无法创建右侧编辑器组');
+      return null;
+    }
+    return _groups[region] = EditorGroup(region);
+  }
+
   Future<void> _showWorkspaceSymbols({
     String initialValue = '#',
     FocusNode? restoreFocus,
@@ -4102,8 +4126,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (!mounted || _workspaceRoot != root) return;
           final path = _pathFromFileUri(symbol['uri'] as String);
           if (path == null) return;
-          if (side && _active != null) _splitFocusedGroup();
-          await _openFileByPath(path);
+          final sourceGroup = _focused;
+          EditorGroup? sideGroup(OpenDoc? existing) =>
+              mounted && _workspaceRoot == root
+                  ? _quickAccessSideGroup(sourceGroup, existing)
+                  : null;
+          await _openFileByPath(
+            path,
+            targetForOpen: side ? sideGroup : null,
+          );
           final target = _active;
           if (!mounted ||
               target?.path == null ||
@@ -4114,14 +4145,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             final targetVersion = target.doc.version;
             final start = target.doc.positionOffset(
                 symbol['line'] as int, symbol['character'] as int);
-            final end = target.doc.positionOffset(
+            // Validate the provider's full range before placing the caret.
+            target.doc.positionOffset(
                 symbol['endLine'] as int, symbol['endCharacter'] as int);
             if (target.doc.version != targetVersion) return;
             _setDocSelection(
                 target,
-                TextSelection(
-                    baseOffset: start.offsetUtf16,
-                    extentOffset: end.offsetUtf16));
+                TextSelection.collapsed(offset: start.offsetUtf16));
             _focusEditorAfterLayout(_focused, target);
           } on AlulaException catch (error) {
             if (error.code == 'InvalidLine' ||
@@ -4145,6 +4175,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 QuickItemButton(
                     icon: Icons.vertical_split,
                     tooltip: '在侧边打开工作区符号',
+                    altEnter: true,
+                    ctrlCmdEnter: true,
                     onRun: () => open(symbol, side: true))
               ],
             )
@@ -4758,35 +4790,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (!currentWorkspace() || (inBackground && closed)) return;
       final source = _focused;
       EditorGroup? destination;
-      EditorGroup? findSideGroup(OpenDoc? existing) {
-        if (!currentWorkspace() || !identical(source, _groups[source.region])) {
-          return null;
-        }
-        final adjacent = _adjacentEditorRegion(
-          source.region,
-          _EditorGroupMoveDirection.right,
-        );
-        final candidate = _groups[adjacent];
-        if (candidate != null &&
-            (!candidate.locked ||
-                (existing != null &&
-                    candidate.docs.any(existing.sameDocumentAs)))) {
-          return destination = candidate;
-        }
-        var index = 2;
-        while (_groups.containsKey('editor-$index')) {
-          index++;
-        }
-        final region = 'editor-$index';
-        if (!_layout.splitRegion(source.region, region, Axis.horizontal)) {
-          setState(() => _statusDetail = '无法创建右侧编辑器组');
-          return null;
-        }
-        return destination = _groups[region] = EditorGroup(region);
-      }
-
       EditorGroup? findDestination(OpenDoc? existing) {
-        if (side) return findSideGroup(existing);
+        if (side) {
+          if (!currentWorkspace()) return null;
+          return destination = _quickAccessSideGroup(source, existing);
+        }
         return destination = _editorGroupForImplicitOpen(existing: existing);
       }
 
