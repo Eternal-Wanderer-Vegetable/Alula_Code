@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
+- P05.234 / feat-286 完成。目录段在父目录列出同级项并初选自身。Windows 实机及 Linux 原生各 7 个观测点，窄回归 30/30，专项 314/314，Flutter 1,827 passed / 2 skipped。产品 0952cc0a 的 CI 45139866380 四项和 Platform Availability 45139859695 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.234-breadcrumb-folder-siblings.md。
+
 - P05.233 / feat-285 完成。文件段显示同级项并初选当前文件，独立符号入口保持。Windows 实机及 Linux 原生各 7 个观测点，窄回归 30/30，专项 314/314，Flutter 1,827 passed / 2 skipped。产品 175486f 的 CI 45135275790 四项和 Platform Availability 45135269711 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.233-breadcrumb-file-siblings.md。
 
 - P05.232 / feat-284 完成。WithPicker 相邻段切换更新列表与锚点，保留边界、确认和返回焦点。Windows 实机及 Linux 原生各 10 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 d93114e 的 CI 45131907170 四项和 Platform Availability 45131899921 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.232-breadcrumb-picker-switch.md。

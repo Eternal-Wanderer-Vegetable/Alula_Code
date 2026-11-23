@@ -3676,8 +3676,8 @@
         "feat-284",
         "feat-285"
       ],
-      "status": "in-progress",
-      "evidence": "固定版目录段以父目录为输入。旧版控件测试点击 src 仅列其子项，菜单中缺少 src/。",
+      "status": "done",
+      "evidence": "目录段在父目录列出同级项并初选自身。Windows 实机及 Linux 原生各 7 个观测点，窄回归 30/30，专项 314/314，Flutter 1,827 passed / 2 skipped。产品 0952cc0a 的 CI 45139866380 四项和 Platform Availability 45139859695 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.234-breadcrumb-folder-siblings.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
