@@ -57,6 +57,7 @@ fn main() {
         .next()
         .and_then(|value| value.to_string_lossy().parse::<u64>().ok())
         .unwrap_or(250);
+    let provide_references = args.next().as_deref() != Some(std::ffi::OsStr::new("no-references"));
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     let pending_completions = Arc::new((Mutex::new(HashSet::<i64>::new()), Condvar::new()));
@@ -74,7 +75,12 @@ fn main() {
                 send(json!({
                     "jsonrpc": "2.0",
                     "id": message["id"],
-                    "result": {"capabilities": {"textDocumentSync": 1, "workspaceSymbolProvider": true, "definitionProvider": true}},
+                    "result": {"capabilities": {
+                        "textDocumentSync": 1,
+                        "workspaceSymbolProvider": true,
+                        "definitionProvider": true,
+                        "referencesProvider": provide_references
+                    }},
                 }));
             }
             "textDocument/didOpen" | "textDocument/didChange" | "textDocument/didClose" => {
@@ -166,6 +172,51 @@ fn main() {
                         }
                     }]
                 }));
+            }
+            "textDocument/references" => {
+                let params = &message["params"];
+                trace(&trace_path, &format!("{method} {params}"));
+                let position = &params["position"];
+                let error = match position["character"].as_u64() {
+                    Some(4) => Some((-32603, "fixture references provider failure")),
+                    Some(5) => Some((-32801, "fixture invalidated analysis")),
+                    Some(6) => Some((-32800, "fixture request cancelled")),
+                    Some(7) => Some((-32802, "fixture server cancelled")),
+                    _ => None,
+                };
+                if let Some((code, detail)) = error {
+                    send(json!({
+                        "jsonrpc": "2.0",
+                        "id": message["id"],
+                        "error": {"code": code, "message": detail}
+                    }));
+                    continue;
+                }
+                let usage = |uri, line, character| {
+                    json!({"uri": uri, "range": {
+                        "start": {"line": line, "character": character},
+                        "end": {"line": line, "character": character + 6}
+                    }})
+                };
+                let result = match position["character"].as_u64() {
+                    Some(0) => Value::Null,
+                    Some(3) => json!(vec![usage("file:///workspace/target.rs", 1, 2); 2001]),
+                    _ => {
+                        let mut locations = vec![
+                            usage("file:///workspace/target.rs", 1, 2),
+                            usage("file:///workspace/other.rs", 3, 5),
+                        ];
+                        if params["context"]["includeDeclaration"] == true {
+                            locations.push(usage("file:///workspace/definition.rs", 0, 3));
+                        }
+                        json!(locations)
+                    }
+                };
+                let id = message["id"].clone();
+                thread::spawn(move || {
+                    thread::sleep(Duration::from_millis(delay_ms));
+                    send(json!({"jsonrpc": "2.0", "id": id, "result": result}));
+                });
             }
             "shutdown" => {
                 trace(&trace_path, method);

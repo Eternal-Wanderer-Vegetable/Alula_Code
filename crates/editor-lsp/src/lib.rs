@@ -162,16 +162,18 @@ pub fn extract_workspace_symbols(
 }
 
 fn definition_target(entry: &serde_json::Value) -> Option<DefinitionTarget> {
-    let uri = entry
-        .get("targetUri")
-        .or_else(|| entry.get("uri"))?
-        .as_str()?;
-    if uri.is_empty() || uri.len() > 8192 {
-        return None;
-    }
+    let uri = entry.get("targetUri").or_else(|| entry.get("uri"))?;
     let range = entry
         .get("targetSelectionRange")
         .or_else(|| entry.get("range"))?;
+    location_target(uri, range)
+}
+
+fn location_target(uri: &serde_json::Value, range: &serde_json::Value) -> Option<DefinitionTarget> {
+    let uri = uri.as_str()?;
+    if uri.is_empty() || uri.len() > 8192 {
+        return None;
+    }
     let position = |p: &serde_json::Value| {
         let line = p.get("line")?.as_u64()?;
         let character = p.get("character")?.as_u64()?;
@@ -225,9 +227,56 @@ pub fn extract_definition_targets(
     Ok(entries.iter().filter_map(definition_target).collect())
 }
 
+/// Decode the Location array returned by textDocument/references. Definition
+/// links are handled by the definition decoder, since references use Location.
+pub fn extract_reference_targets(
+    value: &serde_json::Value,
+) -> Result<Vec<DefinitionTarget>, String> {
+    if value.is_null() {
+        return Ok(Vec::new());
+    }
+    let entries = value
+        .as_array()
+        .ok_or("expected a reference location array")?;
+    if entries.len() > 2000 {
+        return Err("reference result exceeds 2000 entries".into());
+    }
+    Ok(entries
+        .iter()
+        .filter_map(|entry| location_target(entry.get("uri")?, entry.get("range")?))
+        .collect())
+}
+
+const LSP_REQUEST_CANCELLED: i64 = -32800;
+const LSP_CONTENT_MODIFIED: i64 = -32801;
+const LSP_SERVER_CANCELLED: i64 = -32802;
+
+/// Result from a request that opts in to receiving LSP error outcomes.
+pub enum LspRequestOutcome {
+    Result(serde_json::Value),
+    ContentModified,
+    Cancelled,
+}
+
+impl LspRequestOutcome {
+    fn into_value(self) -> serde_json::Value {
+        match self {
+            Self::Result(value) => value,
+            Self::ContentModified | Self::Cancelled => serde_json::Value::Null,
+        }
+    }
+}
+
+type LspResponse = Result<LspRequestOutcome, String>;
+
+struct PendingResponse {
+    sender: mpsc::SyncSender<LspResponse>,
+    report_server_errors: bool,
+}
+
 struct Shared {
     diagnostics: Mutex<HashMap<String, Vec<Diagnostic>>>,
-    pending: Mutex<HashMap<i64, mpsc::SyncSender<serde_json::Value>>>,
+    pending: Mutex<HashMap<i64, PendingResponse>>,
     server_capabilities: Mutex<Option<serde_json::Value>>,
     /// 写端（send_message 与读线程回复服务端请求共用）
     writer: Mutex<Option<ChildStdin>>,
@@ -276,7 +325,7 @@ pub struct LspServer {
 pub struct LspPendingRequest {
     id: i64,
     method: String,
-    receiver: mpsc::Receiver<serde_json::Value>,
+    receiver: mpsc::Receiver<LspResponse>,
     shared: Arc<Shared>,
     completed: bool,
 }
@@ -288,10 +337,15 @@ impl LspPendingRequest {
 
     /// 立即检查响应；None 表示仍在等待。
     pub fn try_recv(&mut self) -> Result<Option<serde_json::Value>, String> {
+        self.try_recv_outcome()
+            .map(|outcome| outcome.map(LspRequestOutcome::into_value))
+    }
+
+    pub fn try_recv_outcome(&mut self) -> Result<Option<LspRequestOutcome>, String> {
         match self.receiver.try_recv() {
-            Ok(value) => {
+            Ok(response) => {
                 self.completed = true;
-                Ok(Some(value))
+                response.map(Some)
             }
             Err(mpsc::TryRecvError::Empty) => Ok(None),
             Err(mpsc::TryRecvError::Disconnected) => {
@@ -310,9 +364,9 @@ impl LspPendingRequest {
             .receiver
             .recv_timeout(Duration::from_millis(timeout_ms))
         {
-            Ok(value) => {
+            Ok(response) => {
                 self.completed = true;
-                Ok(value)
+                response.map(LspRequestOutcome::into_value)
             }
             Err(_) => {
                 let _ = self.cancel();
@@ -550,13 +604,28 @@ impl LspServer {
         method: &str,
         params: serde_json::Value,
     ) -> Result<LspPendingRequest, String> {
+        self.send_request(method, params, false)
+    }
+
+    fn send_request(
+        &self,
+        method: &str,
+        params: serde_json::Value,
+        report_server_errors: bool,
+    ) -> Result<LspPendingRequest, String> {
         let id = self.next_id.fetch_add(1, Ordering::SeqCst);
-        let (tx, rx) = mpsc::sync_channel::<serde_json::Value>(1);
+        let (sender, receiver) = mpsc::sync_channel(1);
         self.shared
             .pending
             .lock()
             .map_err(|_| "pending 锁中毒")?
-            .insert(id, tx);
+            .insert(
+                id,
+                PendingResponse {
+                    sender,
+                    report_server_errors,
+                },
+            );
         let sent = self.send_message(&serde_json::json!({
             "jsonrpc": "2.0", "id": id, "method": method, "params": params,
         }));
@@ -567,7 +636,7 @@ impl LspServer {
         Ok(LspPendingRequest {
             id,
             method: method.to_string(),
-            receiver: rx,
+            receiver,
             shared: Arc::clone(&self.shared),
             completed: false,
         })
@@ -660,6 +729,37 @@ impl LspServer {
                 "position": {"line": line, "character": character},
             }),
         )
+    }
+
+    /// Query references only when the server advertises a provider.
+    pub fn references_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+        include_declaration: bool,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer("/capabilities/referencesProvider"))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.send_request(
+            "textDocument/references",
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+                "context": {"includeDeclaration": include_declaration},
+            }),
+            true,
+        )
+        .map(Some)
     }
 
     /// 发送异步补全请求。返回值可立即轮询或取消。
@@ -898,12 +998,32 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                     }
                 }
                 let sender = shared.pending.lock().ok().and_then(|mut g| g.remove(&id));
-                if let Some(tx) = sender {
-                    let _ = tx.send(
-                        msg.get("result")
-                            .cloned()
-                            .unwrap_or(serde_json::Value::Null),
-                    );
+                if let Some(pending) = sender {
+                    let response = match msg.get("error").filter(|_| pending.report_server_errors) {
+                        Some(error) => {
+                            match error.get("code").and_then(serde_json::Value::as_i64) {
+                                Some(LSP_CONTENT_MODIFIED) => {
+                                    Ok(LspRequestOutcome::ContentModified)
+                                }
+                                Some(LSP_REQUEST_CANCELLED | LSP_SERVER_CANCELLED) => {
+                                    Ok(LspRequestOutcome::Cancelled)
+                                }
+                                _ => Err(error
+                                    .get("message")
+                                    .and_then(serde_json::Value::as_str)
+                                    .unwrap_or("LSP server returned an error")
+                                    .chars()
+                                    .take(512)
+                                    .collect()),
+                            }
+                        }
+                        None => Ok(LspRequestOutcome::Result(
+                            msg.get("result")
+                                .cloned()
+                                .unwrap_or(serde_json::Value::Null),
+                        )),
+                    };
+                    let _ = pending.sender.send(response);
                 }
                 continue;
             }

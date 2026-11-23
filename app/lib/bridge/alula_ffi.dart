@@ -329,6 +329,20 @@ class AlulaFfi {
     'alula_definition_cancel',
   );
 
+  late final Pointer<Utf8> Function(int, int, int, int) _referencesStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+          Pointer<Utf8> Function(int, int, int, int)>('alula_references_start');
+
+  late final Pointer<Utf8> Function(int) _referencesPoll = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_references_poll',
+  );
+
+  late final Pointer<Utf8> Function(int) _referencesCancel = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64),
+      Pointer<Utf8> Function(int)>('alula_references_cancel');
+
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
       _workspaceSymbolsStart = lib.lookupFunction<
           Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint64),
@@ -782,6 +796,23 @@ class AlulaFfi {
 
   String definitionCancelJson(int requestId) =>
       _takeJson(_definitionCancel(requestId));
+
+  String referencesStartJson(
+    int id,
+    int offsetUtf16,
+    bool includeDeclaration,
+    int timeoutMs,
+  ) =>
+      _takeJson(
+        _referencesStart(
+            id, offsetUtf16, includeDeclaration ? 1 : 0, timeoutMs),
+      );
+
+  String referencesPollJson(int requestId) =>
+      _takeJson(_referencesPoll(requestId));
+
+  String referencesCancelJson(int requestId) =>
+      _takeJson(_referencesCancel(requestId));
 
   String workspaceSymbolsStartJson(int id, String query, int timeoutMs) {
     final nativeQuery = query.toNativeUtf8();

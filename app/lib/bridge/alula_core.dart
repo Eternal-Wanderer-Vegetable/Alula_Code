@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 42;
+const int expectedAbiVersion = 43;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -617,6 +617,16 @@ class SemanticTokensResult {
   const SemanticTokensResult(this.version, this.tokens);
 }
 
+/// Provider locations and the version of the reference query's source.
+class ReferencesResult {
+  const ReferencesResult({required this.version, required this.targets});
+
+  final int version;
+
+  /// References and definitions both use zero-based UTF-16 location ranges.
+  final List<DefinitionTarget> targets;
+}
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -698,6 +708,60 @@ class AlulaLsp {
       }
     } finally {
       _core._ffi.definitionCancelJson(requestId);
+    }
+  }
+
+  /// Query the attached reference provider at a UTF-16 document offset.
+  /// Null means unavailable, cancelled, stale or timed out. A completed
+  /// response can contain no references.
+  Future<ReferencesResult?> references(
+    int id,
+    int offsetUtf16, {
+    bool includeDeclaration = true,
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) async {
+    final ffi = _core._ffi;
+    final startJson =
+        ffi.referencesStartJson(id, offsetUtf16, includeDeclaration, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] != true) return null;
+    final requestId = start['requestId'] as int;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(cancelSignal.then((_) {
+        if (!finished) ffi.referencesCancelJson(requestId);
+      }));
+    }
+    try {
+      while (true) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final pollJson = ffi.referencesPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            final targets =
+                (poll['references'] as List).cast<Map<String, Object?>>();
+            return ReferencesResult(
+              version: poll['version'] as int,
+              targets:
+                  List.unmodifiable(targets.map(DefinitionTarget._fromJson)),
+            );
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知引用请求状态：${poll['status']}');
+        }
+      }
+    } finally {
+      finished = true;
+      ffi.referencesCancelJson(requestId);
     }
   }
 
