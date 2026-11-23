@@ -3811,8 +3811,8 @@
       "dependencies": [
         "feat-295"
       ],
-      "status": "in-progress",
-      "evidence": "本地、原生提供程序和键鼠验收待登记。",
+      "status": "done",
+      "evidence": "F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

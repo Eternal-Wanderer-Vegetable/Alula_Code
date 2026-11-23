@@ -5,6 +5,10 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
+
+- 下一步。Windows/Linux 历史返回已恢复源文档和选区，编辑器焦点未还原。先补历史导航的编辑器焦点与键入回归，再推进 References 提供程序及 Peek 交互。
+
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
 - P05.242 / feat-294 完成。路径和符号选择器支持 800 毫秒的名称前缀定位，焦点回绕并滚动到命中行。Windows 实机与 Linux 原生各 16 个观测点，专项 323/323，编辑器 29/29，Flutter 1,836 passed / 2 skipped。产品 a593c9ce 的 CI 45182394887 四项及 Platform Availability 45182384536 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation.md。
