@@ -3527,6 +3527,19 @@
       "evidence": "工作区符号接受定位到已校验的范围起点，三个侧开入口复用右组，保留源状态和目标标签。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 285/285，Flutter 1,817 passed / 2 skipped。产品 765e0bd 的 CI 45096895179 四项及 Platform Availability 45096892355 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.223-workspace-symbol-accept.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-276",
+      "name": "P05.224 CMD-05 工作区符号无查询状态即时呈现",
+      "description": "空查询和无提供程序立即显示指引，真实异步搜索保留加载及取消，清空查询后拒绝迟到结果。",
+      "dependencies": [
+        "feat-274",
+        "feat-275"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

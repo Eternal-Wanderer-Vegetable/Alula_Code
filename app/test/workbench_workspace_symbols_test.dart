@@ -393,4 +393,94 @@ void main() {
         TargetPlatform.linux,
         TargetPlatform.macOS,
       }));
+
+  testWidgets(
+      'blank workspace symbols show guidance in the first frame and cancel pending work',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-workspace-symbol-idle');
+    final file = File('${temp.path}/source.rs')
+      ..writeAsStringSync('pub struct Source;\n');
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': temp.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 99,
+            'docs': [
+              {'id': 99, 'path': file.path},
+            ],
+          },
+        ],
+      });
+    final pending = Completer<List<Map<String, Object?>>?>();
+    final cancelled = Completer<void>();
+    final queries = <String>[];
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+      layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+      sessionStore: session,
+      keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+      onCommandServiceReady: (value) => commands = value,
+      workspaceSymbolRequest: (id, query, signal) {
+        queries.add(query);
+        unawaited(signal.then((_) => cancelled.complete()));
+        return pending.future;
+      },
+    )));
+    await tester.pump(const Duration(milliseconds: 600));
+    final opening = commands.execute('workbench.action.showAllSymbols');
+    await tester.pump();
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final input = find.descendant(of: panel, matching: find.byType(TextField));
+    final loading = find.byKey(const ValueKey('quick-input-loading'));
+    final guide = find.text('输入符号名称以搜索工作区');
+    expect(loading, findsNothing);
+    expect(guide, findsOneWidget);
+    expect(queries, isEmpty);
+
+    await tester.enterText(input, '#Source');
+    await tester.pump();
+    expect(loading, findsOneWidget);
+    expect(guide, findsNothing);
+    expect(queries, ['Source']);
+
+    await tester.enterText(input, '#   ');
+    await tester.pump();
+    expect(loading, findsNothing);
+    expect(guide, findsOneWidget);
+    expect(cancelled.isCompleted, isTrue);
+    pending.complete([
+      {
+        'name': 'Source',
+        'kind': 23,
+        'uri': Uri.file(file.path).toString(),
+        'line': 0,
+        'character': 11,
+        'endLine': 0,
+        'endCharacter': 17,
+      },
+    ]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('qi-Source')), findsNothing);
+    expect(guide, findsOneWidget);
+    expect(queries, ['Source']);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(panel, findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+  });
 }

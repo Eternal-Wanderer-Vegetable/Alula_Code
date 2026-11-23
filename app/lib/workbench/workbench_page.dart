@@ -4072,6 +4072,88 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (pending != null && !pending.isCompleted) pending.complete();
     }
 
+    Future<List<QuickItem>> itemsForRequest(
+      String query,
+      int requestGeneration,
+      Future<List<Map<String, Object?>>?> request,
+    ) async {
+      final symbols = await request;
+      if (!mounted ||
+          closed ||
+          requestGeneration != generation ||
+          _workspaceRoot != root) {
+        return const [];
+      }
+      if (symbols == null) {
+        emptyMessage = '当前提供程序不支持工作区符号或请求已取消';
+        return const [];
+      }
+      emptyMessage = '没有匹配的工作区符号。';
+      symbols.sort((left, right) =>
+          (fuzzyScore(query, right['name'] as String) ?? -1)
+              .compareTo(fuzzyScore(query, left['name'] as String) ?? -1));
+      Future<void> open(Map<String, Object?> symbol,
+          {bool side = false}) async {
+        if (!mounted || _workspaceRoot != root) return;
+        final path = _pathFromFileUri(symbol['uri'] as String);
+        if (path == null) return;
+        final sourceGroup = _focused;
+        EditorGroup? sideGroup(OpenDoc? existing) =>
+            mounted && _workspaceRoot == root
+                ? _quickAccessSideGroup(sourceGroup, existing)
+                : null;
+        await _openFileByPath(
+          path,
+          targetForOpen: side ? sideGroup : null,
+        );
+        final target = _active;
+        if (!mounted ||
+            target?.path == null ||
+            !_pathsEqual(target!.path!, path)) {
+          return;
+        }
+        try {
+          final targetVersion = target.doc.version;
+          final start = target.doc.positionOffset(
+              symbol['line'] as int, symbol['character'] as int);
+          // Validate the provider's full range before placing the caret.
+          target.doc.positionOffset(
+              symbol['endLine'] as int, symbol['endCharacter'] as int);
+          if (target.doc.version != targetVersion) return;
+          _setDocSelection(
+              target,
+              TextSelection.collapsed(offset: start.offsetUtf16));
+          _focusEditorAfterLayout(_focused, target);
+        } on AlulaException catch (error) {
+          if (error.code == 'InvalidLine' ||
+              error.code == 'InvalidUtf16Offset') {
+            setState(() => _statusDetail = '符号位置已过期，未执行跳转');
+          } else {
+            rethrow;
+          }
+        }
+      }
+
+      return [
+        for (final symbol in symbols)
+          QuickItem(
+            label: symbol['name'] as String,
+            description:
+                symbol['containerName'] as String? ?? symbol['uri'] as String,
+            detail: '${symbol['uri']}:${(symbol['line'] as int) + 1}',
+            onRun: () => open(symbol),
+            buttons: [
+              QuickItemButton(
+                  icon: Icons.vertical_split,
+                  tooltip: '在侧边打开工作区符号',
+                  altEnter: true,
+                  ctrlCmdEnter: true,
+                  onRun: () => open(symbol, side: true))
+            ],
+          )
+      ];
+    }
+
     await QuickInput.show(
       context,
       hint: '工作区符号（#名称）',
@@ -4086,7 +4168,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         generation++;
         cancel();
       },
-      itemsProvider: (value) async {
+      itemsProvider: (value) {
         cancel();
         final requestGeneration = ++generation;
         if (source == null ||
@@ -4102,85 +4184,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           emptyMessage = '输入符号名称以搜索工作区';
           return const [];
         }
-        cancellation = Completer<void>();
-        final symbols = await (widget.workspaceSymbolRequest
-                ?.call(source.id, query, cancellation!.future) ??
+        final pending = Completer<void>();
+        cancellation = pending;
+        final request = widget.workspaceSymbolRequest
+                ?.call(source.id, query, pending.future) ??
             core.lsp.workspaceSymbols(source.id, query,
-                cancelSignal: cancellation!.future));
-        if (!mounted ||
-            closed ||
-            requestGeneration != generation ||
-            _workspaceRoot != root) {
-          return const [];
-        }
-        if (symbols == null) {
-          emptyMessage = '当前提供程序不支持工作区符号或请求已取消';
-          return const [];
-        }
-        emptyMessage = '没有匹配的工作区符号。';
-        symbols.sort((left, right) =>
-            (fuzzyScore(query, right['name'] as String) ?? -1)
-                .compareTo(fuzzyScore(query, left['name'] as String) ?? -1));
-        Future<void> open(Map<String, Object?> symbol,
-            {bool side = false}) async {
-          if (!mounted || _workspaceRoot != root) return;
-          final path = _pathFromFileUri(symbol['uri'] as String);
-          if (path == null) return;
-          final sourceGroup = _focused;
-          EditorGroup? sideGroup(OpenDoc? existing) =>
-              mounted && _workspaceRoot == root
-                  ? _quickAccessSideGroup(sourceGroup, existing)
-                  : null;
-          await _openFileByPath(
-            path,
-            targetForOpen: side ? sideGroup : null,
-          );
-          final target = _active;
-          if (!mounted ||
-              target?.path == null ||
-              !_pathsEqual(target!.path!, path)) {
-            return;
-          }
-          try {
-            final targetVersion = target.doc.version;
-            final start = target.doc.positionOffset(
-                symbol['line'] as int, symbol['character'] as int);
-            // Validate the provider's full range before placing the caret.
-            target.doc.positionOffset(
-                symbol['endLine'] as int, symbol['endCharacter'] as int);
-            if (target.doc.version != targetVersion) return;
-            _setDocSelection(
-                target,
-                TextSelection.collapsed(offset: start.offsetUtf16));
-            _focusEditorAfterLayout(_focused, target);
-          } on AlulaException catch (error) {
-            if (error.code == 'InvalidLine' ||
-                error.code == 'InvalidUtf16Offset') {
-              setState(() => _statusDetail = '符号位置已过期，未执行跳转');
-            } else {
-              rethrow;
-            }
-          }
-        }
-
-        return [
-          for (final symbol in symbols)
-            QuickItem(
-              label: symbol['name'] as String,
-              description:
-                  symbol['containerName'] as String? ?? symbol['uri'] as String,
-              detail: '${symbol['uri']}:${(symbol['line'] as int) + 1}',
-              onRun: () => open(symbol),
-              buttons: [
-                QuickItemButton(
-                    icon: Icons.vertical_split,
-                    tooltip: '在侧边打开工作区符号',
-                    altEnter: true,
-                    ctrlCmdEnter: true,
-                    onRun: () => open(symbol, side: true))
-              ],
-            )
-        ];
+                cancelSignal: pending.future);
+        return itemsForRequest(query, requestGeneration, request);
       },
     );
   }

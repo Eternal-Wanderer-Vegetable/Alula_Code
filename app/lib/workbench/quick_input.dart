@@ -133,7 +133,7 @@ class QuickInputNavigation {
   final Set<LogicalKeyboardKey> acceptOnRelease;
 }
 
-typedef QuickInputItemsProvider = Future<List<QuickItem>> Function(
+typedef QuickInputItemsProvider = FutureOr<List<QuickItem>> Function(
   String query,
   ValueChanged<List<QuickItem>> publish,
 );
@@ -219,7 +219,7 @@ class QuickInput {
     Widget Function(BuildContext context, String value, VoidCallback refresh)?
         inputActionBuilder,
     String? queryPrefix,
-    Future<List<QuickItem>> Function(String query)? itemsProvider,
+    FutureOr<List<QuickItem>> Function(String query)? itemsProvider,
     QuickInputItemsProvider? progressiveItemsProvider,
     Object Function(String query)? itemsQueryKey,
     VoidCallback? onClose,
@@ -553,12 +553,13 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
 
     try {
-      final items = await provider(query, (partial) {
+      final response = provider(query, (partial) {
         if (!current() || !_itemsLoading) return;
         applyItems(partial);
         published = true;
       });
-      applyItems(items);
+      // A synchronous result can settle before the picker paints a busy state.
+      applyItems(response is List<QuickItem> ? response : await response);
     } catch (error) {
       if (!current()) return;
       if (published) applyItems(const []);
