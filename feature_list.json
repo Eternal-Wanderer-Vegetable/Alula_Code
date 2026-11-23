@@ -3799,8 +3799,8 @@
       "dependencies": [
         "feat-125"
       ],
-      "status": "in-progress",
-      "evidence": "Rust/Flutter 版本化 FFI、本地门禁和 Windows/Linux 提供程序验证待登记。",
+      "status": "done",
+      "evidence": "ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
