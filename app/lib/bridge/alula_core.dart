@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 41;
+const int expectedAbiVersion = 42;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -566,18 +566,48 @@ class CompletionResult {
   const CompletionResult(this.version, this.items);
 }
 
-class DefinitionResult {
-  final int version;
+/// The identifier range returned for one semantic definition target.
+class DefinitionTarget {
   final String uri;
   final int line;
   final int character;
+  final int? endLine;
+  final int? endCharacter;
 
-  const DefinitionResult({
-    required this.version,
+  const DefinitionTarget({
     required this.uri,
     required this.line,
     required this.character,
+    this.endLine,
+    this.endCharacter,
   });
+
+  DefinitionTarget._fromJson(Map<String, Object?> json)
+      : uri = json['uri'] as String,
+        line = json['line'] as int,
+        character = json['character'] as int,
+        endLine = json['endLine'] as int,
+        endCharacter = json['endCharacter'] as int;
+}
+
+class DefinitionResult extends DefinitionTarget {
+  final int version;
+  final List<DefinitionTarget> alternatives;
+
+  const DefinitionResult({
+    required this.version,
+    required super.uri,
+    required super.line,
+    required super.character,
+    super.endLine,
+    super.endCharacter,
+    this.alternatives = const [],
+  });
+
+  Iterable<DefinitionTarget> get targets sync* {
+    yield this;
+    yield* alternatives;
+  }
 }
 
 class SemanticTokensResult {
@@ -643,14 +673,20 @@ class AlulaLsp {
           case 'pending':
             continue;
           case 'completed':
-            final target = poll['definition'];
-            if (target == null) return null;
-            final location = target as Map<String, Object?>;
+            final targets = (poll['definitions'] as List<Object?>)
+                .cast<Map<String, Object?>>();
+            if (targets.isEmpty) return null;
+            final primary = DefinitionTarget._fromJson(targets.first);
             return DefinitionResult(
               version: poll['version'] as int,
-              uri: location['uri'] as String,
-              line: location['line'] as int,
-              character: location['character'] as int,
+              uri: primary.uri,
+              line: primary.line,
+              character: primary.character,
+              endLine: primary.endLine,
+              endCharacter: primary.endCharacter,
+              alternatives: List.unmodifiable(
+                targets.skip(1).map(DefinitionTarget._fromJson),
+              ),
             );
           case 'stale':
           case 'timeout':

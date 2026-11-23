@@ -6,10 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
-  test('ABI41 workspace symbols preserve ranges and cancel through real FFI',
+  test('Workspace symbols preserve ranges and cancel through real FFI',
       () async {
     final core = AlulaCore.load();
-    expect(core.abiVersion, 41);
+    expect(core.abiVersion, expectedAbiVersion);
     final root =
         Directory.systemTemp.createTempSync('alula-workspace-symbol-ffi');
     final executable = p.join(

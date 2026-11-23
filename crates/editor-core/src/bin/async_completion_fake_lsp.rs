@@ -63,11 +63,20 @@ fn main() {
     while let Some(message) = read_message(&mut reader) {
         let method = message.get("method").and_then(Value::as_str).unwrap_or("");
         match method {
-            "initialize" => send(json!({
-                "jsonrpc": "2.0",
-                "id": message["id"],
-                "result": {"capabilities": {"textDocumentSync": 1, "workspaceSymbolProvider": true}},
-            })),
+            "initialize" => {
+                if message
+                    .pointer("/params/capabilities/textDocument/definition/linkSupport")
+                    .and_then(Value::as_bool)
+                    == Some(true)
+                {
+                    trace(&trace_path, "definition.linkSupport");
+                }
+                send(json!({
+                    "jsonrpc": "2.0",
+                    "id": message["id"],
+                    "result": {"capabilities": {"textDocumentSync": 1, "workspaceSymbolProvider": true, "definitionProvider": true}},
+                }));
+            }
             "textDocument/didOpen" | "textDocument/didChange" | "textDocument/didClose" => {
                 trace(&trace_path, method)
             }
@@ -144,6 +153,16 @@ fn main() {
                         "targetSelectionRange": {
                             "start": {"line": 1, "character": 3},
                             "end": {"line": 1, "character": 9}
+                        }
+                    }, {
+                        "targetUri": "file:///workspace/other.rs",
+                        "targetRange": {
+                            "start": {"line": 2, "character": 0},
+                            "end": {"line": 4, "character": 1}
+                        },
+                        "targetSelectionRange": {
+                            "start": {"line": 3, "character": 5},
+                            "end": {"line": 3, "character": 11}
                         }
                     }]
                 }));

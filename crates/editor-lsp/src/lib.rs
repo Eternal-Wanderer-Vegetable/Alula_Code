@@ -58,6 +58,17 @@ pub struct DefinitionLocation {
     pub character: u64,
 }
 
+/// A definition's identifier range in zero-based UTF-16 coordinates.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DefinitionTarget {
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+    pub end_line: u64,
+    pub end_character: u64,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WorkspaceSymbolLocation {
     pub name: String,
@@ -150,33 +161,68 @@ pub fn extract_workspace_symbols(
     Ok(symbols)
 }
 
-/// Read the first Location or LocationLink from a definition response.
-/// Invalid entries are ignored so one malformed link does not hide later
-/// usable results.
-pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
-    let entries = match value {
-        serde_json::Value::Array(entries) => entries.iter().collect::<Vec<_>>(),
-        serde_json::Value::Null => return None,
-        value => vec![value],
+fn definition_target(entry: &serde_json::Value) -> Option<DefinitionTarget> {
+    let uri = entry
+        .get("targetUri")
+        .or_else(|| entry.get("uri"))?
+        .as_str()?;
+    if uri.is_empty() || uri.len() > 8192 {
+        return None;
+    }
+    let range = entry
+        .get("targetSelectionRange")
+        .or_else(|| entry.get("range"))?;
+    let position = |p: &serde_json::Value| {
+        let line = p.get("line")?.as_u64()?;
+        let character = p.get("character")?.as_u64()?;
+        (line <= i32::MAX as u64 && character <= i32::MAX as u64).then_some((line, character))
     };
-
-    entries.into_iter().find_map(|entry| {
-        let uri = entry
-            .get("targetUri")
-            .or_else(|| entry.get("uri"))?
-            .as_str()?;
-        let start = entry
-            .get("targetSelectionRange")
-            .or_else(|| entry.get("range"))?
-            .get("start")?;
-        let line = start.get("line")?.as_u64()?;
-        let character = start.get("character")?.as_u64()?;
-        (!uri.is_empty()).then(|| DefinitionLocation {
-            uri: uri.to_string(),
-            line,
-            character,
-        })
+    let (line, character) = position(range.get("start")?)?;
+    // A start-only position still supports navigation for older providers.
+    let (end_line, end_character) = range
+        .get("end")
+        .and_then(position)
+        .filter(|end| *end >= (line, character))
+        .unwrap_or((line, character));
+    Some(DefinitionTarget {
+        uri: uri.to_owned(),
+        line,
+        character,
+        end_line,
+        end_character,
     })
+}
+
+fn definition_entries(value: &serde_json::Value) -> &[serde_json::Value] {
+    value
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_else(|| std::slice::from_ref(value))
+}
+
+/// Read the first usable Location or LocationLink for callers that navigate
+/// to a single definition.
+pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
+    definition_entries(value)
+        .iter()
+        .find_map(definition_target)
+        .map(|target| DefinitionLocation {
+            uri: target.uri,
+            line: target.line,
+            character: target.character,
+        })
+}
+
+/// Decode all definition candidates in provider order. Invalid entries do not
+/// hide usable candidates, and oversize results fail as a whole.
+pub fn extract_definition_targets(
+    value: &serde_json::Value,
+) -> Result<Vec<DefinitionTarget>, String> {
+    let entries = definition_entries(value);
+    if entries.len() > 2000 {
+        return Err("definition result exceeds 2000 entries".into());
+    }
+    Ok(entries.iter().filter_map(definition_target).collect())
 }
 
 struct Shared {
@@ -375,6 +421,7 @@ impl LspServer {
             "capabilities": {
                 "general": {"positionEncodings": ["utf-16"]},
                 "textDocument": {
+                    "definition": {"linkSupport": true},
                     "semanticTokens": {
                         "dynamicRegistration": false,
                         "requests": {"range": false, "full": {"delta": false}},
@@ -995,6 +1042,33 @@ mod tests {
         assert!(
             decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 0, 0, 0]}), &legend).is_err()
         );
+    }
+
+    #[test]
+    fn definition_targets_preserve_valid_location_ranges_in_provider_order() {
+        let result = serde_json::json!([
+            {"uri": "file:///workspace/負例.rs", "range": {"start": {"line": 1, "character": -1}}},
+            {"uri": "file:///workspace/z.rs", "range": {
+                "start": {"line": 3, "character": 2}, "end": {"line": 4, "character": 6}
+            }},
+            {"uri": "file:///workspace/a.rs", "range": {"start": {"line": 0, "character": 7}}}
+        ]);
+        let locations = extract_definition_targets(&result).unwrap();
+        assert_eq!(locations.len(), 2);
+        assert_eq!(
+            serde_json::to_value(locations).unwrap(),
+            serde_json::json!([
+                {"uri": "file:///workspace/z.rs", "line": 3, "character": 2,
+                 "endLine": 4, "endCharacter": 6},
+                {"uri": "file:///workspace/a.rs", "line": 0, "character": 7,
+                 "endLine": 0, "endCharacter": 7}
+            ])
+        );
+        assert!(extract_definition_targets(&serde_json::Value::Null)
+            .unwrap()
+            .is_empty());
+        let oversized = serde_json::Value::Array(vec![serde_json::Value::Null; 2001]);
+        assert!(extract_definition_targets(&oversized).is_err());
     }
 
     #[test]

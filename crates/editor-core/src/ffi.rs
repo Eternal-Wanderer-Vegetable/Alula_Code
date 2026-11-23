@@ -27,9 +27,8 @@ use editor_buffer::{
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
-    decode_semantic_tokens, extract_completion_labels, extract_definition_location,
-    extract_workspace_symbols, DefinitionLocation, LspPendingRequest, LspServer, SemanticToken,
-    SemanticTokenLegend,
+    decode_semantic_tokens, extract_completion_labels, extract_definition_targets,
+    extract_workspace_symbols, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
 };
 use editor_merge::{
     combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
@@ -41,7 +40,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 41;
+pub const ALULA_ABI_VERSION: u32 = 42;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -2928,8 +2927,11 @@ pub extern "C" fn alula_definition_poll(request_id: u64) -> *mut c_char {
                             .to_string(),
                     );
                 }
-                let definition = extract_definition_location(&response);
-                let definition_json = definition.map_or(serde_json::Value::Null, |location: DefinitionLocation| {
+                let definitions = match extract_definition_targets(&response) {
+                    Ok(definitions) => definitions,
+                    Err(error) => return err_json("DefinitionFailed", json!(error)),
+                };
+                let definition = definitions.first().map(|location| {
                     json!({ "uri": location.uri, "line": location.line, "character": location.character })
                 });
                 to_c_ptr(
@@ -2938,7 +2940,8 @@ pub extern "C" fn alula_definition_poll(request_id: u64) -> *mut c_char {
                         "status": "completed",
                         "requestId": request_id,
                         "version": pending.document_version,
-                        "definition": definition_json,
+                        "definition": definition,
+                        "definitions": definitions,
                     })
                     .to_string(),
                 )
@@ -3376,7 +3379,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 41);
+        assert_eq!(alula_abi_version(), 42);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

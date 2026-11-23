@@ -121,6 +121,16 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
             })
         );
 
+        assert_eq!(
+            resolved["definitions"],
+            json!([
+                {"uri": "file:///workspace/target.rs", "line": 1, "character": 3,
+                    "endLine": 1, "endCharacter": 9},
+                {"uri": "file:///workspace/other.rs", "line": 3, "character": 5,
+                    "endLine": 3, "endCharacter": 11},
+            ])
+        );
+
         let stale = take_json(ffi::alula_definition_start(doc_id, 4, 5_000));
         let stale_id = stale["requestId"].as_u64().unwrap();
         let change =
@@ -188,6 +198,7 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
     let trace = std::fs::read_to_string(&trace_path).expect("read fake LSP trace");
     assert!(trace.contains("$/cancelRequest"));
     assert!(trace.contains("textDocument/definition"));
+    assert!(trace.contains("definition.linkSupport"));
     assert!(trace.ends_with("textDocument/didClose\nshutdown\nexit\n"));
     std::fs::remove_dir_all(root_path).expect("remove temporary workspace root");
 }

@@ -11,7 +11,7 @@ unsafe fn take(ptr: *mut std::ffi::c_char) -> Value {
 
 #[test]
 fn workspace_symbols_are_async_bounded_versioned_and_cancel_on_shutdown() {
-    assert_eq!(ffi::alula_abi_version(), 41);
+    assert_eq!(ffi::alula_abi_version(), ffi::ALULA_ABI_VERSION);
     let suffix = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
