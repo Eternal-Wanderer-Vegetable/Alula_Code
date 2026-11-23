@@ -5,6 +5,9 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.223 / feat-275 完成。产品 765e0bdaff8191ec9a63781e318e2abff5dbad59。工作区符号接受定位到已校验的范围起点，三个侧开入口复用右组，保留源状态和目标标签。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 285/285，Flutter 1,817 passed / 2 skipped。产品 765e0bd 的 CI 45096895179 四项及 Platform Availability 45096892355 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.223-workspace-symbol-accept.md。
+- 复验 CMD-05 在 Windows 侧开后用 Ctrl+T 重开时空查询的加载指示。P05.223 原生记录有三次观测，输入查询后返回真实结果。
+
 - P05.222 / feat-274 完成。产品 b86cf7cf9c21b9d97e86dae59d6b7f466afb6eee。工作区符号选择器区分无提供程序、输入指引与无匹配，Enter 保留输入。修复文件挂接后验证真实提供程序可跨文件往返。Windows 实机与 Linux Xvfb + xfwm4 各 17 个原生观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 b86cf7c 的 CI 45093615306 四项及 Platform Availability 45093611856 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.222-workspace-symbol-state.md。
 
 - P05.221 / feat-273 完成。产品 9b1cd2f15a3eddaa92f85853680ed50df9de080c。首次无查询打开时选中并滚入光标所在符号。Windows 实机与 Linux Xvfb + xfwm4 各 17 个观测点，专项 282/282，Flutter 1,814 passed / 2 skipped。产品 9b1cd2f 的 CI 45090480668 四项及 Platform Availability 45090477090 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.221-symbol-caret.md。

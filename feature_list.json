@@ -3523,8 +3523,8 @@
         "feat-267",
         "feat-274"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "工作区符号接受定位到已校验的范围起点，三个侧开入口复用右组，保留源状态和目标标签。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 285/285，Flutter 1,817 passed / 2 skipped。产品 765e0bd 的 CI 45096895179 四项及 Platform Availability 45096892355 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.223-workspace-symbol-accept.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
