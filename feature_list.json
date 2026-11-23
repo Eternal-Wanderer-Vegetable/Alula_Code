@@ -3823,8 +3823,8 @@
       "dependencies": [
         "feat-296"
       ],
-      "status": "in-progress",
-      "evidence": "本地回归、原生键鼠和托管检查待登记。",
+      "status": "done",
+      "evidence": "历史后退、前进与上次编辑位置恢复后聚焦实际编辑视图。Windows 实机和 Linux 原生各 14 个观测点，校验跨文件往返、删除、撤销、磁盘哈希。Linux 默认前进接受 GTK 的 Shift+Minus 事件。专项 93/93，Flutter 1,841 passed / 2 skipped。产品 615bc6cf 的 CI 45226628208 四项及 Platform Availability 45226615787 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.245-navigation-history-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
