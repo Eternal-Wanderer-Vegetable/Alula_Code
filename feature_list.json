@@ -3921,8 +3921,8 @@
       "dependencies": [
         "feat-304"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "定义速览共用按文件结果树与 F4/F12、Shift+F4/Shift+F12 循环定位。Windows 28 步和 Linux 25 步通过，覆盖真实 Rust 提供程序的单条定义、引用速览和退出焦点。专项 82/82，Flutter 1,851 passed / 2 skipped。产品 8fd5edb5 的 CI 45277504965 四项和 Platform Availability 45277491428 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.253-definition-peek-cycle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

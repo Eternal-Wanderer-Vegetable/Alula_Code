@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.253 / feat-305 完成。定义速览共用按文件结果树与 F4/F12、Shift+F4/Shift+F12 循环定位。Windows 28 步和 Linux 25 步通过，覆盖真实 Rust 提供程序的单条定义、引用速览和退出焦点。专项 82/82，Flutter 1,851 passed / 2 skipped。产品 8fd5edb5 的 CI 45277504965 四项和 Platform Availability 45277491428 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.253-definition-peek-cycle.md。
+
 - P05.252 / feat-304 完成。定义和引用速览按固定版位置规则选中最近结果，展开选中组并保留来源光标。Windows 24 步和 Linux 21 步通过，含单文件平铺、后续导航和输入法回归。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 67fbe9aa 的 CI 45272703801 四项和 Platform Availability 45272692299 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.252-peek-initial-result.md。
 
 - P05.251 / feat-303 完成。定位 Windows 中文输入法将 x 和 F12 转为 VK_PROCESSKEY 的原因，只读速览可继续接收快捷键。Windows 21 步验证原始扫描码和中文组合、提交及撤销，Linux 18 步回归。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 d7967997 的 CI 45268527176 四项和 Platform Availability 45268514735 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.251-windows-peek-input.md。
@@ -23,7 +25,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。补齐定义速览的结果导航，并核对定位时的未固定标签策略。
+- 下一步。核对并实现速览定位时的未固定标签策略。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
