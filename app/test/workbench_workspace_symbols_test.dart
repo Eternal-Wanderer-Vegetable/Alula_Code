@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -598,4 +599,189 @@ void main() {
     await tester.pumpAndSettle();
     expect(await opening, CommandExecutionStatus.executed);
   });
+
+  testWidgets(
+      'workspace symbol background acceptance keeps the query and input focus',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-symbol-background');
+    const sourceText = 'pub struct Origin;\n';
+    const sideText = 'head\r\n😀Other\r\n';
+    const middleText = '// 😀\nstruct Third;\n';
+    const bomText = '\uFEFFpub struct ByteOrderMark;\r\n';
+    final source = File('${temp.path}/source.rs')
+      ..writeAsStringSync(sourceText);
+    final side = File('${temp.path}/side.rs')..writeAsStringSync(sideText);
+    final middle = File('${temp.path}/middle.rs')
+      ..writeAsStringSync(middleText);
+    final bom = File('${temp.path}/bom.rs')..writeAsStringSync(bomText);
+    final bomBytes = bom.readAsBytesSync();
+    expect(bomBytes.take(3), [0xef, 0xbb, 0xbf]);
+    final session = SessionStore(path: '${temp.path}/session.json')
+      ..save({
+        'v': 1,
+        'workspace': temp.path,
+        'focused': 'editor',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 101,
+            'preview': 101,
+            'docs': [
+              {'id': 101, 'path': source.path}
+            ],
+          },
+        ],
+      });
+    Map<String, Object?> symbol(
+            String name, File file, int line, int start, int end) =>
+        {
+          'name': name,
+          'kind': 23,
+          'uri': Uri.file(file.path).toString(),
+          'line': line,
+          'character': start,
+          'endLine': line,
+          'endCharacter': end,
+        };
+    final results = {
+      'Origin': symbol('Origin', source, 0, 11, 17),
+      'Other': symbol('Other', side, 1, 2, 7),
+      'Third': symbol('Third', middle, 1, 7, 12),
+      'ByteOrderMark': symbol('ByteOrderMark', bom, 0, 12, 25),
+    };
+    tester.view.physicalSize = const Size(1500, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() => temp.delete(recursive: true));
+    });
+    late CommandService commands;
+    await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+      layoutStore: LayoutStore(path: '${temp.path}/layout.json'),
+      sessionStore: session,
+      keybindingsStore: KeybindingsStore(path: '${temp.path}/keys.json'),
+      onCommandServiceReady: (value) => commands = value,
+      workspaceSymbolRequest: (id, query, signal) async =>
+          [if (results[query] case final item?) item],
+    )));
+    await tester.pump(const Duration(milliseconds: 600));
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final filter = find.descendant(of: panel, matching: find.byType(TextField));
+    final sourceTab = find.byKey(const ValueKey('editor-tab-label-editor-101'));
+    Finder field(String region) => find.descendant(
+          of: find.byKey(ValueKey('editor-body-drop-$region')),
+          matching: find.byType(RustTextInputField),
+        );
+    RustTextInputField editor(String region) =>
+        tester.widget<RustTextInputField>(field(region));
+    final opening = commands.execute('workbench.action.showAllSymbols');
+    await tester.pumpAndSettle();
+    final input = tester.widget<TextField>(filter);
+    final edit = input.controller!;
+    Future<void> query(String name) async {
+      await tester.enterText(filter, '#$name');
+      await tester.pumpAndSettle();
+      expect(find.byKey(ValueKey('qi-$name')), findsOneWidget);
+    }
+
+    Future<void> keyRight({LogicalKeyboardKey? modifier}) async {
+      if (modifier != null) await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      if (modifier != null) await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+      expect(panel, findsOneWidget);
+    }
+
+    Future<void> waitEditor(String region, String text) async {
+      for (var frame = 0; frame < 50; frame++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+        if (field(region).evaluate().isNotEmpty &&
+            editor(region).inputWindow.text == text) {
+          break;
+        }
+      }
+      await tester.pumpAndSettle();
+      expect(editor(region).inputWindow.text, text);
+    }
+
+    await query('Origin');
+    edit.selection = TextSelection(
+        baseOffset: edit.text.length - 1, extentOffset: edit.text.length);
+    await tester.pump();
+    await keyRight();
+    expect(edit.selection, TextSelection.collapsed(offset: edit.text.length));
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle, FontStyle.italic);
+    expect(editor('editor').inputWindow.initialValue.selection.extentOffset, 0);
+    await keyRight();
+    expect(tester.widget<Text>(sourceTab).style?.fontStyle,
+        isNot(FontStyle.italic));
+    expect(editor('editor').inputWindow.initialValue.selection,
+        const TextSelection.collapsed(offset: 11));
+    expect(input.focusNode!.hasPrimaryFocus, isTrue);
+    expect(edit.text, '#Origin');
+
+    await query('Other');
+    final platform = Theme.of(tester.element(filter)).platform;
+    await keyRight(
+        modifier: platform == TargetPlatform.macOS
+            ? LogicalKeyboardKey.metaLeft
+            : LogicalKeyboardKey.controlLeft);
+    await waitEditor('editor-2', 'head\n😀Other\n');
+    final right = editor('editor-2');
+    expect(right.inputWindow.initialValue.selection,
+        const TextSelection.collapsed(offset: 7));
+    final sideTab = find.byKey(
+        ValueKey('editor-tab-label-editor-2-${right.inputWindow.document.id}'));
+    expect(
+        tester.widget<Text>(sideTab).style?.fontStyle, isNot(FontStyle.italic));
+    expect(editor('editor').inputWindow.document.id, 101);
+    expect(input.focusNode!.hasPrimaryFocus, isTrue);
+    expect(edit.text, '#Other');
+
+    await query('Third');
+    final press = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('qi-Third'))),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton);
+    await press.up();
+    await waitEditor('editor', middleText);
+    expect(panel, findsOneWidget);
+    expect(input.focusNode!.hasPrimaryFocus, isTrue);
+    expect(edit.text, '#Third');
+    expect(editor('editor').inputWindow.initialValue.selection,
+        TextSelection.collapsed(offset: middleText.indexOf('Third')));
+    expect(editor('editor-2').inputWindow.document.id,
+        right.inputWindow.document.id);
+    await tester.pump(const Duration(milliseconds: 900));
+    expect(session.tryLoad()!['focused'], 'editor');
+
+    await query('ByteOrderMark');
+    await keyRight();
+    await waitEditor('editor', 'pub struct ByteOrderMark;\n');
+    expect(editor('editor').inputWindow.initialValue.selection,
+        const TextSelection.collapsed(offset: 11));
+    expect(input.focusNode!.hasPrimaryFocus, isTrue);
+    expect(bom.readAsBytesSync(), bomBytes);
+
+    await query('Origin');
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(await opening, CommandExecutionStatus.executed);
+    expect(panel, findsNothing);
+    expect(editor('editor').focusNode!.hasPrimaryFocus, isTrue);
+    expect(source.readAsStringSync(), sourceText);
+    expect(side.readAsStringSync(), sideText);
+    expect(middle.readAsStringSync(), middleText);
+  },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      }));
 }

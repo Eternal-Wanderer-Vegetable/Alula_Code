@@ -3554,6 +3554,21 @@
       "evidence": "工作区符号按首词向提供程序查询，按名称、容器和路径筛选、排序并显示命中。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 287/287，Flutter 1,819 passed / 2 skipped。产品 97f5533 的 CI 45101852094 四项及 Platform Availability 45101844605 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.225-workspace-symbol-query.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-278",
+      "name": "P05.226 CMD-05 工作区符号后台打开",
+      "description": "右方向键与中键后台接受工作区符号，保留选择器和输入焦点，支持同组和右侧目标及带 BOM 文件首行定位。",
+      "dependencies": [
+        "feat-249",
+        "feat-250",
+        "feat-275",
+        "feat-277"
+      ],
+      "status": "in-progress",
+      "evidence": "验证中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

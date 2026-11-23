@@ -4076,6 +4076,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       String query,
       int requestGeneration,
       Future<List<Map<String, Object?>>?> request,
+      Set<String> decodedOverlayPaths,
     ) async {
       final symbols = await request;
       if (!mounted ||
@@ -4129,38 +4130,60 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             left.name.toLowerCase().compareTo(right.name.toLowerCase());
         return byName != 0 ? byName : left.order.compareTo(right.order);
       });
-      Future<void> open(Map<String, Object?> symbol,
-          {bool side = false}) async {
-        if (!mounted || _workspaceRoot != root) return;
+      Future<void> open(
+        Map<String, Object?> symbol, {
+        bool side = false,
+        bool inBackground = false,
+      }) async {
+        bool canOpen() =>
+            mounted && _workspaceRoot == root && (!inBackground || !closed);
+        if (!canOpen()) return;
         final path = _pathFromFileUri(symbol['uri'] as String);
         if (path == null) return;
         final sourceGroup = _focused;
-        EditorGroup? sideGroup(OpenDoc? existing) =>
-            mounted && _workspaceRoot == root
-                ? _quickAccessSideGroup(sourceGroup, existing)
-                : null;
+        EditorGroup? destination;
+        EditorGroup? findDestination(OpenDoc? existing) {
+          if (!canOpen()) return null;
+          return destination = side
+              ? _quickAccessSideGroup(sourceGroup, existing)
+              : _editorGroupForImplicitOpen(existing: existing);
+        }
+
         await _openFileByPath(
           path,
-          targetForOpen: side ? sideGroup : null,
+          inBackground: inBackground,
+          targetForOpen: side || inBackground ? findDestination : null,
         );
-        final target = _active;
-        if (!mounted ||
-            target?.path == null ||
-            !_pathsEqual(target!.path!, path)) {
+        final group = side || inBackground ? destination : _focused;
+        if (!canOpen() ||
+            group == null ||
+            (!inBackground && !identical(group, _focused))) {
           return;
         }
+        final target = group.active;
+        if (target?.path == null || !_pathsEqual(target!.path!, path)) return;
         try {
           final targetVersion = target.doc.version;
+          // rust-analyzer counts the disk BOM on line zero. didOpen sends the
+          // decoded buffer, so only results from disk need this translation.
+          final diskOptions = target.savedFileOptions;
+          final countsBom = !decodedOverlayPaths.contains(_canonicalPath(path)) &&
+              diskOptions.encoding == TextEncoding.utf8 &&
+              diskOptions.bom;
+          int editorColumn(int line, int column) =>
+              countsBom && line == 0 && column > 0 ? column - 1 : column;
+          final line = symbol['line'] as int;
           final start = target.doc.positionOffset(
-              symbol['line'] as int, symbol['character'] as int);
+              line, editorColumn(line, symbol['character'] as int));
           // Validate the provider's full range before placing the caret.
-          target.doc.positionOffset(
-              symbol['endLine'] as int, symbol['endCharacter'] as int);
+          final lastLine = symbol['endLine'] as int;
+          target.doc.positionOffset(lastLine,
+              editorColumn(lastLine, symbol['endCharacter'] as int));
           if (target.doc.version != targetVersion) return;
           _setDocSelection(
               target,
               TextSelection.collapsed(offset: start.offsetUtf16));
-          _focusEditorAfterLayout(_focused, target);
+          if (!inBackground) _focusEditorAfterLayout(group, target);
         } on AlulaException catch (error) {
           if (error.code == 'InvalidLine' ||
               error.code == 'InvalidUtf16Offset') {
@@ -4188,6 +4211,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ],
             ),
             onRun: () => open(row.symbol),
+            onRunInBackground: (modifiers) => open(
+              row.symbol,
+              side: modifiers.alt || modifiers.ctrlCmd,
+              inBackground: true,
+            ),
             buttons: [
               QuickItemButton(
                   icon: Icons.vertical_split,
@@ -4233,13 +4261,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final separator = query.indexOf(' ');
         final providerQuery =
             separator < 0 ? query : query.substring(0, separator);
+        final decodedOverlayPaths = {
+          for (final doc in _allDocs)
+            if (doc.lspAttached && doc.path != null) _canonicalPath(doc.path!),
+        };
         final pending = Completer<void>();
         cancellation = pending;
         final request = widget.workspaceSymbolRequest
                 ?.call(source.id, providerQuery, pending.future) ??
             core.lsp.workspaceSymbols(source.id, providerQuery,
                 cancelSignal: pending.future);
-        return itemsForRequest(query, requestGeneration, request);
+        return itemsForRequest(
+            query, requestGeneration, request, decodedOverlayPaths);
       },
     );
   }
