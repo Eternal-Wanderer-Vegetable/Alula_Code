@@ -3909,8 +3909,8 @@
       "dependencies": [
         "feat-303"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "定义和引用速览按固定版位置规则选中最近结果，展开选中组并保留来源光标。Windows 24 步和 Linux 21 步通过，含单文件平铺、后续导航和输入法回归。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 67fbe9aa 的 CI 45272703801 四项和 Platform Availability 45272692299 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.252-peek-initial-result.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
