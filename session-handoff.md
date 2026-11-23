@@ -8,6 +8,8 @@ Last Updated: 2026-11-23
 
 ## Current State
 
+- P05.242 / feat-294 进行中。产品 a593c9ce 的本地门禁及 Linux 原生 16 个观测点通过，Flutter 1,836 passed / 2 skipped。产品 CI 45182394887 四项和 Platform Availability 45182384536 Windows/Linux 通过。Windows 实机夹具在发送键鼠前检测到前台全屏窗口并停止，待普通桌面复验。macOS 实机暂缓。阶段证据见 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation/linux-and-ci.json。
+
 - P05.241 / feat-293 完成。Space 切换分支，叶节点保留弹层。Alt 修饰递归切换子树。Windows 实机及 Linux 原生各 14 个观测点，Windows Alt+Space 被窗管截获，隔离 Xfwm 验证按键送达后的递归展开。窄回归 37/37，专项 321/321，编辑器 29/29，Flutter 1,834 passed / 2 skipped。产品 21887513 的 CI 45176695421 四项和 Platform Availability 45176687394 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.241-breadcrumb-symbol-space.md。
 
 - P05.240 / feat-292 完成。初选时展开祖先，保留同一弹层内分支折叠，支持父子方向键、展开箭头及符号确认。Windows 实机及 Linux 原生各 14 个观测点，窄回归 36/36，专项 320/320，编辑器 29/29，Flutter 1,833 passed / 2 skipped。产品 4707a876 的 CI 45171848489 四项和 Platform Availability 45171834415 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.240-breadcrumb-symbol-tree.md。
@@ -371,4 +373,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.241 收尾证据 CI，按 docs/03 与 docs/11 核对面包屑选择器键入定位的默认行为。PR #3 保持草稿，macOS 实机暂缓。
+确认普通桌面可用后继续 P05.242 Windows 复验。隔离夹具位于 E:/Temp/alula-p05-242-breadcrumb-type-navigation。操作结束即关闭 Computer Use 并归还桌面。通过后登记全量证据并验证文档收尾 CI。PR #3 保持草稿，macOS 实机暂缓。
