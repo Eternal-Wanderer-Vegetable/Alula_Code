@@ -3957,8 +3957,8 @@
       "dependencies": [
         "feat-307"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "速览结果树 Ctrl+Enter 侧开叶项，复用右侧组并保留左侧速览。Windows 43 步与 Linux 40 步覆盖焦点、同文档双视图、UTF-16、普通 F12 与 Esc。专项 91/91，Flutter 1,852 passed / 2 skipped。产品 f7286d4f 的 CI 45289880951 四项和 Platform Availability 45289871384 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.256-peek-open-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
