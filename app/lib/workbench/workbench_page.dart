@@ -14,7 +14,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, listEquals;
+    show compute, TargetPlatform, defaultTargetPlatform, listEquals;
 import 'package:flutter/gestures.dart'
     show
         kMiddleMouseButton,
@@ -96,6 +96,7 @@ import 'quick_open_query.dart';
 import 'document_symbols.dart';
 import 'open_editors_sort_order.dart';
 import 'breadcrumb_navigation.dart';
+import 'definition_peek.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -735,6 +736,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
+  _DefinitionPeekSession? _definitionPeek;
+  int _definitionRequestSequence = 0;
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
       _pendingColumnSelectionStarts = {};
   String _focusedRegion = 'editor';
@@ -1824,8 +1827,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity(),
         enablement: 'editorActive');
-    reg('editor.gotoDef', '编辑器', '跳转定义', () async => _gotoDefinition(),
+    reg('editor.gotoDef', '编辑器', '跳转定义', _gotoDefinition,
         enablement: 'editorActive');
+    reg(
+      'editor.action.peekDefinition',
+      '编辑器',
+      '速览定义',
+      () => _gotoDefinition(peek: true),
+      shortcut: _keybindings.shortcutFor('editor.action.peekDefinition'),
+      enablement: 'editorActive',
+    );
     reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
         shortcut: 'Alt+←');
     reg('workbench.action.navigateForward', '导航', '前进', _navigateForward,
@@ -21140,9 +21151,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// Navigate with the language server when available, retaining the local
   /// Rust outline fallback for same-file definitions.
-  Future<void> _gotoDefinition() async {
+  Future<void> _gotoDefinition({bool peek = false}) async {
     final active = _active;
     if (active == null) return;
+    final request = ++_definitionRequestSequence;
+    final workspace = _workspaceRoot;
+    if (_definitionPeek != null) setState(() => _definitionPeek = null);
+    bool current() =>
+        mounted &&
+        identical(_active, active) &&
+        workspace == _workspaceRoot &&
+        request == _definitionRequestSequence;
+
     _flushInput(active, commitComposition: true);
     final sel = active.selection;
     final offset = sel.baseOffset >= 0 ? sel.baseOffset : 0;
@@ -21164,7 +21184,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (definition == null &&
               stopwatch.elapsed < const Duration(seconds: 2)) {
             await Future<void>.delayed(const Duration(milliseconds: 200));
-            if (!mounted || !identical(_active, active)) return;
+            if (!current()) return;
             if (active.doc.version != sourceVersion) {
               setState(() => _statusDetail = '文档已更改，已取消跳转');
               return;
@@ -21176,17 +21196,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             );
           }
         }
-        if (!mounted || !identical(_active, active)) return;
+        if (!current()) return;
         if (active.doc.version != sourceVersion ||
             (definition != null && definition.version != sourceVersion)) {
           setState(() => _statusDetail = '文档已更改，已取消跳转');
           return;
         }
         if (definition != null) {
+          final entries = <DefinitionPeekEntry>[
+            for (final target in definition.targets)
+              if (_pathFromFileUri(target.uri) case final path?)
+                (path: path, target: target),
+          ];
+          if (entries.isNotEmpty && (peek || entries.length > 1)) {
+            setState(() {
+              _definitionPeek = _DefinitionPeekSession(
+                source: active,
+                sourceVersion: sourceVersion,
+                sourceOffset: offset,
+                workspace: workspace,
+                entries: entries,
+              );
+            });
+            return;
+          }
+          if (peek) {
+            setState(() => _statusDetail = '没有可预览的定义');
+            return;
+          }
           final navigated = await _navigateToDefinition(
             active,
             offset,
-            definition,
+            entries.firstOrNull?.target ?? definition,
           );
           if (!navigated && mounted) {
             setState(() => _statusDetail = '无法打开定义位置');
@@ -21194,11 +21235,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return;
         }
       } catch (error) {
-        if (!mounted || !identical(_active, active)) return;
+        if (!current()) return;
         setState(() => _statusDetail = 'LSP 定义请求失败：$error');
       }
     }
 
+    if (peek) {
+      setState(() => _statusDetail = '没有可预览的定义');
+      return;
+    }
     _gotoDefinitionInCurrentFile(active, word, offset);
   }
 
@@ -21246,7 +21291,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<bool> _navigateToDefinition(
     OpenDoc source,
     int sourceOffset,
-    DefinitionResult definition,
+    DefinitionTarget definition,
   ) async {
     final path = _pathFromFileUri(definition.uri);
     if (path == null) return false;
@@ -21287,6 +21332,77 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     setState(() => _statusDetail = '跳转到 ${target.name}（定义）');
     return true;
+  }
+
+  Widget? _buildDefinitionPeek(OpenDoc active) {
+    final peek = _definitionPeek;
+    if (peek == null ||
+        !identical(peek.source, active) ||
+        !_isCurrentDefinitionPeek(peek)) {
+      return null;
+    }
+    return KeyedSubtree(
+      key: const ValueKey('definition-peek'),
+      child: DefinitionPeek(
+        key: ObjectKey(peek),
+        entries: peek.entries,
+        loadPreview: _loadDefinitionPeek,
+        onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
+        onClose: () => _closeDefinitionPeek(peek),
+        onRemoved: () {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && identical(_definitionPeek, peek)) {
+              setState(() => _definitionPeek = null);
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  Future<List<DefinitionPeekLine>> _loadDefinitionPeek(
+    DefinitionPeekEntry entry,
+  ) async {
+    final existing = _findOpenDocumentByPath(entry.path);
+    if (existing != null) {
+      return definitionPeekOpenDocument(existing.doc, entry.target);
+    }
+    return compute(definitionPeekFile, entry);
+  }
+
+  bool _isCurrentDefinitionPeek(_DefinitionPeekSession session) =>
+      identical(_definitionPeek, session) &&
+      identical(_active, session.source) &&
+      _workspaceRoot == session.workspace &&
+      session.source.doc.version == session.sourceVersion;
+
+  void _closeDefinitionPeek(_DefinitionPeekSession session) {
+    if (!identical(_definitionPeek, session)) return;
+    setState(() => _definitionPeek = null);
+    final source = session.source;
+    final owner = _ownerOfView(source);
+    if (owner != null && identical(_active, source)) {
+      _focusEditorAfterLayout(owner, source);
+    }
+  }
+
+  Future<void> _acceptDefinitionPeek(
+    _DefinitionPeekSession session,
+    DefinitionPeekEntry entry,
+  ) async {
+    if (!_isCurrentDefinitionPeek(session)) return;
+    setState(() => _definitionPeek = null);
+    final navigated = await _navigateToDefinition(
+      session.source,
+      session.sourceOffset,
+      entry.target,
+    );
+    if (!mounted) return;
+    if (!navigated) setState(() => _statusDetail = '无法打开定义位置');
+    final active = _active;
+    if (active == null) return;
+    final owner = _ownerOfView(active);
+    if (owner != null) _focusEditorAfterLayout(owner, active);
   }
 
   NavigationLocation _navigationLocation(
@@ -27743,7 +27859,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ),
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
-                                caretOverlay: choiceOverlay,
+                                caretOverlay:
+                                    _buildDefinitionPeek(active) ?? choiceOverlay,
                                 focusNode: _focusNodeFor(g, active),
                                 scrollController: active.editorScrollController,
                                 inputFormatter:
@@ -29747,4 +29864,20 @@ class TreeNode {
   final bool isDir;
   bool expanded = false;
   List<TreeNode>? children;
+}
+
+class _DefinitionPeekSession {
+  const _DefinitionPeekSession({
+    required this.source,
+    required this.sourceVersion,
+    required this.sourceOffset,
+    required this.workspace,
+    required this.entries,
+  });
+
+  final OpenDoc source;
+  final int sourceVersion;
+  final int sourceOffset;
+  final String? workspace;
+  final List<DefinitionPeekEntry> entries;
 }

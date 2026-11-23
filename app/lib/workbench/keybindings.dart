@@ -333,6 +333,7 @@ class KeybindingSet {
 
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
+    'editor.action.peekDefinition': 'editorTextFocus',
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
@@ -369,6 +370,8 @@ class KeybindingSet {
 
   /// Platform-specific defaults with an explicit Merge Editor context.
   static Map<String, String> contextualDefaultsFor(TargetPlatform platform) => {
+        'editor.action.peekDefinition':
+            platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',
         'mergeEditor.acceptMerge':
             platform == TargetPlatform.macOS ? 'cmd+enter' : 'ctrl+enter',
         'list.find':

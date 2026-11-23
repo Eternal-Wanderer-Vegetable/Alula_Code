@@ -757,9 +757,13 @@ void main() {
                       .split(',')
                       .where((spec) => parseChord(spec) != null)
                       .length);
-      expect(resolved.keys.length, expectedChords + 16,
-          reason: 'tree find, breadcrumbs and notifications add contextual '
-              'bindings, including the accessible primary action');
+      expect(resolved.keys.length, expectedChords + 17,
+          reason: 'tree find, breadcrumbs, notifications and Peek Definition '
+              'add contextual bindings');
+      expect(
+        ks.shortcutFor('editor.action.peekDefinition'),
+        'Alt+F12',
+      );
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
           ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');

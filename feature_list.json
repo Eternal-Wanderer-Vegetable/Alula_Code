@@ -3803,6 +3803,18 @@
       "evidence": "ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-296",
+      "name": "P05.244 CMD-08/09 定义 Peek 与多目标导航",
+      "description": "F12 多定义和显式速览定义进入源编辑器的 Peek 候选界面。以真实目标范围显示只读预览，支持方向键选择、Esc 恢复与确认跳转，按路径和行列辨认候选。",
+      "dependencies": [
+        "feat-295"
+      ],
+      "status": "in-progress",
+      "evidence": "本地、原生提供程序和键鼠验收待登记。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

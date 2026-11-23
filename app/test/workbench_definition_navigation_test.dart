@@ -7,6 +7,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -144,6 +145,162 @@ void main() {
       targetText.replaceFirst('\uFEFF', '').indexOf('target()'),
     );
   });
+
+  testWidgets(
+      'multiple definition targets open a peek and confirm the selected row',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-multiple-definitions');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { let _ = "😀"; target(); }\n';
+    const firstText = 'fn alpha() {}\n';
+    const secondText = '\uFEFF// 🦊 selected target\r\nfn beta() {}\r\n';
+    final primary = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync(firstText);
+    final secondary = File('${workspace.path}/beta.rs')
+      ..writeAsStringSync(secondText);
+    final sourceFile = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final sourceBytes = sourceFile.readAsBytesSync();
+    final secondBytes = secondary.readAsBytesSync();
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async => DefinitionResult(
+              version: version,
+              uri: primary.uri.toString(),
+              line: 0,
+              character: 3,
+              endLine: 0,
+              endCharacter: 8,
+              alternatives: [
+                DefinitionTarget(
+                  uri: secondary.uri.toString(),
+                  line: 1,
+                  character: 3,
+                  endLine: 1,
+                  endCharacter: 7,
+                ),
+              ],
+            ));
+    final sourceOffset = source.indexOf('target()');
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    Future<void> openPeek() async {
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.pumpAndSettle();
+      expect(peek, findsOneWidget);
+      expect(find.descendant(of: peek, matching: find.text('alpha.rs')),
+          findsOneWidget);
+      expect(find.descendant(of: peek, matching: find.text('beta.rs')),
+          findsOneWidget);
+      expect(_activeController(tester).text, source);
+      expect(_activeController(tester).selection.extentOffset, sourceOffset);
+    }
+
+    await openPeek();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    final secondPreview = find.descendant(
+      of: peek,
+      matching: find.textContaining('fn beta()', findRichText: true),
+    );
+    final watch = Stopwatch()..start();
+    while (secondPreview.evaluate().isEmpty &&
+        watch.elapsed < const Duration(seconds: 5)) {
+      await tester.runAsync(() => Future<void>.delayed(
+            const Duration(milliseconds: 25),
+          ));
+      await tester.pump();
+    }
+    expect(secondPreview, findsOneWidget);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(
+        tester
+            .widget<RustTextInputField>(find.byType(RustTextInputField))
+            .focusNode!
+            .hasFocus,
+        isTrue);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+
+    await openPeek();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    final normalized =
+        secondText.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n');
+    expect(_activeController(tester).text, normalized);
+    expect(_activeController(tester).selection.extentOffset,
+        normalized.indexOf('beta()'));
+    expect(sourceFile.readAsBytesSync(), sourceBytes);
+    expect(secondary.readAsBytesSync(), secondBytes);
+  });
+
+  const peekPlatforms = TargetPlatformVariant({
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+  });
+  testWidgets('default Peek Definition shortcut keeps a single target in peek',
+      (tester) async {
+    final platform = defaultTargetPlatform;
+    final temp =
+        Directory.systemTemp.createTempSync('alula-explicit-definition-peek');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { target(); }\nfn target() {}\n';
+    final file = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async => DefinitionResult(
+              version: version,
+              uri: file.uri.toString(),
+              line: 1,
+              character: 3,
+              endLine: 1,
+              endCharacter: 9,
+            ));
+    final sourceOffset = source.indexOf('target()');
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+    if (platform == TargetPlatform.linux) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f10);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    } else {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    }
+    await tester.pumpAndSettle();
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    expect(peek, findsOneWidget);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+    expect(
+        find.descendant(
+          of: peek,
+          matching: find.byKey(const ValueKey('definition-peek-preview')),
+        ),
+        findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(_activeController(tester).selection.extentOffset,
+        source.lastIndexOf('target()'));
+  }, variant: peekPlatforms);
 
   testWidgets('definition response is ignored after its source version changes',
       (tester) async {
