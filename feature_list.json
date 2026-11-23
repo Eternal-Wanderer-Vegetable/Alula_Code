@@ -3718,8 +3718,8 @@
         "feat-287",
         "feat-288"
       ],
-      "status": "in-progress",
-      "evidence": "旧实现会显示 .git/，修复后的 Linux/Windows 控件用例和工作区外路径用例通过，等待完整门禁及原生和托管验证。",
+      "status": "done",
+      "evidence": "工作区内同级项和展开的子项应用六个默认排除项，遵循本地提供程序大小写规则。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 eb633dab 的 CI 45152054753 四项和 Platform Availability 45152041961 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.237-breadcrumb-default-excludes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -1,0 +1,879 @@
+{
+  "product": "eb633dab153cb4a250af7c76c4e89db9c474669c",
+  "tree": "ab901b0ae6330d8dc3a7bacb0c389ba01393f3d6",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "references": [
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbs.ts",
+        "lines": [
+          80
+        ],
+        "sha256": "3f335ad32d429e05027ba518553c91d3e1d569b83be360b12a37674571858840"
+      },
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts",
+        "lines": [
+          275,
+          307,
+          314,
+          327
+        ],
+        "sha256": "c866baa8040b70fe24970e10dafe12bd5cdb0a9789b06cf414bbb7c94088d2a2"
+      },
+      {
+        "path": "src/vs/workbench/contrib/files/browser/files.contribution.ts",
+        "lines": [
+          153,
+          161
+        ],
+        "sha256": "3dccf52f35993cb1f0a9d0a2c79aae759adc97ae84f4b3963b0b57ea526c5c85"
+      },
+      {
+        "path": "src/vs/platform/files/node/diskFileSystemProvider.ts",
+        "lines": [
+          71,
+          74
+        ],
+        "sha256": "14395e336ff9215f3b07f21df74634ec2b4269cfed0c28d070a99322da3db308"
+      }
+    ],
+    "desktopDefaultNames": [
+      ".git",
+      ".svn",
+      ".hg",
+      ".jj",
+      ".DS_Store",
+      "Thumbs.db"
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "ab901b0ae6330d8dc3a7bacb0c389ba01393f3d6",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "50bfdab331ba17633e3970895a1c896db843b9052a2bea0f4d9b35cd1da45ebd",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "654b7f4b738e5f35388016cd89b69cd510eff223ad691d51cce628bbaa41a131",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "f83931d0de9661925be9d0848f2119aafbc4e6cecfc5e4fdd6c1d7ef98853411"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "a8f7901e62f057cdd5b902bdfb0a3ac438584650a9a420773babf3c30dbc0060",
+    "regression-fixed": "965c9dc205ca1ba14e0160d762c39246f26ec0c2400e2590ee123611bf0a0b99",
+    "external": "f1edbeea511271a28c18bf0bf40061f3e56dd041acedd66e3f884442ad7a64ac",
+    "targeted": "1a594218e3c70e5572e0567adf571a116141c85b856ed2964822dbb7eddcc404",
+    "focused": "828a96cfb9c84a5a2bb551306637596940cc8073cad215cba6992e9e9c4ce1e0",
+    "analyze": "8f24b9362c1f220a3eb2f9db284f3ea22e06ab0c7673c0651d0d1ead322619b8",
+    "full": "f41694af67e23c5d1fae65aa2926c8cac147253c596ae48e1b32a63764b714e8"
+  },
+  "graph": {
+    "breadcrumb_picker_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b692bdae62ceb49a4d91aa4ee7ac2c957005e8c2c6aa24ee05f8d37da985ebc5"
+    },
+    "workbench_page-_showBreadcrumbFolderPicker": {
+      "target": "_showBreadcrumbFolderPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "d8972fcb631a17c349dd82e429d7e1a94944a4bdd7a1a3f3e6393eec5a92d792"
+    },
+    "all": {
+      "changed_count": 5,
+      "affected_count": 0,
+      "changed_files": 4,
+      "risk_level": "low",
+      "sha256": "3531b537b46cff55c9c60c17f4019d97ecbbab96eb9ebf6b8b072d253ae1105b"
+    },
+    "staged": {
+      "changed_count": 5,
+      "affected_count": 0,
+      "changed_files": 4,
+      "risk_level": "low",
+      "sha256": "3531b537b46cff55c9c60c17f4019d97ecbbab96eb9ebf6b8b072d253ae1105b"
+    }
+  },
+  "macosPhysical": "deferred",
+  "initialWindowsCheck": {
+    "reportSha256": "729b661604292100fbff3a7765bce6356e051b4feda217d455789d8740a4c93b",
+    "observations": 0,
+    "result": "failed to activate captured window"
+  },
+  "acceptanceDriverSha256": "35c17b8bae7ce27756cfaa781866d9aab87ca6f10cc02f981efbf997cd1f0024",
+  "windows": {
+    "tree": "ab901b0ae6330d8dc3a7bacb0c389ba01393f3d6",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "87e68cfc88cdee98e037d184c30efbd6ea512d56bc00bc8809af6136b7c92c80",
+    "fixtureSha256": "f83931d0de9661925be9d0848f2119aafbc4e6cecfc5e4fdd6c1d7ef98853411",
+    "runnerSha256": "bf5e5c87157ef6d74dc461147c732924307d3ea6e5e0fb39ad0b5cb82a0c4799",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/branch/picked.rs": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044",
+      "src/.git-notes": "4159d41e9b2971b3a2653627989232fdc27d33a1b6339a602954b3609c23d896",
+      "src/branch/Thumbs.db": "2cfa6df3f3a7a4e135e62b24da31fa32dfc2b419f5e4c825b1ed449023269151",
+      "src/.DS_Store": "e2eb93a61ffd7877ea5c751abcb3a618e8e2e9a2073a27f66d4114fe10819f86",
+      "src/Thumbs.db": "3c1e3efdea694d4001f6085911ba63f462e897a98590f15072a997b1690dcfc0"
+    },
+    "defaultExcludes": {
+      "names": [
+        ".git",
+        ".svn",
+        ".hg",
+        ".jj",
+        ".DS_Store",
+        "Thumbs.db"
+      ],
+      "upperCaseDirectoryVisible": false,
+      "firstRoute": 6709881,
+      "secondRoute": 225011523,
+      "nestedFile": "src/branch/picked.rs",
+      "nestedTextSha256": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e"
+    },
+    "exit": 0,
+    "passed": true,
+    "reportSha256": "54f4d0fa3876e448944c20f7fed1f069e330aa63f4ec47893c949ed052129a66",
+    "observations": 8,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "owner-focused": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "path-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "lib.rs"
+        ],
+        "pickerRoutes": [
+          6709881
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "pointer-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "branch/"
+        ],
+        "pickerRoutes": [
+          6709881
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "lib.rs"
+        ],
+        "pickerRoutes": [
+          225011523
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "branch/"
+        ],
+        "pickerRoutes": [
+          225011523
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "nested-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "picked.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "ab901b0ae6330d8dc3a7bacb0c389ba01393f3d6",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2691722,
+            "ppid": 2691721,
+            "private": 245575680,
+            "pss": 260152320,
+            "working_set": 337002496
+          }
+        ],
+        "root_pid": 2691722,
+        "total_private_bytes": 245575680,
+        "total_private_mib": 234.2,
+        "total_working_set_bytes": 337002496
+      },
+      "path-picker": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2691722,
+            "ppid": 2691721,
+            "private": 239239168,
+            "pss": 254110720,
+            "working_set": 332034048
+          }
+        ],
+        "root_pid": 2691722,
+        "total_private_bytes": 239239168,
+        "total_private_mib": 228.2,
+        "total_working_set_bytes": 332034048
+      },
+      "pointer-expanded": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2691722,
+            "ppid": 2691721,
+            "private": 249737216,
+            "pss": 264608768,
+            "working_set": 342532096
+          }
+        ],
+        "root_pid": 2691722,
+        "total_private_bytes": 249737216,
+        "total_private_mib": 238.2,
+        "total_working_set_bytes": 342532096
+      },
+      "nested-opened": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2691722,
+            "ppid": 2691721,
+            "private": 249577472,
+            "pss": 264459264,
+            "working_set": 342499328
+          }
+        ],
+        "root_pid": 2691722,
+        "total_private_bytes": 249577472,
+        "total_private_mib": 238.0,
+        "total_working_set_bytes": 342499328
+      }
+    },
+    "aotSha256": "0343e181f7bec7ce2ebd31208af3103c7c80c326c57d68a57957ca5e1573dfd7",
+    "fixtureSha256": "f83931d0de9661925be9d0848f2119aafbc4e6cecfc5e4fdd6c1d7ef98853411",
+    "runnerSha256": "6607ec30a796ade53473cf1dc089dda39ff6bdf187734dd537a2e5fffbca2728",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/branch/picked.rs": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044",
+      "src/.git-notes": "4159d41e9b2971b3a2653627989232fdc27d33a1b6339a602954b3609c23d896",
+      "src/branch/Thumbs.db": "2cfa6df3f3a7a4e135e62b24da31fa32dfc2b419f5e4c825b1ed449023269151",
+      "src/.DS_Store": "e2eb93a61ffd7877ea5c751abcb3a618e8e2e9a2073a27f66d4114fe10819f86",
+      "src/Thumbs.db": "3c1e3efdea694d4001f6085911ba63f462e897a98590f15072a997b1690dcfc0"
+    },
+    "defaultExcludes": {
+      "names": [
+        ".git",
+        ".svn",
+        ".hg",
+        ".jj",
+        ".DS_Store",
+        "Thumbs.db"
+      ],
+      "upperCaseDirectoryVisible": true,
+      "firstRoute": 652043473,
+      "secondRoute": 587410213,
+      "nestedFile": "src/branch/picked.rs",
+      "nestedTextSha256": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e"
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "reportSha256": "58014612668dca8444e98f402e2b0bded5797f76263d8190342cb3684dfb83c2",
+    "observations": 8,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "owner-focused": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "path-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "lib.rs"
+        ],
+        "pickerRoutes": [
+          652043473
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "pointer-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".JJ/",
+          "picked.rs",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "branch/"
+        ],
+        "pickerRoutes": [
+          652043473
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "lib.rs"
+        ],
+        "pickerRoutes": [
+          587410213
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          ".JJ/",
+          "picked.rs",
+          ".git-notes",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "focusedPickerRows": [
+          "branch/"
+        ],
+        "pickerRoutes": [
+          587410213
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "nested-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "pickerRoutes": [],
+        "editorFocus": [
+          {
+            "label": "picked.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
