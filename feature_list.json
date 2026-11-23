@@ -3637,6 +3637,20 @@
       "evidence": "从所选段左边展开，窗口较窄时贴合右边界。Windows 实机 12 个、Linux 原生 9 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 eb1f285 的 CI 45128667090 四项和 Platform Availability 45128662823 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.231-breadcrumb-picker-width.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-284",
+      "name": "P05.232 CMD-06 面包屑选择器随焦点切换",
+      "description": "选择器打开时使用 WithPicker 快捷键切到相邻段，并显示新段的内容与锚点，保留导航边界和所属编辑器焦点。",
+      "dependencies": [
+        "feat-147",
+        "feat-282",
+        "feat-283"
+      ],
+      "status": "in-progress",
+      "evidence": "控件回归复现切到文件段后仍显示旧目录 lib.rs 条目。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

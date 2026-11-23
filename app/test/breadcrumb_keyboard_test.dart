@@ -197,7 +197,7 @@ void main() {
   });
 
   testWidgets(
-      'WithPicker shortcuts move breadcrumb focus and keep the picker route open',
+      'WithPicker shortcuts replace the contents and anchor of an open picker',
       (tester) async {
     await mount(tester);
     await tester.tap(_segment('editor', 0));
@@ -212,13 +212,26 @@ void main() {
 
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowRight);
     expectSelected(tester, 1);
-    expect(find.text('lib.rs'), findsOneWidget,
-        reason: 'the focused menu remains mounted after segment navigation');
+    expect(find.text('lib.rs'), findsNothing);
+    expect(find.text('fn main'), findsOneWidget);
     expect(commands.context['breadcrumbsPickerOpen'], isTrue);
-
+    expect(commands.context['breadcrumbsPickerFocused'], isTrue);
+    final symbolRow = find.byType(PopupMenuItem<String>);
+    expect(tester.getTopLeft(symbolRow).dx,
+        moreOrLessEquals(tester.getTopLeft(_segment('editor', 1)).dx));
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
     expectSelected(tester, 0);
     expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('fn main'), findsNothing);
+    final folderRow = find.byType(PopupMenuItem<String>).first;
+    expect(tester.getTopLeft(folderRow).dx,
+        moreOrLessEquals(tester.getTopLeft(_segment('editor', 0)).dx));
+    expect(commands.context['breadcrumbsPickerFocused'], isTrue);
+    final folderRoute = ModalRoute.of(tester.element(folderRow));
+    await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
+    expectSelected(tester, 0);
+    expect(ModalRoute.of(tester.element(folderRow)), same(folderRoute));
+
     await key(tester, LogicalKeyboardKey.escape);
     expect(find.byType(PopupMenuItem<String>), findsNothing);
     expect(commands.context['breadcrumbsPickerOpen'], isFalse);

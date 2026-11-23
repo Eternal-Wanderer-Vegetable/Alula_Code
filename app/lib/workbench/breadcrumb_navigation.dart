@@ -166,6 +166,7 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
   BoxConstraints? _viewportConstraints;
   int? _index;
   bool _opening = false;
+  bool _replacePicker = false;
   bool _revealPending = false;
 
   RenderBox? get _focusedSegmentBox {
@@ -247,6 +248,7 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
   void didUpdateWidget(BreadcrumbNavigation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.resource != widget.resource) {
+      _replacePicker = false;
       if (_opening) {
         final close = widget.controller.cancelPicker;
         WidgetsBinding.instance.addPostFrameCallback((_) => close?.call());
@@ -271,9 +273,16 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
 
   void move(int delta) {
     if (widget.segments.isEmpty) return;
-    setState(() => _index = ((_index ?? widget.segments.length - 1) + delta)
-        .clamp(0, widget.segments.length - 1));
+    final previous = _index;
+    final next = ((previous ?? widget.segments.length - 1) + delta)
+        .clamp(0, widget.segments.length - 1);
+    setState(() => _index = next);
     _scheduleReveal();
+    final cancelPicker = widget.controller.cancelPicker;
+    if (_opening && next != previous && cancelPicker != null) {
+      _replacePicker = true;
+      cancelPicker();
+    }
   }
 
   Future<void> selectFocused() async {
@@ -285,17 +294,7 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
         widget.controller._pickerShowing) {
       return;
     }
-    _opening = true;
-    final controller = widget.controller;
-    final select = widget.onSelect;
-    controller._active = this;
-    controller.setPickerShowing(true);
-    try {
-      await select(index);
-    } finally {
-      _opening = false;
-      controller.setPickerShowing(false);
-    }
+    await _openPicker(index, widget.onSelect);
   }
 
   Future<void> revealFocused() async {
@@ -313,16 +312,32 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
       widget.onSelectEditor();
       return;
     }
-    final controller = widget.controller;
-    final reveal = widget.onRevealDirectory;
     setState(() => _index = index + 1);
     _scheduleReveal();
+    await _openPicker(index, widget.onRevealDirectory);
+  }
+
+  Future<void> _openPicker(
+    int index,
+    Future<void> Function(int index) open,
+  ) async {
     _opening = true;
+    final controller = widget.controller;
+    final resource = widget.resource;
     controller._active = this;
     controller.setPickerShowing(true);
     try {
-      await reveal(index);
+      await open(index);
+      // Let the previous route clear its callbacks and focus context before
+      // opening the picker for the newly focused segment.
+      while (mounted && _replacePicker && widget.resource == resource) {
+        _replacePicker = false;
+        final next = _index;
+        if (next == null || next >= widget.segments.length) break;
+        await widget.onSelect(next);
+      }
     } finally {
+      _replacePicker = false;
       _opening = false;
       controller.setPickerShowing(false);
     }
