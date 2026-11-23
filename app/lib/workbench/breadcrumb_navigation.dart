@@ -2,6 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:intl4x/collation.dart';
+
+final _breadcrumbPathNameCollation = Collation(
+  numeric: true,
+  sensitivity: Sensitivity.base,
+);
+
+/// Compares file and directory names with the fixed picker’s UTF-16 tie-break.
+int compareBreadcrumbFileNames(String first, String second) {
+  final result = _breadcrumbPathNameCollation.compare(first, second);
+  return result == 0 ? first.compareTo(second) : result;
+}
 
 /// Registrations live exactly as long as their mounted group breadcrumbs.
 class BreadcrumbNavigationController extends ChangeNotifier {

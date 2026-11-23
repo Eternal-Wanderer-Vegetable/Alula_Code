@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -208,6 +209,49 @@ void main() {
           .widgetList<RustTextInputField>(find.byType(RustTextInputField))
           .singleWhere((field) => field.semanticsLabel!.startsWith('lib.rs'));
       expect(siblingField.focusNode!.hasFocus, isTrue);
+    },
+  );
+
+  testWidgets(
+    'breadcrumb path rows put directories first and sort numeric names',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final src = Directory('${workspace.path}/src');
+      for (final name in ['dir10', 'dir2']) {
+        Directory('${src.path}/$name').createSync();
+      }
+      for (final name in ['a10.rs', 'a2.rs', 'a01.rs', 'A1.rs']) {
+        File('${src.path}/$name').writeAsStringSync('fn sibling() {}\n');
+      }
+      await mountPage(tester);
+
+      // Exercise ICU collation for this menu's order.
+      await runZoned(
+        () async {
+          await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+          await tester.pumpAndSettle();
+        },
+        zoneValues: {#test.allowFormatting: true},
+      );
+      final rows = find.byType(PopupMenuItem<String>);
+      final labels = find.descendant(of: rows, matching: find.byType(Text));
+      expect(
+        tester.widgetList<Text>(labels).map((label) => label.data),
+        [
+          'dir2/',
+          'dir10/',
+          'nested/',
+          'A1.rs',
+          'a01.rs',
+          'a2.rs',
+          'a10.rs',
+          'lib.rs',
+          'main.rs',
+        ],
+      );
+      final current = find.descendant(of: rows, matching: find.text('main.rs'));
+      expect(Focus.of(tester.element(current)).hasPrimaryFocus, isTrue);
     },
   );
 

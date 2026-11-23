@@ -25239,20 +25239,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final doc = group.active;
     if (doc == null) return;
+    final ordered = List<TreeNode>.of(children, growable: false)
+      ..sort((first, second) {
+        if (first.isDir != second.isDir) return first.isDir ? -1 : 1;
+        return compareBreadcrumbFileNames(first.name, second.name);
+      });
     final initialPath = initialFocusPath == null
         ? null
         : _canonicalPath(initialFocusPath);
     final initialItem = initialPath == null
         ? null
-        : children
+        : ordered
             .where((child) => _canonicalPath(child.path) == initialPath)
             .firstOrNull;
     String itemValue(TreeNode child) =>
         '${child.isDir ? 'reveal' : 'open'}:${child.path}';
     final selection = await _showBreadcrumbMenu(group, doc, [
-        if (children.isEmpty)
+        if (ordered.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('空文件夹')),
-        for (final child in children)
+        for (final child in ordered)
           PopupMenuItem(
             value: itemValue(child),
             child: Text(child.isDir ? '${child.name}/' : child.name),
@@ -25260,7 +25265,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ], initialValue: initialItem == null ? null : itemValue(initialItem));
     if (!mounted || selection == null) return;
     final childPath = selection.value.split(':').sublist(1).join(':');
-    final child = children.where((c) => c.path == childPath).firstOrNull;
+    final child = ordered.where((c) => c.path == childPath).firstOrNull;
     if (child == null) return;
     // 上游 _onSelectEvent：picker 交互先激活所属组。
     setState(() => _focusedRegion = group.region);
