@@ -3873,8 +3873,8 @@
       "dependencies": [
         "feat-300"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "四个默认快捷键在引用速览内按排序正反循环，跨文件保留速览、展开组和当前焦点。Windows/Linux 各 24 个原生观测点。专项 80/80，Flutter 1,849 passed / 2 skipped。产品 5063e624 的 CI 45257440610 四项和 Platform Availability 45257426726 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.249-reference-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
