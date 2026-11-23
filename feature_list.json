@@ -3732,8 +3732,8 @@
         "feat-146",
         "feat-284"
       ],
-      "status": "in-progress",
-      "evidence": "本地全量门禁通过，Flutter 1,831 passed / 2 skipped。Linux 原生 8 个观测点和 Windows 无桌面控件测试 1/1 通过。产品 f0b3c5b1 的 CI 45156593418 四项及 Platform Availability 45156587598 Windows/Linux 通过。Windows 桌面实测在用户按 Esc 后等待恢复，macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md",
+      "status": "done",
+      "evidence": "符号选择器初选当前版本的所选段，切换段时更新初选。Windows 实机及 Linux 原生各 8 个观测点，窄回归 34/34，专项 318/318，Flutter 1,831 passed / 2 skipped。产品 f0b3c5b1 的 CI 45156593418 四项和 Platform Availability 45156587598 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.238-breadcrumb-symbol-initial-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
