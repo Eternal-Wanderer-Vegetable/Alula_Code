@@ -290,6 +290,7 @@ class KeybindingSet {
     'editor.action.blockComment': 'alt+shift+a',
     'editor.action.trimTrailingWhitespace': 'ctrl+k ctrl+x',
     'editor.gotoDef': 'f12',
+    'editor.action.goToReferences': 'shift+f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
     'workbench.action.navigateForward': 'alt+arrowright',
     'editor.replace': 'ctrl+h',
@@ -334,6 +335,7 @@ class KeybindingSet {
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.peekDefinition': 'editorTextFocus',
+    'editor.action.goToReferences': 'editorTextFocus',
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',

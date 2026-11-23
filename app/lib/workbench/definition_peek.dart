@@ -8,7 +8,11 @@ import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
 
-typedef DefinitionPeekEntry = ({String path, DefinitionTarget target});
+typedef DefinitionPeekEntry = ({
+  String path,
+  DefinitionTarget target,
+  String? referenceSymbol,
+});
 typedef DefinitionPeekLine = ({
   int number,
   String text,
@@ -19,6 +23,7 @@ typedef DefinitionPeekLine = ({
 const _contextBefore = 3;
 const _previewLines = 9;
 const _lineWidth = 512;
+const maxReferenceSymbolUtf16 = _lineWidth - 2;
 const _maxPreviewFileBytes = 4 * 1024 * 1024;
 
 int _firstPreviewLine(DefinitionTarget target) =>
@@ -32,6 +37,62 @@ DefinitionPeekLine _previewLine(int number, String text, int start, int end) {
   final high = _scalarBoundary(text, end.clamp(low, text.length));
   return (number: number, text: text, highlightStart: low, highlightEnd: high);
 }
+
+DefinitionTarget _referenceTargetWithoutBom(
+  DefinitionTarget target,
+  String? symbol,
+  bool hasBom,
+  ({String text, int startUtf16})? Function() read,
+) {
+  if (!hasBom ||
+      symbol == null ||
+      symbol.isEmpty ||
+      target.line != 0 ||
+      target.endLine != 0 ||
+      target.character < 1 ||
+      target.endCharacter != target.character + symbol.length) {
+    return target;
+  }
+
+  // Providers can resolve an unopened file against its disk text, where the
+  // leading BOM occupies a column. An open editor uses decoded text.
+  final excerpt = read();
+  if (excerpt == null) return target;
+  final previous = target.character - 1 - excerpt.startUtf16;
+  if (previous < 0 ||
+      previous + symbol.length > excerpt.text.length ||
+      !excerpt.text.startsWith(symbol, previous) ||
+      excerpt.text.startsWith(symbol, previous + 1)) {
+    return target;
+  }
+  return DefinitionTarget(
+    uri: target.uri,
+    line: 0,
+    character: target.character - 1,
+    endLine: 0,
+    endCharacter: target.character + symbol.length - 1,
+  );
+}
+
+DefinitionTarget referenceTargetInDocument(
+  AlulaDoc document,
+  DefinitionTarget target,
+  String? symbol, {
+  required bool hasBom,
+}) =>
+    _referenceTargetWithoutBom(target, symbol, hasBom, () {
+      final line = document
+          .readLines(
+            firstLine: 0,
+            maxLines: 1,
+            horizontalStartUtf16: target.character - 1,
+            maxLineUtf16: _lineWidth,
+          )
+          .lines
+          .firstOrNull;
+      if (line == null) return null;
+      return (text: line.text, startUtf16: line.startUtf16);
+    });
 
 /// Open targets use the live Rust buffer, including unsaved edits.
 List<DefinitionPeekLine> definitionPeekOpenDocument(
@@ -63,8 +124,14 @@ List<DefinitionPeekLine> definitionPeekFile(DefinitionPeekEntry entry) {
       stat.size > _maxPreviewFileBytes) {
     return const [];
   }
-  final text = AlulaCore.load().workspace.readFileDocument(entry.path).content;
-  final target = entry.target;
+  final file = AlulaCore.load().workspace.readFileDocument(entry.path);
+  final text = file.content;
+  final target = _referenceTargetWithoutBom(
+    entry.target,
+    entry.referenceSymbol,
+    file.options.bom,
+    () => (text: text, startUtf16: 0),
+  );
   final first = _firstPreviewLine(target);
   final endLine = target.endLine ?? target.line;
   final endCharacter = target.endCharacter ?? target.character;
@@ -107,6 +174,15 @@ int _scalarBoundary(String text, int offset) => offset > 0 &&
     ? offset - 1
     : offset;
 
+enum LocationPeekKind {
+  definition('定义'),
+  references('引用');
+
+  const LocationPeekKind(this.label);
+
+  final String label;
+}
+
 class DefinitionPeek extends StatefulWidget {
   const DefinitionPeek({
     super.key,
@@ -115,6 +191,7 @@ class DefinitionPeek extends StatefulWidget {
     required this.onOpen,
     required this.onClose,
     required this.onRemoved,
+    this.kind = LocationPeekKind.definition,
   });
 
   final List<DefinitionPeekEntry> entries;
@@ -123,6 +200,7 @@ class DefinitionPeek extends StatefulWidget {
   final ValueChanged<DefinitionPeekEntry> onOpen;
   final VoidCallback onClose;
   final VoidCallback onRemoved;
+  final LocationPeekKind kind;
 
   @override
   State<DefinitionPeek> createState() => _DefinitionPeekState();
@@ -247,11 +325,13 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
                 child: Row(
                   children: [
                     const SizedBox(width: 10),
-                    Expanded(child: Text('定义 (${widget.entries.length})')),
+                    Expanded(
+                        child: Text(
+                            '${widget.kind.label} (${widget.entries.length})')),
                     IconButton(
                       padding: EdgeInsets.zero,
                       iconSize: 16,
-                      tooltip: '关闭定义预览',
+                      tooltip: '关闭${widget.kind.label}预览',
                       onPressed: widget.onClose,
                       icon: const Icon(Icons.close),
                     ),
@@ -331,11 +411,11 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       future: _preview,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: Text('正在读取定义…'));
+          return Center(child: Text('正在读取${widget.kind.label}…'));
         }
         final lines = snapshot.data;
         if (lines == null || lines.isEmpty) {
-          return const Center(child: Text('无法预览定义'));
+          return Center(child: Text('无法预览${widget.kind.label}'));
         }
         return SingleChildScrollView(
           key: ValueKey(_selected),

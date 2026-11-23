@@ -90,6 +90,7 @@ class AlulaApp extends StatelessWidget {
     this.windowChromeConfiguration,
     this.windowControls = false,
     this.definitionRequest,
+    this.referencesRequest,
     this.savedCompareFileStat,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
     this.findReplaceHistoryConfiguration =
@@ -127,6 +128,7 @@ class AlulaApp extends StatelessWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+  final ReferencesRequest? referencesRequest;
 
   /// Optional file-stat provider for deterministic saved-compare fixtures.
   final Future<FileStat> Function(String path)? savedCompareFileStat;
@@ -167,6 +169,7 @@ class AlulaApp extends StatelessWidget {
           keybindingsStore: keybindingsStore,
           windowControls: windowControls,
           definitionRequest: definitionRequest,
+          referencesRequest: referencesRequest,
           savedCompareFileStat: savedCompareFileStat,
           pasteAsConfiguration: pasteAsConfiguration,
           findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,

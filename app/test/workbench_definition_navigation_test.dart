@@ -7,6 +7,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/workbench_page.dart' show ReferencesRequest;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +20,7 @@ Future<void> _openWorkspace(
   Directory temp,
   Directory workspace, {
   Future<DefinitionResult?> Function(int, int, int)? definitionRequest,
+  ReferencesRequest? referencesRequest,
   String openFileName = 'main.rs',
 }) async {
   final base = temp.path.replaceAll(r'\', '/');
@@ -28,6 +30,7 @@ Future<void> _openWorkspace(
     sessionStore: SessionStore(path: '$base/session.json'),
     keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
     definitionRequest: definitionRequest,
+    referencesRequest: referencesRequest,
   ));
   await tester.pump(const Duration(milliseconds: 600));
   await tester.tap(find.text(openFileName).first);
@@ -349,6 +352,222 @@ void main() {
     expect(_activeController(tester).selection.extentOffset,
         source.lastIndexOf('target()'));
   }, variant: navigationPlatforms);
+
+  final providerColumns = ValueVariant({'counts BOM', 'decoded text'});
+  testWidgets('Shift+F12 goes to the single usage and restores input focus',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-single-reference');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = '// 😀\nfn symbol() {}\n';
+    const target = '\uFEFF/* 🦊 */ fn caller() { symbol(); }\r\n';
+    final declaration = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final consumer = File('${workspace.path}/consumer.rs')
+      ..writeAsStringSync(target);
+    final consumerBytes = consumer.readAsBytesSync();
+    final reportedStart = target.indexOf('symbol') -
+        (providerColumns.currentValue == 'decoded text' ? 1 : 0);
+    final calls = <bool>[];
+    final sourceOffset = source.indexOf('symbol');
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) async {
+        expect(offset, sourceOffset);
+        calls.add(includeDeclaration);
+        return ReferencesResult(
+          version: version,
+          targets: [
+            if (includeDeclaration)
+              DefinitionTarget(
+                uri: declaration.uri.toString(),
+                line: 1,
+                character: 3,
+                endLine: 1,
+                endCharacter: 9,
+              ),
+            DefinitionTarget(
+              uri: consumer.uri.toString(),
+              line: 0,
+              character: reportedStart,
+              endLine: 0,
+              endCharacter: reportedStart + 'symbol'.length,
+            ),
+          ],
+        );
+      },
+    );
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+
+    expect(calls, [true, false]);
+    expect(find.byKey(const ValueKey('references-peek')), findsNothing);
+    final text = target.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n');
+    expect(_activeController(tester).text, text);
+    expect(_activeController(tester).selection.extentOffset,
+        text.indexOf('symbol'));
+    expect(
+      tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+      isTrue,
+    );
+    expect(consumer.readAsBytesSync(), consumerBytes);
+  }, variant: providerColumns);
+
+  testWidgets(
+      'multiple usages open References Peek and Esc restores the source',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-references-peek');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn call() { target(); }\n';
+    const one = 'fn caller() { target(); }\n';
+    const two = '\uFEFF// 🦊\r\nfn target() {}\r\n';
+    final sourceFile = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final first = File('${workspace.path}/one.rs')..writeAsStringSync(one);
+    final second = File('${workspace.path}/two.rs')..writeAsStringSync(two);
+    final calls = <bool>[];
+    var explicit = false;
+    final sourceOffset = source.indexOf('target');
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) async {
+        expect(offset, sourceOffset);
+        calls.add(includeDeclaration);
+        return ReferencesResult(
+          version: version,
+          targets: [
+            if (!explicit) ...[
+              DefinitionTarget(
+                uri: sourceFile.uri.toString(),
+                line: 0,
+                character: 12,
+              ),
+              DefinitionTarget(
+                uri: first.uri.toString(),
+                line: 0,
+                character: 14,
+              ),
+            ],
+            DefinitionTarget(
+              uri: second.uri.toString(),
+              line: 1,
+              character: 3,
+              endLine: 1,
+              endCharacter: 9,
+            ),
+          ],
+        );
+      },
+    );
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+    final peek = find.byKey(const ValueKey('references-peek'));
+    expect(peek, findsOneWidget);
+    expect(find.text('引用 (3)'), findsOneWidget);
+    expect(
+      find.descendant(of: peek, matching: find.text('one.rs')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: peek, matching: find.text('two.rs')),
+      findsOneWidget,
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+    expect(
+      tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+      isTrue,
+    );
+
+    explicit = true;
+    await _runPaletteCommand(tester, '速览引用');
+    await tester.pumpAndSettle();
+    expect(peek, findsOneWidget);
+    expect(find.text('引用 (1)'), findsOneWidget);
+    expect(_activeController(tester).text, source);
+    expect(calls, [true, true]);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    final text = two.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n');
+    expect(_activeController(tester).text, text);
+    expect(_activeController(tester).selection.extentOffset,
+        text.indexOf('target'));
+    expect(
+      tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+      isTrue,
+    );
+  });
+
+  testWidgets('reference results are ignored once the source caret moves',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-stale-reference');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn call() { target(); }\n';
+    final main = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final waiting = Completer<ReferencesResult?>();
+    int? requestedVersion;
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      referencesRequest: (id, offset, version, includeDeclaration) {
+        requestedVersion = version;
+        return waiting.future;
+      },
+    );
+    final controller = _activeController(tester);
+    controller.selection =
+        TextSelection.collapsed(offset: source.indexOf('target'));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(requestedVersion, isNotNull);
+
+    controller.selection = const TextSelection.collapsed(offset: 0);
+    await tester.pump();
+    waiting.complete(ReferencesResult(
+      version: requestedVersion!,
+      targets: [
+        DefinitionTarget(uri: main.uri.toString(), line: 0, character: 3)
+      ],
+    ));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('references-peek')), findsNothing);
+    expect(controller.selection.extentOffset, 0);
+    expect(controller.text, source);
+  });
 
   testWidgets('definition response is ignored after its source version changes',
       (tester) async {

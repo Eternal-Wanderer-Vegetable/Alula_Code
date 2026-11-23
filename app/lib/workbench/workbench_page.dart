@@ -293,6 +293,13 @@ Color _tokenColor(String kind) {
   return const Color(0xFFD4D4D4);
 }
 
+typedef ReferencesRequest = Future<ReferencesResult?> Function(
+  int documentId,
+  int offsetUtf16,
+  int version,
+  bool includeDeclaration,
+);
+
 class WorkbenchPage extends StatefulWidget {
   WorkbenchPage({
     super.key,
@@ -303,6 +310,7 @@ class WorkbenchPage extends StatefulWidget {
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.referencesRequest,
     this.workspaceSymbolRequest,
     this.savedCompareFileStat,
     this.overtypeOnPaste = true,
@@ -343,6 +351,9 @@ class WorkbenchPage extends StatefulWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+
+  /// Optional override for deterministic reference-navigation tests.
+  final ReferencesRequest? referencesRequest;
 
   /// Deterministic workspace-symbol provider fixture; production uses attached LSP.
   final Future<List<Map<String, Object?>>?> Function(
@@ -1835,6 +1846,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '速览定义',
       () => _gotoDefinition(peek: true),
       shortcut: _keybindings.shortcutFor('editor.action.peekDefinition'),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.action.goToReferences',
+      '编辑器',
+      '转到引用',
+      _gotoReferences,
+      shortcut: _keybindings.shortcutFor('editor.action.goToReferences'),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.action.referenceSearch.trigger',
+      '编辑器',
+      '速览引用',
+      () => _gotoReferences(peek: true),
       enablement: 'editorActive',
     );
     reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
@@ -21230,7 +21256,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final entries = <DefinitionPeekEntry>[
             for (final target in definition.targets)
               if (_pathFromFileUri(target.uri) case final path?)
-                (path: path, target: target),
+                (path: path, target: target, referenceSymbol: null),
           ];
           if (entries.isNotEmpty && (peek || entries.length > 1)) {
             setState(() {
@@ -21269,6 +21295,157 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     _gotoDefinitionInCurrentFile(active, word, offset);
+  }
+
+  Future<void> _gotoReferences({bool peek = false}) async {
+    final active = _active;
+    if (active == null) return;
+    final request = ++_definitionRequestSequence;
+    final workspace = _workspaceRoot;
+    if (_definitionPeek != null) setState(() => _definitionPeek = null);
+    _flushInput(active, commitComposition: true);
+    final selection = active.selection;
+    final offset = math.max(0, selection.baseOffset);
+    final version = active.doc.version;
+    final provider = widget.referencesRequest;
+    if (provider == null && !active.lspAttached) {
+      setState(() => _statusDetail = '没有可用的引用提供程序');
+      return;
+    }
+
+    bool current() =>
+        mounted &&
+        identical(_active, active) &&
+        workspace == _workspaceRoot &&
+        request == _definitionRequestSequence &&
+        active.doc.version == version &&
+        active.selection == selection;
+
+    Future<ReferencesResult?> lookup(
+      bool includeDeclaration, {
+      int timeoutMs = 8000,
+    }) {
+      if (provider != null) {
+        return provider(active.id, offset, version, includeDeclaration);
+      }
+      return active.doc.core.lsp.references(
+        active.id,
+        offset,
+        includeDeclaration: includeDeclaration,
+        timeoutMs: timeoutMs,
+      );
+    }
+
+    try {
+      final elapsed = Stopwatch()..start();
+      var result = await lookup(true);
+      if (result == null &&
+          provider == null &&
+          current() &&
+          elapsed.elapsed < const Duration(seconds: 2)) {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        if (!current()) return;
+        result = await lookup(true, timeoutMs: 2500);
+      }
+      if (!current()) return;
+      if (result == null) {
+        setState(() => _statusDetail = '没有可用的引用结果');
+        return;
+      }
+      if (result.version != version) return;
+      final referenceSymbol = result.targets.any(
+        (target) => target.line == 0 && target.endLine == 0,
+      )
+          ? _referenceSymbolAt(active, offset, result.targets)
+          : null;
+      List<DefinitionPeekEntry> entriesFor(ReferencesResult result) => [
+            for (final target in result.targets)
+              if (_pathFromFileUri(target.uri) case final path?)
+                (path: path, target: target, referenceSymbol: referenceSymbol),
+          ];
+
+      var entries = entriesFor(result);
+      if (entries.isEmpty) {
+        setState(() => _statusDetail = '未找到引用');
+        return;
+      }
+
+      if (!peek && entries.length == 2) {
+        final usages = await lookup(false);
+        if (!current()) return;
+        if (usages != null && usages.version == version) {
+          final usageEntries = entriesFor(usages);
+          if (usageEntries.length == 1) entries = usageEntries;
+        }
+      }
+      if (peek || entries.length > 1) {
+        setState(() {
+          _definitionPeek = _DefinitionPeekSession(
+            source: active,
+            sourceVersion: version,
+            sourceOffset: offset,
+            workspace: workspace,
+            entries: entries,
+            kind: LocationPeekKind.references,
+          );
+        });
+        return;
+      }
+
+      final opened = await _navigateToDefinition(
+        active,
+        offset,
+        entries.single.target,
+        kind: LocationPeekKind.references,
+        referenceSymbol: entries.single.referenceSymbol,
+      );
+      if (!mounted) return;
+      if (!opened) {
+        setState(() => _statusDetail = '无法打开引用位置');
+        return;
+      }
+      final target = _active;
+      if (target != null) {
+        final owner = _ownerOfView(target);
+        if (owner != null) _focusEditorAfterLayout(owner, target);
+      }
+    } catch (error) {
+      if (current()) setState(() => _statusDetail = 'LSP 引用请求失败：$error');
+    }
+  }
+
+  String? _referenceSymbolAt(
+    OpenDoc source,
+    int offset,
+    List<DefinitionTarget> locations,
+  ) {
+    final sourcePath = source.path;
+    if (sourcePath == null) return null;
+    final position = source.doc.positionAt(offset);
+    for (final location in locations) {
+      final end = location.endCharacter;
+      if (location.line != position.line ||
+          location.endLine != position.line ||
+          end == null ||
+          position.character < location.character ||
+          position.character > end) {
+        continue;
+      }
+      final length = end - location.character;
+      if (length <= 0 || length > maxReferenceSymbolUtf16) continue;
+      final path = _pathFromFileUri(location.uri);
+      if (path == null || !_pathsEqual(path, sourcePath)) continue;
+      final start =
+          source.doc.positionOffset(position.line, location.character);
+      final excerpt = source.doc.readRange(
+        start.offsetUtf16,
+        maxLenUtf16: length,
+      );
+      return excerpt.text.length == length && !excerpt.text.contains('\n')
+          ? excerpt.text
+          : null;
+    }
+    return null;
   }
 
   void _gotoDefinitionInCurrentFile(OpenDoc active, String word, int offset) {
@@ -21315,8 +21492,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<bool> _navigateToDefinition(
     OpenDoc source,
     int sourceOffset,
-    DefinitionTarget definition,
-  ) async {
+    DefinitionTarget definition, {
+    LocationPeekKind kind = LocationPeekKind.definition,
+    String? referenceSymbol,
+  }) async {
     final path = _pathFromFileUri(definition.uri);
     if (path == null) return false;
     final sourceGroup = _ownerOfView(source);
@@ -21333,9 +21512,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !_pathsEqual(target.path!, path)) {
       return false;
     }
+    final location = referenceTargetInDocument(
+      target.doc,
+      definition,
+      referenceSymbol,
+      hasBom: target.fileOptions.bom,
+    );
     final targetPosition = target.doc.positionOffset(
-      definition.line,
-      definition.character,
+      location.line,
+      location.character,
     );
     final targetGroup = _ownerOfView(target);
     if (targetGroup == null) return false;
@@ -21354,7 +21539,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       target,
       TextSelection.collapsed(offset: targetPosition.offsetUtf16),
     );
-    setState(() => _statusDetail = '跳转到 ${target.name}（定义）');
+    setState(() => _statusDetail = '跳转到 ${target.name}（${kind.label}）');
     return true;
   }
 
@@ -21366,10 +21551,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return null;
     }
     return KeyedSubtree(
-      key: const ValueKey('definition-peek'),
+      key: ValueKey(peek.kind == LocationPeekKind.definition
+          ? 'definition-peek'
+          : 'references-peek'),
       child: DefinitionPeek(
         key: ObjectKey(peek),
         entries: peek.entries,
+        kind: peek.kind,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
         onClose: () => _closeDefinitionPeek(peek),
@@ -21389,7 +21577,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   ) async {
     final existing = _findOpenDocumentByPath(entry.path);
     if (existing != null) {
-      return definitionPeekOpenDocument(existing.doc, entry.target);
+      final target = referenceTargetInDocument(
+        existing.doc,
+        entry.target,
+        entry.referenceSymbol,
+        hasBom: existing.fileOptions.bom,
+      );
+      return definitionPeekOpenDocument(existing.doc, target);
     }
     return compute(definitionPeekFile, entry);
   }
@@ -21420,9 +21614,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       session.source,
       session.sourceOffset,
       entry.target,
+      kind: session.kind,
+      referenceSymbol: entry.referenceSymbol,
     );
     if (!mounted) return;
-    if (!navigated) setState(() => _statusDetail = '无法打开定义位置');
+    if (!navigated) {
+      setState(() => _statusDetail = '无法打开${session.kind.label}位置');
+    }
     final active = _active;
     if (active == null) return;
     final owner = _ownerOfView(active);
@@ -29899,6 +30097,7 @@ class _DefinitionPeekSession {
     required this.sourceOffset,
     required this.workspace,
     required this.entries,
+    this.kind = LocationPeekKind.definition,
   });
 
   final OpenDoc source;
@@ -29906,4 +30105,5 @@ class _DefinitionPeekSession {
   final int sourceOffset;
   final String? workspace;
   final List<DefinitionPeekEntry> entries;
+  final LocationPeekKind kind;
 }
