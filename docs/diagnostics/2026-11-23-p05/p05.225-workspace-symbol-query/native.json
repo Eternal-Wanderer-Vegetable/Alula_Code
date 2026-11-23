@@ -1,0 +1,1230 @@
+{
+  "product": "97f5533c61b1a88a2f566732983fb2f4a5350520",
+  "tree": "ac03715a4f6460f6ef1f48499d5733e75a2ff54e",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "ac03715a4f6460f6ef1f48499d5733e75a2ff54e",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "cb8c08ef6981dac9f14f94af5cd2a0810d81cfda0b2fc74b1a55bca0be87653d",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "c45129a3c6135833796250509ce4fdba74c518a358781c71e3f2f9b7be59a718"
+  },
+  "sharedDriverSha256": "6fc13e44eb7580a311871df15f97de84e5da2415a69dfd65a67df6b09d755419",
+  "isolatedX11Sha256": "b3e30e3290756f72493b95b3bcb7192618b7c00b9c7e1e21643413f9a5181328",
+  "pinnedScorer": {
+    "checkout": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "compiledScorerSha256": "ea249bdf472a79163d1c039abb2d6aa6e554d70ac56b8d49ba442acb1cad59c6",
+    "runs": [
+      {
+        "separator": "/",
+        "input": "CandleProbe target.rs",
+        "providerQuery": "CandleProbe",
+        "found": [
+          {
+            "name": "CandleProbeWidget",
+            "score": 89,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": [
+              "target.rs"
+            ]
+          }
+        ]
+      },
+      {
+        "separator": "/",
+        "input": "Candle Probe",
+        "providerQuery": "Candle",
+        "found": [
+          {
+            "name": "CandleProbeMirror",
+            "score": 81,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": []
+          },
+          {
+            "name": "CandleProbeWidget",
+            "score": 81,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": []
+          }
+        ]
+      },
+      {
+        "separator": "/",
+        "input": "CandleProbe missing.rs",
+        "providerQuery": "CandleProbe",
+        "found": []
+      },
+      {
+        "separator": "/",
+        "input": "CandleProbe other.rs",
+        "providerQuery": "CandleProbe",
+        "found": [
+          {
+            "name": "CandleProbeMirror",
+            "score": 88,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": [
+              "other.rs"
+            ]
+          }
+        ]
+      },
+      {
+        "separator": "\\",
+        "input": "CandleProbe target.rs",
+        "providerQuery": "CandleProbe",
+        "found": [
+          {
+            "name": "CandleProbeWidget",
+            "score": 89,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": [
+              "target.rs"
+            ]
+          }
+        ]
+      },
+      {
+        "separator": "\\",
+        "input": "Candle Probe",
+        "providerQuery": "Candle",
+        "found": [
+          {
+            "name": "CandleProbeMirror",
+            "score": 81,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": []
+          },
+          {
+            "name": "CandleProbeWidget",
+            "score": 81,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": []
+          }
+        ]
+      },
+      {
+        "separator": "\\",
+        "input": "CandleProbe missing.rs",
+        "providerQuery": "CandleProbe",
+        "found": []
+      },
+      {
+        "separator": "\\",
+        "input": "CandleProbe other.rs",
+        "providerQuery": "CandleProbe",
+        "found": [
+          {
+            "name": "CandleProbeMirror",
+            "score": 88,
+            "label": [
+              "CandleProbe"
+            ],
+            "description": [
+              "other.rs"
+            ]
+          }
+        ]
+      }
+    ],
+    "reportSha256": "3bfc54e290113e06c0fe46c514fc09fa0e9a3099d8934a0b59bdfb66f504c400"
+  },
+  "windows": {
+    "tree": "ac03715a4f6460f6ef1f48499d5733e75a2ff54e",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "9558b9013f336213965812426a9a2c00f993092e10d2c41501dd67aeec4b4bba",
+    "fixtureSha256": "c45129a3c6135833796250509ce4fdba74c518a358781c71e3f2f9b7be59a718",
+    "runnerSha256": "bbcb8d4527fd8db6ce504c317eecbf62994900317fcf8c9bbedeaddb8db8548a",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "rustAnalyzer": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "lspPid": 49684,
+    "matches": {
+      "target": {
+        "title": [
+          "CandleProbe"
+        ],
+        "description": [
+          "target.rs"
+        ],
+        "descriptionText": "src\\target.rs"
+      },
+      "wholeName": {
+        "rows": [
+          "qi-CandleProbeMirror",
+          "qi-CandleProbeWidget"
+        ],
+        "marks": {
+          "title": [
+            "CandleProbe"
+          ],
+          "description": [],
+          "descriptionText": "src\\other.rs"
+        }
+      },
+      "other": {
+        "title": [
+          "CandleProbe"
+        ],
+        "description": [
+          "other.rs"
+        ],
+        "descriptionText": "src\\other.rs"
+      }
+    },
+    "accepted": {
+      "name": "CandleProbeWidget",
+      "selectionUtf16": [
+        34,
+        34
+      ],
+      "target": "src/target.rs"
+    },
+    "reusedLanguageServer": true,
+    "diskSha256": {
+      "src/lib.rs": "edf71fb2f45c1442fa61ff3108fd7612b5d9f225baebb31c6fba4cf3e06141d6",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "exit": 0,
+    "lspExitedWithWorkbench": true,
+    "passed": true,
+    "rawReportSha256": "ee040b6f3f49a372786dfae3016ae07f4c0f464ef48d6254c9e9516a57dbe909",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": false
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": false
+      },
+      "rust-analyzer-ready": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "file-picker-before-hash": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 946003781,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": true,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "initial-guide": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "输入符号名称以搜索工作区",
+        "nativeLanguageServerReady": true
+      },
+      "qualified-target": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe target.rs",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeWidget",
+          "qi-button-CandleProbeWidget-0"
+        ],
+        "quickActive": "qi-CandleProbeWidget",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "whole-name": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#Candle Probe",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeMirror",
+          "qi-button-CandleProbeMirror-0",
+          "qi-CandleProbeWidget"
+        ],
+        "quickActive": "qi-CandleProbeMirror",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "wrong-container": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe missing.rs",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "没有匹配的工作区符号。",
+        "nativeLanguageServerReady": true
+      },
+      "wrong-container-enter-stays": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe missing.rs",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "没有匹配的工作区符号。",
+        "nativeLanguageServerReady": true
+      },
+      "qualified-other": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe other.rs",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeMirror",
+          "qi-button-CandleProbeMirror-0"
+        ],
+        "quickActive": "qi-CandleProbeMirror",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "qualified-target-again": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe target.rs",
+            "controllerIdentity": 497110385,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeWidget",
+          "qi-button-CandleProbeWidget-0"
+        ],
+        "quickActive": "qi-CandleProbeWidget",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "accepted-target": {
+        "editors": [
+          {
+            "label": "target.rs 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "totalUtf16": 53,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              34,
+              34
+            ],
+            "textSha256": "0ef04ad3cf92941668b3402d64f962408d23edb1dcd3913cbea13f189f4d1700"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "ac03715a4f6460f6ef1f48499d5733e75a2ff54e",
+    "aotSha256": "365f312f1c2700ef0d2d1136706de7f08a21206e096a4934d8e08ddc909874d4",
+    "fixtureSha256": "c45129a3c6135833796250509ce4fdba74c518a358781c71e3f2f9b7be59a718",
+    "runnerSha256": "a86b2b1e3a7387b4bd7de44e4a1e445b14bacb9c34ddbb297ab3815799f7e38e",
+    "rustAnalyzer": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "characterDelayMs": 12,
+    "lspPid": 2556878,
+    "matches": {
+      "target": {
+        "title": [
+          "CandleProbe"
+        ],
+        "description": [
+          "target.rs"
+        ],
+        "descriptionText": "src/target.rs"
+      },
+      "wholeName": {
+        "rows": [
+          "qi-CandleProbeMirror",
+          "qi-CandleProbeWidget"
+        ],
+        "marks": {
+          "title": [
+            "CandleProbe"
+          ],
+          "description": [],
+          "descriptionText": "src/other.rs"
+        }
+      },
+      "other": {
+        "title": [
+          "CandleProbe"
+        ],
+        "description": [
+          "other.rs"
+        ],
+        "descriptionText": "src/other.rs"
+      }
+    },
+    "accepted": {
+      "name": "CandleProbeWidget",
+      "selectionUtf16": [
+        34,
+        34
+      ],
+      "target": "src/target.rs"
+    },
+    "reusedLanguageServer": true,
+    "diskSha256": {
+      "src/lib.rs": "edf71fb2f45c1442fa61ff3108fd7612b5d9f225baebb31c6fba4cf3e06141d6",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "lspExitedWithWorkbench": true,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "rawReportSha256": "4cf5ee8d121a4bb6fa87b7c3cdd51f28807ea4b087bc5cbf19e42c8510654337",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": false
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": false
+      },
+      "rust-analyzer-ready": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "file-picker-before-hash": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "controllerIdentity": 32593288,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-lib.rs",
+          "qi-button-lib.rs-0",
+          "qi-button-lib.rs-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-lib.rs",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "initial-guide": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "输入符号名称以搜索工作区",
+        "nativeLanguageServerReady": true
+      },
+      "qualified-target": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe target.rs",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeWidget",
+          "qi-button-CandleProbeWidget-0"
+        ],
+        "quickActive": "qi-CandleProbeWidget",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "whole-name": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#Candle Probe",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeMirror",
+          "qi-button-CandleProbeMirror-0",
+          "qi-CandleProbeWidget"
+        ],
+        "quickActive": "qi-CandleProbeMirror",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "wrong-container": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe missing.rs",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "没有匹配的工作区符号。",
+        "nativeLanguageServerReady": true
+      },
+      "wrong-container-enter-stays": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe missing.rs",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": "没有匹配的工作区符号。",
+        "nativeLanguageServerReady": true
+      },
+      "qualified-other": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe other.rs",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeMirror",
+          "qi-button-CandleProbeMirror-0"
+        ],
+        "quickActive": "qi-CandleProbeMirror",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "qualified-target-again": {
+        "editors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 61,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              60,
+              60
+            ],
+            "textSha256": "adf997b098f650aeffbf1ab8f1d062f4929bd22651b2990885a06ec31c26b44c"
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#CandleProbe target.rs",
+            "controllerIdentity": 359072646,
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-CandleProbeWidget",
+          "qi-button-CandleProbeWidget-0"
+        ],
+        "quickActive": "qi-CandleProbeWidget",
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      },
+      "accepted-target": {
+        "editors": [
+          {
+            "label": "target.rs 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "totalUtf16": 53,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              34,
+              34
+            ],
+            "textSha256": "0ef04ad3cf92941668b3402d64f962408d23edb1dcd3913cbea13f189f4d1700"
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "quickLoading": false,
+        "nativeWindowFocused": true,
+        "symbolStatus": null,
+        "nativeLanguageServerReady": true
+      }
+    },
+    "processTreeSamples": {
+      "source-editor-focused": {
+        "n_processes": 1,
+        "total_private_bytes": 228958208,
+        "total_working_set_bytes": 320716800
+      },
+      "rust-analyzer-ready": {
+        "n_processes": 4,
+        "total_private_bytes": 831139840,
+        "total_working_set_bytes": 992538624
+      },
+      "qualified-target": {
+        "n_processes": 4,
+        "total_private_bytes": 850522112,
+        "total_working_set_bytes": 1012076544
+      },
+      "whole-name": {
+        "n_processes": 4,
+        "total_private_bytes": 848986112,
+        "total_working_set_bytes": 1010540544
+      },
+      "accepted-target": {
+        "n_processes": 4,
+        "total_private_bytes": 847974400,
+        "total_working_set_bytes": 1009594368
+      }
+    }
+  }
+}
