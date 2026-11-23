@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
+- P05.232 / feat-284 完成。WithPicker 相邻段切换更新列表与锚点，保留边界、确认和返回焦点。Windows 实机及 Linux 原生各 10 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 d93114e 的 CI 45131907170 四项和 Platform Availability 45131899921 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.232-breadcrumb-picker-switch.md。
+
 - P05.231 / feat-283 完成。从所选段左边展开，窗口较窄时贴合右边界。Windows 实机 12 个、Linux 原生 9 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 eb1f285 的 CI 45128667090 四项和 Platform Availability 45128662823 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.231-breadcrumb-picker-width.md。
 
 - P05.230 / feat-282 完成。选择器跟随所属编辑组已选段，覆盖当前行和横向滚动后的锚点。Windows 实机与 Linux 原生各 6 个观测点，窄回归 28/28，专项 312/312，Flutter 1,825 passed / 2 skipped。产品 69102ad 的 CI 45125210014 四项和 Platform Availability 45125205157 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.230-breadcrumb-picker-anchor.md。
