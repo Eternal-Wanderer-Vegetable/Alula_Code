@@ -25052,6 +25052,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final navigator = Navigator.of(context);
     ModalRoute<dynamic>? pickerRoute;
     var pickerFocusSyncScheduled = false;
+    final typeNavigation = BreadcrumbPickerTypeNavigation();
     void escape() {
       final route = pickerRoute;
       if (!visible || route == null || !route.isCurrent) return;
@@ -25143,6 +25144,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ? i == 0
                     : item.represents(initialValue),
                 onEscape: escape,
+                typeNavigation: typeNavigation,
                 onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
                 loadFolder: loadFolder,
@@ -25194,6 +25196,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : null;
     } finally {
       visible = false;
+      typeNavigation.dispose();
       _breadcrumbs.closePicker = null;
       _breadcrumbs.cancelPicker = null;
       FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
@@ -25282,8 +25285,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     List<PopupMenuItem<String>> itemsOf(List<TreeNode> children) => [
           for (final child in children)
-            PopupMenuItem(
+            BreadcrumbPickerMenuItem(
               value: itemValue(child),
+              navigationLabel: child.name,
               child: Text(child.isDir ? '${child.name}/' : child.name),
             ),
         ];
@@ -25376,6 +25380,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       symbols[value] = node;
       final item = BreadcrumbSymbolMenuItem(
         value: value,
+        navigationLabel: node.name,
         child: Text('${_outlineKindBadge(node.kind)} ${node.name}'),
         children: node.children.map(menuItem).toList(growable: false),
         initialValue: selectedValue,

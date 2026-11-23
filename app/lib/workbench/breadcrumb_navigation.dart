@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -68,11 +70,104 @@ class BreadcrumbNavigationController extends ChangeNotifier {
   }
 }
 
-class BreadcrumbSymbolMenuItem extends PopupMenuItem<String> {
+class BreadcrumbPickerMenuItem extends PopupMenuItem<String> {
+  const BreadcrumbPickerMenuItem({
+    super.key,
+    required super.value,
+    required super.child,
+    required this.navigationLabel,
+  });
+
+  final String navigationLabel;
+}
+
+/// Shares the typed prefix across the mounted rows of one picker route.
+class BreadcrumbPickerTypeNavigation {
+  final _labels = <FocusNode, String>{};
+  String? _prefix = '';
+  Timer? _clearPrefix;
+
+  void dispose() {
+    _clearPrefix?.cancel();
+    _labels.clear();
+  }
+
+  double? _rowTop(FocusNode node) {
+    final renderObject = node.context?.findRenderObject();
+    if (renderObject is! RenderBox ||
+        !renderObject.attached ||
+        !renderObject.hasSize) {
+      return null;
+    }
+    return renderObject.localToGlobal(Offset.zero).dy;
+  }
+
+  KeyEventResult _handleKey(FocusNode current, KeyEvent event) {
+    if (_labels.isEmpty) return KeyEventResult.ignored;
+    final character = event.character;
+    final keyboard = HardwareKeyboard.instance;
+    if (character == null ||
+        character.isEmpty ||
+        event.logicalKey == LogicalKeyboardKey.space ||
+        keyboard.isControlPressed ||
+        keyboard.isAltPressed ||
+        keyboard.isMetaPressed ||
+        character.runes.any((rune) => rune < 0x20 || rune == 0x7f)) {
+      return KeyEventResult.ignored;
+    }
+    _clearPrefix?.cancel();
+    _clearPrefix = Timer(const Duration(milliseconds: 800), () => _prefix = '');
+    final previousPrefix = _prefix;
+    if (previousPrefix == null) return KeyEventResult.handled;
+    final query = previousPrefix + character.toLowerCase();
+    // Bound the state even when a key is held down for the entire route.
+    _prefix = query.length <= 4096 ? query : null;
+    if (_prefix == null) return KeyEventResult.handled;
+
+    final start = _rowTop(current) ?? double.negativeInfinity;
+    FocusNode? first;
+    FocusNode? next;
+    var firstTop = double.infinity;
+    var nextTop = double.infinity;
+    // Children register only while expanded. Their layout positions preserve
+    // tree order when a branch is reopened after its siblings have mounted.
+    for (final entry in _labels.entries) {
+      if (!entry.value.startsWith(query)) continue;
+      final top = _rowTop(entry.key);
+      if (top == null) continue;
+      if (top < firstTop) {
+        first = entry.key;
+        firstTop = top;
+      }
+      if (top < nextTop &&
+          (top > start || (top == start && previousPrefix.isNotEmpty))) {
+        next = entry.key;
+        nextTop = top;
+      }
+    }
+    final target = next ?? first;
+    final context = target?.context;
+    if (target != null && context != null) {
+      target.requestFocus();
+      Scrollable.ensureVisible(
+        context,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+      );
+      Scrollable.ensureVisible(
+        context,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+      );
+    }
+    return KeyEventResult.handled;
+  }
+}
+
+class BreadcrumbSymbolMenuItem extends BreadcrumbPickerMenuItem {
   BreadcrumbSymbolMenuItem({
     super.key,
     required String value,
     required Widget child,
+    required super.navigationLabel,
     required this.children,
     required String initialValue,
   })  : focusedOnOpen = value == initialValue,
@@ -95,6 +190,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     required this.onRoute,
     required this.onRevealAside,
     required this.first,
+    required this.typeNavigation,
     this.loadFolder,
     this.focusParent,
     this.onItemFocus,
@@ -104,6 +200,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
 
   final PopupMenuItem<String> item;
   final bool first;
+  final BreadcrumbPickerTypeNavigation typeNavigation;
   final VoidCallback onEscape;
   final KeyEventResult Function(KeyEvent event) onKeyEvent;
   final ValueChanged<ModalRoute<dynamic>?> onRoute;
@@ -150,7 +247,18 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final item = widget.item;
+    if (item is BreadcrumbPickerMenuItem && item.enabled) {
+      widget.typeNavigation._labels[_rowFocus] =
+          item.navigationLabel.toLowerCase();
+    }
+  }
+
+  @override
   void dispose() {
+    widget.typeNavigation._labels.remove(_rowFocus);
     _rowFocus.dispose();
     super.dispose();
   }
@@ -201,7 +309,8 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
     _rowFocus.requestFocus();
     final symbol = _symbol;
     if (symbol != null) {
-      _setSymbolExpanded(symbol, _visibleChildren == null, recursive: recursive);
+      _setSymbolExpanded(symbol, _visibleChildren == null,
+          recursive: recursive);
     } else if (_children == null) {
       _expand();
     } else {
@@ -271,7 +380,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
         return KeyEventResult.handled;
       }
     }
-    return KeyEventResult.ignored;
+    return widget.typeNavigation._handleKey(_rowFocus, event);
   }
 
   @override
@@ -323,7 +432,9 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
               final value = widget.item.value;
               if (focused && widget.item.enabled && value != null) {
                 widget.onItemFocus!(value);
-                if (widget.first && widget.depth > 0 && !_initialFocusRevealed) {
+                if (widget.first &&
+                    widget.depth > 0 &&
+                    !_initialFocusRevealed) {
                   _initialFocusRevealed = true;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     final rowContext = _rowFocus.context;
@@ -363,6 +474,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
             onRoute: widget.onRoute,
             onRevealAside: widget.onRevealAside,
             first: item is BreadcrumbSymbolMenuItem && item.focusedOnOpen,
+            typeNavigation: widget.typeNavigation,
             loadFolder: widget.loadFolder,
             focusParent: _rowFocus.requestFocus,
             onItemFocus: widget.onItemFocus,

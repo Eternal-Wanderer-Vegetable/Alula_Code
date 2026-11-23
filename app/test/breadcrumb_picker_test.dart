@@ -651,6 +651,132 @@ void main() {
   );
 
   testWidgets(
+    'breadcrumb file typing focuses a visible name and only Enter opens it',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final src = Directory('${workspace.path}/src');
+      for (final name in [
+        'alpha',
+        'alpine',
+        ...List.generate(40, (index) => 'x$index'),
+        'z_last',
+      ]) {
+        File('${src.path}/$name.rs').writeAsStringSync('fn fixture() {}\n');
+      }
+      await mountPage(tester);
+      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      Finder entry(String name) =>
+          find.descendant(of: rows, matching: find.text(name));
+      void expectFocus(String name) =>
+          expect(Focus.of(tester.element(entry(name))).hasPrimaryFocus, isTrue);
+      Future<void> type(LogicalKeyboardKey key, String character) async {
+        await tester.sendKeyEvent(key, character: character);
+        await tester.pumpAndSettle();
+      }
+
+      expectFocus('main.rs');
+      await type(LogicalKeyboardKey.keyU, 'u');
+      expect(entry('util.rs'), findsNothing);
+      expectFocus('main.rs');
+      await tester.pump(const Duration(milliseconds: 800));
+      await type(LogicalKeyboardKey.keyA, 'A');
+      expectFocus('alpha.rs');
+      await type(LogicalKeyboardKey.keyL, 'l');
+      expectFocus('alpha.rs');
+      await tester.pump(const Duration(milliseconds: 800));
+      await type(LogicalKeyboardKey.keyA, 'a');
+      expectFocus('alpine.rs');
+
+      await tester.pump(const Duration(milliseconds: 800));
+      await type(LogicalKeyboardKey.keyZ, 'z');
+      expectFocus('z_last.rs');
+      expect(entry('z_last.rs').hitTestable(), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 800));
+      await type(LogicalKeyboardKey.keyN, 'n');
+      expectFocus('nested/');
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 800));
+      await type(LogicalKeyboardKey.keyU, 'u');
+      expectFocus('util.rs');
+      expect(
+          _fieldForDocument(tester, 10).semanticsLabel, startsWith('main.rs'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(
+          tester
+              .widget<RustTextInputField>(find.byType(RustTextInputField))
+              .semanticsLabel,
+          startsWith('util.rs'));
+    },
+  );
+
+  testWidgets(
+    'breadcrumb symbol typing previews an expanded descendant without navigating',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      final file = File('${workspace.path}/src/main.rs')
+        ..writeAsStringSync(
+          '// 🦊\r\nmod outer {\r\n    fn inner() {}\r\n}\r\nfn sibling() {}\r\n',
+        );
+      final diskBefore = file.readAsBytesSync();
+      await mountPage(tester);
+
+      final field = _fieldForDocument(tester, 10);
+      final input = find.descendant(
+        of: find.byKey(field.key!),
+        matching: find.byType(TextField),
+      );
+      final controller = tester.widget<TextField>(input).controller!;
+      final bufferBefore = controller.text;
+      final original = TextSelection.collapsed(
+        offset: controller.text.indexOf('outer'),
+      );
+      field.focusNode!.requestFocus();
+      controller.selection = original;
+      await tester.pumpAndSettle();
+      await tester.tap(_breadcrumbSegment('editor', 'outer'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      Finder entry(String name) =>
+          find.descendant(of: rows, matching: find.textContaining(' $name'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyI, character: 'i');
+      await tester.pumpAndSettle();
+      expect(entry('inner'), findsNothing);
+      expect(Focus.of(tester.element(entry('outer'))).hasPrimaryFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 800));
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyI, character: 'i');
+      await tester.pumpAndSettle();
+      expect(Focus.of(tester.element(entry('inner'))).hasPrimaryFocus, isTrue);
+      final painter = tester
+          .widgetList<CustomPaint>(find.byType(CustomPaint))
+          .map((widget) => widget.painter)
+          .whereType<EditorRangeDecorationPainter>()
+          .singleWhere((painter) => painter.fillBackgroundLines);
+      expect(painter.decorations.single.startUtf16,
+          controller.text.indexOf('    fn inner'));
+      expect(controller.selection, original);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(controller.selection, original);
+      expect(field.focusNode!.hasFocus, isTrue);
+      expect(controller.text, bufferBefore);
+      expect(file.readAsBytesSync(), diskBefore);
+    },
+  );
+
+  testWidgets(
     'the breadcrumb path picker expands a directory and navigates to its child',
     (tester) async {
       await prepareWorkspace(tester);

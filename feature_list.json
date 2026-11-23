@@ -3777,6 +3777,20 @@
       "evidence": "Space 切换分支，叶节点保留弹层。Alt 修饰递归切换子树。Windows 实机及 Linux 原生各 14 个观测点，Windows Alt+Space 被窗管截获，隔离 Xfwm 验证按键送达后的递归展开。窄回归 37/37，专项 321/321，编辑器 29/29，Flutter 1,834 passed / 2 skipped。产品 21887513 的 CI 45176695421 四项和 Platform Availability 45176687394 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.241-breadcrumb-symbol-space.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-294",
+      "name": "P05.242 LAY-11 / CMD-06 面包屑选择器键入定位",
+      "description": "按名称前缀移动树中焦点，连续输入细化前缀，间隔 800 毫秒后从当前项下一行开始查找并支持回绕。覆盖文件和符号、折叠项、滚动、预览和确认。",
+      "dependencies": [
+        "feat-288",
+        "feat-289",
+        "feat-293"
+      ],
+      "status": "in-progress",
+      "evidence": "本地回归、原生验证与准确提交托管检查待登记。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
