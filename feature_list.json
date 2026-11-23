@@ -3582,6 +3582,20 @@
       "evidence": "工作区符号支持两种路径分隔符写法并对齐姓名区域排序及同名类别次序。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 291/291，Flutter 1,823 passed / 2 skipped。产品 219f106 的 CI 45108716901 四项及 Platform Availability 45108713550 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.227-workspace-symbol-order.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-280",
+      "name": "P05.228 CMD-05 无活动编辑器时搜索工作区符号",
+      "description": "工作区语言服务器已启动时，支持从空编辑区域运行符号查询和导航，并在工作区切换或退出时释放请求文档。",
+      "dependencies": [
+        "feat-129",
+        "feat-274",
+        "feat-279"
+      ],
+      "status": "in-progress",
+      "evidence": "Linux 固定前置版本已复现关闭最后一个编辑器后工作区符号不可用。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

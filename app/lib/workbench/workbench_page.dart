@@ -767,6 +767,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // LSP / 语法
   bool _lspStarting = false;
   bool _lspReady = false;
+  AlulaDoc? _workspaceSymbolRequestDoc;
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
@@ -4101,6 +4102,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final source = _active;
     final root = _workspaceRoot;
     final core = _core;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    bool workspaceIsCurrent() =>
+        mounted &&
+        !_disposing &&
+        _workspaceRoot == root &&
+        _quickOpenWorkspaceGeneration == workspaceGeneration;
     Completer<void>? cancellation;
     var generation = 0;
     var closed = false;
@@ -4117,10 +4124,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       Set<String> decodedOverlayPaths,
     ) async {
       final symbols = await request;
-      if (!mounted ||
-          closed ||
+      if (closed ||
           requestGeneration != generation ||
-          _workspaceRoot != root) {
+          !workspaceIsCurrent()) {
         return const [];
       }
       if (symbols == null) {
@@ -4183,8 +4189,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         bool side = false,
         bool inBackground = false,
       }) async {
-        bool canOpen() =>
-            mounted && _workspaceRoot == root && (!inBackground || !closed);
+        bool canOpen() => workspaceIsCurrent() && (!inBackground || !closed);
         if (!canOpen()) return;
         final path = _pathFromFileUri(symbol['uri'] as String);
         if (path == null) return;
@@ -4293,10 +4298,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemsProvider: (value) {
         cancel();
         final requestGeneration = ++generation;
-        if (source == null ||
-            core == null ||
-            (widget.workspaceSymbolRequest == null &&
-                (!source.lspAttached || !_lspReady))) {
+        final requestOverride = widget.workspaceSymbolRequest;
+        int? requestDocumentId;
+        if (requestOverride != null) {
+          requestDocumentId = source?.id;
+        } else if (_lspReady) {
+          requestDocumentId = source != null && source.lspAttached
+              ? source.id
+              : _workspaceSymbolRequestDoc?.id;
+        }
+        if (core == null ||
+            requestDocumentId == null ||
+            !workspaceIsCurrent()) {
           emptyMessage = '当前工作区没有可用符号提供程序';
           return const [];
         }
@@ -4315,9 +4328,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         };
         final pending = Completer<void>();
         cancellation = pending;
-        final request = widget.workspaceSymbolRequest
-                ?.call(source.id, providerQuery, pending.future) ??
-            core.lsp.workspaceSymbols(source.id, providerQuery,
+        final request = requestOverride?.call(
+                requestDocumentId, providerQuery, pending.future) ??
+            core.lsp.workspaceSymbols(requestDocumentId, providerQuery,
                 cancelSignal: pending.future);
         return itemsForRequest(
             query, requestGeneration, request, decodedOverlayPaths);
@@ -17191,15 +17204,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final core = _core;
     final root = _workspaceRoot;
     if (core == null || root == null || _lspStarting || _lspReady) return;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
     setState(() {
       _lspStarting = true;
       _lspStatus = '正在启动 rust-analyzer…';
     });
     _syncCommandContext();
     await Future<void>.delayed(const Duration(milliseconds: 50));
+    if (!mounted ||
+        _disposing ||
+        _workspaceRoot != root ||
+        _quickOpenWorkspaceGeneration != workspaceGeneration) {
+      return;
+    }
     try {
-      // Rust 侧按工作区复用服务器进程；挂接用任一已打开文档 id 均可
-      core.lsp.start(_untitledId, root, ['rust-analyzer']);
+      // FFI requests are scoped to a registered document. Keep this one alive
+      // with the workspace so symbol searches can run with all editors closed.
+      final requestDoc = core.openDoc(_nextDocId++, '');
+      try {
+        core.lsp.start(requestDoc.id, root, const ['rust-analyzer']);
+      } catch (_) {
+        requestDoc.close();
+        rethrow;
+      }
+      _workspaceSymbolRequestDoc = requestDoc;
       setState(() {
         _lspReady = true;
         _lspStarting = false;
@@ -22300,12 +22328,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _shutdownLspWorkspace() {
     final core = _core;
     final root = _workspaceRoot;
-    if (_lspReady && core != null && root != null) {
-      try {
+    final requestDoc = _workspaceSymbolRequestDoc;
+    _workspaceSymbolRequestDoc = null;
+    try {
+      if (_lspReady && core != null && root != null) {
         core.lsp.shutdownWorkspace(root);
-      } catch (e) {
-        debugPrint('关闭工作区语言服务器失败：$e');
       }
+    } catch (e) {
+      debugPrint('关闭工作区语言服务器失败：$e');
+    } finally {
+      requestDoc?.close();
     }
   }
 
