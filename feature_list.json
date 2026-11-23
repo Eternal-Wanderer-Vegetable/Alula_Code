@@ -3689,8 +3689,8 @@
         "feat-285",
         "feat-286"
       ],
-      "status": "in-progress",
-      "evidence": "旧控件列表将 dir10/ 放在 dir2/ 前，且 a01.rs 放在 A1.rs 前。按固定版排序后复测。",
+      "status": "done",
+      "evidence": "目录优先，同类名称按系统 locale 数字排序及 UTF-16 平手消歧。Windows 实机及 Linux 原生各 5 个观测点，窄回归 31/31，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 b5be4783 的 CI 45143211844 四项和 Platform Availability 45143205410 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.235-breadcrumb-path-order.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
