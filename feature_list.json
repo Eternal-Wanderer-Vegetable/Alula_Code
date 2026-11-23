@@ -3633,8 +3633,8 @@
       "dependencies": [
         "feat-282"
       ],
-      "status": "in-progress",
-      "evidence": "P05.230 Windows 实机与当前控件回归均复现有右侧空间时向左展开。",
+      "status": "done",
+      "evidence": "从所选段左边展开，窗口较窄时贴合右边界。Windows 实机 12 个、Linux 原生 9 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 eb1f285 的 CI 45128667090 四项和 Platform Availability 45128662823 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.231-breadcrumb-picker-width.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
