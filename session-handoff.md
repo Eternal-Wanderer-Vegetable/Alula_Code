@@ -8,6 +8,8 @@ Last Updated: 2026-11-23
 
 ## Current State
 
+- P05.228 / feat-280 进行中。本地专项 284/284，Flutter 1,823 passed / 2 skipped。Linux 原生复验三组共 44 个观测点，关闭全部编辑器后仍能查询和定位符号。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。Windows Release 已构建，桌面实测待恢复。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md。
+
 - P05.227 / feat-279 完成。产品 219f1062c86d3b5f08317369b146d80a705f9873。工作区符号支持两种路径分隔符写法并对齐姓名区域排序及同名类别次序。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 291/291，Flutter 1,823 passed / 2 skipped。产品 219f106 的 CI 45108716901 四项及 Platform Availability 45108713550 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.227-workspace-symbol-order.md。
 
 - P05.226 / feat-278 完成。产品 521618c46582be75700108d79a02b23ea544b6fc。工作区符号右方向键和中键可后台接受，保留查询及输入焦点，并按提供程序的文本来源修正 UTF-8 BOM 首行位置。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 290/290，Flutter 1,822 passed / 2 skipped。产品 521618c 的 CI 45105686729 四项及 Platform Availability 45105682536 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.226-workspace-symbol-background.md。
@@ -203,6 +205,8 @@ Last Updated: 2026-11-23
 
 ## Blockers / Limits
 
+P05.228 的 Windows 桌面实测等待用户恢复，已验证的本地、Linux 及托管范围记录在证据中。
+
 P05.184 的 macOS 托管原生 Quit 观察与 P05.182 第二轮相同，在 20 秒上限达到时 app 与 open 仍存活。P05.183 同一托管检查通过。
 
 P05.181 的 macOS 托管首轮 Flutter 正则替换测试失败，Platform Availability 44981195018 第二轮三平台通过。
@@ -210,6 +214,8 @@ P05.181 的 macOS 托管首轮 Flutter 正则替换测试失败，Platform Avail
 macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。P05.123 规范命令验证已完成。P05.125 默认无障碍组合键通过 Linux Xvfb 和 Windows Release 原生状态桥验证。P05.124 已在恢复输入后的 Windows 桌面验证自定义键位及 Narrator 默认键，P05.126 已在固定版、Linux Xvfb 和 Windows 实机验收滚动条。通知无障碍视图按 docs/11 ACC-02 归 P14。
 
 ## Files
+
+[P05.228 工作区符号原生与托管证据](docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md)。
 
 [P05.227 工作区符号排序与路径](docs/diagnostics/2026-11-23-p05/p05.227-workspace-symbol-order.md)。
 
@@ -313,4 +319,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-先核对 P05.227 证据提交 CI，再按 docs/03 与 docs/11 核对有工作区语言服务、无活动编辑器时的工作区符号入口。PR #3 保持 OPEN/DRAFT，macOS 实机暂缓。
+等待用户明确恢复 Windows 桌面实测。使用与 P05.228 产品源码树一致的隔离 Release 验证 Ctrl+T，补齐 Windows 原生证据和 CI，完成 P05.228 后再推进下一子项。PR #3 保持草稿，macOS 实机暂缓。

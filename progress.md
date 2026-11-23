@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-22 更新）
 
+- P05.228 / feat-280 进行中。本地专项 284/284，Flutter 1,823 passed / 2 skipped。Linux 原生复验三组共 44 个观测点，关闭全部编辑器后仍能查询和定位符号。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。Windows Release 已构建，桌面实测待恢复。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md。
+
 - P05.227 / feat-279 完成。产品 219f1062c86d3b5f08317369b146d80a705f9873。工作区符号支持两种路径分隔符写法并对齐姓名区域排序及同名类别次序。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 291/291，Flutter 1,823 passed / 2 skipped。产品 219f106 的 CI 45108716901 四项及 Platform Availability 45108713550 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.227-workspace-symbol-order.md。
 
 - P05.226 / feat-278 完成。产品 521618c46582be75700108d79a02b23ea544b6fc。工作区符号右方向键和中键可后台接受，保留查询及输入焦点，并按提供程序的文本来源修正 UTF-8 BOM 首行位置。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 290/290，Flutter 1,822 passed / 2 skipped。产品 521618c 的 CI 45105686729 四项及 Platform Availability 45105682536 Windows/Linux 通过。macOS 实机暂缓。macOS 托管仍在运行。详见 docs/diagnostics/2026-11-23-p05/p05.226-workspace-symbol-background.md。

@@ -3593,7 +3593,7 @@
         "feat-279"
       ],
       "status": "in-progress",
-      "evidence": "Linux 固定前置版本已复现关闭最后一个编辑器后工作区符号不可用。",
+      "evidence": "本地专项 284/284，Flutter 1,823 passed / 2 skipped。Linux 原生复验三组共 44 个观测点，关闭全部编辑器后仍能查询和定位符号。产品 4d6ce25 的 CI 45111824716 四项、Platform Availability 45111821357 Windows/Linux 通过。Windows Release 已构建，桌面实测待恢复。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.228-workspace-symbol-no-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
