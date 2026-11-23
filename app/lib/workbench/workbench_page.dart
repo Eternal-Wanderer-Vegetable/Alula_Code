@@ -25056,8 +25056,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final root = _workspaceRoot;
     final path = doc.path;
     final version = doc.doc.version;
-    final position = _breadcrumbPickerPosition(group.region);
-    if (position == null) return null;
+    final placement = _breadcrumbPickerPosition(group.region);
+    if (placement == null) return null;
     setState(() => _focusedRegion = group.region);
     _syncCommandContext();
     _scheduleStateSave();
@@ -25146,7 +25146,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       FocusManager.instance.addListener(_syncBreadcrumbPickerFocus);
       final action = await showMenu<String>(
         context: context,
-        position: position,
+        position: placement.position,
+        constraints: BoxConstraints.tightFor(width: placement.width),
         items: [
           for (var i = 0; i < items.length; i++)
             if (items[i] case final PopupMenuItem<String> item)
@@ -25360,18 +25361,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
-  RelativeRect? _breadcrumbPickerPosition(String region) {
+  ({RelativeRect position, double width})? _breadcrumbPickerPosition(
+    String region,
+  ) {
     final overlay = Overlay.of(context).context.findRenderObject();
     final segment = _breadcrumbs.focusedSegmentBounds(region);
     if (overlay is! RenderBox || !overlay.hasSize || segment == null) {
       return null;
     }
-    const gap = Offset(0, 8);
-    final anchor = Rect.fromPoints(
-      overlay.globalToLocal(segment.bottomLeft + gap),
-      overlay.globalToLocal(segment.bottomRight + gap),
+
+    const screenMargin = 8.0;
+    final padding = MediaQuery.paddingOf(context);
+    final viewportRight = overlay.size.width - screenMargin;
+    final leftLimit = screenMargin + padding.left;
+    final rightLimit = viewportRight - padding.right;
+    final availableWidth = rightLimit - leftLimit;
+    if (availableWidth <= 0) return null;
+
+    // The breadcrumb picker starts at the segment's left edge and only moves
+    // left when its viewport-relative width would cross the right edge.
+    final width = math.min(availableWidth, math.max(240.0, viewportRight / 4.17));
+    final anchor = overlay.globalToLocal(segment.bottomLeft);
+    final left = math.max(leftLimit, math.min(anchor.dx, rightLimit - width));
+    // Give showMenu the same width as the anchor rectangle so either alignment
+    // chosen by the popup route resolves to the same left edge.
+    final bounds = Rect.fromLTWH(left, anchor.dy + 8, width, 0);
+    return (
+      position: RelativeRect.fromRect(bounds, Offset.zero & overlay.size),
+      width: width,
     );
-    return RelativeRect.fromRect(anchor, Offset.zero & overlay.size);
   }
 
   void _revealInExplorer(List<String> segments, int index) {

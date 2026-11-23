@@ -551,6 +551,45 @@ void main() {
     expect(otherFile.readAsStringSync(), 'fn other() {}\n');
   });
 
+  testWidgets('breadcrumb picker grows right and clamps to the viewport',
+      (tester) async {
+    await mount(tester);
+
+    Future<void> checkPicker({required bool clamped}) async {
+      final segment = _segment('editor-2', 0);
+      await tester.tap(segment);
+      await tester.pumpAndSettle();
+
+      final anchor = tester.getRect(segment);
+      final row = tester.getRect(find.byType(PopupMenuItem<String>).first);
+      final viewportWidth =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      final rightEdge = viewportWidth - 8;
+      final expectedWidth = clamped ? 240.0 : rightEdge / 4.17;
+      final latestLeft = rightEdge - expectedWidth;
+
+      expect(anchor.left, greaterThan(viewportWidth / 2));
+      if (clamped) {
+        expect(anchor.left, greaterThan(latestLeft));
+        expect(row.right, moreOrLessEquals(rightEdge));
+      } else {
+        expect(anchor.left, lessThan(latestLeft));
+        expect(row.left, moreOrLessEquals(anchor.left));
+      }
+      expect(row.width, moreOrLessEquals(expectedWidth));
+      expect(row.top, moreOrLessEquals(anchor.bottom + 16));
+
+      await key(tester, LogicalKeyboardKey.escape);
+      expect(_field(tester, 20).focusNode!.hasFocus, isTrue);
+    }
+
+    await checkPicker(clamped: false);
+
+    tester.view.physicalSize = const Size(720, 720);
+    await tester.pumpAndSettle();
+    await checkPicker(clamped: true);
+  });
+
   testWidgets('breadcrumb pickers are positioned next to their owning segments',
       (tester) async {
     await mount(tester);

@@ -3625,6 +3625,18 @@
       "evidence": "选择器跟随所属编辑组已选段，覆盖当前行和横向滚动后的锚点。Windows 实机与 Linux 原生各 6 个观测点，窄回归 28/28，专项 312/312，Flutter 1,825 passed / 2 skipped。产品 69102ad 的 CI 45125210014 四项和 Platform Availability 45125205157 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.230-breadcrumb-picker-anchor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-283",
+      "name": "P05.231 CMD-06 面包屑选择器横向展开",
+      "description": "按窗口宽度决定面包屑选择器宽度，从所属编辑组的已选段左边展开，空间不足时移至视口右边界内。",
+      "dependencies": [
+        "feat-282"
+      ],
+      "status": "in-progress",
+      "evidence": "P05.230 Windows 实机与当前控件回归均复现有右侧空间时向左展开。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
