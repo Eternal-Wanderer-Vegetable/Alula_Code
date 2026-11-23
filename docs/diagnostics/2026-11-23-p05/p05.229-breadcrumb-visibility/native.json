@@ -1,0 +1,1485 @@
+{
+  "windowsEarlierObservationTimeoutSha256": "899205ad33c35951df1ff89849cf697f3946c706a355b54dc12dd094b2e80d23",
+  "windowsCompletedRunLogSha256": "42952262165615767718a136e95b56a8ed6681daf047fd9f225abdfb0a7f94cf",
+  "windowsCompletedRunAXTreeWarnings": 52,
+  "product": "216b7d0c3eda547c5a7e21e1f33765339fe75eb2",
+  "tree": "4618d0bc5d8152a12f8b0ec74e4aed886c44f734",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "reference": {
+      "src/vs/workbench/browser/parts/editor/breadcrumbsControl.ts": {
+        "sha256": "960d87593723ac3c110122746f813ca20ac510f5c73d246156afce82655e053e",
+        "lines": [
+          839,
+          844,
+          849,
+          850,
+          886,
+          891,
+          924,
+          926,
+          927,
+          938
+        ]
+      },
+      "src/vs/workbench/browser/parts/editor/breadcrumbs.ts": {
+        "sha256": "3f335ad32d429e05027ba518553c91d3e1d569b83be360b12a37674571858840",
+        "lines": [
+          126,
+          129
+        ]
+      }
+    },
+    "defaultEnabled": true,
+    "toggleCommand": "breadcrumbs.toggle",
+    "revealAndPickCommand": "breadcrumbs.toggleToOn",
+    "primaryShiftPeriod": true
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "4618d0bc5d8152a12f8b0ec74e4aed886c44f734",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "39c08eda5101e0b7ae37bafd39b62bd1bed130208ad6b9f84c9492ffdea40fd6",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "fd2e501d126886f3bf506e51aba7b4d665c36c2f8a7b96382772dfb711a4474d"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "df2de15838feb897455c0d789b588001a6f7021bc76c662b8c7194b13ea682fd",
+    "shifted-period-baseline": "2abf81b7e24d58d5cdda95ff66cdd2f37f0b650359ea5a28f52ed46700505cfc",
+    "regression-fixed": "6f5b510a1f78842054a35e29fb3d090da7de720ec1916f0625668d5bff20a0e5",
+    "focused": "d1d7d46ae36f509c8c16b3d8d8c4dbc22cfc717aba245ab7edb4b8dd07b112f8",
+    "analyze": "8f24b9362c1f220a3eb2f9db284f3ea22e06ab0c7673c0651d0d1ead322619b8",
+    "full": "b6ba20947c1abdbe88de610ab54d0ee4d088897d8048b332bc7e7bf118fb50be"
+  },
+  "graph": {
+    "_syncCommandContext": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 98,
+        "processes_affected": 6,
+        "modules_affected": 4
+      },
+      "sha256": "897ee32eeff1b0f17124d07e6ad633b2f4806c76b37af1498d0e920563579b14"
+    },
+    "_encodeSession": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 6,
+        "modules_affected": 3
+      },
+      "sha256": "85d2f45ee124e3b5234191255183f769c8bc35e70c550f2f09ee850a9b1be23a"
+    },
+    "_handleCommandChord": {
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "sha256": "274f213121fb3201dd1acd1a6a16bfd1bd1fa94d8b4f7c0e9d1f2e187feab510"
+    },
+    "all": {
+      "changed_count": 11,
+      "affected_count": 0,
+      "changed_files": 6,
+      "risk_level": "low",
+      "sha256": "601a52e6f6b69993cdc24ed02c1ab038d0007fc7058da19a62e5588418b11c3b"
+    },
+    "staged": {
+      "changed_count": 11,
+      "affected_count": 0,
+      "changed_files": 6,
+      "risk_level": "low",
+      "sha256": "601a52e6f6b69993cdc24ed02c1ab038d0007fc7058da19a62e5588418b11c3b"
+    }
+  },
+  "shiftedPeriodBaseline": {
+    "sourceTree": "e50504e860e89ed6e68cb7f0b34e1ece54cef513",
+    "key": {
+      "logical": "62",
+      "physical": "458807",
+      "control": true,
+      "shift": true,
+      "alt": false,
+      "meta": false
+    },
+    "reportSha256": "9709286e7f8eefc7a652a280184bda5fceb6c0591b53860c8026b87f9ddb8127"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "reportSha256": "9e389462f62c3fe444dfacdeec9c9bb1242dcda02b714e4088da9396189c8f82",
+    "observations": 18,
+    "steps": {
+      "ready": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "source-editor-focused": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-before": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-view": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-appearance": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": true,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "menu-off": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-before": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-view": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-appearance": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": false,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "hidden-editor-focused": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "keyboard-reenabled-and-selected": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [
+          "mo target",
+          "mo other",
+          "mo struct_rank",
+          "mo struct_second",
+          "mo enum_rank",
+          "st EntryProbeFixture"
+        ],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": [
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "control": true,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "control": true,
+            "shift": true,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "46",
+            "physical": "458807",
+            "control": true,
+            "shift": true,
+            "alt": false,
+            "meta": false
+          }
+        ]
+      },
+      "escape-returns-to-editor": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "command-palette": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": "qi-查看: 切换面包屑",
+        "pickerFocused": true,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "palette-off": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-before": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-view": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-appearance": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": false,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "menu-on": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              66,
+              66
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      }
+    },
+    "fixtureSha256": "fd2e501d126886f3bf506e51aba7b4d665c36c2f8a7b96382772dfb711a4474d",
+    "runnerSha256": "d553f7136b2d0be06c10448d70edac3921df043d9e655910ec8241dcfbea1171",
+    "aotSha256": "f0bdc44ce4054db9b4f7ddfb92f0a14d56c04fb82ceabcb2045ac82d57f71e02",
+    "exit": 0,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "breadcrumbVisibility": {
+      "menuChecks": [
+        true,
+        false,
+        false
+      ],
+      "sessionWrites": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "restoredGroups": [
+        "editor",
+        "editor-2"
+      ],
+      "shortcutSymbol": "EntryProbeFixture",
+      "escapeRestoredEditor": true,
+      "paletteToggled": true
+    },
+    "dpi": 120,
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9"
+  },
+  "linux": {
+    "reportSha256": "97cffdaddf4a2acc0bcc46ffd7d0917e0bb9b6286f3f5b8df770d1c59cf28ca4",
+    "observations": 18,
+    "steps": {
+      "ready": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "source-editor-focused": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-before": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-view": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "checked-appearance": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": true,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "menu-off": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-before": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-view": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "unchecked-appearance": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": false,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "hidden-editor-focused": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "keyboard-reenabled-and-selected": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [
+          "mo target",
+          "mo other",
+          "mo struct_rank",
+          "mo struct_second",
+          "mo enum_rank",
+          "st EntryProbeFixture"
+        ],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": [
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "control": true,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "control": true,
+            "shift": true,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "62",
+            "physical": "458807",
+            "control": true,
+            "shift": true,
+            "alt": false,
+            "meta": false
+          }
+        ]
+      },
+      "escape-returns-to-editor": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "command-palette": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": "qi-查看: 切换面包屑",
+        "pickerFocused": true,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "palette-off": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-before": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-view": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "reopen-unchecked-appearance": {
+        "breadcrumbSegments": [],
+        "breadcrumbMenuChecked": false,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": false,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      },
+      "menu-on": {
+        "breadcrumbSegments": [
+          "breadcrumbs-segment-editor-0",
+          "breadcrumbs-segment-editor-1",
+          "breadcrumbs-segment-editor-2",
+          "breadcrumbs-segment-editor-2-0",
+          "breadcrumbs-segment-editor-2-1"
+        ],
+        "breadcrumbMenuChecked": null,
+        "breadcrumbPickerRows": [],
+        "persistedBreadcrumbs": true,
+        "nativeWindowFocused": true,
+        "quickActive": null,
+        "pickerFocused": false,
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "selection": [
+              70,
+              70
+            ],
+            "dirty": false
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "dirty": false
+          }
+        ],
+        "nativeKeyEvents": []
+      }
+    },
+    "fixtureSha256": "fd2e501d126886f3bf506e51aba7b4d665c36c2f8a7b96382772dfb711a4474d",
+    "runnerSha256": "d402ab2b62f9ba1741efb89e3d3affcbdf816085c0a72974f3949eb4939d4409",
+    "aotSha256": "7351170e3eb09f63ae6f638beb5ea5bec5281919b2ab820adf072087a7eebfb5",
+    "exit": 0,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "breadcrumbVisibility": {
+      "menuChecks": [
+        true,
+        false,
+        false
+      ],
+      "sessionWrites": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "restoredGroups": [
+        "editor",
+        "editor-2"
+      ],
+      "shortcutSymbol": "EntryProbeFixture",
+      "escapeRestoredEditor": true,
+      "paletteToggled": true
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\""
+  }
+}
