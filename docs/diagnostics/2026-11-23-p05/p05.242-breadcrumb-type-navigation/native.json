@@ -1,0 +1,2258 @@
+{
+  "product": "a593c9ce39ec454f136c48efa05f985ad81dd6de",
+  "tree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "references": [
+      {
+        "path": "src/vs/base/browser/ui/list/listWidget.ts",
+        "lines": "L503-L519, L552-L598",
+        "sha256": "2d7801465f466d7a271b98f8e34b1136875a655284a7f93e2f4a5d77d1c4a7d6"
+      },
+      {
+        "path": "src/vs/platform/list/browser/listService.ts",
+        "lines": "L1495-L1500",
+        "sha256": "cdc81e193589c3a98ee309a55946e11aac8db0d0cb5901929490ad6c854cbd49"
+      },
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts",
+        "lines": "L252-L257, L377-L392, L467-L486",
+        "sha256": "c866baa8040b70fe24970e10dafe12bd5cdb0a9789b06cf414bbb7c94088d2a2"
+      },
+      {
+        "path": "src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsOutline.ts",
+        "lines": "L163-L178",
+        "sha256": "0a0662dbe7a0874d47e8497fd4ec93c88dc05e6c9e719cb40e1ddd9b2641a4f1"
+      },
+      {
+        "path": "src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsTree.ts",
+        "lines": "L37-L43",
+        "sha256": "deffe21183c4f8c01bf7563ec7b0ef2fa78b572df55207215411834db410766a"
+      },
+      {
+        "path": "src/vs/base/common/filters.ts",
+        "lines": "L44-L63",
+        "sha256": "3149b17406f712f8251bac2f15fb19a695b37d21083d5eb162c93607f8bc9fa3"
+      },
+      {
+        "path": "src/vs/workbench/services/keybinding/browser/keybindingService.ts",
+        "lines": "L695-L739",
+        "sha256": "e428222441df0984e96866d883049d3ebdce4f2ca8ef939810511eac86781b6e"
+      }
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "94f2876e7e6d3da05ecbb72b0010aba3cabe94e193688ddcee5653762ff01997",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "db794321360d5bd243ae9b62cbc14067eaf22f16cb7a69198fca9fb527d9f544"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "f83094c28c25625480364520559a0525f5fccb92facd9b335ff596fa78ca980e",
+    "focused": "e0f18368c91f826db55d79ebd0f233513c70b8b7c0d8848858d75db85d347b03",
+    "editor-renderer": "0064527355a39ca28f10a9f30beb7b1dfe7b5d8f37f14ae3caaa594507971e47",
+    "analyze": "f8a948ec7021e3d8a64925c38575c08d73d517ecfc09e5095404cf2b62491a9c",
+    "full": "dad55aea466be9dc95a981e7e44116281249df7ca86b29925c1512172a729e26",
+    "harness": "06d79ac895e925e86968c3fb8c4f72a1e726f548f12e0dcb22f024bc902018c8"
+  },
+  "graph": {
+    "BreadcrumbMenuEntry": {
+      "target": "BreadcrumbMenuEntry",
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "facc4ae64c965d0eaf1b07f47771ff0c4db9a0ff79238432d8540f3cd52a0941"
+    },
+    "BreadcrumbSymbolMenuItem": {
+      "target": "BreadcrumbSymbolMenuItem",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "55534aa485a6e1f9484db3a8f64f7d6090e354b25f4712fcfa80dfced989bbdb"
+    },
+    "_BreadcrumbMenuEntryState": {
+      "target": "_BreadcrumbMenuEntryState",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "7914cfff01d1ecc467c8508a68bcaa6c6b060b131b58a2f6f26080ecfb878a51"
+    },
+    "_handleKeyEvent": {
+      "target": "_handleKeyEvent",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ac05133af10839a8e2d068e10264dd54dce9f0d0569c96b5cea66896cfcd32"
+    },
+    "_showBreadcrumbFolderPicker": {
+      "target": "_showBreadcrumbFolderPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "4bf1e3bb6d68043b7d03b980b9e5becd47ae450fe6e734cefe7132bbdfa550da"
+    },
+    "_showBreadcrumbMenu": {
+      "target": "_showBreadcrumbMenu",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "abce91cd72acb479e06fd778236e92f9c0e9c4731ea14e5372c1074267743dd3"
+    },
+    "_showBreadcrumbSymbolPicker": {
+      "target": "_showBreadcrumbSymbolPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "64bdb039c20eabc514134db53ffe46732e8ae2deb1a66e73154083e0878c4a4b"
+    },
+    "app-test-breadcrumb_picker_test.dart": {
+      "target": "breadcrumb_picker_test.dart",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "9991b2ba1a2f2321600ba1a27c7c0a99b53467258e12f1749f75736abe79fb53"
+    },
+    "build": {
+      "target": "build",
+      "risk": "UNKNOWN",
+      "summary": null,
+      "sha256": "a952760df5ba7d733dab0405a77aab77f3ff9fb7a0b39cdee853bd5d4382ac04"
+    },
+    "dispose": {
+      "target": "dispose",
+      "risk": "UNKNOWN",
+      "summary": null,
+      "sha256": "b06567c117b319812837b7ba2fafb665c964a275392ca16ba5a0bdbad72f8752"
+    },
+    "all": {
+      "changed_count": 19,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "31b61532819d472642044307846b14bd6e2af7e9033402b175f71cfe943b2218"
+    },
+    "staged": {
+      "changed_count": 19,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "31b61532819d472642044307846b14bd6e2af7e9033402b175f71cfe943b2218"
+    }
+  },
+  "macosPhysical": "deferred",
+  "acceptanceDriverSha256": "ac73970d9fe93d9377e7eb0e568513bd2b07dc0e4e8dd726732eb2ae69ca52ec",
+  "windowsDirectKeyFixture": {
+    "sourceTree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+    "runner": "app/windows/runner/main.cpp",
+    "productRunnerSourceSha256": "85140e1723e8dd56ed6f38d4d6ad36eac01ada258ff8f462d76ee0e34b7483fa",
+    "fixtureRunnerSourceSha256": "f13a905aef8193113e992620fd78cea4f5b9613de2cef4647e1110124d180767",
+    "patchSha256": "b3c61c2a270ff3d374135ba703bb722f831eeab8c4af61b6d6995fdb5e544090",
+    "profile": "ImmDisableIME(0) before CreateWindow in fixture UI thread",
+    "environmentFlag": "ALULA_P242_TEST_DIRECT_KEYS",
+    "firstAttemptSha256": "07cacc9a33987c4b5b0bf220c5a31b55bcd110d9657548e31ed7654c1fe6622b",
+    "installedKeyboardLayouts": [
+      "0x08040804"
+    ],
+    "reference": "https://learn.microsoft.com/en-us/windows/win32/api/imm/nf-imm-immdisableime",
+    "appSha256": "7a49f649b34e78e5140b835e9cc64834b968f10453ef4be025fbca90e787a8e1",
+    "aotSha256": "25e182d05283bbf76535f5d4e1ea2de72216fbd41cd54923a3c7158350fe4102",
+    "firstAttempt": {
+      "focused": true,
+      "keyCountBefore": 5,
+      "keyCountAfter": 5,
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "25e182d05283bbf76535f5d4e1ea2de72216fbd41cd54923a3c7158350fe4102"
+    },
+    "patch": "--- product/app/windows/runner/main.cpp\n+++ fixture/app/windows/runner/main.cpp\n@@ -7,6 +7,17 @@\n \n int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,\n                       _In_ wchar_t *command_line, _In_ int show_command) {\n+  // Fixture-only direct-key profile on a host with one installed IME.\n+  if (::GetEnvironmentVariableW(L\"ALULA_P242_TEST_DIRECT_KEYS\", nullptr, 0)) {\n+    HMODULE imm = ::LoadLibraryExW(L\"imm32.dll\", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);\n+    auto disable_ime = imm ? reinterpret_cast<BOOL(WINAPI*)(DWORD)>(\n+                                ::GetProcAddress(imm, \"ImmDisableIME\"))\n+                           : nullptr;\n+    if (!disable_ime || !disable_ime(0)) {\n+      return EXIT_FAILURE;\n+    }\n+  }\n+\n   // Attach to console when present (e.g., 'flutter run') or create a\n   // new console when running with a debugger.\n   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {\n"
+  },
+  "linuxIsolatedWindowManagerConfigSha256": "35b739394811db6cf43b7005a3efca8a056c43759f9f7809d91b6d650fd7353c",
+  "windows": {
+    "tree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+    "appSha256": "7a49f649b34e78e5140b835e9cc64834b968f10453ef4be025fbca90e787a8e1",
+    "aotSha256": "25e182d05283bbf76535f5d4e1ea2de72216fbd41cd54923a3c7158350fe4102",
+    "fixtureSha256": "db794321360d5bd243ae9b62cbc14067eaf22f16cb7a69198fca9fb527d9f544",
+    "runnerSha256": "d97ab92de29f90b83d969a5dcbcd4c6c4fc38d7d37a2cc3166cc4902b7396e91",
+    "inputProfile": "fixture-ui-thread-direct-keys",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1531,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1531,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      },
+      {
+        "point": [
+          1416,
+          292
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1416,
+          292
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      },
+      {
+        "point": [
+          1371,
+          292
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1371,
+          292
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      }
+    ],
+    "diskSha256": {
+      "src/lib.rs": "8ff4e6eb74880e4eeaf3fce50e77eee7dfe2cbcf8192913ebb4495328b3a067f",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/alpha.rs": "c626952887e00de16914165b9805485a777d4905a83921a6716ac0ecb7784a8b",
+      "src/apex.rs": "4db5fe45ab501a2cd1d909dfd5aa2206e4052b153324fc965e9eda5ed7450f7b",
+      "src/nested/util.rs": "8a25509373135f42a770c7caa094b2b63a73053dd735acf1e1b67e3bd19f77f0",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "typeNavigation": {
+      "observations": {
+        "symbol-initial": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 174626479,
+          "typed": null
+        },
+        "symbol-collapsed-no-match": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 174626479,
+          "typed": "i"
+        },
+        "symbol-section-focus": {
+          "focus": "section",
+          "rows": [
+            "outer",
+            "section",
+            "closed"
+          ],
+          "route": 174626479,
+          "typed": "s"
+        },
+        "symbol-descendant-previews": {
+          "focus": "inner",
+          "rows": [
+            "outer",
+            "section",
+            "inner",
+            "closed"
+          ],
+          "route": 174626479,
+          "typed": "i"
+        },
+        "symbol-escape": {
+          "selection": [
+            16,
+            16
+          ],
+          "editorFocused": true
+        },
+        "file-initial": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": null
+        },
+        "file-collapsed-no-match": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "u"
+        },
+        "file-first-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "a"
+        },
+        "file-second-prefix": {
+          "focus": "apex.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "a"
+        },
+        "file-prefix-wrap": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "a"
+        },
+        "file-refined-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "al"
+        },
+        "file-folder-focus": {
+          "focus": "nested/",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "n"
+        },
+        "file-child-focus": {
+          "focus": "util.rs",
+          "rows": [
+            "nested/",
+            "util.rs",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 925510740,
+          "typed": "u"
+        },
+        "file-enter": {
+          "activeEditor": "util.rs",
+          "editorFocused": true
+        }
+      },
+      "originalSelection": [
+        16,
+        16
+      ],
+      "previewedInnerUtf16": 44
+    },
+    "exit": 0,
+    "passed": true,
+    "observations": 16,
+    "reportSha256": "9bede87f02827b396532afa40b1697ac312b5d5f799c49e417d8a52e3f468924",
+    "steps": {
+      "ready": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "caret": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-initial": {
+        "focusedRows": [
+          "mo outer"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [],
+        "previewHighlights": [
+          {
+            "start": 6,
+            "end": 66,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-collapsed-no-match": {
+        "focusedRows": [
+          "mo outer"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "105",
+            "physical": "458764",
+            "character": "i",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 6,
+            "end": 66,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-section-focus": {
+        "focusedRows": [
+          "mo section"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "115",
+            "physical": "458774",
+            "character": "s",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 18,
+            "end": 64,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-descendant-previews": {
+        "focusedRows": [
+          "fn inner"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "105",
+            "physical": "458764",
+            "character": "i",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 36,
+            "end": 58,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-escape": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-initial": {
+        "focusedRows": [
+          "lib.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-collapsed-no-match": {
+        "focusedRows": [
+          "lib.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "117",
+            "physical": "458776",
+            "character": "u",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-first-prefix": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-second-prefix": {
+        "focusedRows": [
+          "apex.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-prefix-wrap": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-refined-prefix": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "108",
+            "physical": "458767",
+            "character": "l",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-folder-focus": {
+        "focusedRows": [
+          "nested/"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "110",
+            "physical": "458769",
+            "character": "n",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-child-focus": {
+        "focusedRows": [
+          "util.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "117",
+            "physical": "458776",
+            "character": "u",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-enter": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "util.rs 主编辑器",
+            "documentId": 6,
+            "editorFocused": true,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 10492,
+            "ppid": 10491,
+            "private": 253292544,
+            "pss": 280176640,
+            "working_set": 332443648
+          }
+        ],
+        "root_pid": 10492,
+        "total_private_bytes": 253292544,
+        "total_private_mib": 241.6,
+        "total_working_set_bytes": 332443648
+      },
+      "symbol-descendant-previews": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 10492,
+            "ppid": 10491,
+            "private": 262234112,
+            "pss": 289364992,
+            "working_set": 342708224
+          }
+        ],
+        "root_pid": 10492,
+        "total_private_bytes": 262234112,
+        "total_private_mib": 250.1,
+        "total_working_set_bytes": 342708224
+      },
+      "file-refined-prefix": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 10492,
+            "ppid": 10491,
+            "private": 269459456,
+            "pss": 296574976,
+            "working_set": 349933568
+          }
+        ],
+        "root_pid": 10492,
+        "total_private_bytes": 269459456,
+        "total_private_mib": 257.0,
+        "total_working_set_bytes": 349933568
+      },
+      "file-enter": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 10492,
+            "ppid": 10491,
+            "private": 266493952,
+            "pss": 293608448,
+            "working_set": 346968064
+          }
+        ],
+        "root_pid": 10492,
+        "total_private_bytes": 266493952,
+        "total_private_mib": 254.1,
+        "total_working_set_bytes": 346968064
+      }
+    },
+    "aotSha256": "b6e9ddc27a005b4e8ecf595e76ce85cf3c544dd99700d618efc746d4c90f2519",
+    "fixtureSha256": "db794321360d5bd243ae9b62cbc14067eaf22f16cb7a69198fca9fb527d9f544",
+    "runnerSha256": "b41356820ad0531fa78b65b647b0f708288ea0e16377bbd96b7bf122b860a446",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "8ff4e6eb74880e4eeaf3fce50e77eee7dfe2cbcf8192913ebb4495328b3a067f",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/alpha.rs": "c626952887e00de16914165b9805485a777d4905a83921a6716ac0ecb7784a8b",
+      "src/apex.rs": "4db5fe45ab501a2cd1d909dfd5aa2206e4052b153324fc965e9eda5ed7450f7b",
+      "src/nested/util.rs": "8a25509373135f42a770c7caa094b2b63a73053dd735acf1e1b67e3bd19f77f0",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "typeNavigation": {
+      "observations": {
+        "symbol-initial": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": null
+        },
+        "symbol-collapsed-no-match": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "i"
+        },
+        "symbol-section-focus": {
+          "focus": "section",
+          "rows": [
+            "outer",
+            "section",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "s"
+        },
+        "symbol-descendant-previews": {
+          "focus": "inner",
+          "rows": [
+            "outer",
+            "section",
+            "inner",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "i"
+        },
+        "symbol-escape": {
+          "selection": [
+            16,
+            16
+          ],
+          "editorFocused": true
+        },
+        "file-initial": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": null
+        },
+        "file-collapsed-no-match": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "u"
+        },
+        "file-first-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-second-prefix": {
+          "focus": "apex.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-prefix-wrap": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-refined-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "al"
+        },
+        "file-folder-focus": {
+          "focus": "nested/",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "n"
+        },
+        "file-child-focus": {
+          "focus": "util.rs",
+          "rows": [
+            "nested/",
+            "util.rs",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "u"
+        },
+        "file-enter": {
+          "activeEditor": "util.rs",
+          "editorFocused": true
+        }
+      },
+      "originalSelection": [
+        16,
+        16
+      ],
+      "previewedInnerUtf16": 44
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "observations": 16,
+    "reportSha256": "b9d1ee9e02e31038f60846e1d5be07f1ba6dca57756b85b364b0e5f22cf3ccaf",
+    "steps": {
+      "ready": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "caret": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-initial": {
+        "focusedRows": [
+          "mo outer"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [],
+        "previewHighlights": [
+          {
+            "start": 6,
+            "end": 66,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-collapsed-no-match": {
+        "focusedRows": [
+          "mo outer"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "105",
+            "physical": "458764",
+            "character": "i",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 6,
+            "end": 66,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-section-focus": {
+        "focusedRows": [
+          "mo section"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "115",
+            "physical": "458774",
+            "character": "s",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 18,
+            "end": 64,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-descendant-previews": {
+        "focusedRows": [
+          "fn inner"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-2"
+        ],
+        "keyEvents": [
+          {
+            "logical": "105",
+            "physical": "458764",
+            "character": "i",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [
+          {
+            "start": 36,
+            "end": 58,
+            "version": 1
+          }
+        ],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": null,
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              105,
+              105
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "symbol-escape": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": true,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-initial": {
+        "focusedRows": [
+          "lib.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-collapsed-no-match": {
+        "focusedRows": [
+          "lib.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "117",
+            "physical": "458776",
+            "character": "u",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-first-prefix": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-second-prefix": {
+        "focusedRows": [
+          "apex.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-prefix-wrap": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-refined-prefix": {
+        "focusedRows": [
+          "alpha.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "97",
+            "physical": "458756",
+            "character": "a",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          },
+          {
+            "logical": "108",
+            "physical": "458767",
+            "character": "l",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-folder-focus": {
+        "focusedRows": [
+          "nested/"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "110",
+            "physical": "458769",
+            "character": "n",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-child-focus": {
+        "focusedRows": [
+          "util.rs"
+        ],
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "keyEvents": [
+          {
+            "logical": "117",
+            "physical": "458776",
+            "character": "u",
+            "control": false,
+            "shift": false,
+            "alt": false,
+            "meta": false
+          }
+        ],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "documentId": 2,
+            "editorFocused": false,
+            "selection": [
+              16,
+              16
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      },
+      "file-enter": {
+        "focusedRows": [],
+        "selectedBreadcrumbs": [],
+        "keyEvents": [],
+        "previewHighlights": [],
+        "editorViews": [
+          {
+            "label": "util.rs 主编辑器",
+            "documentId": 6,
+            "editorFocused": true,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "documentId": 5,
+            "editorFocused": false,
+            "selection": [
+              0,
+              0
+            ],
+            "startUtf16": 0,
+            "scrollPixels": 0.0,
+            "stateVersion": 1
+          }
+        ]
+      }
+    }
+  }
+}

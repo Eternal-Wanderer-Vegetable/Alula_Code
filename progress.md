@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
-- P05.242 / feat-294 进行中。产品 a593c9ce 的本地门禁及 Linux 原生 16 个观测点通过，Flutter 1,836 passed / 2 skipped。产品 CI 45182394887 四项和 Platform Availability 45182384536 Windows/Linux 通过。Windows 实机夹具在发送键鼠前检测到前台全屏窗口并停止，待普通桌面复验。macOS 实机暂缓。阶段证据见 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation/linux-and-ci.json。
+- P05.242 / feat-294 完成。路径和符号选择器支持 800 毫秒的名称前缀定位，焦点回绕并滚动到命中行。Windows 实机与 Linux 原生各 16 个观测点，专项 323/323，编辑器 29/29，Flutter 1,836 passed / 2 skipped。产品 a593c9ce 的 CI 45182394887 四项及 Platform Availability 45182384536 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation.md。
 
 - P05.241 / feat-293 完成。Space 切换分支，叶节点保留弹层。Alt 修饰递归切换子树。Windows 实机及 Linux 原生各 14 个观测点，Windows Alt+Space 被窗管截获，隔离 Xfwm 验证按键送达后的递归展开。窄回归 37/37，专项 321/321，编辑器 29/29，Flutter 1,834 passed / 2 skipped。产品 21887513 的 CI 45176695421 四项和 Platform Availability 45176687394 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.241-breadcrumb-symbol-space.md。
 

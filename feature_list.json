@@ -3787,8 +3787,8 @@
         "feat-289",
         "feat-293"
       ],
-      "status": "in-progress",
-      "evidence": "产品 a593c9ce 的本地门禁及 Linux 原生 16 个观测点通过，Flutter 1,836 passed / 2 skipped。产品 CI 45182394887 四项和 Platform Availability 45182384536 Windows/Linux 通过。Windows 实机夹具在发送键鼠前检测到前台全屏窗口并停止，待普通桌面复验。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation/linux-and-ci.json",
+      "status": "done",
+      "evidence": "路径和符号选择器支持 800 毫秒的名称前缀定位，焦点回绕并滚动到命中行。Windows 实机与 Linux 原生各 16 个观测点，专项 323/323，编辑器 29/29，Flutter 1,836 passed / 2 skipped。产品 a593c9ce 的 CI 45182394887 四项及 Platform Availability 45182384536 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.242-breadcrumb-type-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
