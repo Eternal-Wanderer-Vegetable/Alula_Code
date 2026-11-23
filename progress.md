@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.254 / feat-306 完成。定义和引用速览跨文件循环定位用同组干净预览，保留已有固定与未保存标签。Windows 28 步和 Linux 25 步验证替换、实际落点、历史返回、焦点和输入回归。专项 90/90，Flutter 1,851 passed / 2 skipped。产品 031504fa 的 CI 45281689853 四项和 Platform Availability 45281681398 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.254-peek-preview-tabs.md。
+
 - P05.253 / feat-305 完成。定义速览共用按文件结果树与 F4/F12、Shift+F4/Shift+F12 循环定位。Windows 28 步和 Linux 25 步通过，覆盖真实 Rust 提供程序的单条定义、引用速览和退出焦点。专项 82/82，Flutter 1,851 passed / 2 skipped。产品 8fd5edb5 的 CI 45277504965 四项和 Platform Availability 45277491428 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.253-definition-peek-cycle.md。
 
 - P05.252 / feat-304 完成。定义和引用速览按固定版位置规则选中最近结果，展开选中组并保留来源光标。Windows 24 步和 Linux 21 步通过，含单文件平铺、后续导航和输入法回归。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 67fbe9aa 的 CI 45272703801 四项和 Platform Availability 45272692299 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.252-peek-initial-result.md。
@@ -25,7 +27,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。核对并实现速览定位时的未固定标签策略。
+- 下一步。核对速览显式接受结果时的固定标签策略。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
