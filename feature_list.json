@@ -3849,8 +3849,8 @@
         "feat-296",
         "feat-298"
       ],
-      "status": "in-progress",
-      "evidence": "工作台定向、真实提供程序、Windows/Linux 原生键鼠与托管检查待登记。",
+      "status": "done",
+      "evidence": "Shift+F12 多引用进入速览，单引用直跳。显式速览、跨文件落点、Esc 与历史焦点已在两端验证，首行 BOM 坐标已校准。Windows/Linux 各 15 个原生观测点。专项 76/76，Flutter 1,845 passed / 2 skipped。产品 2844fde2 的 CI 45244831736 四项和 Platform Availability 45244820894 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.247-references-peek.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
