@@ -3578,8 +3578,8 @@
         "feat-277",
         "feat-278"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "工作区符号支持两种路径分隔符写法并对齐姓名区域排序及同名类别次序。Windows 实机与 Linux Xvfb + xfwm4 各 12 个原生观测点，专项 291/291，Flutter 1,823 passed / 2 skipped。产品 219f106 的 CI 45108716901 四项及 Platform Availability 45108713550 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.227-workspace-symbol-order.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
