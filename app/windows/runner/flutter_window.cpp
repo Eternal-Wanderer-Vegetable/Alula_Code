@@ -4,6 +4,7 @@
 #include <flutter/standard_method_codec.h>
 
 #include <optional>
+#include <variant>
 
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
@@ -75,6 +76,24 @@ bool FlutterWindow::OnCreate() {
   });
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
+  flutter::MethodChannel<flutter::EncodableValue> peek_input_channel(
+      flutter_controller_->engine()->messenger(), "alula/peek_input",
+      &flutter::StandardMethodCodec::GetInstance());
+  peek_input_channel.SetMethodCallHandler(
+      [this](const auto& call, auto result) {
+        if (call.method_name() != "setReadOnlyFocus") {
+          result->NotImplemented();
+          return;
+        }
+        const auto* focused = std::get_if<bool>(call.arguments());
+        if (!focused) {
+          result->Error("invalid-arguments", "Expected a boolean");
+          return;
+        }
+        SetReadOnlyPeekFocus(*focused);
+        result->Success();
+      });
+
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
   });
@@ -87,9 +106,21 @@ bool FlutterWindow::OnCreate() {
   return true;
 }
 
+void FlutterWindow::SetReadOnlyPeekFocus(bool focused) {
+  const HWND view = flutter_controller_->view()->GetNativeWindow();
+  if (focused && !peek_input_context_) {
+    // The read-only pane has no text input client to complete composition.
+    peek_input_context_ = ImmAssociateContext(view, nullptr);
+  } else if (!focused && peek_input_context_) {
+    ImmAssociateContext(view, peek_input_context_);
+    peek_input_context_ = nullptr;
+  }
+}
+
 void FlutterWindow::OnDestroy() {
   main_workbench_window = nullptr;
   if (flutter_controller_) {
+    SetReadOnlyPeekFocus(false);
     flutter_controller_ = nullptr;
   }
 

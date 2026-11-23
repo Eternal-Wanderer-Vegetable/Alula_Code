@@ -3889,6 +3889,18 @@
       "evidence": "定义与引用速览能用 Ctrl/Cmd+K F2 在结果树和只读预览间切换。Windows/Linux 各 18 个原生观测点，验证预览焦点跨文件、文字输入及 Esc。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 a1635d2a 的 CI 45263334280 四项和 Platform Availability 45263325177 Windows/Linux 通过。macOS 实机暂缓。 Windows 字母扫描码投递差异待查。 docs/diagnostics/2026-11-24-p05/p05.250-peek-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-303",
+      "name": "P05.251 CMD-08 Windows 只读速览字符和快捷键投递",
+      "description": "复核中文键盘布局的原生窗口消息、Flutter 按键事件与组合输入。定位只读预览输入字母后功能键中断的原因，修复确认的产品问题，并复验导航、关闭和宿主输入恢复。",
+      "dependencies": [
+        "feat-302"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

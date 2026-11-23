@@ -747,7 +747,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
-  final _definitionPeekFocus = LocationPeekFocus();
+  final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
@@ -21573,6 +21573,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _setDefinitionPeek(_DefinitionPeekSession? session) {
+    _definitionPeekFocus.setVisible(session != null);
     setState(() => _definitionPeek = session);
     _commands.context.setValues({
       'referenceSearchVisible': session?.kind == LocationPeekKind.references,

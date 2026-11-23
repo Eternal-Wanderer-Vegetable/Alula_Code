@@ -321,6 +321,17 @@ void main() {
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {
     final platform = defaultTargetPlatform;
+    const inputChannel = MethodChannel('alula/peek_input');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    final inputChanges = <bool>[];
+    messenger.setMockMethodCallHandler(inputChannel, (call) async {
+      expect(call.method, 'setReadOnlyFocus');
+      inputChanges.add(call.arguments as bool);
+      return null;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(inputChannel, null));
+    final expectsNativeInputControl = platform == TargetPlatform.windows;
     final temp =
         Directory.systemTemp.createTempSync('alula-explicit-definition-peek');
     addTearDown(() async {
@@ -375,9 +386,11 @@ void main() {
     await _pressPeekFocusChord(tester);
     expect(
         FocusManager.instance.primaryFocus?.debugLabel, 'definition-peek-list');
+    expect(inputChanges, expectsNativeInputControl ? [true] : <bool>[]);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(peek, findsNothing);
+    expect(inputChanges, expectsNativeInputControl ? [true, false] : <bool>[]);
     expect(_activeController(tester).selection.extentOffset,
         source.lastIndexOf('target()'));
   }, variant: navigationPlatforms);

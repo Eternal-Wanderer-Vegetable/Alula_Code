@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
@@ -274,14 +275,54 @@ enum LocationPeekFocusTarget { results, preview, source }
 
 /// The owning workbench can return focus to either pane after changing files.
 class LocationPeekFocus {
+  LocationPeekFocus({bool manageWindowInput = false})
+      : _manageWindowInput = manageWindowInput &&
+            defaultTargetPlatform == TargetPlatform.windows {
+    if (_manageWindowInput) {
+      results.addListener(_syncWindowsInput);
+      preview.addListener(_syncWindowsInput);
+    }
+  }
+
+  static const _windowsInput = MethodChannel('alula/peek_input');
   final results = FocusNode(debugLabel: 'definition-peek-list');
   final preview = FocusNode(debugLabel: 'definition-peek-preview');
+  final bool _manageWindowInput;
+  bool _visible = false;
+  bool _readOnlyFocused = false;
 
   void toggle() {
     (preview.hasFocus ? results : preview).requestFocus();
   }
 
+  void setVisible(bool visible) {
+    if (!_manageWindowInput || _visible == visible) return;
+    _visible = visible;
+    _syncWindowsInput();
+  }
+
+  void _syncWindowsInput() {
+    _setReadOnlyFocus(_visible && (results.hasFocus || preview.hasFocus));
+  }
+
+  void _setReadOnlyFocus(bool focused) {
+    if (_readOnlyFocused == focused) return;
+    _readOnlyFocused = focused;
+    unawaited(_sendReadOnlyFocus(focused));
+  }
+
+  Future<void> _sendReadOnlyFocus(bool focused) async {
+    try {
+      await _windowsInput.invokeMethod<void>('setReadOnlyFocus', focused);
+    } on MissingPluginException {
+      // Some workbench embedders run without the Windows runner.
+    }
+  }
+
   void dispose() {
+    preview.removeListener(_syncWindowsInput);
+    results.removeListener(_syncWindowsInput);
+    _setReadOnlyFocus(false);
     preview.dispose();
     results.dispose();
   }
