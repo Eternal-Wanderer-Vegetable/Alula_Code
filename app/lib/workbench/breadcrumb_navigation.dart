@@ -77,6 +77,9 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     required this.onRoute,
     required this.onRevealAside,
     required this.first,
+    this.loadFolder,
+    this.focusParent,
+    this.depth = 0,
   });
 
   final PopupMenuItem<String> item;
@@ -85,6 +88,9 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   final KeyEventResult Function(KeyEvent event) onKeyEvent;
   final ValueChanged<ModalRoute<dynamic>?> onRoute;
   final ValueChanged<String> onRevealAside;
+  final List<PopupMenuItem<String>> Function(String path)? loadFolder;
+  final VoidCallback? focusParent;
+  final int depth;
 
   @override
   double get height => item.height;
@@ -97,49 +103,182 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
 }
 
 class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
+  final _rowFocus = FocusNode();
+  List<PopupMenuItem<String>>? _children;
+
+  bool get _directory =>
+      widget.loadFolder != null &&
+      (widget.item.value?.startsWith('reveal:') ?? false);
+
+  @override
+  void dispose() {
+    _rowFocus.dispose();
+    super.dispose();
+  }
+
+  void _expand() {
+    final children =
+        widget.loadFolder!(widget.item.value!.substring('reveal:'.length));
+    setState(() => _children = children);
+  }
+
+  void _collapse() => setState(() => _children = null);
+
+  void _toggle() {
+    _rowFocus.requestFocus();
+    if (_children == null) {
+      _expand();
+    } else {
+      _collapse();
+    }
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode _, KeyEvent event) {
+    final key = event.logicalKey;
+    if (event is KeyDownEvent && key == LogicalKeyboardKey.escape) {
+      widget.onEscape();
+      return KeyEventResult.handled;
+    }
+    final pickerResult = widget.onKeyEvent(event);
+    if (pickerResult != KeyEventResult.ignored) return pickerResult;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    if (widget.loadFolder != null) {
+      final plain = !keyboard.isControlPressed &&
+          !keyboard.isMetaPressed &&
+          !keyboard.isAltPressed &&
+          !keyboard.isShiftPressed;
+      if (plain && key == LogicalKeyboardKey.arrowLeft) {
+        if (_children != null) {
+          _collapse();
+        } else {
+          widget.focusParent?.call();
+        }
+        return KeyEventResult.handled;
+      }
+      if (plain && key == LogicalKeyboardKey.arrowRight) {
+        if (_directory && _children == null) {
+          _expand();
+        } else if (_children?.isNotEmpty ?? false) {
+          FocusScope.of(context).nextFocus();
+        }
+        return KeyEventResult.handled;
+      }
+      if (_directory && key == LogicalKeyboardKey.space) {
+        if (plain && event is KeyDownEvent) _toggle();
+        return KeyEventResult.handled;
+      }
+      if (_directory && key == LogicalKeyboardKey.enter) {
+        return KeyEventResult.handled;
+      }
+    }
+    if (event is KeyDownEvent &&
+        key == LogicalKeyboardKey.enter &&
+        widget.item.enabled &&
+        widget.item.value != null) {
+      final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+      final primaryModifier =
+          isMac ? keyboard.isMetaPressed : keyboard.isControlPressed;
+      final otherModifier = isMac
+          ? keyboard.isControlPressed || keyboard.isAltPressed
+          : keyboard.isMetaPressed || keyboard.isAltPressed;
+      if (primaryModifier && !otherModifier && !keyboard.isShiftPressed) {
+        widget.onRevealAside(widget.item.value!);
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.onRoute(ModalRoute.of(context));
-    return Focus(
+    Widget label = widget.item.child!;
+    if (widget.loadFolder != null && widget.item.enabled) {
+      label = Padding(
+        padding: EdgeInsets.only(left: widget.depth * 12.0),
+        child: Row(
+          children: [
+            if (_directory)
+              Icon(
+                _children == null ? Icons.chevron_right : Icons.expand_more,
+                size: 18,
+              )
+            else
+              const SizedBox(width: 18),
+            Expanded(child: label),
+          ],
+        ),
+      );
+    }
+    final content = Focus(
+      focusNode: _rowFocus,
+      autofocus: widget.first,
+      skipTraversal: true,
+      child: label,
+    );
+    final row = Focus(
       canRequestFocus: false,
       skipTraversal: true,
-      onKeyEvent: (_, event) {
-        if (event is KeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.escape) {
-          widget.onEscape();
-          return KeyEventResult.handled;
-        }
-        final pickerKeyResult = widget.onKeyEvent(event);
-        if (pickerKeyResult != KeyEventResult.ignored) return pickerKeyResult;
-        if (event is KeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.enter &&
-            widget.item.enabled &&
-            widget.item.value != null) {
-          final keyboard = HardwareKeyboard.instance;
-          final isMac = defaultTargetPlatform == TargetPlatform.macOS;
-          final primaryModifier =
-              isMac ? keyboard.isMetaPressed : keyboard.isControlPressed;
-          final otherModifier = isMac
-              ? keyboard.isControlPressed || keyboard.isAltPressed
-              : keyboard.isMetaPressed || keyboard.isAltPressed;
-          if (primaryModifier && !otherModifier && !keyboard.isShiftPressed) {
-            widget.onRevealAside(widget.item.value!);
-            return KeyEventResult.handled;
-          }
-        }
-        return KeyEventResult.ignored;
-      },
-      child: PopupMenuItem<String>(
-        value: widget.item.value,
-        enabled: widget.item.enabled,
-        child: Focus(
-          autofocus: widget.first,
-          skipTraversal: true,
-          child: widget.item.child!,
-        ),
-      ),
+      onKeyEvent: _handleKeyEvent,
+      child: _directory
+          ? _BreadcrumbDirectoryMenuItem(
+              value: widget.item.value,
+              expanded: _children != null,
+              onToggle: _toggle,
+              child: content,
+            )
+          : PopupMenuItem<String>(
+              value: widget.item.value,
+              enabled: widget.item.enabled,
+              child: content,
+            ),
+    );
+    if (!_directory) return row;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        row,
+        for (final item in _children ?? const <PopupMenuItem<String>>[])
+          BreadcrumbMenuEntry(
+            key: ValueKey(item.value),
+            item: item,
+            onEscape: widget.onEscape,
+            onKeyEvent: widget.onKeyEvent,
+            onRoute: widget.onRoute,
+            onRevealAside: widget.onRevealAside,
+            first: false,
+            loadFolder: widget.loadFolder,
+            focusParent: _rowFocus.requestFocus,
+            depth: widget.depth + 1,
+          ),
+      ],
     );
   }
+}
+
+class _BreadcrumbDirectoryMenuItem extends PopupMenuItem<String> {
+  _BreadcrumbDirectoryMenuItem({
+    required super.value,
+    required Widget child,
+    required bool expanded,
+    required this.onToggle,
+  }) : super(child: Semantics(expanded: expanded, child: child));
+
+  final VoidCallback onToggle;
+
+  @override
+  PopupMenuItemState<String, _BreadcrumbDirectoryMenuItem> createState() =>
+      _BreadcrumbDirectoryMenuItemState();
+}
+
+class _BreadcrumbDirectoryMenuItemState
+    extends PopupMenuItemState<String, _BreadcrumbDirectoryMenuItem> {
+  @override
+  void handleTap() => widget.onToggle();
 }
 
 class BreadcrumbNavigation extends StatefulWidget {

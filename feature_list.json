@@ -3693,6 +3693,21 @@
       "evidence": "目录优先，同类名称按系统 locale 数字排序及 UTF-16 平手消歧。Windows 实机及 Linux 原生各 5 个观测点，窄回归 31/31，专项 315/315，Flutter 1,828 passed / 2 skipped。产品 b5be4783 的 CI 45143211844 四项和 Platform Availability 45143205410 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.235-breadcrumb-path-order.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-288",
+      "name": "P05.236 CMD-06 路径选择器内目录展开",
+      "description": "在当前面包屑路径选择器内展开、收起目录并用左右键在父子项间导航，保留所属编辑组、文件打开及侧开、Esc 焦点恢复。",
+      "dependencies": [
+        "feat-284",
+        "feat-285",
+        "feat-286",
+        "feat-287"
+      ],
+      "status": "in-progress",
+      "evidence": "旧版点击目录后原选择器中未出现嵌套文件的回归已复现，改动后窄回归 31/31 和工作台集成 1/1 通过。等待完整门禁、Windows/Linux 原生及托管验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

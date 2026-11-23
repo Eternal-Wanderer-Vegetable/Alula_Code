@@ -24957,8 +24957,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
           final node = TreeNode(
               name: pathSegments[index], path: directory.path, isDir: true);
-          await _showBreadcrumbFolderPicker(g, pathSegments, index, node,
-              focusPickedFile: true);
+          await _showBreadcrumbFolderPicker(g, node);
         },
         onSelectEditor: () {
           if (!identical(_groups[g.region], g) || !identical(g.active, active)) return;
@@ -25020,10 +25019,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     await _showBreadcrumbFolderPicker(
       group,
-      segments.sublist(0, index),
-      index - 1,
       TreeNode(name: parent.path, path: parent.path, isDir: true),
-      focusPickedFile: true,
       initialFocusPath: selectedPath,
     );
   }
@@ -25033,6 +25029,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     OpenDoc doc,
     List<PopupMenuEntry<String>> items, {
     String? initialValue,
+    List<PopupMenuItem<String>> Function(String path)? loadFolder,
   }) async {
     if (!identical(_groups[group.region], group) || !identical(group.active, doc)) return null;
     final root = _workspaceRoot;
@@ -25142,6 +25139,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 onEscape: escape,
                 onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
+                loadFolder: loadFolder,
                 onRoute: (route) {
                   pickerRoute ??= route;
                   if (route == null) return;
@@ -25213,37 +25211,49 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Future<void> _showBreadcrumbFolderPicker(
     EditorGroup group,
-    List<String> segments,
-    int index,
     TreeNode node, {
-    bool focusPickedFile = false,
     String? initialFocusPath,
   }) async {
-    // 文件树懒加载：未展开的目录现场读取磁盘子项（上游 FileItem picker 同样
-    // 从文件服务读取）。
-    List<TreeNode> children = node.children ?? const <TreeNode>[];
-    if (node.children == null) {
-      try {
-        final entries = _core!.workspace.listDir(node.path);
-        children = [
-          for (final e in entries)
-            TreeNode(
-              name: e['name'] as String,
-              path: e['path'] as String,
-              isDir: (e['is_dir'] as bool?) ?? false,
-            ),
-        ];
-      } on AlulaException {
-        children = const <TreeNode>[];
-      }
-    }
     final doc = group.active;
     if (doc == null) return;
-    final ordered = List<TreeNode>.of(children, growable: false)
-      ..sort((first, second) {
-        if (first.isDir != second.isDir) return first.isDir ? -1 : 1;
-        return compareBreadcrumbFileNames(first.name, second.name);
-      });
+    final workspace = _workspaceRoot;
+    final version = doc.doc.version;
+
+    List<TreeNode> childrenOf(String path, {List<TreeNode>? cached}) {
+      var children = cached;
+      if (children == null) {
+        try {
+          children = [
+            for (final e in _core!.workspace.listDir(path))
+              TreeNode(
+                name: e['name'] as String,
+                path: e['path'] as String,
+                isDir: (e['is_dir'] as bool?) ?? false,
+              ),
+          ];
+        } on AlulaException {
+          return const [];
+        }
+      }
+      return List<TreeNode>.of(children, growable: false)
+        ..sort((first, second) {
+          if (first.isDir != second.isDir) return first.isDir ? -1 : 1;
+          return compareBreadcrumbFileNames(first.name, second.name);
+        });
+    }
+
+    String itemValue(TreeNode child) =>
+        '${child.isDir ? 'reveal' : 'open'}:${child.path}';
+
+    List<PopupMenuItem<String>> itemsOf(List<TreeNode> children) => [
+          for (final child in children)
+            PopupMenuItem(
+              value: itemValue(child),
+              child: Text(child.isDir ? '${child.name}/' : child.name),
+            ),
+        ];
+
+    final ordered = childrenOf(node.path, cached: node.children);
     final initialPath = initialFocusPath == null
         ? null
         : _canonicalPath(initialFocusPath);
@@ -25252,59 +25262,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : ordered
             .where((child) => _canonicalPath(child.path) == initialPath)
             .firstOrNull;
-    String itemValue(TreeNode child) =>
-        '${child.isDir ? 'reveal' : 'open'}:${child.path}';
-    final selection = await _showBreadcrumbMenu(group, doc, [
-        if (ordered.isEmpty)
-          const PopupMenuItem(enabled: false, child: Text('空文件夹')),
-        for (final child in ordered)
-          PopupMenuItem(
-            value: itemValue(child),
-            child: Text(child.isDir ? '${child.name}/' : child.name),
-          ),
-    ], initialValue: initialItem == null ? null : itemValue(initialItem));
-    if (!mounted || selection == null) return;
-    final childPath = selection.value.split(':').sublist(1).join(':');
-    final child = ordered.where((c) => c.path == childPath).firstOrNull;
-    if (child == null) return;
-    // 上游 _onSelectEvent：picker 交互先激活所属组。
+    final selection = await _showBreadcrumbMenu(
+      group,
+      doc,
+      ordered.isEmpty
+          ? const [PopupMenuItem(enabled: false, child: Text('空文件夹'))]
+          : itemsOf(ordered),
+      initialValue: initialItem == null ? null : itemValue(initialItem),
+      loadFolder: (path) {
+        if (!mounted ||
+            workspace != _workspaceRoot ||
+            !identical(_groups[group.region], group) ||
+            !identical(group.active, doc) ||
+            doc.doc.version != version) {
+          return const [];
+        }
+        return itemsOf(childrenOf(path));
+      },
+    );
+    if (!mounted || selection == null || !selection.value.startsWith('open:')) {
+      return;
+    }
+    final childPath = selection.value.substring('open:'.length);
     setState(() => _focusedRegion = group.region);
     _syncCommandContext();
-    if (child.isDir) {
-      // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
-      // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
-      _revealInExplorer([...segments, child.name, ''], index + 1);
-    } else if (selection.openAside) {
+    if (selection.openAside) {
       final sourceRegion = group.region;
       _splitFocusedGroup();
       if (!mounted || _focusedRegion == sourceRegion) return;
-      await _openFileByPath(child.path);
+      await _openFileByPath(childPath);
       final targetGroup = _focused;
       final targetDoc = targetGroup.active;
       if (targetDoc?.path == null ||
-          _canonicalPath(targetDoc!.path!) != _canonicalPath(child.path)) {
+          _canonicalPath(targetDoc!.path!) != _canonicalPath(childPath)) {
         return;
       }
       _focusEditorAfterLayout(targetGroup, targetDoc);
-    } else if (focusPickedFile) {
-      final root = _workspaceRoot;
-      await _openFileByPath(child.path, asPreview: true);
-      if (!mounted || root != _workspaceRoot ||
-          !identical(_groups[group.region], group) ||
-          _focusedRegion != group.region) {
-        return;
-      }
-      final opened = group.active;
-      if (opened?.path == null ||
-          _canonicalPath(opened!.path!) != _canonicalPath(child.path)) {
-        return;
-      }
-      _breadcrumbs.selectEditor();
-      _focusEditorAfterLayout(group, opened);
-      WidgetsBinding.instance.scheduleFrame();
-    } else {
-      _openTreeFile(child);
+      return;
     }
+    await _openFileByPath(childPath, asPreview: true);
+    if (!mounted || workspace != _workspaceRoot ||
+        !identical(_groups[group.region], group) ||
+        _focusedRegion != group.region) {
+      return;
+    }
+    final opened = group.active;
+    if (opened?.path == null ||
+        _canonicalPath(opened!.path!) != _canonicalPath(childPath)) {
+      return;
+    }
+    _breadcrumbs.selectEditor();
+    _focusEditorAfterLayout(group, opened);
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   Future<void> _showBreadcrumbSymbolPicker(EditorGroup group) async {
@@ -25391,28 +25400,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       position: RelativeRect.fromRect(bounds, Offset.zero & overlay.size),
       width: width,
     );
-  }
-
-  void _revealInExplorer(List<String> segments, int index) {
-    if (_workspaceRoot == null || index >= segments.length - 1) {
-      return; // 最后一段是文件名，无目录可展开
-    }
-    _layout.showRegion('sidebar');
-    final target =
-        '${_normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '')}/'
-        '${segments.take(index + 1).join('/')}';
-    void walk(List<TreeNode> nodes) {
-      for (final n in nodes) {
-        final np = _normPath(n.path);
-        if (target == np || target.startsWith('$np/')) {
-          if (n.isDir && !n.expanded) _toggleDir(n);
-          if (n.children != null) walk(n.children!);
-        }
-      }
-    }
-
-    walk(_treeRoots);
-    setState(() {});
   }
 
   bool _tabCloseActionReservesSpace(EditorGroup group, OpenDoc doc) =>

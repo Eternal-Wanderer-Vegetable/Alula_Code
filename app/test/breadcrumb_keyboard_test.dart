@@ -12,6 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Finder _pickerRows({bool skipOffstage = true}) => find.byWidgetPredicate(
+      (widget) => widget is PopupMenuItem<String>,
+      skipOffstage: skipOffstage,
+    );
+
 Finder _segment(String region, int index) =>
     find.byKey(ValueKey('breadcrumbs-segment-$region-$index'));
 
@@ -217,7 +222,7 @@ void main() {
     expectSelected(tester, 1);
     expect(find.text('lib.rs'), findsOneWidget);
     expect(find.text('fn main'), findsNothing);
-    final pathRow = find.byType(PopupMenuItem<String>).first;
+    final pathRow = _pickerRows().first;
     expect(tester.getTopLeft(pathRow).dx,
         moreOrLessEquals(tester.getTopLeft(_segment('editor', 1)).dx));
 
@@ -227,7 +232,7 @@ void main() {
     expect(find.text('fn main'), findsOneWidget);
     expect(commands.context['breadcrumbsPickerOpen'], isTrue);
     expect(commands.context['breadcrumbsPickerFocused'], isTrue);
-    final symbolRow = find.byType(PopupMenuItem<String>);
+    final symbolRow = _pickerRows();
     expect(tester.getTopLeft(symbolRow).dx,
         moreOrLessEquals(tester.getTopLeft(_segment('editor', 2)).dx));
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
@@ -240,7 +245,7 @@ void main() {
     expect(find.text('src/'), findsOneWidget);
     expect(find.text('lib.rs'), findsNothing);
     expect(find.text('fn main'), findsNothing);
-    final folderRow = find.byType(PopupMenuItem<String>).first;
+    final folderRow = _pickerRows().first;
     expect(tester.getTopLeft(folderRow).dx,
         moreOrLessEquals(tester.getTopLeft(_segment('editor', 0)).dx));
     expect(commands.context['breadcrumbsPickerFocused'], isTrue);
@@ -250,7 +255,7 @@ void main() {
     expect(ModalRoute.of(tester.element(folderRow)), same(folderRoute));
 
     await key(tester, LogicalKeyboardKey.escape);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(commands.context['breadcrumbsPickerOpen'], isFalse);
     expect(commands.context['breadcrumbsPickerFocused'], isFalse);
     expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isFalse);
@@ -274,7 +279,7 @@ void main() {
     expect(
         find.byKey(const ValueKey('breadcrumbs-focus-editor')), findsOneWidget);
     expectSelected(tester, 1);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(field.focusNode!.hasFocus, isFalse);
     await key(tester, LogicalKeyboardKey.arrowRight);
     expectSelected(tester, 1);
@@ -312,10 +317,10 @@ void main() {
     final owner = _field(tester, 10);
     final before = owner.inputWindow.document.resync();
     await shortcut(tester, LogicalKeyboardKey.period);
-    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(_pickerRows(), findsWidgets);
     expect(owner.focusNode!.hasFocus, isFalse);
     await key(tester, LogicalKeyboardKey.escape);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(owner.focusNode!.hasFocus, isTrue);
     expect(_field(tester, 20).focusNode!.hasFocus, isFalse);
     expect(commands.context['breadcrumbsActive'], isFalse);
@@ -402,13 +407,13 @@ void main() {
       (tester) async {
     await mount(tester);
     await shortcut(tester, LogicalKeyboardKey.period);
-    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(_pickerRows(), findsWidgets);
     final other = _field(tester, 20);
     other.focusNode!.requestFocus();
     await tester.pump();
     await tester.tapAt(tester.getCenter(find.byKey(other.key!)));
     await tester.pumpAndSettle();
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(other.focusNode!.hasFocus, isTrue);
     expect(_field(tester, 10).focusNode!.hasFocus, isFalse);
     expect(commands.context['breadcrumbsActive'], isFalse);
@@ -439,7 +444,7 @@ void main() {
         reason: 'Tab reached the menu item rather than its inner autofocus');
     expect(owner.focusNode!.hasFocus, isFalse);
     await key(tester, LogicalKeyboardKey.escape);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(owner.focusNode!.hasFocus, isTrue);
     expect(commands.context['breadcrumbsActive'], isFalse);
   });
@@ -450,7 +455,7 @@ void main() {
     await mount(tester);
     final oldFocus = _field(tester, 10).focusNode!;
     await shortcut(tester, LogicalKeyboardKey.period);
-    final entries = find.byType(PopupMenuItem<String>);
+    final entries = _pickerRows();
     expect(entries, findsWidgets);
     final pickerRoute = ModalRoute.of(tester.element(entries.first))!;
     final dialogClosed = showDialog<void>(
@@ -481,13 +486,13 @@ void main() {
         reason: 'invalidation removes the captured picker, not the top dialog');
     expect(pickerRoute.isActive, isFalse);
     expect(
-        find.byType(PopupMenuItem<String>, skipOffstage: false), findsNothing);
+        _pickerRows(skipOffstage: false), findsNothing);
     await tester.tap(find.text('Dismiss cover'));
     await tester.pumpAndSettle();
     await dialogClosed;
     expect(dialog, findsNothing);
     expect(
-        find.byType(PopupMenuItem<String>, skipOffstage: false), findsNothing);
+        _pickerRows(skipOffstage: false), findsNothing);
     expect(oldFocus.hasFocus, isFalse);
     expect(commands.context['breadcrumbsActive'], isFalse);
     expect(commands.context['breadcrumbsPickerOpen'], isFalse);
@@ -500,11 +505,11 @@ void main() {
     await mount(tester);
     final oldFocus = _field(tester, 10).focusNode!;
     await shortcut(tester, LogicalKeyboardKey.period);
-    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(_pickerRows(), findsWidgets);
     await commands.execute('workbench.action.files.newUntitledFile');
     await tester.pumpAndSettle();
     await key(tester, LogicalKeyboardKey.escape);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(oldFocus.hasFocus, isFalse);
     expect(find.byKey(const ValueKey('breadcrumb-editor')), findsNothing);
     expect(commands.context['breadcrumbsActive'], isFalse);
@@ -525,13 +530,13 @@ void main() {
     expect(commands.context['config.breadcrumbs.enabled'], isTrue);
 
     await shortcut(tester, LogicalKeyboardKey.period);
-    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(_pickerRows(), findsWidgets);
     expect(await commands.execute('breadcrumbs.toggle'),
         CommandExecutionStatus.executed);
     await tester.pumpAndSettle();
     expect(_segment('editor', 0), findsNothing);
     expect(_segment('editor-2', 0), findsNothing);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
     expect(commands.context['breadcrumbsPossible'], isTrue);
     expect(commands.context['breadcrumbsVisible'], isFalse);
@@ -571,10 +576,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(_segment('editor', 0), findsOneWidget);
     expect(_segment('editor-2', 0), findsOneWidget);
-    expect(find.byType(PopupMenuItem<String>), findsWidgets);
+    expect(_pickerRows(), findsWidgets);
     expect(commands.context['config.breadcrumbs.enabled'], isTrue);
     await key(tester, LogicalKeyboardKey.escape);
-    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(_pickerRows(), findsNothing);
     expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
     expect(_field(tester, 10).inputWindow.document.isDirty, isFalse);
     expect(sessionStore.tryLoad()?['breadcrumbs.enabled'], isTrue);
@@ -592,7 +597,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final anchor = tester.getRect(segment);
-      final row = tester.getRect(find.byType(PopupMenuItem<String>).first);
+      final row = tester.getRect(_pickerRows().first);
       final viewportWidth =
           tester.view.physicalSize.width / tester.view.devicePixelRatio;
       final rightEdge = viewportWidth - 8;
@@ -633,7 +638,7 @@ void main() {
       );
       expect(selected, findsOneWidget);
       final segment = tester.getRect(selected);
-      final row = tester.getRect(find.byType(PopupMenuItem<String>).first);
+      final row = tester.getRect(_pickerRows().first);
       expect(row.right, greaterThan(segment.left),
           reason: 'the picker overlaps the owning segment horizontally');
       expect(row.left, lessThan(segment.right));

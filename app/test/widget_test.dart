@@ -446,7 +446,7 @@ void main() {
         reason: '回到单组且组 1 仍有 Cargo.toml');
   });
 
-  testWidgets('W2-3 面包屑：路径段展示和目录选择后展开文件树', (tester) async {
+  testWidgets('W2-3 面包屑目录在选择器内展开', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -476,18 +476,22 @@ void main() {
 
     await tester.tap(find.descendant(of: bc, matching: find.text('src')));
     await tester.pumpAndSettle();
-    final folder = find.descendant(
-      of: find.byType(PopupMenuItem<String>),
-      matching: find.text('src/'),
-    );
+    final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+    final folder = find.descendant(of: rows, matching: find.text('src/'));
     expect(folder, findsOneWidget);
     expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
     expect(find.text('main.rs'), findsNWidgets(2));
 
     await tester.tap(folder);
     await tester.pumpAndSettle();
+    expect(find.descendant(of: rows, matching: find.text('main.rs')),
+        findsOneWidget);
     expect(find.text('main.rs'), findsNWidgets(3),
-        reason: '选择目录后，main.rs 应出现在文件树、标签和面包屑中');
+        reason: '新出现的 main.rs 位于选择器中');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(rows, findsNothing);
+    expect(find.text('main.rs'), findsNWidgets(2));
   });
 
   testWidgets('W2-4 journal：重启恢复标签与未保存内容', (tester) async {

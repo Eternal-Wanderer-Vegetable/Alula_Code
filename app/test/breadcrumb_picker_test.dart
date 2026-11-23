@@ -163,7 +163,7 @@ void main() {
       await tester.tap(_breadcrumbSegment('editor', 'src'));
       await tester.pumpAndSettle();
 
-      final rows = find.byType(PopupMenuItem<String>);
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
       final folder = find.descendant(of: rows, matching: find.text('src/'));
       final sibling = find.descendant(of: rows, matching: find.text('notes.txt'));
       expect(folder, findsOneWidget);
@@ -192,7 +192,7 @@ void main() {
       await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
       await tester.pumpAndSettle();
 
-      final rows = find.byType(PopupMenuItem<String>);
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
       final sibling = find.descendant(of: rows, matching: find.text('lib.rs'));
       final current = find.descendant(of: rows, matching: find.text('main.rs'));
       expect(sibling, findsOneWidget);
@@ -234,7 +234,7 @@ void main() {
         },
         zoneValues: {#test.allowFormatting: true},
       );
-      final rows = find.byType(PopupMenuItem<String>);
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
       final labels = find.descendant(of: rows, matching: find.byType(Text));
       expect(
         tester.widgetList<Text>(labels).map((label) => label.data),
@@ -400,30 +400,49 @@ void main() {
   );
 
   testWidgets(
-    'choosing a directory in the file picker reveals it in Explorer',
+    'the breadcrumb path picker expands a directory and navigates to its child',
     (tester) async {
       await prepareWorkspace(tester);
       await seedWorkspaceAndOpen(tester);
       await mountPage(tester);
-
-      // The nested folder was never expanded in the tree; selecting it in
-      // the picker reveals and expands it in the file tree.
       await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('nested/'));
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      final folder = find.descendant(of: rows, matching: find.text('nested/'));
+      final child = find.descendant(of: rows, matching: find.text('util.rs'));
+      final current = find.descendant(of: rows, matching: find.text('main.rs'));
+      expect(child, findsNothing);
+      await tester.tap(folder);
       await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 400));
-      // 节点键保留 Rust 返回的原生分隔符：用后缀匹配避免分隔符差异。
-      expect(
-        find.byWidgetPredicate((widget) {
-          final key = widget.key;
-          return key is ValueKey<String> &&
-              key.value.startsWith('explorer-node:') &&
-              key.value.endsWith('nested');
-        }),
-        findsOneWidget,
-        reason: 'the picked folder expands in the file tree',
-      );
+      expect(child, findsOneWidget);
+      expect(current, findsOneWidget);
+      expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(child, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(child, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(child, findsOneWidget);
+      expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+
+      expect(rows, findsNothing);
+      final opened = tester
+          .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+          .singleWhere((field) => field.semanticsLabel!.startsWith('util.rs'));
+      expect(opened.focusNode!.hasFocus, isTrue);
     },
   );
 
@@ -550,7 +569,7 @@ void main() {
   );
 
   testWidgets(
-    'Ctrl+Enter on a breadcrumb directory keeps the normal reveal route',
+    'folder confirmation stays in the picker and Space expands the directory',
     (tester) async {
       await prepareWorkspace(tester);
       await seedNestedOnlyAndOpen();
@@ -558,7 +577,11 @@ void main() {
 
       await tester.tap(_breadcrumbSegment('editor', 'nested'));
       await tester.pumpAndSettle();
-      expect(find.text('nested/'), findsOneWidget);
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      final folder = find.descendant(of: rows, matching: find.text('nested/'));
+      final child = find.descendant(of: rows, matching: find.text('main.rs'));
+      expect(folder, findsOneWidget);
+      expect(child, findsNothing);
       debugDefaultTargetPlatformOverride = TargetPlatform.linux;
       try {
         await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
@@ -568,18 +591,17 @@ void main() {
         debugDefaultTargetPlatformOverride = null;
       }
       await tester.pumpAndSettle();
-
+      expect(folder, findsOneWidget);
+      expect(child, findsNothing);
       expect(find.byKey(const ValueKey('breadcrumb-editor-2')), findsNothing);
-      expect(
-        find.byWidgetPredicate((widget) {
-          final key = widget.key;
-          return key is ValueKey<String> &&
-              key.value.startsWith('explorer-node:') &&
-              key.value.endsWith('nested');
-        }),
-        findsOneWidget,
-        reason: 'the focused directory remains an Explorer reveal action',
-      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(child, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(_fieldForDocument(tester, 10).focusNode!.hasFocus, isTrue);
     },
   );
 

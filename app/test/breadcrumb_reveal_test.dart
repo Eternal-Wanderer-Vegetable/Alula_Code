@@ -17,7 +17,7 @@ const _reveal = 'breadcrumbs.revealFocused';
 const _original = 'fn main() {\r\n    // 😀\r\n}\r\n';
 const _library = 'fn library() {}\n';
 const _other = 'fn other() {}\n';
-final _pickerItems = find.byType(PopupMenuItem<String>);
+final _pickerItems = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
 
 Finder _pickerEntry(String name) =>
     find.descendant(of: _pickerItems, matching: find.text(name));
