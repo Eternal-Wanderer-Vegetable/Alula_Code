@@ -3536,8 +3536,8 @@
         "feat-274",
         "feat-275"
       ],
-      "status": "in-progress",
-      "evidence": "验证中。",
+      "status": "done",
+      "evidence": "工作区符号空查询首帧显示指引，清空查询取消旧请求。Windows 实机与 Linux Xvfb + xfwm4 各 19 个原生观测点，专项 286/286，Flutter 1,818 passed / 2 skipped。产品 292882d 的 CI 45099251562 四项及 Platform Availability 45099247494 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.224-workspace-symbol-idle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
