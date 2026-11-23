@@ -21576,7 +21576,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _definitionPeekFocus.setVisible(session != null);
     setState(() => _definitionPeek = session);
     _commands.context.setValues({
-      'referenceSearchVisible': session?.kind == LocationPeekKind.references,
+      'referenceSearchVisible': session != null,
       'peekWidgetVisible': session != null,
     });
   }
@@ -21597,7 +21597,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       workspace: workspace,
       entries: entries,
       kind: kind,
-      referenceGroups: kind == LocationPeekKind.references ? groups : null,
+      referenceGroups: groups,
       initialReference: _nearestPeekReference(
         source,
         sourceOffset,
@@ -21642,7 +21642,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final session = _definitionPeek;
     if (_steppingPeekReference ||
         session == null ||
-        session.kind != LocationPeekKind.references ||
         !_isCurrentDefinitionPeek(session)) {
       return;
     }
@@ -21674,7 +21673,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (!mounted || !identical(_definitionPeek, session)) return;
       final target = _active;
       if (!opened || target == null || _workspaceRoot != session.workspace) {
-        setState(() => _statusDetail = '无法打开引用位置');
+        setState(() => _statusDetail = '无法打开${session.kind.label}位置');
         return;
       }
 
@@ -30276,16 +30275,12 @@ class _DefinitionPeekSession {
     required this.workspace,
     required this.entries,
     this.kind = LocationPeekKind.definition,
-    Map<String, List<int>>? referenceGroups,
+    required this.referenceGroups,
     Set<String>? expandedReferenceFiles,
     required this.initialReference,
     this.navigatedReference,
     this.focusTarget = LocationPeekFocusTarget.results,
-  })  : referenceGroups = referenceGroups ??
-            (kind == LocationPeekKind.references
-                ? groupPeekReferences(entries)
-                : const {}),
-        expandedReferenceFiles = expandedReferenceFiles ?? <String>{};
+  }) : expandedReferenceFiles = expandedReferenceFiles ?? <String>{};
 
   final OpenDoc source;
   final int sourceVersion;

@@ -387,10 +387,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   @override
   void initState() {
     super.initState();
-    _fileGroups = widget.referenceGroups ??
-        (widget.kind == LocationPeekKind.references
-            ? groupPeekReferences(widget.entries)
-            : const {});
+    _fileGroups = widget.referenceGroups ?? groupPeekReferences(widget.entries);
     _expandedFiles = widget.expandedReferenceFiles ?? <String>{};
     _showEntry(widget.navigatedReference ?? widget.initialReference);
   }
@@ -715,7 +712,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
         workspace == null ? directory : p.relative(directory, from: workspace);
     return Semantics(
       key: ValueKey('references-file:$path'),
-      label: '$path，$count 个引用',
+      label: '$path，$count 个${widget.kind.label}',
       expanded: expanded,
       selected: selected,
       child: InkWell(

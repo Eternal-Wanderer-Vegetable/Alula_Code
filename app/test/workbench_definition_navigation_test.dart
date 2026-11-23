@@ -233,9 +233,16 @@ void main() {
       expect(_activeController(tester).selection.extentOffset, sourceOffset);
     }
 
+    Future<void> selectSecondary() async {
+      await tester
+          .tap(find.byKey(ValueKey('references-file:${secondary.path}')));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+    }
+
     await openPeek();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
-    await tester.pumpAndSettle();
+    await selectSecondary();
     final secondPreview = find.descendant(
       of: peek,
       matching: find.textContaining('fn beta()', findRichText: true),
@@ -262,8 +269,7 @@ void main() {
     expect(_activeController(tester).selection.extentOffset, sourceOffset);
 
     await openPeek();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
-    await tester.pumpAndSettle();
+    await selectSecondary();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(peek, findsNothing);
@@ -319,6 +325,105 @@ void main() {
     expect(activeFocus().hasPrimaryFocus, isTrue,
         reason: 'forward restores input focus to the target editor');
   }, variant: navigationPlatforms);
+
+  testWidgets('Definition Peek cycles through files and wraps with focus',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-definition-cycle');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { resolve(); }\n';
+    const alphaText = 'fn near() {}\nfn later() {}\n';
+    const betaText = 'fn other() {}\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync(alphaText);
+    final beta = File('${workspace.path}/beta.rs')..writeAsStringSync(betaText);
+    var requests = 0;
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async {
+      requests++;
+      return DefinitionResult(
+        version: version,
+        uri: beta.uri.toString(),
+        line: 0,
+        character: 3,
+        endCharacter: 8,
+        alternatives: [
+          DefinitionTarget(uri: alpha.uri.toString(), line: 1, character: 3),
+          DefinitionTarget(uri: alpha.uri.toString(), line: 0, character: 3),
+        ],
+      );
+    });
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: source.indexOf('resolve'));
+    await tester.pump();
+
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    Finder row(int index) => find.byKey(ValueKey('peek-result:$index'));
+    Finder group(File file) =>
+        find.byKey(ValueKey('references-file:${file.path}'));
+    SemanticsProperties semantics(Finder node) =>
+        tester.widget<Semantics>(node).properties;
+    Future<void> press(LogicalKeyboardKey key, {bool shift = false}) async {
+      if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(key);
+      if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+    }
+
+    void expectResult(String text, int offset, int index,
+        {bool preview = false}) {
+      expect(peek, findsOneWidget);
+      expect(_activeController(tester).text, text);
+      expect(_activeController(tester).selection.extentOffset, offset);
+      expect(semantics(row(index)).selected, isTrue);
+      expect(_peekPreviewFocus(tester).hasPrimaryFocus, preview);
+      if (!preview) {
+        expect(FocusManager.instance.primaryFocus?.debugLabel,
+            'definition-peek-list');
+      }
+    }
+
+    await press(LogicalKeyboardKey.f12);
+    expectResult(source, source.indexOf('resolve'), 2);
+    expect(semantics(group(alpha)).label, endsWith('2 个定义'));
+    expect(semantics(group(alpha)).expanded, isTrue);
+    expect(semantics(group(beta)).expanded, isFalse);
+    expect(
+        tester.getTopLeft(row(2)).dy, lessThan(tester.getTopLeft(row(1)).dy));
+
+    await press(LogicalKeyboardKey.f4);
+    expectResult(alphaText, alphaText.indexOf('later'), 1);
+    await press(LogicalKeyboardKey.f12);
+    expectResult(betaText, 3, 0);
+    expect(semantics(group(alpha)).expanded, isTrue);
+    expect(semantics(group(beta)).expanded, isTrue);
+    await _pressPeekFocusChord(tester);
+    await press(LogicalKeyboardKey.f4, shift: true);
+    expectResult(alphaText, alphaText.indexOf('later'), 1, preview: true);
+    await press(LogicalKeyboardKey.f12, shift: true);
+    expectResult(alphaText, 3, 2, preview: true);
+    await press(LogicalKeyboardKey.f4, shift: true);
+    expectResult(betaText, 3, 0, preview: true);
+    await press(LogicalKeyboardKey.f4);
+    expectResult(alphaText, 3, 2, preview: true);
+
+    await press(LogicalKeyboardKey.escape);
+    expect(peek, findsNothing);
+    expect(
+        tester.widget<TextField>(_activeTextField()).focusNode!.hasPrimaryFocus,
+        isTrue);
+    await press(LogicalKeyboardKey.f4);
+    expect(peek, findsNothing);
+    expect(_activeController(tester).selection.extentOffset, 3);
+    expect(requests, 1);
+    await press(LogicalKeyboardKey.f12);
+    expect(requests, 2);
+    expectResult(alphaText, 3, 2);
+  });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {
