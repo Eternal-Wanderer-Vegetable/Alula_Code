@@ -340,6 +340,7 @@ class DefinitionPeek extends StatefulWidget {
     this.workspace,
     this.referenceGroups,
     this.expandedReferenceFiles,
+    this.initialReference = 0,
     this.navigatedReference,
     this.focusController,
     this.focusTarget = LocationPeekFocusTarget.results,
@@ -355,6 +356,7 @@ class DefinitionPeek extends StatefulWidget {
   final String? workspace;
   final Map<String, List<int>>? referenceGroups;
   final Set<String>? expandedReferenceFiles;
+  final int initialReference;
   final int? navigatedReference;
   final LocationPeekFocus? focusController;
   final LocationPeekFocusTarget focusTarget;
@@ -390,7 +392,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
             ? groupPeekReferences(widget.entries)
             : const {});
     _expandedFiles = widget.expandedReferenceFiles ?? <String>{};
-    _showEntry(widget.navigatedReference ?? 0);
+    _showEntry(widget.navigatedReference ?? widget.initialReference);
   }
 
   @override

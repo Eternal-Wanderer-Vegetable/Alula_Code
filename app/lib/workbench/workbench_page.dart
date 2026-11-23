@@ -21291,13 +21291,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 (path: path, target: target, referenceSymbol: null),
           ];
           if (entries.isNotEmpty && (peek || entries.length > 1)) {
-            _setDefinitionPeek(_DefinitionPeekSession(
+            _showLocationPeek(
               source: active,
               sourceVersion: sourceVersion,
               sourceOffset: offset,
               workspace: workspace,
               entries: entries,
-            ));
+            );
             return;
           }
           if (peek) {
@@ -21410,14 +21410,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       if (peek || entries.length > 1) {
-        _setDefinitionPeek(_DefinitionPeekSession(
+        _showLocationPeek(
           source: active,
           sourceVersion: version,
           sourceOffset: offset,
           workspace: workspace,
           entries: entries,
           kind: LocationPeekKind.references,
-        ));
+        );
         return;
       }
 
@@ -21581,14 +21581,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
-  int _nearestPeekReference(_DefinitionPeekSession session, List<int> order) {
-    final sourceUri = session.source.uri ?? '';
-    final position = session.source.doc.positionAt(session.sourceOffset);
+  void _showLocationPeek({
+    required OpenDoc source,
+    required int sourceVersion,
+    required int sourceOffset,
+    required String? workspace,
+    required List<DefinitionPeekEntry> entries,
+    LocationPeekKind kind = LocationPeekKind.definition,
+  }) {
+    final groups = groupPeekReferences(entries);
+    _setDefinitionPeek(_DefinitionPeekSession(
+      source: source,
+      sourceVersion: sourceVersion,
+      sourceOffset: sourceOffset,
+      workspace: workspace,
+      entries: entries,
+      kind: kind,
+      referenceGroups: kind == LocationPeekKind.references ? groups : null,
+      initialReference: _nearestPeekReference(
+        source,
+        sourceOffset,
+        entries,
+        groups.values.expand((indices) => indices),
+      ),
+    ));
+  }
+
+  int _nearestPeekReference(
+    OpenDoc source,
+    int offset,
+    List<DefinitionPeekEntry> entries,
+    Iterable<int> order,
+  ) {
+    final sourceUri = source.uri ?? '';
+    final position = source.doc.positionAt(offset);
     var nearest = order.first;
     var longestPrefix = -1;
     var closestDistance = 0;
     for (final index in order) {
-      final target = session.entries[index].target;
+      final target = entries[index].target;
       var prefix = 0;
       while (prefix < sourceUri.length &&
           prefix < target.uri.length &&
@@ -21626,8 +21657,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final order = [
       for (final group in session.referenceGroups.values) ...group,
     ];
-    final anchor =
-        session.navigatedReference ?? _nearestPeekReference(session, order);
+    final anchor = session.navigatedReference ?? session.initialReference;
     final next =
         order[(order.indexOf(anchor) + (forward ? 1 : -1)) % order.length];
     final reference = session.entries[next];
@@ -21657,6 +21687,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         kind: session.kind,
         referenceGroups: session.referenceGroups,
         expandedReferenceFiles: session.expandedReferenceFiles,
+        initialReference: session.initialReference,
         navigatedReference: next,
         focusTarget: focusTarget,
       ));
@@ -21693,6 +21724,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         workspace: peek.workspace,
         referenceGroups: peek.referenceGroups,
         expandedReferenceFiles: peek.expandedReferenceFiles,
+        initialReference: peek.initialReference,
         navigatedReference: peek.navigatedReference,
         focusController: _definitionPeekFocus,
         focusTarget: peek.focusTarget,
@@ -30246,6 +30278,7 @@ class _DefinitionPeekSession {
     this.kind = LocationPeekKind.definition,
     Map<String, List<int>>? referenceGroups,
     Set<String>? expandedReferenceFiles,
+    required this.initialReference,
     this.navigatedReference,
     this.focusTarget = LocationPeekFocusTarget.results,
   })  : referenceGroups = referenceGroups ??
@@ -30262,6 +30295,7 @@ class _DefinitionPeekSession {
   final LocationPeekKind kind;
   final Map<String, List<int>> referenceGroups;
   final Set<String> expandedReferenceFiles;
+  final int initialReference;
   final int? navigatedReference;
   final LocationPeekFocusTarget focusTarget;
 }

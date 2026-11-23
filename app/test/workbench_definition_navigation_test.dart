@@ -199,18 +199,18 @@ void main() {
     await _openWorkspace(tester, temp, workspace,
         definitionRequest: (id, offset, version) async => DefinitionResult(
               version: version,
-              uri: primary.uri.toString(),
-              line: 0,
+              uri: secondary.uri.toString(),
+              line: 1,
               character: 3,
-              endLine: 0,
-              endCharacter: 8,
+              endLine: 1,
+              endCharacter: 7,
               alternatives: [
                 DefinitionTarget(
-                  uri: secondary.uri.toString(),
-                  line: 1,
+                  uri: primary.uri.toString(),
+                  line: 0,
                   character: 3,
-                  endLine: 1,
-                  endCharacter: 7,
+                  endLine: 0,
+                  endCharacter: 8,
                 ),
               ],
             ));
@@ -227,12 +227,14 @@ void main() {
           findsOneWidget);
       expect(find.descendant(of: peek, matching: find.text('beta.rs')),
           findsOneWidget);
+      final nearest = find.byKey(const ValueKey('peek-result:1'));
+      expect(tester.widget<Semantics>(nearest).properties.selected, isTrue);
       expect(_activeController(tester).text, source);
       expect(_activeController(tester).selection.extentOffset, sourceOffset);
     }
 
     await openPeek();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
     await tester.pumpAndSettle();
     final secondPreview = find.descendant(
       of: peek,
@@ -260,7 +262,7 @@ void main() {
     expect(_activeController(tester).selection.extentOffset, sourceOffset);
 
     await openPeek();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
     await tester.pumpAndSettle();
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
@@ -634,14 +636,16 @@ void main() {
     final zetaGroup = group(zeta);
     expect(peek, findsOneWidget);
     expect(find.text('引用 (3)'), findsOneWidget);
-    expect(semantics(alphaGroup).expanded, isFalse);
-    expect(semantics(zetaGroup).expanded, isTrue);
+    expect(semantics(alphaGroup).expanded, isTrue);
+    expect(semantics(zetaGroup).expanded, isFalse);
     expect(tester.getTopLeft(alphaGroup).dy,
         lessThan(tester.getTopLeft(zetaGroup).dy));
-    expect(semantics(leaf(0)).selected, isTrue);
-    expect(
-        tester.getTopLeft(leaf(1)).dy, lessThan(tester.getTopLeft(leaf(0)).dy));
-    expect(leaf(2), findsNothing);
+    expect(semantics(leaf(2)).selected, isTrue);
+    expect(leaf(0), findsNothing);
+    expect(leaf(1), findsNothing);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset,
+        source.indexOf('task'));
 
     Future<void> press(LogicalKeyboardKey key) async {
       await tester.sendKeyEvent(key);
@@ -649,14 +653,15 @@ void main() {
     }
 
     await press(LogicalKeyboardKey.arrowLeft);
-    expect(semantics(zetaGroup).selected, isTrue);
+    expect(semantics(alphaGroup).selected, isTrue);
     await press(LogicalKeyboardKey.arrowLeft);
-    expect(semantics(zetaGroup).expanded, isFalse);
-    expect(leaf(0), findsNothing);
-    expect(leaf(1), findsNothing);
+    expect(semantics(alphaGroup).expanded, isFalse);
+    expect(leaf(2), findsNothing);
     await tester.tap(zetaGroup);
     await tester.pumpAndSettle();
     expect(semantics(zetaGroup).expanded, isTrue);
+    expect(
+        tester.getTopLeft(leaf(1)).dy, lessThan(tester.getTopLeft(leaf(0)).dy));
     await press(LogicalKeyboardKey.arrowRight);
     expect(semantics(leaf(1)).selected, isTrue);
 
@@ -684,7 +689,7 @@ void main() {
     expect(peek, findsOneWidget);
     expect(find.text('引用 (2)'), findsOneWidget);
     expect(zetaGroup, findsNothing);
-    expect(semantics(leaf(0)).selected, isTrue);
+    expect(semantics(leaf(1)).selected, isTrue);
     expect(
         tester.getTopLeft(leaf(1)).dy, lessThan(tester.getTopLeft(leaf(0)).dy));
   });
@@ -743,6 +748,12 @@ void main() {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
     await tester.pumpAndSettle();
 
+    final nearest = find.byKey(const ValueKey('peek-result:1'));
+    expect(tester.widget<Semantics>(nearest).properties.selected, isTrue);
+    await tester.tap(find.byKey(ValueKey('references-file:${remote.path}')));
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
     final row = find.byKey(const ValueKey('peek-result:0'));
     final resolved =
         find.descendant(of: row, matching: find.text('1:$reported'));

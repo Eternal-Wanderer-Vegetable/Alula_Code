@@ -3901,6 +3901,18 @@
       "evidence": "定位 Windows 中文输入法将 x 和 F12 转为 VK_PROCESSKEY 的原因，只读速览可继续接收快捷键。Windows 21 步验证原始扫描码和中文组合、提交及撤销，Linux 18 步回归。专项 81/81，Flutter 1,850 passed / 2 skipped。产品 d7967997 的 CI 45268527176 四项和 Platform Availability 45268514735 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.251-windows-peek-input.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-304",
+      "name": "P05.252 CMD-08 速览初次选中最近结果",
+      "description": "在定义与引用速览打开时，按固定版的来源 URI 公共前缀和 UTF-16 位置距离选中初始结果，平分时沿用文件和范围顺序。验证多文件只展开所选组、单文件平铺、预览、来源光标和下一条引用起点。",
+      "dependencies": [
+        "feat-303"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
