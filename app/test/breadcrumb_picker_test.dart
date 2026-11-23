@@ -183,7 +183,37 @@ void main() {
   );
 
   testWidgets(
-    'the file breadcrumb segment opens the symbol picker with keyboard support',
+    'the file breadcrumb lists siblings and focuses the current file',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      await mountPage(tester);
+
+      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byType(PopupMenuItem<String>);
+      final sibling = find.descendant(of: rows, matching: find.text('lib.rs'));
+      final current = find.descendant(of: rows, matching: find.text('main.rs'));
+      expect(sibling, findsOneWidget);
+      expect(current, findsOneWidget);
+      expect(Focus.of(tester.element(current)).hasPrimaryFocus, isTrue);
+      expect(find.descendant(of: rows, matching: find.text('nested/')),
+          findsOneWidget);
+
+      await tester.tap(sibling);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+      final siblingField = tester
+          .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+          .singleWhere((field) => field.semanticsLabel!.startsWith('lib.rs'));
+      expect(siblingField.focusNode!.hasFocus, isTrue);
+    },
+  );
+
+  testWidgets(
+    'the outline breadcrumb segment opens the symbol picker with keyboard support',
     (tester) async {
       await prepareWorkspace(tester);
       const docId = 10;
@@ -192,17 +222,15 @@ void main() {
 
       // Give the outline symbols time to populate for the active document.
       await tester.pump(const Duration(milliseconds: 400));
-      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.tap(_breadcrumbSegment('editor', 'main'));
       await tester.pumpAndSettle();
       // ignore: avoid_print
       print('SYMDBG texts=${[
         for (final t in tester.widgetList<Text>(find.byType(Text)))
           if (t.data != null) t.data
       ].take(40)}');
-      // main() symbol is listed by the LSP outline source.
-      final mainEntry = find.textContaining('main()');
-      expect(mainEntry, findsWidgets,
-          reason: 'the symbol picker lists the document symbols');
+      expect(find.text('fn helper_fn'), findsOneWidget,
+          reason: 'the outline picker lists the document symbols');
 
       // Keyboard: arrow down twice to reach helper_fn (main starts at
       // offset 0), then Enter picks it and jumps the caret to its offset.
@@ -441,7 +469,7 @@ void main() {
       final sourceEditable = tester.widget<EditableText>(sourceEditableFinder);
       final originalSelection = sourceEditable.controller.selection;
 
-      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.tap(_breadcrumbSegment('editor', 'main'));
       await tester.pumpAndSettle();
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();

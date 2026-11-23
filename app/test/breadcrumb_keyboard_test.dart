@@ -200,6 +200,8 @@ void main() {
       'WithPicker shortcuts replace the contents and anchor of an open picker',
       (tester) async {
     await mount(tester);
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pumpAndSettle();
     await tester.tap(_segment('editor', 0));
     await tester.pumpAndSettle();
     expectSelected(tester, 0);
@@ -212,13 +214,26 @@ void main() {
 
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowRight);
     expectSelected(tester, 1);
+    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('fn main'), findsNothing);
+    final pathRow = find.byType(PopupMenuItem<String>).first;
+    expect(tester.getTopLeft(pathRow).dx,
+        moreOrLessEquals(tester.getTopLeft(_segment('editor', 1)).dx));
+
+    await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowRight);
+    expectSelected(tester, 2);
     expect(find.text('lib.rs'), findsNothing);
     expect(find.text('fn main'), findsOneWidget);
     expect(commands.context['breadcrumbsPickerOpen'], isTrue);
     expect(commands.context['breadcrumbsPickerFocused'], isTrue);
     final symbolRow = find.byType(PopupMenuItem<String>);
     expect(tester.getTopLeft(symbolRow).dx,
-        moreOrLessEquals(tester.getTopLeft(_segment('editor', 1)).dx));
+        moreOrLessEquals(tester.getTopLeft(_segment('editor', 2)).dx));
+    await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
+    expectSelected(tester, 1);
+    expect(find.text('lib.rs'), findsOneWidget);
+    expect(find.text('fn main'), findsNothing);
+
     await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
     expectSelected(tester, 0);
     expect(find.text('lib.rs'), findsOneWidget);

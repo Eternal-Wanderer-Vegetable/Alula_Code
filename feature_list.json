@@ -3651,6 +3651,21 @@
       "evidence": "WithPicker 相邻段切换更新列表与锚点，保留边界、确认和返回焦点。Windows 实机及 Linux 原生各 10 个观测点，窄回归 29/29，专项 313/313，Flutter 1,826 passed / 2 skipped。产品 d93114e 的 CI 45131907170 四项和 Platform Availability 45131899921 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.232-breadcrumb-picker-switch.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-285",
+      "name": "P05.233 CMD-06 文件段的同级文件选择器",
+      "description": "文件段打开所在目录的同级文件列表，初始焦点定位当前文件。实际符号段继续进入符号选择器，保留原有选择、取消和侧开行为。",
+      "dependencies": [
+        "feat-100",
+        "feat-142",
+        "feat-145",
+        "feat-284"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 BreadcrumbsFilePicker 以文件父目录为输入并聚焦该文件。旧版控件测试中从 main.rs 打开选择器时缺少同级 lib.rs。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

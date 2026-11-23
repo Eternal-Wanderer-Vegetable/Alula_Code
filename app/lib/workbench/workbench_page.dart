@@ -25010,15 +25010,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     List<String> segments,
     int index,
   ) async {
-    final node = _findTreeNodeByRelPrefix(segments, index);
-    debugPrint(
-        'BCDBG seg=$segments idx=$index node=${node?.path} children=${node?.children?.length} roots=${_treeRoots.map((n) => n.path).take(6)}');
-    final isLastSegment = index == segments.length - 1;
-    if (isLastSegment) {
-      // 上游 OutlineItem → BreadcrumbsOutlinePicker：文件段列出文档符号。
-      await _showBreadcrumbSymbolPicker(group);
+    if (index == segments.length - 1) {
+      final filePath = group.active?.path;
+      if (filePath == null) return;
+      final parent = File(filePath).parent;
+      await _showBreadcrumbFolderPicker(
+        group,
+        segments.sublist(0, index),
+        index - 1,
+        TreeNode(name: parent.path, path: parent.path, isDir: true),
+        focusPickedFile: true,
+        initialFocusPath: filePath,
+      );
       return;
     }
+    final node = _findTreeNodeByRelPrefix(segments, index);
     if (node == null) {
       _revealInExplorer(segments, index);
       return;
@@ -25050,8 +25056,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<({String value, bool openAside})?> _showBreadcrumbMenu(
     EditorGroup group,
     OpenDoc doc,
-    List<PopupMenuEntry<String>> items,
-  ) async {
+    List<PopupMenuEntry<String>> items, {
+    String? initialValue,
+  }) async {
     if (!identical(_groups[group.region], group) || !identical(group.active, doc)) return null;
     final root = _workspaceRoot;
     final path = doc.path;
@@ -25148,12 +25155,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         context: context,
         position: placement.position,
         constraints: BoxConstraints.tightFor(width: placement.width),
+        initialValue: initialValue,
         items: [
           for (var i = 0; i < items.length; i++)
             if (items[i] case final PopupMenuItem<String> item)
               BreadcrumbMenuEntry(
                 item: item,
-                first: i == 0,
+                first: initialValue == null
+                    ? i == 0
+                    : item.represents(initialValue),
                 onEscape: escape,
                 onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
@@ -25232,6 +25242,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     int index,
     TreeNode node, {
     bool focusPickedFile = false,
+    String? initialFocusPath,
   }) async {
     // 文件树懒加载：未展开的目录现场读取磁盘子项（上游 FileItem picker 同样
     // 从文件服务读取）。
@@ -25253,6 +25264,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final doc = group.active;
     if (doc == null) return;
+    final initialPath = initialFocusPath == null
+        ? null
+        : _canonicalPath(initialFocusPath);
+    final initialFile = initialPath == null
+        ? null
+        : children
+            .where((child) =>
+                !child.isDir && _canonicalPath(child.path) == initialPath)
+            .firstOrNull;
     final selection = await _showBreadcrumbMenu(group, doc, [
         if (children.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('空文件夹')),
@@ -25261,7 +25281,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             value: '${child.isDir ? 'reveal' : 'open'}:${child.path}',
             child: Text(child.isDir ? '${child.name}/' : child.name),
           ),
-    ]);
+    ], initialValue: initialFile == null ? null : 'open:${initialFile.path}');
     if (!mounted || selection == null) return;
     final childPath = selection.value.split(':').sublist(1).join(':');
     final child = children.where((c) => c.path == childPath).firstOrNull;
