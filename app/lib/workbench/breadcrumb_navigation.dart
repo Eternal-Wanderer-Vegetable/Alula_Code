@@ -68,6 +68,24 @@ class BreadcrumbNavigationController extends ChangeNotifier {
   }
 }
 
+class BreadcrumbSymbolMenuItem extends PopupMenuItem<String> {
+  BreadcrumbSymbolMenuItem({
+    super.key,
+    required String value,
+    required Widget child,
+    required this.children,
+    required String initialValue,
+  })  : focusedOnOpen = value == initialValue,
+        expandedOnOpen = children.any(
+          (child) => child.focusedOnOpen || child.expandedOnOpen,
+        ),
+        super(value: value, child: child);
+
+  final List<BreadcrumbSymbolMenuItem> children;
+  final bool focusedOnOpen;
+  final bool expandedOnOpen;
+}
+
 class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   const BreadcrumbMenuEntry({
     super.key,
@@ -80,6 +98,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     this.loadFolder,
     this.focusParent,
     this.onItemFocus,
+    this.expandedSymbols,
     this.depth = 0,
   });
 
@@ -92,6 +111,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   final List<PopupMenuItem<String>> Function(String path)? loadFolder;
   final VoidCallback? focusParent;
   final ValueChanged<String>? onItemFocus;
+  final Set<String>? expandedSymbols;
   final int depth;
 
   @override
@@ -107,10 +127,29 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
 class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
   final _rowFocus = FocusNode();
   List<PopupMenuItem<String>>? _children;
+  bool _initialFocusRevealed = false;
+
+  BreadcrumbSymbolMenuItem? get _symbol =>
+      widget.item is BreadcrumbSymbolMenuItem
+          ? widget.item as BreadcrumbSymbolMenuItem
+          : null;
+
+  bool get _hasChildren =>
+      _directory || (_symbol?.children.isNotEmpty ?? false);
 
   bool get _directory =>
       widget.loadFolder != null &&
       (widget.item.value?.startsWith('reveal:') ?? false);
+
+  @override
+  void initState() {
+    super.initState();
+    final symbol = _symbol;
+    if (symbol != null &&
+        (widget.expandedSymbols?.contains(symbol.value) ?? false)) {
+      _children = symbol.children;
+    }
+  }
 
   @override
   void dispose() {
@@ -119,12 +158,16 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
   }
 
   void _expand() {
-    final children =
+    final children = _symbol?.children ??
         widget.loadFolder!(widget.item.value!.substring('reveal:'.length));
+    if (_symbol != null) widget.expandedSymbols?.add(widget.item.value!);
     setState(() => _children = children);
   }
 
-  void _collapse() => setState(() => _children = null);
+  void _collapse() {
+    if (_symbol != null) widget.expandedSymbols?.remove(widget.item.value);
+    setState(() => _children = null);
+  }
 
   void _toggle() {
     _rowFocus.requestFocus();
@@ -147,7 +190,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
-    if (widget.loadFolder != null) {
+    if (widget.loadFolder != null || _symbol != null) {
       final plain = !keyboard.isControlPressed &&
           !keyboard.isMetaPressed &&
           !keyboard.isAltPressed &&
@@ -161,14 +204,14 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
         return KeyEventResult.handled;
       }
       if (plain && key == LogicalKeyboardKey.arrowRight) {
-        if (_directory && _children == null) {
+        if (_hasChildren && _children == null) {
           _expand();
         } else if (_children?.isNotEmpty ?? false) {
           FocusScope.of(context).nextFocus();
         }
         return KeyEventResult.handled;
       }
-      if (_directory && key == LogicalKeyboardKey.space) {
+      if (_hasChildren && key == LogicalKeyboardKey.space) {
         if (plain && event is KeyDownEvent) _toggle();
         return KeyEventResult.handled;
       }
@@ -198,22 +241,31 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
   Widget build(BuildContext context) {
     widget.onRoute(ModalRoute.of(context));
     Widget label = widget.item.child!;
-    if (widget.loadFolder != null && widget.item.enabled) {
+    final symbol = _symbol;
+    if ((widget.loadFolder != null || symbol != null) && widget.item.enabled) {
+      Widget disclosure = const SizedBox(width: 18);
+      if (_hasChildren) {
+        disclosure = Icon(
+          _children == null ? Icons.chevron_right : Icons.expand_more,
+          size: 18,
+        );
+        if (symbol != null) {
+          disclosure = InkResponse(
+            canRequestFocus: false,
+            radius: 12,
+            onTap: _toggle,
+            child: disclosure,
+          );
+        }
+      }
+      final indent = symbol == null ? widget.depth : widget.depth.clamp(0, 8);
       label = Padding(
-        padding: EdgeInsets.only(left: widget.depth * 12.0),
-        child: Row(
-          children: [
-            if (_directory)
-              Icon(
-                _children == null ? Icons.chevron_right : Icons.expand_more,
-                size: 18,
-              )
-            else
-              const SizedBox(width: 18),
-            Expanded(child: label),
-          ],
-        ),
+        padding: EdgeInsets.only(left: indent * 12.0),
+        child: Row(children: [disclosure, Expanded(child: label)]),
       );
+      if (symbol != null && _hasChildren) {
+        label = Semantics(expanded: _children != null, child: label);
+      }
     }
     final content = Focus(
       focusNode: _rowFocus,
@@ -231,6 +283,16 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
               final value = widget.item.value;
               if (focused && widget.item.enabled && value != null) {
                 widget.onItemFocus!(value);
+                if (widget.first && widget.depth > 0 && !_initialFocusRevealed) {
+                  _initialFocusRevealed = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    final rowContext = _rowFocus.context;
+                    if (mounted && _rowFocus.hasFocus && rowContext != null) {
+                      Scrollable.ensureVisible(rowContext, alignment: 0.5);
+                    }
+                  });
+                  WidgetsBinding.instance.scheduleFrame();
+                }
               }
             },
       child: _directory
@@ -246,7 +308,7 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
               child: content,
             ),
     );
-    if (!_directory) return row;
+    if (!_hasChildren) return row;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -260,9 +322,11 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
             onKeyEvent: widget.onKeyEvent,
             onRoute: widget.onRoute,
             onRevealAside: widget.onRevealAside,
-            first: false,
+            first: item is BreadcrumbSymbolMenuItem && item.focusedOnOpen,
             loadFolder: widget.loadFolder,
             focusParent: _rowFocus.requestFocus,
+            onItemFocus: widget.onItemFocus,
+            expandedSymbols: widget.expandedSymbols,
             depth: widget.depth + 1,
           ),
       ],

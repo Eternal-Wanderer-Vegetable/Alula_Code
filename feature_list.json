@@ -3750,6 +3750,21 @@
       "evidence": "符号行焦点临时滚动并高亮范围，窗口外使用一个有界只读视图，取消及确认后恢复源视图。Windows 实机及 Linux 原生各 9 个观测点，专项 319/319，编辑器 29/29，Flutter 1,832 passed / 2 skipped。产品 faa22b67 的 CI 45167340889 四项和 Platform Availability 45167329876 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-23-p05/p05.239-breadcrumb-symbol-preview.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-292",
+      "name": "P05.240 CMD-06 符号选择器树形层级",
+      "description": "使用当前文档版本的 Outline 层级。初选符号展开祖先，保留弹层内分支折叠状态，区分箭头展开和符号文字确认，支持父子方向键。",
+      "dependencies": [
+        "feat-127",
+        "feat-288",
+        "feat-290",
+        "feat-291"
+      ],
+      "status": "in-progress",
+      "evidence": "平铺的回归和重开时丢失子分支折叠的回归均已复现，修复后 Rust 符号控件用例通过。等待全量、Windows/Linux 原生及托管验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

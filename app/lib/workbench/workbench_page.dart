@@ -25034,6 +25034,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     List<PopupMenuEntry<String>> items, {
     String? initialValue,
     ValueChanged<String>? onItemFocus,
+    Set<String>? expandedSymbols,
     List<PopupMenuItem<String>> Function(String path)? loadFolder,
   }) async {
     if (!identical(_groups[group.region], group) || !identical(group.active, doc)) return null;
@@ -25145,6 +25146,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
                 loadFolder: loadFolder,
+                expandedSymbols: expandedSymbols,
                 onItemFocus: onItemFocus == null
                     ? null
                     : (value) {
@@ -25363,28 +25365,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final version = doc.doc.version;
     // 点击时直查 LSP（不依赖大纲缓存，任意组即时可用）。
     final snapshot = doc.doc.core.lsp.symbols(doc.id);
-    final symbols = {
-      if (snapshot != null && snapshot.version == version)
-        for (final row in snapshot.symbols)
-          'symbol:${(row['start_utf16'] as num?)?.toInt() ?? 0}:${row['name'] ?? ''}':
-              (
-                kind: row['kind'] as String? ?? '',
-                name: row['name'] as String? ?? '',
-                startLine: (row['line'] as num?)?.toInt() ?? 0,
-                endLine: (row['end_line'] as num?)?.toInt() ?? 0,
-              ),
-    };
+    final roots = snapshot != null && snapshot.version == version
+        ? buildDocumentSymbolTree(snapshot.symbols)
+        : const <DocumentSymbolNode>[];
+    final selectedValue = 'symbol:${selectedSymbol.id}';
+    final symbols = <String, DocumentSymbolNode>{};
+    final expandedSymbols = <String>{};
+    BreadcrumbSymbolMenuItem menuItem(DocumentSymbolNode node) {
+      final value = 'symbol:${node.id}';
+      symbols[value] = node;
+      final item = BreadcrumbSymbolMenuItem(
+        value: value,
+        child: Text('${_outlineKindBadge(node.kind)} ${node.name}'),
+        children: node.children.map(menuItem).toList(growable: false),
+        initialValue: selectedValue,
+      );
+      if (item.expandedOnOpen) expandedSymbols.add(value);
+      return item;
+    }
+
     final items = <PopupMenuItem<String>>[
-      if (symbols.isEmpty)
+      if (roots.isEmpty)
         const PopupMenuItem(enabled: false, child: Text('未发现符号')),
-      for (final MapEntry(key: value, value: symbol) in symbols.entries)
-        PopupMenuItem(
-          value: value,
-          child: Text('${_outlineKindBadge(symbol.kind)} ${symbol.name}'),
-        ),
+      for (final root in roots) menuItem(root),
     ];
-    final selectedValue =
-        'symbol:${selectedSymbol.startUtf16}:${selectedSymbol.name}';
     final previewField = doc.inputFieldKey.currentState;
     ({String value, bool openAside})? selection;
     try {
@@ -25393,11 +25397,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc,
         items,
         initialValue: symbols.containsKey(selectedValue) ? selectedValue : null,
+        expandedSymbols: expandedSymbols,
         onItemFocus: (value) {
           final symbol = symbols[value];
           if (symbol != null) {
             previewField?.previewSymbolLines(
-              firstLine: symbol.startLine,
+              firstLine: symbol.line,
               lastLine: symbol.endLine,
               documentVersion: version,
             );
@@ -25408,6 +25413,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       previewField?.clearSymbolPreview();
     }
     if (!mounted || selection == null) return;
+    final selected = symbols[selection.value];
+    if (selected == null) return;
     final sourceVersion = doc.doc.version;
     final sourceRegion = group.region;
     if (selection.openAside) {
@@ -25427,11 +25434,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _noteActiveDocument(targetGroup, targetDoc.id);
       _focusedRegion = targetGroup.region;
     });
-    final parts = selection.value.split(':');
-    final offset = int.tryParse(parts[1]) ?? 0;
     _setDocSelection(
       targetDoc,
-      TextSelection.collapsed(offset: offset),
+      TextSelection.collapsed(offset: selected.startUtf16),
     );
     _focusNodeFor(targetGroup, targetDoc).requestFocus();
     setState(() {});

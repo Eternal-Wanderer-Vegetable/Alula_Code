@@ -486,6 +486,88 @@ void main() {
   );
 
   testWidgets(
+    'symbol breadcrumb tree reveals the selected ancestry and toggles branches',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      const source = '// 🦊\r\nmod outer {\r\n    mod section {\r\n'
+          '        fn inner() {}\r\n    }\r\n}\r\n'
+          'mod closed {\r\n    fn other_child() {}\r\n}\r\n';
+      final file = File('${workspace.path}/src/main.rs')
+        ..writeAsStringSync(source);
+      await mountPage(tester);
+
+      final field = _fieldForDocument(tester, 10);
+      final input = find.descendant(
+        of: find.byKey(field.key!),
+        matching: find.byType(TextField),
+      );
+      final controller = tester.widget<TextField>(input).controller!;
+      final content = field.inputWindow.document.resync().content;
+      field.focusNode!.requestFocus();
+      controller.selection =
+          TextSelection.collapsed(offset: content.indexOf('inner'));
+      await tester.pumpAndSettle();
+      await tester.tap(_breadcrumbSegment('editor', 'inner'));
+      await tester.pumpAndSettle();
+
+      final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+      Finder entry(String name) =>
+          find.descendant(of: rows, matching: find.textContaining(' $name'));
+      final inner = entry('inner');
+      final section = entry('section');
+      final outer = entry('outer');
+      expect(inner, findsOneWidget);
+      expect(outer, findsOneWidget);
+      expect(entry('closed'), findsOneWidget);
+      expect(entry('other_child'), findsNothing,
+          reason: 'only the selected symbol ancestry is expanded');
+      expect(Focus.of(tester.element(inner)).hasPrimaryFocus, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(Focus.of(tester.element(section)).hasPrimaryFocus, isTrue);
+      expect(inner, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(inner, findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(Focus.of(tester.element(outer)).hasPrimaryFocus, isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(section, findsNothing);
+
+      final outerRow = find.ancestor(of: outer, matching: rows);
+      await tester.tap(find.descendant(
+        of: outerRow,
+        matching: find.byIcon(Icons.chevron_right),
+      ));
+      await tester.pumpAndSettle();
+      expect(section, findsOneWidget);
+      expect(inner, findsNothing,
+          reason: 'an expanded parent retains the earlier child collapse');
+      for (var i = 0; i < 3; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+        await tester.pumpAndSettle();
+      }
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(controller.selection.extentOffset, content.indexOf('fn inner'));
+
+      await tester.tap(_breadcrumbSegment('editor', 'outer'));
+      await tester.pumpAndSettle();
+      expect(inner, findsNothing);
+      await tester.tap(outer);
+      await tester.pumpAndSettle();
+      expect(rows, findsNothing);
+      expect(controller.selection.extentOffset, content.indexOf('mod outer'));
+      expect(file.readAsBytesSync(), utf8.encode(source));
+    },
+  );
+
+  testWidgets(
     'the breadcrumb path picker expands a directory and navigates to its child',
     (tester) async {
       await prepareWorkspace(tester);
