@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-23 更新）
 
+- P05.241 / feat-293 完成。Space 切换分支，叶节点保留弹层。Alt 修饰递归切换子树。Windows 实机及 Linux 原生各 14 个观测点，Windows Alt+Space 被窗管截获，隔离 Xfwm 验证按键送达后的递归展开。窄回归 37/37，专项 321/321，编辑器 29/29，Flutter 1,834 passed / 2 skipped。产品 21887513 的 CI 45176695421 四项和 Platform Availability 45176687394 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.241-breadcrumb-symbol-space.md。
+
 - P05.240 / feat-292 完成。初选时展开祖先，保留同一弹层内分支折叠，支持父子方向键、展开箭头及符号确认。Windows 实机及 Linux 原生各 14 个观测点，窄回归 36/36，专项 320/320，编辑器 29/29，Flutter 1,833 passed / 2 skipped。产品 4707a876 的 CI 45171848489 四项和 Platform Availability 45171834415 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.240-breadcrumb-symbol-tree.md。
 
 - P05.239 / feat-291 完成。符号行焦点临时滚动并高亮范围，窗口外使用一个有界只读视图，取消及确认后恢复源视图。Windows 实机及 Linux 原生各 9 个观测点，专项 319/319，编辑器 29/29，Flutter 1,832 passed / 2 skipped。产品 faa22b67 的 CI 45167340889 四项和 Platform Availability 45167329876 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-23-p05/p05.239-breadcrumb-symbol-preview.md。
