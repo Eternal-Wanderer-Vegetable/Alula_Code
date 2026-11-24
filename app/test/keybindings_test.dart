@@ -8,6 +8,46 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const quickOpenId = 'workbench.action.quickOpen';
 
+  test('definition commands use the canonical IDs and platform chord', () {
+    const go = 'editor.action.revealDefinition';
+    const aside = 'editor.action.revealDefinitionAside';
+    const oldAside = 'editor.action.openDeclarationToTheSide';
+    bool inEditor(String? condition) =>
+        condition == null || condition == 'editorTextFocus';
+    for (final (platform, modifier) in [
+      (TargetPlatform.windows, 'ctrl'),
+      (TargetPlatform.linux, 'ctrl'),
+      (TargetPlatform.macOS, 'cmd'),
+    ]) {
+      final keys = KeybindingSet.load(platform: platform);
+      final chord = parseChordSequence('$modifier+k f12')!;
+      expect(
+          keys
+              .bindingForChord(parseChord('f12')!, matchesWhen: inEditor)
+              ?.commandId,
+          go);
+      expect(keys.bindingForSequence(chord.chords)?.commandId, aside);
+      expect(keys.bindingForSequence(chord.chords)?.when, 'editorTextFocus');
+      expect(keys.shortcutFor('editor.gotoDef'), keys.shortcutFor(go));
+      expect(keys.shortcutFor('editor.action.goToDeclaration'),
+          keys.shortcutFor(go));
+      expect(keys.shortcutFor(oldAside), chord.display);
+    }
+    final custom = KeybindingSet.load(
+      platform: TargetPlatform.windows,
+      userJson: '''[
+        {"key":"f12","command":"-editor.gotoDef"},
+        {"key":"ctrl+shift+f7","command":"$oldAside"}
+      ]''',
+    );
+    expect(custom.bindingForChord(parseChord('f12')!, matchesWhen: inEditor),
+        isNull);
+    expect(custom.bindingForSequence(parseChordSequence('ctrl+k f12')!.chords),
+        isNull);
+    expect(custom.commandForChord(parseChord('ctrl+shift+f7')!), aside);
+    expect(custom.shortcutFor(oldAside), custom.shortcutFor(aside));
+  });
+
   test('Quick Open registers the canonical platform shortcuts', () {
     for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
       final keys = KeybindingSet.load(platform: platform);
@@ -808,7 +848,8 @@ void main() {
         expect(command('f4', peek: false), isNull);
         expect(command('f4', peek: true, editor: false), isNull);
         expect(command('shift+f4', peek: false), isNull);
-        expect(command('f12', peek: false), 'editor.gotoDef');
+        expect(command('f12', peek: false), 'editor.action.revealDefinition');
+        expect(command('f12', peek: false, editor: false), isNull);
         expect(
             command('shift+f12', peek: false), 'editor.action.goToReferences');
         expect(command('f4', peek: true), 'goToNextReference');

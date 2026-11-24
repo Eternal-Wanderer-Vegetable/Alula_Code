@@ -4057,6 +4057,18 @@
       "evidence": "只使用语义定义位置。Windows 与 Linux 各 17 步验证正常跳转、速览、同名符号存在时的空结果和无提供程序。专项 181/181，Flutter 1,867 passed / 2 skipped。产品 89365340 的 CI 45328752669 四项与 Platform Availability 45328747101 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.264-empty-definition.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-317",
+      "name": "P05.265 CMD-09 定义命令与侧边打开",
+      "description": "注册规范定义与侧开命令并兼容旧 ID。默认 Ctrl/Cmd+K F12 侧开，复用右侧组和预览行为。验证单结果、多结果、同文件、跨文件及无提供程序。",
+      "dependencies": [
+        "feat-316"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

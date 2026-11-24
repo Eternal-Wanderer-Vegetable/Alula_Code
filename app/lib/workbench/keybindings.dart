@@ -293,7 +293,8 @@ class KeybindingSet {
     'togglePeekWidgetFocus': 'ctrl+k f2',
     'goToNextReference': 'f4',
     'goToPreviousReference': 'shift+f4',
-    'editor.gotoDef': 'f12',
+    'editor.action.revealDefinition': 'f12',
+    'editor.action.revealDefinitionAside': 'ctrl+k f12',
     'editor.action.goToReferences': 'shift+f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
     'workbench.action.navigateForward': 'alt+arrowright',
@@ -341,6 +342,8 @@ class KeybindingSet {
 
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
+    'editor.action.revealDefinition': 'editorTextFocus',
+    'editor.action.revealDefinitionAside': 'editorTextFocus',
     'editor.action.peekDefinition': 'editorTextFocus',
     'editor.action.goToImplementation': 'editorTextFocus',
     'editor.action.peekImplementation': 'editorTextFocus',
@@ -461,6 +464,7 @@ class KeybindingSet {
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
         result['togglePeekWidgetFocus'] = 'cmd+k f2';
+        result['editor.action.revealDefinitionAside'] = 'cmd+k f12';
         result['workbench.action.toggleSplitEditorInGroup'] =
             r'cmd+k cmd+shift+\';
         result['workbench.action.moveActiveEditorGroupLeft'] =

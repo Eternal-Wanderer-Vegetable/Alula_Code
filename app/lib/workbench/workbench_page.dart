@@ -1879,8 +1879,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         when: 'editorTextFocus',
       );
     }
-    reg('editor.gotoDef', '编辑器', '跳转定义', _gotoDefinition,
-        enablement: 'editorActive');
+    reg(
+      'editor.action.revealDefinition',
+      '编辑器',
+      '跳转定义',
+      _gotoDefinition,
+      shortcut: _keybindings.shortcutFor('editor.action.revealDefinition'),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.action.revealDefinitionAside',
+      '编辑器',
+      '在侧边打开定义',
+      () => _gotoDefinition(sideBySide: true),
+      shortcut: _keybindings.shortcutFor('editor.action.revealDefinitionAside'),
+      enablement: 'editorActive',
+    );
     reg(
       'editor.action.peekDefinition',
       '编辑器',
@@ -21296,6 +21310,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// Resolve symbol locations using the active semantic provider.
   Future<void> _gotoDefinition({
     bool peek = false,
+    bool sideBySide = false,
     LocationPeekKind kind = LocationPeekKind.definition,
   }) async {
     final active = _active;
@@ -21377,6 +21392,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             offset,
             entries.firstOrNull?.target ?? definition,
             kind: kind,
+            asPreview: sideBySide,
+            sideBySide: sideBySide,
           );
           if (!mounted) return;
           if (!navigated) {

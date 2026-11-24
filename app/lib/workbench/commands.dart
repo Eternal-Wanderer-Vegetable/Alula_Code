@@ -18,6 +18,10 @@ const quickOpenCommandId = 'workbench.action.quickOpen';
 const quickAccessCommandAliases = <String, String>{
   ...commandPaletteCommandAliases,
   'view.quickOpen': quickOpenCommandId,
+  'editor.gotoDef': 'editor.action.revealDefinition',
+  'editor.action.goToDeclaration': 'editor.action.revealDefinition',
+  'editor.action.openDeclarationToTheSide':
+      'editor.action.revealDefinitionAside',
   'goToNextReferenceFromEmbeddedEditor': 'goToNextReference',
   'goToPreviousReferenceFromEmbeddedEditor': 'goToPreviousReference',
   'closeReferenceSearchEditor': 'closeReferenceSearch',

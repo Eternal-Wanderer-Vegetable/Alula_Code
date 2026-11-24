@@ -213,6 +213,130 @@ void main() {
     TargetPlatform.linux,
   });
   testWidgets(
+      'definition side command preserves source and reuses the right group',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-definition-aside');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source =
+        'fn local() {}\nfn main() { let _ = "🦊"; local(); remote(); missing(); }\n';
+    const remote = '\uFEFF// 🦊 location\r\nfn remote() {}\r\n';
+    final main = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final target = File('${workspace.path}/remote.rs')
+      ..writeAsStringSync(remote);
+    final localOffset = source.indexOf('local();');
+    final remoteOffset = source.indexOf('remote();');
+    final missOffset = source.indexOf('missing();');
+    final targetLocation = DefinitionTarget(
+      uri: target.uri.toString(),
+      line: 1,
+      character: 3,
+    );
+    var many = false;
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      definitionRequest: (_, offset, version) async {
+        if (offset == missOffset) return null;
+        return DefinitionResult(
+          version: version,
+          uri: offset == localOffset ? main.uri.toString() : targetLocation.uri,
+          line: offset == localOffset ? 0 : targetLocation.line,
+          character: 3,
+          alternatives: many ? [targetLocation] : const [],
+        );
+      },
+    );
+
+    Finder input(String label) => find.descendant(
+          of: find.byWidgetPredicate((widget) =>
+              widget is RustTextInputField && widget.semanticsLabel == label),
+          matching: find.byType(TextField),
+        );
+    final left = input('main.rs 主编辑器');
+    final strip = find.byKey(const ValueKey('editor-tab-strip-editor-2'));
+    Finder rightTab(String name) =>
+        find.descendant(of: strip, matching: find.text(name));
+    Future<void> place(int offset) async {
+      final editor = tester.widget<TextField>(left);
+      expect(editor.focusNode!.hasFocus, isTrue);
+      editor.controller!.selection = TextSelection.collapsed(offset: offset);
+      await tester.pump();
+    }
+
+    Future<void> back() async {
+      final linux = defaultTargetPlatform == TargetPlatform.linux;
+      if (linux) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(
+        linux ? LogicalKeyboardKey.minus : LogicalKeyboardKey.arrowLeft,
+      );
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      if (linux) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> aside() async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.pumpAndSettle();
+    }
+
+    await place(missOffset);
+    await aside();
+    expect(strip, findsNothing);
+    expect(tester.widget<TextField>(left).controller!.selection.extentOffset,
+        missOffset);
+    expect(find.text('未找到「missing」的定义'), findsOneWidget);
+
+    await place(localOffset);
+    await aside();
+    final copy = tester.widget<TextField>(input('main.rs 编辑器 2'));
+    expect(copy.controller!.selection.extentOffset, source.indexOf('local()'));
+    expect(copy.focusNode!.hasFocus, isTrue);
+    expect(tester.widget<TextField>(left).controller!.selection.extentOffset,
+        localOffset);
+    expect(tester.widget<Text>(rightTab('main.rs')).style!.fontStyle,
+        FontStyle.italic);
+
+    await back();
+    await place(remoteOffset);
+    await _runPaletteCommand(tester, '在侧边打开定义');
+    await tester.pumpAndSettle();
+    expect(rightTab('main.rs'), findsNothing);
+    final opened = tester.widget<TextField>(input('remote.rs 编辑器 2'));
+    expect(opened.controller!.selection.extentOffset,
+        opened.controller!.text.indexOf('remote()'));
+    expect(opened.focusNode!.hasFocus, isTrue);
+    expect(tester.widget<TextField>(left).controller!.selection.extentOffset,
+        remoteOffset);
+    expect(tester.widget<Text>(rightTab('remote.rs')).style!.fontStyle,
+        FontStyle.italic);
+
+    await back();
+    many = true;
+    await place(localOffset);
+    await aside();
+    final peek = find.byType(DefinitionPeek);
+    expect(peek, findsOneWidget);
+    expect(find.descendant(of: peek, matching: find.text('定义 (2)')),
+        findsOneWidget);
+    expect(rightTab('remote.rs'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(tester.widget<TextField>(left).focusNode!.hasFocus, isTrue);
+    expect(tester.widget<TextField>(left).controller!.selection.extentOffset,
+        localOffset);
+  }, variant: navigationPlatforms);
+
+  testWidgets(
       'multiple definition targets open a peek and confirm the selected row',
       (tester) async {
     final temp =
