@@ -4101,8 +4101,8 @@
       "dependencies": [
         "feat-319"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "调用层级补齐懒加载、父子焦点、分支折叠和分页。Windows 与 Linux 各 19 步使用实际 rust-analyzer，55 项按 50 项分页。专项 189/189，Flutter 1,875 passed / 2 skipped。产品 235ecb40 的 CI 45345947769 四项与 Platform Availability 45345943784 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

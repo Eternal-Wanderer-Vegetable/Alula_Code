@@ -8,6 +8,7 @@ Last Updated: 2026-11-24
 
 ## Current State
 
+- P05.268 / feat-320 完成。调用层级补齐懒加载、父子焦点、分支折叠和分页。Windows 与 Linux 各 19 步使用实际 rust-analyzer，55 项按 50 项分页。专项 189/189，Flutter 1,875 passed / 2 skipped。产品 235ecb40 的 CI 45345947769 四项与 Platform Availability 45345943784 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md。
 - P05.267 / feat-319 完成。调用层级支持 Alt+Shift+H、首层传入及传出、调用点预览、导航和焦点恢复。Windows 与 Linux 各 18 步使用实际 rust-analyzer。专项 188/188，Flutter 1,874 passed / 2 skipped。产品 d67a5b5e 的 CI 45339796125 四项与 Platform Availability 45339789578 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.267-call-hierarchy.md。
 - P05.266 / feat-318 完成。ABI 45 接通调用与类型层级的四个方向及准备请求。Windows 与 Linux 的实际 rust-analyzer 调用层级、类型能力缺失、旧 ABI 拒绝和模拟类型双向回传均通过。Flutter 1,870 passed / 2 skipped。产品 446175f8 的 CI 45335926583 四项与 Platform Availability 45335922282 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.266-symbol-hierarchy.md。
 - P05.265 / feat-317 完成。定义和侧开采用规范命令 ID 并兼容旧 ID。Windows 与 Linux 各 15 步验证默认组合键、同文件与跨文件侧开、右侧组预览复用、后退和无提供程序。专项 184/184，Flutter 1,870 passed / 2 skipped。产品 7ad209aa 的 CI 45331680195 四项与 Platform Availability 45331670103 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.265-definition-side.md。
@@ -285,6 +286,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.268 调用层级子节点、焦点与分页](docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md)。
 [P05.267 调用层级速览和方向切换](docs/diagnostics/2026-11-24-p05/p05.267-call-hierarchy.md)。
 [P05.266 调用与类型层级传输](docs/diagnostics/2026-11-24-p05/p05.266-symbol-hierarchy.md)。
 [P05.265 定义命令与侧边打开](docs/diagnostics/2026-11-24-p05/p05.265-definition-side.md)。
@@ -459,4 +461,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.267 收尾 CI。按 docs/03 和固定版本推进 CMD-10 的调用子节点展开、焦点和分页。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.268 收尾 CI。按 docs/03 和固定版本推进 CMD-10 类型层级速览及方向命令。PR #3 保持草稿，macOS 实机暂缓。

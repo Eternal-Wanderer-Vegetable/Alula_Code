@@ -1,0 +1,5810 @@
+{
+  "product": "235ecb40eeb4d2d784df4a59d62a2dd4f83752fb",
+  "tree": "d8b3416ac0fc5e1855f9b08cd6933bccd462330e",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sourceSha256": {
+      "src/vs/workbench/contrib/callHierarchy/browser/callHierarchyTree.ts": "9165fbc1a66ec32b25d7ec4a2e0bec2c7253c386e2fb9ffeffbfc239a25445b5",
+      "src/vs/workbench/contrib/callHierarchy/browser/callHierarchyPeek.ts": "4f658f200e81a54fc72b64f8b05b8323ab1196b88df115ae3b4a406bc0d70938",
+      "src/vs/base/common/strings.ts": "8419f80b407c97e88e5c7ebd73732737c364b360050740bb0ab4cab52680f811"
+    }
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "d8b3416ac0fc5e1855f9b08cd6933bccd462330e",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b389a501d96119152b1353b87cecf3ed3aa59a68e662391a541befdf2a19cf12",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "ba77fb6d4430cb03f2a6f051fb0443058c932533a8872095fc5ac2a03468e3b5",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "76fb403dee46d0f1054d61d127e97ba30da027e3088136d0daea597c23126bde",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "ad2b7f5d4a1c67a1576f09c41766d5eb57beb144bee0a6be5fa8aa6dc62f1dda",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed"
+  },
+  "fixtureSha256": "ad2b7f5d4a1c67a1576f09c41766d5eb57beb144bee0a6be5fa8aa6dc62f1dda",
+  "acceptanceDriverSha256": "a16d3a47c77f9737c77f14b8ebb0de3118524f3c905b0c073e4a2b9f054b515d",
+  "cursors": {
+    "source": 57,
+    "bottom": 35
+  },
+  "diskSha256": {
+    "src/lib.rs": "c8f57e06823bd7cf245f5f91d4ad22ce3b16ff9aaa05fdd788cc03e48d51001f",
+    "src/A_callers.rs": "f223ae9362f2c848cc2fc7c477aec6edcc8cc69c79df00d253a9782698203a5e",
+    "src/Z_extra.rs": "3470ecafdd65f065047494b3f1b9b04b5a817efe168be3b6d316fa39953db657",
+    "src/a_extra.rs": "bd38cbb3e0395a34c10ece92ef32f170ef06d1b50ddeb817243dc696bb5d5bd5",
+    "src/leaves.rs": "815cf0373c95de4c62d7d61dbea2beb742147ff4b5e3318572fe3fe1434d46d8",
+    "plain.txt": "c4e0276b9e46c76b5a57646d5989508b5e03f430cb7c8fa57c578f09d62f51d5",
+    "Cargo.toml": "54343f7b3e59916765d02ba9efff06273f6ebb9c1bf8cee00dedf3cb28446dfb"
+  },
+  "localLogsSha256": {
+    "p05-268-core.log": "5018fdbb8b57e9322d15d6ab692a33bc28d7056499dc6808a5f2bd2f6efefc08",
+    "p05-268-targeted.log": "2b83bd7c28eec7d5ecc0a2a9ce4e9b9b2a3ae70194015103313a97b1b477e08d",
+    "p05-268-analyze.log": "f3d2c796ff7731cbfc0487540e75a50c9216c6d2d94f1f0437896c935d22f49d",
+    "p05-268-focused.log": "cf98b92e726ce54a3748068bc6a68395dfea0602f14f15c283077fa06b160c85",
+    "p05-268-full.log": "97ebabd626e14ebb29a3cc9f7d17e2f59b375df2cb1c62011b597cb9e5d4167e",
+    "p05-268-full-first.log": "aa8c9c3a4a126ac6b2f8c18027fbd78633fd5038c023b0020cf0544e9beec311",
+    "p05-268-full-retry.log": "dc8f78c6a207704896e52a63e6c70dc788f43f91403ddb549180c3eeeb627c89",
+    "p05-268-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-268-linux-native.log": "93925a3d5e56aa2e79fb390f34c17b37e2cff85606bde55188c3c9626615d74e",
+    "windows-core.log": "f16215223c8dc5a6d7033f1891e26a084f6df88cabb624b39c970ee09be85160",
+    "windows-build.log": "20d72e7b9244c041ffaeb1c14c2103ab8249f6cac7e772a7e030240306aea9f9"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 44,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "sha256": "df07907dc0e5fbe8b355e4f12876e37d17a522b39a9508d927a299201d67dc24",
+      "processes": [
+        "Build → _revealRow",
+        "Dispose → CancelBranch"
+      ]
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 44,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "sha256": "df07907dc0e5fbe8b355e4f12876e37d17a522b39a9508d927a299201d67dc24",
+      "processes": [
+        "Build → _revealRow",
+        "Dispose → CancelBranch"
+      ]
+    }
+  },
+  "preedit": {
+    "session.cancel": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 4,
+        "modules_affected": 3
+      },
+      "sha256": "df8537cb7b8c1094360d3f4190737fd2234af7d7f9cdb51cc00461d48c072e67"
+    },
+    "compareNodes": {
+      "risk": "UNKNOWN",
+      "sourceCallers": [
+        "_showCallHierarchy",
+        "_expandCallHierarchyNode"
+      ],
+      "sha256": "270a5e7dfe850123916f5e38af97c55e2b798680f833a4b500108f8e66c5dd77"
+    }
+  },
+  "memoryComparison": {
+    "historicalWindowsEmptyPrivateMiB": 189.9,
+    "historicalBaseline": "docs/baselines/2026-10-26/alula-w2-empty.md",
+    "previousLinuxReportSha256": "32a59bdd1c7a8f7bf547134576346e6af9f77534000ea252a68425a83bd9f53f",
+    "previousLinuxPrivateMiB": {
+      "ready": 238.1,
+      "hierarchy-incoming": 831.1,
+      "hierarchy-outgoing": 834.7,
+      "caller-open": 834.3
+    },
+    "currentLinuxPrivateMiB": {
+      "ready": 248.8,
+      "incoming-nested": 845.2,
+      "page-two": 866.1,
+      "outgoing-nested": 873.3
+    }
+  },
+  "macosPhysical": "deferred",
+  "beforeOrderingCorrection": {
+    "tree": "b373d7d1fd1592e50b0cf2c0d6b7f8cdbe69b4d7",
+    "windowsReportSha256": "99dc7e54cd76eeb4272f1a13693f8acc845f4e33cfe4378addc1787a98e9ada7",
+    "linuxReportSha256": "143017fc0331d15c68ffb5f3d0fdaec78509d1247f9d680a938303c4a00ae339"
+  },
+  "discardedFormattingCandidate": {
+    "tree": "285f2cb671759e2f1dd7cc44f0e175f8c57e76d4",
+    "analyzeLogSha256": "24891e8b170295ab2cdb8878f716ce047d833837ab3e94ae91f9b82dea7d8213",
+    "windowsReportSha256": "70612365d68f9a2e91031e5a6cd3bc24b00468afc1935cac16e7dd4ec020c317"
+  },
+  "windows": {
+    "aotSha256": "12ecc058b6e79d0ee8ac194aa21d99586c80f81fde6262f65ea4046e9049537c",
+    "reportSha256": "fe396ca196d1fd0255d302750ac896b445347291ccbf46a24c336778f25b0f58",
+    "rawRunnerSha256": "c65596faaea8e7bd6e1b60c63f97a5bd57980410f464c05683fa54d599407753",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "exit": 0,
+    "firstPageDirectChildren": 50,
+    "totalDirectChildren": 55,
+    "firstLevelIncoming": [
+      "caller",
+      "upper_caller",
+      "lower_caller"
+    ],
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": false,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "lsp-attached": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          241,
+          241
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "source-position": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "provider-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          "root"
+        ],
+        "callHierarchy": null
+      },
+      "incoming-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "incoming-expanded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "incoming-nested": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "outer",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "parent-focus": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "branch-folded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "branch-reopened": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "outgoing-first-page": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "显示更多",
+              1,
+              null
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "page-action-focused": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "显示更多",
+              1,
+              null
+            ]
+          ],
+          "selected": "显示更多",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "page-two": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf_50",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "  52      leaves::leaf_47();",
+            "  53      leaves::leaf_48();",
+            "  54      leaves::leaf_49();",
+            "  55      leaves::leaf_50();",
+            "  56      leaves::leaf_51();",
+            "  57      leaves::leaf_52();",
+            "  58      leaves::leaf_53();",
+            "  59      leaves::leaf_54();",
+            "  60  }"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "root-focused": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "root",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #[path = \"A_callers.rs\"] mod callers;",
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "first-child-focus": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "outgoing-expanded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "bottom",
+              2,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "outgoing-nested": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "bottom",
+              2,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "bottom",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn leaf() { bottom(); }",
+            "   2  pub fn bottom() {}",
+            "   3  pub fn leaf_01() {}",
+            "   4  pub fn leaf_02() {}",
+            "   5  pub fn leaf_03() {}",
+            "   6  pub fn leaf_04() {}",
+            "   7  pub fn leaf_05() {}",
+            "   8  pub fn leaf_06() {}",
+            "   9  pub fn leaf_07() {}"
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            177.0,
+            920.8000000000001,
+            211.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            177.0,
+            960.8000000000001,
+            211.0
+          ]
+        }
+      },
+      "bottom-open": {
+        "editor": "leaves.rs 主编辑器",
+        "selection": [
+          35,
+          35
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "back-to-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      }
+    },
+    "dpi": 120,
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ]
+  },
+  "linux": {
+    "aotSha256": "cdf2d7ab14d015d6d37a39e0b87959243da928b2736ceb35d55f9f98cbfa69b2",
+    "reportSha256": "9b537a09686ec163f25d402d5af5409f22ec8b7e1467ef6a4e61319adcfbe2f0",
+    "rawRunnerSha256": "3b80efbabf54ff952a763cb4524e535dded03ffdcaf6dbc76d7183756715ca8f",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "exit": 0,
+    "firstPageDirectChildren": 50,
+    "totalDirectChildren": 55,
+    "firstLevelIncoming": [
+      "caller",
+      "upper_caller",
+      "lower_caller"
+    ],
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": false,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "lsp-attached": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          356,
+          356
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "source-position": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "provider-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          "root"
+        ],
+        "callHierarchy": null
+      },
+      "incoming-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "incoming-expanded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "incoming-nested": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "outer",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "parent-focus": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "branch-folded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "branch-reopened": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": true,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "outer",
+              2,
+              false
+            ],
+            [
+              "upper_caller",
+              1,
+              false
+            ],
+            [
+              "lower_caller",
+              1,
+              false
+            ]
+          ],
+          "selected": "caller",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn caller() { let _ = \"🦊\"; crate::root(); crate::root(); }",
+            "   2  pub fn outer() { caller(); }",
+            "   3  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "outgoing-first-page": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "显示更多",
+              1,
+              null
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "page-action-focused": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "显示更多",
+              1,
+              null
+            ]
+          ],
+          "selected": "显示更多",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "page-two": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf_50",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "  52      leaves::leaf_47();",
+            "  53      leaves::leaf_48();",
+            "  54      leaves::leaf_49();",
+            "  55      leaves::leaf_50();",
+            "  56      leaves::leaf_51();",
+            "  57      leaves::leaf_52();",
+            "  58      leaves::leaf_53();",
+            "  59      leaves::leaf_54();",
+            "  60  }"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "root-focused": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "root",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #[path = \"A_callers.rs\"] mod callers;",
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "first-child-focus": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "outgoing-expanded": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "bottom",
+              2,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "leaf",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   2  mod leaves;",
+            "   3  pub fn root() {",
+            "   4      let _ = \"🦊\";",
+            "   5      leaves::leaf();",
+            "   6      leaves::leaf_01();",
+            "   7      leaves::leaf_02();",
+            "   8      leaves::leaf_03();",
+            "   9      leaves::leaf_04();",
+            "  10      leaves::leaf_05();"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "outgoing-nested": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": {
+          "incoming": false,
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "bottom",
+              2,
+              false
+            ],
+            [
+              "leaf_01",
+              1,
+              false
+            ],
+            [
+              "leaf_02",
+              1,
+              false
+            ],
+            [
+              "leaf_03",
+              1,
+              false
+            ],
+            [
+              "leaf_04",
+              1,
+              false
+            ],
+            [
+              "leaf_05",
+              1,
+              false
+            ],
+            [
+              "leaf_06",
+              1,
+              false
+            ],
+            [
+              "leaf_07",
+              1,
+              false
+            ],
+            [
+              "leaf_08",
+              1,
+              false
+            ],
+            [
+              "leaf_09",
+              1,
+              false
+            ],
+            [
+              "leaf_10",
+              1,
+              false
+            ],
+            [
+              "leaf_11",
+              1,
+              false
+            ],
+            [
+              "leaf_12",
+              1,
+              false
+            ],
+            [
+              "leaf_13",
+              1,
+              false
+            ],
+            [
+              "leaf_14",
+              1,
+              false
+            ],
+            [
+              "leaf_15",
+              1,
+              false
+            ],
+            [
+              "leaf_16",
+              1,
+              false
+            ],
+            [
+              "leaf_17",
+              1,
+              false
+            ],
+            [
+              "leaf_18",
+              1,
+              false
+            ],
+            [
+              "leaf_19",
+              1,
+              false
+            ],
+            [
+              "leaf_20",
+              1,
+              false
+            ],
+            [
+              "leaf_21",
+              1,
+              false
+            ],
+            [
+              "leaf_22",
+              1,
+              false
+            ],
+            [
+              "leaf_23",
+              1,
+              false
+            ],
+            [
+              "leaf_24",
+              1,
+              false
+            ],
+            [
+              "leaf_25",
+              1,
+              false
+            ],
+            [
+              "leaf_26",
+              1,
+              false
+            ],
+            [
+              "leaf_27",
+              1,
+              false
+            ],
+            [
+              "leaf_28",
+              1,
+              false
+            ],
+            [
+              "leaf_29",
+              1,
+              false
+            ],
+            [
+              "leaf_30",
+              1,
+              false
+            ],
+            [
+              "leaf_31",
+              1,
+              false
+            ],
+            [
+              "leaf_32",
+              1,
+              false
+            ],
+            [
+              "leaf_33",
+              1,
+              false
+            ],
+            [
+              "leaf_34",
+              1,
+              false
+            ],
+            [
+              "leaf_35",
+              1,
+              false
+            ],
+            [
+              "leaf_36",
+              1,
+              false
+            ],
+            [
+              "leaf_37",
+              1,
+              false
+            ],
+            [
+              "leaf_38",
+              1,
+              false
+            ],
+            [
+              "leaf_39",
+              1,
+              false
+            ],
+            [
+              "leaf_40",
+              1,
+              false
+            ],
+            [
+              "leaf_41",
+              1,
+              false
+            ],
+            [
+              "leaf_42",
+              1,
+              false
+            ],
+            [
+              "leaf_43",
+              1,
+              false
+            ],
+            [
+              "leaf_44",
+              1,
+              false
+            ],
+            [
+              "leaf_45",
+              1,
+              false
+            ],
+            [
+              "leaf_46",
+              1,
+              false
+            ],
+            [
+              "leaf_47",
+              1,
+              false
+            ],
+            [
+              "leaf_48",
+              1,
+              false
+            ],
+            [
+              "leaf_49",
+              1,
+              false
+            ],
+            [
+              "leaf_50",
+              1,
+              false
+            ],
+            [
+              "leaf_51",
+              1,
+              false
+            ],
+            [
+              "leaf_52",
+              1,
+              false
+            ],
+            [
+              "leaf_53",
+              1,
+              false
+            ],
+            [
+              "leaf_54",
+              1,
+              false
+            ]
+          ],
+          "selected": "bottom",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  pub fn leaf() { bottom(); }",
+            "   2  pub fn bottom() {}",
+            "   3  pub fn leaf_01() {}",
+            "   4  pub fn leaf_02() {}",
+            "   5  pub fn leaf_03() {}",
+            "   6  pub fn leaf_04() {}",
+            "   7  pub fn leaf_05() {}",
+            "   8  pub fn leaf_06() {}",
+            "   9  pub fn leaf_07() {}"
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            177.0,
+            1056.0,
+            211.0
+          ],
+          "closeBounds": [
+            1056.0,
+            177.0,
+            1096.0,
+            211.0
+          ]
+        }
+      },
+      "bottom-open": {
+        "editor": "leaves.rs 主编辑器",
+        "selection": [
+          35,
+          35
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      },
+      "back-to-root": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          57,
+          57
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "callHierarchy": null
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1673,
+            "ppid": 1672,
+            "private": 260911104,
+            "pss": 287603712,
+            "working_set": 339566592
+          }
+        ],
+        "root_pid": 1673,
+        "total_private_bytes": 260911104,
+        "total_private_mib": 248.8,
+        "total_working_set_bytes": 339566592
+      },
+      "incoming-nested": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1673,
+            "ppid": 1672,
+            "private": 277811200,
+            "pss": 304568320,
+            "working_set": 356741120
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1869,
+            "ppid": 1673,
+            "private": 598794240,
+            "pss": 605575168,
+            "working_set": 621563904
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2055,
+            "ppid": 1869,
+            "private": 4771840,
+            "pss": 11944960,
+            "working_set": 27901952
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2054,
+            "ppid": 1869,
+            "private": 4878336,
+            "pss": 12051456,
+            "working_set": 28008448
+          }
+        ],
+        "root_pid": 1673,
+        "total_private_bytes": 886255616,
+        "total_private_mib": 845.2,
+        "total_working_set_bytes": 1034215424
+      },
+      "page-two": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1673,
+            "ppid": 1672,
+            "private": 299327488,
+            "pss": 326085632,
+            "working_set": 378257408
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1869,
+            "ppid": 1673,
+            "private": 599183360,
+            "pss": 605965312,
+            "working_set": 621953024
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2055,
+            "ppid": 1869,
+            "private": 4771840,
+            "pss": 11947008,
+            "working_set": 27901952
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2054,
+            "ppid": 1869,
+            "private": 4878336,
+            "pss": 12053504,
+            "working_set": 28008448
+          }
+        ],
+        "root_pid": 1673,
+        "total_private_bytes": 908161024,
+        "total_private_mib": 866.1,
+        "total_working_set_bytes": 1056120832
+      },
+      "outgoing-nested": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1673,
+            "ppid": 1672,
+            "private": 306847744,
+            "pss": 333606912,
+            "working_set": 386306048
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1869,
+            "ppid": 1673,
+            "private": 599224320,
+            "pss": 606006272,
+            "working_set": 621993984
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2055,
+            "ppid": 1869,
+            "private": 4771840,
+            "pss": 11947008,
+            "working_set": 27901952
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 2054,
+            "ppid": 1869,
+            "private": 4878336,
+            "pss": 12053504,
+            "working_set": 28008448
+          }
+        ],
+        "root_pid": 1673,
+        "total_private_bytes": 915722240,
+        "total_private_mib": 873.3,
+        "total_working_set_bytes": 1064210432
+      }
+    },
+    "bundleCoreSha256": "ba5bc9bf74c6cdb01ecaf4d99ceb94702f3f1b63d6318d83db1850a9983d3bd3"
+  }
+}
