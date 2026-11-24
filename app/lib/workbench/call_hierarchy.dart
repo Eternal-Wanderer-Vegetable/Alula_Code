@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -5,22 +7,31 @@ import 'definition_peek.dart' show DefinitionPeekLine;
 
 class CallHierarchyRow {
   const CallHierarchyRow({
+    required this.id,
     required this.name,
     required this.detail,
     required this.depth,
+    this.parentIndex,
     this.expanded,
+    this.more = false,
+    this.loading = false,
   });
 
+  final Object id;
   final String name;
   final String detail;
   final int depth;
+  final int? parentIndex;
   final bool? expanded;
+  final bool more;
+  final bool loading;
 }
 
 class CallHierarchyPeek extends StatefulWidget {
   const CallHierarchyPeek({
     super.key,
     required this.rows,
+    this.preferredSelection,
     required this.incoming,
     required this.loading,
     required this.message,
@@ -33,6 +44,7 @@ class CallHierarchyPeek extends StatefulWidget {
   });
 
   final List<CallHierarchyRow> rows;
+  final Object? preferredSelection;
   final bool incoming;
   final bool loading;
   final String? message;
@@ -69,7 +81,12 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   @override
   void didUpdateWidget(CallHierarchyPeek oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(widget.rows, oldWidget.rows)) _refreshRows();
+    if (!identical(widget.rows, oldWidget.rows)) {
+      _refreshRows(oldWidget);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _revealRow(_selected);
+      });
+    }
     if (widget.incoming != oldWidget.incoming) _focusResultsAfterLayout();
   }
 
@@ -79,9 +96,31 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
     });
   }
 
-  void _refreshRows() {
-    _selected = _initialRow;
-    _preview = widget.rows.isEmpty ? null : widget.loadPreview(_selected);
+  void _refreshRows([CallHierarchyPeek? oldWidget]) {
+    if (widget.rows.isEmpty) {
+      _selected = 0;
+      _preview = null;
+      return;
+    }
+    final preferred =
+        widget.rows.indexWhere((row) => row.id == widget.preferredSelection);
+    final previous = oldWidget != null &&
+            oldWidget.incoming == widget.incoming &&
+            _selected < oldWidget.rows.length
+        ? oldWidget.rows[_selected]
+        : null;
+    int? oldIndex = previous == null ? null : _selected;
+    var current = preferred;
+    while (current < 0 && oldIndex != null) {
+      final row = oldWidget!.rows[oldIndex];
+      current = widget.rows.indexWhere((candidate) => candidate.id == row.id);
+      oldIndex = row.parentIndex;
+    }
+    _selected = current < 0 ? _initialRow : current;
+    final row = widget.rows[_selected];
+    if (!row.more && (row.id != previous?.id || _preview == null)) {
+      _preview = widget.loadPreview(_selected);
+    }
   }
 
   @override
@@ -97,12 +136,18 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
     if (bounded != _selected) {
       setState(() {
         _selected = bounded;
-        _preview = widget.loadPreview(bounded);
+        if (!widget.rows[bounded].more) {
+          _preview = widget.loadPreview(bounded);
+        }
       });
     }
+    _revealRow(bounded);
+  }
+
+  void _revealRow(int index) {
     if (!_scroll.hasClients) return;
     final position = _scroll.position;
-    final top = bounded * _rowHeight;
+    final top = index * _rowHeight;
     if (top < position.pixels) {
       _scroll.jumpTo(top);
     } else if (top + _rowHeight >
@@ -137,12 +182,25 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
       _select(widget.rows.length - 1);
     } else if (key == LogicalKeyboardKey.enter) {
       widget.onOpen(_selected);
-    } else if (key == LogicalKeyboardKey.arrowLeft &&
-        widget.rows[_selected].expanded == true) {
-      widget.onToggle(_selected);
-    } else if (key == LogicalKeyboardKey.arrowRight &&
-        widget.rows[_selected].expanded == false) {
-      widget.onToggle(_selected);
+    } else if (key == LogicalKeyboardKey.arrowLeft) {
+      final row = widget.rows[_selected];
+      if (row.expanded == true) {
+        widget.onToggle(_selected);
+      } else if (row.parentIndex case final parent?) {
+        _select(parent);
+      } else {
+        return KeyEventResult.ignored;
+      }
+    } else if (key == LogicalKeyboardKey.arrowRight) {
+      final row = widget.rows[_selected];
+      if (row.expanded == false) {
+        widget.onToggle(_selected);
+      } else if (_selected + 1 < widget.rows.length &&
+          widget.rows[_selected + 1].parentIndex == _selected) {
+        _select(_selected + 1);
+      } else {
+        return KeyEventResult.ignored;
+      }
     } else {
       return KeyEventResult.ignored;
     }
@@ -152,56 +210,73 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   Widget _buildRow(int index, ColorScheme colors) {
     final row = widget.rows[index];
     final selected = index == _selected;
-    return Semantics(
-      key: ValueKey('call-hierarchy-row-$index'),
-      selected: selected,
-      child: InkWell(
-        onTap: () {
-          _resultsFocus.requestFocus();
-          _select(index);
-        },
-        onDoubleTap: () => widget.onOpen(index),
-        child: Container(
-          padding: EdgeInsets.only(left: 6.0 + 14.0 * row.depth, right: 6),
-          color: selected ? colors.primary.withValues(alpha: 0.25) : null,
-          child: Row(
-            children: [
-              if (row.expanded case final expanded?)
-                InkWell(
-                  key: ValueKey('call-hierarchy-toggle-$index'),
-                  onTap: () {
-                    _resultsFocus.requestFocus();
-                    widget.onToggle(index);
-                  },
-                  child: Icon(
-                    expanded ? Icons.expand_more : Icons.chevron_right,
-                    size: 16,
+    return LayoutBuilder(builder: (context, constraints) {
+      final indent = math.min(
+          6.0 + 14.0 * row.depth, math.max(0.0, constraints.maxWidth - 68));
+      return Semantics(
+        key: ValueKey('call-hierarchy-row-$index'),
+        selected: selected,
+        expanded: row.expanded,
+        button: row.more,
+        child: InkWell(
+          onTap: () {
+            _resultsFocus.requestFocus();
+            _select(index);
+            if (row.more) widget.onOpen(index);
+          },
+          onDoubleTap: row.more ? null : () => widget.onOpen(index),
+          child: Container(
+            padding: EdgeInsets.only(left: indent, right: 6),
+            color: selected ? colors.primary.withValues(alpha: 0.25) : null,
+            child: Row(
+              children: [
+                if (row.expanded case final expanded?)
+                  InkWell(
+                    key: ValueKey('call-hierarchy-toggle-$index'),
+                    onTap: () {
+                      _resultsFocus.requestFocus();
+                      _select(index);
+                      widget.onToggle(index);
+                    },
+                    child: Icon(
+                      expanded ? Icons.expand_more : Icons.chevron_right,
+                      size: 16,
+                    ),
+                  )
+                else
+                  const SizedBox(width: 16),
+                const SizedBox(width: 4),
+                if (row.loading)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 4),
+                    child: SizedBox(
+                      width: 11,
+                      height: 11,
+                      child: CircularProgressIndicator(strokeWidth: 1),
+                    ),
                   ),
-                )
-              else
-                const SizedBox(width: 16),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    text: row.name,
-                    children: [
-                      if (row.detail.isNotEmpty)
-                        TextSpan(
-                          text: '  ${row.detail}',
-                          style: TextStyle(color: colors.onSurfaceVariant),
-                        ),
-                    ],
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: row.name,
+                      children: [
+                        if (row.detail.isNotEmpty)
+                          TextSpan(
+                            text: '  ${row.detail}',
+                            style: TextStyle(color: colors.onSurfaceVariant),
+                          ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildPreview(ColorScheme colors) {

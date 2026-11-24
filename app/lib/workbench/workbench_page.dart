@@ -21692,61 +21692,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       });
       return;
     }
-    session.roots = result.entries.map((entry) => entry.item).toList();
-    await _expandCallHierarchyRoot(session, 0);
+    session.roots = [
+      for (final entry in result.entries) _CallHierarchyNode.root(entry.item),
+    ]..sort(_CallHierarchySession.compareNodes);
+    session.retainedCount = session.roots.length;
+    session.loading = false;
+    _syncCommandContext();
+    await _expandCallHierarchyNode(
+      session,
+      session.roots.first,
+      focusFirstChild: true,
+    );
   }
 
-  Future<void> _expandCallHierarchyRoot(
+  Future<void> _expandCallHierarchyNode(
     _CallHierarchySession session,
-    int rootIndex,
-  ) async {
-    if (!_isCurrentCallHierarchy(session)) return;
-    session.cancelExpansion();
+    _CallHierarchyNode node, {
+    bool focusFirstChild = false,
+  }) async {
+    if (!_isCurrentCallHierarchy(session) || node.expansion != null) return;
+    if (node.children != null) {
+      setState(() {
+        node.expanded = node.children!.isNotEmpty;
+        session.rebuildRows();
+      });
+      return;
+    }
     final request = Completer<void>();
-    session.expansion = request;
-    final root = session.roots[rootIndex];
     setState(() {
-      session.expandedRoot = rootIndex;
-      session.children = const [];
-      session.loading = true;
+      node.expansion = request;
+      node.expanded = true;
+      node.error = null;
       session.message = null;
+      session.rebuildRows();
     });
-    _syncCommandContext();
     bool current() =>
-        _isCurrentCallHierarchy(session) &&
-        identical(session.expansion, request);
+        _isCurrentCallHierarchy(session) && identical(node.expansion, request);
     HierarchyResult? result;
+    String? failure;
     try {
       result = await session.source.doc.core.lsp.expandHierarchy(
         session.source.id,
         session.version,
         session.direction,
-        root,
+        node.item,
         cancelSignal: request.future,
       );
-    } catch (error) {
-      if (current()) {
-        setState(() {
-          session.loading = false;
-          session.rebuildRows();
-          session.message = '无法加载调用关系：$error';
-        });
+      if (result?.version != session.version) {
+        failure = '查询已结束';
       }
-      return;
+    } catch (_) {
+      failure = '无法加载调用关系';
     }
     if (!current()) return;
-    final entries = result?.version == session.version
-        ? result!.entries
-        : const <HierarchyEntry>[];
+    final entries = result?.entries ?? const <HierarchyEntry>[];
+    if (failure == null &&
+        session.retainedCount + entries.length >
+            _CallHierarchySession.nodeLimit) {
+      failure = '已达到调用层级节点上限';
+    }
     setState(() {
-      session.loading = false;
-      session.children = entries;
-      session.rebuildRows();
-      if (entries.isEmpty) {
-        session.message = session.incoming
-            ? '没有调用「${root.name}」的位置'
-            : '「${root.name}」没有传出调用';
+      node.expansion = null;
+      node.error = failure;
+      if (failure != null) {
+        node.expanded = false;
+        session.rebuildRows();
+        return;
       }
+      final children = [
+        for (final edge in entries)
+          _CallHierarchyNode.child(
+            edge: edge,
+            parent: node,
+            incoming: session.incoming,
+          ),
+      ]..sort(_CallHierarchySession.compareNodes);
+      node.children = children;
+      node.expanded = children.isNotEmpty;
+      session.retainedCount += children.length;
+      if (node.depth == 0 && session.roots.length == 1 && children.isEmpty) {
+        session.message = session.incoming
+            ? '没有调用「${node.item.name}」的位置'
+            : '「${node.item.name}」没有传出调用';
+      }
+      session.rebuildRows(
+        select: focusFirstChild ? children.firstOrNull : null,
+      );
     });
   }
 
@@ -21760,27 +21791,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         session.direction == direction) {
       return;
     }
-    session.direction = direction;
+    session.resetDirection(direction);
     _lastCallHierarchyDirection = direction;
-    await _expandCallHierarchyRoot(session, session.expandedRoot ?? 0);
+    _syncCommandContext();
+    await _expandCallHierarchyNode(
+      session,
+      session.roots.first,
+      focusFirstChild: true,
+    );
   }
 
-  void _toggleCallHierarchyRoot(_CallHierarchySession session, int index) {
-    if (!_isCurrentCallHierarchy(session) || index >= session.targets.length) {
+  void _toggleCallHierarchyNode(
+    _CallHierarchySession session,
+    _CallHierarchyTarget target,
+  ) {
+    if (!_isCurrentCallHierarchy(session) || !session.targets.contains(target)) {
       return;
     }
-    final row = session.targets[index];
-    if (!row.isRoot) return;
-    if (session.expandedRoot == row.rootIndex) {
-      session.cancelExpansion();
+    if (target.more) return;
+    final node = target.node;
+    if (node.expanded) {
       setState(() {
-        session.expandedRoot = null;
-        session.children = const [];
+        session.cancelBranch(node);
+        node.expanded = false;
         session.message = null;
-        session.rebuildRows();
+        session.rebuildRows(select: node);
       });
     } else {
-      unawaited(_expandCallHierarchyRoot(session, row.rootIndex));
+      unawaited(_expandCallHierarchyNode(session, node));
     }
   }
 
@@ -21796,23 +21834,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<List<DefinitionPeekLine>> _loadCallHierarchyPreview(
     _CallHierarchyTarget row,
   ) async {
-    final path = _pathFromFileUri(row.previewUri);
+    final node = row.node;
+    final path = _pathFromFileUri(node.previewUri);
     if (path == null) return const [];
     return _loadDefinitionPeek((
       path: path,
-      target: _hierarchyTarget(row.previewUri, row.previewRange),
+      target: _hierarchyTarget(node.previewUri, node.previewRange),
       referenceSymbol: null,
     ));
   }
 
   Future<void> _openCallHierarchyItem(
     _CallHierarchySession session,
-    int index,
+    _CallHierarchyTarget row,
   ) async {
-    if (!_isCurrentCallHierarchy(session) || index >= session.targets.length) {
+    if (!_isCurrentCallHierarchy(session) || !session.targets.contains(row)) {
       return;
     }
-    final item = session.targets[index].item;
+    final node = row.node;
+    if (row.more) {
+      final children = node.children;
+      if (children == null || node.visibleChildren >= children.length) {
+        return;
+      }
+      final first = children[node.visibleChildren];
+      setState(() {
+        node.visibleChildren += _CallHierarchySession.pageSize;
+        session.rebuildRows(select: first);
+      });
+      return;
+    }
+    final item = node.item;
     if (_pathFromFileUri(item.uri) == null) return;
     _closeCallHierarchy(restoreFocus: false);
     final opened = await _navigateToDefinition(
@@ -21867,13 +21919,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !_isCurrentCallHierarchy(session)) {
       return null;
     }
+    final targets = session.targets;
     return CallHierarchyPeek(
       key: ObjectKey(session),
       rows: session.rows,
+      preferredSelection: session.preferredSelection,
       incoming: session.incoming,
       loading: session.loading,
       message: session.message,
-      loadPreview: (index) => _loadCallHierarchyPreview(session.targets[index]),
+      loadPreview: (index) => _loadCallHierarchyPreview(targets[index]),
       onDirection: session.roots.isEmpty
           ? null
           : () {
@@ -21883,8 +21937,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     : 'editor.showIncomingCalls',
               );
             },
-      onOpen: (index) => unawaited(_openCallHierarchyItem(session, index)),
-      onToggle: (index) => _toggleCallHierarchyRoot(session, index),
+      onOpen: (index) =>
+          unawaited(_openCallHierarchyItem(session, targets[index])),
+      onToggle: (index) => _toggleCallHierarchyNode(session, targets[index]),
       onClose: _closeCallHierarchy,
       onCommandKey: _handleCallHierarchyKey,
     );
@@ -30837,13 +30892,35 @@ class TreeNode {
   List<TreeNode>? children;
 }
 
-typedef _CallHierarchyTarget = ({
-  HierarchyItem item,
-  String previewUri,
-  HierarchyRange previewRange,
-  int rootIndex,
-  bool isRoot,
-});
+typedef _CallHierarchyTarget = ({_CallHierarchyNode node, bool more});
+
+class _CallHierarchyNode {
+  _CallHierarchyNode.root(this.item)
+    : previewUri = item.uri,
+      previewRange = item.selectionRange,
+      depth = 0;
+
+  _CallHierarchyNode.child({
+    required HierarchyEntry edge,
+    required _CallHierarchyNode parent,
+    required bool incoming,
+  }) : item = edge.item,
+       previewUri = !incoming && edge.fromRanges.isNotEmpty
+           ? parent.item.uri
+           : edge.item.uri,
+       previewRange = edge.fromRanges.firstOrNull ?? edge.item.selectionRange,
+       depth = parent.depth + 1;
+
+  final HierarchyItem item;
+  final String previewUri;
+  final HierarchyRange previewRange;
+  final int depth;
+  List<_CallHierarchyNode>? children;
+  Completer<void>? expansion;
+  bool expanded = false;
+  int visibleChildren = _CallHierarchySession.pageSize;
+  String? error;
+}
 
 class _CallHierarchySession {
   _CallHierarchySession({
@@ -30855,70 +30932,126 @@ class _CallHierarchySession {
     required this.stablePeek,
   });
 
+  static const pageSize = 50;
+  static const nodeLimit = 4096;
+
   final OpenDoc source;
   final String? workspace;
   final int version;
   final int offset;
   final bool stablePeek;
   final closed = Completer<void>();
-  Completer<void>? expansion;
   HierarchyDirection direction;
-  List<HierarchyItem> roots = const [];
-  List<HierarchyEntry> children = const [];
+  List<_CallHierarchyNode> roots = const [];
   List<_CallHierarchyTarget> targets = const [];
   List<CallHierarchyRow> rows = const [];
-  int? expandedRoot;
+  Object? preferredSelection;
   bool loading = true;
   String? message;
+  int retainedCount = 0;
 
   bool get incoming => direction == HierarchyDirection.incoming;
 
-  void cancelExpansion() {
-    expansion?.complete();
-    expansion = null;
+  static int _comparePositions(HierarchyPosition a, HierarchyPosition b) {
+    final line = a.line.compareTo(b.line);
+    return line == 0 ? a.character.compareTo(b.character) : line;
+  }
+
+  static int compareNodes(_CallHierarchyNode a, _CallHierarchyNode b) {
+    final uri = a.item.uri.compareTo(b.item.uri);
+    if (uri != 0) return uri;
+    final start = _comparePositions(a.item.range.start, b.item.range.start);
+    return start != 0
+        ? start
+        : _comparePositions(a.item.range.end, b.item.range.end);
+  }
+
+  void cancelBranch(_CallHierarchyNode root) {
+    final remaining = [root];
+    while (remaining.isNotEmpty) {
+      final node = remaining.removeLast();
+      final request = node.expansion;
+      if (request != null) {
+        node.expansion = null;
+        node.expanded = false;
+        request.complete();
+      }
+      if (node.children case final children?) remaining.addAll(children);
+    }
+  }
+
+  void resetDirection(HierarchyDirection newDirection) {
+    direction = newDirection;
+    for (final root in roots) {
+      cancelBranch(root);
+      root
+        ..children = null
+        ..expanded = false
+        ..visibleChildren = pageSize
+        ..error = null;
+    }
+    retainedCount = roots.length;
+    message = null;
   }
 
   void cancel() {
-    cancelExpansion();
+    for (final root in roots) {
+      cancelBranch(root);
+    }
     closed.complete();
   }
 
-  void rebuildRows() {
-    targets = [
-      for (var index = 0; index < roots.length; index++) ...[
-        (
-          item: roots[index],
-          previewUri: roots[index].uri,
-          previewRange: roots[index].selectionRange,
-          rootIndex: index,
-          isRoot: true,
-        ),
-        if (index == expandedRoot)
-          for (final edge in children)
-            (
-              item: edge.item,
-              previewUri: !incoming && edge.fromRanges.isNotEmpty
-                  ? roots[index].uri
-                  : edge.item.uri,
-              previewRange:
-                  edge.fromRanges.firstOrNull ?? edge.item.selectionRange,
-              rootIndex: index,
-              isRoot: false,
-            ),
-      ],
+  void rebuildRows({Object? select}) {
+    preferredSelection = select;
+    final pending = <(_CallHierarchyNode, int?, bool)>[
+      for (final root in roots.reversed) (root, null, false),
     ];
-    rows = [
-      for (final target in targets)
+    final newRows = <CallHierarchyRow>[];
+    final newTargets = <_CallHierarchyTarget>[];
+    while (pending.isNotEmpty) {
+      final (node, parent, more) = pending.removeLast();
+      final index = newRows.length;
+      newTargets.add((node: node, more: more));
+      final children = node.children;
+      if (more) {
+        newRows.add(
+          CallHierarchyRow(
+            id: (node, true),
+            parentIndex: parent,
+            name: '显示更多',
+            detail: '剩余 ${children!.length - node.visibleChildren} 项',
+            depth: node.depth + 1,
+            more: true,
+          ),
+        );
+        continue;
+      }
+      newRows.add(
         CallHierarchyRow(
-          name: target.item.name,
+          id: node,
+          parentIndex: parent,
+          name: node.item.name,
           detail:
-              target.item.detail ??
-              Uri.tryParse(target.item.uri)?.pathSegments.lastOrNull ??
+              node.error ??
+              node.item.detail ??
+              Uri.tryParse(node.item.uri)?.pathSegments.lastOrNull ??
               '',
-          depth: target.isRoot ? 0 : 1,
-          expanded: target.isRoot ? target.rootIndex == expandedRoot : null,
+          depth: node.depth,
+          expanded: children?.isEmpty == true ? null : node.expanded,
+          loading: node.expansion != null,
         ),
-    ];
+      );
+      if (!node.expanded || children == null) continue;
+      if (node.visibleChildren < children.length) {
+        pending.add((node, index, true));
+      }
+      final count = math.min(children.length, node.visibleChildren);
+      for (var child = count - 1; child >= 0; child--) {
+        pending.add((children[child], index, false));
+      }
+    }
+    rows = newRows;
+    targets = newTargets;
   }
 }
 
