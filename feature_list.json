@@ -4113,8 +4113,8 @@
       "dependencies": [
         "feat-320"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "类型层级提供速览、父子类型切换、分支导航及 Esc 关闭。Windows 和 Linux 各 18 步，实际 clangd 返回父子类型。专项 192/192，Flutter 1,878 passed / 2 skipped。产品 1ee668d8 的 CI 45351036934 四项与 Platform Availability 45351031826 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.269-type-hierarchy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
