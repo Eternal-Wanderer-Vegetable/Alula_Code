@@ -4005,8 +4005,8 @@
       "dependencies": [
         "feat-311"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "预览默认占 70%，空间充足时预览和结果树下限为 200 与 100 逻辑像素。Windows 58 步与 Linux 55 步验证双向拖动、保留焦点与同窗重开。专项 163/163，Flutter 1,859 passed / 2 skipped。产品 aca6611c 的 CI 45308330665 四项和 Platform Availability 45308325780 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.260-peek-sash.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
