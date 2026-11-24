@@ -294,6 +294,7 @@ class KeybindingSet {
     'goToNextReference': 'f4',
     'goToPreviousReference': 'shift+f4',
     'editor.action.revealDefinition': 'f12',
+    'editor.showCallHierarchy': 'alt+shift+h',
     'editor.action.revealDefinitionAside': 'ctrl+k f12',
     'editor.action.goToReferences': 'shift+f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
@@ -343,6 +344,10 @@ class KeybindingSet {
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.revealDefinition': 'editorTextFocus',
+    'editor.showCallHierarchy': 'editorTextFocus && !callHierarchyVisible',
+    'editor.showIncomingCalls': 'callHierarchyHasRoots && !callHierarchyIncoming',
+    'editor.showOutgoingCalls': 'callHierarchyHasRoots && callHierarchyIncoming',
+    'editor.closeCallHierarchy': 'callHierarchyVisible && !callHierarchyStablePeek',
     'editor.action.revealDefinitionAside': 'editorTextFocus',
     'editor.action.peekDefinition': 'editorTextFocus',
     'editor.action.goToImplementation': 'editorTextFocus',
@@ -391,6 +396,9 @@ class KeybindingSet {
   /// Platform-specific defaults with an explicit Merge Editor context.
   static Map<String, String> contextualDefaultsFor(TargetPlatform platform) => {
         'goToNextReference': 'f12',
+        'editor.showIncomingCalls': 'alt+shift+h',
+        'editor.showOutgoingCalls': 'alt+shift+h',
+        'editor.closeCallHierarchy': 'escape',
         'goToPreviousReference': 'shift+f12',
         'editor.action.peekDefinition':
             platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',

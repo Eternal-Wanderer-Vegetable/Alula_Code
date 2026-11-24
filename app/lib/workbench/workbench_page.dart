@@ -97,6 +97,7 @@ import 'quick_open_query.dart';
 import 'document_symbols.dart';
 import 'open_editors_sort_order.dart';
 import 'breadcrumb_navigation.dart';
+import 'call_hierarchy.dart';
 import 'definition_peek.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
@@ -754,6 +755,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _stablePeek = false;
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
+  _CallHierarchySession? _callHierarchy;
+  HierarchyDirection _lastCallHierarchyDirection = HierarchyDirection.incoming;
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
@@ -1902,6 +1905,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () => _gotoDefinition(peek: true),
       shortcut: _keybindings.shortcutFor('editor.action.peekDefinition'),
       enablement: 'editorActive',
+    );
+    reg(
+      'editor.showCallHierarchy',
+      '导航',
+      '速览调用层级',
+      _showCallHierarchy,
+      shortcut: _keybindings.shortcutFor('editor.showCallHierarchy'),
+      enablement: 'editorActive && !callHierarchyVisible',
+    );
+    reg(
+      'editor.showIncomingCalls',
+      '导航',
+      '显示传入调用',
+      () => _changeCallHierarchyDirection(HierarchyDirection.incoming),
+      enablement: 'callHierarchyHasRoots && !callHierarchyIncoming',
+    );
+    reg(
+      'editor.showOutgoingCalls',
+      '导航',
+      '显示传出调用',
+      () => _changeCallHierarchyDirection(HierarchyDirection.outgoing),
+      enablement: 'callHierarchyHasRoots && callHierarchyIncoming',
+    );
+    reg(
+      'editor.closeCallHierarchy',
+      '导航',
+      '关闭调用层级',
+      () async => _closeCallHierarchy(),
+      enablement: 'callHierarchyVisible',
     );
     reg(
       'editor.action.goToReferences',
@@ -3756,6 +3788,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final active = _active;
     final peek = _definitionPeek;
     final peekVisible = peek != null && _isCurrentDefinitionPeek(peek);
+    final openHierarchy = _callHierarchy;
+    if (openHierarchy != null && !_isCurrentCallHierarchy(openHierarchy)) {
+      _discardCallHierarchy();
+    }
+    final hierarchy = _callHierarchy;
     final recentTarget = active == null
         ? null
         : (group: _focused, document: active._shared);
@@ -3785,6 +3822,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editorActive': active != null,
       'referenceSearchVisible': peekVisible,
       'peekWidgetVisible': peekVisible,
+      'callHierarchyVisible': hierarchy != null,
+      'callHierarchyHasRoots': hierarchy?.roots.isNotEmpty ?? false,
+      'callHierarchyIncoming': hierarchy?.incoming ?? false,
+      'callHierarchyStablePeek': hierarchy?.stablePeek ?? false,
       'activeEditorCanSplitInGroup':
           active != null && active._splitEditor == null && mergeSession == null,
       'sideBySideEditorActive':
@@ -21578,6 +21619,277 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return null;
   }
 
+  bool _isCurrentCallHierarchy(_CallHierarchySession session) =>
+      mounted &&
+      !_disposing &&
+      identical(_callHierarchy, session) &&
+      identical(_active, session.source) &&
+      _workspaceRoot == session.workspace &&
+      session.source.doc.version == session.version;
+
+  void _discardCallHierarchy() {
+    _callHierarchy?.cancel();
+    _callHierarchy = null;
+  }
+
+  void _closeCallHierarchy({bool restoreFocus = true}) {
+    final session = _callHierarchy;
+    if (session == null) return;
+    setState(_discardCallHierarchy);
+    _syncCommandContext();
+    final owner = _ownerOfView(session.source);
+    if (restoreFocus && owner != null && identical(_active, session.source)) {
+      _focusEditorAfterLayout(owner, session.source);
+    }
+  }
+
+  Future<void> _showCallHierarchy() async {
+    final source = _active;
+    if (source == null) return;
+    if (_definitionPeek != null) _setDefinitionPeek(null);
+    _flushInput(source, commitComposition: true);
+    final session = _CallHierarchySession(
+      source: source,
+      workspace: _workspaceRoot,
+      version: source.doc.version,
+      offset: math.max(0, source.selection.baseOffset),
+      direction: _lastCallHierarchyDirection,
+      stablePeek: _readStablePeekSetting(),
+    );
+    setState(() {
+      _discardCallHierarchy();
+      _callHierarchy = session;
+    });
+    _syncCommandContext();
+
+    HierarchyResult? result;
+    try {
+      result = await source.doc.core.lsp.prepareHierarchy(
+        source.id,
+        session.offset,
+        HierarchyKind.call,
+        cancelSignal: session.closed.future,
+      );
+    } catch (error) {
+      if (_isCurrentCallHierarchy(session)) {
+        setState(() {
+          session.loading = false;
+          session.message = '无法加载调用层级：$error';
+        });
+      }
+      return;
+    }
+    if (!_isCurrentCallHierarchy(session)) return;
+    if (result == null ||
+        !result.supported ||
+        result.version != session.version ||
+        result.entries.isEmpty) {
+      setState(() {
+        session.loading = false;
+        session.message = result?.supported == false
+            ? '没有可用的调用层级提供程序'
+            : '没有调用层级结果';
+      });
+      return;
+    }
+    session.roots = result.entries.map((entry) => entry.item).toList();
+    await _expandCallHierarchyRoot(session, 0);
+  }
+
+  Future<void> _expandCallHierarchyRoot(
+    _CallHierarchySession session,
+    int rootIndex,
+  ) async {
+    if (!_isCurrentCallHierarchy(session)) return;
+    session.cancelExpansion();
+    final request = Completer<void>();
+    session.expansion = request;
+    final root = session.roots[rootIndex];
+    setState(() {
+      session.expandedRoot = rootIndex;
+      session.children = const [];
+      session.loading = true;
+      session.message = null;
+    });
+    _syncCommandContext();
+    bool current() =>
+        _isCurrentCallHierarchy(session) &&
+        identical(session.expansion, request);
+    HierarchyResult? result;
+    try {
+      result = await session.source.doc.core.lsp.expandHierarchy(
+        session.source.id,
+        session.version,
+        session.direction,
+        root,
+        cancelSignal: request.future,
+      );
+    } catch (error) {
+      if (current()) {
+        setState(() {
+          session.loading = false;
+          session.rebuildRows();
+          session.message = '无法加载调用关系：$error';
+        });
+      }
+      return;
+    }
+    if (!current()) return;
+    final entries = result?.version == session.version
+        ? result!.entries
+        : const <HierarchyEntry>[];
+    setState(() {
+      session.loading = false;
+      session.children = entries;
+      session.rebuildRows();
+      if (entries.isEmpty) {
+        session.message = session.incoming
+            ? '没有调用「${root.name}」的位置'
+            : '「${root.name}」没有传出调用';
+      }
+    });
+  }
+
+  Future<void> _changeCallHierarchyDirection(
+    HierarchyDirection direction,
+  ) async {
+    final session = _callHierarchy;
+    if (session == null ||
+        !_isCurrentCallHierarchy(session) ||
+        session.roots.isEmpty ||
+        session.direction == direction) {
+      return;
+    }
+    session.direction = direction;
+    _lastCallHierarchyDirection = direction;
+    await _expandCallHierarchyRoot(session, session.expandedRoot ?? 0);
+  }
+
+  void _toggleCallHierarchyRoot(_CallHierarchySession session, int index) {
+    if (!_isCurrentCallHierarchy(session) || index >= session.targets.length) {
+      return;
+    }
+    final row = session.targets[index];
+    if (!row.isRoot) return;
+    if (session.expandedRoot == row.rootIndex) {
+      session.cancelExpansion();
+      setState(() {
+        session.expandedRoot = null;
+        session.children = const [];
+        session.message = null;
+        session.rebuildRows();
+      });
+    } else {
+      unawaited(_expandCallHierarchyRoot(session, row.rootIndex));
+    }
+  }
+
+  DefinitionTarget _hierarchyTarget(String uri, HierarchyRange span) =>
+      DefinitionTarget(
+        uri: uri,
+        line: span.start.line,
+        character: span.start.character,
+        endLine: span.end.line,
+        endCharacter: span.end.character,
+      );
+
+  Future<List<DefinitionPeekLine>> _loadCallHierarchyPreview(
+    _CallHierarchyTarget row,
+  ) async {
+    final path = _pathFromFileUri(row.previewUri);
+    if (path == null) return const [];
+    return _loadDefinitionPeek((
+      path: path,
+      target: _hierarchyTarget(row.previewUri, row.previewRange),
+      referenceSymbol: null,
+    ));
+  }
+
+  Future<void> _openCallHierarchyItem(
+    _CallHierarchySession session,
+    int index,
+  ) async {
+    if (!_isCurrentCallHierarchy(session) || index >= session.targets.length) {
+      return;
+    }
+    final item = session.targets[index].item;
+    if (_pathFromFileUri(item.uri) == null) return;
+    _closeCallHierarchy(restoreFocus: false);
+    final opened = await _navigateToDefinition(
+      session.source,
+      session.offset,
+      _hierarchyTarget(item.uri, item.selectionRange),
+      navigationLabel: '调用层级',
+    );
+    if (!mounted) return;
+    final target = _active;
+    if (!opened || target == null) {
+      setState(() => _statusDetail = '无法打开调用位置');
+      return;
+    }
+    final owner = _ownerOfView(target);
+    if (owner != null) _focusEditorAfterLayout(owner, target);
+  }
+
+  KeyEventResult _handleCallHierarchyKey(KeyEvent event) {
+    const allowed = {
+      'editor.showIncomingCalls',
+      'editor.showOutgoingCalls',
+      'editor.closeCallHierarchy',
+    };
+    final chord = _handleCommandChord(event, permittedCommands: allowed);
+    if (chord != KeyEventResult.ignored) return chord;
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final keyboard = HardwareKeyboard.instance;
+    final binding = _keybindings.bindingForChord(
+      KeyChord(
+        key: event.logicalKey,
+        control: keyboard.isControlPressed,
+        shift: keyboard.isShiftPressed,
+        alt: keyboard.isAltPressed,
+        meta: keyboard.isMetaPressed,
+      ),
+      matchesWhen: _commands.context.matches,
+    );
+    if (binding == null ||
+        !allowed.contains(binding.commandId) ||
+        !_commands.isEnabled(binding.commandId)) {
+      return KeyEventResult.ignored;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
+    return KeyEventResult.handled;
+  }
+
+  Widget? _buildCallHierarchy(OpenDoc active) {
+    final session = _callHierarchy;
+    if (session == null ||
+        !identical(session.source, active) ||
+        !_isCurrentCallHierarchy(session)) {
+      return null;
+    }
+    return CallHierarchyPeek(
+      key: ObjectKey(session),
+      rows: session.rows,
+      incoming: session.incoming,
+      loading: session.loading,
+      message: session.message,
+      loadPreview: (index) => _loadCallHierarchyPreview(session.targets[index]),
+      onDirection: session.roots.isEmpty
+          ? null
+          : () {
+              _runCommand(
+                session.incoming
+                    ? 'editor.showOutgoingCalls'
+                    : 'editor.showIncomingCalls',
+              );
+            },
+      onOpen: (index) => unawaited(_openCallHierarchyItem(session, index)),
+      onToggle: (index) => _toggleCallHierarchyRoot(session, index),
+      onClose: _closeCallHierarchy,
+      onCommandKey: _handleCallHierarchyKey,
+    );
+  }
+
   Future<bool> _navigateToDefinition(
     OpenDoc source,
     int sourceOffset,
@@ -21586,6 +21898,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String? referenceSymbol,
     bool asPreview = false,
     bool sideBySide = false,
+    String? navigationLabel,
   }) async {
     final path = _pathFromFileUri(definition.uri);
     if (path == null) return false;
@@ -21643,7 +21956,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       target,
       TextSelection.collapsed(offset: targetPosition.offsetUtf16),
     );
-    setState(() => _statusDetail = '跳转到 ${target.name}（${kind.label}）');
+    setState(() => _statusDetail =
+        '跳转到 ${target.name}（${navigationLabel ?? kind.label}）');
     return true;
   }
 
@@ -21664,6 +21978,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _setDefinitionPeek(_DefinitionPeekSession? session) {
+    if (session != null && _callHierarchy != null) {
+      _closeCallHierarchy(restoreFocus: false);
+    }
     if (session == null ||
         !identical(_definitionPeek?.entries, session.entries)) {
       _focusedPeekResult = null;
@@ -23083,6 +23400,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       d.disposeView();
     }
     _auxiliaryTransferSourceLocks.clear();
+    _discardCallHierarchy();
     _definitionPeekFocus.dispose();
     for (final n in _editorFocusNodes.values) {
       n.dispose();
@@ -28511,8 +28829,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ),
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
-                                caretOverlay:
-                                    _buildDefinitionPeek(active) ?? choiceOverlay,
+                                caretOverlay: _buildDefinitionPeek(active) ??
+                                    _buildCallHierarchy(active) ??
+                                    choiceOverlay,
                                 focusNode: _focusNodeFor(g, active),
                                 scrollController: active.editorScrollController,
                                 inputFormatter:
@@ -30516,6 +30835,91 @@ class TreeNode {
   final bool isDir;
   bool expanded = false;
   List<TreeNode>? children;
+}
+
+typedef _CallHierarchyTarget = ({
+  HierarchyItem item,
+  String previewUri,
+  HierarchyRange previewRange,
+  int rootIndex,
+  bool isRoot,
+});
+
+class _CallHierarchySession {
+  _CallHierarchySession({
+    required this.source,
+    required this.workspace,
+    required this.version,
+    required this.offset,
+    required this.direction,
+    required this.stablePeek,
+  });
+
+  final OpenDoc source;
+  final String? workspace;
+  final int version;
+  final int offset;
+  final bool stablePeek;
+  final closed = Completer<void>();
+  Completer<void>? expansion;
+  HierarchyDirection direction;
+  List<HierarchyItem> roots = const [];
+  List<HierarchyEntry> children = const [];
+  List<_CallHierarchyTarget> targets = const [];
+  List<CallHierarchyRow> rows = const [];
+  int? expandedRoot;
+  bool loading = true;
+  String? message;
+
+  bool get incoming => direction == HierarchyDirection.incoming;
+
+  void cancelExpansion() {
+    expansion?.complete();
+    expansion = null;
+  }
+
+  void cancel() {
+    cancelExpansion();
+    closed.complete();
+  }
+
+  void rebuildRows() {
+    targets = [
+      for (var index = 0; index < roots.length; index++) ...[
+        (
+          item: roots[index],
+          previewUri: roots[index].uri,
+          previewRange: roots[index].selectionRange,
+          rootIndex: index,
+          isRoot: true,
+        ),
+        if (index == expandedRoot)
+          for (final edge in children)
+            (
+              item: edge.item,
+              previewUri: !incoming && edge.fromRanges.isNotEmpty
+                  ? roots[index].uri
+                  : edge.item.uri,
+              previewRange:
+                  edge.fromRanges.firstOrNull ?? edge.item.selectionRange,
+              rootIndex: index,
+              isRoot: false,
+            ),
+      ],
+    ];
+    rows = [
+      for (final target in targets)
+        CallHierarchyRow(
+          name: target.item.name,
+          detail:
+              target.item.detail ??
+              Uri.tryParse(target.item.uri)?.pathSegments.lastOrNull ??
+              '',
+          depth: target.isRoot ? 0 : 1,
+          expanded: target.isRoot ? target.rootIndex == expandedRoot : null,
+        ),
+    ];
+  }
 }
 
 class _DefinitionPeekSession {

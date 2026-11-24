@@ -4081,6 +4081,18 @@
       "evidence": "ABI 45 接通调用与类型层级的四个方向及准备请求。Windows 与 Linux 的实际 rust-analyzer 调用层级、类型能力缺失、旧 ABI 拒绝和模拟类型双向回传均通过。Flutter 1,870 passed / 2 skipped。产品 446175f8 的 CI 45335926583 四项与 Platform Availability 45335922282 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.266-symbol-hierarchy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-319",
+      "name": "P05.267 CMD-10 调用层级速览和方向切换",
+      "description": "接入调用层级规范命令、传入与传出切换、根及首层调用行、调用点预览和来源焦点。验证真实提供程序、空态及跨文件导航。",
+      "dependencies": [
+        "feat-318"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

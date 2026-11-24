@@ -8,6 +8,28 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const quickOpenId = 'workbench.action.quickOpen';
 
+  test('call hierarchy keyboard routing follows direction and stable Peek', () {
+    final keys = KeybindingSet.load(platform: TargetPlatform.windows);
+    final context = ContextKeyService();
+    addTearDown(context.dispose);
+    String? command(String key) => keys
+        .bindingForChord(parseChord(key)!, matchesWhen: context.matches)
+        ?.commandId;
+    context.setValues({'editorTextFocus': true});
+    expect(command('alt+shift+h'), 'editor.showCallHierarchy');
+    context.setValues({
+      'callHierarchyVisible': true,
+      'callHierarchyHasRoots': true,
+      'callHierarchyIncoming': true,
+    });
+    expect(command('alt+shift+h'), 'editor.showOutgoingCalls');
+    context.setValues({'callHierarchyIncoming': false});
+    expect(command('alt+shift+h'), 'editor.showIncomingCalls');
+    expect(command('escape'), 'editor.closeCallHierarchy');
+    context.setValues({'callHierarchyStablePeek': true});
+    expect(command('escape'), isNot('editor.closeCallHierarchy'));
+  });
+
   test('definition commands use the canonical IDs and platform chord', () {
     const go = 'editor.action.revealDefinition';
     const aside = 'editor.action.revealDefinitionAside';
