@@ -336,7 +336,8 @@ class DefinitionPeek extends StatefulWidget {
     required this.onOpen,
     required this.onClose,
     required this.onRemoved,
-    this.onOpenToSide,
+    this.onFocusedResultChanged,
+    this.onResultKey,
     this.onFocusChange,
     this.kind = LocationPeekKind.definition,
     this.workspace,
@@ -352,7 +353,8 @@ class DefinitionPeek extends StatefulWidget {
   final Future<List<DefinitionPeekLine>> Function(DefinitionPeekEntry)
       loadPreview;
   final ValueChanged<DefinitionPeekEntry> onOpen;
-  final ValueChanged<DefinitionPeekEntry>? onOpenToSide;
+  final ValueChanged<DefinitionPeekEntry?>? onFocusedResultChanged;
+  final KeyEventResult Function(KeyEvent)? onResultKey;
   final ValueChanged<bool>? onFocusChange;
   final VoidCallback onClose;
   final VoidCallback onRemoved;
@@ -425,6 +427,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
         case LocationPeekFocusTarget.source:
           break;
       }
+      _publishFocusedResult();
       _revealRow(_focusedRowIndex);
     });
   }
@@ -494,6 +497,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
         _preview = _requestPreview(widget.entries[entryIndex]);
       }
     });
+    _publishFocusedResult();
     _revealRow(next);
   }
 
@@ -503,6 +507,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       if (!_expandedFiles.remove(file)) _expandedFiles.add(file);
       _rows = _visibleRows();
     });
+    _publishFocusedResult();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _revealRow(_focusedRowIndex);
     });
@@ -519,6 +524,15 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     _resultsScroll.jumpTo(offset.clamp(0.0, position.maxScrollExtent));
   }
 
+  void _publishFocusedResult() {
+    final index = _focusedRowIndex;
+    final entryIndex =
+        _listFocus.hasFocus && index >= 0 ? _rows[index].entryIndex : null;
+    widget.onFocusedResultChanged?.call(
+      entryIndex == null ? null : widget.entries[entryIndex],
+    );
+  }
+
   KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
@@ -529,6 +543,10 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       return KeyEventResult.handled;
     }
     if (!_listFocus.hasFocus) return KeyEventResult.ignored;
+    if (event is KeyDownEvent) {
+      final handled = widget.onResultKey?.call(event) ?? KeyEventResult.ignored;
+      if (handled != KeyEventResult.ignored) return handled;
+    }
     final index = _focusedRowIndex;
     if (index < 0) return KeyEventResult.ignored;
     if (key == LogicalKeyboardKey.arrowUp ||
@@ -541,17 +559,12 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     final entryIndex = row.entryIndex;
     final file = row.file;
     final keyboard = HardwareKeyboard.instance;
-    if (key == LogicalKeyboardKey.enter && event is KeyDownEvent) {
-      final openToSide = widget.onOpenToSide;
-      if (openToSide != null &&
-          keyboard.isControlPressed &&
-          !keyboard.isAltPressed &&
-          !keyboard.isMetaPressed &&
-          !keyboard.isShiftPressed) {
-        if (entryIndex == null) return KeyEventResult.ignored;
-        openToSide(widget.entries[entryIndex]);
-        return KeyEventResult.handled;
-      }
+    final modified = keyboard.isAltPressed ||
+        keyboard.isControlPressed ||
+        keyboard.isMetaPressed ||
+        keyboard.isShiftPressed;
+    if (key == LogicalKeyboardKey.enter) {
+      if (event is KeyRepeatEvent || modified) return KeyEventResult.handled;
       if (entryIndex != null) {
         widget.onOpen(widget.entries[entryIndex]);
       } else if (file != null) {
@@ -559,13 +572,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       }
       return KeyEventResult.handled;
     }
-    if (file == null) return KeyEventResult.ignored;
-    if (keyboard.isAltPressed ||
-        keyboard.isControlPressed ||
-        keyboard.isMetaPressed ||
-        keyboard.isShiftPressed) {
-      return KeyEventResult.ignored;
-    }
+    if (file == null || modified) return KeyEventResult.ignored;
     if (key == LogicalKeyboardKey.arrowLeft) {
       if (entryIndex != null) {
         _select(_rows
@@ -662,6 +669,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     final colors = Theme.of(context).colorScheme;
     return Focus(
       focusNode: _listFocus,
+      onFocusChange: (_) => _publishFocusedResult(),
       child: ListView.builder(
         controller: _resultsScroll,
         itemExtent: _rowHeight,

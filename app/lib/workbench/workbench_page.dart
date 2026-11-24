@@ -748,6 +748,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
   final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
+  DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
@@ -1893,6 +1894,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () => _stepPeekReference(forward: false),
       shortcut: _keybindings.shortcutFor('goToPreviousReference'),
       when: 'referenceSearchVisible',
+    );
+    reg(
+      'openReferenceToSide',
+      '导航',
+      '在侧边打开速览结果',
+      _openDefinitionPeekToSide,
+      shortcut: _keybindings.shortcutFor('openReferenceToSide'),
+      when: KeybindingSet.openReferenceToSideWhen,
     );
     reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
         shortcut: 'Alt+←');
@@ -21599,11 +21608,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _setDefinitionPeek(_DefinitionPeekSession? session) {
+    if (session == null ||
+        !identical(_definitionPeek?.entries, session.entries)) {
+      _focusedPeekResult = null;
+    }
     _definitionPeekFocus.setVisible(session != null);
     setState(() => _definitionPeek = session);
     _commands.context.setValues({
       'referenceSearchVisible': session != null,
       'peekWidgetVisible': session != null,
+      'peekResultFocused': _focusedPeekResult != null,
     });
   }
 
@@ -21756,8 +21770,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         focusTarget: peek.focusTarget,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
-        onOpenToSide: (entry) =>
-            unawaited(_openDefinitionPeekToSide(peek, entry)),
+        onFocusedResultChanged: (entry) => _setFocusedPeekResult(peek, entry),
+        onResultKey: _handleDefinitionPeekResultKey,
         onFocusChange: (focused) {
           if (focused) _focusDefinitionPeekSource(peek);
         },
@@ -21812,11 +21826,55 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
   }
 
-  Future<void> _openDefinitionPeekToSide(
+  void _setFocusedPeekResult(
     _DefinitionPeekSession session,
-    DefinitionPeekEntry entry,
-  ) async {
-    if (!_isCurrentDefinitionPeek(session)) return;
+    DefinitionPeekEntry? entry,
+  ) {
+    if (!mounted || _disposing || !identical(_definitionPeek, session)) return;
+    _focusedPeekResult = entry;
+    _commands.context.setValues({'peekResultFocused': entry != null});
+  }
+
+  KeyEventResult _handleDefinitionPeekResultKey(KeyEvent event) {
+    final chord = _handleCommandChord(
+      event,
+      permittedCommands: const {
+        'notifications.showList',
+        'togglePeekWidgetFocus',
+        'openReferenceToSide',
+      },
+    );
+    if (chord != KeyEventResult.ignored) return chord;
+
+    final keyboard = HardwareKeyboard.instance;
+    final binding = _keybindings.bindingForChord(
+      KeyChord(
+        key: event.logicalKey,
+        control: keyboard.isControlPressed,
+        shift: keyboard.isShiftPressed,
+        alt: keyboard.isAltPressed,
+        meta: keyboard.isMetaPressed,
+      ),
+      matchesWhen: _commands.context.matches,
+    );
+    if (binding == null ||
+        binding.commandId != 'openReferenceToSide' ||
+        !_commands.isEnabled(binding.commandId)) {
+      return KeyEventResult.ignored;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
+    return KeyEventResult.handled;
+  }
+
+  Future<void> _openDefinitionPeekToSide() async {
+    final session = _definitionPeek;
+    final entry = _focusedPeekResult;
+    if (session == null ||
+        entry == null ||
+        !_definitionPeekFocus.results.hasFocus ||
+        !_isCurrentDefinitionPeek(session)) {
+      return;
+    }
     final navigated = await _navigateToDefinition(
       session.source,
       session.sourceOffset,

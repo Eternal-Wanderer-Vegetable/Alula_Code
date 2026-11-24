@@ -488,6 +488,12 @@ void main() {
     expect(tab('beta.rs'), findsOneWidget);
   });
 
+  final sideBindings = ValueVariant<String>({
+    'ctrl+enter',
+    'ctrl+shift+enter',
+    'ctrl+k ctrl+shift+enter',
+  });
+
   testWidgets('Peek opens the selected result to the side and remains usable',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-peek-open-side');
@@ -495,6 +501,14 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       if (temp.existsSync()) await temp.delete(recursive: true);
     });
+    final binding = sideBindings.currentValue!;
+    final rebound = binding != 'ctrl+enter';
+    if (rebound) {
+      File('${temp.path}/keybindings.json').writeAsStringSync('''[
+        {"key":"ctrl+enter","command":"-openReferenceToSide"},
+        {"key":"$binding","command":"openReferenceToSide"}
+      ]''');
+    }
     final workspace = Directory('${temp.path}/workspace')..createSync();
     const source = 'fn main() { resolve(); }\n';
     const target = '/* 🦊 */ fn resolve() {}\n';
@@ -559,17 +573,45 @@ void main() {
       expect(tester.widget<Semantics>(row).properties.selected, isTrue);
     }
 
-    Future<void> openSide() async {
+    Future<void> pressControlEnter({required bool shifted}) async {
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      if (shifted) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      if (shifted) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
       await tester.pumpAndSettle();
+    }
+
+    Future<void> openSide() async {
+      if (binding.startsWith('ctrl+k ')) {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      }
+      await pressControlEnter(shifted: rebound);
     }
 
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pumpAndSettle();
     expect(peek, findsOneWidget);
     await selectFileResult(remoteGroup, remoteRow);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pumpAndSettle();
+    final expanded = tester.widget<Semantics>(remoteGroup).properties.expanded;
+    await openSide();
+    expect(tester.widget<Semantics>(remoteGroup).properties.expanded, expanded);
+    expect(find.byType(RustTextInputField), findsOneWidget);
+    expect(_activeController(tester).text, source);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Semantics>(remoteRow).properties.selected, isTrue);
+    if (rebound) {
+      await pressControlEnter(shifted: false);
+      expect(peek, findsOneWidget);
+      expect(find.byType(RustTextInputField), findsOneWidget);
+      expect(_activeController(tester).text, source);
+    }
     await openSide();
 
     TextField right() => editor('target.rs 编辑器 2');
@@ -609,7 +651,7 @@ void main() {
     expect(peek, findsNothing);
     expect(left().focusNode!.hasPrimaryFocus, isTrue);
     expect(left().controller!.selection.extentOffset, sourceOffset);
-  });
+  }, variant: sideBindings);
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {

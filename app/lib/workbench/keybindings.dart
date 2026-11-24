@@ -335,6 +335,9 @@ class KeybindingSet {
   static const notificationPrimaryActionWhen =
       'accessibilityModeEnabled && (notificationFocus || notificationToastsVisible)';
 
+  static const openReferenceToSideWhen =
+      'referenceSearchVisible && peekResultFocused';
+
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.peekDefinition': 'editorTextFocus',
@@ -342,6 +345,7 @@ class KeybindingSet {
     'togglePeekWidgetFocus': 'peekWidgetVisible && editorTextFocus',
     'goToNextReference': 'referenceSearchVisible && editorTextFocus',
     'goToPreviousReference': 'referenceSearchVisible && editorTextFocus',
+    'openReferenceToSide': openReferenceToSideWhen,
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
@@ -384,6 +388,7 @@ class KeybindingSet {
             platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',
         'mergeEditor.acceptMerge':
             platform == TargetPlatform.macOS ? 'cmd+enter' : 'ctrl+enter',
+        'openReferenceToSide': 'ctrl+enter',
         'list.find':
             platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
         'list.closeFind': 'escape',

@@ -533,7 +533,13 @@ void main() {
         mac.commandForChord(parseChord('cmd+enter')!),
         'editor.action.insertLineAfter',
       );
-      expect(mac.commandForChord(parseChord('ctrl+enter')!), isNull);
+      final context = ContextKeyService();
+      addTearDown(context.dispose);
+      expect(
+        mac.bindingForChord(parseChord('ctrl+enter')!,
+            matchesWhen: context.matches),
+        isNull,
+      );
     });
 
     test('line deletion uses Ctrl/Cmd+Shift+K on each platform', () {
@@ -780,9 +786,10 @@ void main() {
         final context = ContextKeyService();
         addTearDown(context.dispose);
         String? command(String chord,
-            {required bool peek, bool editor = true}) {
+            {required bool peek, bool editor = true, bool result = false}) {
           context.setValues({
             'referenceSearchVisible': peek,
+            'peekResultFocused': result,
             'editorTextFocus': editor,
           });
           return keys
@@ -790,6 +797,14 @@ void main() {
               ?.commandId;
         }
 
+        final insertBelow = platform == TargetPlatform.macOS
+            ? null
+            : 'editor.action.insertLineAfter';
+        expect(command('ctrl+enter', peek: false), insertBelow);
+        expect(command('ctrl+enter', peek: true), insertBelow);
+        expect(command('ctrl+enter', peek: true, result: true),
+            'openReferenceToSide');
+        expect(keys.shortcutFor('openReferenceToSide'), 'Ctrl+Enter');
         expect(command('f4', peek: false), isNull);
         expect(command('f4', peek: true, editor: false), isNull);
         expect(command('shift+f4', peek: false), isNull);
