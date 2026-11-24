@@ -3969,8 +3969,8 @@
       "dependencies": [
         "feat-308"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "侧开命令接入命令注册和用户键位，可移除默认 Ctrl+Enter 并重绑。Windows 45 步与 Linux 42 步通过，确认重绑侧开、文件标题行与原键移除保持源文档和焦点。专项 93/93，Flutter 1,854 passed / 2 skipped。产品 810a2f39 的 CI 45293986109 四项和 Platform Availability 45293975235 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.257-peek-side-binding.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
