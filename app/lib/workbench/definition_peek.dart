@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kPrimaryButton, kTouchSlop;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
@@ -337,6 +339,7 @@ class DefinitionPeek extends StatefulWidget {
     required this.onClose,
     required this.onRemoved,
     this.onFocusedResultChanged,
+    this.onOpenToSide,
     this.onResultKey,
     this.onFocusChange,
     this.kind = LocationPeekKind.definition,
@@ -353,6 +356,7 @@ class DefinitionPeek extends StatefulWidget {
   final Future<List<DefinitionPeekLine>> Function(DefinitionPeekEntry)
       loadPreview;
   final ValueChanged<DefinitionPeekEntry> onOpen;
+  final ValueChanged<DefinitionPeekEntry>? onOpenToSide;
   final ValueChanged<DefinitionPeekEntry?>? onFocusedResultChanged;
   final KeyEventResult Function(KeyEvent)? onResultKey;
   final ValueChanged<bool>? onFocusChange;
@@ -380,6 +384,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   final _resultsScroll = ScrollController();
   var _selected = 0;
   String? _focusedFile;
+  ({int pointer, int entry, Offset position})? _sideClick;
   late final Map<String, List<int>> _fileGroups;
   late final Set<String> _expandedFiles;
   late List<_PeekResultRow> _rows;
@@ -665,6 +670,46 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     );
   }
 
+  void _recordResultPress(PointerDownEvent event, int entry) {
+    final keyboard = HardwareKeyboard.instance;
+    final modified = keyboard.isControlPressed ||
+        keyboard.isMetaPressed ||
+        keyboard.isAltPressed;
+    _sideClick = event.kind == PointerDeviceKind.mouse &&
+            event.buttons == kPrimaryButton &&
+            modified &&
+            widget.onOpenToSide != null
+        ? (pointer: event.pointer, entry: entry, position: event.position)
+        : null;
+  }
+
+  void _cancelMovedResultPress(PointerMoveEvent event) {
+    final pressed = _sideClick;
+    if (pressed != null &&
+        pressed.pointer == event.pointer &&
+        (event.position - pressed.position).distance > kTouchSlop) {
+      _sideClick = null;
+    }
+  }
+
+  void _activateResult(int entryIndex, {required bool confirm}) {
+    final openToSide = widget.onOpenToSide;
+    final side = _sideClick?.entry == entryIndex && openToSide != null;
+    _sideClick = null;
+    final rowIndex = _rows.indexWhere((row) => row.entryIndex == entryIndex);
+    if (rowIndex < 0) return;
+    final entry = widget.entries[entryIndex];
+    if (side) {
+      _select(rowIndex);
+      openToSide(entry);
+    } else if (confirm) {
+      widget.onOpen(entry);
+    } else {
+      _listFocus.requestFocus();
+      _select(rowIndex);
+    }
+  }
+
   Widget _resultList(BuildContext context, {int? previewCharacter}) {
     final colors = Theme.of(context).colorScheme;
     return Focus(
@@ -689,32 +734,37 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
             key: ValueKey('peek-result:$entryIndex'),
             selected: selected,
             label: '${entry.path}:${target.line + 1}',
-            child: InkWell(
-              canRequestFocus: false,
-              onTap: () {
-                _listFocus.requestFocus();
-                _select(index);
+            child: Listener(
+              onPointerDown: (event) => _recordResultPress(event, entryIndex),
+              onPointerMove: _cancelMovedResultPress,
+              onPointerCancel: (event) {
+                if (_sideClick?.pointer == event.pointer) _sideClick = null;
               },
-              onDoubleTap: () => widget.onOpen(entry),
-              child: ColoredBox(
-                color: selected ? colors.primaryContainer : Colors.transparent,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: row.file == null ? 8 : 28,
-                    right: 8,
-                  ),
-                  child: Row(
-                    children: [
-                      if (row.file == null)
-                        Expanded(
-                          child: Text(
-                            p.basename(entry.path),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+              child: InkWell(
+                canRequestFocus: false,
+                onTap: () => _activateResult(entryIndex, confirm: false),
+                onDoubleTap: () => _activateResult(entryIndex, confirm: true),
+                child: ColoredBox(
+                  color:
+                      selected ? colors.primaryContainer : Colors.transparent,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: row.file == null ? 8 : 28,
+                      right: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        if (row.file == null)
+                          Expanded(
+                            child: Text(
+                              p.basename(entry.path),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                      Text(position),
-                    ],
+                        Text(position),
+                      ],
+                    ),
                   ),
                 ),
               ),

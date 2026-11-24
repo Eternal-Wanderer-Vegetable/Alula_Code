@@ -9,6 +9,7 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart' show ReferencesRequest;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart' show SemanticsProperties;
 import 'package:flutter/services.dart';
@@ -652,6 +653,127 @@ void main() {
     expect(left().focusNode!.hasPrimaryFocus, isTrue);
     expect(left().controller!.selection.extentOffset, sourceOffset);
   }, variant: sideBindings);
+
+  testWidgets('Modified clicks open Peek results in replaceable side tabs',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-peek-pointer-side');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { resolve(); }\n';
+    const alphaText = '/* 🦊 */ fn alpha() {}\n';
+    const betaText = 'fn beta() {}\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('\uFEFF${alphaText.replaceAll('\n', '\r\n')}');
+    final beta = File('${workspace.path}/beta.rs')..writeAsStringSync(betaText);
+    var requests = 0;
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async {
+      requests++;
+      return DefinitionResult(
+        version: version,
+        uri: alpha.uri.toString(),
+        line: 0,
+        character: alphaText.indexOf('alpha'),
+        alternatives: [
+          DefinitionTarget(uri: beta.uri.toString(), line: 0, character: 3),
+        ],
+      );
+    });
+    final sourceOffset = source.indexOf('resolve');
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    Finder row(int index) => find.byKey(ValueKey('peek-result:$index'));
+    Finder rightTab(String name) => find.descendant(
+          of: find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+          matching: find.text(name),
+        );
+    TextField editor(String label) => tester.widget<TextField>(
+          find.descendant(
+            of: find.byWidgetPredicate((widget) =>
+                widget is RustTextInputField && widget.semanticsLabel == label),
+            matching: find.byType(TextField),
+          ),
+        );
+
+    Future<void> reveal(File file, int index) async {
+      final group = find.byKey(ValueKey('references-file:${file.path}'));
+      await tester.ensureVisible(group);
+      if (tester.widget<Semantics>(group).properties.expanded != true) {
+        await tester.tap(group);
+        await tester.pumpAndSettle();
+      }
+      await tester.ensureVisible(row(index));
+    }
+
+    Future<void> clickWith(LogicalKeyboardKey modifier, int index) async {
+      await tester.sendKeyDownEvent(modifier);
+      await tester.tap(row(index), kind: PointerDeviceKind.mouse);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pumpAndSettle();
+    }
+
+    void expectSourcePreserved() {
+      final input = editor('main.rs 主编辑器').controller!;
+      expect(input.text, source);
+      expect(input.selection.extentOffset, sourceOffset);
+      expect(peek, findsOneWidget);
+      expect(requests, 1);
+    }
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.pumpAndSettle();
+    await reveal(alpha, 0);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    final cancelled = await tester.startGesture(tester.getCenter(row(0)),
+        kind: PointerDeviceKind.mouse);
+    await cancelled.cancel();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row(0), kind: PointerDeviceKind.mouse);
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pumpAndSettle();
+    expect(find.byType(RustTextInputField), findsOneWidget);
+    expectSourcePreserved();
+
+    await clickWith(LogicalKeyboardKey.controlLeft, 0);
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    expectSourcePreserved();
+    final alphaEditor = editor('alpha.rs 编辑器 2');
+    expect(alphaEditor.focusNode!.hasPrimaryFocus, isTrue);
+    expect(alphaEditor.controller!.text, alphaText);
+    expect(alphaEditor.controller!.selection.extentOffset,
+        alphaText.indexOf('alpha'));
+    expect(tester.widget<Text>(rightTab('alpha.rs')).style?.fontStyle,
+        FontStyle.italic);
+
+    await reveal(beta, 1);
+    await clickWith(LogicalKeyboardKey.altLeft, 1);
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    expectSourcePreserved();
+    final betaEditor = editor('beta.rs 编辑器 2');
+    expect(betaEditor.focusNode!.hasPrimaryFocus, isTrue);
+    expect(betaEditor.controller!.text, betaText);
+    expect(betaEditor.controller!.selection.extentOffset, 3);
+    expect(tester.widget<Text>(rightTab('beta.rs')).style?.fontStyle,
+        FontStyle.italic);
+    expect(rightTab('alpha.rs'), findsNothing);
+
+    await reveal(alpha, 0);
+    await clickWith(LogicalKeyboardKey.metaLeft, 0);
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    expectSourcePreserved();
+    expect(editor('alpha.rs 编辑器 2').focusNode!.hasPrimaryFocus, isTrue);
+    expect(tester.widget<Text>(rightTab('alpha.rs')).style?.fontStyle,
+        FontStyle.italic);
+    expect(rightTab('beta.rs'), findsNothing);
+  });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {

@@ -21772,6 +21772,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
         onFocusedResultChanged: (entry) => _setFocusedPeekResult(peek, entry),
         onResultKey: _handleDefinitionPeekResultKey,
+        onOpenToSide: (entry) {
+          _focusDefinitionPeekSource(peek);
+          unawaited(_navigateDefinitionPeekToSide(peek, entry, asPreview: true));
+        },
         onFocusChange: (focused) {
           if (focused) _focusDefinitionPeekSource(peek);
         },
@@ -21875,12 +21879,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !_isCurrentDefinitionPeek(session)) {
       return;
     }
+    await _navigateDefinitionPeekToSide(session, entry);
+  }
+
+  Future<void> _navigateDefinitionPeekToSide(
+    _DefinitionPeekSession session,
+    DefinitionPeekEntry entry, {
+    bool asPreview = false,
+  }) async {
+    if (!_isCurrentDefinitionPeek(session)) return;
     final navigated = await _navigateToDefinition(
       session.source,
       session.sourceOffset,
       entry.target,
       kind: session.kind,
       referenceSymbol: entry.referenceSymbol,
+      asPreview: asPreview,
       sideBySide: true,
     );
     if (!mounted || !identical(_definitionPeek, session)) return;
@@ -22080,6 +22094,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     view.clearPendingOvertypeInput();
     _pendingDefinitionPointers.remove(event.pointer);
     if (event.buttons != kPrimaryButton) return;
+    if (identical(_definitionPeek?.source, view)) {
+      final results = _definitionPeekFocus.results.context?.findRenderObject();
+      if (results is RenderBox &&
+          results.attached &&
+          results.hasSize &&
+          results.size.contains(results.globalToLocal(event.position))) {
+        return;
+      }
+    }
     final control = HardwareKeyboard.instance.isControlPressed;
     final meta = HardwareKeyboard.instance.isMetaPressed;
     final alt = HardwareKeyboard.instance.isAltPressed;
