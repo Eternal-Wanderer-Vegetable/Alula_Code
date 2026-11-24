@@ -4053,8 +4053,8 @@
       "dependencies": [
         "feat-315"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "只使用语义定义位置。Windows 与 Linux 各 17 步验证正常跳转、速览、同名符号存在时的空结果和无提供程序。专项 181/181，Flutter 1,867 passed / 2 skipped。产品 89365340 的 CI 45328752669 四项与 Platform Availability 45328747101 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.264-empty-definition.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
