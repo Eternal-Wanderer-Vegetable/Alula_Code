@@ -4089,8 +4089,8 @@
       "dependencies": [
         "feat-318"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "调用层级支持 Alt+Shift+H、首层传入及传出、调用点预览、导航和焦点恢复。Windows 与 Linux 各 18 步使用实际 rust-analyzer。专项 188/188，Flutter 1,874 passed / 2 skipped。产品 d67a5b5e 的 CI 45339796125 四项与 Platform Availability 45339789578 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.267-call-hierarchy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

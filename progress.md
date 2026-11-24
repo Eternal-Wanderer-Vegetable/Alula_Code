@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.267 / feat-319 完成。调用层级支持 Alt+Shift+H、首层传入及传出、调用点预览、导航和焦点恢复。Windows 与 Linux 各 18 步使用实际 rust-analyzer。专项 188/188，Flutter 1,874 passed / 2 skipped。产品 d67a5b5e 的 CI 45339796125 四项与 Platform Availability 45339789578 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.267-call-hierarchy.md。
 - P05.266 / feat-318 完成。ABI 45 接通调用与类型层级的四个方向及准备请求。Windows 与 Linux 的实际 rust-analyzer 调用层级、类型能力缺失、旧 ABI 拒绝和模拟类型双向回传均通过。Flutter 1,870 passed / 2 skipped。产品 446175f8 的 CI 45335926583 四项与 Platform Availability 45335922282 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.266-symbol-hierarchy.md。
 - P05.265 / feat-317 完成。定义和侧开采用规范命令 ID 并兼容旧 ID。Windows 与 Linux 各 15 步验证默认组合键、同文件与跨文件侧开、右侧组预览复用、后退和无提供程序。专项 184/184，Flutter 1,870 passed / 2 skipped。产品 7ad209aa 的 CI 45331680195 四项与 Platform Availability 45331670103 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.265-definition-side.md。
 - P05.264 / feat-316 完成。只使用语义定义位置。Windows 与 Linux 各 17 步验证正常跳转、速览、同名符号存在时的空结果和无提供程序。专项 181/181，Flutter 1,867 passed / 2 skipped。产品 89365340 的 CI 45328752669 四项与 Platform Availability 45328747101 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.264-empty-definition.md。
@@ -44,7 +45,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本接入 CMD-10 调用层级的入口、方向切换和树行。520 像素整窗的标题栏溢出留在对应布局项。
+- 下一步。补齐 CMD-10 调用层级的子节点展开、焦点和分页。520 像素整窗的标题栏溢出留在对应布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
