@@ -757,6 +757,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   _DefinitionPeekSession? _definitionPeek;
   _CallHierarchySession? _callHierarchy;
   HierarchyDirection _lastCallHierarchyDirection = HierarchyDirection.incoming;
+  HierarchyDirection _lastTypeHierarchyDirection = HierarchyDirection.subtypes;
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
@@ -1912,7 +1913,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '速览调用层级',
       _showCallHierarchy,
       shortcut: _keybindings.shortcutFor('editor.showCallHierarchy'),
-      enablement: 'editorActive && !callHierarchyVisible',
+      enablement: 'editorActive && !callHierarchyVisible && !typeHierarchyVisible',
     );
     reg(
       'editor.showIncomingCalls',
@@ -1934,6 +1935,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '关闭调用层级',
       () async => _closeCallHierarchy(),
       enablement: 'callHierarchyVisible',
+    );
+    reg(
+      'editor.showTypeHierarchy',
+      '导航',
+      '速览类型层级',
+      () => _showCallHierarchy(kind: HierarchyKind.type),
+      shortcut: _keybindings.shortcutFor('editor.showTypeHierarchy'),
+      enablement: 'editorActive && !callHierarchyVisible && !typeHierarchyVisible',
+    );
+    reg(
+      'editor.showSupertypes',
+      '导航',
+      '显示父类型',
+      () => _changeCallHierarchyDirection(HierarchyDirection.supertypes),
+      enablement: 'typeHierarchyHasRoots && !typeHierarchySupertypes',
+    );
+    reg(
+      'editor.showSubtypes',
+      '导航',
+      '显示子类型',
+      () => _changeCallHierarchyDirection(HierarchyDirection.subtypes),
+      enablement: 'typeHierarchyHasRoots && typeHierarchySupertypes',
+    );
+    reg(
+      'editor.closeTypeHierarchy',
+      '导航',
+      '关闭类型层级',
+      () async => _closeCallHierarchy(),
+      enablement: 'typeHierarchyVisible',
     );
     reg(
       'editor.action.goToReferences',
@@ -3793,6 +3823,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _discardCallHierarchy();
     }
     final hierarchy = _callHierarchy;
+    final callHierarchyVisible = hierarchy?.kind == HierarchyKind.call;
+    final typeHierarchyVisible = hierarchy?.kind == HierarchyKind.type;
+    final hierarchyHasRoots = hierarchy?.roots.isNotEmpty ?? false;
+    final stableHierarchy = hierarchy?.stablePeek ?? false;
     final recentTarget = active == null
         ? null
         : (group: _focused, document: active._shared);
@@ -3822,10 +3856,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editorActive': active != null,
       'referenceSearchVisible': peekVisible,
       'peekWidgetVisible': peekVisible,
-      'callHierarchyVisible': hierarchy != null,
-      'callHierarchyHasRoots': hierarchy?.roots.isNotEmpty ?? false,
+      'callHierarchyVisible': callHierarchyVisible,
+      'callHierarchyHasRoots': callHierarchyVisible && hierarchyHasRoots,
       'callHierarchyIncoming': hierarchy?.incoming ?? false,
-      'callHierarchyStablePeek': hierarchy?.stablePeek ?? false,
+      'callHierarchyStablePeek': callHierarchyVisible && stableHierarchy,
+      'typeHierarchyVisible': typeHierarchyVisible,
+      'typeHierarchyHasRoots': typeHierarchyVisible && hierarchyHasRoots,
+      'typeHierarchySupertypes':
+          hierarchy?.direction == HierarchyDirection.supertypes,
+      'typeHierarchyStablePeek': typeHierarchyVisible && stableHierarchy,
       'activeEditorCanSplitInGroup':
           active != null && active._splitEditor == null && mergeSession == null,
       'sideBySideEditorActive':
@@ -21643,7 +21682,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  Future<void> _showCallHierarchy() async {
+  Future<void> _showCallHierarchy({
+    HierarchyKind kind = HierarchyKind.call,
+  }) async {
     final source = _active;
     if (source == null) return;
     if (_definitionPeek != null) _setDefinitionPeek(null);
@@ -21653,7 +21694,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       workspace: _workspaceRoot,
       version: source.doc.version,
       offset: math.max(0, source.selection.baseOffset),
-      direction: _lastCallHierarchyDirection,
+      kind: kind,
+      direction: kind == HierarchyKind.call
+          ? _lastCallHierarchyDirection
+          : _lastTypeHierarchyDirection,
       stablePeek: _readStablePeekSetting(),
     );
     setState(() {
@@ -21667,14 +21711,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       result = await source.doc.core.lsp.prepareHierarchy(
         source.id,
         session.offset,
-        HierarchyKind.call,
+        session.kind,
         cancelSignal: session.closed.future,
       );
     } catch (error) {
       if (_isCurrentCallHierarchy(session)) {
         setState(() {
           session.loading = false;
-          session.message = '无法加载调用层级：$error';
+          session.message = '无法加载${session.title}：$error';
         });
       }
       return;
@@ -21687,8 +21731,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         session.loading = false;
         session.message = result?.supported == false
-            ? '没有可用的调用层级提供程序'
-            : '没有调用层级结果';
+            ? '没有可用的${session.title}提供程序'
+            : '没有${session.title}结果';
       });
       return;
     }
@@ -21742,14 +21786,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         failure = '查询已结束';
       }
     } catch (_) {
-      failure = '无法加载调用关系';
+      failure = session.kind == HierarchyKind.call
+          ? '无法加载调用关系'
+          : '无法加载类型关系';
     }
     if (!current()) return;
     final entries = result?.entries ?? const <HierarchyEntry>[];
     if (failure == null &&
         session.retainedCount + entries.length >
             _CallHierarchySession.nodeLimit) {
-      failure = '已达到调用层级节点上限';
+      failure = '已达到${session.title}节点上限';
     }
     setState(() {
       node.expansion = null;
@@ -21771,9 +21817,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       node.expanded = children.isNotEmpty;
       session.retainedCount += children.length;
       if (node.depth == 0 && session.roots.length == 1 && children.isEmpty) {
-        session.message = session.incoming
-            ? '没有调用「${node.item.name}」的位置'
-            : '「${node.item.name}」没有传出调用';
+        final name = node.item.name;
+        session.message = switch (session.direction) {
+          HierarchyDirection.incoming => '没有调用「$name」的位置',
+          HierarchyDirection.outgoing => '「$name」没有传出调用',
+          HierarchyDirection.supertypes => '「$name」没有父类型',
+          HierarchyDirection.subtypes => '「$name」没有子类型',
+        };
       }
       session.rebuildRows(
         select: focusFirstChild ? children.firstOrNull : null,
@@ -21785,14 +21835,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     HierarchyDirection direction,
   ) async {
     final session = _callHierarchy;
+    final typeDirection = direction == HierarchyDirection.supertypes ||
+        direction == HierarchyDirection.subtypes;
     if (session == null ||
         !_isCurrentCallHierarchy(session) ||
         session.roots.isEmpty ||
-        session.direction == direction) {
+        session.direction == direction ||
+        typeDirection != (session.kind == HierarchyKind.type)) {
       return;
     }
     session.resetDirection(direction);
-    _lastCallHierarchyDirection = direction;
+    if (typeDirection) {
+      _lastTypeHierarchyDirection = direction;
+    } else {
+      _lastCallHierarchyDirection = direction;
+    }
     _syncCommandContext();
     await _expandCallHierarchyNode(
       session,
@@ -21871,12 +21928,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       session.source,
       session.offset,
       _hierarchyTarget(item.uri, item.selectionRange),
-      navigationLabel: '调用层级',
+      navigationLabel: session.title,
     );
     if (!mounted) return;
     final target = _active;
     if (!opened || target == null) {
-      setState(() => _statusDetail = '无法打开调用位置');
+      setState(() {
+        _statusDetail = session.kind == HierarchyKind.call
+            ? '无法打开调用位置'
+            : '无法打开类型位置';
+      });
       return;
     }
     final owner = _ownerOfView(target);
@@ -21888,6 +21949,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editor.showIncomingCalls',
       'editor.showOutgoingCalls',
       'editor.closeCallHierarchy',
+      'editor.showSupertypes',
+      'editor.showSubtypes',
+      'editor.closeTypeHierarchy',
     };
     final chord = _handleCommandChord(event, permittedCommands: allowed);
     if (chord != KeyEventResult.ignored) return chord;
@@ -21920,23 +21984,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return null;
     }
     final targets = session.targets;
+    final switchDirection = switch (session.direction) {
+      HierarchyDirection.incoming => 'editor.showOutgoingCalls',
+      HierarchyDirection.outgoing => 'editor.showIncomingCalls',
+      HierarchyDirection.supertypes => 'editor.showSubtypes',
+      HierarchyDirection.subtypes => 'editor.showSupertypes',
+    };
     return CallHierarchyPeek(
       key: ObjectKey(session),
       rows: session.rows,
       preferredSelection: session.preferredSelection,
-      incoming: session.incoming,
+      direction: session.direction,
       loading: session.loading,
       message: session.message,
       loadPreview: (index) => _loadCallHierarchyPreview(targets[index]),
-      onDirection: session.roots.isEmpty
-          ? null
-          : () {
-              _runCommand(
-                session.incoming
-                    ? 'editor.showOutgoingCalls'
-                    : 'editor.showIncomingCalls',
-              );
-            },
+      onDirection:
+          session.roots.isEmpty ? null : () => _runCommand(switchDirection),
       onOpen: (index) =>
           unawaited(_openCallHierarchyItem(session, targets[index])),
       onToggle: (index) => _toggleCallHierarchyNode(session, targets[index]),
@@ -30928,6 +30991,7 @@ class _CallHierarchySession {
     required this.workspace,
     required this.version,
     required this.offset,
+    required this.kind,
     required this.direction,
     required this.stablePeek,
   });
@@ -30939,6 +31003,7 @@ class _CallHierarchySession {
   final String? workspace;
   final int version;
   final int offset;
+  final HierarchyKind kind;
   final bool stablePeek;
   final closed = Completer<void>();
   HierarchyDirection direction;
@@ -30951,6 +31016,8 @@ class _CallHierarchySession {
   int retainedCount = 0;
 
   bool get incoming => direction == HierarchyDirection.incoming;
+
+  String get title => kind == HierarchyKind.call ? '调用层级' : '类型层级';
 
   static int _comparePositions(HierarchyPosition a, HierarchyPosition b) {
     final line = a.line.compareTo(b.line);

@@ -344,10 +344,16 @@ class KeybindingSet {
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.revealDefinition': 'editorTextFocus',
-    'editor.showCallHierarchy': 'editorTextFocus && !callHierarchyVisible',
+    'editor.showCallHierarchy':
+        'editorTextFocus && !callHierarchyVisible && !typeHierarchyVisible',
     'editor.showIncomingCalls': 'callHierarchyHasRoots && !callHierarchyIncoming',
     'editor.showOutgoingCalls': 'callHierarchyHasRoots && callHierarchyIncoming',
     'editor.closeCallHierarchy': 'callHierarchyVisible && !callHierarchyStablePeek',
+    'editor.showTypeHierarchy':
+        'editorTextFocus && !callHierarchyVisible && !typeHierarchyVisible',
+    'editor.showSupertypes': 'typeHierarchyHasRoots && !typeHierarchySupertypes',
+    'editor.showSubtypes': 'typeHierarchyHasRoots && typeHierarchySupertypes',
+    'editor.closeTypeHierarchy': 'typeHierarchyVisible && !typeHierarchyStablePeek',
     'editor.action.revealDefinitionAside': 'editorTextFocus',
     'editor.action.peekDefinition': 'editorTextFocus',
     'editor.action.goToImplementation': 'editorTextFocus',
@@ -399,6 +405,9 @@ class KeybindingSet {
         'editor.showIncomingCalls': 'alt+shift+h',
         'editor.showOutgoingCalls': 'alt+shift+h',
         'editor.closeCallHierarchy': 'escape',
+        'editor.showSupertypes': 'alt+shift+h',
+        'editor.showSubtypes': 'alt+shift+h',
+        'editor.closeTypeHierarchy': 'escape',
         'goToPreviousReference': 'shift+f12',
         'editor.action.peekDefinition':
             platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',

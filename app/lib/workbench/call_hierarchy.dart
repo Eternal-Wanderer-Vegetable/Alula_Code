@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../bridge/alula_core.dart' show HierarchyDirection;
 import 'definition_peek.dart' show DefinitionPeekLine;
 
 class CallHierarchyRow {
@@ -32,7 +33,7 @@ class CallHierarchyPeek extends StatefulWidget {
     super.key,
     required this.rows,
     this.preferredSelection,
-    required this.incoming,
+    required this.direction,
     required this.loading,
     required this.message,
     required this.loadPreview,
@@ -45,7 +46,7 @@ class CallHierarchyPeek extends StatefulWidget {
 
   final List<CallHierarchyRow> rows;
   final Object? preferredSelection;
-  final bool incoming;
+  final HierarchyDirection direction;
   final bool loading;
   final String? message;
   final Future<List<DefinitionPeekLine>> Function(int index) loadPreview;
@@ -65,6 +66,13 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   final _scroll = ScrollController();
   int _selected = 0;
   Future<List<DefinitionPeekLine>>? _preview;
+
+  String get _keyPrefix => switch (widget.direction) {
+        HierarchyDirection.incoming || HierarchyDirection.outgoing =>
+          'call-hierarchy',
+        HierarchyDirection.supertypes || HierarchyDirection.subtypes =>
+          'type-hierarchy',
+      };
 
   int get _initialRow {
     final child = widget.rows.indexWhere((row) => row.depth > 0);
@@ -87,7 +95,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
         if (mounted) _revealRow(_selected);
       });
     }
-    if (widget.incoming != oldWidget.incoming) _focusResultsAfterLayout();
+    if (widget.direction != oldWidget.direction) _focusResultsAfterLayout();
   }
 
   void _focusResultsAfterLayout() {
@@ -105,7 +113,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
     final preferred =
         widget.rows.indexWhere((row) => row.id == widget.preferredSelection);
     final previous = oldWidget != null &&
-            oldWidget.incoming == widget.incoming &&
+            oldWidget.direction == widget.direction &&
             _selected < oldWidget.rows.length
         ? oldWidget.rows[_selected]
         : null;
@@ -214,7 +222,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
       final indent = math.min(
           6.0 + 14.0 * row.depth, math.max(0.0, constraints.maxWidth - 68));
       return Semantics(
-        key: ValueKey('call-hierarchy-row-$index'),
+        key: ValueKey('$_keyPrefix-row-$index'),
         selected: selected,
         expanded: row.expanded,
         button: row.more,
@@ -232,7 +240,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
               children: [
                 if (row.expanded case final expanded?)
                   InkWell(
-                    key: ValueKey('call-hierarchy-toggle-$index'),
+                    key: ValueKey('$_keyPrefix-toggle-$index'),
                     onTap: () {
                       _resultsFocus.requestFocus();
                       _select(index);
@@ -291,7 +299,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
           return const Center(child: Text('预览不可用'));
         }
         return SelectionArea(
-          key: const ValueKey('call-hierarchy-preview'),
+          key: ValueKey('$_keyPrefix-preview'),
           child: ListView.builder(
             itemCount: lines.length,
             itemBuilder: (context, index) {
@@ -331,6 +339,16 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final (hierarchy, relation, switchLabel, switchIcon) = switch (widget.direction) {
+      HierarchyDirection.incoming =>
+        ('调用层级', '传入调用', '显示传出调用', Icons.call_made),
+      HierarchyDirection.outgoing =>
+        ('调用层级', '传出调用', '显示传入调用', Icons.call_received),
+      HierarchyDirection.supertypes =>
+        ('类型层级', '父类型', '显示子类型', Icons.account_tree_outlined),
+      HierarchyDirection.subtypes =>
+        ('类型层级', '子类型', '显示父类型', Icons.vertical_align_top),
+    };
     return Material(
       color: colors.surfaceContainer,
       elevation: 3,
@@ -350,23 +368,21 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        widget.incoming ? '调用层级 · 传入调用' : '调用层级 · 传出调用',
+                        '$hierarchy · $relation',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     IconButton(
-                      key: const ValueKey('call-hierarchy-direction'),
-                      tooltip: widget.incoming ? '显示传出调用' : '显示传入调用',
+                      key: ValueKey('$_keyPrefix-direction'),
+                      tooltip: switchLabel,
                       onPressed: widget.onDirection,
                       iconSize: 16,
-                      icon: Icon(widget.incoming
-                          ? Icons.call_made
-                          : Icons.call_received),
+                      icon: Icon(switchIcon),
                     ),
                     IconButton(
-                      key: const ValueKey('call-hierarchy-close'),
-                      tooltip: '关闭调用层级',
+                      key: ValueKey('$_keyPrefix-close'),
+                      tooltip: '关闭$hierarchy',
                       onPressed: widget.onClose,
                       iconSize: 16,
                       icon: const Icon(Icons.close),
@@ -377,7 +393,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
               Divider(height: 1, color: colors.outlineVariant),
               Expanded(
                 child: widget.loading
-                    ? const Center(child: Text('正在查询调用层级…'))
+                    ? Center(child: Text('正在查询$hierarchy…'))
                     : widget.message != null && widget.rows.isEmpty
                         ? Center(child: Text(widget.message!))
                         : LayoutBuilder(
@@ -396,8 +412,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
                                 Expanded(
                                   flex: 3,
                                   child: ListView.builder(
-                                    key: const ValueKey(
-                                        'call-hierarchy-results'),
+                                    key: ValueKey('$_keyPrefix-results'),
                                     controller: _scroll,
                                     itemExtent: _rowHeight,
                                     itemCount: widget.rows.length,

@@ -30,6 +30,29 @@ void main() {
     expect(command('escape'), isNot('editor.closeCallHierarchy'));
   });
 
+  test('type hierarchy uses its own direction and close contexts', () {
+    final keys = KeybindingSet.load(platform: TargetPlatform.windows);
+    final context = ContextKeyService();
+    addTearDown(context.dispose);
+    String? command(String key) => keys
+        .bindingForChord(parseChord(key)!, matchesWhen: context.matches)
+        ?.commandId;
+
+    context.setValues({
+      'editorTextFocus': true,
+      'typeHierarchyVisible': true,
+    });
+    expect(command('alt+shift+h'), isNot('editor.showCallHierarchy'));
+    expect(command('escape'), 'editor.closeTypeHierarchy');
+
+    context.setValues({'typeHierarchyHasRoots': true});
+    expect(command('alt+shift+h'), 'editor.showSupertypes');
+    context.setValues({'typeHierarchySupertypes': true});
+    expect(command('alt+shift+h'), 'editor.showSubtypes');
+    context.setValues({'typeHierarchyStablePeek': true});
+    expect(command('escape'), isNot('editor.closeTypeHierarchy'));
+  });
+
   test('definition commands use the canonical IDs and platform chord', () {
     const go = 'editor.action.revealDefinition';
     const aside = 'editor.action.revealDefinitionAside';

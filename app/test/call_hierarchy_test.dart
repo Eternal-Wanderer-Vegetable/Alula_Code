@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:alula_app/bridge/alula_core.dart' show HierarchyDirection, HierarchyKind;
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/call_hierarchy.dart';
@@ -23,7 +24,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: CallHierarchyPeek(
-          incoming: true,
+          direction: HierarchyDirection.incoming,
           loading: false,
           message: null,
           rows: const [
@@ -137,7 +138,7 @@ void main() {
           return CallHierarchyPeek(
             rows: rows,
             preferredSelection: preferred,
-            incoming: true,
+            direction: HierarchyDirection.incoming,
             loading: false,
             message: null,
             loadPreview: (index) async => [
@@ -208,10 +209,16 @@ void main() {
     expect(selected(0), isTrue);
   });
 
-  for (final stablePeek in [false, true]) {
+  for (final (kind, stablePeek) in [
+    for (final kind in HierarchyKind.values)
+      for (final stablePeek in [false, true]) (kind, stablePeek),
+  ]) {
     testWidgets(
-        'unavailable call hierarchy restores source focus (stable=$stablePeek)',
+        'unavailable ${kind.name} hierarchy restores source focus (stable=$stablePeek)',
         (tester) async {
+      final isType = kind == HierarchyKind.type;
+      final hierarchyName = isType ? '类型层级' : '调用层级';
+      final keyPrefix = isType ? 'type-hierarchy' : 'call-hierarchy';
       final temp = Directory.systemTemp.createTempSync('alula-call-hierarchy');
       addTearDown(() async {
         await tester.pumpWidget(const SizedBox.shrink());
@@ -224,6 +231,11 @@ void main() {
       File('$base/settings.json').writeAsStringSync(
         '{"editor.stablePeek":$stablePeek}',
       );
+      if (isType) {
+        File('$base/keybindings.json').writeAsStringSync(
+          '[{"key":"ctrl+shift+f9","command":"editor.showTypeHierarchy"}]',
+        );
+      }
       await tester.pumpWidget(AlulaApp(
         autoFolder: workspace.path,
         layoutStore: LayoutStore(path: '$base/layout.json'),
@@ -244,15 +256,22 @@ void main() {
       field.controller!.selection = caret;
       await tester.pump();
 
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      final modifier =
+          isType ? LogicalKeyboardKey.controlLeft : LogicalKeyboardKey.altLeft;
+      final key = isType ? LogicalKeyboardKey.f9 : LogicalKeyboardKey.keyH;
+      await tester.sendKeyDownEvent(modifier);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
-      await tester.sendKeyEvent(LogicalKeyboardKey.keyH);
+      await tester.sendKeyEvent(key);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyUpEvent(modifier);
       await tester.pumpAndSettle();
       final hierarchy = find.byType(CallHierarchyPeek);
       expect(hierarchy, findsOneWidget);
-      expect(find.text('没有可用的调用层级提供程序'), findsOneWidget);
+      expect(find.text('没有可用的$hierarchyName提供程序'), findsOneWidget);
+      expect(
+        tester.widget<CallHierarchyPeek>(hierarchy).direction,
+        isType ? HierarchyDirection.subtypes : HierarchyDirection.incoming,
+      );
       expect(field.controller!.selection, caret);
       expect(field.controller!.text, source);
       expect(field.focusNode!.hasFocus, isFalse);
@@ -261,7 +280,7 @@ void main() {
       await tester.pumpAndSettle();
       if (stablePeek) {
         expect(hierarchy, findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('call-hierarchy-close')));
+        await tester.tap(find.byKey(ValueKey('$keyPrefix-close')));
         await tester.pumpAndSettle();
       }
       expect(hierarchy, findsNothing);

@@ -4105,6 +4105,18 @@
       "evidence": "调用层级补齐懒加载、父子焦点、分支折叠和分页。Windows 与 Linux 各 19 步使用实际 rust-analyzer，55 项按 50 项分页。专项 189/189，Flutter 1,875 passed / 2 skipped。产品 235ecb40 的 CI 45345947769 四项与 Platform Availability 45345943784 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-321",
+      "name": "P05.269 CMD-10 类型层级速览、方向与导航",
+      "description": "接入固定版本的类型层级速览、父子类型切换与关闭命令。复用分支树、分页和 UTF-16 导航，验证无提供程序空态及实际 clangd 的父子类型。",
+      "dependencies": [
+        "feat-320"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
