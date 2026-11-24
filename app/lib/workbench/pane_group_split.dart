@@ -18,6 +18,7 @@ class PaneGroupSplit extends StatefulWidget {
     required this.sashKeyPrefix,
     required this.buildPane,
     required this.onCommit,
+    this.resetOnDoubleTap = true,
     this.collapsed = const {},
     this.collapsedExtent = 0,
   }) : assert(minimums.length > 1);
@@ -28,6 +29,7 @@ class PaneGroupSplit extends StatefulWidget {
   final String sashKeyPrefix;
   final Widget Function(String view, double extent) buildPane;
   final ValueChanged<Map<String, double>> onCommit;
+  final bool resetOnDoubleTap;
   final Set<String> collapsed;
   final double collapsedExtent;
 
@@ -145,7 +147,9 @@ class _PaneGroupSplitState extends State<PaneGroupSplit> {
               _finish(index, event.pointer, commit: false),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onDoubleTap: () => _reset(expanded, index, inside),
+            onDoubleTap: widget.resetOnDoubleTap
+                ? () => _reset(expanded, index, inside)
+                : null,
             child: Center(
               child: SizedBox(
                 width: vertical ? double.infinity : 1,

@@ -3997,6 +3997,18 @@
       "evidence": "速览文本双击按点击的 UTF-16 位置打开，修饰双击侧开。单击保留预览。Windows 51 步与 Linux 48 步验证两条双击路径和单击焦点。专项 96/96，Flutter 1,857 passed / 2 skipped。产品 de174fa4 的 CI 45303087629 四项和 Platform Availability 45303080415 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.259-peek-preview-open.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-312",
+      "name": "P05.260 CMD-08 速览横向分隔线",
+      "description": "预览与结果树之间支持指针拖动。验证固定版的默认比例、分栏下限、窄窗口、取消和同窗重新打开，拖动保留选区与焦点。",
+      "dependencies": [
+        "feat-311"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

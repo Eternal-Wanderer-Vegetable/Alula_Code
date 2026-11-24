@@ -748,6 +748,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
   final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
+  final _definitionPeekBodyKey = GlobalKey();
+  Map<String, double> _definitionPeekSplitWeights = const {
+    'preview': 0.7,
+    'results': 0.3,
+  };
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
@@ -21767,6 +21772,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         initialReference: peek.initialReference,
         navigatedReference: peek.navigatedReference,
         focusController: _definitionPeekFocus,
+        bodyKey: _definitionPeekBodyKey,
+        splitWeights: _definitionPeekSplitWeights,
+        onSplitChanged: (weights) {
+          if (identical(_definitionPeek, peek)) {
+            setState(() => _definitionPeekSplitWeights = weights);
+          }
+        },
         focusTarget: peek.focusTarget,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
@@ -22101,17 +22113,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pendingDefinitionPointers.remove(event.pointer);
     if (event.buttons != kPrimaryButton) return;
     if (identical(_definitionPeek?.source, view)) {
-      for (final pane in [
-        _definitionPeekFocus.results,
-        _definitionPeekFocus.preview,
-      ]) {
-        final box = pane.context?.findRenderObject();
-        if (box is RenderBox &&
-            box.attached &&
-            box.hasSize &&
-            box.size.contains(box.globalToLocal(event.position))) {
-          return;
-        }
+      final box = _definitionPeekBodyKey.currentContext?.findRenderObject();
+      if (box is RenderBox &&
+          box.attached &&
+          box.hasSize &&
+          box.size.contains(box.globalToLocal(event.position))) {
+        return;
       }
     }
     final control = HardwareKeyboard.instance.isControlPressed;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/definition_peek.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
@@ -900,6 +901,185 @@ void main() {
     ));
     expect(tab.style?.fontStyle, FontStyle.italic);
   }, variant: previewOpenModes);
+
+  testWidgets('Peek sash resizes both panes and retains focus and window share',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1500, 900);
+    final temp = Directory.systemTemp.createTempSync('alula-peek-sash');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn target() {}\nfn call() { target(); }\n';
+    final file = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    var definitionRequests = 0;
+    await _openWorkspace(
+      tester,
+      temp,
+      workspace,
+      definitionRequest: (id, offset, version) async {
+        definitionRequests++;
+        return null;
+      },
+      referencesRequest: (id, offset, version, includeDeclaration) async =>
+          ReferencesResult(
+        version: version,
+        targets: [
+          DefinitionTarget(uri: file.uri.toString(), line: 0, character: 3),
+          DefinitionTarget(uri: file.uri.toString(), line: 1, character: 12),
+        ],
+      ),
+    );
+    final anchor = source.lastIndexOf('target');
+    final selection =
+        TextSelection(baseOffset: anchor, extentOffset: anchor + 2);
+    _activeController(tester).selection = selection;
+    await tester.pump();
+
+    final peek = find.byKey(const ValueKey('references-peek'));
+    final preview = find.byKey(const ValueKey('definition-peek-preview-focus'));
+    final sash =
+        find.byKey(const ValueKey('definition-peek-sash-preview-results'));
+
+    final modifier = defaultTargetPlatform == TargetPlatform.macOS
+        ? LogicalKeyboardKey.metaLeft
+        : LogicalKeyboardKey.controlLeft;
+
+    Future<void> openPeek() async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expect(peek, findsOneWidget);
+    }
+
+    double previewWidth() => tester.getSize(preview).width;
+    double bodyWidth() =>
+        tester.getSize(peek).width - tester.getSize(sash).width;
+
+    Future<TestGesture> dragSash(double delta) async {
+      final drag = await tester.startGesture(
+        tester.getCenter(sash),
+        kind: PointerDeviceKind.mouse,
+      );
+      await drag.moveBy(Offset(delta, 0));
+      await tester.pump();
+      return drag;
+    }
+
+    await openPeek();
+    final initialWidth = previewWidth();
+    expect(initialWidth, closeTo(bodyWidth() * 0.7, 0.01));
+    await tester.tap(preview, kind: PointerDeviceKind.mouse);
+    await tester.pump();
+    final focus = tester.widget<SelectionArea>(preview).focusNode!;
+    expect(focus.hasFocus, isTrue);
+
+    final cancelled = await dragSash(-80);
+    expect(previewWidth(), closeTo(initialWidth - 80, 0.01));
+    await cancelled.cancel();
+    await tester.pump();
+    expect(previewWidth(), closeTo(initialWidth, 0.01));
+
+    final minPreview = await dragSash(-1000);
+    await minPreview.up();
+    await tester.pump();
+    expect(previewWidth(), closeTo(200, 0.01));
+    final minResults = await dragSash(1000);
+    await minResults.up();
+    await tester.pump();
+    final selectedWidth = previewWidth();
+    expect(bodyWidth() - selectedWidth, closeTo(100, 0.01));
+
+    await tester.sendKeyDownEvent(modifier);
+    await tester.tap(sash, kind: PointerDeviceKind.mouse);
+    await tester.sendKeyUpEvent(modifier);
+    await tester.pumpAndSettle();
+    expect(definitionRequests, 0);
+    expect(focus.hasFocus, isTrue);
+    expect(_activeController(tester).selection, selection);
+    expect(_activeController(tester).text, source);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(tester.widget<TextField>(_activeTextField()).focusNode!.hasFocus,
+        isTrue);
+    await openPeek();
+    expect(previewWidth(), closeTo(selectedWidth, 0.01));
+  });
+
+  testWidgets('Peek sash fits below the pane minimums and recovers its share',
+      (tester) async {
+    const sash = ValueKey('definition-peek-sash-preview-results');
+    const preview = ValueKey('definition-peek-preview-focus');
+
+    Future<void> sizePeek(double width) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: width,
+              child: DefinitionPeek(
+                bodyKey: const ValueKey('peek-body'),
+                kind: LocationPeekKind.references,
+                splitWeights: const {'preview': .7, 'results': .3},
+                onSplitChanged: (_) => fail('narrow sash moved'),
+                entries: const [
+                  (
+                    path: 'demo.rs',
+                    target: DefinitionTarget(
+                      uri: 'file:///demo.rs',
+                      line: 0,
+                      character: 0,
+                    ),
+                    referenceSymbol: null,
+                  ),
+                  (
+                    path: 'second.rs',
+                    target: DefinitionTarget(
+                      uri: 'file:///second.rs',
+                      line: 65000,
+                      character: 813,
+                    ),
+                    referenceSymbol: null,
+                  ),
+                ],
+                loadPreview: (_) async => [],
+                onOpen: (_) {},
+                onClose: () {},
+                onRemoved: () {},
+              ),
+            ),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+    }
+
+    await sizePeek(250);
+    final width = 250 - tester.getSize(find.byKey(sash)).width;
+    expect(tester.getSize(find.byKey(preview)).width,
+        closeTo(width * 2 / 3, 0.01));
+    await tester.drag(find.byKey(sash), const Offset(70, 0));
+    await tester.pumpAndSettle();
+    expect(tester.getSize(find.byKey(preview)).width,
+        closeTo(width * 2 / 3, 0.01));
+
+    await sizePeek(72);
+    expect(tester.getSize(find.byKey(preview)).width,
+        closeTo((72 - tester.getSize(find.byKey(sash)).width) * 2 / 3, 0.01));
+
+    await sizePeek(700);
+    final expanded = 700 - tester.getSize(find.byKey(sash)).width;
+    expect(tester.getSize(find.byKey(preview)).width,
+        closeTo(expanded * .7, 0.01));
+  });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {

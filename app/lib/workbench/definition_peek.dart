@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
+import 'pane_group_split.dart';
 
 typedef DefinitionPeekEntry = ({
   String path,
@@ -347,6 +348,9 @@ class DefinitionPeek extends StatefulWidget {
     required this.onOpen,
     required this.onClose,
     required this.onRemoved,
+    required this.bodyKey,
+    required this.splitWeights,
+    required this.onSplitChanged,
     this.onFocusedResultChanged,
     this.onOpenToSide,
     this.onOpenPreview,
@@ -373,6 +377,9 @@ class DefinitionPeek extends StatefulWidget {
   final ValueChanged<bool>? onFocusChange;
   final VoidCallback onClose;
   final VoidCallback onRemoved;
+  final Key bodyKey;
+  final Map<String, double> splitWeights;
+  final ValueChanged<Map<String, double>> onSplitChanged;
   final LocationPeekKind kind;
   final String? workspace;
   final Map<String, List<int>>? referenceGroups;
@@ -650,13 +657,17 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
               ),
               const Divider(height: 1),
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(flex: 3, child: _buildPreview(context)),
-                    const VerticalDivider(width: 1),
-                    Expanded(flex: 2, child: _buildResults(context)),
-                  ],
+                child: PaneGroupSplit(
+                  key: widget.bodyKey,
+                  axis: Axis.horizontal,
+                  minimums: const {'preview': 200, 'results': 100},
+                  weights: widget.splitWeights,
+                  sashKeyPrefix: 'definition-peek-sash',
+                  resetOnDoubleTap: false,
+                  buildPane: (pane, _) => pane == 'preview'
+                      ? _buildPreview(context)
+                      : _buildResults(context),
+                  onCommit: widget.onSplitChanged,
                 ),
               ),
             ],
@@ -764,18 +775,9 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
                       left: row.file == null ? 8 : 28,
                       right: 8,
                     ),
-                    child: Row(
-                      children: [
-                        if (row.file == null)
-                          Expanded(
-                            child: Text(
-                              p.basename(entry.path),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        Text(position),
-                      ],
+                    child: _resultLabelRow(
+                      label: row.file == null ? p.basename(entry.path) : null,
+                      trailing: position,
                     ),
                   ),
                 ),
@@ -811,27 +813,49 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
             color: selected ? colors.primaryContainer : Colors.transparent,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  Icon(expanded ? Icons.expand_more : Icons.chevron_right,
-                      size: 16),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      parent == '.'
-                          ? p.basename(path)
-                          : '${p.basename(path)}  $parent',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text('$count'),
-                ],
+              child: _resultLabelRow(
+                leading: expanded ? Icons.expand_more : Icons.chevron_right,
+                label: parent == '.'
+                    ? p.basename(path)
+                    : '\${p.basename(path)}  $parent',
+                trailing: '$count',
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _resultLabelRow({
+    IconData? leading,
+    String? label,
+    required String trailing,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final showIcon = leading != null && constraints.maxWidth >= 20;
+        return Row(
+          children: [
+            if (showIcon) ...[
+              Icon(leading, size: 16),
+              const SizedBox(width: 4),
+            ],
+            if (label != null)
+              Expanded(
+                child:
+                    Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: constraints.maxWidth - (showIcon ? 20 : 0),
+              ),
+              child:
+                  Text(trailing, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        );
+      },
     );
   }
 
