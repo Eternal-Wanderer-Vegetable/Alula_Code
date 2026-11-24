@@ -8,6 +8,7 @@ Last Updated: 2026-11-24
 
 ## Current State
 
+- P05.263 / feat-315 完成。声明、实现和类型定义接入 ABI 44 及各自的语言服务器。Windows 与 Linux 各 28 步验证六条命令、跨文件、多结果、UTF-16 和空提供程序。专项 180/180，Flutter 1,866 passed / 2 skipped。产品 1bdfc0b9 的 CI 45326039116 四项和 Platform Availability 45326031761 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.263-symbol-locations.md。
 - P05.262 / feat-314 完成。固定速览启用后，默认 Esc、Shift+Esc 和预览普通双击保留速览。Windows 69 步与 Linux 66 步验证侧开、选中结果、关闭按钮及坏档回退。专项 168/168，Flutter 1,864 passed / 2 skipped。产品 29028621 的 CI 45319711345 四项和 Platform Availability 45319703807 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.262-stable-peek.md。
 - P05.261 / feat-313 完成。速览高度按编辑器行高调整，横向比例和高度保存到当前布局偏好。Windows 69 步与 Linux 66 步完成原生拖动、焦点和重新启动读回。专项 165/165，Flutter 1,861 passed / 2 skipped。产品 7b9b1e93 的 CI 45313664619 四项和 Platform Availability 45313659772 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.261-peek-height.md。
 - P05.260 / feat-312 完成。预览默认占 70%，空间充足时预览和结果树下限为 200 与 100 逻辑像素。Windows 58 步与 Linux 55 步验证双向拖动、保留焦点与同窗重开。专项 163/163，Flutter 1,859 passed / 2 skipped。产品 aca6611c 的 CI 45308330665 四项和 Platform Availability 45308325780 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.260-peek-sash.md。
@@ -280,6 +281,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.263 声明、实现和类型定义导航](docs/diagnostics/2026-11-24-p05/p05.263-symbol-locations.md)。
 [P05.262 固定速览模式](docs/diagnostics/2026-11-24-p05/p05.262-stable-peek.md)。
 [P05.261 速览高度拖动与布局恢复](docs/diagnostics/2026-11-24-p05/p05.261-peek-height.md)。
 [P05.260 速览横向分隔线](docs/diagnostics/2026-11-24-p05/p05.260-peek-sash.md)。
@@ -449,4 +451,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.262 收尾 CI。按 docs/03 和 docs/11 核对 CMD-09 声明、实现和类型定义导航。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.263 收尾 CI。按 docs/03 和 docs/11 核对 CMD-09 的定义查询空结果及无提供程序边界。PR #3 保持草稿，macOS 实机暂缓。

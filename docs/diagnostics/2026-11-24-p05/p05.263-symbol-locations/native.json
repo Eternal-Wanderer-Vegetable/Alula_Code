@@ -1,0 +1,1821 @@
+{
+  "product": "1bdfc0b99ee0ed5ebc99129fa688536e3910431b",
+  "tree": "cf10e5869995fbe976c5dc742219dff25b5603fd",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": [
+      {
+        "path": "src/vs/editor/contrib/gotoSymbol/browser/goToCommands.ts",
+        "lines": [
+          403,
+          459,
+          490,
+          541,
+          576,
+          635
+        ],
+        "sha256": "32a083116edb1d9bc5f9e14659847df72b7f2d5a645b91e85901ac75aeaac8f0"
+      }
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "cf10e5869995fbe976c5dc742219dff25b5603fd",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "406964d72b7947009723ba8e38758376ac171418ad61d4e465526e4e17f2d618",
+      "app/lib/bridge/alula_ffi.dart": "bc7de972386989b70ee59911dad858a5924b3d455005f1f7fa7c7274db5175d7",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "7e420d545e335584fc906b1d4a5e44c665c4d68f53f397167c35472c1ae4846e",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "f5e84ffed100802a92133d573e1b0dc8cb6901e06e34a1e7a29e91476f95bde4",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "e82d6fbaad776795d0edc241711a7f42e64ddc02c0e5d88eb29310defbe70a35",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "c135a904323dbf8d1bbdd166ad1ce37043d2e5823820ecb2f4f399ccc40daa08",
+      "crates/editor-core/src/ffi.rs": "354a66be7e437eb1f04d9657922843e418cf2df96c7d339d93f8b1b91ae5c36e",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "1147e7010a2aa4a8625c4a6084eb2e000e97f0c12994833d0bd83267b3dccc6b",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "67aeb306fbaff76caa24b38d73f4355e3b77b1646093db4ea1f13c989c716f2a"
+    },
+    "rustProduct": "74fbfad8515dccb473ff15998c52113a5405af1f",
+    "nativeCoreSha256": "82a2f1fa6b38167922d4e11fc8f912d17f79feeb4fa045451a3f3ff7b8a73a80",
+    "fixtureSha256": "a6abb6df79563146ab0b37c1dffdbce1b37e26f9caa2323639b973cfc9ed5c47",
+    "abiProbeSha256": "f072c1f91b4e4747e25aa9301e1fdd6bf9a8b103f1f91fd47004573d975c3e96",
+    "previousNativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed",
+    "linuxNativeCoreSha256": "a539ae1c45afca3dbbab7ebba89381e3002334d47d97ccc83c6365a7fd7eb2a4"
+  },
+  "fixtureSha256": "a6abb6df79563146ab0b37c1dffdbce1b37e26f9caa2323639b973cfc9ed5c47",
+  "acceptanceDriverSha256": "c0d1f6735027b0006b8efb08f47328fec0fe3ea29f88b7b8efb82873674ced44",
+  "diskSha256": {
+    "src/imp.rs": "c11de4d7a9d1dec033ddc5cdc6c5bbeac63796337d08c5aa4157fa92596e502a",
+    "src/kind.rs": "9d8433a4180fb860189c30a0021a9c57fcc9733f2d4dd6eeb9438b3e2c78aa14",
+    "src/lib.rs": "98b7d504cc1053335fa8d262594b8a17dd1bf36dc62037d3783f61d33d6c4473",
+    "plain.txt": "f89e9d8a4ba9e9de29deebf3be870e6323ca8613d7a3a72a7598fcc9c31fa5b0",
+    "Cargo.toml": "54343f7b3e59916765d02ba9efff06273f6ebb9c1bf8cee00dedf3cb28446dfb"
+  },
+  "localLogsSha256": {
+    "p05-263-ffi.log": "f4dac56f4fadb64854524b5dc71cdee9dcc4ab8fd252b65cc7ccc6babc3e5e95",
+    "p05-263-abi-original.log": "6aabb57971fb533ac49a86b7203bfd0517914d3c8d1ceb09d091178eecbe7aa6",
+    "p05-263-abi-current.log": "f2f36286cd23c8d512f52154784b56aa1b31b4339f7c5eeb713d6e8e11ddfa4a",
+    "windows-abi.log": "3ef0b99c3ad76706cc44617b153f479d0ea2edc26ea58a28a0bb24713408c180",
+    "windows-core.log": "31285a3654f914ff63ac52713f084f5b92d0753176d64d7b3eb74a59ec73c594",
+    "p05-263-navigation.log": "a19170f01a2b5d3cecdbd063b4a58c7fa4034caf407578071b00ed00a7d5f3fc",
+    "p05-263-core.log": "958b7e462c6cedee7d10e30bde3d963b00666599d88441723decf896b39b0e06",
+    "p05-263-analyze.log": "8afdd1e84741dd71035f8c53e59c1e65c29e2de3ab756876374597c35a98e873",
+    "p05-263-focused.log": "736970c6023ab39d29ec3f27900969f8c3c0ed84977763f79e1d54a771a26bfc",
+    "p05-263-full.log": "f3fd55c26784eb215f26d2e33112d746bfd09aeb34c052c4c74535203ddde062",
+    "p05-263-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-263-linux-native.log": "aae2218b02388e97494e7706ee9097b5c1bbc320d2afa5934ee3cb00ccad7b5c",
+    "windows-build.log": "86932a75a4b851622db8c06197e242a6023a337f03d82b646b2d018aa45616ef"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 38,
+      "affected_count": 4,
+      "changed_files": 15,
+      "risk_level": "medium",
+      "sha256": "8abf8bbba2d36f511d3b7eb76794cb2648eefedd6b9d62b69c4052988ce24855",
+      "flows": [
+        {
+          "id": "proc_165_spawn",
+          "name": "Spawn → Send_message",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "handshake",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_166_spawn",
+          "name": "Spawn → Path_to_uri",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "handshake",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_446_definition",
+          "name": "Definition → AlulaException",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "definition",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "id": "proc_473_definition",
+          "name": "Definition → _takeJson",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "definition",
+              "step": 1
+            }
+          ]
+        }
+      ]
+    },
+    "staged": {
+      "changed_count": 38,
+      "affected_count": 4,
+      "changed_files": 15,
+      "risk_level": "medium",
+      "sha256": "8abf8bbba2d36f511d3b7eb76794cb2648eefedd6b9d62b69c4052988ce24855",
+      "flows": [
+        {
+          "id": "proc_165_spawn",
+          "name": "Spawn → Send_message",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "handshake",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_166_spawn",
+          "name": "Spawn → Path_to_uri",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "handshake",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_446_definition",
+          "name": "Definition → AlulaException",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "definition",
+              "step": 1
+            }
+          ]
+        },
+        {
+          "id": "proc_473_definition",
+          "name": "Definition → _takeJson",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "definition",
+              "step": 1
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "macosPhysical": "deferred",
+  "preEditImpact": {
+    "lsp-handshake": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "sha256": "50039f78a0793edd8ae3f3abe7f80d9d921e6f0f801922252c65a4b01cff04dd"
+    },
+    "bridge": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 23,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "48edb3afd172e1b4c0aad92212476e5040b8d64cab1bd643dda6ce5d5c00f6d0"
+    },
+    "bindings": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 49,
+        "processes_affected": 31,
+        "modules_affected": 5
+      },
+      "sha256": "e9fcc43c0b21e88a022e4fd7bdeb2bfc404ff33dc37e08bd3be22a2347884774"
+    }
+  },
+  "abiProbe": {
+    "sourceSha256": "f072c1f91b4e4747e25aa9301e1fdd6bf9a8b103f1f91fd47004573d975c3e96",
+    "oldLinuxSha256": "8230b12f2c55a3c538b3512e6894cf9e7dd43e27ed67c2f1ccd1ba5548e46a19",
+    "oldWindowsSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "rejected": 43,
+    "loaded": 44
+  },
+  "windows": {
+    "reportSha256": "0d9211f063f1fb6f6f35a937460a876826bd5fcee2b98a81b4d220ed22a1339b",
+    "runnerSha256": "54bfeb035e8a453d80f4374e394fb6be795e649dd2d4ab11c3ef2fad077bb5de",
+    "aotSha256": "efbbe9ddfaa4b5c8958c2b10eabf75d426b871912f5fc4573d53fa57b67929c9",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "observations": 28,
+    "providerTargets": {
+      "declaration": [
+        [
+          "kind.rs",
+          1,
+          7,
+          1,
+          10
+        ]
+      ],
+      "implementation": [
+        [
+          "imp.rs",
+          2,
+          13,
+          2,
+          19
+        ],
+        [
+          "imp.rs",
+          6,
+          13,
+          6,
+          18
+        ]
+      ],
+      "typeDefinition": [
+        [
+          "imp.rs",
+          1,
+          11,
+          1,
+          17
+        ]
+      ]
+    },
+    "cursors": {
+      "declarationSource": 70,
+      "declarationTarget": 23,
+      "implementationSource": 11,
+      "implementationFirst": 54,
+      "implementationSecond": 125,
+      "typeSource": 121,
+      "typeTarget": 33,
+      "definitionTarget": 65,
+      "missingProviderSource": 13
+    },
+    "states": {
+      "ready": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "lsp-attached": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          111,
+          111
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "declaration-at": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "provider-declaration": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "declaration-go": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          23,
+          23
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-back": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-peek": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": "declaration-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "声明 (1)",
+        "rows": [
+          {
+            "bounds": [
+              760.7456,
+              145.0,
+              960.8,
+              177.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\kind.rs:2",
+            "selected": true,
+            "position": "2:8"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-peek-close": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-to-implementation-source": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          23,
+          23
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-at": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "provider-implementation": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-go-many": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              760.7456,
+              145.0,
+              960.8,
+              177.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:3",
+            "selected": true,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              760.7456,
+              177.0,
+              960.8,
+              209.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:7",
+            "selected": false,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-accept-first": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          54,
+          54
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-back": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-peek": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              760.7456,
+              145.0,
+              960.8,
+              177.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:3",
+            "selected": true,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              760.7456,
+              177.0,
+              960.8,
+              209.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:7",
+            "selected": false,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-second": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              760.7456,
+              145.0,
+              960.8,
+              177.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:3",
+            "selected": false,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              760.7456,
+              177.0,
+              960.8,
+              209.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:7",
+            "selected": true,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-accept-second": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          125,
+          125
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-editor": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-at": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "provider-typeDefinition": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-go": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          33,
+          33
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-back": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-peek": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": "type-definition-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "类型定义 (1)",
+        "rows": [
+          {
+            "bounds": [
+              760.7456,
+              145.0,
+              960.8,
+              177.0
+            ],
+            "path": "e:\\temp\\alula-p05-263-symbol-locations\\probe-1795494083410567800\\workspace\\src\\imp.rs:2",
+            "selected": true,
+            "position": "2:12"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-peek-close": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "definition-distinct": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          65,
+          65
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider-editor": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider-at": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [
+          "没有类型定义位置"
+        ],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      }
+    },
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "fixturePositions": [
+      "4:8",
+      "1:12",
+      "5:35",
+      "2:1"
+    ]
+  },
+  "linux": {
+    "reportSha256": "c75059f844da3ce989b1b21b6441db66a0c043603fe1eaf6d9d3efe6ce79750c",
+    "runnerSha256": "8f6484b30fb152f08efa5c77a52bc1bab77fef6f42f83843bd78562b141002ec",
+    "aotSha256": "bddfe24fa1e689fa2ffa91c14792def6fc73b603af4a577091d54297fc096c54",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "observations": 28,
+    "providerTargets": {
+      "declaration": [
+        [
+          "kind.rs",
+          1,
+          7,
+          1,
+          10
+        ]
+      ],
+      "implementation": [
+        [
+          "imp.rs",
+          2,
+          13,
+          2,
+          19
+        ],
+        [
+          "imp.rs",
+          6,
+          13,
+          6,
+          18
+        ]
+      ],
+      "typeDefinition": [
+        [
+          "imp.rs",
+          1,
+          11,
+          1,
+          17
+        ]
+      ]
+    },
+    "cursors": {
+      "declarationSource": 70,
+      "declarationTarget": 23,
+      "implementationSource": 11,
+      "implementationFirst": 54,
+      "implementationSecond": 125,
+      "typeSource": 121,
+      "typeTarget": 33,
+      "definitionTarget": 65,
+      "missingProviderSource": 13
+    },
+    "states": {
+      "ready": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "lsp-attached": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          111,
+          111
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "declaration-at": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "provider-declaration": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false
+        }
+      },
+      "declaration-go": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          23,
+          23
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-back": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-peek": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": "declaration-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "声明 (1)",
+        "rows": [
+          {
+            "bounds": [
+              871.4559999999999,
+              145.0,
+              1096.0,
+              177.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/kind.rs:2",
+            "selected": true,
+            "position": "2:8"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-peek-close": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "declaration-to-implementation-source": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          23,
+          23
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-at": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "provider-implementation": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-go-many": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              871.4559999999999,
+              145.0,
+              1096.0,
+              177.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:3",
+            "selected": true,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              871.4559999999999,
+              177.0,
+              1096.0,
+              209.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:7",
+            "selected": false,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-accept-first": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          54,
+          54
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-back": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-peek": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              871.4559999999999,
+              145.0,
+              1096.0,
+              177.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:3",
+            "selected": true,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              871.4559999999999,
+              177.0,
+              1096.0,
+              209.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:7",
+            "selected": false,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-second": {
+        "editor": "kind.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          11,
+          11
+        ],
+        "version": 1,
+        "locationPeek": "implementation-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "实现 (2)",
+        "rows": [
+          {
+            "bounds": [
+              871.4559999999999,
+              145.0,
+              1096.0,
+              177.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:3",
+            "selected": false,
+            "position": "3:14"
+          },
+          {
+            "bounds": [
+              871.4559999999999,
+              177.0,
+              1096.0,
+              209.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:7",
+            "selected": true,
+            "position": "7:14"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "implementation-accept-second": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          125,
+          125
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-editor": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-at": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "provider-typeDefinition": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-go": {
+        "editor": "imp.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          33,
+          33
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-back": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-peek": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": "type-definition-peek",
+        "previewReadOnly": true,
+        "listFocused": true,
+        "peekTitle": "类型定义 (1)",
+        "rows": [
+          {
+            "bounds": [
+              871.4559999999999,
+              145.0,
+              1096.0,
+              177.0
+            ],
+            "path": "/tmp/alula-p05-177-xvfb-vycwryv_/workspace/src/imp.rs:2",
+            "selected": true,
+            "position": "2:12"
+          }
+        ],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "type-peek-close": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "definition-distinct": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          65,
+          65
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider-editor": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider-at": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      },
+      "no-provider": {
+        "editor": "plain.txt 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "locationPeek": null,
+        "previewReadOnly": false,
+        "listFocused": false,
+        "peekTitle": null,
+        "rows": [],
+        "statuses": [
+          "没有类型定义位置"
+        ],
+        "tabs": {
+          "lib.rs": false,
+          "imp.rs": false,
+          "plain.txt": false,
+          "未命名": false,
+          "kind.rs": false
+        }
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "memoryMiB": {
+      "ready": {
+        "mainPrivate": 229.8,
+        "treePrivate": 229.8,
+        "processCount": 1
+      },
+      "implementation-go-many": {
+        "mainPrivate": 247.0,
+        "treePrivate": 815.3,
+        "processCount": 4
+      },
+      "type-go": {
+        "mainPrivate": 242.2,
+        "treePrivate": 810.7,
+        "processCount": 4
+      },
+      "no-provider": {
+        "mainPrivate": 246.9,
+        "treePrivate": 815.6,
+        "processCount": 4
+      }
+    }
+  }
+}
