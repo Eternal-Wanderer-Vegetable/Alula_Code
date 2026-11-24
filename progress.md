@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.258 / feat-310 完成。速览结果叶项修饰键单击在右侧组打开预览标签，保留来源光标和速览。Windows 47 步与 Linux 44 步覆盖 Ctrl+单击、右侧预览以及键盘接受为常规标签。专项 94/94，Flutter 1,855 passed / 2 skipped。产品 eba4b2cd 的 CI 45297796669 四项和 Platform Availability 45297790088 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.258-peek-pointer-side.md。
+
 - P05.257 / feat-309 完成。侧开命令接入命令注册和用户键位，可移除默认 Ctrl+Enter 并重绑。Windows 45 步与 Linux 42 步通过，确认重绑侧开、文件标题行与原键移除保持源文档和焦点。专项 93/93，Flutter 1,854 passed / 2 skipped。产品 810a2f39 的 CI 45293986109 四项和 Platform Availability 45293975235 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.257-peek-side-binding.md。
 
 - P05.256 / feat-308 完成。速览结果树 Ctrl+Enter 侧开叶项，复用右侧组并保留左侧速览。Windows 43 步与 Linux 40 步覆盖焦点、同文档双视图、UTF-16、普通 F12 与 Esc。专项 91/91，Flutter 1,852 passed / 2 skipped。产品 f7286d4f 的 CI 45289880951 四项和 Platform Availability 45289871384 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.256-peek-open-side.md。
@@ -33,7 +35,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。核对速览鼠标侧开入口。
+- 下一步。核对速览预览内容的双击打开。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

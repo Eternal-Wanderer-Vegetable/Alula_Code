@@ -3981,8 +3981,8 @@
       "dependencies": [
         "feat-309"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "速览结果叶项修饰键单击在右侧组打开预览标签，保留来源光标和速览。Windows 47 步与 Linux 44 步覆盖 Ctrl+单击、右侧预览以及键盘接受为常规标签。专项 94/94，Flutter 1,855 passed / 2 skipped。产品 eba4b2cd 的 CI 45297796669 四项和 Platform Availability 45297790088 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.258-peek-pointer-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
