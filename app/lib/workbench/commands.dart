@@ -20,6 +20,7 @@ const quickAccessCommandAliases = <String, String>{
   'view.quickOpen': quickOpenCommandId,
   'goToNextReferenceFromEmbeddedEditor': 'goToNextReference',
   'goToPreviousReferenceFromEmbeddedEditor': 'goToPreviousReference',
+  'closeReferenceSearchEditor': 'closeReferenceSearch',
 };
 
 /// 一条可执行命令。

@@ -10,6 +10,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -750,6 +751,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
   final _definitionPeekBodyKey = GlobalKey();
   late PeekLayout _definitionPeekLayout = widget.layoutStore.loadPeekLayout();
+  bool _stablePeek = false;
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
@@ -1895,6 +1897,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '转到上一条引用',
       () => _stepPeekReference(forward: false),
       shortcut: _keybindings.shortcutFor('goToPreviousReference'),
+      when: 'referenceSearchVisible',
+    );
+    reg(
+      'closeReferenceSearch',
+      '导航',
+      '关闭速览',
+      () async {
+        final session = _definitionPeek;
+        if (session != null) _closeDefinitionPeek(session);
+      },
+      shortcut: _keybindings.shortcutFor('closeReferenceSearch'),
       when: 'referenceSearchVisible',
     );
     reg(
@@ -21609,15 +21622,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return true;
   }
 
+  bool _readStablePeekSetting() {
+    final path = p.join(
+      p.dirname(widget.keybindingsStore.resolvePath()),
+      'settings.json',
+    );
+    try {
+      final settings = jsonDecode(File(path).readAsStringSync());
+      return settings is Map<String, Object?> &&
+          settings['editor.stablePeek'] == true;
+    } on FileSystemException {
+      return false;
+    } on FormatException {
+      return false;
+    }
+  }
+
   void _setDefinitionPeek(_DefinitionPeekSession? session) {
     if (session == null ||
         !identical(_definitionPeek?.entries, session.entries)) {
       _focusedPeekResult = null;
+      _stablePeek = session != null && _readStablePeekSetting();
     }
     _definitionPeekFocus.setVisible(session != null);
     setState(() => _definitionPeek = session);
     _commands.context.setValues({
       'referenceSearchVisible': session != null,
+      'config.editor.stablePeek': _stablePeek,
       'peekWidgetVisible': session != null,
       'peekResultFocused': _focusedPeekResult != null,
     });
@@ -21805,7 +21836,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           unawaited(_acceptDefinitionPeek(peek, entry, asPreview: true));
         },
         onFocusedResultChanged: (entry) => _setFocusedPeekResult(peek, entry),
-        onResultKey: _handleDefinitionPeekResultKey,
+        stablePeek: _stablePeek,
+        onKey: _handleDefinitionPeekKey,
         onOpenToSide: (entry) {
           _focusDefinitionPeekSource(peek);
           unawaited(_navigateDefinitionPeekToSide(peek, entry, asPreview: true));
@@ -21873,13 +21905,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands.context.setValues({'peekResultFocused': entry != null});
   }
 
-  KeyEventResult _handleDefinitionPeekResultKey(KeyEvent event) {
+  KeyEventResult _handleDefinitionPeekKey(KeyEvent event) {
     final chord = _handleCommandChord(
       event,
       permittedCommands: const {
         'notifications.showList',
         'togglePeekWidgetFocus',
         'openReferenceToSide',
+        'closeReferenceSearch',
       },
     );
     if (chord != KeyEventResult.ignored) return chord;
@@ -21896,7 +21929,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       matchesWhen: _commands.context.matches,
     );
     if (binding == null ||
-        binding.commandId != 'openReferenceToSide' ||
+        (binding.commandId != 'openReferenceToSide' &&
+            binding.commandId != 'closeReferenceSearch') ||
         !_commands.isEnabled(binding.commandId)) {
       return KeyEventResult.ignored;
     }
@@ -21944,6 +21978,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _closeDefinitionPeek(_DefinitionPeekSession session) {
     if (!identical(_definitionPeek, session)) return;
+    _focusDefinitionPeekSource(session);
     _setDefinitionPeek(null);
     final source = session.source;
     final owner = _ownerOfView(source);

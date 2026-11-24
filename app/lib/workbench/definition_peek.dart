@@ -355,10 +355,11 @@ class DefinitionPeek extends StatefulWidget {
     required this.onSplitChanged,
     required this.heightInLines,
     required this.onHeightChanged,
+    this.stablePeek = false,
     this.onFocusedResultChanged,
     this.onOpenToSide,
     this.onOpenPreview,
-    this.onResultKey,
+    this.onKey,
     this.onFocusChange,
     this.kind = LocationPeekKind.definition,
     this.workspace,
@@ -377,7 +378,7 @@ class DefinitionPeek extends StatefulWidget {
   final ValueChanged<DefinitionPeekEntry>? onOpenToSide;
   final ValueChanged<DefinitionPeekEntry>? onOpenPreview;
   final ValueChanged<DefinitionPeekEntry?>? onFocusedResultChanged;
-  final KeyEventResult Function(KeyEvent)? onResultKey;
+  final KeyEventResult Function(KeyEvent)? onKey;
   final ValueChanged<bool>? onFocusChange;
   final VoidCallback onClose;
   final VoidCallback onRemoved;
@@ -386,6 +387,7 @@ class DefinitionPeek extends StatefulWidget {
   final ValueChanged<Map<String, double>> onSplitChanged;
   final int heightInLines;
   final ValueChanged<int> onHeightChanged;
+  final bool stablePeek;
   final LocationPeekKind kind;
   final String? workspace;
   final Map<String, List<int>>? referenceGroups;
@@ -571,15 +573,11 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       return KeyEventResult.ignored;
     }
     final key = event.logicalKey;
-    if (key == LogicalKeyboardKey.escape) {
-      widget.onClose();
-      return KeyEventResult.handled;
-    }
-    if (!_listFocus.hasFocus) return KeyEventResult.ignored;
     if (event is KeyDownEvent) {
-      final handled = widget.onResultKey?.call(event) ?? KeyEventResult.ignored;
+      final handled = widget.onKey?.call(event) ?? KeyEventResult.ignored;
       if (handled != KeyEventResult.ignored) return handled;
     }
+    if (!_listFocus.hasFocus) return KeyEventResult.ignored;
     final index = _focusedRowIndex;
     if (index < 0) return KeyEventResult.ignored;
     if (key == LogicalKeyboardKey.arrowUp ||
@@ -992,11 +990,11 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       if (offset < prefixLength || line.text.isEmpty) return;
       final selected = widget.entries[_selected];
       final keyboard = HardwareKeyboard.instance;
-      final open = keyboard.isControlPressed ||
-              keyboard.isMetaPressed ||
-              keyboard.isAltPressed
-          ? widget.onOpenToSide
-          : widget.onOpenPreview;
+      final side = keyboard.isControlPressed ||
+          keyboard.isMetaPressed ||
+          keyboard.isAltPressed;
+      if (!side && widget.stablePeek) return;
+      final open = side ? widget.onOpenToSide : widget.onOpenPreview;
       if (open == null) return;
       final entry = (
         path: selected.path,

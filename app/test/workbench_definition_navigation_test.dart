@@ -777,16 +777,25 @@ void main() {
     expect(rightTab('beta.rs'), findsNothing);
   });
 
-  final previewOpenModes = ValueVariant<bool>({false, true});
+  final previewOpenModes = ValueVariant<({bool side, bool stable})>({
+    (side: false, stable: false),
+    (side: true, stable: false),
+    (side: false, stable: true),
+    (side: true, stable: true),
+  });
   testWidgets(
       'Double-clicking the Peek preview opens the clicked UTF-16 position',
       (tester) async {
-    final side = previewOpenModes.currentValue!;
+    final (:side, :stable) = previewOpenModes.currentValue!;
     final temp = Directory.systemTemp.createTempSync('alula-peek-preview-open');
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox.shrink());
       if (temp.existsSync()) await temp.delete(recursive: true);
     });
+    if (stable) {
+      File('${temp.path}/settings.json')
+          .writeAsStringSync('{"editor.stablePeek":true}');
+    }
     final workspace = Directory('${temp.path}/workspace')..createSync();
     const source = 'fn main() { resolve(); }\n';
     final prefix = ''.padLeft(435, 'x');
@@ -832,6 +841,11 @@ void main() {
 
     final peek = find.byKey(const ValueKey('definition-peek'));
     final preview = find.byKey(const ValueKey('definition-peek-preview-focus'));
+    if (stable) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(peek, findsOneWidget);
+    }
     final code = find.descendant(
       of: preview,
       matching: find.byWidgetPredicate(
@@ -874,12 +888,32 @@ void main() {
     expect(_activeController(tester).text, source);
     expect(_activeController(tester).selection.extentOffset, sourceOffset);
 
+    if (stable) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expect(peek, findsOneWidget);
+      expect(tester.widget<SelectionArea>(preview).focusNode!.hasFocus, isTrue);
+    }
     if (side) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
     await clickAt(const Duration(milliseconds: 450));
     await tester.pump(const Duration(milliseconds: 80));
     await clickAt(const Duration(milliseconds: 530));
     if (side) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pumpAndSettle();
+
+    if (stable && !side) {
+      expect(peek, findsOneWidget);
+      expect(find.byType(RustTextInputField), findsOneWidget);
+      expect(_activeController(tester).text, source);
+      expect(_activeController(tester).selection.extentOffset, sourceOffset);
+      await _runPaletteCommand(tester, '关闭速览');
+      await tester.pumpAndSettle();
+      expect(peek, findsNothing);
+      expect(_activeController(tester).selection.extentOffset, sourceOffset);
+      return;
+    }
 
     expect(peek, side ? findsOneWidget : findsNothing);
     final label = side ? 'target.rs 编辑器 2' : 'target.rs 主编辑器';
@@ -900,6 +934,19 @@ void main() {
       matching: find.text('target.rs'),
     ));
     expect(tab.style?.fontStyle, FontStyle.italic);
+    if (stable) {
+      await tester.tap(find.byTooltip('关闭定义预览'));
+      await tester.pumpAndSettle();
+      expect(peek, findsNothing);
+      final original = find.byWidgetPredicate((widget) =>
+          widget is RustTextInputField &&
+          widget.semanticsLabel == 'main.rs 主编辑器');
+      final sourceField = tester.widget<TextField>(
+        find.descendant(of: original, matching: find.byType(TextField)),
+      );
+      expect(sourceField.focusNode!.hasPrimaryFocus, isTrue);
+      expect(sourceField.controller!.selection.extentOffset, sourceOffset);
+    }
   }, variant: previewOpenModes);
 
   testWidgets('Peek sash resizes both panes and retains focus and window share',

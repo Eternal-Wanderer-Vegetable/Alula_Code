@@ -761,8 +761,8 @@ void main() {
           .whereType<KeyChord>()
           .toSet()
           .length;
-      expect(resolved.keys.length, expectedChords + 17,
-          reason: 'tree find, breadcrumbs, notifications and Peek Definition '
+      expect(resolved.keys.length, expectedChords + 18,
+          reason: 'tree find, breadcrumbs, notifications and Peek '
               'add contextual bindings');
       expect(
         ks.shortcutFor('editor.action.peekDefinition'),
@@ -826,6 +826,43 @@ void main() {
       expect(remapped.commandForChord(parseChord('ctrl+shift+f4')!),
           'goToPreviousReference');
       expect(remapped.commandForChord(parseChord('f4')!), isNull);
+    });
+
+    test('Peek close defaults honor stable mode and preserve explicit alias',
+        () {
+      final context = ContextKeyService();
+      addTearDown(context.dispose);
+      final rebound = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '''[
+          {"key":"ctrl+shift+f9","command":"closeReferenceSearchEditor",
+           "when":"referenceSearchVisible"}
+        ]''',
+      );
+      final keys = KeybindingSet.load(platform: TargetPlatform.windows);
+      String? command(String chord) => keys
+          .bindingForChord(parseChord(chord)!, matchesWhen: context.matches)
+          ?.commandId;
+
+      expect(command('escape'), isNull);
+      context.setValues({
+        'editorTextFocus': true,
+        'referenceSearchVisible': true,
+        'config.editor.stablePeek': false,
+      });
+      expect(command('escape'), 'closeReferenceSearch');
+      expect(command('shift+escape'), 'closeReferenceSearch');
+      context.setValue('config.editor.stablePeek', true);
+      expect(command('escape'), isNull);
+      expect(command('shift+escape'), isNull);
+      expect(
+          rebound
+              .bindingForChord(
+                parseChord('ctrl+shift+f9')!,
+                matchesWhen: context.matches,
+              )
+              ?.commandId,
+          'closeReferenceSearch');
     });
 
     test('Peek focus uses a scoped platform chord', () {

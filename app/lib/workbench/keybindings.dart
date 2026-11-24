@@ -265,7 +265,8 @@ class KeybindingSet {
     'workbench.action.closeActiveEditor': 'ctrl+w',
     'workbench.action.closeOtherEditors': 'ctrl+alt+t',
     'workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup': 'ctrl+tab',
-    'workbench.action.quickOpenLeastRecentlyUsedEditorInGroup': 'ctrl+shift+tab',
+    'workbench.action.quickOpenLeastRecentlyUsedEditorInGroup':
+        'ctrl+shift+tab',
     'notifications.showList': 'ctrl+k ctrl+shift+n',
     'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
     'workbench.action.closeAllEditors': 'ctrl+k w',
@@ -346,6 +347,8 @@ class KeybindingSet {
     'goToNextReference': 'referenceSearchVisible && editorTextFocus',
     'goToPreviousReference': 'referenceSearchVisible && editorTextFocus',
     'openReferenceToSide': openReferenceToSideWhen,
+    'closeReferenceSearch':
+        'referenceSearchVisible && !config.editor.stablePeek && editorTextFocus',
     'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
@@ -394,6 +397,7 @@ class KeybindingSet {
         'list.closeFind': 'escape',
         'notifications.hideToasts': 'escape',
         'notifications.hideList': 'escape',
+        'closeReferenceSearch': 'escape,shift+escape',
         'notifications.focusNextToast': 'arrowdown',
         'notifications.focusPreviousToast': 'arrowup',
         'notifications.focusFirstToast': 'pageup,home',
@@ -450,7 +454,8 @@ class KeybindingSet {
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
         result['togglePeekWidgetFocus'] = 'cmd+k f2';
-        result['workbench.action.toggleSplitEditorInGroup'] = r'cmd+k cmd+shift+\';
+        result['workbench.action.toggleSplitEditorInGroup'] =
+            r'cmd+k cmd+shift+\';
         result['workbench.action.moveActiveEditorGroupLeft'] =
             'cmd+k arrowleft';
         result['workbench.action.moveActiveEditorGroupRight'] =
@@ -631,8 +636,7 @@ class KeybindingSet {
       if (chord == null && sequence == null) continue;
       final remove = command.startsWith('-');
       final requestedId = remove ? command.substring(1) : command;
-      final commandId =
-          quickAccessCommandAliases[requestedId] ?? requestedId;
+      final commandId = quickAccessCommandAliases[requestedId] ?? requestedId;
       if (remove) {
         // Remove only this command's binding; another context may own the chord.
         if (chord != null) {
