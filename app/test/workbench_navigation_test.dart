@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:alula_app/bridge/alula_core.dart' show DefinitionResult;
+
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
@@ -20,7 +22,7 @@ RenderEditable _findRenderEditable(RenderObject root) {
 }
 
 void main() {
-  testWidgets('F12 goes to a same-file Rust definition and reports misses',
+  testWidgets('F12 uses same-file provider targets and reports empty results',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-nav');
     addTearDown(() async {
@@ -29,10 +31,17 @@ void main() {
     });
     final workspace = Directory('${temp.path}/workspace')..createSync();
     const source =
-        '\uFEFF// 🦊 navigation fixture\r\nfn target() {}\r\nfn 目标() {}\r\nfn f() {}\r\nfn main() {\r\n    target();\r\n    目标();\r\n    f();\r\n    missing();\r\n}\r\n';
+        '\uFEFF// 🦊 navigation fixture\r\nfn target() {}\r\nfn 目标() {}\r\nfn f() {}\r\nfn main() {\r\n    target();\r\n    目标();\r\n    f();\r\n    missing();\r\n}\r\nfn missing() {}\r\n';
     const normalizedSource =
-        '// 🦊 navigation fixture\nfn target() {}\nfn 目标() {}\nfn f() {}\nfn main() {\n    target();\n    目标();\n    f();\n    missing();\n}\n';
-    File('${workspace.path}/main.rs').writeAsStringSync(source);
+        '// 🦊 navigation fixture\nfn target() {}\nfn 目标() {}\nfn f() {}\nfn main() {\n    target();\n    目标();\n    f();\n    missing();\n}\nfn missing() {}\n';
+    final sourceFile = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final targets = {
+      normalizedSource.indexOf('target();'): 1,
+      normalizedSource.indexOf('目标();'): 2,
+      normalizedSource.indexOf('f();'): 3,
+    };
+    var throwRequestError = false;
     final base = temp.path.replaceAll(r'\', '/');
 
     await tester.pumpWidget(AlulaApp(
@@ -40,6 +49,18 @@ void main() {
       layoutStore: LayoutStore(path: '$base/layout.json'),
       sessionStore: SessionStore(path: '$base/session.json'),
       keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+      definitionRequest: (_, offset, version) async {
+        if (throwRequestError) throw StateError('test provider unavailable');
+        final line = targets[offset];
+        return line == null
+            ? null
+            : DefinitionResult(
+                version: version,
+                uri: sourceFile.uri.toString(),
+                line: line,
+                character: 3,
+              );
+      },
     ));
     await tester.pump(const Duration(milliseconds: 600));
     await tester.tap(find.text('main.rs').first);
@@ -71,7 +92,7 @@ void main() {
     );
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.textContaining('跳转到 target'), findsOneWidget);
+    expect(find.text('跳转到 main.rs（定义）'), findsOneWidget);
     final selectionAfterJump =
         tester.widget<TextField>(textFieldFinder).controller!.selection;
     expect(
@@ -91,7 +112,7 @@ void main() {
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.textContaining('跳转到 目标'), findsOneWidget);
+    expect(find.text('跳转到 main.rs（定义）'), findsOneWidget);
     expect(
       tester
           .widget<TextField>(textFieldFinder)
@@ -113,7 +134,7 @@ void main() {
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.textContaining('跳转到 f'), findsOneWidget);
+    expect(find.text('跳转到 main.rs（定义）'), findsOneWidget);
     expect(
       tester
           .widget<TextField>(textFieldFinder)
@@ -121,7 +142,7 @@ void main() {
           .selection
           .extentOffset,
       oneLetterDefinitionOffset,
-      reason: 'definition search must match the identifier boundary, not `fn`',
+      reason: 'the provider returns the single-letter definition position',
     );
 
     final controllerAfterOneLetterJump =
@@ -145,7 +166,20 @@ void main() {
     expect(find.byKey(const ValueKey('qi-编辑器: 跳转定义')), findsOneWidget);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.textContaining('未找到「missing」的定义'), findsOneWidget);
+    expect(find.text('未找到「missing」的定义'), findsOneWidget);
+    final editorAfterMiss = tester.widget<TextField>(textFieldFinder);
+    expect(editorAfterMiss.controller!.selection.extentOffset,
+        normalizedSource.indexOf('missing();'));
+    expect(editorAfterMiss.controller!.text, normalizedSource);
+    expect(editorAfterMiss.focusNode!.hasFocus, isTrue);
+
+    throwRequestError = true;
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.textContaining('LSP 定义请求失败'), findsOneWidget);
+    expect(editorAfterMiss.controller!.selection.extentOffset,
+        normalizedSource.indexOf('missing();'));
+    throwRequestError = false;
 
     final controllerAfterMiss =
         tester.widget<TextField>(textFieldFinder).controller!;
@@ -154,7 +188,7 @@ void main() {
     await tester.pump();
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.text('光标不在符号上'), findsOneWidget);
+    expect(find.text('未找到定义'), findsOneWidget);
   });
 
   testWidgets('Control-click and Command-click jump to a Rust definition',
@@ -167,7 +201,10 @@ void main() {
     final workspace = Directory('${temp.path}/workspace')..createSync();
     const source =
         '// 🦊 pointer fixture\nfn target() {}\nfn main() {\n    target();\n}\n';
-    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final sourceFile = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final providerSource = source.lastIndexOf('target();');
+    final queriedOffsets = <int>[];
     final base = temp.path.replaceAll(r'\', '/');
 
     await tester.pumpWidget(AlulaApp(
@@ -175,6 +212,16 @@ void main() {
       layoutStore: LayoutStore(path: '$base/layout.json'),
       sessionStore: SessionStore(path: '$base/session.json'),
       keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+      definitionRequest: (_, offset, version) async {
+        queriedOffsets.add(offset);
+        if (offset < providerSource || offset > providerSource + 6) return null;
+        return DefinitionResult(
+          version: version,
+          uri: sourceFile.uri.toString(),
+          line: 1,
+          character: 3,
+        );
+      },
     ));
     await tester.pump(const Duration(milliseconds: 600));
     await tester.tap(find.text('main.rs').first);
@@ -233,6 +280,7 @@ void main() {
 
     await jumpWith(LogicalKeyboardKey.controlLeft);
     await jumpWith(LogicalKeyboardKey.metaLeft);
+    expect(queriedOffsets, hasLength(2));
   });
 
   testWidgets('Control-click maps a bounded input window to document offsets',
@@ -246,7 +294,10 @@ void main() {
     final padding = List.filled(6000, '// filler 🦊\n').join();
     final source = '// header 🦊\nfn target() {}\n$padding'
         'fn main() {\n    target();\n}\n';
-    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final sourceFile = File('${workspace.path}/main.rs')
+      ..writeAsStringSync(source);
+    final providerSource = source.lastIndexOf('target();');
+    final queriedOffsets = <int>[];
     final base = temp.path.replaceAll(r'\', '/');
 
     await tester.pumpWidget(AlulaApp(
@@ -254,6 +305,16 @@ void main() {
       layoutStore: LayoutStore(path: '$base/layout.json'),
       sessionStore: SessionStore(path: '$base/session.json'),
       keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+      definitionRequest: (_, offset, version) async {
+        queriedOffsets.add(offset);
+        if (offset < providerSource || offset > providerSource + 6) return null;
+        return DefinitionResult(
+          version: version,
+          uri: sourceFile.uri.toString(),
+          line: 1,
+          character: 3,
+        );
+      },
     ));
     await tester.pump(const Duration(milliseconds: 600));
     await tester.tap(find.text('main.rs').first);
@@ -336,5 +397,6 @@ void main() {
     final navigatedController =
         tester.widget<TextField>(textFieldFinder).controller!;
     expect(navigatedController.selection.extentOffset, definitionOffset);
+    expect(queriedOffsets.single, inInclusiveRange(callOffset, callOffset + 6));
   });
 }

@@ -132,6 +132,12 @@ void main() {
     await _runPaletteCommand(tester, '转到类型定义');
     await tester.pumpAndSettle();
     expect(find.text('没有类型定义位置'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+    await tester.pumpAndSettle();
+    expect(find.text('没有可用的定义提供程序'), findsOneWidget);
+    await _runPaletteCommand(tester, '速览定义');
+    await tester.pumpAndSettle();
+    expect(find.text('没有可用的定义提供程序'), findsOneWidget);
     expect(_activeController(tester).text, source);
     expect(_activeController(tester).selection, selection);
     expect(find.byType(DefinitionPeek), findsNothing);
@@ -1916,52 +1922,69 @@ void main() {
     expect(controller.text, source);
   });
 
-  testWidgets('definition response is ignored after its source version changes',
-      (tester) async {
-    final temp = Directory.systemTemp.createTempSync('alula-stale-definition');
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      if (temp.existsSync()) await temp.delete(recursive: true);
+  for (final edit in [true, false]) {
+    testWidgets(
+        edit
+            ? 'definition response is ignored after its source version changes'
+            : 'definition response is ignored after its source selection changes',
+        (tester) async {
+      final temp =
+          Directory.systemTemp.createTempSync('alula-stale-definition');
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        if (temp.existsSync()) await temp.delete(recursive: true);
+      });
+      final workspace = Directory('${temp.path}/workspace')..createSync();
+      const source = 'fn main() { target(); }\n';
+      const targetText = 'fn target() {}\n';
+      final targetPath = '${workspace.path}/target.rs';
+      File('${workspace.path}/main.rs').writeAsStringSync(source);
+      File(targetPath).writeAsStringSync(targetText);
+      final response = Completer<DefinitionResult?>();
+      var requestVersion = -1;
+
+      await _openWorkspace(
+        tester,
+        temp,
+        workspace,
+        definitionRequest: (id, offset, version) {
+          requestVersion = version;
+          return response.future;
+        },
+      );
+      _activeController(tester).selection = TextSelection.collapsed(
+        offset: source.indexOf('target()'),
+      );
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.pump();
+      expect(requestVersion, greaterThan(0));
+
+      if (edit) {
+        await tester.enterText(_activeTextField(), '$source// changed\n');
+      } else {
+        _activeController(tester).selection =
+            const TextSelection.collapsed(offset: 0);
+      }
+      await tester.pump(const Duration(milliseconds: 100));
+      response.complete(DefinitionResult(
+        version: requestVersion,
+        uri: Uri.file(targetPath).toString(),
+        line: 0,
+        character: 3,
+      ));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      if (edit) {
+        expect(find.text('文档已更改，已取消跳转'), findsOneWidget);
+        expect(_activeController(tester).text, '$source// changed\n');
+      } else {
+        expect(_activeController(tester).selection.extentOffset, 0);
+        expect(_activeController(tester).text, source);
+        expect(find.byType(DefinitionPeek), findsNothing);
+      }
     });
-    final workspace = Directory('${temp.path}/workspace')..createSync();
-    const source = 'fn main() { target(); }\n';
-    const targetText = 'fn target() {}\n';
-    final targetPath = '${workspace.path}/target.rs';
-    File('${workspace.path}/main.rs').writeAsStringSync(source);
-    File(targetPath).writeAsStringSync(targetText);
-    final response = Completer<DefinitionResult?>();
-    var requestVersion = -1;
-
-    await _openWorkspace(
-      tester,
-      temp,
-      workspace,
-      definitionRequest: (id, offset, version) {
-        requestVersion = version;
-        return response.future;
-      },
-    );
-    _activeController(tester).selection = TextSelection.collapsed(
-      offset: source.indexOf('target()'),
-    );
-    await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.f12);
-    await tester.pump();
-    expect(requestVersion, greaterThan(0));
-
-    await tester.enterText(_activeTextField(), '$source// changed\n');
-    await tester.pump(const Duration(milliseconds: 100));
-    response.complete(DefinitionResult(
-      version: requestVersion,
-      uri: Uri.file(targetPath).toString(),
-      line: 0,
-      character: 3,
-    ));
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.text('文档已更改，已取消跳转'), findsOneWidget);
-    expect(_activeController(tester).text, '$source// changed\n');
-  });
+  }
 
   testWidgets(
       'definition opens an already open file in the source editor group',

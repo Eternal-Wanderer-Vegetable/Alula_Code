@@ -4045,6 +4045,18 @@
       "evidence": "声明、实现和类型定义接入 ABI 44 及各自的语言服务器。Windows 与 Linux 各 28 步验证六条命令、跨文件、多结果、UTF-16 和空提供程序。专项 180/180，Flutter 1,866 passed / 2 skipped。产品 1bdfc0b9 的 CI 45326039116 四项和 Platform Availability 45326031761 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.263-symbol-locations.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-316",
+      "name": "P05.264 CMD-09 定义空结果与无提供程序",
+      "description": "F12、命令面板与修饰键单击按语义提供程序返回的位置导航。定义查询为空、失败或无提供程序时保持来源与编辑焦点，迟到结果不覆盖新位置。",
+      "dependencies": [
+        "feat-315"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

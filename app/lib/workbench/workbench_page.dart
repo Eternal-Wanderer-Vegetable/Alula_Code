@@ -21293,8 +21293,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return '';
   }
 
-  /// Navigate with the language server when available, retaining the local
-  /// Rust outline fallback for same-file definitions.
+  /// Resolve symbol locations using the active semantic provider.
   Future<void> _gotoDefinition({
     bool peek = false,
     LocationPeekKind kind = LocationPeekKind.definition,
@@ -21312,14 +21311,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         mounted &&
         identical(_active, active) &&
         workspace == _workspaceRoot &&
-        request == _definitionRequestSequence &&
-        (symbolKind == null || active.selection.baseOffset == sel.baseOffset);
+        request == _definitionRequestSequence;
 
-    final word = symbolKind == null ? _wordAt(active.text, offset) : null;
-    if (word == '') {
-      setState(() => _statusDetail = '光标不在符号上');
-      return;
-    }
     final sourceVersion = active.doc.version;
     final provider = symbolKind == null ? widget.definitionRequest : null;
     if (provider != null || active.lspAttached) {
@@ -21342,6 +21335,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               setState(() => _statusDetail = '文档已更改，已取消跳转');
               return;
             }
+            if (active.selection != sel) return;
             definition = await active.doc.core.lsp.definition(
               active.id,
               offset,
@@ -21356,6 +21350,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           setState(() => _statusDetail = '文档已更改，已取消跳转');
           return;
         }
+        if (active.selection != sel) return;
         if (definition != null) {
           final entries = <DefinitionPeekEntry>[
             for (final target in definition.targets)
@@ -21396,21 +21391,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return;
         }
       } catch (error) {
-        if (!current()) return;
+        if (!current() || active.selection != sel) return;
         setState(() => _statusDetail = 'LSP ${kind.label}请求失败：$error');
-        if (symbolKind != null) return;
+        return;
       }
+    } else if (symbolKind == null) {
+      setState(() => _statusDetail = '没有可用的定义提供程序');
+      return;
     }
 
     if (peek) {
       setState(() => _statusDetail = '没有可预览的${kind.label}');
-      return;
-    }
-    if (word == null) {
+    } else if (symbolKind == null) {
+      final word = _wordAt(active.text, offset);
+      setState(() => _statusDetail =
+          word.isEmpty ? '未找到定义' : '未找到「$word」的定义');
+    } else {
       setState(() => _statusDetail = '没有${kind.label}位置');
-      return;
     }
-    _gotoDefinitionInCurrentFile(active, word, offset);
   }
 
   Future<void> _gotoReferences({bool peek = false}) async {
@@ -21561,47 +21559,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : null;
     }
     return null;
-  }
-
-  void _gotoDefinitionInCurrentFile(OpenDoc active, String word, int offset) {
-    final r = active.doc.core.lsp.symbols(active.id);
-    final defs =
-        (r?.symbols ?? const []).where((s) => s['name'] == word).map((s) {
-      final start = (s['start_utf16'] as num?)?.toInt() ?? 0;
-      final lineEnd = active.text.indexOf('\n', start);
-      final declaration = active.text.substring(
-        start,
-        lineEnd < 0 ? active.text.length : lineEnd,
-      );
-      var nameOffset = -1;
-      for (final match in _rustIdentifierPattern.allMatches(declaration)) {
-        if (match.group(0) == word) {
-          nameOffset = match.start;
-          break;
-        }
-      }
-      return nameOffset < 0 ? start : start + nameOffset;
-    }).toList();
-    if (defs.isEmpty) {
-      setState(() => _statusDetail = '未找到「$word」的定义（当前文件）');
-      return;
-    }
-    // 排除光标正踩着的定义本身；跳第一个真实定义
-    final target = defs.where((d) => d != offset).isEmpty
-        ? defs.first
-        : defs.firstWhere((d) => d != offset);
-    final owner = _ownerOfView(active);
-    if (owner != null) {
-      try {
-        final from = _navigationLocation(active, offset, owner.region);
-        final to = _navigationLocation(active, target, owner.region);
-        _navigationHistory.recordNavigation(from, to);
-      } on AlulaException {
-        // The document may have changed while its local symbols were read.
-      }
-    }
-    _jumpToSymbol(target);
-    setState(() => _statusDetail = '跳转到 $word（定义）');
   }
 
   Future<bool> _navigateToDefinition(
