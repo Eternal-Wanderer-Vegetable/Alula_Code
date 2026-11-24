@@ -112,6 +112,33 @@ Future<void> _runPaletteCommand(WidgetTester tester, String query) async {
 void main() {
   setUp(mockNativeDragDrop);
 
+  testWidgets('symbol navigation keeps the editor when no provider is attached',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-symbol-no-provider');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = '// 🦊 Widget\nWidget\n';
+    File('${workspace.path}/main.txt').writeAsStringSync(source);
+    await _openWorkspace(tester, temp, workspace, openFileName: 'main.txt');
+    final selection =
+        TextSelection.collapsed(offset: source.lastIndexOf('Widget'));
+    _activeController(tester).selection = selection;
+    await tester.pump();
+
+    await _runPaletteCommand(tester, '转到类型定义');
+    await tester.pumpAndSettle();
+    expect(find.text('没有类型定义位置'), findsOneWidget);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection, selection);
+    expect(find.byType(DefinitionPeek), findsNothing);
+    expect(tester.widget<TextField>(_activeTextField()).focusNode!.hasFocus,
+        isTrue);
+  });
+
   testWidgets(
       'LSP definition opens a cross-file target and back/forward restore it',
       (tester) async {

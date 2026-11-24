@@ -277,12 +277,19 @@ int _scalarBoundary(String text, int offset) => offset > 0 &&
     : offset;
 
 enum LocationPeekKind {
-  definition('定义'),
-  references('引用');
+  definition('定义', 'definition-peek'),
+  references('引用', 'references-peek'),
+  declaration('声明', 'declaration-peek', SymbolLocationKind.declaration),
+  implementation(
+      '实现', 'implementation-peek', SymbolLocationKind.implementation),
+  typeDefinition(
+      '类型定义', 'type-definition-peek', SymbolLocationKind.typeDefinition);
 
-  const LocationPeekKind(this.label);
+  const LocationPeekKind(this.label, this.widgetKey, [this.symbolKind]);
 
   final String label;
+  final String widgetKey;
+  final SymbolLocationKind? symbolKind;
 }
 
 enum LocationPeekFocusTarget { results, preview, source }
@@ -788,7 +795,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   }
 
   Widget _buildResults(BuildContext context) {
-    if (widget.kind == LocationPeekKind.definition) return _resultList(context);
+    if (widget.kind != LocationPeekKind.references) return _resultList(context);
     return FutureBuilder<List<DefinitionPeekLine>>(
       future: _preview,
       builder: (context, snapshot) {

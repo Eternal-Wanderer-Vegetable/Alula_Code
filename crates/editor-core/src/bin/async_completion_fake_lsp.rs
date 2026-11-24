@@ -57,7 +57,10 @@ fn main() {
         .next()
         .and_then(|value| value.to_string_lossy().parse::<u64>().ok())
         .unwrap_or(250);
-    let provide_references = args.next().as_deref() != Some(std::ffi::OsStr::new("no-references"));
+    let option = args.next();
+    let provide_references = option.as_deref() != Some(std::ffi::OsStr::new("no-references"));
+    let provide_symbol_locations =
+        option.as_deref() != Some(std::ffi::OsStr::new("no-symbol-locations"));
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     let pending_completions = Arc::new((Mutex::new(HashSet::<i64>::new()), Condvar::new()));
@@ -65,13 +68,23 @@ fn main() {
         let method = message.get("method").and_then(Value::as_str).unwrap_or("");
         match method {
             "initialize" => {
-                if message
-                    .pointer("/params/capabilities/textDocument/definition/linkSupport")
-                    .and_then(Value::as_bool)
-                    == Some(true)
-                {
-                    trace(&trace_path, "definition.linkSupport");
+                for kind in [
+                    "definition",
+                    "declaration",
+                    "implementation",
+                    "typeDefinition",
+                ] {
+                    let capability =
+                        format!("/params/capabilities/textDocument/{kind}/linkSupport");
+                    if message.pointer(&capability).and_then(Value::as_bool) == Some(true) {
+                        trace(&trace_path, &format!("{kind}.linkSupport"));
+                    }
                 }
+                let implementation_provider = if provide_symbol_locations {
+                    json!({"workDoneProgress": false})
+                } else {
+                    json!(false)
+                };
                 send(json!({
                     "jsonrpc": "2.0",
                     "id": message["id"],
@@ -79,6 +92,9 @@ fn main() {
                         "textDocumentSync": 1,
                         "workspaceSymbolProvider": true,
                         "definitionProvider": true,
+                        "declarationProvider": provide_symbol_locations,
+                        "implementationProvider": implementation_provider,
+                        "typeDefinitionProvider": provide_symbol_locations,
                         "referencesProvider": provide_references
                     }},
                 }));
@@ -172,6 +188,46 @@ fn main() {
                         }
                     }]
                 }));
+            }
+            "textDocument/declaration"
+            | "textDocument/implementation"
+            | "textDocument/typeDefinition" => {
+                let params = &message["params"];
+                trace(&trace_path, &format!("{method} {params}"));
+                let location = |uri, line, start, end| {
+                    json!({"uri": uri, "range": {
+                        "start": {"line": line, "character": start},
+                        "end": {"line": line, "character": end}
+                    }})
+                };
+                let link = |uri, line, start, end| {
+                    json!({"targetUri": uri, "targetRange": {
+                        "start": {"line": line, "character": 0},
+                        "end": {"line": line, "character": end + 4}
+                    }, "targetSelectionRange": {
+                        "start": {"line": line, "character": start},
+                        "end": {"line": line, "character": end}
+                    }})
+                };
+                let result = if params["position"]["character"] == 0 {
+                    Value::Null
+                } else {
+                    match method {
+                        "textDocument/declaration" => {
+                            location("file:///workspace/kind.rs", 1, 7, 10)
+                        }
+                        "textDocument/implementation" => json!([
+                            link("file:///workspace/imp.rs", 2, 13, 19),
+                            link("file:///workspace/other_imp.rs", 6, 13, 18)
+                        ]),
+                        _ => json!([location("file:///workspace/imp.rs", 1, 11, 17)]),
+                    }
+                };
+                let id = message["id"].clone();
+                thread::spawn(move || {
+                    thread::sleep(Duration::from_millis(delay_ms));
+                    send(json!({"jsonrpc": "2.0", "id": id, "result": result}));
+                });
             }
             "textDocument/references" => {
                 let params = &message["params"];

@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 43;
+const int expectedAbiVersion = 44;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -627,6 +627,17 @@ class ReferencesResult {
   final List<DefinitionTarget> targets;
 }
 
+/// Location providers that use the versioned definition result shape.
+enum SymbolLocationKind {
+  declaration(1),
+  implementation(2),
+  typeDefinition(3);
+
+  const SymbolLocationKind(this.nativeValue);
+
+  final int nativeValue;
+}
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -660,18 +671,23 @@ class AlulaLsp {
     _check(_core._ffi.lspDidCloseJson(id));
   }
 
-  /// Resolve a symbol through the server's versioned definition provider.
-  /// Returns null when no target exists, the document changed, or the request
-  /// timed out.
+  /// Resolve a symbol through the requested versioned location provider.
+  /// Returns null when the provider is unavailable, no target exists, the
+  /// document changed, or the request timed out.
   Future<DefinitionResult?> definition(
     int id,
     int offsetUtf16, {
+    SymbolLocationKind? kind,
     int timeoutMs = 8000,
   }) async {
-    final startJson =
-        _core._ffi.definitionStartJson(id, offsetUtf16, timeoutMs);
+    final ffi = _core._ffi;
+    final startJson = kind == null
+        ? ffi.definitionStartJson(id, offsetUtf16, timeoutMs)
+        : ffi.symbolLocationStartJson(
+            id, offsetUtf16, kind.nativeValue, timeoutMs);
     _check(startJson);
     final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] == false) return null;
     final requestId = start['requestId'] as int;
     try {
       while (true) {

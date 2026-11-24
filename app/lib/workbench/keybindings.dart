@@ -342,6 +342,8 @@ class KeybindingSet {
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.peekDefinition': 'editorTextFocus',
+    'editor.action.goToImplementation': 'editorTextFocus',
+    'editor.action.peekImplementation': 'editorTextFocus',
     'editor.action.goToReferences': 'editorTextFocus',
     'togglePeekWidgetFocus': 'peekWidgetVisible && editorTextFocus',
     'goToNextReference': 'referenceSearchVisible && editorTextFocus',
@@ -389,6 +391,11 @@ class KeybindingSet {
         'goToPreviousReference': 'shift+f12',
         'editor.action.peekDefinition':
             platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',
+        'editor.action.goToImplementation':
+            platform == TargetPlatform.macOS ? 'cmd+f12' : 'ctrl+f12',
+        'editor.action.peekImplementation': platform == TargetPlatform.macOS
+            ? 'cmd+shift+f12'
+            : 'ctrl+shift+f12',
         'mergeEditor.acceptMerge':
             platform == TargetPlatform.macOS ? 'cmd+enter' : 'ctrl+enter',
         'openReferenceToSide': 'ctrl+enter',

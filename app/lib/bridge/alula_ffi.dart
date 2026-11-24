@@ -319,6 +319,12 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
           Pointer<Utf8> Function(int, int, int)>('alula_definition_start');
 
+  late final Pointer<Utf8> Function(int, int, int, int) _symbolLocationStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+          Pointer<Utf8> Function(int, int, int, int)>(
+    'alula_symbol_location_start',
+  );
+
   late final Pointer<Utf8> Function(int) _definitionPoll = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_definition_poll',
@@ -790,6 +796,14 @@ class AlulaFfi {
 
   String definitionStartJson(int id, int offsetUtf16, int timeoutMs) =>
       _takeJson(_definitionStart(id, offsetUtf16, timeoutMs));
+
+  String symbolLocationStartJson(
+    int id,
+    int offsetUtf16,
+    int kind,
+    int timeoutMs,
+  ) =>
+      _takeJson(_symbolLocationStart(id, offsetUtf16, kind, timeoutMs));
 
   String definitionPollJson(int requestId) =>
       _takeJson(_definitionPoll(requestId));

@@ -69,7 +69,7 @@ fn references_are_versioned_cancellable_and_drained() {
     let uri = CString::new("file:///E:/workspace/main.rs").unwrap();
     let language = CString::new("rust").unwrap();
 
-    assert_eq!(ffi::alula_abi_version(), 43);
+    assert_eq!(ffi::alula_abi_version(), ffi::ALULA_ABI_VERSION);
     assert_eq!(
         take_json(unsafe { ffi::alula_doc_open(doc_id, text.as_ptr()) })["version"],
         1

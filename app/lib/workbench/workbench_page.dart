@@ -1845,6 +1845,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity(),
         enablement: 'editorActive');
+    for (final (kind, go, peek) in const [
+      (
+        LocationPeekKind.declaration,
+        'editor.action.revealDeclaration',
+        'editor.action.peekDeclaration',
+      ),
+      (
+        LocationPeekKind.implementation,
+        'editor.action.goToImplementation',
+        'editor.action.peekImplementation',
+      ),
+      (
+        LocationPeekKind.typeDefinition,
+        'editor.action.goToTypeDefinition',
+        'editor.action.peekTypeDefinition',
+      ),
+    ]) {
+      reg(
+        go,
+        '导航',
+        '转到${kind.label}',
+        () => _gotoDefinition(kind: kind),
+        shortcut: _keybindings.shortcutFor(go),
+        when: 'editorTextFocus',
+      );
+      reg(
+        peek,
+        '导航',
+        '速览${kind.label}',
+        () => _gotoDefinition(peek: true, kind: kind),
+        shortcut: _keybindings.shortcutFor(peek),
+        when: 'editorTextFocus',
+      );
+    }
     reg('editor.gotoDef', '编辑器', '跳转定义', _gotoDefinition,
         enablement: 'editorActive');
     reg(
@@ -21261,28 +21295,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// Navigate with the language server when available, retaining the local
   /// Rust outline fallback for same-file definitions.
-  Future<void> _gotoDefinition({bool peek = false}) async {
+  Future<void> _gotoDefinition({
+    bool peek = false,
+    LocationPeekKind kind = LocationPeekKind.definition,
+  }) async {
     final active = _active;
     if (active == null) return;
     final request = ++_definitionRequestSequence;
     final workspace = _workspaceRoot;
     if (identical(_definitionPeek?.source, active)) _setDefinitionPeek(null);
+    _flushInput(active, commitComposition: true);
+    final sel = active.selection;
+    final offset = sel.baseOffset >= 0 ? sel.baseOffset : 0;
+    final symbolKind = kind.symbolKind;
     bool current() =>
         mounted &&
         identical(_active, active) &&
         workspace == _workspaceRoot &&
-        request == _definitionRequestSequence;
+        request == _definitionRequestSequence &&
+        (symbolKind == null || active.selection.baseOffset == sel.baseOffset);
 
-    _flushInput(active, commitComposition: true);
-    final sel = active.selection;
-    final offset = sel.baseOffset >= 0 ? sel.baseOffset : 0;
-    final word = _wordAt(active.text, offset);
-    if (word.isEmpty) {
+    final word = symbolKind == null ? _wordAt(active.text, offset) : null;
+    if (word == '') {
       setState(() => _statusDetail = '光标不在符号上');
       return;
     }
     final sourceVersion = active.doc.version;
-    final provider = widget.definitionRequest;
+    final provider = symbolKind == null ? widget.definitionRequest : null;
     if (provider != null || active.lspAttached) {
       try {
         DefinitionResult? definition;
@@ -21290,7 +21329,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           definition = await provider(active.id, offset, sourceVersion);
         } else {
           final stopwatch = Stopwatch()..start();
-          definition = await active.doc.core.lsp.definition(active.id, offset);
+          definition = await active.doc.core.lsp.definition(
+            active.id,
+            offset,
+            kind: symbolKind,
+          );
           if (definition == null &&
               stopwatch.elapsed < const Duration(seconds: 2)) {
             await Future<void>.delayed(const Duration(milliseconds: 200));
@@ -21302,6 +21345,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             definition = await active.doc.core.lsp.definition(
               active.id,
               offset,
+              kind: symbolKind,
               timeoutMs: 2500,
             );
           }
@@ -21325,21 +21369,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               sourceOffset: offset,
               workspace: workspace,
               entries: entries,
+              kind: kind,
             );
             return;
           }
           if (peek) {
-            setState(() => _statusDetail = '没有可预览的定义');
+            setState(() => _statusDetail = '没有可预览的${kind.label}');
             return;
           }
           final navigated = await _navigateToDefinition(
             active,
             offset,
             entries.firstOrNull?.target ?? definition,
+            kind: kind,
           );
           if (!mounted) return;
           if (!navigated) {
-            setState(() => _statusDetail = '无法打开定义位置');
+            setState(() => _statusDetail = '无法打开${kind.label}位置');
             return;
           }
           final target = _active;
@@ -21351,12 +21397,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       } catch (error) {
         if (!current()) return;
-        setState(() => _statusDetail = 'LSP 定义请求失败：$error');
+        setState(() => _statusDetail = 'LSP ${kind.label}请求失败：$error');
+        if (symbolKind != null) return;
       }
     }
 
     if (peek) {
-      setState(() => _statusDetail = '没有可预览的定义');
+      setState(() => _statusDetail = '没有可预览的${kind.label}');
+      return;
+    }
+    if (word == null) {
+      setState(() => _statusDetail = '没有${kind.label}位置');
       return;
     }
     _gotoDefinitionInCurrentFile(active, word, offset);
@@ -21793,9 +21844,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return null;
     }
     return KeyedSubtree(
-      key: ValueKey(peek.kind == LocationPeekKind.definition
-          ? 'definition-peek'
-          : 'references-peek'),
+      key: ValueKey(peek.kind.widgetKey),
       child: DefinitionPeek(
         key: ObjectKey(peek.entries),
         entries: peek.entries,

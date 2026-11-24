@@ -49,6 +49,14 @@ pub struct SemanticToken {
     pub kind: String,
 }
 
+/// Position-based navigation providers that share the definition result shape.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SymbolLocationKind {
+    Declaration,
+    Implementation,
+    TypeDefinition,
+}
+
 /// First usable LSP definition target. `line` and `character` use LSP's
 /// zero-based UTF-16 coordinates.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -476,6 +484,9 @@ impl LspServer {
                 "general": {"positionEncodings": ["utf-16"]},
                 "textDocument": {
                     "definition": {"linkSupport": true},
+                    "declaration": {"linkSupport": true},
+                    "implementation": {"linkSupport": true},
+                    "typeDefinition": {"linkSupport": true},
                     "semanticTokens": {
                         "dynamicRegistration": false,
                         "requests": {"range": false, "full": {"delta": false}},
@@ -729,6 +740,49 @@ impl LspServer {
                 "position": {"line": line, "character": character},
             }),
         )
+    }
+
+    /// Request a semantic location only from its advertised provider.
+    pub fn symbol_location_async(
+        &self,
+        kind: SymbolLocationKind,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        let (method, capability) = match kind {
+            SymbolLocationKind::Declaration => (
+                "textDocument/declaration",
+                "/capabilities/declarationProvider",
+            ),
+            SymbolLocationKind::Implementation => (
+                "textDocument/implementation",
+                "/capabilities/implementationProvider",
+            ),
+            SymbolLocationKind::TypeDefinition => (
+                "textDocument/typeDefinition",
+                "/capabilities/typeDefinitionProvider",
+            ),
+        };
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer(capability))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.request_async(
+            method,
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+            }),
+        )
+        .map(Some)
     }
 
     /// Query references only when the server advertises a provider.

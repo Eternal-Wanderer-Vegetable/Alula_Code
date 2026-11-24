@@ -761,8 +761,8 @@ void main() {
           .whereType<KeyChord>()
           .toSet()
           .length;
-      expect(resolved.keys.length, expectedChords + 18,
-          reason: 'tree find, breadcrumbs, notifications and Peek '
+      expect(resolved.keys.length, expectedChords + 20,
+          reason: 'tree find, breadcrumbs, notifications and navigation '
               'add contextual bindings');
       expect(
         ks.shortcutFor('editor.action.peekDefinition'),
@@ -826,6 +826,29 @@ void main() {
       expect(remapped.commandForChord(parseChord('ctrl+shift+f4')!),
           'goToPreviousReference');
       expect(remapped.commandForChord(parseChord('f4')!), isNull);
+    });
+
+    test('implementation Go and Peek use the platform editor shortcuts', () {
+      for (final (platform, modifier) in [
+        (TargetPlatform.windows, 'ctrl'),
+        (TargetPlatform.linux, 'ctrl'),
+        (TargetPlatform.macOS, 'cmd'),
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final context = ContextKeyService();
+        addTearDown(context.dispose);
+        String? command(String chord) => keys
+            .bindingForChord(parseChord(chord)!, matchesWhen: context.matches)
+            ?.commandId;
+        expect(command('$modifier+f12'), isNull);
+        context.setValue('editorTextFocus', true);
+        expect(command('$modifier+f12'), 'editor.action.goToImplementation');
+        expect(
+            command('$modifier+shift+f12'), 'editor.action.peekImplementation');
+        expect(command('shift+f12'), 'editor.action.goToReferences');
+        expect(keys.shortcutFor('editor.action.revealDeclaration'), isNull);
+        expect(keys.shortcutFor('editor.action.peekTypeDefinition'), isNull);
+      }
     });
 
     test('Peek close defaults honor stable mode and preserve explicit alias',

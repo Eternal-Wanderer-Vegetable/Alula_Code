@@ -4033,6 +4033,18 @@
       "evidence": "固定速览启用后，默认 Esc、Shift+Esc 和预览普通双击保留速览。Windows 69 步与 Linux 66 步验证侧开、选中结果、关闭按钮及坏档回退。专项 168/168，Flutter 1,864 passed / 2 skipped。产品 29028621 的 CI 45319711345 四项和 Platform Availability 45319703807 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.262-stable-peek.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-315",
+      "name": "P05.263 CMD-09 声明、实现和类型定义导航",
+      "description": "接入声明、实现、类型定义的真实 LSP 请求和跳转、速览命令。验证 ABI 44、Location 与 LocationLink、UTF-16、跨文件多结果和无提供程序时保持来源。",
+      "dependencies": [
+        "feat-314"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

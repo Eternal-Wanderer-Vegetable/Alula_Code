@@ -29,7 +29,7 @@ use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_targets,
     extract_reference_targets, extract_workspace_symbols, LspPendingRequest, LspRequestOutcome,
-    LspServer, SemanticToken, SemanticTokenLegend,
+    LspServer, SemanticToken, SemanticTokenLegend, SymbolLocationKind,
 };
 use editor_merge::{
     combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
@@ -41,7 +41,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 43;
+pub const ALULA_ABI_VERSION: u32 = 44;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -399,6 +399,13 @@ fn pending_definitions_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinit
 enum LocationQuery {
     Definition,
     References,
+}
+
+#[derive(Clone, Copy)]
+enum LocationRequest {
+    Definition,
+    Symbol(SymbolLocationKind),
+    References { include_declaration: bool },
 }
 
 impl LocationQuery {
@@ -2832,9 +2839,14 @@ fn start_location_query(
     id: u64,
     offset_utf16: u64,
     timeout_ms: u64,
-    query: LocationQuery,
-    include_declaration: bool,
+    kind: LocationRequest,
 ) -> *mut c_char {
+    let query = if matches!(kind, LocationRequest::References { .. }) {
+        LocationQuery::References
+    } else {
+        LocationQuery::Definition
+    };
+    let supports_unavailable = !matches!(kind, LocationRequest::Definition);
     let (uri, server, line, character, version) = {
         let reg = registry_lock();
         let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
@@ -2845,7 +2857,7 @@ fn start_location_query(
         };
         let uri = reg.uri_of(id);
         let server = reg.lsp_of(id);
-        if query == LocationQuery::References && (uri.is_none() || server.is_none()) {
+        if supports_unavailable && (uri.is_none() || server.is_none()) {
             return to_c_ptr(json!({ "ok": true, "supported": false }).to_string());
         }
         let Some(uri) = uri else {
@@ -2868,11 +2880,12 @@ fn start_location_query(
         cancel_workspace_symbols(|request| request.document_id == id);
     }
     query.cancel_matching(|request| request.document_id == id);
-    let issued = match query {
-        LocationQuery::Definition => server.definition_async(&uri, line, character).map(Some),
-        LocationQuery::References => {
-            server.references_async(&uri, line, character, include_declaration)
-        }
+    let issued = match kind {
+        LocationRequest::Definition => server.definition_async(&uri, line, character).map(Some),
+        LocationRequest::Symbol(kind) => server.symbol_location_async(kind, &uri, line, character),
+        LocationRequest::References {
+            include_declaration,
+        } => server.references_async(&uri, line, character, include_declaration),
     };
     let mut request = match issued {
         Ok(Some(request)) => request,
@@ -2901,7 +2914,7 @@ fn start_location_query(
         },
     );
     let mut response = json!({ "ok": true, "requestId": request_id, "version": version });
-    if query == LocationQuery::References {
+    if supports_unavailable {
         response["supported"] = json!(true);
     }
     to_c_ptr(response.to_string())
@@ -3011,15 +3024,35 @@ pub extern "C" fn alula_definition_start(
     timeout_ms: u64,
 ) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
+        start_location_query(id, offset_utf16, timeout_ms, LocationRequest::Definition)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_start")))
+}
+
+/// Start a declaration (1), implementation (2), or type-definition (3) query.
+/// Results and lifecycle use alula_definition_poll / alula_definition_cancel.
+#[no_mangle]
+pub extern "C" fn alula_symbol_location_start(
+    id: u64,
+    offset_utf16: u64,
+    kind: u8,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let kind = match kind {
+            1 => SymbolLocationKind::Declaration,
+            2 => SymbolLocationKind::Implementation,
+            3 => SymbolLocationKind::TypeDefinition,
+            _ => return err_json("InvalidArgument", json!({"kind": kind})),
+        };
         start_location_query(
             id,
             offset_utf16,
-            timeout_ms,
-            LocationQuery::Definition,
-            false,
+            timeout_ms.min(60_000),
+            LocationRequest::Symbol(kind),
         )
     }))
-    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_start")))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_symbol_location_start")))
 }
 
 /// Poll a definition request while its source document version remains current.
@@ -3059,8 +3092,9 @@ pub extern "C" fn alula_references_start(
             id,
             offset_utf16,
             timeout_ms.min(60_000),
-            LocationQuery::References,
-            include_declaration != 0,
+            LocationRequest::References {
+                include_declaration: include_declaration != 0,
+            },
         )
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_start")))
@@ -3494,7 +3528,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 43);
+        assert_eq!(alula_abi_version(), 44);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {
