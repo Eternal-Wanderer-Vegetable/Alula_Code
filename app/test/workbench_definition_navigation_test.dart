@@ -1030,6 +1030,8 @@ void main() {
                 kind: LocationPeekKind.references,
                 splitWeights: const {'preview': .7, 'results': .3},
                 onSplitChanged: (_) => fail('narrow sash moved'),
+                heightInLines: defaultPeekLayout.heightInLines,
+                onHeightChanged: (_) => fail('height changed'),
                 entries: const [
                   (
                     path: 'demo.rs',
@@ -1079,6 +1081,143 @@ void main() {
     final expanded = 700 - tester.getSize(find.byKey(sash)).width;
     expect(tester.getSize(find.byKey(preview)).width,
         closeTo(expanded * .7, 0.01));
+  });
+
+  testWidgets('Peek height uses editor lines and restores both pane dimensions',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1500, 1050);
+    final temp = Directory.systemTemp.createTempSync('alula-peek-height');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn target() {}\nfn call() { target(); }\n';
+    final file = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final selection =
+        TextSelection.collapsed(offset: source.lastIndexOf('target'));
+    final base = temp.path.replaceAll(r'\', '/');
+    final store = LayoutStore(path: '$base/layout.json');
+    final peek = find.byKey(const ValueKey('references-peek'));
+    final preview = find.byKey(const ValueKey('definition-peek-preview-focus'));
+    final sash = find.byKey(const ValueKey('definition-peek-height-sash'));
+    final columns =
+        find.byKey(const ValueKey('definition-peek-sash-preview-results'));
+
+    Future<void> mountAndOpen() async {
+      await _openWorkspace(
+        tester,
+        temp,
+        workspace,
+        referencesRequest: (id, offset, version, includeDeclaration) async =>
+            ReferencesResult(
+          version: version,
+          targets: [
+            DefinitionTarget(uri: file.uri.toString(), line: 0, character: 3),
+            DefinitionTarget(uri: file.uri.toString(), line: 1, character: 12),
+          ],
+        ),
+      );
+      _activeController(tester).selection = selection;
+      await tester.pump();
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expect(peek, findsOneWidget);
+    }
+
+    Future<TestGesture> dragHeight(double delta) async {
+      final drag = await tester.startGesture(
+        tester.getCenter(sash),
+        kind: PointerDeviceKind.mouse,
+      );
+      await drag.moveBy(Offset(0, delta));
+      await tester.pump();
+      return drag;
+    }
+
+    expect(store.loadPeekLayout(), defaultPeekLayout);
+    await mountAndOpen();
+    final original = tester.getSize(peek).height;
+    final lineHeight = original / defaultPeekLayout.heightInLines;
+    expect(lineHeight, greaterThan(10));
+    await _pressPeekFocusChord(tester);
+    final previewFocus = tester.widget<SelectionArea>(preview).focusNode!;
+    expect(previewFocus.hasFocus, isTrue);
+
+    final cancelled = await dragHeight(-lineHeight * 2.2);
+    expect(
+        tester.getSize(peek).height, closeTo(original - lineHeight * 2, .01));
+    await cancelled.cancel();
+    await tester.pumpAndSettle();
+    expect(tester.getSize(peek).height, closeTo(original, .01));
+    expect(store.loadPeekLayout(), defaultPeekLayout);
+
+    final drag = await dragHeight(-lineHeight * 4.2);
+    await drag.up();
+    await tester.pumpAndSettle();
+    final adjusted = tester.getSize(peek).height;
+    expect(adjusted, closeTo(original - lineHeight * 4, .01));
+    expect(store.loadPeekLayout().heightInLines, 14);
+
+    await tester.drag(columns, const Offset(-75, 0),
+        kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    final adjustedWidth = tester.getSize(preview).width;
+    final bodyWidth =
+        tester.getSize(peek).width - tester.getSize(columns).width;
+    final saved = store.loadPeekLayout();
+    expect(saved.previewRatio, closeTo(adjustedWidth / bodyWidth, .0001));
+    expect(saved.heightInLines, 14);
+    expect(saved.previewRatio, lessThan(defaultPeekLayout.previewRatio));
+    expect(previewFocus.hasFocus, isTrue);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection, selection);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(peek, findsNothing);
+    expect(tester.widget<TextField>(_activeTextField()).focusNode!.hasFocus,
+        isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await mountAndOpen();
+    expect(tester.getSize(peek).height, closeTo(adjusted, .01));
+    expect(tester.getSize(preview).width, closeTo(adjustedWidth, .01));
+
+    final minimum = await dragHeight(-1000);
+    await minimum.up();
+    await tester.pumpAndSettle();
+    expect(store.loadPeekLayout().heightInLines, minPeekHeightInLines);
+    expect(tester.getSize(peek).height,
+        closeTo(lineHeight * minPeekHeightInLines, .01));
+    final maximum = await dragHeight(2000);
+    await maximum.up();
+    await tester.pumpAndSettle();
+    final maxLines = store.loadPeekLayout().heightInLines;
+    expect(maxLines, inInclusiveRange(18, maxPeekHeightInLines));
+    expect(tester.getSize(peek).height, closeTo(lineHeight * maxLines, .01));
+  });
+
+  test('Peek layout accepts independent fields and recovers corrupt data', () {
+    final temp = Directory.systemTemp.createTempSync('alula-peek-layout');
+    addTearDown(() => temp.deleteSync(recursive: true));
+    final store = LayoutStore(path: '${temp.path}/layout.json');
+    final preferences = File('${store.resolvePath()}.peek.json');
+    expect(store.loadPeekLayout(), defaultPeekLayout);
+    preferences.writeAsStringSync('{"previewRatio":0.4,"heightInLines":1000}');
+    expect(store.loadPeekLayout(), (previewRatio: .4, heightInLines: 18));
+    preferences.writeAsStringSync('{"previewRatio":1,"heightInLines":21}');
+    expect(store.loadPeekLayout(), (previewRatio: .7, heightInLines: 21));
+    preferences.writeAsStringSync('{');
+    expect(store.loadPeekLayout(), defaultPeekLayout);
+    store.savePeekLayout((previewRatio: .6, heightInLines: 16));
+    store.savePeekLayout((previewRatio: .5, heightInLines: 17));
+    expect(store.loadPeekLayout(), (previewRatio: .5, heightInLines: 17));
   });
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',

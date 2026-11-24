@@ -10,6 +10,12 @@ import 'dart:io';
 import 'layout_model.dart';
 import 'secondary_sidebar_layout.dart';
 
+typedef PeekLayout = ({double previewRatio, int heightInLines});
+
+const defaultPeekLayout = (previewRatio: 0.7, heightInLines: 18);
+const minPeekHeightInLines = 6;
+const maxPeekHeightInLines = 34;
+
 class LayoutStore {
   LayoutStore({String? path}) : _overridePath = path;
 
@@ -21,6 +27,55 @@ class LayoutStore {
         Platform.environment['USERPROFILE'] ??
         Directory.current.path;
     return '$home/.alula/layout.json';
+  }
+
+  String get _peekLayoutPath => '${resolvePath()}.peek.json';
+
+  PeekLayout loadPeekLayout() {
+    try {
+      final data = jsonDecode(File(_peekLayoutPath).readAsStringSync());
+      if (data is! Map<String, Object?>) return defaultPeekLayout;
+      final ratio = data['previewRatio'];
+      final height = data['heightInLines'];
+      return (
+        previewRatio: ratio is num && ratio > 0 && ratio < 1
+            ? ratio.toDouble()
+            : defaultPeekLayout.previewRatio,
+        heightInLines: height is int &&
+                height >= minPeekHeightInLines &&
+                height <= maxPeekHeightInLines
+            ? height
+            : defaultPeekLayout.heightInLines,
+      );
+    } on FileSystemException {
+      return defaultPeekLayout;
+    } on FormatException {
+      return defaultPeekLayout;
+    }
+  }
+
+  void savePeekLayout(PeekLayout layout) {
+    final path = _peekLayoutPath;
+    final file = File(path);
+    final temporary =
+        File('$path.$pid.${DateTime.now().microsecondsSinceEpoch}.tmp');
+    try {
+      file.parent.createSync(recursive: true);
+      temporary.writeAsStringSync(
+          jsonEncode({
+            'previewRatio': layout.previewRatio,
+            'heightInLines': layout.heightInLines,
+          }),
+          flush: true);
+      temporary.renameSync(path);
+    } on FileSystemException {
+      // The in-memory layout remains usable if its preference cannot be saved.
+      try {
+        if (temporary.existsSync()) temporary.deleteSync();
+      } on FileSystemException {
+        // Leave the previous preference intact.
+      }
+    }
   }
 
   /// 读取已保存布局；不存在或损坏返回 null（调用方回退 defaultLayout）。

@@ -4009,6 +4009,18 @@
       "evidence": "预览默认占 70%，空间充足时预览和结果树下限为 200 与 100 逻辑像素。Windows 58 步与 Linux 55 步验证双向拖动、保留焦点与同窗重开。专项 163/163，Flutter 1,859 passed / 2 skipped。产品 aca6611c 的 CI 45308330665 四项和 Platform Availability 45308325780 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.260-peek-sash.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-313",
+      "name": "P05.261 CMD-08 速览高度拖动与布局恢复",
+      "description": "以编辑器行高调整速览高度，保存横向比例与高度并在重启后恢复。验证拖动、上下限、取消、焦点、旧档和坏档回退。",
+      "dependencies": [
+        "feat-312"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

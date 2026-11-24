@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
+import '../editor/rust_text_input_field.dart' show editorFontFamilyFallbacks;
+import 'layout_store.dart' show minPeekHeightInLines, maxPeekHeightInLines;
 import 'pane_group_split.dart';
 
 typedef DefinitionPeekEntry = ({
@@ -351,6 +353,8 @@ class DefinitionPeek extends StatefulWidget {
     required this.bodyKey,
     required this.splitWeights,
     required this.onSplitChanged,
+    required this.heightInLines,
+    required this.onHeightChanged,
     this.onFocusedResultChanged,
     this.onOpenToSide,
     this.onOpenPreview,
@@ -380,6 +384,8 @@ class DefinitionPeek extends StatefulWidget {
   final Key bodyKey;
   final Map<String, double> splitWeights;
   final ValueChanged<Map<String, double>> onSplitChanged;
+  final int heightInLines;
+  final ValueChanged<int> onHeightChanged;
   final LocationPeekKind kind;
   final String? workspace;
   final Map<String, List<int>>? referenceGroups;
@@ -401,6 +407,9 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   FocusNode get _listFocus => _focus.results;
   final _resultsScroll = ScrollController();
   final _previewText = GlobalKey();
+  late double _editorLineHeight;
+  ({int pointer, double startY, int startLines})? _heightDrag;
+  int? _dragHeightInLines;
   var _selected = 0;
   String? _focusedFile;
   ({int pointer, int entry, Offset position})? _sideClick;
@@ -618,62 +627,165 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Focus(
-      onKeyEvent: _handleKey,
-      onFocusChange: widget.onFocusChange,
-      child: Material(
-        elevation: 6,
-        color: colors.surface,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: colors.outlineVariant),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SizedBox(
-          width: double.infinity,
-          height: 240,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: 34,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 10),
-                    Expanded(
-                        child: Text(
-                            '${widget.kind.label} (${widget.entries.length})')),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 16,
-                      tooltip: '关闭${widget.kind.label}预览',
-                      onPressed: widget.onClose,
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: PaneGroupSplit(
-                  key: widget.bodyKey,
-                  axis: Axis.horizontal,
-                  minimums: const {'preview': 200, 'results': 100},
-                  weights: widget.splitWeights,
-                  sashKeyPrefix: 'definition-peek-sash',
-                  resetOnDoubleTap: false,
-                  buildPane: (pane, _) => pane == 'preview'
-                      ? _buildPreview(context)
-                      : _buildResults(context),
-                  onCommit: widget.onSplitChanged,
-                ),
-              ),
-            ],
-          ),
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final theme = Theme.of(context);
+    final baseStyle = theme.useMaterial3
+        ? theme.textTheme.bodyLarge!
+        : theme.textTheme.titleMedium!;
+    final painter = TextPainter(
+      text: TextSpan(
+        text: ' ',
+        style: baseStyle.copyWith(
+          fontFamily: 'monospace',
+          fontFamilyFallback: editorFontFamilyFallbacks,
         ),
       ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    );
+    _editorLineHeight = painter.preferredLineHeight;
+    painter.dispose();
+  }
+
+  void _startHeightDrag(PointerDownEvent event, int lines) {
+    if (_heightDrag != null || event.buttons != kPrimaryButton) return;
+    _heightDrag = (
+      pointer: event.pointer,
+      startY: event.position.dy,
+      startLines: lines,
+    );
+  }
+
+  void _resizeHeight(PointerMoveEvent event, int maxLines) {
+    final drag = _heightDrag;
+    if (drag == null ||
+        drag.pointer != event.pointer ||
+        maxLines < minPeekHeightInLines) {
+      return;
+    }
+    final delta =
+        ((event.position.dy - drag.startY) / _editorLineHeight).truncate();
+    final lines =
+        (drag.startLines + delta).clamp(minPeekHeightInLines, maxLines);
+    if (lines == (_dragHeightInLines ?? drag.startLines)) return;
+    setState(() => _dragHeightInLines = lines);
+  }
+
+  void _finishHeightDrag(int pointer, {required bool commit}) {
+    final drag = _heightDrag;
+    if (drag == null || drag.pointer != pointer) return;
+    final lines = _dragHeightInLines;
+    setState(() {
+      _heightDrag = null;
+      _dragHeightInLines = null;
+    });
+    if (commit && lines != null && lines != drag.startLines) {
+      widget.onHeightChanged(lines);
+    }
+  }
+
+  Widget _heightSash(int lines, int maxLines, double height) {
+    final canResize = maxLines >= minPeekHeightInLines;
+    return SizedBox(
+      key: const ValueKey('definition-peek-height-sash'),
+      height: height,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.resizeUpDown,
+        child: Listener(
+          behavior: HitTestBehavior.opaque,
+          onPointerDown:
+              canResize ? (event) => _startHeightDrag(event, lines) : null,
+          onPointerMove: (event) => _resizeHeight(event, maxLines),
+          onPointerUp: (event) =>
+              _finishHeightDrag(event.pointer, commit: canResize),
+          onPointerCancel: (event) =>
+              _finishHeightDrag(event.pointer, commit: false),
+          child: const Center(child: Divider(height: 1)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableLines = constraints.maxHeight / _editorLineHeight;
+        final maxLines = constraints.hasBoundedHeight
+            ? math.min(
+                math.min(maxPeekHeightInLines, availableLines.floor()),
+                math.max(12, (availableLines * 0.8).floor()),
+              )
+            : maxPeekHeightInLines;
+        final lines =
+            math.min(_dragHeightInLines ?? widget.heightInLines, maxLines);
+        final height =
+            math.min(lines * _editorLineHeight, constraints.maxHeight);
+        final header = math.min(34.0, height);
+        final separator = math.min(1.0, height - header);
+        final sashHeight = math.min(4.0, height - header - separator);
+        return Focus(
+          onKeyEvent: _handleKey,
+          onFocusChange: widget.onFocusChange,
+          child: Material(
+            elevation: 6,
+            color: colors.surface,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: colors.outlineVariant),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              key: widget.bodyKey,
+              width: double.infinity,
+              height: height,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    height: header,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            '${widget.kind.label} (${widget.entries.length})',
+                          ),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 16,
+                          tooltip: '关闭${widget.kind.label}预览',
+                          onPressed: widget.onClose,
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: separator),
+                  Expanded(
+                    child: PaneGroupSplit(
+                      axis: Axis.horizontal,
+                      minimums: const {'preview': 200, 'results': 100},
+                      weights: widget.splitWeights,
+                      sashKeyPrefix: 'definition-peek-sash',
+                      resetOnDoubleTap: false,
+                      buildPane: (pane, _) => pane == 'preview'
+                          ? _buildPreview(context)
+                          : _buildResults(context),
+                      onCommit: widget.onSplitChanged,
+                    ),
+                  ),
+                  if (maxLines >= minPeekHeightInLines || _heightDrag != null)
+                    _heightSash(lines, maxLines, sashHeight),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

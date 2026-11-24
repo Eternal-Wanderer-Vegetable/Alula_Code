@@ -749,10 +749,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _pendingDefinitionPointers = {};
   final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
   final _definitionPeekBodyKey = GlobalKey();
-  Map<String, double> _definitionPeekSplitWeights = const {
-    'preview': 0.7,
-    'results': 0.3,
-  };
+  late PeekLayout _definitionPeekLayout = widget.layoutStore.loadPeekLayout();
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   bool _steppingPeekReference = false;
@@ -21751,6 +21748,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  void _saveDefinitionPeekLayout(PeekLayout layout) {
+    if (_definitionPeekLayout == layout) return;
+    setState(() => _definitionPeekLayout = layout);
+    widget.layoutStore.savePeekLayout(layout);
+  }
+
   Widget? _buildDefinitionPeek(OpenDoc active) {
     final peek = _definitionPeek;
     if (peek == null ||
@@ -21773,10 +21776,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         navigatedReference: peek.navigatedReference,
         focusController: _definitionPeekFocus,
         bodyKey: _definitionPeekBodyKey,
-        splitWeights: _definitionPeekSplitWeights,
+        splitWeights: {
+          'preview': _definitionPeekLayout.previewRatio,
+          'results': 1 - _definitionPeekLayout.previewRatio,
+        },
+        heightInLines: _definitionPeekLayout.heightInLines,
         onSplitChanged: (weights) {
           if (identical(_definitionPeek, peek)) {
-            setState(() => _definitionPeekSplitWeights = weights);
+            _saveDefinitionPeekLayout((
+              previewRatio: weights['preview']!,
+              heightInLines: _definitionPeekLayout.heightInLines,
+            ));
+          }
+        },
+        onHeightChanged: (lines) {
+          if (identical(_definitionPeek, peek)) {
+            _saveDefinitionPeekLayout((
+              previewRatio: _definitionPeekLayout.previewRatio,
+              heightInLines: lines,
+            ));
           }
         },
         focusTarget: peek.focusTarget,
