@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-24 更新）
 
+- P05.265 / feat-317 完成。定义和侧开采用规范命令 ID 并兼容旧 ID。Windows 与 Linux 各 15 步验证默认组合键、同文件与跨文件侧开、右侧组预览复用、后退和无提供程序。专项 184/184，Flutter 1,870 passed / 2 skipped。产品 7ad209aa 的 CI 45331680195 四项与 Platform Availability 45331670103 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.265-definition-side.md。
 - P05.264 / feat-316 完成。只使用语义定义位置。Windows 与 Linux 各 17 步验证正常跳转、速览、同名符号存在时的空结果和无提供程序。专项 181/181，Flutter 1,867 passed / 2 skipped。产品 89365340 的 CI 45328752669 四项与 Platform Availability 45328747101 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.264-empty-definition.md。
 - P05.263 / feat-315 完成。声明、实现和类型定义接入 ABI 44 及各自的语言服务器。Windows 与 Linux 各 28 步验证六条命令、跨文件、多结果、UTF-16 和空提供程序。专项 180/180，Flutter 1,866 passed / 2 skipped。产品 1bdfc0b9 的 CI 45326039116 四项和 Platform Availability 45326031761 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.263-symbol-locations.md。
 - P05.262 / feat-314 完成。固定速览启用后，默认 Esc、Shift+Esc 和预览普通双击保留速览。Windows 69 步与 Linux 66 步验证侧开、选中结果、关闭按钮及坏档回退。专项 168/168，Flutter 1,864 passed / 2 skipped。产品 29028621 的 CI 45319711345 四项和 Platform Availability 45319703807 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.262-stable-peek.md。
@@ -42,7 +43,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本核对 CMD-09 定义命令的规范 ID 与侧开入口。520 像素整窗的标题栏溢出留在对应布局项。
+- 下一步。按固定版本核对 CMD-10 调用与类型层级的提供程序和界面入口。520 像素整窗的标题栏溢出留在对应布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

@@ -4065,8 +4065,8 @@
       "dependencies": [
         "feat-316"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "定义和侧开采用规范命令 ID 并兼容旧 ID。Windows 与 Linux 各 15 步验证默认组合键、同文件与跨文件侧开、右侧组预览复用、后退和无提供程序。专项 184/184，Flutter 1,870 passed / 2 skipped。产品 7ad209aa 的 CI 45331680195 四项与 Platform Availability 45331670103 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.265-definition-side.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
