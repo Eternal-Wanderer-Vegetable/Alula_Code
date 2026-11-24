@@ -382,6 +382,59 @@ void main() {
   );
 
   testWidgets(
+    'outlined editor text starts at the gutter top inset at any viewport height',
+    (tester) async {
+      final document = _bootstrap.core!.openDoc(
+        9790,
+        'fn main() {\n  // 中文 🦊\n  let value = 7;\n}\n',
+      );
+      final window = RustTextInputWindow.open(
+        document,
+        startUtf16: 0,
+        maxWindowUtf16: 128,
+      );
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        document.close();
+      });
+
+      for (final height in [180.0, 300.0, 520.0]) {
+        await tester.pumpWidget(MaterialApp(
+          theme: ThemeData(visualDensity: VisualDensity.compact),
+          home: Scaffold(
+            body: SizedBox(
+              width: 500,
+              height: height,
+              child: RustTextInputField(
+                inputWindow: window,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(12),
+                ),
+              ),
+            ),
+          ),
+        ));
+        final edit = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        ).renderEditable;
+        final gutter = find.byKey(const ValueKey('rust-editor-gutter'));
+        expect(
+          edit.localToGlobal(Offset.zero).dy - tester.getTopLeft(gutter).dy,
+          closeTo(12, 0.01),
+          reason: 'viewport height $height',
+        );
+      }
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+  testWidgets(
     'Rust-backed gutter resolves absolute line and paints bidi decorations',
     (tester) async {
       final doc = _bootstrap.core!.openDoc(

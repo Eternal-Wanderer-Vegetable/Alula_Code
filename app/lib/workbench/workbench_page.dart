@@ -935,7 +935,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _breadcrumbs.focusLast(_focused.region),
         when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
     reg('breadcrumbs.focusAndSelect', '面包屑', '聚焦并选择面包屑',
-        () async => _breadcrumbs.focusLast(_focused.region, select: true),
+        _enableAndSelectBreadcrumbs,
         when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
     reg('breadcrumbs.focusNext', '面包屑', '聚焦下一段',
         () async => _breadcrumbs.move(1),
@@ -26098,7 +26098,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       await WidgetsBinding.instance.endOfFrame;
     }
     if (!mounted || _disposing || !_breadcrumbsEnabled) return;
-    _breadcrumbs.focusLast(_focused.region, select: true);
+    final group = _focused;
+    final active = group.active;
+    if (active == null) return;
+    final documentKey = '${active.id}#${active.doc.version}';
+    final staleSymbols = group.breadcrumbSymbolDocumentKey == documentKey &&
+        group.breadcrumbSymbolPath.isNotEmpty &&
+        _outlineDocKey != documentKey;
+    if (staleSymbols || _breadcrumbRebuildPending) {
+      setState(() {
+        if (staleSymbols) _refreshOutline();
+      });
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted ||
+          _disposing ||
+          !_breadcrumbsEnabled ||
+          !identical(_groups[_focusedRegion], group) ||
+          !identical(group.active, active)) {
+        return;
+      }
+    }
+    _breadcrumbs.focusLast(group.region, select: true);
   }
 
   /// 面包屑（W2-3）：工作区相对路径拆段；点文件夹段在文件树中展开该目录。

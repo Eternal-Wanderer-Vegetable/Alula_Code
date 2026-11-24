@@ -4117,6 +4117,18 @@
       "evidence": "类型层级提供速览、父子类型切换、分支导航及 Esc 关闭。Windows 和 Linux 各 18 步，实际 clangd 返回父子类型。专项 192/192，Flutter 1,878 passed / 2 skipped。产品 1ee668d8 的 CI 45351036934 四项与 Platform Availability 45351031826 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.269-type-hierarchy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-322",
+      "name": "P05.270 主编辑器正文与行号对齐",
+      "description": "修复 P03.6 行号绘制与带边框主编辑区使用不同垂直起点的回归。验证短文件、窗口缩放、字体混排、长文档滚动及文件末尾的面包屑锚点。",
+      "dependencies": [
+        "feat-321"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

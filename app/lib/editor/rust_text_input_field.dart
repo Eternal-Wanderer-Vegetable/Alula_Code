@@ -1945,6 +1945,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final inputBaseStyle = theme.useMaterial3
         ? theme.textTheme.bodyLarge!
         : theme.textTheme.titleMedium!;
+    // Match the decoration inset to the padding used by the gutter.
+    final decoration = (widget.decoration ??
+            const InputDecoration(
+              border: InputBorder.none,
+              isCollapsed: true,
+            ))
+        .copyWith(visualDensity: VisualDensity.standard);
     final field = Listener(
       onPointerDown: _handlePointerDown,
       onPointerMove: _handlePointerMove,
@@ -1962,14 +1969,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         keyboardType: TextInputType.multiline,
         maxLines: null,
         expands: true,
+        textAlignVertical: TextAlignVertical.top,
         style: editorStyle,
         strutStyle:
             _controller.hasVisibleFoldedRanges ? StrutStyle.disabled : null,
-        decoration: widget.decoration ??
-            const InputDecoration(
-              border: InputBorder.none,
-              isCollapsed: true,
-            ),
+        decoration: decoration,
       ),
     );
     final textStyle = inputBaseStyle.merge(editorStyle);
@@ -1979,7 +1983,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       withComposing: true,
     );
     final gutterStyle = textStyle.copyWith(fontSize: 11);
-    final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
+    final padding = (decoration.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
     final textDirection = Directionality.of(context);
     final textScaler = MediaQuery.textScalerOf(context);
