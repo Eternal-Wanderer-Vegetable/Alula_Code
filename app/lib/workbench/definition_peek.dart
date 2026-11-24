@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/gestures.dart'
     show PointerDeviceKind, kPrimaryButton, kTouchSlop;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph, RenderProxyBox;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
@@ -18,6 +19,7 @@ typedef DefinitionPeekEntry = ({
 });
 typedef DefinitionPeekLine = ({
   int number,
+  int startCharacter,
   String text,
   int highlightStart,
   int highlightEnd,
@@ -103,12 +105,14 @@ DefinitionPeekLine _previewLine(
   String text,
   int start,
   int end, {
+  int startCharacter = 0,
   int? targetCharacter,
 }) {
   final low = _scalarBoundary(text, start.clamp(0, text.length));
   final high = _scalarBoundary(text, end.clamp(low, text.length));
   return (
     number: number,
+    startCharacter: startCharacter,
     text: text,
     highlightStart: low,
     highlightEnd: high,
@@ -182,10 +186,11 @@ List<DefinitionPeekLine> definitionPeekOpenDocument(
     target.endLine ?? target.line,
     target.endCharacter ?? target.character,
   );
+  final horizontalStart = _firstPreviewColumn(target);
   final lines = document.readLines(
     firstLine: _firstPreviewLine(target),
     maxLines: _previewLines,
-    horizontalStartUtf16: _firstPreviewColumn(target),
+    horizontalStartUtf16: horizontalStart,
     maxLineUtf16: _lineWidth,
   );
   return [
@@ -195,6 +200,9 @@ List<DefinitionPeekLine> definitionPeekOpenDocument(
         line.text,
         low.offsetUtf16 - line.startUtf16,
         high.offsetUtf16 - line.startUtf16,
+        startCharacter: horizontalStart == 0
+            ? 0
+            : document.positionAt(line.startUtf16).character,
         targetCharacter: line.line == target.line ? low.character : null,
       ),
   ];
@@ -245,6 +253,7 @@ List<DefinitionPeekLine> definitionPeekFile(DefinitionPeekEntry entry) {
         text.substring(from, until),
         start,
         finish,
+        startCharacter: column,
         targetCharacter: line == target.line
             ? target.character.clamp(0, end - offset)
             : null,
@@ -340,6 +349,7 @@ class DefinitionPeek extends StatefulWidget {
     required this.onRemoved,
     this.onFocusedResultChanged,
     this.onOpenToSide,
+    this.onOpenPreview,
     this.onResultKey,
     this.onFocusChange,
     this.kind = LocationPeekKind.definition,
@@ -357,6 +367,7 @@ class DefinitionPeek extends StatefulWidget {
       loadPreview;
   final ValueChanged<DefinitionPeekEntry> onOpen;
   final ValueChanged<DefinitionPeekEntry>? onOpenToSide;
+  final ValueChanged<DefinitionPeekEntry>? onOpenPreview;
   final ValueChanged<DefinitionPeekEntry?>? onFocusedResultChanged;
   final KeyEventResult Function(KeyEvent)? onResultKey;
   final ValueChanged<bool>? onFocusChange;
@@ -382,6 +393,7 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
       widget.focusController ?? (_localFocus ??= LocationPeekFocus());
   FocusNode get _listFocus => _focus.results;
   final _resultsScroll = ScrollController();
+  final _previewText = GlobalKey();
   var _selected = 0;
   String? _focusedFile;
   ({int pointer, int entry, Offset position})? _sideClick;
@@ -823,6 +835,51 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
     );
   }
 
+  String _previewLinePrefix(int line) => '${line.toString().padLeft(4)}  ';
+
+  void _openPreviewAt(Offset globalPosition, List<DefinitionPeekLine> lines) {
+    var paragraph = _previewText.currentContext?.findRenderObject();
+    while (paragraph is RenderProxyBox) {
+      paragraph = paragraph.child;
+    }
+    if (paragraph is! RenderParagraph || !paragraph.hasSize) return;
+    final point = paragraph.globalToLocal(globalPosition);
+    if (!paragraph.size.contains(point)) return;
+    var offset = paragraph.getPositionForOffset(point).offset;
+    for (final line in lines) {
+      final prefixLength = _previewLinePrefix(line.number).length;
+      final end = prefixLength + line.text.length;
+      if (offset > end) {
+        offset -= end + 1;
+        continue;
+      }
+      if (offset < prefixLength || line.text.isEmpty) return;
+      final selected = widget.entries[_selected];
+      final keyboard = HardwareKeyboard.instance;
+      final open = keyboard.isControlPressed ||
+              keyboard.isMetaPressed ||
+              keyboard.isAltPressed
+          ? widget.onOpenToSide
+          : widget.onOpenPreview;
+      if (open == null) return;
+      final entry = (
+        path: selected.path,
+        target: DefinitionTarget(
+          uri: selected.target.uri,
+          line: line.number - 1,
+          character: line.startCharacter + offset - prefixLength,
+        ),
+        referenceSymbol: null,
+      );
+      final preview = _preview;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && identical(_preview, preview)) open(entry);
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+      return;
+    }
+  }
+
   Widget _buildPreview(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final content = FutureBuilder<List<DefinitionPeekLine>>(
@@ -836,29 +893,39 @@ class _DefinitionPeekState extends State<DefinitionPeek> {
         if (lines == null || lines.isEmpty) {
           return Center(child: Text('无法预览${widget.kind.label}'));
         }
+        final text = Text.rich(
+          TextSpan(
+            style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            children: [
+              for (final line in lines) ...[
+                TextSpan(
+                  text: _previewLinePrefix(line.number),
+                  style: TextStyle(color: colors.onSurfaceVariant),
+                ),
+                TextSpan(text: line.text.substring(0, line.highlightStart)),
+                TextSpan(
+                  text: line.text
+                      .substring(line.highlightStart, line.highlightEnd),
+                  style: TextStyle(backgroundColor: colors.tertiaryContainer),
+                ),
+                TextSpan(text: '${line.text.substring(line.highlightEnd)}\n'),
+              ],
+            ],
+          ),
+          key: _previewText,
+        );
         return SingleChildScrollView(
           key: ValueKey(_selected),
           padding: const EdgeInsets.all(8),
-          child: Text.rich(
-            TextSpan(
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-              children: [
-                for (final line in lines) ...[
-                  TextSpan(
-                    text: '${line.number.toString().padLeft(4)}  ',
-                    style: TextStyle(color: colors.onSurfaceVariant),
-                  ),
-                  TextSpan(text: line.text.substring(0, line.highlightStart)),
-                  TextSpan(
-                    text: line.text
-                        .substring(line.highlightStart, line.highlightEnd),
-                    style: TextStyle(backgroundColor: colors.tertiaryContainer),
-                  ),
-                  TextSpan(text: '${line.text.substring(line.highlightEnd)}\n'),
-                ],
-              ],
-            ),
-          ),
+          child: widget.onOpenPreview == null
+              ? text
+              : GestureDetector(
+                  supportedDevices: const {PointerDeviceKind.mouse},
+                  // SelectionArea still handles text selection.
+                  onDoubleTapDown: (details) =>
+                      _openPreviewAt(details.globalPosition, lines),
+                  child: text,
+                ),
         );
       },
     );

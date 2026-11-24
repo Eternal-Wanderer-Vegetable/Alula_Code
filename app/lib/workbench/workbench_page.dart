@@ -21770,6 +21770,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         focusTarget: peek.focusTarget,
         loadPreview: _loadDefinitionPeek,
         onOpen: (entry) => unawaited(_acceptDefinitionPeek(peek, entry)),
+        onOpenPreview: (entry) {
+          _focusDefinitionPeekSource(peek);
+          unawaited(_acceptDefinitionPeek(peek, entry, asPreview: true));
+        },
         onFocusedResultChanged: (entry) => _setFocusedPeekResult(peek, entry),
         onResultKey: _handleDefinitionPeekResultKey,
         onOpenToSide: (entry) {
@@ -21920,8 +21924,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Future<void> _acceptDefinitionPeek(
     _DefinitionPeekSession session,
-    DefinitionPeekEntry entry,
-  ) async {
+    DefinitionPeekEntry entry, {
+    bool asPreview = false,
+  }) async {
     if (!_isCurrentDefinitionPeek(session)) return;
     _setDefinitionPeek(null);
     final navigated = await _navigateToDefinition(
@@ -21930,6 +21935,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       entry.target,
       kind: session.kind,
       referenceSymbol: entry.referenceSymbol,
+      asPreview: asPreview,
     );
     if (!mounted) return;
     if (!navigated) {
@@ -21939,7 +21945,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     final owner = _ownerOfView(active);
     if (owner == null) return;
-    if (navigated && owner.previewDocId == active.id) {
+    if (navigated && !asPreview && owner.previewDocId == active.id) {
       setState(() => owner.previewDocId = null);
       _scheduleStateSave();
     }
@@ -22095,12 +22101,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pendingDefinitionPointers.remove(event.pointer);
     if (event.buttons != kPrimaryButton) return;
     if (identical(_definitionPeek?.source, view)) {
-      final results = _definitionPeekFocus.results.context?.findRenderObject();
-      if (results is RenderBox &&
-          results.attached &&
-          results.hasSize &&
-          results.size.contains(results.globalToLocal(event.position))) {
-        return;
+      for (final pane in [
+        _definitionPeekFocus.results,
+        _definitionPeekFocus.preview,
+      ]) {
+        final box = pane.context?.findRenderObject();
+        if (box is RenderBox &&
+            box.attached &&
+            box.hasSize &&
+            box.size.contains(box.globalToLocal(event.position))) {
+          return;
+        }
       }
     }
     final control = HardwareKeyboard.instance.isControlPressed;

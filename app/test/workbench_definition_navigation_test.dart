@@ -11,6 +11,7 @@ import 'package:alula_app/workbench/workbench_page.dart' show ReferencesRequest;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/semantics.dart' show SemanticsProperties;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -774,6 +775,131 @@ void main() {
         FontStyle.italic);
     expect(rightTab('beta.rs'), findsNothing);
   });
+
+  final previewOpenModes = ValueVariant<bool>({false, true});
+  testWidgets(
+      'Double-clicking the Peek preview opens the clicked UTF-16 position',
+      (tester) async {
+    final side = previewOpenModes.currentValue!;
+    final temp = Directory.systemTemp.createTempSync('alula-peek-preview-open');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'fn main() { resolve(); }\n';
+    final prefix = ''.padLeft(435, 'x');
+    final suffix = ''.padLeft(190, 'z');
+    final targetText = 'fn lead() {}\n$prefix /* 🦊 */ clicked $suffix\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final target = File('${workspace.path}/target.rs')
+      ..writeAsStringSync('\uFEFF${targetText.replaceAll('\n', '\r\n')}');
+    await _openWorkspace(tester, temp, workspace,
+        definitionRequest: (id, offset, version) async {
+      return DefinitionResult(
+        version: version,
+        uri: target.uri.toString(),
+        line: 1,
+        character: 600,
+        endCharacter: 601,
+      );
+    });
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
+    if (side) {
+      await openPinnedExplorerFile(tester, find.text('target.rs'));
+      await tester.tap(find.text('main.rs').first);
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(_activeTextField());
+    final sourceOffset = source.indexOf('resolve');
+    _activeController(tester).selection =
+        TextSelection.collapsed(offset: sourceOffset);
+    await tester.pump();
+
+    if (defaultTargetPlatform == TargetPlatform.linux) {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f10);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    } else {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f12);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    }
+    await tester.pumpAndSettle();
+
+    final peek = find.byKey(const ValueKey('definition-peek'));
+    final preview = find.byKey(const ValueKey('definition-peek-preview-focus'));
+    final code = find.descendant(
+      of: preview,
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is RichText && widget.text.toPlainText().contains('clicked'),
+      ),
+    );
+    for (var attempt = 0; attempt < 8 && code.evaluate().isEmpty; attempt++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 40)),
+      );
+      await tester.pumpAndSettle();
+    }
+    expect(code, findsOneWidget);
+    final paragraph = tester.renderObject<RenderParagraph>(code);
+    final glyphOffset = paragraph.text.toPlainText().indexOf('clicked') + 2;
+    final glyph = paragraph
+        .getBoxesForSelection(
+          TextSelection(baseOffset: glyphOffset, extentOffset: glyphOffset + 1),
+        )
+        .single;
+    final point = paragraph.localToGlobal(Offset(
+      glyph.left + (glyph.right - glyph.left) * .25,
+      (glyph.top + glyph.bottom) / 2,
+    ));
+    expect(tester.getRect(preview).contains(point), isTrue);
+
+    Future<void> clickAt(Duration timestamp) async {
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.down(point, timeStamp: timestamp);
+      await mouse.up(
+        timeStamp: timestamp + const Duration(milliseconds: 10),
+      );
+    }
+
+    await clickAt(Duration.zero);
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pumpAndSettle();
+    expect(peek, findsOneWidget);
+    expect(_activeController(tester).text, source);
+    expect(_activeController(tester).selection.extentOffset, sourceOffset);
+
+    if (side) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await clickAt(const Duration(milliseconds: 450));
+    await tester.pump(const Duration(milliseconds: 80));
+    await clickAt(const Duration(milliseconds: 530));
+    if (side) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pumpAndSettle();
+
+    expect(peek, side ? findsOneWidget : findsNothing);
+    final label = side ? 'target.rs 编辑器 2' : 'target.rs 主编辑器';
+    final targetFinder = find.byWidgetPredicate(
+      (widget) =>
+          widget is RustTextInputField && widget.semanticsLabel == label,
+    );
+    final input = tester.widget<TextField>(
+      find.descendant(of: targetFinder, matching: find.byType(TextField)),
+    );
+    expect(input.focusNode!.hasPrimaryFocus, isTrue);
+    expect(input.controller!.text, targetText);
+    expect(input.controller!.selection.extentOffset,
+        targetText.indexOf('clicked') + 2);
+    final region = side ? 'editor-2' : 'editor';
+    final tab = tester.widget<Text>(find.descendant(
+      of: find.byKey(ValueKey('editor-tab-strip-$region')),
+      matching: find.text('target.rs'),
+    ));
+    expect(tab.style?.fontStyle, FontStyle.italic);
+  }, variant: previewOpenModes);
 
   testWidgets('default Peek Definition shortcut keeps a single target in peek',
       (tester) async {
