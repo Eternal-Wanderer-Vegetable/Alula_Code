@@ -1,0 +1,301 @@
+{
+  "product": "446175f87d499e38ab05428d6eaa78a3219fa510",
+  "tree": "1925670c747b7ebcb65aaf5ae4b28bab7689ba1f",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sourceSha256": {
+      "src/vs/workbench/contrib/callHierarchy/common/callHierarchy.ts": "4a323355462dd3f2f3b08d5461bcffd83d67a90bbf75e28e4e2c93866d01dcfa",
+      "src/vs/workbench/contrib/typeHierarchy/common/typeHierarchy.ts": "303411d17b4adfe3e6d1529cad3bbba4ce0f4b994ee53ba89bcbfee4a1e62c2e"
+    }
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "1925670c747b7ebcb65aaf5ae4b28bab7689ba1f",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "8328272311e863775236209a864d913b29669633069047432f3df55dc563f024",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "7b4984121976c96898f47a3f4c97d0e3848de3e810fee1763b210cc6803c4ea6",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "1ed02c939f695a7c43a2b45b7e85e9b3ffb29f5837bc419621ca60a44efea583",
+    "previousNativeCoreSha256": "82a2f1fa6b38167922d4e11fc8f912d17f79feeb4fa045451a3f3ff7b8a73a80",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90"
+  },
+  "dartProbeSha256": "1ed02c939f695a7c43a2b45b7e85e9b3ffb29f5837bc419621ca60a44efea583",
+  "rawProviderProbeSha256": "05d333deda6a5849192e1ec0fb2cbdfac7fd7615b8b5cf27ddf71096d106d0f4",
+  "abi": {
+    "rejected": 44,
+    "accepted": 45,
+    "windowsOldSha256": "82a2f1fa6b38167922d4e11fc8f912d17f79feeb4fa045451a3f3ff7b8a73a80",
+    "windowsNewSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90",
+    "linuxOldSha256": "a539ae1c45afca3dbbab7ebba89381e3002334d47d97ccc83c6365a7fd7eb2a4",
+    "linuxNewSha256": "ba5bc9bf74c6cdb01ecaf4d99ceb94702f3f1b63d6318d83db1850a9983d3bd3"
+  },
+  "localLogsSha256": {
+    "p05-266-core.log": "c15546e5a640ea552cec94ad141ba831da771750cc944d8b5d46a0bc39d82f56",
+    "p05-266-lsp-focused.log": "6b3b32fdc007d840f23a39993badccf5801a3c238532ffeaa57eb5c234ff208e",
+    "p05-266-rust-targeted.log": "ad2831665cfc4b56b612ea00eb0114ad22ee68c5b32757f3f01a9435626e277b",
+    "p05-266-analyze.log": "3619cb1eccbb34b5d48ea6abd87a4222be0cd2f73355cdba4305dc18da4b8fbd",
+    "p05-266-focused.log": "c2c059a6dd49780fca206e0d58e969ce93c7435b705573aa22c911e4dbc79427",
+    "p05-266-full.log": "bf4f7c11e3d308a4f5cea7daac5f6639e389592df5a8a63c11daa7d033521800",
+    "p05-266-linux-abi.log": "84db0b9763fb09220a75b23e842e89e483fee6d162330c37ed76162addfd16b2",
+    "p05-266-linux-real.log": "ca64d07fb568ae0606fea5707056be7e0d793242b7ffe7ee963b3882800325f8",
+    "p05-266-linux-fake.log": "25f593fbc80141b6b9553141c5e68b75b3ad05ec4a5414719bc8c22f062c7900",
+    "windows-core.log": "d94907c5dfe10d80c5a4171bbe0a00f24b6edd228047769a055d0b29c6022a99",
+    "windows-abi.log": "72fb5640fb10fe00c0410eb55bb12052f8dc86fb8e0d465704a12c2483558d67",
+    "windows-real.log": "1cb76f06c54b4ffa3265086a475263b0e61f37bf8a8f4741022ff3064bbf2f63",
+    "windows-fake.log": "8339d23a362311698688d1e1a48c9f52f8b3b81fa2b223f43d3841d53c887835"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 118,
+        "affected_count": 14,
+        "changed_files": 11,
+        "risk_level": "high"
+      },
+      "sha256": "7c06fc45be22195bd92577ca9cb4b20eb39d2ed99fc538cebeb7d4fe113564a0",
+      "processes": [
+        "Hierarchy_children_async → HierarchyPosition",
+        "Hierarchy_children_async → Send_message",
+        "Hierarchy_children_async → LspPendingRequest",
+        "Hierarchy_children_async → PendingResponse",
+        "Hierarchy_children_async → HierarchyRange",
+        "Hierarchy_children_async → Capability",
+        "Spawn → Path_to_uri",
+        "Lsp_gated_ffi_returns_no_lsp_without_start → Matches",
+        "Lsp_gated_ffi_returns_no_lsp_without_start → Matches",
+        "Spawn → Send_message",
+        "Alula_workspace_symbols_start → Matches",
+        "Alula_workspace_symbols_start → Matches",
+        "Alula_hierarchy_expand_start → New",
+        "Alula_workspace_symbols_start → New"
+      ]
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 118,
+        "affected_count": 14,
+        "changed_files": 11,
+        "risk_level": "high"
+      },
+      "sha256": "95e25f4a73ab2a998fcdc7d7b182a9d786266cd86100634f3725e6c5afe84173",
+      "processes": [
+        "Hierarchy_children_async → HierarchyPosition",
+        "Hierarchy_children_async → Send_message",
+        "Hierarchy_children_async → LspPendingRequest",
+        "Hierarchy_children_async → PendingResponse",
+        "Hierarchy_children_async → HierarchyRange",
+        "Hierarchy_children_async → Capability",
+        "Spawn → Path_to_uri",
+        "Lsp_gated_ffi_returns_no_lsp_without_start → Matches",
+        "Lsp_gated_ffi_returns_no_lsp_without_start → Matches",
+        "Spawn → Send_message",
+        "Alula_workspace_symbols_start → Matches",
+        "Alula_workspace_symbols_start → Matches",
+        "Alula_hierarchy_expand_start → New",
+        "Alula_workspace_symbols_start → New"
+      ]
+    }
+  },
+  "preedit": {
+    "lib-handshake": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "sha256": "f805e342eec3bf4235eef0d68d474c9ec322f3975a219ef28f7bd2504e9b3748"
+    },
+    "ffi-cancel_definitions_for_doc": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 4,
+        "modules_affected": 1
+      },
+      "sha256": "c57662c47012a35bfb149d1c60ab930b7a3a1c2b65b61a86187938ca2a006785"
+    },
+    "alula_core-AlulaLsp": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 23,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "48edb3afd172e1b4c0aad92212476e5040b8d64cab1bd643dda6ce5d5c00f6d0"
+    },
+    "alula_ffi-AlulaFfi": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 49,
+        "processes_affected": 31,
+        "modules_affected": 5
+      },
+      "sha256": "0b455dabcd82f2165599b7e610ec9d7c5dea602e6c780981e6223ce4538398a5"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "real": {
+      "abi": 45,
+      "version": 1,
+      "requestOffsetUtf16": 39,
+      "root": "root",
+      "rootSelection": [
+        2,
+        7
+      ],
+      "incoming": "caller",
+      "outgoing": "leaf",
+      "incomingSites": [
+        [
+          0,
+          39,
+          0,
+          43
+        ],
+        [
+          0,
+          54,
+          0,
+          58
+        ]
+      ],
+      "outgoingSites": [
+        [
+          2,
+          30,
+          2,
+          42
+        ]
+      ],
+      "typeSupported": false,
+      "staleRejected": true,
+      "cancelled": true
+    },
+    "fixtureProvider": {
+      "abi": 45,
+      "version": 1,
+      "root": "Root",
+      "supertypes": [
+        "Base"
+      ],
+      "subtypes": [
+        "Derived"
+      ],
+      "emptySupported": true,
+      "opaqueItemPreserved": true
+    },
+    "realSha256": "f439c7b7884c692dfdb53b85a27e2e55ed4218b2ecf5242d73393353baf5f9b5",
+    "fixtureSha256": "c4f3de8031261a485acff964528f31424ae9ff88bfdaeaa1760c15681fdaac69",
+    "rawProviderSha256": "6d00d040cae2d065b0a11bdeccf469f2a26c21e0dc2eaadec93a99e8ceff2740"
+  },
+  "linux": {
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "real": {
+      "abi": 45,
+      "version": 1,
+      "requestOffsetUtf16": 39,
+      "root": "root",
+      "rootSelection": [
+        2,
+        7
+      ],
+      "incoming": "caller",
+      "outgoing": "leaf",
+      "incomingSites": [
+        [
+          0,
+          39,
+          0,
+          43
+        ],
+        [
+          0,
+          54,
+          0,
+          58
+        ]
+      ],
+      "outgoingSites": [
+        [
+          2,
+          30,
+          2,
+          42
+        ]
+      ],
+      "typeSupported": false,
+      "staleRejected": true,
+      "cancelled": true
+    },
+    "fixtureProvider": {
+      "abi": 45,
+      "version": 1,
+      "root": "Root",
+      "supertypes": [
+        "Base"
+      ],
+      "subtypes": [
+        "Derived"
+      ],
+      "emptySupported": true,
+      "opaqueItemPreserved": true
+    },
+    "realSha256": "f439c7b7884c692dfdb53b85a27e2e55ed4218b2ecf5242d73393353baf5f9b5",
+    "fixtureSha256": "c4f3de8031261a485acff964528f31424ae9ff88bfdaeaa1760c15681fdaac69",
+    "rawProviderSha256": "c0da0e31b6a6d8e354aa7a70addedebfe0b55f93f18f02bac5f064ceecaea09a"
+  }
+}
