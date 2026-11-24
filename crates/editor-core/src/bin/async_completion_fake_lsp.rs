@@ -61,6 +61,7 @@ fn main() {
     let provide_references = option.as_deref() != Some(std::ffi::OsStr::new("no-references"));
     let provide_symbol_locations =
         option.as_deref() != Some(std::ffi::OsStr::new("no-symbol-locations"));
+    let provide_hierarchy = option.as_deref() == Some(std::ffi::OsStr::new("hierarchy"));
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     let pending_completions = Arc::new((Mutex::new(HashSet::<i64>::new()), Condvar::new()));
@@ -80,6 +81,13 @@ fn main() {
                         trace(&trace_path, &format!("{kind}.linkSupport"));
                     }
                 }
+                for kind in ["callHierarchy", "typeHierarchy"] {
+                    let name =
+                        format!("/params/capabilities/textDocument/{kind}/dynamicRegistration");
+                    if message.pointer(&name) == Some(&json!(false)) {
+                        trace(&trace_path, &format!("{kind}.static"));
+                    }
+                }
                 let implementation_provider = if provide_symbol_locations {
                     json!({"workDoneProgress": false})
                 } else {
@@ -95,7 +103,13 @@ fn main() {
                         "declarationProvider": provide_symbol_locations,
                         "implementationProvider": implementation_provider,
                         "typeDefinitionProvider": provide_symbol_locations,
-                        "referencesProvider": provide_references
+                        "referencesProvider": provide_references,
+                        "callHierarchyProvider": provide_hierarchy,
+                        "typeHierarchyProvider": if provide_hierarchy {
+                            json!({"workDoneProgress": false})
+                        } else {
+                            json!(false)
+                        }
                     }},
                 }));
             }
@@ -266,6 +280,79 @@ fn main() {
                             locations.push(usage("file:///workspace/definition.rs", 0, 3));
                         }
                         json!(locations)
+                    }
+                };
+                let id = message["id"].clone();
+                thread::spawn(move || {
+                    thread::sleep(Duration::from_millis(delay_ms));
+                    send(json!({"jsonrpc": "2.0", "id": id, "result": result}));
+                });
+            }
+            "textDocument/prepareCallHierarchy"
+            | "textDocument/prepareTypeHierarchy"
+            | "callHierarchy/incomingCalls"
+            | "callHierarchy/outgoingCalls"
+            | "typeHierarchy/supertypes"
+            | "typeHierarchy/subtypes" => {
+                let params = &message["params"];
+                trace(&trace_path, &format!("{method} {params}"));
+                let character = params
+                    .pointer("/position/character")
+                    .and_then(Value::as_u64);
+                if let Some(code) = match character {
+                    Some(4) => Some(-32603),
+                    Some(5) => Some(-32801),
+                    Some(6) => Some(-32800),
+                    _ => None,
+                } {
+                    send(json!({
+                        "jsonrpc": "2.0",
+                        "id": message["id"],
+                        "error": {"code": code, "message": "fixture hierarchy status"}
+                    }));
+                    continue;
+                }
+
+                let span = |line, start, end| {
+                    json!({
+                        "start": {"line": line, "character": start},
+                        "end": {"line": line, "character": end},
+                    })
+                };
+                let item = |name, kind, file, line, start, end| {
+                    json!({
+                        "name": name,
+                        "kind": kind,
+                        "detail": "fixture module",
+                        "uri": format!("file:///E:/workspace/{file}"),
+                        "range": span(line, 0, 40),
+                        "selectionRange": span(line, start, end),
+                        "data": {"id": [name, "🦊", 7], "context": {"project": 1}},
+                        "providerTag": [true, null, name],
+                    })
+                };
+                let result = if character == Some(0) {
+                    Value::Null
+                } else {
+                    match method {
+                        "textDocument/prepareCallHierarchy" => {
+                            json!([item("root", 12, "main.rs", 1, 2, 8)])
+                        }
+                        "textDocument/prepareTypeHierarchy" => {
+                            json!([item("Root", 23, "main.rs", 1, 2, 8)])
+                        }
+                        "callHierarchy/incomingCalls" => json!([{
+                            "from": item("caller", 12, "caller.rs", 0, 7, 13),
+                            "fromRanges": [span(0, 15, 21), span(0, 30, 36)]
+                        }]),
+                        "callHierarchy/outgoingCalls" => json!([{
+                            "to": item("leaf", 12, "leaf.rs", 2, 8, 12),
+                            "fromRanges": [span(1, 12, 16)]
+                        }]),
+                        "typeHierarchy/supertypes" => {
+                            json!([item("Base", 11, "base.rs", 0, 6, 10)])
+                        }
+                        _ => json!([item("Derived", 23, "derived.rs", 3, 7, 14)]),
                     }
                 };
                 let id = message["id"].clone();

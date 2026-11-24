@@ -18,6 +18,12 @@ use std::time::{Duration, Instant};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
 use serde::{Deserialize, Serialize};
 
+mod hierarchy;
+pub use hierarchy::{
+    extract_hierarchy_entries, HierarchyDirection, HierarchyEntry, HierarchyKind,
+    HierarchyPosition, HierarchyRange,
+};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Diagnostic {
     /// LSP severity：1=Error 2=Warning 3=Information 4=Hint
@@ -487,6 +493,8 @@ impl LspServer {
                     "declaration": {"linkSupport": true},
                     "implementation": {"linkSupport": true},
                     "typeDefinition": {"linkSupport": true},
+                    "callHierarchy": {"dynamicRegistration": false},
+                    "typeHierarchy": {"dynamicRegistration": false},
                     "semanticTokens": {
                         "dynamicRegistration": false,
                         "requests": {"range": false, "full": {"delta": false}},

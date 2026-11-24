@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 44;
+const int expectedAbiVersion = 45;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -638,6 +638,95 @@ enum SymbolLocationKind {
   final int nativeValue;
 }
 
+enum HierarchyKind {
+  call(1),
+  type(2);
+
+  const HierarchyKind(this.nativeValue);
+  final int nativeValue;
+}
+
+enum HierarchyDirection {
+  incoming(1),
+  outgoing(2),
+  supertypes(3),
+  subtypes(4);
+
+  const HierarchyDirection(this.nativeValue);
+  final int nativeValue;
+}
+
+class HierarchyPosition {
+  final int line;
+  final int character;
+
+  HierarchyPosition._fromJson(Map<String, Object?> json)
+    : line = json['line'] as int,
+      character = json['character'] as int;
+}
+
+class HierarchyRange {
+  final HierarchyPosition start;
+  final HierarchyPosition end;
+
+  HierarchyRange._fromJson(Map<String, Object?> json)
+    : start = HierarchyPosition._fromJson(
+        json['start'] as Map<String, Object?>,
+      ),
+      end = HierarchyPosition._fromJson(json['end'] as Map<String, Object?>);
+}
+
+class HierarchyItem {
+  final Map<String, Object?> _providerItem;
+  final String name;
+  final String uri;
+  final int kind;
+  final String? detail;
+  final HierarchyRange range;
+  final HierarchyRange selectionRange;
+
+  HierarchyItem._fromJson(Map<String, Object?> json)
+    : _providerItem = Map.unmodifiable(json),
+      name = json['name'] as String,
+      uri = json['uri'] as String,
+      kind = json['kind'] as int,
+      detail = json['detail'] is String ? json['detail'] as String : null,
+      range = HierarchyRange._fromJson(json['range'] as Map<String, Object?>),
+      selectionRange = HierarchyRange._fromJson(
+        json['selectionRange'] as Map<String, Object?>,
+      );
+}
+
+class HierarchyEntry {
+  final HierarchyItem item;
+  final List<HierarchyRange> fromRanges;
+
+  HierarchyEntry._fromJson(Map<String, Object?> json)
+    : item = HierarchyItem._fromJson(json['item'] as Map<String, Object?>),
+      fromRanges = List.unmodifiable(
+        (json['fromRanges'] as List<Object?>).cast<Map<String, Object?>>().map(
+          HierarchyRange._fromJson,
+        ),
+      );
+}
+
+class HierarchyResult {
+  final int? version;
+  final List<HierarchyEntry> entries;
+
+  bool get supported => version != null;
+
+  const HierarchyResult._unsupported() : version = null, entries = const [];
+
+  HierarchyResult._fromJson(Map<String, Object?> json)
+    : version = json['version'] as int,
+      entries = List.unmodifiable(
+        (json['entries'] as List<Object?>).cast<Map<String, Object?>>().map(
+          HierarchyEntry._fromJson,
+        ),
+      );
+}
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -778,6 +867,93 @@ class AlulaLsp {
     } finally {
       finished = true;
       ffi.referencesCancelJson(requestId);
+    }
+  }
+
+  /// Prepare a hierarchy. A completed result may contain no items.
+  /// Null means the request was cancelled, stale, or timed out.
+  Future<HierarchyResult?> prepareHierarchy(
+    int id,
+    int offsetUtf16,
+    HierarchyKind kind, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) => _pollHierarchy(
+    _core._ffi.hierarchyPrepareStartJson(
+      id,
+      offsetUtf16,
+      kind.nativeValue,
+      timeoutMs,
+    ),
+    cancelSignal,
+  );
+
+  /// Expand a provider item from the same source document version.
+  Future<HierarchyResult?> expandHierarchy(
+    int id,
+    int sourceVersion,
+    HierarchyDirection direction,
+    HierarchyItem item, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) => _pollHierarchy(
+    _core._ffi.hierarchyExpandStartJson(
+      id,
+      sourceVersion,
+      direction.nativeValue,
+      jsonEncode(item._providerItem),
+      timeoutMs,
+    ),
+    cancelSignal,
+  );
+
+  Future<HierarchyResult?> _pollHierarchy(
+    String startJson,
+    Future<void>? cancelSignal,
+  ) async {
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] == false) {
+      return const HierarchyResult._unsupported();
+    }
+    if (start['status'] == 'stale') return null;
+
+    final ffi = _core._ffi;
+    final requestId = start['requestId'] as int;
+    var cancelled = false;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(
+        cancelSignal.then((_) {
+          cancelled = true;
+          if (!finished) ffi.hierarchyCancelJson(requestId);
+        }),
+      );
+    }
+    try {
+      while (!cancelled) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        if (cancelled) return null;
+        final pollJson = ffi.hierarchyPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return HierarchyResult._fromJson(poll);
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知层级请求状态：${poll['status']}');
+        }
+      }
+      return null;
+    } finally {
+      finished = true;
+      ffi.hierarchyCancelJson(requestId);
     }
   }
 

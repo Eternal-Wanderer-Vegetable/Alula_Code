@@ -54,8 +54,9 @@ void _expectConflictSlicesMatchResult(AlulaMergeProjection projection) {
 }
 
 void main() {
-  test('Dart ABI guard accepts v44 and rejects older versions', () {
-    AlulaCore.validateAbiVersion(44);
+  test('Dart ABI guard accepts v45 and rejects older versions', () {
+    AlulaCore.validateAbiVersion(45);
+    expect(() => AlulaCore.validateAbiVersion(44), throwsStateError);
     expect(() => AlulaCore.validateAbiVersion(43), throwsStateError);
     expect(() => AlulaCore.validateAbiVersion(42), throwsStateError);
     expect(() => AlulaCore.validateAbiVersion(41), throwsStateError);

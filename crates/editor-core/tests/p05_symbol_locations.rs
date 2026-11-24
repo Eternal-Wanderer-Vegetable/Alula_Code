@@ -1,4 +1,4 @@
-//! Exercise semantic location providers across ABI 44 and the LSP wire.
+//! Exercise semantic location providers across the versioned ABI and LSP wire.
 
 use alula_core::ffi;
 use serde_json::{json, Value};
@@ -66,7 +66,7 @@ fn symbol_location_queries_use_distinct_versioned_providers() {
     let doc = 55101;
     let text = CString::new("\u{FEFF}// note\r\n🦊target\r\n").unwrap();
     let uri = CString::new("file:///E:/workspace/main.rs").unwrap();
-    assert_eq!(ffi::alula_abi_version(), 44);
+    assert_eq!(ffi::alula_abi_version(), ffi::ALULA_ABI_VERSION);
     assert_eq!(
         take(unsafe { ffi::alula_doc_open(doc, text.as_ptr()) })["version"],
         1

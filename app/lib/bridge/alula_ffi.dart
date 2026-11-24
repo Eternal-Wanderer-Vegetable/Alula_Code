@@ -335,6 +335,31 @@ class AlulaFfi {
     'alula_definition_cancel',
   );
 
+  late final Pointer<Utf8> Function(int, int, int, int) _hierarchyPrepareStart =
+      lib.lookupFunction<
+        Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+        Pointer<Utf8> Function(int, int, int, int)
+      >('alula_hierarchy_prepare_start');
+
+  late final Pointer<Utf8> Function(int, int, int, Pointer<Utf8>, int)
+  _hierarchyExpandStart = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64, Uint64, Uint8, Pointer<Utf8>, Uint64),
+        Pointer<Utf8> Function(int, int, int, Pointer<Utf8>, int)
+      >('alula_hierarchy_expand_start');
+
+  late final Pointer<Utf8> Function(int) _hierarchyPoll = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64),
+        Pointer<Utf8> Function(int)
+      >('alula_hierarchy_poll');
+
+  late final Pointer<Utf8> Function(int) _hierarchyCancel = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64),
+        Pointer<Utf8> Function(int)
+      >('alula_hierarchy_cancel');
+
   late final Pointer<Utf8> Function(int, int, int, int) _referencesStart =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
           Pointer<Utf8> Function(int, int, int, int)>('alula_references_start');
@@ -827,6 +852,36 @@ class AlulaFfi {
 
   String referencesCancelJson(int requestId) =>
       _takeJson(_referencesCancel(requestId));
+
+  String hierarchyPrepareStartJson(
+    int id,
+    int offsetUtf16,
+    int kind,
+    int timeoutMs,
+  ) => _takeJson(_hierarchyPrepareStart(id, offsetUtf16, kind, timeoutMs));
+
+  String hierarchyExpandStartJson(
+    int id,
+    int version,
+    int direction,
+    String item,
+    int timeoutMs,
+  ) {
+    final nativeItem = item.toNativeUtf8();
+    try {
+      return _takeJson(
+        _hierarchyExpandStart(id, version, direction, nativeItem, timeoutMs),
+      );
+    } finally {
+      malloc.free(nativeItem);
+    }
+  }
+
+  String hierarchyPollJson(int requestId) =>
+      _takeJson(_hierarchyPoll(requestId));
+
+  String hierarchyCancelJson(int requestId) =>
+      _takeJson(_hierarchyCancel(requestId));
 
   String workspaceSymbolsStartJson(int id, String query, int timeoutMs) {
     final nativeQuery = query.toNativeUtf8();

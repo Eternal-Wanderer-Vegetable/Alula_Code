@@ -28,8 +28,9 @@ use editor_buffer::{
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_targets,
-    extract_reference_targets, extract_workspace_symbols, LspPendingRequest, LspRequestOutcome,
-    LspServer, SemanticToken, SemanticTokenLegend, SymbolLocationKind,
+    extract_hierarchy_entries, extract_reference_targets, extract_workspace_symbols,
+    HierarchyDirection, HierarchyKind, LspPendingRequest, LspRequestOutcome, LspServer,
+    SemanticToken, SemanticTokenLegend, SymbolLocationKind,
 };
 use editor_merge::{
     combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
@@ -41,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 44;
+pub const ALULA_ABI_VERSION: u32 = 45;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -58,6 +59,7 @@ const MAX_PENDING_SEMANTIC_TOKENS: usize = 16;
 const MAX_SEMANTIC_TOKENS_PER_DOCUMENT: usize = 100_000;
 static NEXT_SEMANTIC_TOKENS_ID: AtomicU64 = AtomicU64::new(1);
 const MAX_PENDING_DEFINITIONS: usize = 16;
+const MAX_HIERARCHY_ITEM_JSON_BYTES: usize = 64 * 1024;
 static NEXT_DEFINITION_ID: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Deserialize)]
@@ -258,6 +260,7 @@ struct PendingDefinition {
     server: Arc<LspServer>,
     request: LspPendingRequest,
     deadline: Instant,
+    hierarchy_direction: Option<HierarchyDirection>,
 }
 
 static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
@@ -265,6 +268,7 @@ static PENDING_SEMANTIC_TOKENS: OnceLock<Mutex<HashMap<u64, PendingSemanticToken
     OnceLock::new();
 static PENDING_DEFINITIONS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
 static PENDING_REFERENCES: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
+static PENDING_HIERARCHY: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
 static PENDING_WORKSPACE_SYMBOLS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> =
     OnceLock::new();
 static NEXT_WORKSPACE_SYMBOL_ID: AtomicU64 = AtomicU64::new(1);
@@ -399,6 +403,7 @@ fn pending_definitions_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinit
 enum LocationQuery {
     Definition,
     References,
+    Hierarchy,
 }
 
 #[derive(Clone, Copy)]
@@ -406,6 +411,7 @@ enum LocationRequest {
     Definition,
     Symbol(SymbolLocationKind),
     References { include_declaration: bool },
+    Hierarchy(HierarchyKind),
 }
 
 impl LocationQuery {
@@ -416,6 +422,10 @@ impl LocationQuery {
                 .get_or_init(|| Mutex::new(HashMap::new()))
                 .lock()
                 .unwrap_or_else(|poisoned| poisoned.into_inner()),
+            Self::Hierarchy => PENDING_HIERARCHY
+                .get_or_init(|| Mutex::new(HashMap::new()))
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner()),
         }
     }
 
@@ -423,6 +433,7 @@ impl LocationQuery {
         match self {
             Self::Definition => "DefinitionFailed",
             Self::References => "ReferencesFailed",
+            Self::Hierarchy => "HierarchyFailed",
         }
     }
 
@@ -448,6 +459,7 @@ fn cancel_definitions_for_doc(id: u64) {
     cancel_workspace_symbols(matches);
     LocationQuery::Definition.cancel_matching(matches);
     LocationQuery::References.cancel_matching(matches);
+    LocationQuery::Hierarchy.cancel_matching(matches);
 }
 
 pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
@@ -455,12 +467,14 @@ pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
     cancel_workspace_symbols(matches);
     LocationQuery::Definition.cancel_matching(matches);
     LocationQuery::References.cancel_matching(matches);
+    LocationQuery::Hierarchy.cancel_matching(matches);
 }
 
 fn cancel_all_definitions() {
     cancel_workspace_symbols(|_| true);
     LocationQuery::Definition.cancel_matching(|_| true);
     LocationQuery::References.cancel_matching(|_| true);
+    LocationQuery::Hierarchy.cancel_matching(|_| true);
 }
 
 fn semantic_token_ranges(
@@ -2841,10 +2855,10 @@ fn start_location_query(
     timeout_ms: u64,
     kind: LocationRequest,
 ) -> *mut c_char {
-    let query = if matches!(kind, LocationRequest::References { .. }) {
-        LocationQuery::References
-    } else {
-        LocationQuery::Definition
+    let query = match kind {
+        LocationRequest::References { .. } => LocationQuery::References,
+        LocationRequest::Hierarchy(_) => LocationQuery::Hierarchy,
+        LocationRequest::Definition | LocationRequest::Symbol(_) => LocationQuery::Definition,
     };
     let supports_unavailable = !matches!(kind, LocationRequest::Definition);
     let (uri, server, line, character, version) = {
@@ -2879,45 +2893,81 @@ fn start_location_query(
     if query == LocationQuery::Definition {
         cancel_workspace_symbols(|request| request.document_id == id);
     }
-    query.cancel_matching(|request| request.document_id == id);
+    if query != LocationQuery::Hierarchy {
+        query.cancel_matching(|request| request.document_id == id);
+    }
     let issued = match kind {
         LocationRequest::Definition => server.definition_async(&uri, line, character).map(Some),
         LocationRequest::Symbol(kind) => server.symbol_location_async(kind, &uri, line, character),
         LocationRequest::References {
             include_declaration,
         } => server.references_async(&uri, line, character, include_declaration),
+        LocationRequest::Hierarchy(kind) => {
+            server.prepare_hierarchy_async(kind, &uri, line, character)
+        }
     };
-    let mut request = match issued {
+    let request = match issued {
         Ok(Some(request)) => request,
         Ok(None) => return to_c_ptr(json!({ "ok": true, "supported": false }).to_string()),
         Err(error) => return err_json(query.error_code(), json!(error)),
     };
-    let mut pending = query.pending();
-    if pending.len() >= MAX_PENDING_DEFINITIONS {
-        drop(pending);
-        let _ = request.cancel();
-        return err_json("Backpressure", json!({ "limit": MAX_PENDING_DEFINITIONS }));
-    }
-    let request_id = NEXT_DEFINITION_ID.fetch_add(1, Ordering::Relaxed);
     let now = Instant::now();
     let deadline = now
         .checked_add(Duration::from_millis(timeout_ms))
         .unwrap_or_else(|| now + Duration::from_secs(86_400));
-    pending.insert(
-        request_id,
+    let request_id = match queue_location_request(
+        query,
         PendingDefinition {
             document_id: id,
             document_version: version,
             server,
             request,
             deadline,
+            hierarchy_direction: None,
         },
-    );
+    ) {
+        Ok(id) => id,
+        Err(reply) => return reply,
+    };
     let mut response = json!({ "ok": true, "requestId": request_id, "version": version });
     if supports_unavailable {
         response["supported"] = json!(true);
     }
     to_c_ptr(response.to_string())
+}
+
+fn location_request_is_current(query: LocationQuery, pending: &PendingDefinition) -> bool {
+    let reg = registry_lock();
+    reg.version_of(pending.document_id) == Some(pending.document_version)
+        && (query != LocationQuery::Hierarchy
+            || reg
+                .lsp_of(pending.document_id)
+                .is_some_and(|server| Arc::ptr_eq(&server, &pending.server)))
+}
+
+fn queue_location_request(
+    query: LocationQuery,
+    mut pending: PendingDefinition,
+) -> Result<u64, *mut c_char> {
+    let mut requests = query.pending();
+    if query == LocationQuery::Hierarchy && !location_request_is_current(query, &pending) {
+        drop(requests);
+        let _ = pending.request.cancel();
+        return Err(to_c_ptr(
+            json!({"ok": true, "supported": true, "status": "stale"}).to_string(),
+        ));
+    }
+    if requests.len() >= MAX_PENDING_DEFINITIONS {
+        drop(requests);
+        let _ = pending.request.cancel();
+        return Err(err_json(
+            "Backpressure",
+            json!({"limit": MAX_PENDING_DEFINITIONS}),
+        ));
+    }
+    let request_id = NEXT_DEFINITION_ID.fetch_add(1, Ordering::Relaxed);
+    requests.insert(request_id, pending);
+    Ok(request_id)
 }
 
 fn poll_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
@@ -2939,8 +2989,8 @@ fn poll_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
         };
         if Instant::now() >= pending.deadline {
             PollResult::Timeout(pending)
-        } else if query == LocationQuery::References
-            && registry_lock().version_of(pending.document_id) != Some(pending.document_version)
+        } else if query != LocationQuery::Definition
+            && !location_request_is_current(query, &pending)
         {
             PollResult::Stale(pending)
         } else {
@@ -2970,7 +3020,7 @@ fn poll_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
             status("stale")
         }
         PollResult::Complete(pending, response) => {
-            if registry_lock().version_of(pending.document_id) != Some(pending.document_version) {
+            if !location_request_is_current(query, &pending) {
                 return status("stale");
             }
             let mut reply = json!({
@@ -2996,6 +3046,14 @@ fn poll_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
                         Err(error) => return err_json(query.error_code(), json!(error)),
                     };
                     reply["references"] = json!(targets);
+                }
+                LocationQuery::Hierarchy => {
+                    let entries =
+                        match extract_hierarchy_entries(response, pending.hierarchy_direction) {
+                            Ok(entries) => entries,
+                            Err(error) => return err_json(query.error_code(), json!(error)),
+                        };
+                    reply["entries"] = json!(entries);
                 }
             }
             to_c_ptr(reply.to_string())
@@ -3116,6 +3174,113 @@ pub extern "C" fn alula_references_cancel(request_id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_cancel")))
 }
 
+/// Prepare a call (1) or type (2) hierarchy using a UTF-16 document offset.
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_prepare_start(
+    id: u64,
+    offset_utf16: u64,
+    kind: u8,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let kind = match kind {
+            1 => HierarchyKind::Call,
+            2 => HierarchyKind::Type,
+            _ => return err_json("InvalidArgument", json!("unknown hierarchy kind")),
+        };
+        start_location_query(
+            id,
+            offset_utf16,
+            timeout_ms.min(60_000),
+            LocationRequest::Hierarchy(kind),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_prepare_start")))
+}
+
+/// Expand a versioned hierarchy item using incoming (1), outgoing (2),
+/// supertypes (3), or subtypes (4).
+///
+/// # Safety
+/// item_json must point to a valid, NUL-terminated UTF-8 string for this call.
+#[no_mangle]
+pub unsafe extern "C" fn alula_hierarchy_expand_start(
+    id: u64,
+    expected_version: u64,
+    direction: u8,
+    item_json: *const c_char,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let direction = match direction {
+            1 => HierarchyDirection::Incoming,
+            2 => HierarchyDirection::Outgoing,
+            3 => HierarchyDirection::Supertypes,
+            4 => HierarchyDirection::Subtypes,
+            _ => return err_json("InvalidArgument", json!("unknown hierarchy direction")),
+        };
+        let server = {
+            let reg = registry_lock();
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({"id": id}));
+            };
+            if version != expected_version {
+                return to_c_ptr(json!({"ok": true, "supported": true, "status": "stale"}).to_string());
+            }
+            let Some(server) = reg.lsp_of(id) else {
+                return to_c_ptr(json!({"ok": true, "supported": false}).to_string());
+            };
+            server
+        };
+        let item_text = match unsafe { read_c_str(item_json) } {
+            Ok(item) => item,
+            Err(error) => return error,
+        };
+        if item_text.len() > MAX_HIERARCHY_ITEM_JSON_BYTES {
+            return err_json("InvalidArgument", json!({"maxItemBytes": MAX_HIERARCHY_ITEM_JSON_BYTES}));
+        }
+        let item = match serde_json::from_str(item_text) {
+            Ok(item) => item,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let query = LocationQuery::Hierarchy;
+        let request = match server.hierarchy_children_async(direction, item) {
+            Ok(Some(request)) => request,
+            Ok(None) => return to_c_ptr(json!({"ok": true, "supported": false}).to_string()),
+            Err(error) => return err_json(query.error_code(), json!(error)),
+        };
+        let request_id = match queue_location_request(query, PendingDefinition {
+            document_id: id,
+            document_version: expected_version,
+            server,
+            request,
+            deadline: Instant::now() + Duration::from_millis(timeout_ms.min(60_000)),
+            hierarchy_direction: Some(direction),
+        }) {
+            Ok(id) => id,
+            Err(reply) => return reply,
+        };
+        to_c_ptr(json!({"ok": true, "supported": true, "requestId": request_id, "version": expected_version}).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_expand_start")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_poll(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        poll_location_query(request_id, LocationQuery::Hierarchy)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_poll")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        cancel_location_query(request_id, LocationQuery::Hierarchy)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_cancel")))
+}
+
 /// Start a workspace-scoped symbol query using the server attached to `id`.
 /// Query bytes and in-flight requests are bounded; unsupported servers are explicit.
 ///
@@ -3167,6 +3332,7 @@ pub unsafe extern "C" fn alula_workspace_symbols_start(
                 server,
                 request,
                 deadline,
+                hierarchy_direction: None,
             },
         );
         to_c_ptr(
@@ -3528,7 +3694,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 44);
+        assert_eq!(alula_abi_version(), 45);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {
