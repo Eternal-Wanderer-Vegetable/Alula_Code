@@ -1,0 +1,1024 @@
+{
+  "product": "7b9b1e933ae5edab0299432c11c2f28d403f3c53",
+  "tree": "9e9d32470d60171bee76971a87f4f323cf8e3d45",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": [
+      {
+        "path": "src/vs/editor/contrib/gotoSymbol/browser/peek/referencesWidget.ts",
+        "lines": [
+          166,
+          183,
+          275,
+          277,
+          313,
+          313
+        ],
+        "sha256": "5ffc7c326f0f2dcf9534ac55bce67a3b955de86cac50bc2703b36752af2c7452"
+      },
+      {
+        "path": "src/vs/editor/contrib/gotoSymbol/browser/peek/referencesController.ts",
+        "lines": [
+          99,
+          108
+        ],
+        "sha256": "3a3e11d00f621d412f6137e99b6450f7f33f9ecac0c0e082852e7c474acd08d1"
+      },
+      {
+        "path": "src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts",
+        "lines": [
+          381,
+          401,
+          518,
+          555,
+          567,
+          570
+        ],
+        "sha256": "fbd4877803606de8ecfe11163cf862d2489b0e17941e409808ef773cfffd0df3"
+      }
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9e9d32470d60171bee76971a87f4f323cf8e3d45",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "157a91690bef4b656b547128419649ee42ff7cea1968e1d878ff1aa4e0b482f0",
+      "app/lib/bridge/alula_ffi.dart": "d6cb93b858a9c3c4d605a38133a17f80fc4024925c094922ea82915b05b9fcc6",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "128f17afd4826c15d3d654242855d34406a04a9a365b1d0a108ba2490f816771",
+      "app/lib/workbench/definition_peek.dart": "672df2b1db0b8a6a4ec62a5d5b178985bcd99ed1a615f98140b6fd38afec12d6",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "9a9c22332f942f3be97b8a9c5e5be63f87b5ed360a4dbc67c3c334a410a407d7",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "a79aa3ec4756014dcd1c6ba11a966357d5301c4a8a542c65b0ef3653faed16f6",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "2d4a8abfa3753fccb1473776216532e37e96f44b326bf5f4e3e8437475fa1d29",
+      "crates/editor-core/src/ffi.rs": "62960b20395ea8d0d4f90019dfca337be3a6aa410421ebdf3b22f6b59ce09ac6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "113e72e8ac6328c64335411b5f438e8d76708c770f13de17cae9769c6b929512",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "acf446bd1cf10d8c7c57ce529798b49d939f0053c708ec186952b41505f344fd"
+    },
+    "rustProduct": "74fbfad8515dccb473ff15998c52113a5405af1f",
+    "nativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "fixtureSha256": "92dfe01226921bc8658e6e523f47e435cd834ea643f95931fae1d95c97d3cb84"
+  },
+  "fixtureSha256": "92dfe01226921bc8658e6e523f47e435cd834ea643f95931fae1d95c97d3cb84",
+  "acceptanceDriverSha256": "342ab5d04a1f3f4116569f135bddb8c0d8733eeecfd7bf787a0da1abf04a98a1",
+  "diskSha256": {
+    "src/lib.rs": "75fb2711167eacb71e95dc78448c52693941ea0fa4b14c3ae8a1508759b2960a",
+    "src/consumer.rs": "3f69a9007587927b47fe8fce7b55b2f35dec98c2532de0e612fd212a75935f31",
+    "Cargo.toml": "4b69c4fb7a5ae4dbd30a664b2df25dd704d35164b7ac64a54985def9f8deca38"
+  },
+  "localLogsSha256": {
+    "p05-261-navigation.log": "83094763ce84ef53c319aba55a99d5a6249c490e5e167f93156559511cca25e5",
+    "p05-261-core.log": "fbf0a803ae103a221434b4f44238f444cf96dfc1b2c7d8293f06445da6cf30a6",
+    "p05-261-analyze.log": "fcf1c0e2b16360b7e9116b9a1b78b70cdad9a793f00df40e27af50a47aeee1ff",
+    "p05-261-focused.log": "debba9035043c9daf0ae29c986670be1d8a2b903b3ecfadc29517b86f3f6c17e",
+    "p05-261-full.log": "ca101735a5f382e79e83af3dbea3453399d3c3c6c6201b788493adf593c198e2",
+    "p05-261-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-261-linux-native.log": "81953ee2ac3797ab25d8345e4990358ac54b01807a38bc1238cec216d7678c3f",
+    "windows-build.log": "9668969131f4cdeafca9cb688e7b07a0bf9ffea5b06639e5d9f915d1a65df787"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 27,
+      "affected_count": 0,
+      "changed_files": 6,
+      "risk_level": "low",
+      "sha256": "21a7918fda664e220b347daf92d2c6bb04fc80436c69a98180fa492bb6b37128",
+      "flows": []
+    },
+    "staged": {
+      "changed_count": 27,
+      "affected_count": 0,
+      "changed_files": 6,
+      "risk_level": "low",
+      "sha256": "21a7918fda664e220b347daf92d2c6bb04fc80436c69a98180fa492bb6b37128",
+      "flows": []
+    }
+  },
+  "macosPhysical": "deferred",
+  "linuxMemoryComparison": {
+    "previousReportSha256": "63deedf5e198d323fd43ae47efb0840b56b853d35cffb04dc5d1e95620750e53",
+    "samples": {
+      "ready": {
+        "previous": {
+          "mainPrivate": 236.2,
+          "treePrivate": 236.2,
+          "processCount": 1
+        },
+        "current": {
+          "mainPrivate": 237.0,
+          "treePrivate": 237.0,
+          "processCount": 1
+        }
+      },
+      "references-preview": {
+        "previous": {
+          "mainPrivate": 251.3,
+          "treePrivate": 821.2,
+          "processCount": 4
+        },
+        "current": {
+          "mainPrivate": 244.2,
+          "treePrivate": 813.0,
+          "processCount": 4
+        }
+      },
+      "side-open": {
+        "previous": {
+          "mainPrivate": 252.2,
+          "treePrivate": 822.4,
+          "processCount": 4
+        },
+        "current": {
+          "mainPrivate": 255.7,
+          "treePrivate": 825.0,
+          "processCount": 4
+        }
+      }
+    }
+  },
+  "windows": {
+    "reportSha256": "a19e0bc76c8fd29ba893b33ba6a1daf7c89c065a5156663527f867bbda4b4fc4",
+    "runnerSha256": "dda9f43661c25e6310ac4952ef8ac2de2a9db76759d8c3311ce8edc376941a08",
+    "aotSha256": "cd295bcd822c90b6f389e0f8b79e00d1400d573633e5f6054c19e671a9ec02ac",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "observations": 69,
+    "firstPid": 11496,
+    "restartPid": 18528,
+    "firstExit": 0,
+    "exit": 0,
+    "layout": {
+      "initialHeight": 336.0,
+      "savedHeight": 264.0,
+      "editorLineHeight": 24.0,
+      "initial": {
+        "previewRatio": 0.6809433865945174,
+        "heightInLines": 18
+      },
+      "saved": {
+        "previewRatio": 0.6809433865945174,
+        "heightInLines": 11
+      },
+      "writtenSha256": "f636fa67619a32bb7642fdf62540833dac476e4460c49560b1f61bcd637bb9a5",
+      "widths": [
+        213.424,
+        100.0
+      ],
+      "restart": {
+        "height": 264.0,
+        "paneWidths": [
+          454.0857354637808,
+          212.76226453621928
+        ],
+        "selection": [
+          124,
+          124
+        ],
+        "readbackSha256": "f636fa67619a32bb7642fdf62540833dac476e4460c49560b1f61bcd637bb9a5"
+      }
+    },
+    "sashDrags": [
+      {
+        "points": [
+          [
+            1602,
+            555
+          ],
+          [
+            1596,
+            555
+          ],
+          [
+            1590,
+            555
+          ],
+          [
+            1584,
+            555
+          ],
+          [
+            1579,
+            555
+          ],
+          [
+            1573,
+            555
+          ],
+          [
+            1567,
+            555
+          ],
+          [
+            1561,
+            555
+          ],
+          [
+            1555,
+            555
+          ]
+        ],
+        "logicalDelta": -37.42400000000001,
+        "foregroundOwned": true,
+        "vertical": false
+      },
+      {
+        "points": [
+          [
+            1585,
+            555
+          ],
+          [
+            1591,
+            555
+          ],
+          [
+            1597,
+            555
+          ],
+          [
+            1603,
+            555
+          ],
+          [
+            1608,
+            555
+          ],
+          [
+            1614,
+            555
+          ],
+          [
+            1620,
+            555
+          ],
+          [
+            1626,
+            555
+          ],
+          [
+            1632,
+            555
+          ]
+        ],
+        "logicalDelta": 37.42399999999998,
+        "foregroundOwned": true,
+        "vertical": false
+      },
+      {
+        "points": [
+          [
+            1531,
+            743
+          ],
+          [
+            1531,
+            732
+          ],
+          [
+            1531,
+            721
+          ],
+          [
+            1531,
+            709
+          ],
+          [
+            1531,
+            698
+          ],
+          [
+            1531,
+            687
+          ],
+          [
+            1531,
+            675
+          ],
+          [
+            1531,
+            664
+          ],
+          [
+            1531,
+            653
+          ]
+        ],
+        "logicalDelta": -72,
+        "foregroundOwned": true,
+        "vertical": true
+      }
+    ],
+    "states": {
+      "height-open": {
+        "peekBounds": [
+          289.952,
+          110.0,
+          607.376,
+          446.0
+        ],
+        "previewBounds": [
+          289.952,
+          145.0,
+          503.37600000000003,
+          442.0
+        ],
+        "sashBounds": [
+          503.37600000000003,
+          145.0,
+          507.37600000000003,
+          442.0
+        ],
+        "heightSashBounds": [
+          289.952,
+          442.0,
+          607.376,
+          446.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "height-preview-focus": {
+        "peekBounds": [
+          289.952,
+          110.0,
+          607.376,
+          446.0
+        ],
+        "previewBounds": [
+          289.952,
+          145.0,
+          503.37600000000003,
+          442.0
+        ],
+        "sashBounds": [
+          503.37600000000003,
+          145.0,
+          507.37600000000003,
+          442.0
+        ],
+        "heightSashBounds": [
+          289.952,
+          442.0,
+          607.376,
+          446.0
+        ],
+        "editorFocused": false,
+        "previewFocused": true,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "height-shortened": {
+        "peekBounds": [
+          289.952,
+          110.0,
+          607.376,
+          374.0
+        ],
+        "previewBounds": [
+          289.952,
+          145.0,
+          503.37600000000003,
+          370.0
+        ],
+        "sashBounds": [
+          503.37600000000003,
+          145.0,
+          507.37600000000003,
+          370.0
+        ],
+        "heightSashBounds": [
+          289.952,
+          370.0,
+          607.376,
+          374.0
+        ],
+        "editorFocused": false,
+        "previewFocused": true,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "height-closed": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "height-reopened": {
+        "peekBounds": [
+          289.952,
+          110.0,
+          607.376,
+          374.0
+        ],
+        "previewBounds": [
+          289.952,
+          145.0,
+          503.37600000000003,
+          370.0
+        ],
+        "sashBounds": [
+          503.37600000000003,
+          145.0,
+          507.37600000000003,
+          370.0
+        ],
+        "heightSashBounds": [
+          289.952,
+          370.0,
+          607.376,
+          374.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "height-final-close": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 3
+      },
+      "restart-caret": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "restart-peek": {
+        "peekBounds": [
+          289.952,
+          110.0,
+          960.8000000000001,
+          374.0
+        ],
+        "previewBounds": [
+          289.952,
+          145.0,
+          744.0377354637808,
+          370.0
+        ],
+        "sashBounds": [
+          744.0377354637808,
+          145.0,
+          748.0377354637808,
+          370.0
+        ],
+        "heightSashBounds": [
+          289.952,
+          370.0,
+          960.8000000000001,
+          374.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "restart-close": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      }
+    },
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "initialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS"
+  },
+  "linux": {
+    "reportSha256": "93e11f0c3bdfc98324be42ffdbb77eab959010775cfc2da01d5149b767d48f7b",
+    "runnerSha256": "738728c1b951863a83f9980f761018fd3f2b5e0c870d6b142d6209e48a51b9ac",
+    "aotSha256": "5fadcc2aa358ba7f2142b897cdd183829e003719141b12d12322e8ef305f4a9e",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "observations": 66,
+    "firstPid": 981,
+    "restartPid": 2078,
+    "firstExit": 0,
+    "exit": 0,
+    "layout": {
+      "initialHeight": 432.0,
+      "savedHeight": 360.0,
+      "editorLineHeight": 24.0,
+      "initial": {
+        "previewRatio": 0.7488951386098834,
+        "heightInLines": 18
+      },
+      "saved": {
+        "previewRatio": 0.7488951386098834,
+        "heightInLines": 15
+      },
+      "writtenSha256": "53d31853b94ead2bf09b9c0a8124e2ee67e324142e5d34ac992f3ada96429d4f",
+      "widths": [
+        298.24,
+        100.0
+      ],
+      "restart": {
+        "height": 360.0,
+        "paneWidths": [
+          560.5330333467255,
+          187.94696665327456
+        ],
+        "selection": [
+          124,
+          124
+        ],
+        "readbackSha256": "53d31853b94ead2bf09b9c0a8124e2ee67e324142e5d34ac992f3ada96429d4f"
+      }
+    },
+    "sashDrags": [
+      {
+        "points": [
+          [
+            644,
+            390
+          ],
+          [
+            631,
+            390
+          ],
+          [
+            619,
+            390
+          ],
+          [
+            606,
+            390
+          ],
+          [
+            593,
+            390
+          ],
+          [
+            580,
+            390
+          ],
+          [
+            567,
+            390
+          ],
+          [
+            554,
+            390
+          ],
+          [
+            542,
+            390
+          ]
+        ],
+        "logicalDelta": -102.76799999999997,
+        "foregroundOwned": true,
+        "vertical": false
+      },
+      {
+        "points": [
+          [
+            566,
+            390
+          ],
+          [
+            581,
+            390
+          ],
+          [
+            596,
+            390
+          ],
+          [
+            611,
+            390
+          ],
+          [
+            627,
+            390
+          ],
+          [
+            642,
+            390
+          ],
+          [
+            657,
+            390
+          ],
+          [
+            672,
+            390
+          ],
+          [
+            688,
+            390
+          ]
+        ],
+        "logicalDelta": 122.23999999999995,
+        "foregroundOwned": true,
+        "vertical": false
+      },
+      {
+        "points": [
+          [
+            565,
+            588
+          ],
+          [
+            565,
+            579
+          ],
+          [
+            565,
+            570
+          ],
+          [
+            565,
+            561
+          ],
+          [
+            565,
+            552
+          ],
+          [
+            565,
+            543
+          ],
+          [
+            565,
+            534
+          ],
+          [
+            565,
+            525
+          ],
+          [
+            565,
+            516
+          ]
+        ],
+        "logicalDelta": -72,
+        "foregroundOwned": true,
+        "vertical": true
+      }
+    ],
+    "states": {
+      "height-open": {
+        "peekBounds": [
+          343.52,
+          110.0,
+          745.76,
+          542.0
+        ],
+        "previewBounds": [
+          343.52,
+          145.0,
+          641.76,
+          538.0
+        ],
+        "sashBounds": [
+          641.76,
+          145.0,
+          645.76,
+          538.0
+        ],
+        "heightSashBounds": [
+          343.52,
+          538.0,
+          745.76,
+          542.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "height-preview-focus": {
+        "peekBounds": [
+          343.52,
+          110.0,
+          745.76,
+          542.0
+        ],
+        "previewBounds": [
+          343.52,
+          145.0,
+          641.76,
+          538.0
+        ],
+        "sashBounds": [
+          641.76,
+          145.0,
+          645.76,
+          538.0
+        ],
+        "heightSashBounds": [
+          343.52,
+          538.0,
+          745.76,
+          542.0
+        ],
+        "editorFocused": false,
+        "previewFocused": true,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "height-shortened": {
+        "peekBounds": [
+          343.52,
+          110.0,
+          745.76,
+          470.0
+        ],
+        "previewBounds": [
+          343.52,
+          145.0,
+          641.76,
+          466.0
+        ],
+        "sashBounds": [
+          641.76,
+          145.0,
+          645.76,
+          466.0
+        ],
+        "heightSashBounds": [
+          343.52,
+          466.0,
+          745.76,
+          470.0
+        ],
+        "editorFocused": false,
+        "previewFocused": true,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "height-closed": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "height-reopened": {
+        "peekBounds": [
+          343.52,
+          110.0,
+          745.76,
+          470.0
+        ],
+        "previewBounds": [
+          343.52,
+          145.0,
+          641.76,
+          466.0
+        ],
+        "sashBounds": [
+          641.76,
+          145.0,
+          645.76,
+          466.0
+        ],
+        "heightSashBounds": [
+          343.52,
+          466.0,
+          745.76,
+          470.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "height-final-close": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "restart-caret": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "restart-peek": {
+        "peekBounds": [
+          343.52,
+          110.0,
+          1096.0,
+          470.0
+        ],
+        "previewBounds": [
+          343.52,
+          145.0,
+          904.0530333467254,
+          466.0
+        ],
+        "sashBounds": [
+          904.0530333467254,
+          145.0,
+          908.0530333467254,
+          466.0
+        ],
+        "heightSashBounds": [
+          343.52,
+          466.0,
+          1096.0,
+          470.0
+        ],
+        "editorFocused": false,
+        "previewFocused": false,
+        "listFocused": true,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      },
+      "restart-close": {
+        "peekBounds": null,
+        "previewBounds": null,
+        "sashBounds": null,
+        "heightSashBounds": null,
+        "editorFocused": true,
+        "previewFocused": false,
+        "listFocused": false,
+        "selection": [
+          124,
+          124
+        ],
+        "version": 1
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "firstCleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "memoryMiB": {
+      "ready": {
+        "mainPrivate": 237.0,
+        "treePrivate": 237.0,
+        "processCount": 1
+      },
+      "references-tree-open": {
+        "mainPrivate": 251.2,
+        "treePrivate": 820.0,
+        "processCount": 4
+      },
+      "references-preview": {
+        "mainPrivate": 244.2,
+        "treePrivate": 813.0,
+        "processCount": 4
+      },
+      "preview-next-cross": {
+        "mainPrivate": 241.7,
+        "treePrivate": 810.7,
+        "processCount": 4
+      },
+      "definition-preview": {
+        "mainPrivate": 248.1,
+        "treePrivate": 817.3,
+        "processCount": 4
+      },
+      "side-open": {
+        "mainPrivate": 255.7,
+        "treePrivate": 825.0,
+        "processCount": 4
+      },
+      "side-normal-f12": {
+        "mainPrivate": 255.1,
+        "treePrivate": 824.3,
+        "processCount": 4
+      }
+    }
+  }
+}

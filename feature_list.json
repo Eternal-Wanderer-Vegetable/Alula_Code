@@ -4017,8 +4017,8 @@
       "dependencies": [
         "feat-312"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "速览高度按编辑器行高调整，横向比例和高度保存到当前布局偏好。Windows 69 步与 Linux 66 步完成原生拖动、焦点和重新启动读回。专项 165/165，Flutter 1,861 passed / 2 skipped。产品 7b9b1e93 的 CI 45313664619 四项和 Platform Availability 45313659772 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.261-peek-height.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
