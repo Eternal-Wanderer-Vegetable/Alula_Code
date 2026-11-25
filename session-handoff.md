@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.283 / feat-335 完成。Problems 无匹配时可清除筛选。重置文本与错误、警告、信息级别，保留活动文件范围。Windows 通过 27 个原生检查点，Linux 通过 29 个。专题 184/184，Flutter 1,888 项通过、2 项跳过。产品 7452ea34 的 CI 45719548456 四项与 Platform Availability 45719537632 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.283-problems-clear-filters.md。
 - P05.282 / feat-334 完成。Problems 可仅显示活动文件，随编辑器切换更新，同步应用文本和级别筛选。Windows、Linux 各通过 29 个真实 rust-analyzer 检查点。专题 184/184，Flutter 1,888 passed / 2 skipped。产品 25237a38 的 CI 45713333226 四项与 Platform Availability 45713325741 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.282-problems-active-file.md。
 - P05.281 / feat-333 完成。Problems 的错误、警告和信息可独立切换，并与文本筛选共同生效。Windows、Linux 各通过协议夹具 21 步和真实 rust-analyzer 8 步。专题 184/184，Flutter 1,888 passed / 2 skipped。产品 737e59ba 的 CI 45707598317 四项与 Platform Availability 45707591586 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.281-problems-severity.md。
 - P05.280 / feat-332 完成。Problems 按文件名、消息或来源过滤显示，支持清除与收起后保留查询。Windows 18 步，Linux 18 步，专题 184/184，Flutter 1,888 passed / 2 skipped。产品 46aa3542 的 CI 45701859597 四项与 Platform Availability 45701851430 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.280-problems-text-filter.md。
@@ -300,6 +301,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.283 Problems 清除筛选](docs/diagnostics/2026-11-26-p05/p05.283-problems-clear-filters.md)。
 [P05.282 Problems 仅显示活动文件](docs/diagnostics/2026-11-26-p05/p05.282-problems-active-file.md)。
 [P05.281 Problems 严重级别过滤](docs/diagnostics/2026-11-26-p05/p05.281-problems-severity.md)。
 [P05.280 Problems 文本过滤](docs/diagnostics/2026-11-26-p05/p05.280-problems-text-filter.md)。
@@ -489,4 +491,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.282 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 清除筛选入口。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.283 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 筛选框与结果列表的键盘焦点路由。PR #3 保持草稿，macOS 实机暂缓。
