@@ -16,6 +16,8 @@ void main() {
         .bindingForChord(parseChord(key)!, matchesWhen: context.matches)
         ?.commandId;
     context.setValues({'editorTextFocus': true});
+    expect(command('alt+shift+h'), isNot('editor.showCallHierarchy'));
+    context.setValue('editorHasCallHierarchyProvider', true);
     expect(command('alt+shift+h'), 'editor.showCallHierarchy');
     expect(command('shift+enter'), isNot('editor.refocusCallHierarchy'));
     context.setValues({
@@ -30,6 +32,41 @@ void main() {
     expect(command('shift+enter'), 'editor.refocusCallHierarchy');
     context.setValues({'callHierarchyStablePeek': true});
     expect(command('escape'), isNot('editor.closeCallHierarchy'));
+  });
+
+  test('static shortcut filtering keeps alternatives for a live chord', () {
+    const command = 'editor.showCallHierarchy';
+    final keys = KeybindingSet.load(
+      platform: TargetPlatform.windows,
+      userJson: '[{"key":"alt+shift+h","command":"workbench.action.quickOpen",'
+          '"when":"editorTextFocus"},'
+          '{"key":"alt+shift+h","command":"editor.showCallHierarchy",'
+          '"when":"editorTextFocus && editorHasCallHierarchyProvider"}]',
+    );
+    final context = ContextKeyService()
+      ..setValues({
+        'editorTextFocus': true,
+        'editorHasCallHierarchyProvider': true,
+      });
+    addTearDown(context.dispose);
+    final chord = parseChord('alt+shift+h')!;
+    expect(
+      keys.bindingForChord(chord, matchesWhen: context.matches)?.commandId,
+      command,
+    );
+    final staticBindings = keys.resolveBindings(
+      matchesWhen: context.matches,
+      excludeCommands: const {command},
+    );
+    final fallback = staticBindings.entries.singleWhere(
+      (entry) =>
+          entry.key.trigger == chord.key &&
+          entry.key.alt &&
+          entry.key.shift &&
+          !entry.key.control &&
+          !entry.key.meta,
+    );
+    expect(fallback.value.commandId, quickOpenId);
   });
 
   test('type hierarchy uses its own direction and close contexts', () {

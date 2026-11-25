@@ -101,6 +101,7 @@ import 'call_hierarchy.dart';
 import 'definition_peek.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
+import 'context_keys.dart';
 import 'editor_drop_overlay.dart';
 import 'editor_tab_action_location.dart';
 import 'editor_tab_close_policy.dart';
@@ -487,8 +488,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'notifications.toggleDoNotDisturbMode',
   };
 
-  final CommandService _commands = CommandService(
+  late final CommandService _commands = CommandService(
     registry: CommandRegistry(aliases: _workbenchCommandAliases),
+    context: ContextKeyService(booleanReaders: {
+      'editorHasCallHierarchyProvider': () =>
+          _hasActiveHierarchyProvider(HierarchyKind.call),
+      'editorHasTypeHierarchyProvider': () =>
+          _hasActiveHierarchyProvider(HierarchyKind.type),
+    }),
   );
   final ValueNotifier<EditorTabMode> _editorTabMode =
       ValueNotifier(EditorTabMode.multiple);
@@ -4190,10 +4197,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }) {
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final currentLocation = _layout.activityBarLocation;
+    final callHierarchyAvailable =
+        _commands.context['editorHasCallHierarchyProvider'] == true;
+    final typeHierarchyAvailable =
+        _commands.context['editorHasTypeHierarchyProvider'] == true;
     final available = [
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
-            !_isCurrentActivityBarLocationCommand(c.id, currentLocation))
+            !_isCurrentActivityBarLocationCommand(c.id, currentLocation) &&
+            (c.id != 'editor.showCallHierarchy' || callHierarchyAvailable) &&
+            (c.id != 'editor.showTypeHierarchy' || typeHierarchyAvailable))
           c,
     ];
     final byId = {for (final c in available) c.id: c};
@@ -19549,6 +19562,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _awaitingMoveSelectionChord = false;
   KeyChord? _pendingChordPrefix;
 
+  static const _hierarchyOpenCommands = {
+    'editor.showCallHierarchy',
+    'editor.showTypeHierarchy',
+  };
+
   KeyEventResult _handleCommandChord(
     KeyEvent event, {
     Set<String>? permittedCommands,
@@ -19621,6 +19639,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (_handleNotificationPrimaryShortcut(currentChord) ||
         _handleShiftedBreadcrumbShortcut(event, currentChord)) {
       return KeyEventResult.handled;
+    }
+    // Language capabilities can become available without rebuilding shortcuts.
+    if (permittedCommands == null ||
+        permittedCommands.any(_hierarchyOpenCommands.contains)) {
+      final binding = _keybindings.bindingForChord(
+        currentChord,
+        matchesWhen: _commands.context.matches,
+      );
+      if (binding != null &&
+          _hierarchyOpenCommands.contains(binding.commandId) &&
+          isEnabled(binding.commandId)) {
+        _runCommand(binding.commandId, arguments: binding.arguments);
+        return KeyEventResult.handled;
+      }
     }
     // GTK reports Shift+Minus as Underscore. Resolve against the active
     // minus binding so removing or changing the shortcut still takes effect.
@@ -23736,7 +23768,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             const SingleActivator(LogicalKeyboardKey.pageDown, shift: true):
                 () => _runCommand('editor.cursorPageDownSelect'),
           for (final e in _keybindings
-              .resolveBindings(matchesWhen: _commands.context.matches)
+              .resolveBindings(
+                matchesWhen: _commands.context.matches,
+                excludeCommands: _hierarchyOpenCommands,
+              )
               .entries
               .where((entry) => _commands.isEnabled(entry.value.commandId)))
             e.key: () =>
@@ -23749,6 +23784,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             permittedCommands: const {
               'notifications.showList',
               'togglePeekWidgetFocus',
+              ..._hierarchyOpenCommands,
             },
           ),
           child: Stack(
@@ -28892,6 +28928,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
       );
     });
+  }
+
+  bool _hasActiveHierarchyProvider(HierarchyKind kind) {
+    if (!mounted || _disposing) return false;
+    final doc = _active;
+    return doc != null && doc.doc.core.lsp.hasHierarchyProvider(doc.id, kind);
   }
 
   Widget _buildEditorHierarchyContextMenu(

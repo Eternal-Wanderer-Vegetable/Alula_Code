@@ -11,6 +11,25 @@ Command _cmd(String id, String category, String title) => Command(
     );
 
 void main() {
+  test('boolean readers are evaluated only when their keys are read', () {
+    var providerAvailable = false;
+    var reads = 0;
+    final context = ContextKeyService(booleanReaders: {
+      'providerAvailable': () {
+        reads++;
+        return providerAvailable;
+      },
+    });
+    addTearDown(context.dispose);
+    context.setValue('editorActive', true);
+    expect(context.matches('editorActive'), isTrue);
+    expect(reads, 0);
+    expect(context.matches('editorActive && providerAvailable'), isFalse);
+    providerAvailable = true;
+    expect(context.matches('editorActive && providerAvailable'), isTrue);
+    expect(reads, 2);
+  });
+
   group('注册表', () {
     test('注册 / 查找 / 同 id 覆盖 / 注销', () {
       final r = CommandRegistry();

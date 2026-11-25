@@ -345,13 +345,15 @@ class KeybindingSet {
   static const Map<String, String> defaultWhen = {
     'editor.action.revealDefinition': 'editorTextFocus',
     'editor.showCallHierarchy':
-        'editorTextFocus && !callHierarchyVisible && !typeHierarchyVisible',
+        'editorTextFocus && editorHasCallHierarchyProvider && '
+        '!callHierarchyVisible && !typeHierarchyVisible',
     'editor.showIncomingCalls': 'callHierarchyHasRoots && !callHierarchyIncoming',
     'editor.showOutgoingCalls': 'callHierarchyHasRoots && callHierarchyIncoming',
     'editor.closeCallHierarchy': 'callHierarchyVisible && !callHierarchyStablePeek',
     'editor.refocusCallHierarchy': 'callHierarchyHasRoots',
     'editor.showTypeHierarchy':
-        'editorTextFocus && !callHierarchyVisible && !typeHierarchyVisible',
+        'editorTextFocus && editorHasTypeHierarchyProvider && '
+        '!callHierarchyVisible && !typeHierarchyVisible',
     'editor.showSupertypes': 'typeHierarchyHasRoots && !typeHierarchySupertypes',
     'editor.showSubtypes': 'typeHierarchyHasRoots && typeHierarchySupertypes',
     'editor.closeTypeHierarchy': 'typeHierarchyVisible && !typeHierarchyStablePeek',
@@ -724,10 +726,16 @@ class KeybindingSet {
   /// Resolve each chord to its last binding matching the active context.
   Map<SingleActivator, KeybindingBinding> resolveBindings({
     bool Function(String? condition)? matchesWhen,
+    Set<String> excludeCommands = const {},
   }) {
     final result = <SingleActivator, KeybindingBinding>{};
     for (final e in _chordToCommands.entries) {
-      final binding = _bindingFor(e.value, matchesWhen: matchesWhen);
+      final candidates = excludeCommands.isEmpty
+          ? e.value
+          : e.value.where(
+              (binding) => !excludeCommands.contains(binding.commandId),
+            );
+      final binding = _bindingFor(candidates, matchesWhen: matchesWhen);
       if (binding != null) result[e.key.toActivator()] = binding;
     }
     return result;

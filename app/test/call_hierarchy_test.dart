@@ -343,11 +343,12 @@ void main() {
       File('$base/settings.json').writeAsStringSync(
         '{"editor.stablePeek":$stablePeek}',
       );
-      if (isType) {
-        File('$base/keybindings.json').writeAsStringSync(
-          '[{"key":"ctrl+shift+f9","command":"editor.showTypeHierarchy"}]',
-        );
-      }
+      final command = isType
+          ? 'editor.showTypeHierarchy'
+          : 'editor.showCallHierarchy';
+      File('$base/keybindings.json').writeAsStringSync(
+        '[{"key":"ctrl+shift+f9","command":"$command"}]',
+      );
       await tester.pumpWidget(AlulaApp(
         autoFolder: workspace.path,
         layoutStore: LayoutStore(path: '$base/layout.json'),
@@ -368,14 +369,21 @@ void main() {
       field.controller!.selection = caret;
       await tester.pump();
 
-      final modifier =
-          isType ? LogicalKeyboardKey.controlLeft : LogicalKeyboardKey.altLeft;
-      final key = isType ? LogicalKeyboardKey.f9 : LogicalKeyboardKey.keyH;
-      await tester.sendKeyDownEvent(modifier);
+      if (!isType) {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyH);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.pumpAndSettle();
+        expect(find.byType(CallHierarchyPeek), findsNothing);
+        expect(field.controller!.selection, caret);
+      }
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
-      await tester.sendKeyEvent(key);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f9);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
-      await tester.sendKeyUpEvent(modifier);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
       await tester.pumpAndSettle();
       final hierarchy = find.byType(CallHierarchyPeek);
       expect(hierarchy, findsOneWidget);
