@@ -11,19 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/explorer_preview.dart';
+import 'helpers/file_paths.dart';
 
 final String _fixtureRoot =
     '${Directory.current.parent.path}/tests/fixtures/rust-mini';
 
-String _uriFor(String path) {
-  final normalized = path.replaceAll(r'\', '/');
-  final uriPath = normalized.startsWith(RegExp(r'[A-Za-z]:/'))
-      ? '${normalized[0].toLowerCase()}${normalized.substring(1)}'
-      : normalized;
-  return 'file:///$uriPath';
-}
-
-String _uri(String fileName) => _uriFor('$_fixtureRoot/$fileName');
+String _uri(String fileName) => workbenchFileUri('$_fixtureRoot/$fileName');
 
 void main() {
   late Directory temp;

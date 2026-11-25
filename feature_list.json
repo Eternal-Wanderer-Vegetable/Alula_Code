@@ -4189,6 +4189,18 @@
       "evidence": "命令面板按实际提供程序显示层级入口，默认调用键位改为按事件实时匹配。Windows 39 步，Linux 39 步，专题 138/138，Flutter 1,885 passed / 2 skipped。产品 77439bfa 的 CI 45666724638 四项与 Platform Availability 45666709135 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-328",
+      "name": "P05.276 CMD-11 Problems 列表打开诊断范围",
+      "description": "从诊断面板定位已打开文档中的版本化诊断范围，并保持选区、焦点与返回历史。",
+      "dependencies": [
+        "feat-327"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

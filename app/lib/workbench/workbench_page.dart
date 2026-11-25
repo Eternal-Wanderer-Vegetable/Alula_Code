@@ -15124,9 +15124,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String _pathToUri(String path) {
     final p = path.replaceAll('\\', '/');
-    return p.startsWith(RegExp(r'[A-Za-z]:/'))
-        ? 'file:///${p[0].toLowerCase()}${p.substring(1)}'
-        : 'file:///$p';
+    if (p.startsWith(RegExp(r'[A-Za-z]:/'))) {
+      return 'file:///${p[0].toLowerCase()}${p.substring(1)}';
+    }
+    return !Platform.isWindows && p.startsWith('/') ? 'file://$p' : 'file:///$p';
   }
 
   void _noteActiveDocument(
@@ -30317,6 +30318,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  OpenDoc? _diagnosticEditor(Map<String, Object?> diagnostic) {
+    final id = diagnostic['_documentId'];
+    final version = diagnostic['documentVersion'];
+    if (id is! int || version is! int) return null;
+
+    bool matches(OpenDoc view) =>
+        view.id == id && view.lspAttached && view.doc.version == version;
+
+    final current = _active;
+    if (current != null && matches(current)) return current;
+    return _allDocs.where(matches).firstOrNull;
+  }
+
+  void _openDiagnostic(Map<String, Object?> diagnostic) {
+    if (!_diagnostics.contains(diagnostic)) return;
+    final target = _diagnosticEditor(diagnostic);
+    if (target == null) return;
+    final group = _ownerOfView(target);
+    if (group == null) return;
+
+    final startLine = diagnostic['line'];
+    final startCharacter = diagnostic['character'];
+    final endLine = diagnostic['endLine'];
+    final endCharacter = diagnostic['endCharacter'];
+    if (startLine is! int ||
+        startLine < 0 ||
+        startCharacter is! int ||
+        startCharacter < 0 ||
+        endLine is! int ||
+        endLine < startLine ||
+        endCharacter is! int ||
+        endCharacter < 0) {
+      return;
+    }
+
+    _flushInput(target, commitComposition: true);
+    final version = target.doc.version;
+    if (version != diagnostic['documentVersion']) return;
+
+    final DocumentPosition start;
+    final DocumentPosition end;
+    try {
+      start = target.doc.positionOffset(startLine, startCharacter);
+      end = target.doc.positionOffset(endLine, endCharacter);
+    } on AlulaException {
+      return;
+    }
+    if (start.version != version ||
+        end.version != version ||
+        start.line != startLine ||
+        start.character != startCharacter ||
+        end.line != endLine ||
+        end.character != endCharacter ||
+        end.offsetUtf16 < start.offsetUtf16) {
+      return;
+    }
+
+    final from = _currentNavigationLocation();
+    _activateOpenEditorsRow(group, target);
+    final visible = group.active;
+    if (visible == null ||
+        visible.id != target.id ||
+        visible.doc.version != version) {
+      return;
+    }
+    if (from != null) {
+      _navigationHistory.recordNavigation(
+        from,
+        NavigationLocation(
+          uri: visible.uri,
+          path: visible.path,
+          documentId: visible.id,
+          groupRegion: group.region,
+          line: start.line,
+          character: start.character,
+          version: version,
+        ),
+      );
+    }
+    _setDocSelection(
+      visible,
+      TextSelection(baseOffset: start.offsetUtf16, extentOffset: end.offsetUtf16),
+    );
+    _focusEditorAfterLayout(group, visible);
+  }
+
   Widget _buildDiagnosticsPanel() {
     if (!_lspReady && _diagnostics.isEmpty) {
       return Center(
@@ -30335,6 +30422,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemCount: _diagnostics.length,
       itemBuilder: (context, i) {
         final d = _diagnostics[i];
+        final canOpen = _diagnosticEditor(d) != null;
         final severity = (d['severity'] as num?)?.toInt() ?? 3;
         final (icon, color) = switch (severity) {
           1 => (Icons.error, Colors.redAccent),
@@ -30343,6 +30431,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         };
         return ListTile(
           dense: true,
+          onTap: canOpen ? () => _openDiagnostic(d) : null,
           leading: Icon(icon, size: 16, color: color),
           title: Text(
             '${d['message'] ?? ''}',

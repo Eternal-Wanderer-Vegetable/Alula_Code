@@ -9,7 +9,7 @@ String workbenchFileUri(String path) {
   final uriPath = normalized.startsWith(RegExp(r'[A-Za-z]:/'))
       ? '${normalized[0].toLowerCase()}${normalized.substring(1)}'
       : normalized;
-  return 'file:///$uriPath';
+  return Uri.file(uriPath).toString();
 }
 
 Finder explorerFileNode(String path) => find.byWidgetPredicate((widget) {
