@@ -7,6 +7,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import '../bridge/alula_core.dart' show HierarchyDirection, HierarchyKind;
 import 'layout_model.dart';
 import 'secondary_sidebar_layout.dart';
 
@@ -55,26 +56,62 @@ class LayoutStore {
   }
 
   void savePeekLayout(PeekLayout layout) {
-    final path = _peekLayoutPath;
+    _writePreference(_peekLayoutPath, {
+      'previewRatio': layout.previewRatio,
+      'heightInLines': layout.heightInLines,
+    });
+  }
+
+  String _hierarchyDirectionPath(HierarchyKind kind) =>
+      '${resolvePath()}.${kind.name}-hierarchy.json';
+
+  HierarchyDirection? loadHierarchyDirection(HierarchyKind kind) {
+    try {
+      final value = jsonDecode(
+        File(_hierarchyDirectionPath(kind)).readAsStringSync(),
+      );
+      return switch ((kind, value)) {
+        (HierarchyKind.call, 'incoming') => HierarchyDirection.incoming,
+        (HierarchyKind.call, 'outgoing') => HierarchyDirection.outgoing,
+        (HierarchyKind.type, 'supertypes') => HierarchyDirection.supertypes,
+        (HierarchyKind.type, 'subtypes') => HierarchyDirection.subtypes,
+        _ => null,
+      };
+    } on FileSystemException {
+      return null;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  bool saveHierarchyDirection(HierarchyDirection direction) {
+    final kind = switch (direction) {
+      HierarchyDirection.incoming ||
+      HierarchyDirection.outgoing =>
+        HierarchyKind.call,
+      HierarchyDirection.supertypes ||
+      HierarchyDirection.subtypes =>
+        HierarchyKind.type,
+    };
+    return _writePreference(_hierarchyDirectionPath(kind), direction.name);
+  }
+
+  bool _writePreference(String path, Object value) {
     final file = File(path);
     final temporary =
         File('$path.$pid.${DateTime.now().microsecondsSinceEpoch}.tmp');
     try {
       file.parent.createSync(recursive: true);
-      temporary.writeAsStringSync(
-          jsonEncode({
-            'previewRatio': layout.previewRatio,
-            'heightInLines': layout.heightInLines,
-          }),
-          flush: true);
+      temporary.writeAsStringSync(jsonEncode(value), flush: true);
       temporary.renameSync(path);
+      return true;
     } on FileSystemException {
-      // The in-memory layout remains usable if its preference cannot be saved.
       try {
         if (temporary.existsSync()) temporary.deleteSync();
       } on FileSystemException {
         // Leave the previous preference intact.
       }
+      return false;
     }
   }
 

@@ -756,8 +756,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   _CallHierarchySession? _callHierarchy;
-  HierarchyDirection _lastCallHierarchyDirection = HierarchyDirection.incoming;
-  HierarchyDirection _lastTypeHierarchyDirection = HierarchyDirection.subtypes;
+  final _unsavedHierarchyDirections = <HierarchyKind, HierarchyDirection>{};
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
@@ -21667,8 +21666,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       session.source.doc.version == session.version;
 
   void _discardCallHierarchy() {
-    _callHierarchy?.cancel();
+    final session = _callHierarchy;
+    if (session == null) return;
+    session.cancel();
     _callHierarchy = null;
+    final kind = session.kind;
+    if (session.direction == session.initialDirection &&
+        !_unsavedHierarchyDirections.containsKey(kind)) {
+      return;
+    }
+    if (widget.layoutStore.saveHierarchyDirection(session.direction)) {
+      _unsavedHierarchyDirections.remove(kind);
+    } else {
+      _unsavedHierarchyDirections[kind] = session.direction;
+    }
   }
 
   void _closeCallHierarchy({bool restoreFocus = true}) {
@@ -21695,9 +21706,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       version: source.doc.version,
       offset: math.max(0, source.selection.baseOffset),
       kind: kind,
-      direction: kind == HierarchyKind.call
-          ? _lastCallHierarchyDirection
-          : _lastTypeHierarchyDirection,
+      direction: _unsavedHierarchyDirections[kind] ??
+          widget.layoutStore.loadHierarchyDirection(kind) ??
+          (kind == HierarchyKind.call
+              ? HierarchyDirection.incoming
+              : HierarchyDirection.subtypes),
       stablePeek: _readStablePeekSetting(),
     );
     setState(() {
@@ -21845,11 +21858,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     session.resetDirection(direction);
-    if (typeDirection) {
-      _lastTypeHierarchyDirection = direction;
-    } else {
-      _lastCallHierarchyDirection = direction;
-    }
     _syncCommandContext();
     await _expandCallHierarchyNode(
       session,
@@ -31014,7 +31022,7 @@ class _CallHierarchySession {
     required this.kind,
     required this.direction,
     required this.stablePeek,
-  });
+  }) : initialDirection = direction;
 
   static const pageSize = 50;
   static const nodeLimit = 4096;
@@ -31026,6 +31034,7 @@ class _CallHierarchySession {
   final HierarchyKind kind;
   final bool stablePeek;
   final closed = Completer<void>();
+  final HierarchyDirection initialDirection;
   HierarchyDirection direction;
   List<_CallHierarchyNode> roots = const [];
   List<_CallHierarchyTarget> targets = const [];

@@ -2,6 +2,8 @@
 // 纯 Dart IO（注入临时路径），无 FFI/无 widget。对应 docs/09 W1-4。
 import 'dart:io';
 
+import 'package:alula_app/bridge/alula_core.dart'
+    show HierarchyDirection, HierarchyKind;
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -58,6 +60,45 @@ void main() {
     // 结构非法（叶子当根）
     File(store.resolvePath()).writeAsStringSync('{"t":"leaf","region":"solo"}');
     expect(store.tryLoad(), isNull);
+  });
+
+  test('hierarchy directions round-trip independently in the profile', () {
+    final reopened = LayoutStore(path: store.resolvePath());
+    expect(reopened.loadHierarchyDirection(HierarchyKind.call), isNull);
+    expect(reopened.loadHierarchyDirection(HierarchyKind.type), isNull);
+    expect(store.saveHierarchyDirection(HierarchyDirection.outgoing), isTrue);
+    expect(
+        reopened.saveHierarchyDirection(HierarchyDirection.supertypes), isTrue);
+    expect(store.loadHierarchyDirection(HierarchyKind.call),
+        HierarchyDirection.outgoing);
+    expect(store.loadHierarchyDirection(HierarchyKind.type),
+        HierarchyDirection.supertypes);
+    expect(store.saveHierarchyDirection(HierarchyDirection.incoming), isTrue);
+    expect(reopened.loadHierarchyDirection(HierarchyKind.call),
+        HierarchyDirection.incoming);
+    expect(reopened.loadHierarchyDirection(HierarchyKind.type),
+        HierarchyDirection.supertypes);
+  });
+
+  test('damaged hierarchy preferences fall back only for their own kind', () {
+    expect(store.saveHierarchyDirection(HierarchyDirection.outgoing), isTrue);
+    final file = File('${store.resolvePath()}.type-hierarchy.json');
+    for (final value in ['{', '22', '"outgoing"', '{"direction":"subtypes"}']) {
+      file.writeAsStringSync(value);
+      expect(store.loadHierarchyDirection(HierarchyKind.type), isNull);
+      expect(store.loadHierarchyDirection(HierarchyKind.call),
+          HierarchyDirection.outgoing);
+    }
+  });
+
+  test(
+      'a failed hierarchy write leaves the existing path and no temporary file',
+      () {
+    final blocked = Directory('${store.resolvePath()}.call-hierarchy.json')
+      ..createSync();
+    expect(store.saveHierarchyDirection(HierarchyDirection.outgoing), isFalse);
+    expect(blocked.existsSync(), isTrue);
+    expect(tmp.listSync().map((entry) => entry.path), [blocked.path]);
   });
 
   test('保存不留 .tmp 半写文件（原子替换）', () {
