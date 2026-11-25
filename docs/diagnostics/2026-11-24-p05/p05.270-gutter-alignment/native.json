@@ -1,0 +1,996 @@
+{
+  "product": "25ad46701a7d15f7c49b47ed07342145eac9e70b",
+  "tree": "878dc5b531efc3a075093d0b1f3386c8f2204d77",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "878dc5b531efc3a075093d0b1f3386c8f2204d77",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "3355e4e796a3315abdcaf208c52500c3bd82a6d9e471f8b7b6e19b318a8cea74",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "58725ebc65c675f0391884caba9922d5e1736796cf09f87376602ea847079ada",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "947a21adcff5e15dde0f81fc45fd93f859f7b0319ae9117ce7e0f38617c8eb69",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "beb0c3a427da6c373750aa9376ecbc10cbcbb398d9ec76a68a642663610db8e2",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "85557c1534843eed236a53e11d3fa3a2a7850cbbbefe8e65fbf5e498e37e7eec",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed"
+  },
+  "fixtureSha256": "85557c1534843eed236a53e11d3fa3a2a7850cbbbefe8e65fbf5e498e37e7eec",
+  "acceptanceDriverSha256": "100d4e9f30d9083f5214be6e22dda5154970a1c0790846c5ed95748e4ad7fac6",
+  "diskSha256": {
+    "short.rs": "5fee0c834b714889e5974eb10b5bc4cac73108937cbd8942639fe099dd52f028",
+    "long.rs": "749ffa59fcfd87631bb6a58fa3a16829248a47cbe4d715fa725240cbf2a35f00"
+  },
+  "localLogsSha256": {
+    "p05-270-core.log": "b32682f97eb95e9d1cebb1af3f3a935e4eb1de9aceedd6d7cd5f29a9a2cf0333",
+    "p05-270-alignment-regression-red.log": "b7f77d593bd1127bed6a84d75b8a1fa04e3441dbdf0fb2ea8b2e071f54680d70",
+    "p05-270-compact-before.log": "b26cd96ed7d26453f2101e358b9202e41e8870c540112a518934d21102f72398",
+    "p05-270-alignment-after.log": "9063edad91e457cbd79e3c83ad06eaf98be2b81e43356db4536eca0ce1913d5f",
+    "p05-270-targeted.log": "16ee32d4e5ac4f0083d24afe1823350e7d066db0028e869b89de500af892e6cb",
+    "p05-270-breadcrumb-after.log": "bdfc5dc8599f140a64fd707169d75d7387bb0342550594976b9f286eefb31853",
+    "p05-270-analyze.log": "f88aadaa352a8f1785194ebec8efc882d4f269ba0ed81f20cf66b5d6cca48fdc",
+    "p05-270-focused.log": "dab2b18b07c5416f6c10c3a8a2641ebdbbfa936fd58876409041c081aaa158ac",
+    "p05-270-full.log": "7e48fdc106952c1fd3aab86fd1d07ef3708b8c1f155970d77f01a2838ffb1f30",
+    "p05-270-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-270-linux-native.log": "a37d2ea658754213c2a5a1cae1b733fa9307458b779f3246a7e24d4ada19574c",
+    "windows-core.log": "51e61c05e0c927462d8d07e472716d2df447f2004aaacb304ef8d316bc3eb1f3",
+    "windows-build.log": "c421e65a0e38bc8e94196325f281bb6479ce8d7927e0aeb618ece8942813fc07"
+  },
+  "before": {
+    "sourceCommit": "1ee668d8e2698e026433878e0b67f612a7b7b603",
+    "flutterStandardTheme": [
+      {
+        "viewportHeight": 300,
+        "logicalRows": 9,
+        "editorOrigin": 55.5,
+        "gutterTopPadding": 12,
+        "baselineDelta": -44.0
+      },
+      {
+        "viewportHeight": 300,
+        "logicalRows": 7,
+        "editorOrigin": 76.5,
+        "gutterTopPadding": 12,
+        "baselineDelta": -65.0
+      }
+    ],
+    "topAlignmentOnlyLinux": {
+      "tree": "4110e82d9800da14898ae01d42c18574a3dbfd4d",
+      "reportSha256": "1479f5f03e2106463549b3cea334fe54ccd8474a6aa59d7e94ed69ee7293271d",
+      "geometry": {
+        "editorOriginRelativeY": 8.0,
+        "sourceActualFirstBaseline": 15.3466796875,
+        "sourceMeasuredFirstBaseline": 15.3466796875,
+        "topPadding": 12.0,
+        "viewportHeight": 678.0000000000001,
+        "scroll": 0.0,
+        "logicalLines": 7,
+        "lineNumbers": [
+          26.55810546875,
+          48.55810546875,
+          69.55810546875,
+          90.55810546875,
+          111.55810546875,
+          132.55810546875,
+          153.55810546875
+        ],
+        "sourceRows": [
+          23.3466796875,
+          44.3466796875,
+          65.3466796875,
+          86.3466796875,
+          107.3466796875,
+          128.3466796875,
+          149.3466796875
+        ]
+      }
+    }
+  },
+  "afterWidget": {
+    "standardAndCompactThemeEditorOrigin": 12,
+    "baselineDelta": -0.5
+  },
+  "breadcrumbRegression": {
+    "traceSha256": "a37d43d34a9ad7698d3432f49a8f274845dad4c5e76d9fedfee729f95ef3edee",
+    "firstFullLogSha256": "a9c9e6530ea296f586afe450a42942a82b584f7c1ab705eebfb4354d1a8403b9",
+    "caretUtf16": 24,
+    "staleAnchorLeft": 805.52,
+    "currentSegmentRight": 771.77,
+    "focusedCasesPassed": 13
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 6,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "a27351217e0dab628499cd7f5b6b6a6f6a6df828a072a504f989c75a6b4eac12"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 6,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "a27351217e0dab628499cd7f5b6b6a6f6a6df828a072a504f989c75a6b4eac12"
+    }
+  },
+  "preedit": {
+    "input-build": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "a7f05375ccb0218638e08d88840a6a691d9c839371020a2781a06b70c639d044"
+    },
+    "gutter-paint": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "f01c0e192f030c4db689a2d1203405eb7b77859fbc924eae0ace4f5f77df2dfb"
+    },
+    "test-main": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "39330e194ec1fdd895e5f424a8eb211bc08b6b7bdc53618580230a589fc9be2a"
+    },
+    "_enableAndSelectBreadcrumbs": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b9b3b81584f2ed807601a36ff7f18e9cc539892b59a9a415c803912ecd6258d5"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "aotSha256": "2abf32261da5ee68b58fce6017f94f339a25b6c18b2c87441f3a9ef6c60900e0",
+    "reportSha256": "629e4da8870778cd7dd20f41ab4382517f3d8acc02b8fd20e5345e7b47701f1b",
+    "rawRunnerSha256": "80ee0aafc33b62a50fcf6de5d551ae32be9dfc8f1de359fa4468aac75963e41d",
+    "exit": 0,
+    "alignment": {
+      "ready": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.7900390625,
+        "topPadding": 12.0,
+        "viewportHeight": 448.4,
+        "scroll": 0.0
+      },
+      "resized-short": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.7900390625,
+        "topPadding": 12.0,
+        "viewportHeight": 348.3999999999999,
+        "scroll": 0.0
+      },
+      "long-open": {
+        "comparedRows": 16,
+        "maximumBaselineDelta": 0.7900390625,
+        "topPadding": 12.0,
+        "viewportHeight": 348.3999999999999,
+        "scroll": 0.0
+      },
+      "long-scrolled": {
+        "comparedRows": 16,
+        "maximumBaselineDelta": 0.7900390625,
+        "topPadding": 12.0,
+        "viewportHeight": 348.3999999999999,
+        "scroll": 809.8000000000002
+      },
+      "short-restored": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.7900390625,
+        "topPadding": 12.0,
+        "viewportHeight": 348.3999999999999,
+        "scroll": 0.0
+      }
+    },
+    "scrollCaretUtf16": 997,
+    "steps": {
+      "ready": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.353515625,
+          "sourceMeasuredFirstBaseline": 15.353515625,
+          "topPadding": 12.0,
+          "viewportHeight": 448.4,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.5634765625,
+            48.5634765625,
+            69.5634765625,
+            90.5634765625,
+            111.5634765625,
+            132.5634765625,
+            153.5634765625
+          ],
+          "sourceRows": [
+            27.353515625,
+            48.353515625,
+            69.353515625,
+            90.353515625,
+            111.353515625,
+            132.353515625,
+            153.353515625
+          ]
+        }
+      },
+      "resized-short": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.353515625,
+          "sourceMeasuredFirstBaseline": 15.353515625,
+          "topPadding": 12.0,
+          "viewportHeight": 348.3999999999999,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.5634765625,
+            48.5634765625,
+            69.5634765625,
+            90.5634765625,
+            111.5634765625,
+            132.5634765625,
+            153.5634765625
+          ],
+          "sourceRows": [
+            27.353515625,
+            48.353515625,
+            69.353515625,
+            90.353515625,
+            111.353515625,
+            132.353515625,
+            153.353515625
+          ]
+        }
+      },
+      "long-open": {
+        "editor": "long.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.353515625,
+          "sourceMeasuredFirstBaseline": 15.353515625,
+          "topPadding": 12.0,
+          "viewportHeight": 348.3999999999999,
+          "scroll": 0.0,
+          "logicalLines": 64,
+          "lineNumbers": [
+            26.5634765625,
+            47.5634765625,
+            68.5634765625,
+            89.5634765625,
+            110.5634765625,
+            131.5634765625,
+            152.5634765625,
+            173.5634765625,
+            194.5634765625,
+            215.5634765625,
+            236.5634765625,
+            257.5634765625,
+            278.5634765625,
+            299.5634765625,
+            320.5634765625,
+            341.5634765625
+          ],
+          "sourceRows": [
+            27.353515625,
+            48.353515625,
+            69.353515625,
+            90.353515625,
+            111.353515625,
+            132.353515625,
+            153.353515625,
+            174.353515625,
+            195.353515625,
+            216.353515625,
+            237.353515625,
+            258.353515625,
+            279.353515625,
+            300.353515625,
+            321.353515625,
+            342.353515625,
+            363.353515625,
+            384.353515625,
+            405.353515625,
+            426.353515625,
+            447.353515625,
+            468.353515625,
+            489.353515625,
+            510.353515625,
+            531.353515625,
+            552.353515625,
+            573.353515625,
+            594.353515625,
+            615.353515625,
+            636.353515625,
+            657.353515625,
+            678.353515625,
+            699.353515625,
+            720.353515625,
+            741.353515625,
+            762.353515625,
+            783.353515625,
+            804.353515625,
+            825.353515625,
+            846.353515625,
+            867.353515625,
+            888.353515625,
+            909.353515625,
+            930.353515625,
+            951.353515625,
+            972.353515625,
+            993.353515625,
+            1014.353515625,
+            1035.353515625,
+            1056.353515625,
+            1077.353515625,
+            1098.353515625,
+            1119.353515625,
+            1140.353515625,
+            1161.353515625,
+            1182.353515625,
+            1203.353515625,
+            1224.353515625,
+            1245.353515625,
+            1266.353515625,
+            1287.353515625,
+            1308.353515625,
+            1329.353515625,
+            1350.353515625
+          ]
+        }
+      },
+      "long-scrolled": {
+        "editor": "long.rs 主编辑器",
+        "selection": [
+          997,
+          997
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.353515625,
+          "sourceMeasuredFirstBaseline": 15.353515625,
+          "topPadding": 12.0,
+          "viewportHeight": 348.3999999999999,
+          "scroll": 809.8000000000002,
+          "logicalLines": 64,
+          "lineNumbers": [
+            14.763476562499818,
+            35.76347656249982,
+            56.76347656249982,
+            77.76347656249982,
+            98.76347656249982,
+            119.76347656249982,
+            140.76347656249982,
+            161.76347656249982,
+            182.76347656249982,
+            203.76347656249982,
+            224.76347656249982,
+            245.76347656249982,
+            266.7634765624998,
+            287.7634765624998,
+            308.7634765624998,
+            329.7634765624998,
+            350.7634765624998
+          ],
+          "sourceRows": [
+            -782.4464843750002,
+            -761.4464843750002,
+            -740.4464843750002,
+            -719.4464843750002,
+            -698.4464843750002,
+            -677.4464843750002,
+            -656.4464843750002,
+            -635.4464843750002,
+            -614.4464843750002,
+            -593.4464843750002,
+            -572.4464843750002,
+            -551.4464843750002,
+            -530.4464843750002,
+            -509.4464843750002,
+            -488.4464843750002,
+            -467.4464843750002,
+            -446.4464843750002,
+            -425.4464843750002,
+            -404.4464843750002,
+            -383.4464843750002,
+            -362.4464843750002,
+            -341.4464843750002,
+            -320.4464843750002,
+            -299.4464843750002,
+            -278.4464843750002,
+            -257.4464843750002,
+            -236.44648437500018,
+            -215.44648437500018,
+            -194.44648437500018,
+            -173.44648437500018,
+            -152.44648437500018,
+            -131.44648437500018,
+            -110.44648437500018,
+            -89.44648437500018,
+            -68.44648437500018,
+            -47.44648437500018,
+            -26.446484375000182,
+            -5.446484375000182,
+            15.553515624999818,
+            36.55351562499982,
+            57.55351562499982,
+            78.55351562499982,
+            99.55351562499982,
+            120.55351562499982,
+            141.55351562499982,
+            162.55351562499982,
+            183.55351562499982,
+            204.55351562499982,
+            225.55351562499982,
+            246.55351562499982,
+            267.5535156249998,
+            288.5535156249998,
+            309.5535156249998,
+            330.5535156249998,
+            351.5535156249998,
+            372.5535156249998,
+            393.5535156249998,
+            414.5535156249998,
+            435.5535156249998,
+            456.5535156249998,
+            477.5535156249998,
+            498.5535156249998,
+            519.5535156249998,
+            540.5535156249998
+          ]
+        }
+      },
+      "short-restored": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.353515625,
+          "sourceMeasuredFirstBaseline": 15.353515625,
+          "topPadding": 12.0,
+          "viewportHeight": 348.3999999999999,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.5634765625,
+            48.5634765625,
+            69.5634765625,
+            90.5634765625,
+            111.5634765625,
+            132.5634765625,
+            153.5634765625
+          ],
+          "sourceRows": [
+            27.353515625,
+            48.353515625,
+            69.353515625,
+            90.353515625,
+            111.353515625,
+            132.353515625,
+            153.353515625
+          ]
+        }
+      }
+    },
+    "dpi": 120,
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1525,
+          256
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1525,
+          256
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1381,
+          256
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1381,
+          256
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ]
+  },
+  "linux": {
+    "aotSha256": "af7b6030bee8dfa265256101758f4175afbd72e28d508a96eee9af8e1091d749",
+    "reportSha256": "addb47c25f345adc40a3c5e6a07435ed0f1e67cfcec89912aecfb77036178afd",
+    "rawRunnerSha256": "6bc0710ec7a2fd4958adabd3995088013b4e21c94afda45e7c9e3547cbaa6076",
+    "exit": 0,
+    "alignment": {
+      "ready": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.78857421875,
+        "topPadding": 12.0,
+        "viewportHeight": 678.0000000000001,
+        "scroll": 0.0
+      },
+      "resized-short": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.78857421875,
+        "topPadding": 12.0,
+        "viewportHeight": 578.0,
+        "scroll": 0.0
+      },
+      "long-open": {
+        "comparedRows": 26,
+        "maximumBaselineDelta": 0.78857421875,
+        "topPadding": 12.0,
+        "viewportHeight": 578.0,
+        "scroll": 0.0
+      },
+      "long-scrolled": {
+        "comparedRows": 27,
+        "maximumBaselineDelta": 0.78857421875,
+        "topPadding": 12.0,
+        "viewportHeight": 578.0,
+        "scroll": 580.0
+      },
+      "short-restored": {
+        "comparedRows": 7,
+        "maximumBaselineDelta": 0.78857421875,
+        "topPadding": 12.0,
+        "viewportHeight": 578.0,
+        "scroll": 0.0
+      }
+    },
+    "scrollCaretUtf16": 997,
+    "steps": {
+      "ready": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.3466796875,
+          "sourceMeasuredFirstBaseline": 15.3466796875,
+          "topPadding": 12.0,
+          "viewportHeight": 678.0000000000001,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.55810546875,
+            48.55810546875,
+            69.55810546875,
+            90.55810546875,
+            111.55810546875,
+            132.55810546875,
+            153.55810546875
+          ],
+          "sourceRows": [
+            27.3466796875,
+            48.3466796875,
+            69.3466796875,
+            90.3466796875,
+            111.3466796875,
+            132.3466796875,
+            153.3466796875
+          ]
+        }
+      },
+      "resized-short": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.3466796875,
+          "sourceMeasuredFirstBaseline": 15.3466796875,
+          "topPadding": 12.0,
+          "viewportHeight": 578.0,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.55810546875,
+            48.55810546875,
+            69.55810546875,
+            90.55810546875,
+            111.55810546875,
+            132.55810546875,
+            153.55810546875
+          ],
+          "sourceRows": [
+            27.3466796875,
+            48.3466796875,
+            69.3466796875,
+            90.3466796875,
+            111.3466796875,
+            132.3466796875,
+            153.3466796875
+          ]
+        }
+      },
+      "long-open": {
+        "editor": "long.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.3466796875,
+          "sourceMeasuredFirstBaseline": 15.3466796875,
+          "topPadding": 12.0,
+          "viewportHeight": 578.0,
+          "scroll": 0.0,
+          "logicalLines": 64,
+          "lineNumbers": [
+            26.55810546875,
+            47.55810546875,
+            68.55810546875,
+            89.55810546875,
+            110.55810546875,
+            131.55810546875,
+            152.55810546875,
+            173.55810546875,
+            194.55810546875,
+            215.55810546875,
+            236.55810546875,
+            257.55810546875,
+            278.55810546875,
+            299.55810546875,
+            320.55810546875,
+            341.55810546875,
+            362.55810546875,
+            383.55810546875,
+            404.55810546875,
+            425.55810546875,
+            446.55810546875,
+            467.55810546875,
+            488.55810546875,
+            509.55810546875,
+            530.55810546875,
+            551.55810546875,
+            572.55810546875
+          ],
+          "sourceRows": [
+            27.3466796875,
+            48.3466796875,
+            69.3466796875,
+            90.3466796875,
+            111.3466796875,
+            132.3466796875,
+            153.3466796875,
+            174.3466796875,
+            195.3466796875,
+            216.3466796875,
+            237.3466796875,
+            258.3466796875,
+            279.3466796875,
+            300.3466796875,
+            321.3466796875,
+            342.3466796875,
+            363.3466796875,
+            384.3466796875,
+            405.3466796875,
+            426.3466796875,
+            447.3466796875,
+            468.3466796875,
+            489.3466796875,
+            510.3466796875,
+            531.3466796875,
+            552.3466796875,
+            573.3466796875,
+            594.3466796875,
+            615.3466796875,
+            636.3466796875,
+            657.3466796875,
+            678.3466796875,
+            699.3466796875,
+            720.3466796875,
+            741.3466796875,
+            762.3466796875,
+            783.3466796875,
+            804.3466796875,
+            825.3466796875,
+            846.3466796875,
+            867.3466796875,
+            888.3466796875,
+            909.3466796875,
+            930.3466796875,
+            951.3466796875,
+            972.3466796875,
+            993.3466796875,
+            1014.3466796875,
+            1035.3466796875,
+            1056.3466796875,
+            1077.3466796875,
+            1098.3466796875,
+            1119.3466796875,
+            1140.3466796875,
+            1161.3466796875,
+            1182.3466796875,
+            1203.3466796875,
+            1224.3466796875,
+            1245.3466796875,
+            1266.3466796875,
+            1287.3466796875,
+            1308.3466796875,
+            1329.3466796875,
+            1350.3466796875
+          ]
+        }
+      },
+      "long-scrolled": {
+        "editor": "long.rs 主编辑器",
+        "selection": [
+          997,
+          997
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.3466796875,
+          "sourceMeasuredFirstBaseline": 15.3466796875,
+          "topPadding": 12.0,
+          "viewportHeight": 578.0,
+          "scroll": 580.0,
+          "logicalLines": 64,
+          "lineNumbers": [
+            13.55810546875,
+            34.55810546875,
+            55.55810546875,
+            76.55810546875,
+            97.55810546875,
+            118.55810546875,
+            139.55810546875,
+            160.55810546875,
+            181.55810546875,
+            202.55810546875,
+            223.55810546875,
+            244.55810546875,
+            265.55810546875,
+            286.55810546875,
+            307.55810546875,
+            328.55810546875,
+            349.55810546875,
+            370.55810546875,
+            391.55810546875,
+            412.55810546875,
+            433.55810546875,
+            454.55810546875,
+            475.55810546875,
+            496.55810546875,
+            517.55810546875,
+            538.55810546875,
+            559.55810546875,
+            580.55810546875
+          ],
+          "sourceRows": [
+            -552.6533203125,
+            -531.6533203125,
+            -510.6533203125,
+            -489.6533203125,
+            -468.6533203125,
+            -447.6533203125,
+            -426.6533203125,
+            -405.6533203125,
+            -384.6533203125,
+            -363.6533203125,
+            -342.6533203125,
+            -321.6533203125,
+            -300.6533203125,
+            -279.6533203125,
+            -258.6533203125,
+            -237.6533203125,
+            -216.6533203125,
+            -195.6533203125,
+            -174.6533203125,
+            -153.6533203125,
+            -132.6533203125,
+            -111.6533203125,
+            -90.6533203125,
+            -69.6533203125,
+            -48.6533203125,
+            -27.6533203125,
+            -6.6533203125,
+            14.3466796875,
+            35.3466796875,
+            56.3466796875,
+            77.3466796875,
+            98.3466796875,
+            119.3466796875,
+            140.3466796875,
+            161.3466796875,
+            182.3466796875,
+            203.3466796875,
+            224.3466796875,
+            245.3466796875,
+            266.3466796875,
+            287.3466796875,
+            308.3466796875,
+            329.3466796875,
+            350.3466796875,
+            371.3466796875,
+            392.3466796875,
+            413.3466796875,
+            434.3466796875,
+            455.3466796875,
+            476.3466796875,
+            497.3466796875,
+            518.3466796875,
+            539.3466796875,
+            560.3466796875,
+            581.3466796875,
+            602.3466796875,
+            623.3466796875,
+            644.3466796875,
+            665.3466796875,
+            686.3466796875,
+            707.3466796875,
+            728.3466796875,
+            749.3466796875,
+            770.3466796875
+          ]
+        }
+      },
+      "short-restored": {
+        "editor": "short.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "geometry": {
+          "editorOriginRelativeY": 12.0,
+          "sourceActualFirstBaseline": 15.3466796875,
+          "sourceMeasuredFirstBaseline": 15.3466796875,
+          "topPadding": 12.0,
+          "viewportHeight": 578.0,
+          "scroll": 0.0,
+          "logicalLines": 7,
+          "lineNumbers": [
+            26.55810546875,
+            48.55810546875,
+            69.55810546875,
+            90.55810546875,
+            111.55810546875,
+            132.55810546875,
+            153.55810546875
+          ],
+          "sourceRows": [
+            27.3466796875,
+            48.3466796875,
+            69.3466796875,
+            90.3466796875,
+            111.3466796875,
+            132.3466796875,
+            153.3466796875
+          ]
+        }
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "bundleCoreSha256": "ba5bc9bf74c6cdb01ecaf4d99ceb94702f3f1b63d6318d83db1850a9983d3bd3"
+  }
+}

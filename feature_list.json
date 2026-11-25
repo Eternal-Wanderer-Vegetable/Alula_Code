@@ -4125,8 +4125,8 @@
       "dependencies": [
         "feat-321"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "主编辑器正文与行号共用顶部 12 逻辑像素内边距。Windows 和 Linux 各 5 步，缩窗与滚动后基线差小于 0.8。专项 95/95，Flutter 1,879 passed / 2 skipped。产品 25ad4670 的 CI 45357649069 四项与 Platform Availability 45357642521 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-24-p05/p05.270-gutter-alignment.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
