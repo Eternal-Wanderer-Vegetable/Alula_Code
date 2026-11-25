@@ -128,6 +128,7 @@ void main() {
       more: true,
     );
     List<CallHierarchyRow> rows = const [root, first, more];
+    Object? reportedSelection;
     Object? preferred;
     StateSetter? update;
     final opens = <int>[];
@@ -141,6 +142,8 @@ void main() {
             direction: HierarchyDirection.incoming,
             loading: false,
             message: null,
+            onSelection: (index) =>
+                reportedSelection = index == null ? null : rows[index].id,
             loadPreview: (index) async => [
               (
                 number: 1,
@@ -175,9 +178,11 @@ void main() {
         .selected!;
 
     expect(selected(1), isTrue);
+    expect(reportedSelection, first.id);
     await tester.sendKeyEvent(LogicalKeyboardKey.end);
     await tester.pumpAndSettle();
     expect(selected(2), isTrue);
+    expect(reportedSelection, more.id);
     expect(find.textContaining('preview for first', findRichText: true),
         findsOneWidget);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -194,6 +199,7 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(selected(3), isTrue);
+    expect(reportedSelection, next.id);
     expect(find.textContaining('preview for next', findRichText: true),
         findsOneWidget);
 
@@ -207,6 +213,10 @@ void main() {
     update!(() => rows = const [root]);
     await tester.pumpAndSettle();
     expect(selected(0), isTrue);
+    expect(reportedSelection, root.id);
+    update!(() => rows = const []);
+    await tester.pumpAndSettle();
+    expect(reportedSelection, isNull);
   });
 
   for (final (kind, stablePeek) in [

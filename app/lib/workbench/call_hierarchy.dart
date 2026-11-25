@@ -40,6 +40,7 @@ class CallHierarchyPeek extends StatefulWidget {
     required this.onDirection,
     required this.onOpen,
     required this.onToggle,
+    this.onSelection,
     required this.onClose,
     required this.onCommandKey,
   });
@@ -53,6 +54,7 @@ class CallHierarchyPeek extends StatefulWidget {
   final VoidCallback? onDirection;
   final ValueChanged<int> onOpen;
   final ValueChanged<int> onToggle;
+  final ValueChanged<int?>? onSelection;
   final VoidCallback onClose;
   final KeyEventResult Function(KeyEvent) onCommandKey;
 
@@ -108,6 +110,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
     if (widget.rows.isEmpty) {
       _selected = 0;
       _preview = null;
+      widget.onSelection?.call(null);
       return;
     }
     final preferred =
@@ -125,6 +128,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
       oldIndex = row.parentIndex;
     }
     _selected = current < 0 ? _initialRow : current;
+    widget.onSelection?.call(_selected);
     final row = widget.rows[_selected];
     if (!row.more && (row.id != previous?.id || _preview == null)) {
       _preview = widget.loadPreview(_selected);
@@ -144,6 +148,7 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
     if (bounded != _selected) {
       setState(() {
         _selected = bounded;
+        widget.onSelection?.call(_selected);
         if (!widget.rows[bounded].more) {
           _preview = widget.loadPreview(bounded);
         }

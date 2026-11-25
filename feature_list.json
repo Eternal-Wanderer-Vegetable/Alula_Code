@@ -4141,6 +4141,18 @@
       "evidence": "调用方向和类型方向在关闭速览时分别保存。Windows 与 Linux 各 23 步，以三次进程验证写入、失败恢复和重启读回。专项 136/136，Flutter 1,882 passed / 2 skipped。产品 a4192810 的 CI 45638398979 四项与 Platform Availability 45638382365 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-25-p05/p05.271-hierarchy-directions.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-324",
+      "name": "P05.272 CMD-10 调用与类型层级重定位",
+      "description": "用 Shift+Enter 将选中的符号作为新层级根，保持方向和原提供程序，验证同文件、跨文件、导航历史与空态。",
+      "dependencies": [
+        "feat-323"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

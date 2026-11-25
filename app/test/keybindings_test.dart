@@ -17,6 +17,7 @@ void main() {
         ?.commandId;
     context.setValues({'editorTextFocus': true});
     expect(command('alt+shift+h'), 'editor.showCallHierarchy');
+    expect(command('shift+enter'), isNot('editor.refocusCallHierarchy'));
     context.setValues({
       'callHierarchyVisible': true,
       'callHierarchyHasRoots': true,
@@ -26,6 +27,7 @@ void main() {
     context.setValues({'callHierarchyIncoming': false});
     expect(command('alt+shift+h'), 'editor.showIncomingCalls');
     expect(command('escape'), 'editor.closeCallHierarchy');
+    expect(command('shift+enter'), 'editor.refocusCallHierarchy');
     context.setValues({'callHierarchyStablePeek': true});
     expect(command('escape'), isNot('editor.closeCallHierarchy'));
   });
@@ -44,9 +46,11 @@ void main() {
     });
     expect(command('alt+shift+h'), isNot('editor.showCallHierarchy'));
     expect(command('escape'), 'editor.closeTypeHierarchy');
+    expect(command('shift+enter'), isNot('editor.refocusTypeHierarchy'));
 
     context.setValues({'typeHierarchyHasRoots': true});
     expect(command('alt+shift+h'), 'editor.showSupertypes');
+    expect(command('shift+enter'), 'editor.refocusTypeHierarchy');
     context.setValues({'typeHierarchySupertypes': true});
     expect(command('alt+shift+h'), 'editor.showSubtypes');
     context.setValues({'typeHierarchyStablePeek': true});
@@ -846,7 +850,7 @@ void main() {
           .whereType<KeyChord>()
           .toSet()
           .length;
-      expect(resolved.keys.length, expectedChords + 20,
+      expect(resolved.keys.length, expectedChords + 21,
           reason: 'tree find, breadcrumbs, notifications and navigation '
               'add contextual bindings');
       expect(

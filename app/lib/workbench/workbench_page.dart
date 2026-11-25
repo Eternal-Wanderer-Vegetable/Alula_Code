@@ -756,6 +756,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   DefinitionPeekEntry? _focusedPeekResult;
   _DefinitionPeekSession? _definitionPeek;
   _CallHierarchySession? _callHierarchy;
+  int _hierarchyNavigationRevision = 0;
   final _unsavedHierarchyDirections = <HierarchyKind, HierarchyDirection>{};
   bool _steppingPeekReference = false;
   int _definitionRequestSequence = 0;
@@ -1929,6 +1930,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'callHierarchyHasRoots && callHierarchyIncoming',
     );
     reg(
+      'editor.refocusCallHierarchy',
+      '导航',
+      '重定位调用层级',
+      _refocusCallHierarchy,
+      shortcut: _keybindings.shortcutFor('editor.refocusCallHierarchy'),
+      enablement: 'callHierarchyHasRoots',
+    );
+    reg(
       'editor.closeCallHierarchy',
       '导航',
       '关闭调用层级',
@@ -1956,6 +1965,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '显示子类型',
       () => _changeCallHierarchyDirection(HierarchyDirection.subtypes),
       enablement: 'typeHierarchyHasRoots && typeHierarchySupertypes',
+    );
+    reg(
+      'editor.refocusTypeHierarchy',
+      '导航',
+      '重定位类型层级',
+      _refocusCallHierarchy,
+      shortcut: _keybindings.shortcutFor('editor.refocusTypeHierarchy'),
+      enablement: 'typeHierarchyHasRoots',
     );
     reg(
       'editor.closeTypeHierarchy',
@@ -21663,7 +21680,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       identical(_callHierarchy, session) &&
       identical(_active, session.source) &&
       _workspaceRoot == session.workspace &&
-      session.source.doc.version == session.version;
+      session.source.doc.version == session.version &&
+      _hasCurrentHierarchyProvider(session);
+
+  bool _hasCurrentHierarchyProvider(_CallHierarchySession session) {
+    final provider = session.provider;
+    return provider.doc.version == session.providerVersion &&
+        (identical(_active, provider) ||
+            _allDocViews.any(provider.sameDocumentAs));
+  }
 
   void _discardCallHierarchy() {
     final session = _callHierarchy;
@@ -21698,10 +21723,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }) async {
     final source = _active;
     if (source == null) return;
+    _hierarchyNavigationRevision++;
     if (_definitionPeek != null) _setDefinitionPeek(null);
     _flushInput(source, commitComposition: true);
     final session = _CallHierarchySession(
       source: source,
+      provider: source,
+      providerVersion: source.doc.version,
       workspace: _workspaceRoot,
       version: source.doc.version,
       offset: math.max(0, source.selection.baseOffset),
@@ -21788,14 +21816,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     HierarchyResult? result;
     String? failure;
     try {
-      result = await session.source.doc.core.lsp.expandHierarchy(
-        session.source.id,
-        session.version,
+      result = await session.provider.doc.core.lsp.expandHierarchy(
+        session.provider.id,
+        session.providerVersion,
         session.direction,
         node.item,
         cancelSignal: request.future,
       );
-      if (result?.version != session.version) {
+      if (result?.version != session.providerVersion) {
         failure = '查询已结束';
       }
     } catch (_) {
@@ -21909,10 +21937,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ));
   }
 
+  Future<void> _refocusCallHierarchy() async {
+    final session = _callHierarchy;
+    final row = session?.selectedTarget;
+    if (session == null || row == null || row.more) return;
+    await _openCallHierarchyItem(session, row, refocus: true);
+  }
+
   Future<void> _openCallHierarchyItem(
     _CallHierarchySession session,
-    _CallHierarchyTarget row,
-  ) async {
+    _CallHierarchyTarget row, {
+    bool refocus = false,
+  }) async {
     if (!_isCurrentCallHierarchy(session) || !session.targets.contains(row)) {
       return;
     }
@@ -21931,6 +21967,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final item = node.item;
     if (_pathFromFileUri(item.uri) == null) return;
+    final revision = ++_hierarchyNavigationRevision;
     _closeCallHierarchy(restoreFocus: false);
     final opened = await _navigateToDefinition(
       session.source,
@@ -21938,7 +21975,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _hierarchyTarget(item.uri, item.selectionRange),
       navigationLabel: session.title,
     );
-    if (!mounted) return;
+    if (!mounted ||
+        _disposing ||
+        revision != _hierarchyNavigationRevision ||
+        _workspaceRoot != session.workspace ||
+        (refocus && _definitionPeek != null)) {
+      return;
+    }
     final target = _active;
     if (!opened || target == null) {
       setState(() {
@@ -21946,6 +21989,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? '无法打开调用位置'
             : '无法打开类型位置';
       });
+      return;
+    }
+    if (refocus && _hasCurrentHierarchyProvider(session)) {
+      final root = _CallHierarchyNode.root(item);
+      final replacement = _CallHierarchySession(
+        source: target,
+        provider: session.provider,
+        providerVersion: session.providerVersion,
+        workspace: session.workspace,
+        version: target.doc.version,
+        offset: target.selection.baseOffset,
+        kind: session.kind,
+        direction: session.direction,
+        stablePeek: session.stablePeek,
+      )
+        ..roots = [root]
+        ..retainedCount = 1
+        ..loading = false;
+      setState(() => _callHierarchy = replacement);
+      _syncCommandContext();
+      await _expandCallHierarchyNode(replacement, root, focusFirstChild: true);
       return;
     }
     final owner = _ownerOfView(target);
@@ -21957,9 +22021,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editor.showIncomingCalls',
       'editor.showOutgoingCalls',
       'editor.closeCallHierarchy',
+      'editor.refocusCallHierarchy',
       'editor.showSupertypes',
       'editor.showSubtypes',
       'editor.closeTypeHierarchy',
+      'editor.refocusTypeHierarchy',
     };
     final chord = _handleCommandChord(event, permittedCommands: allowed);
     if (chord != KeyEventResult.ignored) return chord;
@@ -22011,6 +22077,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onOpen: (index) =>
           unawaited(_openCallHierarchyItem(session, targets[index])),
       onToggle: (index) => _toggleCallHierarchyNode(session, targets[index]),
+      onSelection: (index) =>
+          session.selectedTarget = index == null ? null : targets[index],
       onClose: _closeCallHierarchy,
       onCommandKey: _handleCallHierarchyKey,
     );
@@ -31016,6 +31084,8 @@ class _CallHierarchyNode {
 class _CallHierarchySession {
   _CallHierarchySession({
     required this.source,
+    required this.provider,
+    required this.providerVersion,
     required this.workspace,
     required this.version,
     required this.offset,
@@ -31028,6 +31098,8 @@ class _CallHierarchySession {
   static const nodeLimit = 4096;
 
   final OpenDoc source;
+  final OpenDoc provider;
+  final int providerVersion;
   final String? workspace;
   final int version;
   final int offset;
@@ -31040,6 +31112,7 @@ class _CallHierarchySession {
   List<_CallHierarchyTarget> targets = const [];
   List<CallHierarchyRow> rows = const [];
   Object? preferredSelection;
+  _CallHierarchyTarget? selectedTarget;
   bool loading = true;
   String? message;
   int retainedCount = 0;
