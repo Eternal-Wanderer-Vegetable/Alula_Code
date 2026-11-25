@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.278 / feat-330 完成。Alt+F8 与 Alt+Shift+F8 只遍历活动文档的当前版本诊断。Windows 21 步，Linux 21 步，专题 183/183，Flutter 1,886 passed / 2 skipped。产品 0d54d006 的 CI 45687891122 四项与 Platform Availability 45687880669 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md。
 - P05.277 / feat-329 完成。默认 F8 与 Shift+F8 在已打开文件的当前版本诊断之间正反循环。Windows 16 步，Linux 14 步，专题 183/183。Flutter 1,886 passed / 2 skipped。产品 eca04970 的 CI 45681779214 四项与 Platform Availability 45681769674 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md。
 - P05.276 / feat-328 完成。Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md。
 - P05.275 / feat-327 完成。命令面板按实际提供程序显示层级入口，默认调用键位改为按事件实时匹配。Windows 39 步，Linux 39 步，专题 138/138，Flutter 1,885 passed / 2 skipped。产品 77439bfa 的 CI 45666724638 四项与 Platform Availability 45666709135 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md。
@@ -295,6 +296,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.278 当前文件诊断快捷键](docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md)。
 [P05.277 跨文件诊断快捷键](docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md)。
 [P05.276 Problems 列表打开诊断范围](docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md)。
 [P05.275 命令面板和默认键位的层级提供程序条件](docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md)。
@@ -479,4 +481,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.277 收尾 CI。按 docs/03 和固定版本推进 CMD-11 当前文件诊断导航。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.278 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 面板宿主与过滤。PR #3 保持草稿，macOS 实机暂缓。

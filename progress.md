@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.278 / feat-330 完成。Alt+F8 与 Alt+Shift+F8 只遍历活动文档的当前版本诊断。Windows 21 步，Linux 21 步，专题 183/183，Flutter 1,886 passed / 2 skipped。产品 0d54d006 的 CI 45687891122 四项与 Platform Availability 45687880669 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md。
 - P05.277 / feat-329 完成。默认 F8 与 Shift+F8 在已打开文件的当前版本诊断之间正反循环。Windows 16 步，Linux 14 步，专题 183/183。Flutter 1,886 passed / 2 skipped。产品 eca04970 的 CI 45681779214 四项与 Platform Availability 45681769674 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md。
 - P05.276 / feat-328 完成。Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md。
 - P05.275 / feat-327 完成。命令面板按实际提供程序显示层级入口，默认调用键位改为按事件实时匹配。Windows 39 步，Linux 39 步，专题 138/138，Flutter 1,885 passed / 2 skipped。产品 77439bfa 的 CI 45666724638 四项与 Platform Availability 45666709135 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md。
@@ -55,7 +56,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 CMD-11 当前文件 Alt+F8 与 Alt+Shift+F8。当前 Problems 行的零基位置显示留在面板呈现项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 CMD-11 Problems 面板宿主与过滤。当前 Problems 行的零基位置显示留在面板呈现项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
