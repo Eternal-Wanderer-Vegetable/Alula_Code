@@ -4161,8 +4161,8 @@
       "dependencies": [
         "feat-324"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "调用和类型层级分别恢复两个方向的展开、分页、选中与滚动。Windows 与 Linux 各 32 步，延迟提供程序夹具 14 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 7dfa8ad8 的 CI 45649646513 四项与 Platform Availability 45649641144 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

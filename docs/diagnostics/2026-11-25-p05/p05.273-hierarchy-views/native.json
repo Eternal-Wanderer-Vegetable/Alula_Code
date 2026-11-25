@@ -1,0 +1,2912 @@
+{
+  "product": "7dfa8ad862a63002e830ed914210e94f4d1b5890",
+  "tree": "9e57275149c85d41d0eb0f659ccbf1ec1130f95b",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9e57275149c85d41d0eb0f659ccbf1ec1130f95b",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "3355e4e796a3315abdcaf208c52500c3bd82a6d9e471f8b7b6e19b318a8cea74",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "000a2347aa50f206543d4db7dd8e8aaf3e6eef1276f35c41face19e76ccfca2b",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "dfc42e48289b51a7f011ac54fa59cbfc549d586efa2fd6699b4c648a0b264664",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "f4b5d8c8d2843d2ea58e6dbdf087e924fe7a4cbaa25effde6041a61cfb55eaf4",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90"
+  },
+  "fixtureSha256": "f4b5d8c8d2843d2ea58e6dbdf087e924fe7a4cbaa25effde6041a61cfb55eaf4",
+  "acceptanceDriverSha256": "f77bf1ebf93e6ee7f70a5402181102a90b2e27891a5217087212a07892c63b7f",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/callHierarchy/browser/callHierarchyPeek.ts": "4f658f200e81a54fc72b64f8b05b8323ab1196b88df115ae3b4a406bc0d70938",
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchyPeek.ts": "13d2e7806f0103967f412a5e6cbf15402dfc2c33ab2cd5d90ad4f25e9dce1158"
+    }
+  },
+  "localLogsSha256": {
+    "p05-273-baseline-fast.log": "ee191775d630bcde454d0c5df6c6daec8fea13483fb72a0d9ae1ac01fa9fc5f2",
+    "p05-273-targeted.log": "60993affe63431e01cdae9aa8598a416d12722ca5f77edda42d5800efe704c09",
+    "p05-273-analyze.log": "1140446f9744550bfb5f0764093421759df58fec6271d5efc0da82fba588868b",
+    "p05-273-focused.log": "c702fada321e4f7b9d32eff755e6b6b703d71cf93c3f2300b6c75ad79adb2dec",
+    "p05-273-full.log": "1a436e0a58c975a588eebc1469ad0e9ce28e08255bad751ca3717fc5483c784b",
+    "p05-273-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "windows-core.log": "84eb13ba99fed608a909dc41b844e95743fed3fa0675a95acb559bbd98f74f15",
+    "windows-build.log": "ec2de9457a24ed807e02fc3ddc97b1208613fb5040d43fe0d89de8d081733282"
+  },
+  "setupRetries": {
+    "initialLinuxBuild": "797249907cf80fd1f9222ffba11e4f623038490f5b99f2ca081e27106e0ff815",
+    "initialWindowsBuild": "ffdd094f954c862b2b64a01eb11a5708e8cd6ffb4e7b82031d504969ec4fd0cf",
+    "initialMockRun": "2705ffb100b8245137d25ca908cfc15b5ca27d6dc8b3e2bea5ebce622b99f367",
+    "initialHostedPush": "789d473d188750b0799bee8da59091d3532ee07399727a0582d037e6837f23ad"
+  },
+  "mockLinux": {
+    "reportSha256": "214c0a0b9b22bec3f17abad1c9acc42dd3eff1767389864689a85c674718ce12",
+    "driverSha256": "524f6f4f7a434cc7a559edaac4a1857cf412c8a35aa17e629cd43163ec2ec7b6",
+    "runnerSha256": "606845b9050650ace2243305894cc0cf03be59d5d249c1e4fd5821bcffffb836",
+    "providerSha256": "af33b7ee8429d72278a2564f74b605b4683bc1946110b134dc6e3fd66efd0a52",
+    "providerVersion": "Alula delayed hierarchy fixture 1",
+    "providerEvents": [
+      "prepare root",
+      "incoming root id=3",
+      "outgoing root id=4",
+      "prepare root",
+      "incoming root id=6",
+      "incoming caller id=7",
+      "held id=7",
+      "outgoing root id=8",
+      "late id=7",
+      "cancel id=7",
+      "incoming caller id=9",
+      "outgoing leaf id=10",
+      "outgoing branch id=11",
+      "incoming root id=12"
+    ],
+    "staleRequest": "7",
+    "activeNodeCount": 4000,
+    "rejectedNodeCount": 100,
+    "inactiveNodeCountBeforeEviction": 162,
+    "exit": 0,
+    "steps": {
+      "ready": {
+        "editorFocused": false,
+        "selection": [
+          0,
+          0
+        ],
+        "hierarchy": null
+      },
+      "source-caret": {
+        "editorFocused": true,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": null
+      },
+      "incoming-ready": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "incoming",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "caller-0001",
+              1,
+              false
+            ],
+            [
+              "caller-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "caller",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "branch-pending": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "incoming",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "caller-0001",
+              1,
+              false
+            ],
+            [
+              "caller-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "caller",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "outgoing-after-cancel": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "outgoing",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf-0001",
+              1,
+              false
+            ],
+            [
+              "leaf-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "leaf",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "incoming-after-late-response": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "incoming",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "caller-0001",
+              1,
+              false
+            ],
+            [
+              "caller-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "caller",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "incoming-reloaded-branch": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "incoming",
+          "rowCount": 53,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              true
+            ],
+            [
+              "fresh-child",
+              2,
+              false
+            ],
+            [
+              "caller-0001",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "caller",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "outgoing-restored": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "outgoing",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              false
+            ],
+            [
+              "leaf-0001",
+              1,
+              false
+            ],
+            [
+              "leaf-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "leaf",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "outgoing-capacity-evicts-inactive": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "outgoing",
+          "rowCount": 103,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "branch",
+              2,
+              false
+            ],
+            [
+              "branch-0001",
+              2,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "leaf",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "large-tree-nested-selection": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "outgoing",
+          "rowCount": 103,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "branch",
+              2,
+              false
+            ],
+            [
+              "branch-0001",
+              2,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "branch",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "large-tree-active-limit": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "outgoing",
+          "rowCount": 103,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "leaf",
+              1,
+              true
+            ],
+            [
+              "branch",
+              2,
+              false
+            ],
+            [
+              "branch-0001",
+              2,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "branch",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": "branch"
+        }
+      },
+      "incoming-evicted-view-is-fresh": {
+        "editorFocused": false,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": {
+          "direction": "incoming",
+          "rowCount": 52,
+          "firstRows": [
+            [
+              "root",
+              0,
+              true
+            ],
+            [
+              "caller",
+              1,
+              false
+            ],
+            [
+              "caller-0001",
+              1,
+              false
+            ],
+            [
+              "caller-0002",
+              1,
+              false
+            ]
+          ],
+          "lastRow": [
+            "显示更多",
+            1,
+            null
+          ],
+          "selected": "caller",
+          "scrollOffset": 0.0,
+          "previewReady": true,
+          "focused": true,
+          "nodeLimitRow": null
+        }
+      },
+      "closed": {
+        "editorFocused": true,
+        "selection": [
+          20,
+          20
+        ],
+        "hierarchy": null
+      }
+    }
+  },
+  "windowsPrivateBytes": {
+    "reportSha256": "e7363d18a2f26b2cef20f7f96827041c81b2aa63389883c8081cb25299eff00e",
+    "runnerSha256": "4b1524ec55ec7ec16cc59de62f9f88f725ecd8e4f97eb8fb4d590a3b30781eef",
+    "memProbeSha256": "0e3e48b43b11ef340a33b043f582f20673488994d0e8cf288c9d451d1318664e",
+    "latestBaseline": {
+      "path": "docs/baselines/2026-10-26/alula-w2-empty.json",
+      "sha256": "377c455d360c18043824dd1cdbacfc08b7582fcab2aae8cfc57903e2d59764a2",
+      "steadyPrivateMiB": 189.9
+    },
+    "samples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app.exe",
+            "peak_private": 263254016,
+            "pid": 21604,
+            "ppid": 15208,
+            "private": 257941504,
+            "pss": 257941504,
+            "working_set": 160948224
+          }
+        ],
+        "root_pid": 21604,
+        "total_private_bytes": 257941504,
+        "total_private_mib": 246.0,
+        "total_working_set_bytes": 160948224
+      },
+      "initial-scrolled": {
+        "n_processes": 3,
+        "processes": [
+          {
+            "name": "alula_app.exe",
+            "peak_private": 268632064,
+            "pid": 21604,
+            "ppid": 15208,
+            "private": 225820672,
+            "pss": 225820672,
+            "working_set": 168656896
+          },
+          {
+            "name": "rust-analyzer.exe",
+            "peak_private": 485441536,
+            "pid": 42904,
+            "ppid": 21604,
+            "private": 409919488,
+            "pss": 409919488,
+            "working_set": 430051328
+          },
+          {
+            "name": "rust-analyzer-proc-macro-srv.exe",
+            "peak_private": 3166208,
+            "pid": 42640,
+            "ppid": 42904,
+            "private": 3166208,
+            "pss": 3166208,
+            "working_set": 15745024
+          }
+        ],
+        "root_pid": 21604,
+        "total_private_bytes": 638906368,
+        "total_private_mib": 609.3,
+        "total_working_set_bytes": 614453248
+      },
+      "alternate-scrolled": {
+        "n_processes": 3,
+        "processes": [
+          {
+            "name": "alula_app.exe",
+            "peak_private": 268632064,
+            "pid": 21604,
+            "ppid": 15208,
+            "private": 222953472,
+            "pss": 222953472,
+            "working_set": 168329216
+          },
+          {
+            "name": "rust-analyzer.exe",
+            "peak_private": 485441536,
+            "pid": 42904,
+            "ppid": 21604,
+            "private": 409919488,
+            "pss": 409919488,
+            "working_set": 430051328
+          },
+          {
+            "name": "rust-analyzer-proc-macro-srv.exe",
+            "peak_private": 3166208,
+            "pid": 42640,
+            "ppid": 42904,
+            "private": 3166208,
+            "pss": 3166208,
+            "working_set": 15745024
+          }
+        ],
+        "root_pid": 21604,
+        "total_private_bytes": 636039168,
+        "total_private_mib": 606.6,
+        "total_working_set_bytes": 614125568
+      },
+      "alternate-restored": {
+        "n_processes": 3,
+        "processes": [
+          {
+            "name": "alula_app.exe",
+            "peak_private": 268632064,
+            "pid": 21604,
+            "ppid": 15208,
+            "private": 215842816,
+            "pss": 215842816,
+            "working_set": 160067584
+          },
+          {
+            "name": "rust-analyzer.exe",
+            "peak_private": 485441536,
+            "pid": 42904,
+            "ppid": 21604,
+            "private": 409919488,
+            "pss": 409919488,
+            "working_set": 430051328
+          },
+          {
+            "name": "rust-analyzer-proc-macro-srv.exe",
+            "peak_private": 3166208,
+            "pid": 42640,
+            "ppid": 42904,
+            "private": 3166208,
+            "pss": 3166208,
+            "working_set": 15745024
+          }
+        ],
+        "root_pid": 21604,
+        "total_private_bytes": 628928512,
+        "total_private_mib": 599.8,
+        "total_working_set_bytes": 605863936
+      },
+      "closed-again": {
+        "n_processes": 3,
+        "processes": [
+          {
+            "name": "alula_app.exe",
+            "peak_private": 268632064,
+            "pid": 21604,
+            "ppid": 15208,
+            "private": 212430848,
+            "pss": 212430848,
+            "working_set": 156200960
+          },
+          {
+            "name": "rust-analyzer.exe",
+            "peak_private": 485441536,
+            "pid": 42904,
+            "ppid": 21604,
+            "private": 409923584,
+            "pss": 409923584,
+            "working_set": 430063616
+          },
+          {
+            "name": "rust-analyzer-proc-macro-srv.exe",
+            "peak_private": 3166208,
+            "pid": 42640,
+            "ppid": 42904,
+            "private": 3166208,
+            "pss": 3166208,
+            "working_set": 15745024
+          }
+        ],
+        "root_pid": 21604,
+        "total_private_bytes": 625520640,
+        "total_private_mib": 596.5,
+        "total_working_set_bytes": 602009600
+      }
+    }
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 13,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "6d7604d99e017f1c966e07a5da4d0b562791ab6ed594b82859c4fed317cb1121"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 13,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "6d7604d99e017f1c966e07a5da4d0b562791ab6ed594b82859c4fed317cb1121"
+    }
+  },
+  "preedit": {
+    "summary": {
+      "direct": 4,
+      "processes_affected": 2,
+      "modules_affected": 1
+    },
+    "risk": "LOW",
+    "sha256": "f9002ee53cba4ee81e01fafbc970a406aa0883257839b8b067ecc7f32b4e6d95"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "call": {
+      "reportSha256": "0807040d1b0779198d90d9cc1426c95d96ad7b10ae6835b4419e9842b082a5af",
+      "aotSha256": "95ee2c016fc618dcda58078c7f8a3bc10bb3cd81167841ca93ffeb5ab516c527",
+      "sourceSha256": {
+        "src/lib.rs": "e3adb8fced8ffc7d887a1776013d9b81344e91f48615c21efe1dfa9993a3e799",
+        "src/callers.rs": "a2b672b7255406fe8c0974bdac342b146e64cd9696800fbca2a63f87577a32b9"
+      },
+      "runnerSha256": "b3c6cdabf1193cdf17276b1f128febbe079e3c608bafa60e5c041fec36665063",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "exit": 0,
+      "sourceCaret": 20,
+      "initialScroll": 1283.0,
+      "alternateScroll": 737.0,
+      "dpi": 120,
+      "keyboardOwnershipChecks": 15,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "initial": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 52,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ],
+              [
+                "caller02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "caller",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-expanded": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "caller",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "pager-selected": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "显示更多",
+            "scrollOffset": 1153.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-page": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller50",
+            "scrollOffset": 1179.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-new": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ],
+              [
+                "leaf02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-expanded": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-restored": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-restored": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "reopened-clean": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ],
+              [
+                "leaf02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed-again": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        }
+      }
+    },
+    "type": {
+      "reportSha256": "1218ecbe06f0335e83283b24ce38acb128a07782272d8b6e1efe13cd61d22ca3",
+      "aotSha256": "95ee2c016fc618dcda58078c7f8a3bc10bb3cd81167841ca93ffeb5ab516c527",
+      "sourceSha256": {
+        "base.hpp": "7e429452f93e6b1118934ca758842c9e6c25f87e5b3475b2ceedd549d579a365",
+        "grand.hpp": "75ffb8e48d8237cb30a0a8d6712cb38fdddf0dca3f9073cdb779ae37385f3905",
+        "derived.hpp": "6103ce2d3c7cde11211bb4aa6deb2e0024571fb31cfbeb399dd9529ea0b11ec0"
+      },
+      "runnerSha256": "b3c6cdabf1193cdf17276b1f128febbe079e3c608bafa60e5c041fec36665063",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: windows+grpc\nPlatform: x86_64-pc-windows-msvc",
+      "providerSha256": "695b84de39702b15f1ba10ae2db7ed67d287d235c78796ed22e8d5c4af4e6edb",
+      "exit": 0,
+      "sourceCaret": 37,
+      "initialScroll": 1283.0,
+      "alternateScroll": 737.0,
+      "dpi": 120,
+      "keyboardOwnershipChecks": 15,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "initial": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 52,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ],
+              [
+                "Derived02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "Derived",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-expanded": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "Derived",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "pager-selected": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "显示更多",
+            "scrollOffset": 1153.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-page": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived50",
+            "scrollOffset": 1179.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-new": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ],
+              [
+                "Super02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-expanded": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Super34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-restored": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-restored": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Super34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "reopened-clean": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ],
+              [
+                "Super02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed-again": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        }
+      }
+    }
+  },
+  "linux": {
+    "call": {
+      "reportSha256": "11a6a4ce666d80c7f5f3995d1960bee9fb59b0f2516e3d91d8723f9c9984a2a4",
+      "aotSha256": "23543584aba92ae66721df144b7a1078eefac2989f1ddc308a8bad7e380a6d13",
+      "sourceSha256": {
+        "src/lib.rs": "e3adb8fced8ffc7d887a1776013d9b81344e91f48615c21efe1dfa9993a3e799",
+        "src/callers.rs": "a2b672b7255406fe8c0974bdac342b146e64cd9696800fbca2a63f87577a32b9"
+      },
+      "runnerSha256": "2b28edc1c61203e490b83a4431dcc82f3986c88b57c68c79026d91a8b424538d",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "exit": 0,
+      "sourceCaret": 20,
+      "initialScroll": 1283.0,
+      "alternateScroll": 737.0,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "keyboardOwnershipChecks": 0,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "initial": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 52,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ],
+              [
+                "caller02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "caller",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-expanded": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "caller",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "pager-selected": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "显示更多",
+            "scrollOffset": 1153.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-page": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller50",
+            "scrollOffset": 1179.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-new": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ],
+              [
+                "leaf02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-expanded": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-restored": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "incoming",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                true
+              ],
+              [
+                "outer",
+                2,
+                false
+              ],
+              [
+                "caller01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "caller54",
+              1,
+              false
+            ],
+            "selected": "caller54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-restored": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                true
+              ],
+              [
+                "lowest",
+                2,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        },
+        "reopened-clean": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": {
+            "direction": "outgoing",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ],
+              [
+                "leaf01",
+                1,
+                false
+              ],
+              [
+                "leaf02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "leaf34",
+              1,
+              false
+            ],
+            "selected": "leaf",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed-again": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "hierarchy": null
+        }
+      }
+    },
+    "type": {
+      "reportSha256": "51cf640cca6dc9ca4f04e5c576e89c2c778a41234f54848a33309afe4ff06542",
+      "aotSha256": "23543584aba92ae66721df144b7a1078eefac2989f1ddc308a8bad7e380a6d13",
+      "sourceSha256": {
+        "base.hpp": "7e429452f93e6b1118934ca758842c9e6c25f87e5b3475b2ceedd549d579a365",
+        "grand.hpp": "75ffb8e48d8237cb30a0a8d6712cb38fdddf0dca3f9073cdb779ae37385f3905",
+        "derived.hpp": "6103ce2d3c7cde11211bb4aa6deb2e0024571fb31cfbeb399dd9529ea0b11ec0"
+      },
+      "runnerSha256": "2b28edc1c61203e490b83a4431dcc82f3986c88b57c68c79026d91a8b424538d",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: linux+grpc\nPlatform: x86_64-unknown-linux-gnu",
+      "providerSha256": "8a630b1bf56ed468205ea6f59264063f5830c6cff53fe28b2157f7f321ac71c3",
+      "exit": 0,
+      "sourceCaret": 37,
+      "initialScroll": 1283.0,
+      "alternateScroll": 737.0,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "keyboardOwnershipChecks": 0,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "initial": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 52,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ],
+              [
+                "Derived02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "Derived",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-expanded": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "Derived",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "pager-selected": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 53,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "显示更多",
+              1,
+              null
+            ],
+            "selected": "显示更多",
+            "scrollOffset": 1153.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-page": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived50",
+            "scrollOffset": 1179.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-new": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ],
+              [
+                "Super02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-expanded": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-scrolled": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Super34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "initial-restored": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "subtypes",
+            "rowCount": 57,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                true
+              ],
+              [
+                "Last",
+                2,
+                false
+              ],
+              [
+                "Derived01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Derived54",
+              1,
+              false
+            ],
+            "selected": "Derived54",
+            "scrollOffset": 1283.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "alternate-restored": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 37,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                true
+              ],
+              [
+                "Top",
+                2,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Super34",
+            "scrollOffset": 737.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        },
+        "reopened-clean": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": {
+            "direction": "supertypes",
+            "rowCount": 36,
+            "firstRows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ],
+              [
+                "Super01",
+                1,
+                false
+              ],
+              [
+                "Super02",
+                1,
+                false
+              ]
+            ],
+            "lastRow": [
+              "Super34",
+              1,
+              false
+            ],
+            "selected": "Grand",
+            "scrollOffset": 0.0,
+            "previewReady": true,
+            "focused": true,
+            "nodeLimitRow": null
+          }
+        },
+        "closed-again": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "hierarchy": null
+        }
+      }
+    }
+  }
+}

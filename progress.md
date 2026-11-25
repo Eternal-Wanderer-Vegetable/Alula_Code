@@ -3,8 +3,9 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-24 更新）
+## Current State（当前状态，2026-11-26 更新）
 
+- P05.273 / feat-325 完成。调用和类型层级分别恢复两个方向的展开、分页、选中与滚动。Windows 与 Linux 各 32 步，延迟提供程序夹具 14 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 7dfa8ad8 的 CI 45649646513 四项与 Platform Availability 45649641144 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md。
 - P05.272 / feat-324 完成。Shift+Enter 将所选调用或类型作为新的层级根，保留原提供程序、方向与返回历史。Windows 与 Linux 各 24 步，专题 136/136，Flutter 1,882 passed / 2 skipped。产品 29d029ee 的 CI 45643686847 四项与 Platform Availability 45643670635 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.272-hierarchy-refocus.md。
 - P05.271 / feat-323 完成。调用方向和类型方向在关闭速览时分别保存。Windows 与 Linux 各 23 步，以三次进程验证写入、失败恢复和重启读回。专项 136/136，Flutter 1,882 passed / 2 skipped。产品 a4192810 的 CI 45638398979 四项与 Platform Availability 45638382365 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.271-hierarchy-directions.md。
 - P05.270 / feat-322 完成。done（本地、两端原生及托管通过）详见 docs/diagnostics/2026-11-24-p05/p05.270-gutter-alignment.md。
@@ -50,7 +51,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。推进 CMD-10 按方向保存调用与类型层级的树状态。520 像素整窗的标题栏溢出留在对应布局项。
+- 下一步。按固定版本核对 CMD-10 剩余入口和行为差异。520 像素整窗的标题栏溢出留在对应布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
