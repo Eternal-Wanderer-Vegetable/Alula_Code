@@ -21833,9 +21833,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     if (!current()) return;
     final entries = result?.entries ?? const <HierarchyEntry>[];
-    if (failure == null &&
-        session.retainedCount + entries.length >
-            _CallHierarchySession.nodeLimit) {
+    if (failure == null && !session.reserveNodes(entries.length)) {
       failure = '已达到${session.title}节点上限';
     }
     setState(() {
@@ -21885,13 +21883,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         typeDirection != (session.kind == HierarchyKind.type)) {
       return;
     }
-    session.resetDirection(direction);
+    setState(() => session.resetDirection(direction));
     _syncCommandContext();
-    await _expandCallHierarchyNode(
-      session,
-      session.roots.first,
-      focusFirstChild: true,
-    );
+    final root = session.roots.first;
+    if (root.children == null) {
+      await _expandCallHierarchyNode(session, root, focusFirstChild: true);
+    }
   }
 
   void _toggleCallHierarchyNode(
@@ -22068,6 +22065,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       key: ObjectKey(session),
       rows: session.rows,
       preferredSelection: session.preferredSelection,
+      viewIdentity: session.viewIdentity,
       direction: session.direction,
       loading: session.loading,
       message: session.message,
@@ -31116,6 +31114,14 @@ class _CallHierarchySession {
   bool loading = true;
   String? message;
   int retainedCount = 0;
+  Object viewIdentity = Object();
+  ({
+    List<_CallHierarchyNode> roots,
+    int retainedCount,
+    Object? selection,
+    String? message,
+    Object identity,
+  })? _inactiveView;
 
   bool get incoming => direction == HierarchyDirection.incoming;
 
@@ -31150,17 +31156,41 @@ class _CallHierarchySession {
   }
 
   void resetDirection(HierarchyDirection newDirection) {
-    direction = newDirection;
     for (final root in roots) {
       cancelBranch(root);
-      root
-        ..children = null
-        ..expanded = false
-        ..visibleChildren = pageSize
-        ..error = null;
     }
-    retainedCount = roots.length;
-    message = null;
+    final previous = _inactiveView;
+    final selection = selectedTarget;
+    _inactiveView = (
+      roots: roots,
+      retainedCount: retainedCount,
+      selection: selection == null
+          ? null
+          : selection.more
+              ? (selection.node, true)
+              : selection.node,
+      message: message,
+      identity: viewIdentity,
+    );
+    direction = newDirection;
+    roots = previous?.roots ??
+        [for (final root in roots) _CallHierarchyNode.root(root.item)];
+    retainedCount = previous?.retainedCount ?? roots.length;
+    message = previous?.message;
+    viewIdentity = previous?.identity ?? Object();
+    selectedTarget = null;
+    reserveNodes(0);
+    rebuildRows(select: previous?.selection);
+  }
+
+  bool reserveNodes(int count) {
+    final total = retainedCount + count;
+    if (total > nodeLimit) return false;
+    // Evict the inactive direction when the two views exceed the session cap.
+    if (total + (_inactiveView?.retainedCount ?? 0) > nodeLimit) {
+      _inactiveView = null;
+    }
+    return true;
   }
 
   void cancel() {

@@ -4153,6 +4153,18 @@
       "evidence": "Shift+Enter 将所选调用或类型作为新的层级根，保留原提供程序、方向与返回历史。Windows 与 Linux 各 24 步，专题 136/136，Flutter 1,882 passed / 2 skipped。产品 29d029ee 的 CI 45643686847 四项与 Platform Availability 45643670635 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-25-p05/p05.272-hierarchy-refocus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-325",
+      "name": "P05.273 CMD-10 调用与类型层级分方向树状态",
+      "description": "在单次速览内分别恢复两个方向的展开、分页、所选节点及滚动位置，取消旧请求并保持共享节点上限。",
+      "dependencies": [
+        "feat-324"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

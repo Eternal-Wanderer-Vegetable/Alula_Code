@@ -219,6 +219,108 @@ void main() {
     expect(reportedSelection, isNull);
   });
 
+  testWidgets('hierarchy restores scroll and selection for a retained view',
+      (tester) async {
+    List<CallHierarchyRow> rowsFor(String direction, int count) => [
+          for (var index = 0; index < count; index++)
+            CallHierarchyRow(
+              id: '$direction-$index',
+              name: '$direction $index',
+              detail: '',
+              depth: index == 0 ? 0 : 1,
+              parentIndex: index == 0 ? null : 0,
+            ),
+        ];
+
+    final incoming = rowsFor('incoming', 40);
+    final outgoing = rowsFor('outgoing', 38);
+    final incomingView = Object();
+    var outgoingView = Object();
+    var showIncoming = true;
+    var freshOutgoing = false;
+    Object? selected;
+    StateSetter? update;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: StatefulBuilder(builder: (context, setState) {
+          update = setState;
+          final rows = showIncoming ? incoming : outgoing;
+          return CallHierarchyPeek(
+            rows: rows,
+            preferredSelection: showIncoming
+                ? 'incoming-9'
+                : freshOutgoing
+                    ? null
+                    : 'outgoing-3',
+            viewIdentity: showIncoming ? incomingView : outgoingView,
+            direction: showIncoming
+                ? HierarchyDirection.incoming
+                : HierarchyDirection.outgoing,
+            loading: false,
+            message: null,
+            onSelection: (index) =>
+                selected = index == null ? null : rows[index].id,
+            loadPreview: (index) async => [
+              (
+                number: 1,
+                startCharacter: 0,
+                text: 'preview for ${rows[index].name}',
+                highlightStart: 0,
+                highlightEnd: 0,
+                targetCharacter: null,
+              ),
+            ],
+            onDirection: () => setState(() => showIncoming = !showIncoming),
+            onOpen: (_) {},
+            onToggle: (_) {},
+            onClose: () {},
+            onCommandKey: (_) => KeyEventResult.ignored,
+          );
+        }),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    final results = find.byKey(const ValueKey('call-hierarchy-results'));
+    final scroll = tester.widget<ListView>(results).controller!;
+    final direction = find.byKey(const ValueKey('call-hierarchy-direction'));
+
+    scroll.jumpTo(82);
+    await tester.pumpAndSettle();
+    expect(selected, 'incoming-9');
+    await tester.tap(direction);
+    await tester.pumpAndSettle();
+    expect(selected, 'outgoing-3');
+    expect(scroll.offset, 0);
+
+    scroll.jumpTo(173);
+    await tester.pumpAndSettle();
+    await tester.tap(direction);
+    await tester.pumpAndSettle();
+    expect(scroll.offset, 82);
+    expect(selected, 'incoming-9');
+    expect(find.textContaining('preview for incoming 9', findRichText: true),
+        findsOneWidget);
+
+    await tester.tap(direction);
+    await tester.pumpAndSettle();
+    expect(scroll.offset, 173);
+    expect(selected, 'outgoing-3');
+    await tester.tap(direction);
+    await tester.pumpAndSettle();
+
+    update!(() {
+      outgoingView = Object();
+      freshOutgoing = true;
+      showIncoming = false;
+    });
+    await tester.pumpAndSettle();
+    expect(scroll.offset, 0);
+    expect(selected, 'outgoing-1');
+    expect(find.textContaining('preview for outgoing 1', findRichText: true),
+        findsOneWidget);
+  });
+
   for (final (kind, stablePeek) in [
     for (final kind in HierarchyKind.values)
       for (final stablePeek in [false, true]) (kind, stablePeek),

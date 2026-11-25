@@ -33,6 +33,7 @@ class CallHierarchyPeek extends StatefulWidget {
     super.key,
     required this.rows,
     this.preferredSelection,
+    this.viewIdentity,
     required this.direction,
     required this.loading,
     required this.message,
@@ -47,6 +48,7 @@ class CallHierarchyPeek extends StatefulWidget {
 
   final List<CallHierarchyRow> rows;
   final Object? preferredSelection;
+  final Object? viewIdentity;
   final HierarchyDirection direction;
   final bool loading;
   final String? message;
@@ -66,6 +68,8 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   static const _rowHeight = 26.0;
   final _resultsFocus = FocusNode(debugLabel: 'Call hierarchy results');
   final _scroll = ScrollController();
+  final _scrollPositions =
+      <HierarchyDirection, ({Object? viewIdentity, double offset})>{};
   int _selected = 0;
   Future<List<DefinitionPeekLine>>? _preview;
 
@@ -91,13 +95,44 @@ class _CallHierarchyPeekState extends State<CallHierarchyPeek> {
   @override
   void didUpdateWidget(CallHierarchyPeek oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(widget.rows, oldWidget.rows)) {
+    final direction = widget.direction;
+    final rows = widget.rows;
+    final directionChanged = direction != oldWidget.direction;
+    final rowsChanged = !identical(rows, oldWidget.rows);
+    if (directionChanged) {
+      if (_scroll.hasClients) {
+        _scrollPositions[oldWidget.direction] = (
+          viewIdentity: oldWidget.viewIdentity,
+          offset: _scroll.offset,
+        );
+      }
+      _preview = null;
+      _focusResultsAfterLayout();
+    }
+    if (rowsChanged || directionChanged) {
       _refreshRows(oldWidget);
+      final previous = directionChanged ? _scrollPositions[direction] : null;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _revealRow(_selected);
+        if (!mounted ||
+            widget.direction != direction ||
+            !identical(widget.rows, rows)) {
+          return;
+        }
+        if (directionChanged && _scroll.hasClients) {
+          if (previous != null &&
+              identical(previous.viewIdentity, widget.viewIdentity)) {
+            _scroll.jumpTo(
+              previous.offset
+                  .clamp(0.0, _scroll.position.maxScrollExtent)
+                  .toDouble(),
+            );
+            return;
+          }
+          _scroll.jumpTo(0.0);
+        }
+        _revealRow(_selected);
       });
     }
-    if (widget.direction != oldWidget.direction) _focusResultsAfterLayout();
   }
 
   void _focusResultsAfterLayout() {
