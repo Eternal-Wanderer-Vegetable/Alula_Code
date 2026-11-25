@@ -1,0 +1,1359 @@
+{
+  "product": "a41928102429477e0f70b5fdddd72b579731da9f",
+  "tree": "17c5ce893daeeb34c1d0feb65f050fb96d6f6a7f",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "17c5ce893daeeb34c1d0feb65f050fb96d6f6a7f",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "3355e4e796a3315abdcaf208c52500c3bd82a6d9e471f8b7b6e19b318a8cea74",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "58725ebc65c675f0391884caba9922d5e1736796cf09f87376602ea847079ada",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "947a21adcff5e15dde0f81fc45fd93f859f7b0319ae9117ce7e0f38617c8eb69",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "e57ce1b9a1f7858b4e432d1f3e39a2ef3e81cf3c1a0e0f460ef9437fb9f883cd",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "055e06af80b6d1cf6e864ec4d51b5db1c4142dffd581bd2e07e93791faac63e2",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed"
+  },
+  "fixtureSha256": "055e06af80b6d1cf6e864ec4d51b5db1c4142dffd581bd2e07e93791faac63e2",
+  "acceptanceDriverSha256": "867d53bb2a0e27b723c6a161cec33828a704b929c3406e54b8577c074c253090",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/callHierarchy/browser/callHierarchy.contribution.ts": "97c434c4101bb25d1161b697b261686c18c485b3ddb7d5b13e9c6dcdb0bc318b",
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchy.contribution.ts": "124c55ac99e12112a403c051622d3402c9f9e889d0d9f7e3bdc8af069abd4cde"
+    }
+  },
+  "localLogsSha256": {
+    "p05-271-core.log": "1a381ecd9af0b754899ebb0cc7d331139637cfb32fba74ae6c8c5bbccea50679",
+    "p05-271-baseline-fast.log": "e1b4e78141c4f77706fcafaa9b1d062d17ce9a5c1a8a5b9249ac20775c8e326e",
+    "p05-271-targeted.log": "b7763e08b62a7f98abf4a8ae2c8e77197192e8138a2b8cd109c5c3d62dee5b66",
+    "p05-271-analyze.log": "52ff09b32b53b4c0d9c6a0e864ce43d6dab4386fa8d5466cea3af16fcf31fe5b",
+    "p05-271-focused.log": "e13dcf986d382e5fd6dbf88ee8eb4cd275eac03aecde10e3da058518a8e5b4d8",
+    "p05-271-full.log": "28dc8e30673c164f6133bce436cdfadd6297dec9f1c86f37bbade670f6a256e8",
+    "p05-271-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "windows-core.log": "c7fa1175f93a80fc12426e99a3b0fccd07f9bc8bc06988552c7382a759bc4b81",
+    "windows-build.log": "febf1ab33edf0f5d6bc903f8b532d557a7e9cb9d80ae08fa54601babeb73b841"
+  },
+  "windowsInitialCallFixture": {
+    "reportSha256": "e68dd0fff9431746cb6620c87d56624357ae7060dc390f1dd814cd38d8075542",
+    "logSha256": "6e1da90a98da8c89f0193dd8680be244063c297cccc354456a8808a7a2b4dfb5",
+    "cause": "isolated USERPROFILE lacked the rustup default; prepended the native toolchain to PATH"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 13,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "4c168d7b176d1cda1c1b81ca6039bd6ce77c55a1c2a2bd27ed5d65a2338b8a59"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 13,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "4c168d7b176d1cda1c1b81ca6039bd6ce77c55a1c2a2bd27ed5d65a2338b8a59"
+    }
+  },
+  "preedit": {
+    "summary": {
+      "direct": 3,
+      "processes_affected": 5,
+      "modules_affected": 3
+    },
+    "risk": "CRITICAL",
+    "sha256": "c68b40ac5f21705efdb8bcd85ceb6737aecde4ac5da98a86c7005e930535b9d4"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "record-call": {
+      "reportSha256": "a97fadd36ef3970c1a8db2bb34d367b18a3de4af8dddd8aab494bbcef7baa85f",
+      "aotSha256": "bd98a9ac61b889025cac629b58352ad65fc7dd8e0fddbccdc86d98321785086c",
+      "sourceSha256": "add9b4f957081bb7d243c6eb002b4cc8091a30346c2911e953c9444789e21ce1",
+      "runnerSha256": "41511173be3f6aa618556fe274b1469fdafd30f752657f06761aca590e3bec94",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "exit": 0,
+      "direction": "outgoing",
+      "preferenceSha256": "eb72de10a8ab4f57923229fedac22b148bc2b6ca023648ad268cc4c7f355f8a0",
+      "unchangedCloseSkippedWrite": true,
+      "dpi": 120,
+      "steps": {
+        "ready": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            71,
+            71
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "source-position": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": {
+            "root": "root",
+            "initial": [
+              "caller"
+            ],
+            "alternate": [
+              "leaf"
+            ]
+          },
+          "hierarchy": null
+        },
+        "initial-direction": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "incoming",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ]
+            ],
+            "selected": "caller",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "changed-direction": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ]
+            ],
+            "selected": "leaf",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "stored-and-closed": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "direction-reopened": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ]
+            ],
+            "selected": "leaf",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "unchanged-direction-closed": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "record-type": {
+      "reportSha256": "874acf2bd4e1c1272282c03e8051693c2575c15931dcb3168673c728efd1fa1b",
+      "aotSha256": "bd98a9ac61b889025cac629b58352ad65fc7dd8e0fddbccdc86d98321785086c",
+      "sourceSha256": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "runnerSha256": "41511173be3f6aa618556fe274b1469fdafd30f752657f06761aca590e3bec94",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: windows+grpc\nPlatform: x86_64-pc-windows-msvc",
+      "providerSha256": "695b84de39702b15f1ba10ae2db7ed67d287d235c78796ed22e8d5c4af4e6edb",
+      "exit": 0,
+      "direction": "supertypes",
+      "preferenceSha256": "cf37cab7ef909211f380b456e590df65d07038480f17c013544413798553b8be",
+      "failedWriteRecovered": true,
+      "unchangedCloseSkippedWrite": true,
+      "dpi": 120,
+      "steps": {
+        "ready": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "source-position": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": {
+            "root": "Base",
+            "initial": [
+              "Derived"
+            ],
+            "alternate": [
+              "Grand"
+            ]
+          },
+          "hierarchy": null
+        },
+        "initial-direction": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "subtypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ]
+            ],
+            "selected": "Derived",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  #include \"base.hpp\"",
+              "   2  struct Derived : Base {};",
+              "   3  struct Last : Derived {};",
+              "   4  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "changed-direction": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "write-blocked": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "unsaved-direction-reopened": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "stored-and-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "direction-reopened": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "unchanged-direction-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "restart": {
+      "reportSha256": "96c59292e949e7e0434805e0c0510aa515eb6c5c549a301afc348c071c1193fa",
+      "aotSha256": "bd98a9ac61b889025cac629b58352ad65fc7dd8e0fddbccdc86d98321785086c",
+      "sourceSha256": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "runnerSha256": "41511173be3f6aa618556fe274b1469fdafd30f752657f06761aca590e3bec94",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: windows+grpc\nPlatform: x86_64-pc-windows-msvc",
+      "providerSha256": "695b84de39702b15f1ba10ae2db7ed67d287d235c78796ed22e8d5c4af4e6edb",
+      "exit": 0,
+      "diskPreferencesUnchanged": true,
+      "dpi": 120,
+      "steps": {
+        "ready": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "type-from-disk": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": "没有可用的类型层级提供程序",
+            "rows": [],
+            "selected": null,
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": false,
+            "previewLines": [],
+            "directionBounds": [
+              880.8000000000001,
+              181.0,
+              920.8000000000001,
+              215.0
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              181.0,
+              960.8000000000001,
+              215.0
+            ]
+          }
+        },
+        "type-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "call-from-disk": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": "没有可用的调用层级提供程序",
+            "rows": [],
+            "selected": null,
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": false,
+            "previewLines": [],
+            "directionBounds": [
+              880.8000000000001,
+              181.0,
+              920.8000000000001,
+              215.0
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              181.0,
+              960.8000000000001,
+              215.0
+            ]
+          }
+        },
+        "call-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    }
+  },
+  "linux": {
+    "record-call": {
+      "reportSha256": "147905c5c586bc2bf10e61bcd397f57a3417a7a89160d81f6afdedf371f79a8f",
+      "aotSha256": "91a38eac265ddb7ea65a04871e6523d5e5e2e4bac6412f44f22e8d9a86b398e9",
+      "sourceSha256": "add9b4f957081bb7d243c6eb002b4cc8091a30346c2911e953c9444789e21ce1",
+      "runnerSha256": "9ef54cdac5f4888db6197e91e75f1bcba665968501acfd2ca489ca53186ee182",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "exit": 0,
+      "direction": "outgoing",
+      "preferenceSha256": "eb72de10a8ab4f57923229fedac22b148bc2b6ca023648ad268cc4c7f355f8a0",
+      "unchangedCloseSkippedWrite": true,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "steps": {
+        "ready": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "source-position": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": {
+            "root": "root",
+            "initial": [
+              "caller"
+            ],
+            "alternate": [
+              "leaf"
+            ]
+          },
+          "hierarchy": null
+        },
+        "initial-direction": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "incoming",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ]
+            ],
+            "selected": "caller",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "changed-direction": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ]
+            ],
+            "selected": "leaf",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "stored-and-closed": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "direction-reopened": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "leaf",
+                1,
+                false
+              ]
+            ],
+            "selected": "leaf",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn leaf() {}",
+              "   2  pub fn root() { leaf(); }",
+              "   3  pub fn caller() { root(); }",
+              "   4  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "unchanged-direction-closed": {
+          "editor": "lib.rs 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            24,
+            24
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "record-type": {
+      "reportSha256": "dcf279909952384ae97c6802371838ef9a005a90a75ec99d333aa4375ae12bed",
+      "aotSha256": "91a38eac265ddb7ea65a04871e6523d5e5e2e4bac6412f44f22e8d9a86b398e9",
+      "sourceSha256": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "runnerSha256": "9ef54cdac5f4888db6197e91e75f1bcba665968501acfd2ca489ca53186ee182",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: linux+grpc\nPlatform: x86_64-unknown-linux-gnu",
+      "providerSha256": "8a630b1bf56ed468205ea6f59264063f5830c6cff53fe28b2157f7f321ac71c3",
+      "exit": 0,
+      "direction": "supertypes",
+      "preferenceSha256": "cf37cab7ef909211f380b456e590df65d07038480f17c013544413798553b8be",
+      "failedWriteRecovered": true,
+      "unchangedCloseSkippedWrite": true,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "steps": {
+        "ready": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "source-position": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": {
+            "root": "Base",
+            "initial": [
+              "Derived"
+            ],
+            "alternate": [
+              "Grand"
+            ]
+          },
+          "hierarchy": null
+        },
+        "initial-direction": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "subtypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ]
+            ],
+            "selected": "Derived",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  #include \"base.hpp\"",
+              "   2  struct Derived : Base {};",
+              "   3  struct Last : Derived {};",
+              "   4  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "changed-direction": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "write-blocked": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "unsaved-direction-reopened": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "stored-and-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        },
+        "direction-reopened": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Grand",
+                1,
+                false
+              ]
+            ],
+            "selected": "Grand",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  struct Grand {};",
+              "   2  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "unchanged-direction-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "attached": true,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "restart": {
+      "reportSha256": "aa938d712f8d8d8d6611e0d888fe363cc16ab0c7bb312db56be7e19ec8983df6",
+      "aotSha256": "91a38eac265ddb7ea65a04871e6523d5e5e2e4bac6412f44f22e8d9a86b398e9",
+      "sourceSha256": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "runnerSha256": "9ef54cdac5f4888db6197e91e75f1bcba665968501acfd2ca489ca53186ee182",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: linux+grpc\nPlatform: x86_64-unknown-linux-gnu",
+      "providerSha256": "8a630b1bf56ed468205ea6f59264063f5830c6cff53fe28b2157f7f321ac71c3",
+      "exit": 0,
+      "diskPreferencesUnchanged": true,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "steps": {
+        "ready": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "type-from-disk": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": {
+            "direction": "supertypes",
+            "loading": false,
+            "message": "没有可用的类型层级提供程序",
+            "rows": [],
+            "selected": null,
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": false,
+            "previewLines": [],
+            "directionBounds": [
+              1015.9999999999999,
+              181.0,
+              1056.0,
+              215.0
+            ],
+            "closeBounds": [
+              1056.0,
+              181.0,
+              1096.0,
+              215.0
+            ]
+          }
+        },
+        "type-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        },
+        "call-from-disk": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": false,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": {
+            "direction": "outgoing",
+            "loading": false,
+            "message": "没有可用的调用层级提供程序",
+            "rows": [],
+            "selected": null,
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": false,
+            "previewLines": [],
+            "directionBounds": [
+              1015.9999999999999,
+              181.0,
+              1056.0,
+              215.0
+            ],
+            "closeBounds": [
+              1056.0,
+              181.0,
+              1096.0,
+              215.0
+            ]
+          }
+        },
+        "call-closed": {
+          "editor": "base.hpp 主编辑器",
+          "editorFocused": true,
+          "selection": [
+            54,
+            54
+          ],
+          "attached": false,
+          "provider": null,
+          "hierarchy": null
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ Last Updated: 2026-11-24
 
 ## Current State
 
+- P05.271 / feat-323 完成。调用方向和类型方向在关闭速览时分别保存。Windows 与 Linux 各 23 步，以三次进程验证写入、失败恢复和重启读回。专项 136/136，Flutter 1,882 passed / 2 skipped。产品 a4192810 的 CI 45638398979 四项与 Platform Availability 45638382365 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.271-hierarchy-directions.md。
 - P05.270 / feat-322 完成。done（本地、两端原生及托管通过）详见 docs/diagnostics/2026-11-24-p05/p05.270-gutter-alignment.md。
 - P05.269 / feat-321 完成。类型层级提供速览、父子类型切换、分支导航及 Esc 关闭。Windows 和 Linux 各 18 步，实际 clangd 返回父子类型。专项 192/192，Flutter 1,878 passed / 2 skipped。产品 1ee668d8 的 CI 45351036934 四项与 Platform Availability 45351031826 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.269-type-hierarchy.md。
 - P05.268 / feat-320 完成。调用层级补齐懒加载、父子焦点、分支折叠和分页。Windows 与 Linux 各 19 步使用实际 rust-analyzer，55 项按 50 项分页。专项 189/189，Flutter 1,875 passed / 2 skipped。产品 235ecb40 的 CI 45345947769 四项与 Platform Availability 45345943784 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md。
@@ -288,6 +289,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.271 调用与类型层级方向持久化](docs/diagnostics/2026-11-25-p05/p05.271-hierarchy-directions.md)。
 [P05.270 主编辑器正文与行号对齐](docs/diagnostics/2026-11-24-p05/p05.270-gutter-alignment.md)。
 [P05.269 类型层级速览、方向与导航](docs/diagnostics/2026-11-24-p05/p05.269-type-hierarchy.md)。
 [P05.268 调用层级子节点、焦点与分页](docs/diagnostics/2026-11-24-p05/p05.268-call-hierarchy-tree.md)。
@@ -465,4 +467,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.270 收尾 CI。按 docs/03 和固定版本推进 CMD-10 调用和类型层级重定位及方向持久化。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.271 收尾 CI。按 docs/03 和固定版本推进 CMD-10 调用与类型层级的重定位。PR #3 保持草稿，macOS 实机暂缓。
