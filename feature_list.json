@@ -4257,8 +4257,8 @@
       "dependencies": [
         "feat-332"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 的错误、警告和信息可独立切换，并与文本筛选共同生效。Windows、Linux 各通过协议夹具 21 步和真实 rust-analyzer 8 步。专题 184/184，Flutter 1,888 passed / 2 skipped。产品 737e59ba 的 CI 45707598317 四项与 Platform Availability 45707591586 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.281-problems-severity.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

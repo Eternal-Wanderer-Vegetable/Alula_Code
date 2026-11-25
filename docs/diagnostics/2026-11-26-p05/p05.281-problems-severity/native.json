@@ -1,0 +1,3350 @@
+{
+  "product": "737e59baf1a89ff7e16aa8d81fccda112b319fbd",
+  "tree": "beee40caad94bdda898e07e40332410de53d1791",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "beee40caad94bdda898e07e40332410de53d1791",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "22de0382bd997aaca0dffdfc5f395a6a0fc539e7a03d3698b295035610180d19",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "0162ae0863ae8ff7bcfe470168cb1a0720c957363406d5760b41bd5b96e05ce4",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "7b6ed017543d4252b6b60406dfd004ad5b8f33c4e8739394a17a63a6779ad697",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+    "abi": 46,
+    "nativeCoreSha256": "f6f74c08bec8c98de22fe00e9722a7ce00f4ba6f350a617b6ffa99e63ee521dd"
+  },
+  "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+  "acceptanceDriverSha256": "aaf9077cf0d40369bae067630fca868dcefbab918d52c0929b962ec96017aeac",
+  "protocolFixture": {
+    "Cargo.toml": "4a4ec9a47ed34236bc6e5fce86285dd379dd0803f85b3aa6004f1530cdd67ccb",
+    "Cargo.lock": "41538a99c3aa7b621145cf861e4452f79ea71fc8134b455507543edccaf005cf",
+    "src/main.rs": "cf46da3ddcb37ab8a25cd2f3f436a2282814749223aad5ef33e018abf577cde6"
+  },
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "source": "src/vs/workbench/contrib/markers/browser/markersView.ts",
+    "sha256": "f7db413f12fcde3f895b630ac79f93b9c8d975ce05f66b7e842a905113713f1f"
+  },
+  "localLogsSha256": {
+    "p05-281-full.log": "b0bca3b5b8191688e3de280d97cc962a3b819c8998ec4d1dffb669196d62c756",
+    "p05-281-focused.log": "ec32789f480ae80e3f49edb7d4e2af4cc690fa014f9718d7e19539e1e9127f67",
+    "p05-281-targeted.log": "5bdf487eece3f2c459836fc762c1f606f6c72ed5c3ed15514ac9b67b2c7a4de0",
+    "p05-281-analyze.log": "1e89f639e691b5d59f5bd6460ad40adb10a674bd1430e078c3d055e7730696af",
+    "p05-281-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 3,
+        "risk_level": "low"
+      },
+      "sha256": "daa4b7c6db96fbf903c2f6b458959900312a271075f76bc94acf4b2ec10c01f4"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 3,
+        "risk_level": "low"
+      },
+      "sha256": "daa4b7c6db96fbf903c2f6b458959900312a271075f76bc94acf4b2ec10c01f4"
+    }
+  },
+  "preedit": {
+    "_buildDiagnosticsPanel": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "7adf9f087deea45ddc26c915df9b10d30fa85cc5a8e9276241ba773aab2dbf53"
+    },
+    "_buildDiagnosticResults": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "5dd01fa229d8b52cf01f6adbd07ba0046fba2a9c0db50647aaa4343d5f3cf3ce"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "mixed": {
+      "tree": "beee40caad94bdda898e07e40332410de53d1791",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "efb49e9c5a359c06478b53c51c1b048043e30ff5e58c5a7eb47214d9415ac92a",
+      "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+      "runnerSha256": "40c13f0ea1b44331477b85fee27d7e915cc3f4ff1d4d0524ae2dfd46c609f862",
+      "observedInitialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS",
+      "steps": {
+        "ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "provider-raw-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "default-shows-three-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "review warning",
+              "location": "lib.rs · L0 C0",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "defaults-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "review warning",
+              "location": "lib.rs · L0 C0",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-hidden": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "intersection-excludes-warnings": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            }
+          ]
+        },
+        "only-error-text-match": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            }
+          ]
+        },
+        "only-error-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            }
+          ]
+        },
+        "all-hidden-with-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "text-clear-keeps-levels-off": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "query-remains-empty-with-levels-off": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "all-levels-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": []
+        },
+        "warning-restored-with-same-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "panel-hidden-keeps-editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "reopen-keeps-level-and-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "reopened-check-state": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-row-ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "visible-warning-opens": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            12
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "f8-visits-hidden-information": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            18,
+            23
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        }
+      },
+      "providerSha256": "ef0ac6e3c0a0943e9298bf436b50562d2d135f978de98806be54fffb6bb524b4",
+      "providerVersion": "alula-problems-severity-fixture 1",
+      "dpi": 120,
+      "nativeFocus": {
+        "ready": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-caret": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-raw-severities": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shows-three-severities": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "defaults-checked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "warning-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "intersection-excludes-warnings": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "warning-unchecked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "only-error-text-match": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "only-error-checked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "all-hidden-with-query": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "text-clear-keeps-levels-off": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "query-remains-empty-with-levels-off": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "all-levels-unchecked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "warning-restored-with-same-query": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "panel-hidden-keeps-editor-caret": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "reopen-keeps-level-and-query": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "reopened-check-state": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "warning-row-ready": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "visible-warning-opens": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "f8-visits-hidden-information": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            596
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            596
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            806
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            806
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            1752,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            866
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            866
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            746
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            746
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2111,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2111,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            806
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            806
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            1752,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            1752,
+            846
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            846
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer",
+        "needle",
+        "needle"
+      ],
+      "kind": "problemsSeverity",
+      "scenario": "mixed",
+      "sourceSha256": {
+        "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+        "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "needle error",
+          "severity": 1,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 0,
+          "line": 0,
+          "message": "review warning",
+          "severity": 2,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 19,
+          "documentVersion": 1,
+          "endCharacter": 22,
+          "endLine": 1,
+          "line": 1,
+          "message": "needle information",
+          "severity": 3,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 1,
+          "line": 1,
+          "message": "internal hint",
+          "severity": 4,
+          "source": "severity-fixture"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "review error",
+          "severity": 1,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 7,
+          "documentVersion": 1,
+          "endCharacter": 12,
+          "endLine": 0,
+          "line": 0,
+          "message": "needle warning",
+          "severity": 2,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 18,
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "review information",
+          "severity": 3,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 0,
+          "line": 0,
+          "message": "internal hint",
+          "severity": 4,
+          "source": "severity-fixture"
+        }
+      ],
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "6f22d8f8d6022cff864d8a374cb22c2d842705d715b6338932f6f210a86dff98"
+    },
+    "real": {
+      "tree": "beee40caad94bdda898e07e40332410de53d1791",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "efb49e9c5a359c06478b53c51c1b048043e30ff5e58c5a7eb47214d9415ac92a",
+      "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+      "runnerSha256": "40c13f0ea1b44331477b85fee27d7e915cc3f4ff1d4d0524ae2dfd46c609f862",
+      "observedInitialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS",
+      "steps": {
+        "ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "provider-raw-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "real-errors-show-hints-omitted": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        },
+        "real-default-levels-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        },
+        "real-hiding-errors-leaves-empty-view": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "real-errors-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                800.8,
+                422.4,
+                968.8,
+                470.4
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                800.8,
+                470.4,
+                968.8,
+                518.4
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                800.8,
+                518.4,
+                968.8,
+                566.4
+              ]
+            }
+          ],
+          "rows": []
+        },
+        "real-errors-restore": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "nativeFocus": {
+        "ready": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-caret": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-raw-severities": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "real-errors-show-hints-omitted": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "real-default-levels-checked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "real-hiding-errors-leaves-empty-view": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "real-errors-unchecked": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "real-errors-restore": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            596
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            596
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            746
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            746
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2156,
+            781
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2156,
+            781
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        },
+        {
+          "point": [
+            2076,
+            746
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            2076,
+            746
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer"
+      ],
+      "kind": "problemsSeverity",
+      "scenario": "real",
+      "sourceSha256": {
+        "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+        "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "documentVersion": 1,
+          "endCharacter": 22,
+          "endLine": 1,
+          "line": 1,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "05044070822d7a8246dd943692e018ecb06eaa18931ef7eec1a56e4dd45880d1"
+    }
+  },
+  "linux": {
+    "mixed": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "beee40caad94bdda898e07e40332410de53d1791",
+      "processTreeSamples": {
+        "ready": {
+          "n_processes": 1,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2067,
+              "ppid": 2066,
+              "private": 244965376,
+              "pss": 271734784,
+              "working_set": 323698688
+            }
+          ],
+          "root_pid": 2067,
+          "total_private_bytes": 244965376,
+          "total_private_mib": 233.6,
+          "total_working_set_bytes": 323698688
+        }
+      },
+      "aotSha256": "8a792e8bffe7d3738fad5ac8aa4e1d8f513f63be4af143d8f1327a6b832dc48f",
+      "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+      "runnerSha256": "07563d40aa05cff9d113ce1815e76f3f38438570caed6d5ce004b6e1cb05b628",
+      "steps": {
+        "ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "provider-raw-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "default-shows-three-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "review warning",
+              "location": "lib.rs · L0 C0",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "defaults-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "review warning",
+              "location": "lib.rs · L0 C0",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-hidden": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            },
+            {
+              "message": "review error",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            },
+            {
+              "message": "review information",
+              "location": "other.rs · L0 C18",
+              "canOpen": true
+            }
+          ]
+        },
+        "intersection-excludes-warnings": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "needle information",
+              "location": "lib.rs · L1 C19",
+              "canOpen": true
+            }
+          ]
+        },
+        "only-error-text-match": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            }
+          ]
+        },
+        "only-error-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle error",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            }
+          ]
+        },
+        "all-hidden-with-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "text-clear-keeps-levels-off": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "query-remains-empty-with-levels-off": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "all-levels-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": []
+        },
+        "warning-restored-with-same-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": true,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "panel-hidden-keeps-editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "reopen-keeps-level-and-query": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "reopened-check-state": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "warning-row-ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "visible-warning-opens": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            12
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        },
+        "f8-visits-hidden-information": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            18,
+            23
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "needle",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "needle warning",
+              "location": "other.rs · L0 C7",
+              "canOpen": true
+            }
+          ]
+        }
+      },
+      "providerSha256": "e9775df3b5a6f557547ec2b814137109f0f2a0c949d89c260aacb1a3623c77cf",
+      "providerVersion": "alula-problems-severity-fixture 1",
+      "characterDelayMs": 12,
+      "kind": "problemsSeverity",
+      "scenario": "mixed",
+      "sourceSha256": {
+        "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+        "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "needle error",
+          "severity": 1,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 0,
+          "line": 0,
+          "message": "review warning",
+          "severity": 2,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 19,
+          "documentVersion": 1,
+          "endCharacter": 22,
+          "endLine": 1,
+          "line": 1,
+          "message": "needle information",
+          "severity": 3,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 1,
+          "line": 1,
+          "message": "internal hint",
+          "severity": 4,
+          "source": "severity-fixture"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "review error",
+          "severity": 1,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 7,
+          "documentVersion": 1,
+          "endCharacter": 12,
+          "endLine": 0,
+          "line": 0,
+          "message": "needle warning",
+          "severity": 2,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 18,
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "review information",
+          "severity": 3,
+          "source": "severity-fixture"
+        },
+        {
+          "character": 0,
+          "documentVersion": 1,
+          "endCharacter": 3,
+          "endLine": 0,
+          "line": 0,
+          "message": "internal hint",
+          "severity": 4,
+          "source": "severity-fixture"
+        }
+      ],
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "7e5e5178d49533951a6a25b1b5d48ecba972f52bc19af335e28562ba85a72f23"
+    },
+    "real": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "beee40caad94bdda898e07e40332410de53d1791",
+      "processTreeSamples": {
+        "ready": {
+          "n_processes": 1,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1312,
+              "ppid": 1311,
+              "private": 246771712,
+              "pss": 273425408,
+              "working_set": 325595136
+            }
+          ],
+          "root_pid": 1312,
+          "total_private_bytes": 246771712,
+          "total_private_mib": 235.3,
+          "total_working_set_bytes": 325595136
+        }
+      },
+      "aotSha256": "8a792e8bffe7d3738fad5ac8aa4e1d8f513f63be4af143d8f1327a6b832dc48f",
+      "fixtureSha256": "13eba8393303f1ea781b97d8e840786dc79832f5b429a831014aa42708962e7b",
+      "runnerSha256": "07563d40aa05cff9d113ce1815e76f3f38438570caed6d5ce004b6e1cb05b628",
+      "steps": {
+        "ready": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "editor-caret": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "provider-raw-severities": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": true,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "panelTab": null,
+          "filterText": null,
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [],
+          "rows": []
+        },
+        "real-errors-show-hints-omitted": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        },
+        "real-default-levels-checked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        },
+        "real-hiding-errors-leaves-empty-view": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": []
+        },
+        "real-errors-unchecked": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": true,
+          "problemsFocused": false,
+          "severityItems": [
+            {
+              "value": 1,
+              "label": "显示错误",
+              "checked": false,
+              "bounds": [
+                1024.0,
+                623.3,
+                1192.0,
+                671.3
+              ]
+            },
+            {
+              "value": 2,
+              "label": "显示警告",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                671.3,
+                1192.0,
+                719.3
+              ]
+            },
+            {
+              "value": 3,
+              "label": "显示信息",
+              "checked": true,
+              "bounds": [
+                1024.0,
+                719.3,
+                1192.0,
+                767.3
+              ]
+            }
+          ],
+          "rows": []
+        },
+        "real-errors-restore": {
+          "editor": "other.rs 主编辑器",
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            7,
+            7
+          ],
+          "nativeWindowFocused": true,
+          "editorFocused": false,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "panelTab": 0,
+          "filterText": "",
+          "filterFocused": false,
+          "noFilterResults": false,
+          "problemsFocused": true,
+          "severityItems": [],
+          "rows": [
+            {
+              "message": "mismatched types\nexpected `u32`, found `&str`",
+              "location": "lib.rs · L1 C34",
+              "canOpen": true
+            },
+            {
+              "message": "mismatched types\nexpected `usize`, found `bool`",
+              "location": "other.rs · L0 C35",
+              "canOpen": true
+            }
+          ]
+        }
+      },
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "characterDelayMs": 12,
+      "kind": "problemsSeverity",
+      "scenario": "real",
+      "sourceSha256": {
+        "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+        "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "documentVersion": 1,
+          "endCharacter": 22,
+          "endLine": 1,
+          "line": 1,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "b79fc78cc75c0d299059dfa2d6fe5c385fef37c862976e8d0dee27118aa89748"
+    }
+  }
+}
