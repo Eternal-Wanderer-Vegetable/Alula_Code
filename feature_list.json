@@ -4173,8 +4173,8 @@
       "dependencies": [
         "feat-325"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "编辑器右键菜单按实际语言提供程序能力显示调用及类型层级，并保留标准编辑操作。ABI 46 握手，Windows 与 Linux 各 18 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 f22ed229 的 CI 45655062245 四项与 Platform Availability 45655049352 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.274-hierarchy-menu.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

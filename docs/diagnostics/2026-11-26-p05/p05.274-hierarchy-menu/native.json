@@ -1,0 +1,1174 @@
+{
+  "product": "f22ed229bd81309bc902694b2fdc9d45bde26f3b",
+  "tree": "c4f886936b70057267ccedb502883946c577c0f3",
+  "nativeBuildTree": "f88f5861482b30b7110359c9b24f5e5823a3c2f1",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "f88f5861482b30b7110359c9b24f5e5823a3c2f1",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "22de0382bd997aaca0dffdfc5f395a6a0fc539e7a03d3698b295035610180d19",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "000a2347aa50f206543d4db7dd8e8aaf3e6eef1276f35c41face19e76ccfca2b",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "1bf1764964a6ec64d5401d973818e7b216a646256631e12fcf588e42ee7bbc57",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "7c509b7e9e972fcd0136c6f043528c5db67df4509d6d1e2dd3c64772b8157965",
+    "abi": 46,
+    "nativeCoreSha256": "f6f74c08bec8c98de22fe00e9722a7ce00f4ba6f350a617b6ffa99e63ee521dd"
+  },
+  "fixtureSha256": "7c509b7e9e972fcd0136c6f043528c5db67df4509d6d1e2dd3c64772b8157965",
+  "acceptanceDriverSha256": "59f60491d142f2cde1293295e6d6e97abd216d6694e2d73e4d10f8f7a9155d86",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/callHierarchy/browser/callHierarchy.contribution.ts": "97c434c4101bb25d1161b697b261686c18c485b3ddb7d5b13e9c6dcdb0bc318b",
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchy.contribution.ts": "124c55ac99e12112a403c051622d3402c9f9e889d0d9f7e3bdc8af069abd4cde"
+    }
+  },
+  "localLogsSha256": {
+    "p05-274-core.log": "fdb13c571ae482afea111c52db762857d816b91796daa1b0b8a8dfd93eb40136",
+    "p05-274-baseline-fast.log": "3884abf39809fc504df8d59f9f4f866e0a29e5b10f0db148dbef78281d23da99",
+    "p05-274-rust-hierarchy.log": "ec77b425c8766938baa83dd3e4605713106f5476d67fe83f9a1ee84fe5509917",
+    "p05-274-rust-lsp-hierarchy.log": "c50c84fda2998baca337e72c9c13590b5fd7a77b6c45c5cdc196129fc669ff00",
+    "p05-274-abi-guard-recheck.log": "9d6d49132cb498a31b301664d4a51032c827f35beab419a55465f766c1961405",
+    "p05-274-targeted.log": "18a74cebeb94a0fa9f5b36eaf6ccdc3bbe73a43ac014edb9d3ce5e55744a8b73",
+    "p05-274-analyze.log": "7f200a1420197d8d6cfc686f0f04def3ae57669a49e7d2a1a0d3d1440c655486",
+    "p05-274-focused.log": "b82449554db6940391426613e76635629651a3c6572203094366505ef2bbdf07",
+    "p05-274-full.log": "d2e4462a6e9ec1d99bbd0853d5d03ba88599bfdcf12b490ea8016b51e8d822f0",
+    "p05-274-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "windows-core.log": "ffce5b670489df8a0a3e5e98c594a8cb9307c12419232c1ca45bda74600281fc",
+    "windows-build.log": "99d9424ba42ec9a9981d7de6d10df499a994483fe554127a9a0b24ee7fe628bf"
+  },
+  "initialCapabilityObservations": {
+    "windows-hierarchy-menu-call-report.json": {
+      "sha256": "fac955ebdf1686e7090b70671f1f48a7796c25e9390c1cd3a66bbc2b1c3c0fc9",
+      "providerResult": {
+        "root": "root",
+        "initial": [
+          "caller"
+        ],
+        "alternate": [
+          "leaf"
+        ]
+      },
+      "earlierCapabilitySnapshot": []
+    },
+    "linux-hierarchy-menu-type-report.json": {
+      "sha256": "118bbf00700a724e65b099fbfe46561446a4d49fe72db50d066081685300369b",
+      "providerResult": {
+        "root": "Base",
+        "initial": [
+          "Derived"
+        ],
+        "alternate": [
+          "Grand"
+        ]
+      },
+      "earlierCapabilitySnapshot": []
+    },
+    "oldAcceptanceDriverSha256": "b55ba44a9700f99648553fdde3970c0089ff9d737ed0721f0d75565316d6cdab"
+  },
+  "firstFullRunAbiGuardFailureSha256": "f2ee4f7427ad6bf727a8780b6948ca48f00e43a517ff3ac856471902b7644346",
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 23,
+        "affected_count": 7,
+        "changed_files": 10,
+        "risk_level": "high"
+      },
+      "sha256": "d212dd6a32f72bede103c609bbf6dbc84218f4994aebbef18af92974d7014b9f"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 23,
+        "affected_count": 7,
+        "changed_files": 10,
+        "risk_level": "high"
+      },
+      "sha256": "d212dd6a32f72bede103c609bbf6dbc84218f4994aebbef18af92974d7014b9f"
+    }
+  },
+  "preedit": {
+    "summary": {
+      "direct": 52,
+      "processes_affected": 31,
+      "modules_affected": 5
+    },
+    "risk": "CRITICAL",
+    "sha256": "511f1e42c7249a4e0fdf377faa980de503089ee7eb67136d6bd22a57b70203f2"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "call": {
+      "reportSha256": "2a71a88aeca539558dbcf47ea239164796e96616dca3d08e00bcc06f9f080864",
+      "aotSha256": "337a21fca791dfd345a354f14f936ee0ef423c995faf7fb71be31a4a2ccac79a",
+      "sourceSha256": {
+        "src/lib.rs": "08e485b15681d3e95708277dd9bbc27c1d116f6c5d09d9912338bbf00ebb975c",
+        "src/callers.rs": "4e2ffc8b6eb30538d856a96c7e53c018e34e08068ac5c27a67765f7527fa85ba"
+      },
+      "runnerSha256": "a0ae4433a14f441e44997a2f07944aee08f90e8cfbb5e6d62bc705f6b9232f46",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "exit": 0,
+      "sourceCaret": 20,
+      "capabilityNames": [
+        "call"
+      ],
+      "dpi": 120,
+      "nativeClickChecks": [
+        {
+          "point": [
+            1468,
+            370
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1468,
+            370
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": true
+        },
+        {
+          "point": [
+            1526,
+            422
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1526,
+            422
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": false
+        },
+        {
+          "point": [
+            1468,
+            370
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1468,
+            370
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": true
+        },
+        {
+          "point": [
+            1545,
+            458
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1545,
+            458
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": false
+        }
+      ],
+      "keysChecked": 5,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-without-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": {
+            "items": [
+              {
+                "type": "paste",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Paste": [
+                418.4,
+                150.1,
+                450.1412109375,
+                169.1
+              ],
+              "Select all": [
+                418.4,
+                178.1,
+                471.3208984375,
+                197.1
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "standard-select-all": {
+          "editorFocused": true,
+          "selection": [
+            0,
+            56
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret-before-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-with-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": {
+            "items": [
+              {
+                "type": "paste",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览调用层级",
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Paste": [
+                418.4,
+                150.1,
+                450.1412109375,
+                169.1
+              ],
+              "Select all": [
+                418.4,
+                178.1,
+                471.3208984375,
+                197.1
+              ],
+              "速览调用层级": [
+                418.4,
+                206.1,
+                501.49999847412107,
+                225.1
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "hierarchy-opened-from-menu": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": {
+            "direction": "incoming",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ]
+            ],
+            "selected": "caller",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn caller() { crate::root(); }",
+              "   2  pub fn outer() { caller(); }",
+              "   3  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "hierarchy-closed": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "type": {
+      "reportSha256": "916bba88e93d85bc386097a8014efee85ba312fc87ec45f26118794379520e69",
+      "aotSha256": "337a21fca791dfd345a354f14f936ee0ef423c995faf7fb71be31a4a2ccac79a",
+      "sourceSha256": {
+        "base.hpp": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+        "grand.hpp": "2847a69705f5265af7273aeeec27d3227c63257620e84c3347ac4512bbc45942",
+        "derived.hpp": "b74a5cec6e7e48d91490357a6fdd85bf870ae10d7f177846e2fb3d2c71ac59c8"
+      },
+      "runnerSha256": "a0ae4433a14f441e44997a2f07944aee08f90e8cfbb5e6d62bc705f6b9232f46",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: windows+grpc\nPlatform: x86_64-pc-windows-msvc",
+      "providerSha256": "695b84de39702b15f1ba10ae2db7ed67d287d235c78796ed22e8d5c4af4e6edb",
+      "exit": 0,
+      "sourceCaret": 37,
+      "capabilityNames": [
+        "call",
+        "type"
+      ],
+      "dpi": 120,
+      "nativeClickChecks": [
+        {
+          "point": [
+            1569,
+            370
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1569,
+            370
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": true
+        },
+        {
+          "point": [
+            1627,
+            422
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1627,
+            422
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": false
+        },
+        {
+          "point": [
+            1569,
+            370
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1569,
+            370
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": true
+        },
+        {
+          "point": [
+            1646,
+            492
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1646,
+            492
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "double": false,
+          "right": false
+        }
+      ],
+      "keysChecked": 5,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-without-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": {
+            "items": [
+              {
+                "type": "paste",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Paste": [
+                499.2,
+                150.1,
+                530.9412109375,
+                169.1
+              ],
+              "Select all": [
+                499.2,
+                178.1,
+                552.1208984375,
+                197.1
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "standard-select-all": {
+          "editorFocused": true,
+          "selection": [
+            0,
+            54
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret-before-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-with-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": {
+            "items": [
+              {
+                "type": "paste",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览调用层级",
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览类型层级",
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Paste": [
+                499.2,
+                150.1,
+                530.9412109375,
+                169.1
+              ],
+              "Select all": [
+                499.2,
+                178.1,
+                552.1208984375,
+                197.1
+              ],
+              "速览调用层级": [
+                499.2,
+                206.1,
+                582.2999984741211,
+                225.1
+              ],
+              "速览类型层级": [
+                499.2,
+                234.1,
+                582.2999984741211,
+                253.1
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "hierarchy-opened-from-menu": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": {
+            "direction": "subtypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ]
+            ],
+            "selected": "Derived",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  #include \"base.hpp\"",
+              "   2  struct Derived : Base {};",
+              "   3  struct Last : Derived {};",
+              "   4  "
+            ],
+            "directionBounds": [
+              880.8000000000001,
+              160.20000000000002,
+              920.8000000000001,
+              194.20000000000002
+            ],
+            "closeBounds": [
+              920.8000000000001,
+              160.20000000000002,
+              960.8000000000001,
+              194.20000000000002
+            ]
+          }
+        },
+        "hierarchy-closed": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": null
+        }
+      }
+    }
+  },
+  "linux": {
+    "call": {
+      "reportSha256": "b088881ebd5e752b796221f3252ec5646c6c544985d5aa87782e198fe85969d1",
+      "aotSha256": "9b0df3f6a14a562853a2fe499785ce9d9e7ea19da5a814e42781aa30c60118f3",
+      "sourceSha256": {
+        "src/lib.rs": "08e485b15681d3e95708277dd9bbc27c1d116f6c5d09d9912338bbf00ebb975c",
+        "src/callers.rs": "4e2ffc8b6eb30538d856a96c7e53c018e34e08068ac5c27a67765f7527fa85ba"
+      },
+      "runnerSha256": "74e036c6864c758f262717010aeee5a9b01bfcd4b7a6db978d433ed87db0111b",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "exit": 0,
+      "sourceCaret": 20,
+      "capabilityNames": [
+        "call"
+      ],
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "keysChecked": 0,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-without-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": {
+            "items": [
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Select all": [
+                474.0,
+                152.0,
+                528.7097778320312,
+                168.0
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "standard-select-all": {
+          "editorFocused": true,
+          "selection": [
+            0,
+            56
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret-before-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-with-provider": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": {
+            "items": [
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览调用层级",
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Select all": [
+                474.0,
+                152.0,
+                528.7097778320312,
+                168.0
+              ],
+              "速览调用层级": [
+                474.0,
+                179.0,
+                557.0999984741211,
+                197.0
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "hierarchy-opened-from-menu": {
+          "editorFocused": false,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": {
+            "direction": "incoming",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "root",
+                0,
+                true
+              ],
+              [
+                "caller",
+                1,
+                false
+              ]
+            ],
+            "selected": "caller",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  pub fn caller() { crate::root(); }",
+              "   2  pub fn outer() { caller(); }",
+              "   3  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "hierarchy-closed": {
+          "editorFocused": true,
+          "selection": [
+            20,
+            20
+          ],
+          "capabilities": [
+            "call"
+          ],
+          "menu": null,
+          "hierarchy": null
+        }
+      }
+    },
+    "type": {
+      "reportSha256": "1e269c56def32acc648e5fe718c79e71fe8e8c083d177f636323df67c9ab67c5",
+      "aotSha256": "9b0df3f6a14a562853a2fe499785ce9d9e7ea19da5a814e42781aa30c60118f3",
+      "sourceSha256": {
+        "base.hpp": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+        "grand.hpp": "2847a69705f5265af7273aeeec27d3227c63257620e84c3347ac4512bbc45942",
+        "derived.hpp": "b74a5cec6e7e48d91490357a6fdd85bf870ae10d7f177846e2fb3d2c71ac59c8"
+      },
+      "runnerSha256": "74e036c6864c758f262717010aeee5a9b01bfcd4b7a6db978d433ed87db0111b",
+      "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: linux+grpc\nPlatform: x86_64-unknown-linux-gnu",
+      "providerSha256": "8a630b1bf56ed468205ea6f59264063f5830c6cff53fe28b2157f7f321ac71c3",
+      "exit": 0,
+      "sourceCaret": 37,
+      "capabilityNames": [
+        "call",
+        "type"
+      ],
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "keysChecked": 0,
+      "steps": {
+        "ready": {
+          "editorFocused": false,
+          "selection": [
+            0,
+            0
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-without-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": {
+            "items": [
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Select all": [
+                546.0,
+                152.0,
+                600.7097778320312,
+                168.0
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "standard-select-all": {
+          "editorFocused": true,
+          "selection": [
+            0,
+            54
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "source-caret-before-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [],
+          "menu": null,
+          "hierarchy": null
+        },
+        "provider-root": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": null
+        },
+        "menu-with-provider": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": {
+            "items": [
+              {
+                "type": "selectAll",
+                "label": null,
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览调用层级",
+                "enabled": true
+              },
+              {
+                "type": "custom",
+                "label": "速览类型层级",
+                "enabled": true
+              }
+            ],
+            "bounds": {
+              "Select all": [
+                546.0,
+                152.0,
+                600.7097778320312,
+                168.0
+              ],
+              "速览调用层级": [
+                546.0,
+                179.0,
+                629.0999984741211,
+                197.0
+              ],
+              "速览类型层级": [
+                546.0,
+                207.0,
+                629.0999984741211,
+                225.0
+              ]
+            },
+            "selectAllLabel": "Select all"
+          },
+          "hierarchy": null
+        },
+        "hierarchy-opened-from-menu": {
+          "editorFocused": false,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": {
+            "direction": "subtypes",
+            "loading": false,
+            "message": null,
+            "rows": [
+              [
+                "Base",
+                0,
+                true
+              ],
+              [
+                "Derived",
+                1,
+                false
+              ]
+            ],
+            "selected": "Derived",
+            "focused": true,
+            "focusNodes": 1,
+            "previewReady": true,
+            "previewLines": [
+              "   1  #include \"base.hpp\"",
+              "   2  struct Derived : Base {};",
+              "   3  struct Last : Derived {};",
+              "   4  "
+            ],
+            "directionBounds": [
+              1015.9999999999999,
+              160.0,
+              1056.0,
+              194.0
+            ],
+            "closeBounds": [
+              1056.0,
+              160.0,
+              1096.0,
+              194.0
+            ]
+          }
+        },
+        "hierarchy-closed": {
+          "editorFocused": true,
+          "selection": [
+            37,
+            37
+          ],
+          "capabilities": [
+            "call",
+            "type"
+          ],
+          "menu": null,
+          "hierarchy": null
+        }
+      }
+    }
+  }
+}

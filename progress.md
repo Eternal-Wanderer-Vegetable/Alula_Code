@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.274 / feat-326 完成。编辑器右键菜单按实际语言提供程序能力显示调用及类型层级，并保留标准编辑操作。ABI 46 握手，Windows 与 Linux 各 18 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 f22ed229 的 CI 45655062245 四项与 Platform Availability 45655049352 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.274-hierarchy-menu.md。
 - P05.273 / feat-325 完成。调用和类型层级分别恢复两个方向的展开、分页、选中与滚动。Windows 与 Linux 各 32 步，延迟提供程序夹具 14 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 7dfa8ad8 的 CI 45649646513 四项与 Platform Availability 45649641144 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md。
 - P05.272 / feat-324 完成。Shift+Enter 将所选调用或类型作为新的层级根，保留原提供程序、方向与返回历史。Windows 与 Linux 各 24 步，专题 136/136，Flutter 1,882 passed / 2 skipped。产品 29d029ee 的 CI 45643686847 四项与 Platform Availability 45643670635 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.272-hierarchy-refocus.md。
 - P05.271 / feat-323 完成。调用方向和类型方向在关闭速览时分别保存。Windows 与 Linux 各 23 步，以三次进程验证写入、失败恢复和重启读回。专项 136/136，Flutter 1,882 passed / 2 skipped。产品 a4192810 的 CI 45638398979 四项与 Platform Availability 45638382365 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.271-hierarchy-directions.md。
@@ -51,7 +52,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本核对 CMD-10 剩余入口和行为差异。520 像素整窗的标题栏溢出留在对应布局项。
+- 下一步。核对 CMD-10 命令面板和默认键位的提供程序条件。520 像素整窗的标题栏溢出留在对应布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
