@@ -255,6 +255,7 @@ class RustTextInputField extends StatefulWidget {
     this.tabSize = 4,
     this.enableCodeFolding = false,
     this.semanticsLabel,
+    this.contextMenuBuilder,
     this.onTap,
     this.onAltClick,
     this.onColumnSelectionDrag,
@@ -295,6 +296,7 @@ class RustTextInputField extends StatefulWidget {
   final int tabSize;
   final bool enableCodeFolding;
   final String? semanticsLabel;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
   final ColumnSelectionDragChanged? onColumnSelectionDrag;
@@ -1965,6 +1967,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         inputFormatters:
             widget.inputFormatter == null ? null : [widget.inputFormatter!],
         autofocus: widget.autofocus,
+        contextMenuBuilder: widget.contextMenuBuilder ??
+            (_, state) =>
+                AdaptiveTextSelectionToolbar.editableText(editableTextState: state),
         onTap: widget.onTap,
         keyboardType: TextInputType.multiline,
         maxLines: null,

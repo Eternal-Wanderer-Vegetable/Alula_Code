@@ -63,7 +63,7 @@ fn expand(doc: u64, version: u64, direction: u8, item: &Value) -> Value {
 
 #[test]
 fn hierarchy_routes_and_cancels_versioned_provider_operations() {
-    assert_eq!(ffi::alula_abi_version(), 45);
+    assert_eq!(ffi::alula_abi_version(), 46);
     let suff = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
@@ -86,6 +86,8 @@ fn hierarchy_routes_and_cancels_versioned_provider_operations() {
             doc, offset, kind, timeout,
         ))
     };
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 1), 0);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 2), 0);
     assert_eq!(prepare(offset, 1, 3000), unsupported);
     assert_eq!(prepare(offset, 3, 3000)["error"]["code"], "InvalidArgument");
     assert_eq!(
@@ -93,6 +95,9 @@ fn hierarchy_routes_and_cancels_versioned_provider_operations() {
         true
     );
     attach(doc, &root, &trace, "hierarchy");
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 1), 1);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 2), 1);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 3), 0);
     assert_eq!(
         prepare(offset - 1, 1, 3000)["error"]["code"],
         "InvalidUtf16Offset"
@@ -196,7 +201,11 @@ fn hierarchy_routes_and_cancels_versioned_provider_operations() {
     assert_eq!(finish(pending)["status"], "cancelled");
 
     let denied = folder.join("unsupported.log");
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 1), 0);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 2), 0);
     attach(doc, &root, &denied, "no-hierarchy");
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 1), 0);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 2), 0);
     assert_eq!(prepare(offset + 1, 1, 3000), unsupported);
     assert_eq!(prepare(offset + 1, 2, 3000), unsupported);
     assert_eq!(expand(doc, 2, 4, type_item), unsupported);
@@ -205,6 +214,8 @@ fn hierarchy_routes_and_cancels_versioned_provider_operations() {
         true
     );
     assert_eq!(take(ffi::alula_doc_close(doc))["removed"], true);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 1), 0);
+    assert_eq!(ffi::alula_hierarchy_has_provider(doc, 2), 0);
 
     let wire = std::fs::read_to_string(trace).unwrap();
     let rejected = std::fs::read_to_string(denied).unwrap();

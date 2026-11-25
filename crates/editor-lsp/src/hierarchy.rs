@@ -74,21 +74,24 @@ pub struct HierarchyEntry {
 }
 
 impl LspServer {
-    fn hierarchy_request(
-        &self,
-        kind: HierarchyKind,
-        method: &'static str,
-        params: Value,
-    ) -> Result<Option<LspPendingRequest>, String> {
-        let supported = self
+    pub fn supports_hierarchy(&self, kind: HierarchyKind) -> Result<bool, String> {
+        Ok(self
             .shared
             .server_capabilities
             .lock()
             .map_err(|_| "capabilities lock poisoned")?
             .as_ref()
             .and_then(|result| result.pointer(kind.capability()))
-            .is_some_and(|provider| provider == true || provider.is_object());
-        if !supported {
+            .is_some_and(|provider| provider == true || provider.is_object()))
+    }
+
+    fn hierarchy_request(
+        &self,
+        kind: HierarchyKind,
+        method: &'static str,
+        params: Value,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        if !self.supports_hierarchy(kind)? {
             return Ok(None);
         }
         self.send_request(method, params, true).map(Some)

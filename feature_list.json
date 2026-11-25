@@ -4165,6 +4165,18 @@
       "evidence": "调用和类型层级分别恢复两个方向的展开、分页、选中与滚动。Windows 与 Linux 各 32 步，延迟提供程序夹具 14 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 7dfa8ad8 的 CI 45649646513 四项与 Platform Availability 45649641144 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-326",
+      "name": "P05.274 CMD-10 编辑器右键打开调用与类型层级",
+      "description": "在文本编辑器右键菜单中接入规范层级命令，按当前文档实际的提供程序能力显隐，保留已有编辑操作。",
+      "dependencies": [
+        "feat-325"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

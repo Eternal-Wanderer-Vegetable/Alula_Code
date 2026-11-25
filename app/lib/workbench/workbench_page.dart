@@ -28894,6 +28894,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  Widget _buildEditorHierarchyContextMenu(
+    OpenDoc doc,
+    EditableTextState editableText,
+  ) {
+    final buttons = [...editableText.contextMenuButtonItems];
+    if (identical(_active, doc) && _callHierarchy == null) {
+      final lsp = doc.doc.core.lsp;
+      for (final (kind, command, title) in const [
+        (HierarchyKind.call, 'editor.showCallHierarchy', '速览调用层级'),
+        (HierarchyKind.type, 'editor.showTypeHierarchy', '速览类型层级'),
+      ]) {
+        if (!lsp.hasHierarchyProvider(doc.id, kind)) continue;
+        buttons.add(ContextMenuButtonItem(
+          label: title,
+          onPressed: () {
+            editableText.hideToolbar();
+            if (identical(_active, doc) && lsp.hasHierarchyProvider(doc.id, kind)) {
+              _runCommand(command);
+            }
+          },
+        ));
+      }
+    }
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: editableText.contextMenuAnchors,
+      buttonItems: buttons,
+    );
+  }
+
   Widget _buildEditor(EditorGroup g, {OpenDoc? view}) {
     // 同步监听常挂（Hold 模式在 toggle 关闭时也需要监听），回调内判断开关。
     _ensureScrollSyncListeners();
@@ -29023,6 +29052,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               child: RustTextInputField(
                                 key: active.inputFieldKey,
                                 inputWindow: active.inputWindow,
+                                contextMenuBuilder: (_, state) =>
+                                    _buildEditorHierarchyContextMenu(active, state),
                                 tabSize: active.tabSize,
                                 syntaxTokens: syntaxTokens,
                                 syntaxVersion: syntaxVersion,

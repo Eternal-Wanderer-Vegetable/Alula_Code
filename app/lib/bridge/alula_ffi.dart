@@ -335,6 +335,11 @@ class AlulaFfi {
     'alula_definition_cancel',
   );
 
+  late final int Function(int, int) hierarchyHasProvider = lib
+      .lookupFunction<Uint8 Function(Uint64, Uint8), int Function(int, int)>(
+        'alula_hierarchy_has_provider',
+      );
+
   late final Pointer<Utf8> Function(int, int, int, int) _hierarchyPrepareStart =
       lib.lookupFunction<
         Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),

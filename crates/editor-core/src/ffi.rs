@@ -42,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 45;
+pub const ALULA_ABI_VERSION: u32 = 46;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -3174,6 +3174,33 @@ pub extern "C" fn alula_references_cancel(request_id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_cancel")))
 }
 
+fn hierarchy_kind(kind: u8) -> Option<HierarchyKind> {
+    match kind {
+        1 => Some(HierarchyKind::Call),
+        2 => Some(HierarchyKind::Type),
+        _ => None,
+    }
+}
+
+/// Inspect the attached provider's advertised call (1) or type (2) capability.
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_has_provider(id: u64, kind: u8) -> u8 {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Some(kind) = hierarchy_kind(kind) else {
+            return 0;
+        };
+        let server = {
+            let reg = registry_lock();
+            if reg.uri_of(id).is_none() {
+                return 0;
+            }
+            reg.lsp_of(id)
+        };
+        u8::from(server.is_some_and(|server| server.supports_hierarchy(kind).unwrap_or(false)))
+    }))
+    .unwrap_or(0)
+}
+
 /// Prepare a call (1) or type (2) hierarchy using a UTF-16 document offset.
 #[no_mangle]
 pub extern "C" fn alula_hierarchy_prepare_start(
@@ -3183,10 +3210,8 @@ pub extern "C" fn alula_hierarchy_prepare_start(
     timeout_ms: u64,
 ) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
-        let kind = match kind {
-            1 => HierarchyKind::Call,
-            2 => HierarchyKind::Type,
-            _ => return err_json("InvalidArgument", json!("unknown hierarchy kind")),
+        let Some(kind) = hierarchy_kind(kind) else {
+            return err_json("InvalidArgument", json!("unknown hierarchy kind"));
         };
         start_location_query(
             id,
@@ -3694,7 +3719,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 45);
+        assert_eq!(alula_abi_version(), 46);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

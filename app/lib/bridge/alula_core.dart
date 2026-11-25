@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 45;
+const int expectedAbiVersion = 46;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -869,6 +869,10 @@ class AlulaLsp {
       ffi.referencesCancelJson(requestId);
     }
   }
+
+  /// Read the attached provider capability without requesting hierarchy data.
+  bool hasHierarchyProvider(int id, HierarchyKind kind) =>
+      _core._ffi.hierarchyHasProvider(id, kind.nativeValue) != 0;
 
   /// Prepare a hierarchy. A completed result may contain no items.
   /// Null means the request was cancelled, stale, or timed out.
