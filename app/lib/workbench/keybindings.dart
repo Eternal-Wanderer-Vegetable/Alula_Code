@@ -259,6 +259,7 @@ class KeybindingSet {
     'view.toggleSidebar': 'ctrl+b',
     'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
+    'workbench.actions.view.problems': 'ctrl+shift+m',
     'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
@@ -512,6 +513,7 @@ class KeybindingSet {
         result['workbench.action.toggleAuxiliaryBar'] = 'cmd+alt+b';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
+        result['workbench.actions.view.problems'] = 'cmd+shift+m';
         result['editor.action.joinLines'] = 'ctrl+j';
         result['workbench.action.navigateBack'] = 'ctrl+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';

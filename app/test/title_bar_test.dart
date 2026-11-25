@@ -30,6 +30,56 @@ void main() {
     commands.dispose();
   });
 
+  testWidgets('a menu command can transfer focus to its view', (tester) async {
+    final editor = FocusNode();
+    final view = FocusNode();
+    addTearDown(editor.dispose);
+    addTearDown(view.dispose);
+    commands.register(Command(
+      id: 'test.focusView',
+      category: '查看',
+      title: '问题',
+      run: () async => view.requestFocus(),
+    ));
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            AlulaTitleBar(
+              commands: commands,
+              windowChromeDriver: window,
+              menus: const [
+                (
+                  '查看',
+                  [
+                    TitleMenuItem(
+                      '问题',
+                      commandId: 'test.focusView',
+                      restorePreviousFocus: false,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            TextField(focusNode: editor),
+            Focus(focusNode: view, child: const SizedBox(height: 32)),
+          ],
+        ),
+      ),
+    ));
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+    expect(editor.hasFocus, isTrue);
+
+    await tester.tap(find.text('查看'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('问题'));
+    await tester.pumpAndSettle();
+
+    expect(view.hasFocus, isTrue);
+  });
+
   testWidgets(
       'Linux custom title bar renders bounded controls and routes actions',
       (tester) async {

@@ -718,6 +718,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _gitDiffStaged = false;
   int _gitDiffGeneration = 0;
   final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
+  final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -1337,6 +1338,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.actions.view.problems',
+      '查看',
+      '问题',
+      () async => _openProblems(toggleWhenFocused: true),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Shift+M'
+          : 'Ctrl+Shift+M',
+      runWithArguments: (arguments) async => _openProblems(
+        toggleWhenFocused: true,
+        preserveFocus: arguments is Map && arguments['preserveFocus'] == true,
+      ),
+    );
+    reg(
+      'workbench.action.problems.focus',
+      '查看',
+      '聚焦问题',
+      () async => _openProblems(),
+    );
     reg(
       'workbench.action.showNotifications',
       '查看',
@@ -23686,6 +23706,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _gitDiffFocus.dispose();
+    _problemsPanelFocus.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
     _editorTabActionLocation.dispose();
@@ -23902,6 +23923,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             commandId: 'view.search'),
                         const TitleMenuItem('大纲(&&L)',
                             commandId: 'view.outline'),
+                        TitleMenuItem(
+                          '问题(&&M)${_sc('workbench.actions.view.problems')}',
+                          commandId: 'workbench.actions.view.problems',
+                          restorePreviousFocus: false,
+                        ),
                         TitleMenuItem.submenu('外观(&&A)', children: [
                           TitleMenuItem(
                             '切换禅模式(&&Z)',
@@ -29942,7 +29968,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildStandardPanelBody(PanelViewTab tab) {
     final original = switch (tab) {
-      PanelViewTab.diagnostics => _buildDiagnosticsPanel(),
+      PanelViewTab.diagnostics => Focus(
+          key: const ValueKey('problems-panel-focus'),
+          focusNode: _problemsPanelFocus,
+          child: _buildDiagnosticsPanel(),
+        ),
       PanelViewTab.completions => _buildCompletionPanel(),
       PanelViewTab.syntax => _buildSyntaxPanel(),
       PanelViewTab.gitDiff => _buildGitDiffPanel(),
@@ -30550,6 +30580,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (_openDiagnostic(markers[index].diagnostic)) return;
       index = (index + step) % markers.length;
     }
+  }
+
+  void _openProblems({
+    bool toggleWhenFocused = false,
+    bool preserveFocus = false,
+  }) {
+    final index = PanelViewTab.diagnostics.index;
+    if (toggleWhenFocused &&
+        !preserveFocus &&
+        _problemsPanelFocus.hasFocus &&
+        !_layout.isCollapsed('panel') &&
+        _panelTab.index == index) {
+      setState(() => _layout.toggleRegion('panel'));
+      final editor = _active;
+      if (editor != null) {
+        final group = _ownerOfView(editor);
+        if (group != null) _focusEditorAfterLayout(group, editor);
+      }
+      return;
+    }
+
+    setState(() {
+      _layout.showRegion('panel');
+      _panelTab.index = index;
+    });
+    if (preserveFocus) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          !_disposing &&
+          !_layout.isCollapsed('panel') &&
+          _panelTab.index == index) {
+        _problemsPanelFocus.requestFocus();
+      }
+    });
   }
 
   Widget _buildDiagnosticsPanel() {

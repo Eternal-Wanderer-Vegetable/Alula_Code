@@ -4225,6 +4225,18 @@
       "evidence": "Alt+F8 与 Alt+Shift+F8 只遍历活动文档的当前版本诊断。Windows 21 步，Linux 21 步，专题 183/183，Flutter 1,886 passed / 2 skipped。产品 0d54d006 的 CI 45687891122 四项与 Platform Availability 45687880669 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-331",
+      "name": "P05.279 CMD-11 Problems 面板打开、聚焦与收起",
+      "description": "通过标准快捷键、查看菜单和命令面板打开或聚焦 Problems，收起时恢复原编辑器。",
+      "dependencies": [
+        "feat-330"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

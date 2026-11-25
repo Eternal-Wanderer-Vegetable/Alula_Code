@@ -27,6 +27,7 @@ class TitleMenuItem {
   const TitleMenuItem(this.label,
       {required this.commandId,
       this.arguments,
+      this.restorePreviousFocus = true,
       this.enabled = true,
       this.checked,
       this.checkedBuilder,
@@ -38,6 +39,7 @@ class TitleMenuItem {
   const TitleMenuItem.submenu(this.label, {required this.children})
       : commandId = null,
         arguments = null,
+        restorePreviousFocus = true,
         enabled = true,
         checked = null,
         checkedBuilder = null,
@@ -48,6 +50,7 @@ class TitleMenuItem {
       : label = '',
         commandId = null,
         arguments = null,
+        restorePreviousFocus = true,
         enabled = true,
         checked = null,
         checkedBuilder = null,
@@ -58,6 +61,7 @@ class TitleMenuItem {
   final String label;
   final String? commandId;
   final Object? arguments;
+  final bool restorePreviousFocus;
 
   /// Keeps an informational menu entry visible while preventing invocation.
   final bool enabled;
@@ -434,10 +438,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       item.commandId!,
       arguments: item.arguments,
     );
-    _restoreWorkbenchFocus();
+    _restoreWorkbenchFocus(item.restorePreviousFocus);
   }
 
-  void _restoreWorkbenchFocus() {
+  void _restoreWorkbenchFocus([bool restorePreviousFocus = true]) {
     final focusToReturn = _focusToReturn;
     _focusToReturn = null;
     for (final controller in _submenuControllers.values) {
@@ -447,7 +451,9 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       if (controller.isOpen) controller.close();
     }
     if (mounted) setState(() => _mnemonicsVisible = false);
-    if (focusToReturn != null && focusToReturn.context != null) {
+    if (restorePreviousFocus &&
+        focusToReturn != null &&
+        focusToReturn.context != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && focusToReturn.context != null) {
           focusToReturn.requestFocus();
@@ -854,7 +860,11 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
           shortcut: _macPlatformMenuShortcut(command?.shortcut),
           onSelected: item.enabled && widget.commands.isEnabled(commandId)
               ? () => unawaited(
-                    _executeMacCommand(commandId, item.arguments),
+                    _executeMacCommand(
+                      commandId,
+                      arguments: item.arguments,
+                      restorePreviousFocus: item.restorePreviousFocus,
+                    ),
                   )
               : null,
         ),
@@ -864,9 +874,13 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     return result;
   }
 
-  Future<void> _executeMacCommand(String commandId, [Object? arguments]) async {
+  Future<void> _executeMacCommand(
+    String commandId, {
+    Object? arguments,
+    bool restorePreviousFocus = true,
+  }) async {
     await widget.commands.execute(commandId, arguments: arguments);
-    _restoreWorkbenchFocus();
+    _restoreWorkbenchFocus(restorePreviousFocus);
   }
 
   void _requestCloseFromMenu() {
@@ -994,7 +1008,7 @@ class _MenuButton extends StatelessWidget {
   final MenuController Function(List<int> path) submenuControllerForPath;
   final bool enableMnemonics;
   final bool persistentMnemonics;
-  final VoidCallback onCommandExecuted;
+  final ValueChanged<bool> onCommandExecuted;
 
   static const ButtonStyle _barButtonStyle = ButtonStyle(
     foregroundColor: WidgetStatePropertyAll(Color(0xFFE0E0E0)),
@@ -1104,7 +1118,7 @@ class _MenuButton extends StatelessWidget {
       item.commandId!,
       arguments: item.arguments,
     );
-    onCommandExecuted();
+    onCommandExecuted(item.restorePreviousFocus);
   }
 }
 

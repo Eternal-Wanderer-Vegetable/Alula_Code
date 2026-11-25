@@ -8,6 +8,26 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const quickOpenId = 'workbench.action.quickOpen';
 
+  test('Problems view uses the platform shortcut and supports rebindings', () {
+    const command = 'workbench.actions.view.problems';
+    for (final (platform, chord, otherChord) in [
+      (TargetPlatform.windows, 'ctrl+shift+m', 'cmd+shift+m'),
+      (TargetPlatform.linux, 'ctrl+shift+m', 'cmd+shift+m'),
+      (TargetPlatform.macOS, 'cmd+shift+m', 'ctrl+shift+m'),
+    ]) {
+      final keys = KeybindingSet.load(platform: platform);
+      expect(keys.commandForChord(parseChord(chord)!), command);
+      expect(keys.commandForChord(parseChord(otherChord)!), isNot(command));
+
+      final override = KeybindingSet.load(
+        platform: platform,
+        userJson: '[{"key":"ctrl+alt+m","command":"$command"}]',
+      );
+      expect(override.commandForChord(parseChord('ctrl+alt+m')!), command);
+      expect(override.commandForChord(parseChord(chord)!), isNot(command));
+    }
+  });
+
   test('problem navigation owns F8 in editor focus and preserves rebindings', () {
     for (final platform in [
       TargetPlatform.windows,
