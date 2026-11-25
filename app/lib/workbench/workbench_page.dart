@@ -303,6 +303,18 @@ typedef ReferencesRequest = Future<ReferencesResult?> Function(
   bool includeDeclaration,
 );
 
+enum _ProblemsFilterOption {
+  errors('显示错误', severity: 1),
+  warnings('显示警告', severity: 2),
+  information('显示信息', severity: 3),
+  activeFile('仅显示活动文件');
+
+  const _ProblemsFilterOption(this.label, {this.severity});
+
+  final String label;
+  final int? severity;
+}
+
 class WorkbenchPage extends StatefulWidget {
   WorkbenchPage({
     super.key,
@@ -722,6 +734,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
   final TextEditingController _problemsFilterController = TextEditingController();
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
+  bool _problemsActiveFileOnly = false;
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -30641,11 +30654,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       builder: (context, value, _) {
         final query = value.text.trim().toLowerCase();
         final diagnostics = <Map<String, Object?>>[];
+        final activeId = _active?.id;
         var hasProblems = false;
+        var hasProblemsInScope = false;
         for (final diagnostic in _diagnostics) {
           final severity = (diagnostic['severity'] as num?)?.toInt() ?? 3;
           if (severity < 1 || severity > 3) continue;
           hasProblems = true;
+          if (_problemsActiveFileOnly && diagnostic['_documentId'] != activeId) {
+            continue;
+          }
+          hasProblemsInScope = true;
           if (_visibleProblemSeverities.contains(severity) &&
               (query.isEmpty || _matchesProblemsText(diagnostic, query))) {
             diagnostics.add(diagnostic);
@@ -30681,27 +30700,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             _problemsFilterFocus.requestFocus();
                           },
                         ),
-                      PopupMenuButton<int>(
-                        tooltip: '诊断级别筛选',
+                      PopupMenuButton<_ProblemsFilterOption>(
+                        tooltip: '诊断筛选选项',
                         icon: const Icon(Icons.filter_list, size: 16),
-                        onSelected: (severity) {
+                        onSelected: (option) {
                           setState(() {
-                            if (!_visibleProblemSeverities.remove(severity)) {
+                            final severity = option.severity;
+                            if (severity == null) {
+                              _problemsActiveFileOnly = !_problemsActiveFileOnly;
+                            } else if (!_visibleProblemSeverities.remove(severity)) {
                               _visibleProblemSeverities.add(severity);
                             }
                           });
                         },
                         itemBuilder: (context) => [
-                          for (final (severity, label) in const [
-                            (1, '显示错误'),
-                            (2, '显示警告'),
-                            (3, '显示信息'),
-                          ])
-                            CheckedPopupMenuItem<int>(
-                              value: severity,
-                              checked: _visibleProblemSeverities.contains(severity),
-                              child: Text(label),
+                          for (final option in _ProblemsFilterOption.values) ...[
+                            if (option == _ProblemsFilterOption.activeFile)
+                              const PopupMenuDivider(),
+                            CheckedPopupMenuItem<_ProblemsFilterOption>(
+                              value: option,
+                              checked: option.severity == null
+                                  ? _problemsActiveFileOnly
+                                  : _visibleProblemSeverities.contains(option.severity),
+                              child: Text(option.label),
                             ),
+                          ],
                         ],
                       ),
                     ],
@@ -30710,7 +30733,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
             ),
             Expanded(
-              child: _buildDiagnosticResults(diagnostics, hasProblems: hasProblems),
+              child: _buildDiagnosticResults(
+                diagnostics,
+                hasProblems: hasProblems,
+                hasProblemsInScope: hasProblemsInScope,
+              ),
             ),
           ],
         );
@@ -30721,12 +30748,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Widget _buildDiagnosticResults(
     List<Map<String, Object?>> diagnostics, {
     required bool hasProblems,
+    required bool hasProblemsInScope,
   }) {
     if (!_lspReady && !hasProblems) {
       return Center(
         child: Text('LSP 未启动\n打开文件夹后从编辑器右上角启动',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+      );
+    }
+    if (_problemsActiveFileOnly && !hasProblemsInScope) {
+      return Center(
+        child: Text(
+          '当前文件没有诊断',
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+        ),
       );
     }
     if (!hasProblems) {
