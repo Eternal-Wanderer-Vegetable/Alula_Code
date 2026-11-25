@@ -4269,8 +4269,8 @@
       "dependencies": [
         "feat-333"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 可仅显示活动文件，随编辑器切换更新，同步应用文本和级别筛选。Windows、Linux 各通过 29 个真实 rust-analyzer 检查点。专题 184/184，Flutter 1,888 passed / 2 skipped。产品 25237a38 的 CI 45713333226 四项与 Platform Availability 45713325741 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.282-problems-active-file.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
