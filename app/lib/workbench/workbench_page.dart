@@ -719,6 +719,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _gitDiffGeneration = 0;
   final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
   final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
+  final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
+  final TextEditingController _problemsFilterController = TextEditingController();
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -23707,6 +23709,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _panelTab.dispose();
     _gitDiffFocus.dispose();
     _problemsPanelFocus.dispose();
+    _problemsFilterFocus.dispose();
+    _problemsFilterController.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
     _editorTabActionLocation.dispose();
@@ -30617,7 +30621,68 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  bool _matchesProblemsText(Map<String, Object?> diagnostic, String query) {
+    bool matches(String text) =>
+        text.toLowerCase().contains(query) ||
+        treeFindMatchRanges(query, text, fuzzy: true) != null;
+
+    final file = diagnostic['file'];
+    final source = diagnostic['source'];
+    final message = diagnostic['message'];
+    return file is String && matches(file) ||
+        source is String && matches(source) ||
+        message is String && message.split('\n').any(matches);
+  }
+
   Widget _buildDiagnosticsPanel() {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: _problemsFilterController,
+      builder: (context, value, _) {
+        final query = value.text.trim().toLowerCase();
+        final diagnostics = query.isEmpty
+            ? _diagnostics
+            : _diagnostics
+                .where((diagnostic) => _matchesProblemsText(diagnostic, query))
+                .toList();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              child: TextField(
+                key: const ValueKey('problems-text-filter'),
+                controller: _problemsFilterController,
+                focusNode: _problemsFilterFocus,
+                autocorrect: false,
+                enableSuggestions: false,
+                style: const TextStyle(fontSize: 12),
+                decoration: InputDecoration(
+                  hintText: '筛选诊断',
+                  isDense: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  suffixIcon: value.text.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: '清除诊断筛选',
+                          icon: const Icon(Icons.close, size: 16),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            _problemsFilterController.clear();
+                            _problemsFilterFocus.requestFocus();
+                          },
+                        ),
+                ),
+              ),
+            ),
+            Expanded(child: _buildDiagnosticResults(diagnostics)),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDiagnosticResults(List<Map<String, Object?>> diagnostics) {
     if (!_lspReady && _diagnostics.isEmpty) {
       return Center(
         child: Text('LSP 未启动\n打开文件夹后从编辑器右上角启动',
@@ -30631,10 +30696,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
       );
     }
+    if (diagnostics.isEmpty) {
+      return Center(
+        child: Text(
+          '没有匹配的诊断',
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+        ),
+      );
+    }
     return ListView.builder(
-      itemCount: _diagnostics.length,
+      itemCount: diagnostics.length,
       itemBuilder: (context, i) {
-        final d = _diagnostics[i];
+        final d = diagnostics[i];
         final canOpen = _diagnosticEditor(d) != null;
         final severity = (d['severity'] as num?)?.toInt() ?? 3;
         final (icon, color) = switch (severity) {
