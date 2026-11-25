@@ -8,6 +8,35 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const quickOpenId = 'workbench.action.quickOpen';
 
+  test('problem navigation owns F8 in editor focus and preserves rebindings', () {
+    for (final platform in [
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+      TargetPlatform.macOS,
+    ]) {
+      final keys = KeybindingSet.load(platform: platform);
+      final context = ContextKeyService();
+      addTearDown(context.dispose);
+      String? command(String chord, KeybindingSet bindings) => bindings
+          .bindingForChord(parseChord(chord)!, matchesWhen: context.matches)
+          ?.commandId;
+
+      expect(command('f8', keys), isNull);
+      expect(command('shift+f8', keys), isNull);
+      context.setValue('editorTextFocus', true);
+      expect(command('f8', keys), 'editor.action.marker.nextInFiles');
+      expect(command('shift+f8', keys), 'editor.action.marker.prevInFiles');
+      expect(command('ctrl+space', keys), 'editor.completion');
+
+      final override = KeybindingSet.load(
+        platform: platform,
+        userJson: '[{"key":"f8","command":"editor.completion"}]',
+      );
+      expect(command('f8', override), 'editor.completion');
+      expect(command('shift+f8', override), 'editor.action.marker.prevInFiles');
+    }
+  });
+
   test('call hierarchy keyboard routing follows direction and stable Peek', () {
     final keys = KeybindingSet.load(platform: TargetPlatform.windows);
     final context = ContextKeyService();

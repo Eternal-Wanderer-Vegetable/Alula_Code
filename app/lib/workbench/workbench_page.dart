@@ -15,7 +15,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart'
-    show compute, TargetPlatform, defaultTargetPlatform, listEquals;
+    show compute, TargetPlatform, defaultTargetPlatform, listEquals, mapEquals;
 import 'package:flutter/gestures.dart'
     show
         kMiddleMouseButton,
@@ -803,6 +803,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   AlulaDoc? _workspaceSymbolRequestDoc;
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
+  ({Map<String, Object?> diagnostic, TextSelection selection})?
+      _lastOpenedDiagnostic;
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
   Map<int, int> _syntaxVersionByDoc = {};
   Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
@@ -1853,6 +1855,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
         shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
+    reg(
+      'editor.action.marker.nextInFiles',
+      '转到',
+      '转到文件中的下一个问题',
+      () async => _navigateDiagnostics(forward: true),
+      shortcut: 'F8',
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.action.marker.prevInFiles',
+      '转到',
+      '转到文件中的上一个问题',
+      () async => _navigateDiagnostics(forward: false),
+      shortcut: 'Shift+F8',
+      enablement: 'editorActive',
+    );
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity(),
         enablement: 'editorActive');
@@ -30331,12 +30349,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return _allDocs.where(matches).firstOrNull;
   }
 
-  void _openDiagnostic(Map<String, Object?> diagnostic) {
-    if (!_diagnostics.contains(diagnostic)) return;
+  bool _openDiagnostic(Map<String, Object?> diagnostic) {
+    if (!_diagnostics.contains(diagnostic)) return false;
     final target = _diagnosticEditor(diagnostic);
-    if (target == null) return;
+    if (target == null) return false;
     final group = _ownerOfView(target);
-    if (group == null) return;
+    if (group == null) return false;
 
     final startLine = diagnostic['line'];
     final startCharacter = diagnostic['character'];
@@ -30350,12 +30368,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         endLine < startLine ||
         endCharacter is! int ||
         endCharacter < 0) {
-      return;
+      return false;
     }
 
     _flushInput(target, commitComposition: true);
     final version = target.doc.version;
-    if (version != diagnostic['documentVersion']) return;
+    if (version != diagnostic['documentVersion']) return false;
 
     final DocumentPosition start;
     final DocumentPosition end;
@@ -30363,7 +30381,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       start = target.doc.positionOffset(startLine, startCharacter);
       end = target.doc.positionOffset(endLine, endCharacter);
     } on AlulaException {
-      return;
+      return false;
     }
     if (start.version != version ||
         end.version != version ||
@@ -30372,7 +30390,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         end.line != endLine ||
         end.character != endCharacter ||
         end.offsetUtf16 < start.offsetUtf16) {
-      return;
+      return false;
     }
 
     final from = _currentNavigationLocation();
@@ -30381,7 +30399,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (visible == null ||
         visible.id != target.id ||
         visible.doc.version != version) {
-      return;
+      return false;
     }
     if (from != null) {
       _navigationHistory.recordNavigation(
@@ -30397,11 +30415,121 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       );
     }
-    _setDocSelection(
-      visible,
-      TextSelection(baseOffset: start.offsetUtf16, extentOffset: end.offsetUtf16),
+    final selection = TextSelection(
+      baseOffset: start.offsetUtf16,
+      extentOffset: end.offsetUtf16,
     );
+    _setDocSelection(visible, selection);
+    _lastOpenedDiagnostic = (diagnostic: diagnostic, selection: selection);
     _focusEditorAfterLayout(group, visible);
+    return true;
+  }
+
+  void _navigateDiagnostics({required bool forward}) {
+    final active = _active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+    final current = _currentNavigationLocation();
+    final markers = <({
+      Map<String, Object?> diagnostic,
+      String uri,
+      int severity,
+      int line,
+      int character,
+      int endLine,
+      int endCharacter,
+    })>[];
+    final seen = <Object>{};
+    for (final diagnostic in _diagnostics) {
+      final editor = _diagnosticEditor(diagnostic);
+      final uri = editor?.uri;
+      final severity = diagnostic['severity'];
+      final line = diagnostic['line'];
+      final character = diagnostic['character'];
+      final endLine = diagnostic['endLine'];
+      final endCharacter = diagnostic['endCharacter'];
+      if (editor == null ||
+          uri == null ||
+          severity is! int ||
+          severity < 1 ||
+          severity > 3 ||
+          line is! int ||
+          line < 0 ||
+          character is! int ||
+          character < 0 ||
+          endLine is! int ||
+          endLine < line ||
+          endCharacter is! int ||
+          endCharacter < 0 ||
+          endLine == line && endCharacter < character) {
+        continue;
+      }
+      if (!seen.add((
+        editor.id,
+        severity,
+        line,
+        character,
+        endLine,
+        endCharacter,
+        diagnostic['message'],
+        diagnostic['source'],
+      ))) {
+        continue;
+      }
+      markers.add((
+        diagnostic: diagnostic,
+        uri: uri,
+        severity: severity,
+        line: line,
+        character: character,
+        endLine: endLine,
+        endCharacter: endCharacter,
+      ));
+    }
+    if (markers.isEmpty) return;
+    markers.sort((a, b) {
+      var order = a.uri.compareTo(b.uri);
+      if (order == 0) order = a.severity.compareTo(b.severity);
+      if (order == 0) order = a.line.compareTo(b.line);
+      if (order == 0) order = a.character.compareTo(b.character);
+      if (order == 0) order = a.endLine.compareTo(b.endLine);
+      if (order == 0) order = a.endCharacter.compareTo(b.endCharacter);
+      return order;
+    });
+
+    final step = forward ? 1 : -1;
+    final last = _lastOpenedDiagnostic;
+    final lastIndex = last != null && active.selection == last.selection
+        ? markers.indexWhere((entry) =>
+            entry.diagnostic['_documentId'] == active.id &&
+            mapEquals(entry.diagnostic, last.diagnostic))
+        : -1;
+    var index = forward ? 0 : markers.length - 1;
+    if (lastIndex >= 0) {
+      index = (lastIndex + step) % markers.length;
+    } else if (current != null && current.uri != null) {
+      for (var i = 0; i < markers.length; i++) {
+        final marker = markers[i];
+        final order = marker.uri.compareTo(current.uri!);
+        if (order < 0) continue;
+        if (order > 0) {
+          index = (forward ? i : i - 1) % markers.length;
+          break;
+        }
+        final afterStart = current.line > marker.line ||
+            current.line == marker.line && current.character >= marker.character;
+        final beforeEnd = current.line < marker.endLine ||
+            current.line == marker.endLine &&
+                current.character <= marker.endCharacter;
+        if (afterStart && !beforeEnd) continue;
+        index = (forward || afterStart ? i : i - 1) % markers.length;
+        break;
+      }
+    }
+    for (var attempt = 0; attempt < markers.length; attempt++) {
+      if (_openDiagnostic(markers[index].diagnostic)) return;
+      index = (index + step) % markers.length;
+    }
   }
 
   Widget _buildDiagnosticsPanel() {
@@ -30451,7 +30579,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Widget _buildCompletionPanel() {
     if (_completionItems.isEmpty) {
       return Center(
-        child: Text('无补全结果\n点击编辑器右上角「补全」或 Ctrl+Space / F8',
+        child: Text('无补全结果\n点击编辑器右上角「补全」或 Ctrl+Space',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
       );

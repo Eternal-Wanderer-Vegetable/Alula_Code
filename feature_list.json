@@ -4201,6 +4201,18 @@
       "evidence": "Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-329",
+      "name": "P05.277 CMD-11 F8 与 Shift+F8 跨已打开文件诊断导航",
+      "description": "通过默认 F8 与 Shift+F8 在当前版本诊断之间正反导航，保留位置历史和编辑器焦点。",
+      "dependencies": [
+        "feat-328"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -280,7 +280,9 @@ class KeybindingSet {
     'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
-    'editor.completion': 'ctrl+space,f8',
+    'editor.completion': 'ctrl+space',
+    'editor.action.marker.nextInFiles': 'f8',
+    'editor.action.marker.prevInFiles': 'shift+f8',
     'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
     // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
@@ -344,6 +346,8 @@ class KeybindingSet {
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
     'editor.action.revealDefinition': 'editorTextFocus',
+    'editor.action.marker.nextInFiles': 'editorTextFocus',
+    'editor.action.marker.prevInFiles': 'editorTextFocus',
     'editor.showCallHierarchy':
         'editorTextFocus && editorHasCallHierarchyProvider && '
         '!callHierarchyVisible && !typeHierarchyVisible',
