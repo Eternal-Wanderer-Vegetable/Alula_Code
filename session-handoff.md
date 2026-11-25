@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.276 / feat-328 完成。Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md。
 - P05.275 / feat-327 完成。命令面板按实际提供程序显示层级入口，默认调用键位改为按事件实时匹配。Windows 39 步，Linux 39 步，专题 138/138，Flutter 1,885 passed / 2 skipped。产品 77439bfa 的 CI 45666724638 四项与 Platform Availability 45666709135 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md。
 - P05.274 / feat-326 完成。编辑器右键菜单按实际语言提供程序能力显示调用及类型层级，并保留标准编辑操作。ABI 46 握手，Windows 与 Linux 各 18 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 f22ed229 的 CI 45655062245 四项与 Platform Availability 45655049352 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.274-hierarchy-menu.md。
 - P05.273 / feat-325 完成。调用和类型层级分别恢复两个方向的展开、分页、选中与滚动。Windows 与 Linux 各 32 步，延迟提供程序夹具 14 步，专题 137/137，Flutter 1,883 passed / 2 skipped。产品 7dfa8ad8 的 CI 45649646513 四项与 Platform Availability 45649641144 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md。
@@ -293,6 +294,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.276 Problems 列表打开诊断范围](docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md)。
 [P05.275 命令面板和默认键位的层级提供程序条件](docs/diagnostics/2026-11-26-p05/p05.275-hierarchy-availability.md)。
 [P05.274 编辑器右键打开调用与类型层级](docs/diagnostics/2026-11-26-p05/p05.274-hierarchy-menu.md)。
 [P05.273 调用与类型层级分方向树状态](docs/diagnostics/2026-11-25-p05/p05.273-hierarchy-views.md)。
@@ -475,4 +477,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.275 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 导航。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.276 收尾 CI。按 docs/03 和固定版本推进 CMD-11 跨文件 F8 与 Shift+F8。PR #3 保持草稿，macOS 实机暂缓。

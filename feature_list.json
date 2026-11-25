@@ -4197,8 +4197,8 @@
       "dependencies": [
         "feat-327"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
