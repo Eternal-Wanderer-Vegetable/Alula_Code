@@ -4213,6 +4213,18 @@
       "evidence": "默认 F8 与 Shift+F8 在已打开文件的当前版本诊断之间正反循环。Windows 16 步，Linux 14 步，专题 183/183。Flutter 1,886 passed / 2 skipped。产品 eca04970 的 CI 45681779214 四项与 Platform Availability 45681769674 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-330",
+      "name": "P05.278 CMD-11 当前文件 Alt+F8 与 Alt+Shift+F8 诊断导航",
+      "description": "按固定版快捷键正反遍历活动文档当前版本的诊断，并保留选区与编辑器焦点。",
+      "dependencies": [
+        "feat-329"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

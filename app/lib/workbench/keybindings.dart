@@ -283,6 +283,8 @@ class KeybindingSet {
     'editor.completion': 'ctrl+space',
     'editor.action.marker.nextInFiles': 'f8',
     'editor.action.marker.prevInFiles': 'shift+f8',
+    'editor.action.marker.next': 'alt+f8',
+    'editor.action.marker.prev': 'alt+shift+f8',
     'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
     // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
@@ -348,6 +350,8 @@ class KeybindingSet {
     'editor.action.revealDefinition': 'editorTextFocus',
     'editor.action.marker.nextInFiles': 'editorTextFocus',
     'editor.action.marker.prevInFiles': 'editorTextFocus',
+    'editor.action.marker.next': 'editorTextFocus',
+    'editor.action.marker.prev': 'editorTextFocus',
     'editor.showCallHierarchy':
         'editorTextFocus && editorHasCallHierarchyProvider && '
         '!callHierarchyVisible && !typeHierarchyVisible',

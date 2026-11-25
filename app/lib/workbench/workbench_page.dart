@@ -1871,6 +1871,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       shortcut: 'Shift+F8',
       enablement: 'editorActive',
     );
+    reg(
+      'editor.action.marker.next',
+      '转到',
+      '转到当前文件中的下一个问题',
+      () async => _navigateDiagnostics(forward: true, currentFileOnly: true),
+      shortcut: 'Alt+F8',
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.action.marker.prev',
+      '转到',
+      '转到当前文件中的上一个问题',
+      () async => _navigateDiagnostics(forward: false, currentFileOnly: true),
+      shortcut: 'Alt+Shift+F8',
+      enablement: 'editorActive',
+    );
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity(),
         enablement: 'editorActive');
@@ -30425,7 +30441,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return true;
   }
 
-  void _navigateDiagnostics({required bool forward}) {
+  void _navigateDiagnostics({
+    required bool forward,
+    bool currentFileOnly = false,
+  }) {
     final active = _active;
     if (active == null) return;
     _flushInput(active, commitComposition: true);
@@ -30441,6 +30460,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     })>[];
     final seen = <Object>{};
     for (final diagnostic in _diagnostics) {
+      if (currentFileOnly && diagnostic['_documentId'] != active.id) continue;
       final editor = _diagnosticEditor(diagnostic);
       final uri = editor?.uri;
       final severity = diagnostic['severity'];

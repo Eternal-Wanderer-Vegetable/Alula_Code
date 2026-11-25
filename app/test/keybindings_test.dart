@@ -23,9 +23,13 @@ void main() {
 
       expect(command('f8', keys), isNull);
       expect(command('shift+f8', keys), isNull);
+      expect(command('alt+f8', keys), isNull);
+      expect(command('alt+shift+f8', keys), isNull);
       context.setValue('editorTextFocus', true);
       expect(command('f8', keys), 'editor.action.marker.nextInFiles');
       expect(command('shift+f8', keys), 'editor.action.marker.prevInFiles');
+      expect(command('alt+f8', keys), 'editor.action.marker.next');
+      expect(command('alt+shift+f8', keys), 'editor.action.marker.prev');
       expect(command('ctrl+space', keys), 'editor.completion');
 
       final override = KeybindingSet.load(
@@ -34,6 +38,16 @@ void main() {
       );
       expect(command('f8', override), 'editor.completion');
       expect(command('shift+f8', override), 'editor.action.marker.prevInFiles');
+      final localOverride = KeybindingSet.load(
+        platform: platform,
+        userJson: '[{"key":"alt+f8","command":"editor.completion"}]',
+      );
+      expect(command('f8', localOverride), 'editor.action.marker.nextInFiles');
+      expect(command('alt+f8', localOverride), 'editor.completion');
+      expect(
+        command('alt+shift+f8', localOverride),
+        'editor.action.marker.prev',
+      );
     }
   });
 
