@@ -30692,7 +30692,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     children: [
                       if (value.text.isNotEmpty)
                         IconButton(
-                          tooltip: '清除诊断筛选',
+                          tooltip: '清除诊断文本筛选',
                           icon: const Icon(Icons.close, size: 16),
                           visualDensity: VisualDensity.compact,
                           onPressed: () {
@@ -30773,9 +30773,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     if (diagnostics.isEmpty) {
       return Center(
-        child: Text(
-          '没有匹配的诊断',
-          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+        child: SingleChildScrollView(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 4,
+            children: [
+              Text(
+                '没有匹配的诊断',
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _visibleProblemSeverities
+                      ..clear()
+                      ..addAll(const [1, 2, 3]);
+                  });
+                  _problemsFilterController.clear();
+                  _problemsFilterFocus.requestFocus();
+                },
+                child: const Text('清除筛选'),
+              ),
+            ],
+          ),
         ),
       );
     }
