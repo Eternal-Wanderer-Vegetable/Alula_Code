@@ -4285,6 +4285,18 @@
       "evidence": "Problems 无匹配时可清除筛选。重置文本与错误、警告、信息级别，保留活动文件范围。Windows 通过 27 个原生检查点，Linux 通过 29 个。专题 184/184，Flutter 1,888 项通过、2 项跳过。产品 7452ea34 的 CI 45719548456 四项与 Platform Availability 45719537632 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.283-problems-clear-filters.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-336",
+      "name": "P05.284 CMD-11 Problems 筛选与结果焦点切换",
+      "description": "在当前 Problems 视图按固定版键位切换筛选框与结果区域焦点，保留查询和编辑器选区。",
+      "dependencies": [
+        "feat-335"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

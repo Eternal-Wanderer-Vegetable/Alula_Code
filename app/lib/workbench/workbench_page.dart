@@ -732,6 +732,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
   final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
   final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
+  final FocusNode _problemsResultsFocus =
+      FocusNode(debugLabel: 'problems-results');
   final TextEditingController _problemsFilterController = TextEditingController();
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
   bool _problemsActiveFileOnly = false;
@@ -23724,6 +23726,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _gitDiffFocus.dispose();
     _problemsPanelFocus.dispose();
     _problemsFilterFocus.dispose();
+    _problemsResultsFocus.dispose();
     _problemsFilterController.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
@@ -29989,6 +29992,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       PanelViewTab.diagnostics => Focus(
           key: const ValueKey('problems-panel-focus'),
           focusNode: _problemsPanelFocus,
+          onKeyEvent: _onProblemsPaneKey,
           child: _buildDiagnosticsPanel(),
         ),
       PanelViewTab.completions => _buildCompletionPanel(),
@@ -30648,6 +30652,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         message is String && message.split('\n').any(matches);
   }
 
+  KeyEventResult _onProblemsPaneKey(FocusNode _, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final keyboard = HardwareKeyboard.instance;
+    final binding = _keybindings.bindingForChord(
+      KeyChord(
+        key: event.logicalKey,
+        control: keyboard.isControlPressed,
+        shift: keyboard.isShiftPressed,
+        alt: keyboard.isAltPressed,
+        meta: keyboard.isMetaPressed,
+      ),
+      matchesWhen: (condition) => switch (condition) {
+        'problemsViewFocus' => _problemsPanelFocus.hasFocus,
+        'problemsFilterFocus' => _problemsFilterFocus.hasFocus,
+        _ => _commands.context.matches(condition),
+      },
+    );
+    switch (binding?.commandId) {
+      case 'problems.action.focusFilter':
+        _problemsFilterFocus.requestFocus();
+        return KeyEventResult.handled;
+      case 'problems.action.focusProblemsFromFilter':
+        // The list is virtualized. Focus the first rendered row when available.
+        for (final node in _problemsResultsFocus.traversalDescendants) {
+          if (node.context?.findAncestorWidgetOfExactType<ListTile>() != null) {
+            node.requestFocus();
+            return KeyEventResult.handled;
+          }
+        }
+        _problemsResultsFocus.requestFocus();
+        return KeyEventResult.handled;
+      default:
+        return KeyEventResult.ignored;
+    }
+  }
+
   Widget _buildDiagnosticsPanel() {
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: _problemsFilterController,
@@ -30733,10 +30773,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
             ),
             Expanded(
-              child: _buildDiagnosticResults(
-                diagnostics,
-                hasProblems: hasProblems,
-                hasProblemsInScope: hasProblemsInScope,
+              child: Focus(
+                key: const ValueKey('problems-results-focus'),
+                focusNode: _problemsResultsFocus,
+                skipTraversal: true,
+                child: _buildDiagnosticResults(
+                  diagnostics,
+                  hasProblems: hasProblems,
+                  hasProblemsInScope: hasProblemsInScope,
+                ),
               ),
             ),
           ],

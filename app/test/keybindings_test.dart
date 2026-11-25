@@ -28,6 +28,49 @@ void main() {
     }
   });
 
+  test('Problems filter and result shortcuts are scoped to the view', () {
+    const filter = 'problems.action.focusFilter';
+    const results = 'problems.action.focusProblemsFromFilter';
+    for (final (platform, modifier) in [
+      (TargetPlatform.windows, 'ctrl'),
+      (TargetPlatform.linux, 'ctrl'),
+      (TargetPlatform.macOS, 'cmd'),
+    ]) {
+      final keys = KeybindingSet.load(platform: platform);
+      final context = ContextKeyService();
+      addTearDown(context.dispose);
+      String? command(String chord, KeybindingSet bindings) => bindings
+          .bindingForChord(parseChord(chord)!, matchesWhen: context.matches)
+          ?.commandId;
+
+      final findChord = '$modifier+f';
+      final resultsChord = '$modifier+arrowdown';
+      expect(command(findChord, keys), isNot(filter));
+      expect(command(resultsChord, keys), isNot(results));
+      expect(command('ctrl+f', keys), 'editor.find');
+
+      context.setValue('problemsViewFocus', true);
+      expect(command(findChord, keys), filter);
+      expect(command(resultsChord, keys), isNot(results));
+
+      context.setValue('problemsFilterFocus', true);
+      expect(command(resultsChord, keys), results);
+
+      final override = KeybindingSet.load(
+        platform: platform,
+        userJson: '[{"key":"ctrl+alt+d","command":"$results",'
+            '"when":"problemsFilterFocus"}]',
+      );
+      expect(command(resultsChord, override), isNot(results));
+      expect(command('ctrl+alt+d', override), results);
+
+      context.setValue('problemsFilterFocus', false);
+      expect(command('ctrl+alt+d', override), isNot(results));
+      context.setValue('problemsViewFocus', false);
+      expect(command(findChord, keys), isNot(filter));
+    }
+  });
+
   test('problem navigation owns F8 in editor focus and preserves rebindings', () {
     for (final platform in [
       TargetPlatform.windows,
@@ -950,8 +993,8 @@ void main() {
           .whereType<KeyChord>()
           .toSet()
           .length;
-      expect(resolved.keys.length, expectedChords + 21,
-          reason: 'tree find, breadcrumbs, notifications and navigation '
+      expect(resolved.keys.length, expectedChords + 22,
+          reason: 'tree find, breadcrumbs, notifications, navigation and Problems '
               'add contextual bindings');
       expect(
         ks.shortcutFor('editor.action.peekDefinition'),

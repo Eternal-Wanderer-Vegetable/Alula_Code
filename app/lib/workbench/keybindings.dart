@@ -382,6 +382,8 @@ class KeybindingSet {
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
+    'problems.action.focusFilter': 'problemsViewFocus',
+    'problems.action.focusProblemsFromFilter': 'problemsFilterFocus',
     'notification.clear': 'notificationFocus',
     'notification.expand': 'notificationRowFocus',
     'notification.collapse': 'notificationRowFocus',
@@ -437,6 +439,10 @@ class KeybindingSet {
         'list.find':
             platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
         'list.closeFind': 'escape',
+        'problems.action.focusFilter':
+            platform == TargetPlatform.macOS ? 'cmd+f' : 'ctrl+f',
+        'problems.action.focusProblemsFromFilter':
+            platform == TargetPlatform.macOS ? 'cmd+arrowdown' : 'ctrl+arrowdown',
         'notifications.hideToasts': 'escape',
         'notifications.hideList': 'escape',
         'closeReferenceSearch': 'escape,shift+escape',
