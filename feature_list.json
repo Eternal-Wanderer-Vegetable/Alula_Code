@@ -4245,8 +4245,8 @@
       "dependencies": [
         "feat-331"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 按文件名、消息或来源过滤显示，支持清除与收起后保留查询。Windows 18 步，Linux 18 步，专题 184/184，Flutter 1,888 passed / 2 skipped。产品 46aa3542 的 CI 45701859597 四项与 Platform Availability 45701851430 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.280-problems-text-filter.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
