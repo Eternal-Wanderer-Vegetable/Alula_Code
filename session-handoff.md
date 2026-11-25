@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.279 / feat-331 完成。Problems 可通过默认快捷键、查看菜单和命令面板打开或聚焦。聚焦时用默认快捷键收起并恢复编辑器选区。Windows 19 步，Linux 17 步，专题 206/206，Flutter 1,888 passed / 2 skipped。产品 8ec0f252 的 CI 45695725781 四项与 Platform Availability 45695719346 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.279-problems-panel.md。
 - P05.278 / feat-330 完成。Alt+F8 与 Alt+Shift+F8 只遍历活动文档的当前版本诊断。Windows 21 步，Linux 21 步，专题 183/183，Flutter 1,886 passed / 2 skipped。产品 0d54d006 的 CI 45687891122 四项与 Platform Availability 45687880669 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md。
 - P05.277 / feat-329 完成。默认 F8 与 Shift+F8 在已打开文件的当前版本诊断之间正反循环。Windows 16 步，Linux 14 步，专题 183/183。Flutter 1,886 passed / 2 skipped。产品 eca04970 的 CI 45681779214 四项与 Platform Availability 45681769674 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md。
 - P05.276 / feat-328 完成。Problems 列表打开当前版本诊断并选中 UTF-16 范围。Windows 6 步，Linux 6 步，Linux 协议夹具 13 步。专题 168/168，URI 回归 51/51，Flutter 1,885 passed / 2 skipped。产品 40904f89 的 CI 45674748097 四项与 Platform Availability 45674729462 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md。
@@ -296,6 +297,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.279 Problems 面板打开、聚焦与收起](docs/diagnostics/2026-11-26-p05/p05.279-problems-panel.md)。
 [P05.278 当前文件诊断快捷键](docs/diagnostics/2026-11-26-p05/p05.278-current-file-problems.md)。
 [P05.277 跨文件诊断快捷键](docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md)。
 [P05.276 Problems 列表打开诊断范围](docs/diagnostics/2026-11-26-p05/p05.276-problems-navigation.md)。
@@ -481,4 +483,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.278 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 面板宿主与过滤。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.279 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 文本过滤。PR #3 保持草稿，macOS 实机暂缓。

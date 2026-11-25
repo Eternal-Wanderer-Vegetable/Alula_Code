@@ -1,0 +1,2402 @@
+{
+  "product": "8ec0f252eef2a8b9b0298e671a3de8b23ec11713",
+  "tree": "304682b27673aaeeb1dbc612bf99952a282e7959",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "304682b27673aaeeb1dbc612bf99952a282e7959",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "22de0382bd997aaca0dffdfc5f395a6a0fc539e7a03d3698b295035610180d19",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "0162ae0863ae8ff7bcfe470168cb1a0720c957363406d5760b41bd5b96e05ce4",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "0d77a4a5f65ca6934a2fabf58b69656686df8eb6ebc586bb568513fcbc1fa5c0",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "86d37eebce3c1707b2134f44afb0ff81a8b3f1f61f5ba596841daf86f8fde2d4",
+    "abi": 46,
+    "nativeCoreSha256": "f6f74c08bec8c98de22fe00e9722a7ce00f4ba6f350a617b6ffa99e63ee521dd",
+    "fixture": "p05_279_windows_problems_menu_probe.dart"
+  },
+  "linuxFixtureSha256": "42c5bdb3a506521fd3c19d308247aeff76efcbbe188a1adb66735c476ded38f0",
+  "windowsFixtureSha256": "86d37eebce3c1707b2134f44afb0ff81a8b3f1f61f5ba596841daf86f8fde2d4",
+  "linuxAcceptanceDriverSha256": "5d3d54ab57cb06c5543d05a865505ad65eb2cf601020be8355bb1a3b34f6fdd0",
+  "windowsAcceptanceDriverSha256": "2e3d0a8ab25311f4b250c1e83a93bc373e7802ab3b95ea628134fc5b1e72ce41",
+  "initialObservations": {
+    "beforeRenderedPanel": "9c4e322df0234ef25dd4589f28577528647cfbb59e3b469798d83fcd542a604c",
+    "beforeFocusAndStatusFix": "e2f1e2c4844888f0a90de27d28685dfe419d5afb108e2eb811b19974846a57fc",
+    "windowsNativeMnemonicAttempt": "dbc4afaf1df6c69d4bf5b3ee79fcee34612dfc18074baa0a7e849c984daf69dd"
+  },
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b",
+      "src/vs/workbench/services/views/browser/viewsService.ts": "cdeba8d07bddea5240bfa6a814d5ca148141547bdfe0bb876c8056f9bb28734f"
+    }
+  },
+  "localLogsSha256": {
+    "p05-279-full.log": "cbe03b1becab97b283af438b5ab2a86b51634de27535e8252daaaea1204a8ff1",
+    "p05-279-focused.log": "38267b7f8c76b4af813b223f8af7e1524b272184987989ce86249fc2a1a4fe7f",
+    "p05-279-targeted.log": "b9824ddce07baf6f89c0a0d3dce31090c450b2a5b999ccb8f1b76b2d83f75245",
+    "p05-279-analyze.log": "8ff6825c23864f2c88149e1cd6258a22a1a272ab5e236e2ee60dcc110ccb7ab0",
+    "p05-279-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 16,
+        "affected_count": 1,
+        "changed_files": 7,
+        "risk_level": "medium"
+      },
+      "sha256": "cf8ab2541c71221ea327861975d9344558b86eaacc596a3982cf96e2f7696da6"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 16,
+        "affected_count": 1,
+        "changed_files": 7,
+        "risk_level": "medium"
+      },
+      "sha256": "cf8ab2541c71221ea327861975d9344558b86eaacc596a3982cf96e2f7696da6"
+    }
+  },
+  "preedit": {
+    "p05-279-impact-title-TitleMenuItem": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "880cf8d488102c84e6c55e2467d33c2ed400b571f4c83fae474d4fc72da539b6"
+    },
+    "p05-279-impact-title-_MenuButton": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "176fb71e95c7d5cd6934df7048f6bdea0550f70ee98e6e932d0bd723237df197"
+    },
+    "p05-279-impact-title-_buildMacPlatformMenuItems": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "8fe91fee063baee6e027375199cbd85c8fa54d3974551dc3780a1c6322fd62e3"
+    },
+    "p05-279-impact-title-_execute": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "d7d965ad6689c3202258239b3083a03268488abce2e6790d56c66a091b07e9be"
+    },
+    "p05-279-impact-title-_executeMacCommand": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "d3b4d461252fe18ea81d93fe0b4d50bd034c399ed96e60c42924a0b66f8a31bb"
+    },
+    "p05-279-impact-title-_executeMnemonic": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "cb30208f2fbd83e31bb896d4ada54f1aa7f291ad37f6b1371b42cac4668c4567"
+    },
+    "p05-279-impact-title-_restoreWorkbenchFocus": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "b9cfc0bb97715a1f851fed521477508edf627af2881e00fcbbbe115f4ecd3ed2"
+    },
+    "p05-279-impact-title-main": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "2eb43ed37107b27b41d5d401ac52de95ead98cc9188ff737e3578429ef6a5322"
+    },
+    "p05-279-readonly-impact-_WorkbenchPageState.build-1": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c2246da05dae4b4f130cc4a728a56a1d33509a263de7fb144125a87a43d8e7d7"
+    },
+    "p05-279-readonly-impact-_WorkbenchPageState.dispose-0": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    },
+    "p05-279-readonly-impact-_buildDiagnosticsPanel": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "0f461a1b9499d7e6762e5f4ec52308732cda8c18748029791444192017e3be5e"
+    },
+    "p05-279-readonly-impact-_buildStandardPanelBody": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "79b59d5ed273fe5bc507a29e13e225c83295a7d8193401c67957aa49e192d8c0"
+    },
+    "p05-279-readonly-impact-_registerCommands": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "037b0c279f84604129f8680128df1a2387f112487483891220e1b30b7fb623ee"
+    },
+    "p05-279-readonly-impact-defaults": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "fc25873bf7dbd4464a1afcb20eef24a998e9041571f2645a558237c17c605a1f"
+    },
+    "p05-279-readonly-impact-defaultsFor": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c0d9ba4a958a1aba268672b1bc89cc471356e2340e7e1502618649a150ec3a1e"
+    },
+    "p05-279-readonly-impact-main": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "cccfd5754bd7150e1ab790b8293941cad3de0e353c4aea7ef324707194c7afca"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "304682b27673aaeeb1dbc612bf99952a282e7959",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "f977654b357528a644725bc18db017cdeff11af7c92fdcb023ae8ac4b89ff6ba",
+    "fixtureSha256": "86d37eebce3c1707b2134f44afb0ff81a8b3f1f61f5ba596841daf86f8fde2d4",
+    "runnerSha256": "110f51c3a63eead09ce275f8aa8c9141e47a777ead4e0dd191b3ffc29429dcc9",
+    "observedInitialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS",
+    "steps": {
+      "ready": {
+        "step": "main-ready-120538763944600",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "initial-editor": {
+        "step": "main-initial-editor-120540054638400",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "shortcut-opens-empty": {
+        "step": "main-shortcut-opens-empty-120540886252100",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "shortcut-hides-and-restores-editor": {
+        "step": "main-shortcut-hides-and-restores-editor-120541798131500",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "syntax-panel-active": {
+        "step": "main-syntax-panel-active-120542629846700",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": true,
+        "panelTab": 2,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "shortcut-selects-problems-from-syntax": {
+        "step": "main-shortcut-selects-problems-from-syntax-120543460975000",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "palette-focus-keeps-panel-open": {
+        "step": "main-palette-focus-keeps-panel-open-120544562727000",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "hide-after-palette-focus": {
+        "step": "main-hide-after-palette-focus-120545394299300",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "palette-focus-opens-collapsed-panel": {
+        "step": "main-palette-focus-opens-collapsed-panel-120546497421300",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "hide-after-palette-open": {
+        "step": "main-hide-after-palette-open-120547328593900",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "view-menu-ready-for-pointer": {
+        "step": "main-view-menu-ready-for-pointer-120548050297100",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "view-menu-item-visible": {
+        "step": "main-view-menu-item-visible-120548935613200",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": [
+          374.4140625,
+          139.0,
+          566.150390625,
+          165.0
+        ],
+        "problemRows": []
+      },
+      "view-menu-opens-problems": {
+        "step": "main-view-menu-opens-problems-120549819716700",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "hide-after-view-menu-open": {
+        "step": "main-hide-after-view-menu-open-120550649793900",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "provider-ready": {
+        "step": "main-provider-ready-120552678535000",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      },
+      "opens-populated-problems": {
+        "step": "main-opens-populated-problems-120553590596900",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              450.58,
+              976.8,
+              516.5799999999999
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              516.5799999999999,
+              976.8,
+              572.5799999999999
+            ]
+          }
+        ]
+      },
+      "diagnostic-click-focuses-editor": {
+        "step": "main-diagnostic-click-focuses-editor-120554474704800",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              450.58,
+              976.8,
+              516.5799999999999
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              516.5799999999999,
+              976.8,
+              572.5799999999999
+            ]
+          }
+        ]
+      },
+      "visible-panel-refocuses-from-editor": {
+        "step": "main-visible-panel-refocuses-from-editor-120555386776000",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          390.58
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              450.58,
+              976.8,
+              516.5799999999999
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              273.952,
+              516.5799999999999,
+              976.8,
+              572.5799999999999
+            ]
+          }
+        ]
+      },
+      "hide-restores-diagnostic-selection": {
+        "step": "main-hide-restores-diagnostic-selection-120556217798900",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "viewMenuBounds": [
+          374.4140625,
+          4.0,
+          433.109375,
+          31.0
+        ],
+        "viewProblemsMenuItemBounds": null,
+        "problemRows": []
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "initial-editor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "shortcut-opens-empty": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "shortcut-hides-and-restores-editor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "syntax-panel-active": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "shortcut-selects-problems-from-syntax": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "palette-focus-keeps-panel-open": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "hide-after-palette-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "palette-focus-opens-collapsed-panel": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "hide-after-palette-open": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "view-menu-ready-for-pointer": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "view-menu-item-visible": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "view-menu-opens-problems": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "hide-after-view-menu-open": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "opens-populated-problems": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "diagnostic-click-focuses-editor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "visible-panel-refocuses-from-editor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "hide-restores-diagnostic-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+j",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F3",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1475,
+          210
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1475,
+          210
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1558,
+          378
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1558,
+          378
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1752,
+          792
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          792
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ],
+    "fixturePositions": [
+      "1:8",
+      "聚焦问题",
+      "聚焦问题",
+      "rust-analyzer"
+    ],
+    "viewMenuRoute": "native pointer",
+    "kind": "problemsPanel",
+    "sourceSha256": {
+      "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+      "src/other.rs": "b7fe90c74c08931c090cbcfe34bc06d1de50170803bd4ea8a163f004e70bf05b",
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+    },
+    "diagnostic": {
+      "character": 34,
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 1,
+      "line": 1,
+      "message": "mismatched types\nexpected `u32`, found `&str`",
+      "severity": 1,
+      "source": "rustc"
+    },
+    "rangeUtf16": [
+      45,
+      55
+    ],
+    "sourceCaret": 7,
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "cab9f9e04258dcc8c9d7a4848bf148e3e49ac00f15f037dfbfc9c23f53bf9861"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "304682b27673aaeeb1dbc612bf99952a282e7959",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1436,
+            "ppid": 1435,
+            "private": 246173696,
+            "pss": 272730112,
+            "working_set": 324755456
+          }
+        ],
+        "root_pid": 1436,
+        "total_private_bytes": 246173696,
+        "total_private_mib": 234.8,
+        "total_working_set_bytes": 324755456
+      }
+    },
+    "aotSha256": "85f652b68480065db4db048bd2fe18db06aabc88cdce855d7c4fdf3b7589837a",
+    "fixtureSha256": "42c5bdb3a506521fd3c19d308247aeff76efcbbe188a1adb66735c476ded38f0",
+    "runnerSha256": "92d53b5dc8a30ed2937df683bdc655e215b5691c63b347e56093375730f711b7",
+    "steps": {
+      "ready": {
+        "step": "ready",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "initial-editor": {
+        "step": "initial-editor",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "shortcut-opens-empty": {
+        "step": "shortcut-opens-empty",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": []
+      },
+      "shortcut-hides-and-restores-editor": {
+        "step": "shortcut-hides-and-restores-editor",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "syntax-panel-active": {
+        "step": "syntax-panel-active",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": true,
+        "panelTab": 2,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "shortcut-selects-problems-from-syntax": {
+        "step": "shortcut-selects-problems-from-syntax",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": []
+      },
+      "palette-focus-keeps-panel-open": {
+        "step": "palette-focus-keeps-panel-open",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": []
+      },
+      "hide-after-palette-focus": {
+        "step": "hide-after-palette-focus",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "palette-focus-opens-collapsed-panel": {
+        "step": "palette-focus-opens-collapsed-panel",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": []
+      },
+      "hide-after-palette-open": {
+        "step": "hide-after-palette-open",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "view-menu-opens-problems": {
+        "step": "view-menu-opens-problems",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": []
+      },
+      "hide-after-view-menu-open": {
+        "step": "hide-after-view-menu-open",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "provider-ready": {
+        "step": "provider-ready-2",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      },
+      "opens-populated-problems": {
+        "step": "opens-populated-problems",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { 7 }\n",
+        "mirror": "pub fn other() -> usize { 7 }\n",
+        "selection": [
+          7,
+          7
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              611.3,
+              1200.0,
+              677.3
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              677.3,
+              1200.0,
+              733.3
+            ]
+          }
+        ]
+      },
+      "diagnostic-click-focuses-editor": {
+        "step": "diagnostic-click-focuses-editor",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": false,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              611.3,
+              1200.0,
+              677.3
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              677.3,
+              1200.0,
+              733.3
+            ]
+          }
+        ]
+      },
+      "visible-panel-refocuses-from-editor": {
+        "step": "visible-panel-refocuses-from-editor",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          551.3
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "problemsFocused": true,
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "lib.rs · L1 C34",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              611.3,
+              1200.0,
+              677.3
+            ]
+          },
+          {
+            "message": "expected `u32` because of return type",
+            "location": "lib.rs · L1 C19",
+            "canOpen": true,
+            "bounds": [
+              327.52,
+              677.3,
+              1200.0,
+              733.3
+            ]
+          }
+        ]
+      },
+      "hide-restores-diagnostic-selection": {
+        "step": "hide-restores-diagnostic-selection",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [],
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "problemsFocused": false,
+        "problemRows": []
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "characterDelayMs": 12,
+    "kind": "problemsPanel",
+    "sourceSha256": {
+      "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+      "src/other.rs": "b7fe90c74c08931c090cbcfe34bc06d1de50170803bd4ea8a163f004e70bf05b",
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+    },
+    "diagnostic": {
+      "character": 34,
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 1,
+      "line": 1,
+      "message": "mismatched types\nexpected `u32`, found `&str`",
+      "severity": 1,
+      "source": "rustc"
+    },
+    "rangeUtf16": [
+      45,
+      55
+    ],
+    "sourceCaret": 7,
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "viewMenuRoute": "native keyboard mnemonics",
+    "rawReportSha256": "fd06c5016e277431e037fbb011b24a95c18e73b4c6153a1856a69320fae7811f"
+  }
+}

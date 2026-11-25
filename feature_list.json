@@ -4233,8 +4233,8 @@
       "dependencies": [
         "feat-330"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 可通过默认快捷键、查看菜单和命令面板打开或聚焦。聚焦时用默认快捷键收起并恢复编辑器选区。Windows 19 步，Linux 17 步，专题 206/206，Flutter 1,888 passed / 2 skipped。产品 8ec0f252 的 CI 45695725781 四项与 Platform Availability 45695719346 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.279-problems-panel.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
