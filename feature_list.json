@@ -4209,8 +4209,8 @@
       "dependencies": [
         "feat-328"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "默认 F8 与 Shift+F8 在已打开文件的当前版本诊断之间正反循环。Windows 16 步，Linux 14 步，专题 183/183。Flutter 1,886 passed / 2 skipped。产品 eca04970 的 CI 45681779214 四项与 Platform Availability 45681769674 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.277-problems-keybindings.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

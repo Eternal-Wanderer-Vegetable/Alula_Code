@@ -1,0 +1,2512 @@
+{
+  "product": "eca04970da0b758a0186d16ea4bd2793a2d646ff",
+  "tree": "2467b2bc3dfb680c27e990f41ba8a26b05744462",
+  "nativeTree": "4a054c37cb4545f1f6e7e1461ec37530b3606558",
+  "testOnlyDifference": "app/test/keybindings_test.dart",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "4a054c37cb4545f1f6e7e1461ec37530b3606558",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "22de0382bd997aaca0dffdfc5f395a6a0fc539e7a03d3698b295035610180d19",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "065832c458f9182b51f1f15c3c97ccb37807ebe3065eddf1c561d68503010bad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "f513c1641b4367f58b981acbb23117fa51ae331aed39c7e62105ee57f6d36205",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "b3b1b412a78301d5c960a7b8210900244cc0b476a55aa8647d739ebc7145a9db",
+    "abi": 46,
+    "nativeCoreSha256": "f6f74c08bec8c98de22fe00e9722a7ce00f4ba6f350a617b6ffa99e63ee521dd",
+    "fixture": "p05_277_windows_key_events_probe.dart"
+  },
+  "linuxFixtureSha256": "0657201eded8f19f0ca23c16c4d28004cd3d204f37c612954a0338729a2ae23f",
+  "windowsFixtureSha256": "b3b1b412a78301d5c960a7b8210900244cc0b476a55aa8647d739ebc7145a9db",
+  "windowsAcceptanceDriverSha256": "c425ffae0bda7ae5e6208209b91d034175d35c32a8575ccec6e4f2cbfbba7e2b",
+  "linuxAcceptanceDriverSha256": "070355893170b655961dd17bcfd63685ee497becf484ec1fb03ca0c41e9f1f3c",
+  "windowsInitialKeyboardCheckSha256": "bc7f2e3d12890b507dff18490a23f843830e2c2e847d79e15b4e391f195c8350",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/editor/contrib/gotoError/browser/gotoError.ts": "8ab082e7f1f1e1f7b8d7854fb35cafa622e690218772f885233914518008bd89",
+      "src/vs/editor/contrib/gotoError/browser/markerNavigationService.ts": "d7c745b8fd464a7ad22c55bcc8d0b79c4206f6d11933a3ff336ae31dcad340cb"
+    }
+  },
+  "localLogsSha256": {
+    "p05-277-full.log": "909721a2e895483d33c423057c4ae232e05a0a1cdbce7a5fb9544e80eec97cfe",
+    "p05-277-focused.log": "440a7f6ea94292d687e43035f9343330c842e2121668b7c4416baf6752420a1a",
+    "p05-277-targeted.log": "7be27cb63a7c98c08b84b51d00309212d9a5573189a07353451c7cf1fae9eb78",
+    "p05-277-full-analyze.log": "03da083ad8a3fee55dc96094d600bf7b73f31a79e55ae442aa8079d7b314c24b",
+    "p05-277-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 11,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "be67c5bbc6ce11f59c773b4418e3618b6f575d440502500fb4ea102b2e4dfa3d"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 11,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "sha256": "be67c5bbc6ce11f59c773b4418e3618b6f575d440502500fb4ea102b2e4dfa3d"
+    }
+  },
+  "preedit": {
+    "readonly-impact-_registerCommands": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "037b0c279f84604129f8680128df1a2387f112487483891220e1b30b7fb623ee"
+    },
+    "readonly-impact-_openDiagnostic": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "e1158ee83a0269859407eee755f8782f15508af677bdb98f88c9f7396086faab"
+    },
+    "readonly-impact-_diagnosticEditor": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "1108ce53ffd3f5584c02df82eaa58e8a4d06e7e3541e10fb81d154a645411554"
+    },
+    "impact-_buildCompletionPanel": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "2423591dac51a6681942d1d108846374f93ea1811a8c65dbcc602a5fb7fe897c"
+    },
+    "impact-KeybindingSet": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "cae3a16ad985e1ecb2a554da1bc2c75726d59eb978a1e323b53c645c7b20e0ac"
+    },
+    "impact-defaults": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "fc25873bf7dbd4464a1afcb20eef24a998e9041571f2645a558237c17c605a1f"
+    },
+    "impact-defaultWhen": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "708b003143344c407471bbcbadaf1834d08a850ada3d9a441a1f6bb82b80489b"
+    },
+    "impact-keybindings-test-main": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "cccfd5754bd7150e1ab790b8293941cad3de0e353c4aea7ef324707194c7afca"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "4a054c37cb4545f1f6e7e1461ec37530b3606558",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "ec3306ee63dba3c2c8949cb42a2fbd1b3ec2dcc43f84cc82544f2874bbb2348b",
+    "fixtureSha256": "b3b1b412a78301d5c960a7b8210900244cc0b476a55aa8647d739ebc7145a9db",
+    "runnerSha256": "d75626570674d81b0377a8415a67739c4174550a2944546b2d7dea1461ebf36a",
+    "observedInitialWindowClass": "CASCADIA_HOSTING_WINDOW_CLASS",
+    "steps": {
+      "ready": {
+        "step": "main-ready-115333846071500",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "已连接 Rust 核心 v46",
+        "problemRows": []
+      },
+      "initial-caret": {
+        "step": "main-initial-caret-115335144043600",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "no-diagnostics-next": {
+        "step": "main-no-diagnostics-next-115335984019600",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "no-diagnostics-previous": {
+        "step": "main-no-diagnostics-previous-115336779183200",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "provider-two-files": {
+        "step": "main-provider-two-files-115338815741700",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "start-with-provider": {
+        "step": "main-start-with-provider-115340107407100",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-file-from-caret": {
+        "step": "main-previous-file-from-caret-115340906186100",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "history-restores-origin": {
+        "step": "main-history-restores-origin-115341782387500",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-in-current-file": {
+        "step": "main-next-in-current-file-115342541252300",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-wraps-across-files": {
+        "step": "main-next-wraps-across-files-115343300454500",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-file": {
+        "step": "main-next-file-115344058883600",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-file": {
+        "step": "main-previous-file-115344935374400",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-wraps-across-files": {
+        "step": "main-previous-wraps-across-files-115345731792600",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "completion-before-key-event": {
+        "step": "main-completion-before-key-event-115346453773200",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "completion-windows-hardware-trace": {
+        "step": "main-completion-windows-hardware-trace-115348451467300",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "completion-still-available": {
+        "step": "main-completion-still-available-115349557332400",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          550.4
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "补全返回 138 项",
+        "problemRows": []
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "initial-caret": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "no-diagnostics-next": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "no-diagnostics-previous": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-two-files": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "start-with-provider": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "previous-file-from-caret": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "history-restores-origin": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "next-in-current-file": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "next-wraps-across-files": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "next-file": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "previous-file": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "previous-wraps-across-files": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "completion-before-key-event": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "completion-windows-hardware-trace": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "completion-still-available": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "shift+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "shift+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "alt+Left",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "shift+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "shift+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+space",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ],
+    "fixturePositions": [
+      "1:1",
+      "rust-analyzer",
+      "1:1",
+      "触发补全"
+    ],
+    "completionNativeKeyEvents": [
+      {
+        "type": "KeyDownEvent",
+        "logical": 8589934848,
+        "physical": 458976,
+        "controlKey": true,
+        "spaceKey": false,
+        "spacePhysical": false,
+        "ctrl": true,
+        "shift": false
+      },
+      {
+        "type": "KeyUpEvent",
+        "logical": 8589934848,
+        "physical": 458976,
+        "controlKey": true,
+        "spaceKey": false,
+        "spacePhysical": false,
+        "ctrl": false,
+        "shift": false
+      }
+    ],
+    "completionCtrlSpaceDetail": "行 1，列 1",
+    "completionRoute": "native F1 command palette",
+    "kind": "crossFileDiagnostics",
+    "sourceSha256": {
+      "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+      "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+    },
+    "completionStatus": "补全返回 138 项",
+    "diagnoses": {
+      "lib.rs": {
+        "diagnostic": {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "fileRangeUtf16": [
+          1,
+          34,
+          1,
+          44
+        ],
+        "selectionUtf16": [
+          45,
+          55
+        ]
+      },
+      "other.rs": {
+        "diagnostic": {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "fileRangeUtf16": [
+          0,
+          35,
+          0,
+          40
+        ],
+        "selectionUtf16": [
+          35,
+          40
+        ]
+      }
+    },
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "dbda2469a39615e09e220ec99245fdca6a634f217a174c8fbb82fa7c621c2d78"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "4a054c37cb4545f1f6e7e1461ec37530b3606558",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1297,
+            "ppid": 1296,
+            "private": 238366720,
+            "pss": 264947712,
+            "working_set": 317091840
+          }
+        ],
+        "root_pid": 1297,
+        "total_private_bytes": 238366720,
+        "total_private_mib": 227.3,
+        "total_working_set_bytes": 317091840
+      }
+    },
+    "aotSha256": "dc1764ab317f99b8dae543f153b6b36a18568321caffff4f837d346eb0d9f099",
+    "fixtureSha256": "0657201eded8f19f0ca23c16c4d28004cd3d204f37c612954a0338729a2ae23f",
+    "runnerSha256": "980d0e910bf5b88bd846fd1bf7a4f4b4b368c426a7a26a6356fde2f472678cbe",
+    "steps": {
+      "ready": {
+        "step": "ready",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "已连接 Rust 核心 v46",
+        "problemRows": []
+      },
+      "initial-caret": {
+        "step": "initial-caret",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "no-diagnostics-next": {
+        "step": "no-diagnostics-next",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "no-diagnostics-previous": {
+        "step": "no-diagnostics-previous",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [],
+        "otherDiagnostics": [],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "provider-two-files": {
+        "step": "provider-two-files-2",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "start-with-provider": {
+        "step": "start-with-provider",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-file-from-caret": {
+        "step": "previous-file-from-caret",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "history-restores-origin": {
+        "step": "history-restores-origin",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          0,
+          0
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-in-current-file": {
+        "step": "next-in-current-file",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-wraps-across-files": {
+        "step": "next-wraps-across-files",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "next-file": {
+        "step": "next-file",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-file": {
+        "step": "previous-file",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "lib.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 2,
+        "text": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "mirror": "mod other;\npub fn broken() -> u32 { /* 🦊 */ \"mismatch\" }\n",
+        "selection": [
+          45,
+          55
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "previous-wraps-across-files": {
+        "step": "previous-wraps-across-files",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "行 1，列 1",
+        "problemRows": []
+      },
+      "completion-still-available": {
+        "step": "completion-still-available",
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "editor": "other.rs 主编辑器",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0000000000001
+        ],
+        "abi": 46,
+        "version": 1,
+        "documentId": 3,
+        "text": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "mirror": "pub fn other() -> usize { /* 🐙 */ false }\n",
+        "selection": [
+          35,
+          40
+        ],
+        "diagnostics": [
+          {
+            "character": 34,
+            "documentVersion": 1,
+            "endCharacter": 44,
+            "endLine": 1,
+            "line": 1,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 19,
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 1,
+            "line": 1,
+            "message": "expected `u32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "otherDiagnostics": [
+          {
+            "character": 35,
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `usize` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "statusDetail": "补全返回 132 项",
+        "problemRows": []
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "characterDelayMs": 12,
+    "kind": "crossFileDiagnostics",
+    "sourceSha256": {
+      "src/lib.rs": "f3fa83b472ba1b4a4e50ebc3fd8f8a944cae24a0d99ab2e4fd5f4f4196fee099",
+      "src/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef",
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d"
+    },
+    "completionStatus": "补全返回 132 项",
+    "diagnoses": {
+      "lib.rs": {
+        "diagnostic": {
+          "character": 34,
+          "documentVersion": 1,
+          "endCharacter": 44,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "fileRangeUtf16": [
+          1,
+          34,
+          1,
+          44
+        ],
+        "selectionUtf16": [
+          45,
+          55
+        ]
+      },
+      "other.rs": {
+        "diagnostic": {
+          "character": 35,
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "fileRangeUtf16": [
+          0,
+          35,
+          0,
+          40
+        ],
+        "selectionUtf16": [
+          35,
+          40
+        ]
+      }
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "completionRoute": "native Ctrl+Space",
+    "rawReportSha256": "c015e3e90461539a70ffa65419d7803125b6e322acd72067decd50330e95cdd1"
+  }
+}
