@@ -721,6 +721,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
   final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
   final TextEditingController _problemsFilterController = TextEditingController();
+  final Set<int> _visibleProblemSeverities = {1, 2, 3};
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -30639,11 +30640,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       valueListenable: _problemsFilterController,
       builder: (context, value, _) {
         final query = value.text.trim().toLowerCase();
-        final diagnostics = query.isEmpty
-            ? _diagnostics
-            : _diagnostics
-                .where((diagnostic) => _matchesProblemsText(diagnostic, query))
-                .toList();
+        final diagnostics = <Map<String, Object?>>[];
+        var hasProblems = false;
+        for (final diagnostic in _diagnostics) {
+          final severity = (diagnostic['severity'] as num?)?.toInt() ?? 3;
+          if (severity < 1 || severity > 3) continue;
+          hasProblems = true;
+          if (_visibleProblemSeverities.contains(severity) &&
+              (query.isEmpty || _matchesProblemsText(diagnostic, query))) {
+            diagnostics.add(diagnostic);
+          }
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -30661,9 +30668,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   isDense: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  suffixIcon: value.text.isEmpty
-                      ? null
-                      : IconButton(
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (value.text.isNotEmpty)
+                        IconButton(
                           tooltip: '清除诊断筛选',
                           icon: const Icon(Icons.close, size: 16),
                           visualDensity: VisualDensity.compact,
@@ -30672,25 +30681,55 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             _problemsFilterFocus.requestFocus();
                           },
                         ),
+                      PopupMenuButton<int>(
+                        tooltip: '诊断级别筛选',
+                        icon: const Icon(Icons.filter_list, size: 16),
+                        onSelected: (severity) {
+                          setState(() {
+                            if (!_visibleProblemSeverities.remove(severity)) {
+                              _visibleProblemSeverities.add(severity);
+                            }
+                          });
+                        },
+                        itemBuilder: (context) => [
+                          for (final (severity, label) in const [
+                            (1, '显示错误'),
+                            (2, '显示警告'),
+                            (3, '显示信息'),
+                          ])
+                            CheckedPopupMenuItem<int>(
+                              value: severity,
+                              checked: _visibleProblemSeverities.contains(severity),
+                              child: Text(label),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Expanded(child: _buildDiagnosticResults(diagnostics)),
+            Expanded(
+              child: _buildDiagnosticResults(diagnostics, hasProblems: hasProblems),
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _buildDiagnosticResults(List<Map<String, Object?>> diagnostics) {
-    if (!_lspReady && _diagnostics.isEmpty) {
+  Widget _buildDiagnosticResults(
+    List<Map<String, Object?>> diagnostics, {
+    required bool hasProblems,
+  }) {
+    if (!_lspReady && !hasProblems) {
       return Center(
         child: Text('LSP 未启动\n打开文件夹后从编辑器右上角启动',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
       );
     }
-    if (_diagnostics.isEmpty) {
+    if (!hasProblems) {
       return Center(
         child: Text('无诊断（代码干净）',
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
