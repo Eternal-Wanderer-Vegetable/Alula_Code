@@ -4657,6 +4657,18 @@
       "evidence": "Problems 树诊断行单击预览并保留焦点，双击显式打开并固定已有预览标签。Windows、Linux 各通过 20 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a7ed06f5 的 CI 45873005067 四项与 Platform Availability 45872997470 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.314-problems-tree-mouse-preview.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-367",
+      "name": "P05.315 LAY-16 / CMD-11 Problems 筛选框进入结果区的焦点目标",
+      "description": "Ctrl/Cmd+Down 将 Problems 筛选焦点转入结果。保留已有选择和行焦点，初始化树或表格目标，空态可获焦。",
+      "dependencies": [
+        "feat-366"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -216,6 +216,8 @@ class ProblemsResultSelection {
   Object? _lastPlainClick;
   Timer? _previewTimer;
 
+  Object? lastFocusedRow;
+
   bool registerRowActivation(Object key, int? clickCount) {
     _previewTimer?.cancel();
     _previewTimer = null;

@@ -309,6 +309,10 @@ typedef ReferencesRequest = Future<ReferencesResult?> Function(
   bool includeDeclaration,
 );
 
+class _FocusProblemsResultsIntent extends Intent {
+  const _FocusProblemsResultsIntent();
+}
+
 enum _ProblemsFilterOption {
   errors('显示错误', severity: 1),
   warnings('显示警告', severity: 2),
@@ -30820,14 +30824,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _problemsFilterFocus.requestFocus();
         return KeyEventResult.handled;
       case 'problems.action.focusProblemsFromFilter':
-        // The list is virtualized. Focus the first rendered row when available.
-        for (final node in _problemsResultsFocus.traversalDescendants) {
-          if (node.context?.findAncestorWidgetOfExactType<ListTile>() != null) {
-            node.requestFocus();
-            return KeyEventResult.handled;
-          }
+        final context = _problemsResultsFocus.context;
+        if (context == null ||
+            Actions.maybeInvoke(context, const _FocusProblemsResultsIntent()) !=
+                true) {
+          _problemsResultsFocus.requestFocus();
         }
-        _problemsResultsFocus.requestFocus();
         return KeyEventResult.handled;
       default:
         return KeyEventResult.ignored;
@@ -31203,42 +31205,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (endBoundary != null) WidgetsBinding.instance.ensureVisualUpdate();
     }
 
-    void focusFileGroup(Key key, int index, Object? document) {
-      const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtStart;
-      if (focusRenderedResult(key, alignment)) return;
-      if (_problemsScrollController.positions.length != 1) return;
-
-      var render =
-          FocusManager.instance.primaryFocus?.context?.findRenderObject();
-      while (render != null && render is! RenderSliverList) {
-        render = render.parent;
-      }
-      if (render is! RenderSliverList) return;
-
-      final sliver = render;
-      final position = _problemsScrollController.position;
+    void revealResult(
+      RenderSliverList sliver,
+      ScrollPosition position,
+      int index,
+      bool Function() focus, {
+      bool Function()? canFocus,
+    }) {
       final first = sliver.firstChild;
-      if (!position.hasContentDimensions ||
-          first == null ||
-          sliver.indexOf(first) <= index) {
-        return;
-      }
+      final last = sliver.lastChild;
+      if (first == null || last == null) return;
 
-      var lower = position.minScrollExtent;
-      var upper = position.pixels;
+      var lower = index < sliver.indexOf(first)
+          ? position.minScrollExtent
+          : position.pixels;
+      var upper = index > sliver.indexOf(last)
+          ? position.maxScrollExtent
+          : position.pixels;
+      if (lower >= upper) return;
 
       void seek(double offset, int remaining) {
         jumpResults(sliver, position, offset, (sampledOffset) {
-          if (document != null && _collapsedProblemGroups[document] == true) {
-            return;
-          }
-          if (focusRenderedResult(key, alignment) || remaining == 1) return;
-
+          if (canFocus?.call() == false || focus() || remaining == 1) return;
           final first = sliver.firstChild;
           final last = sliver.lastChild;
           if (first == null || last == null) return;
-          // The rows have variable heights. Use their rendered indexes to
-          // narrow the scroll range until the group's actual bounds are known.
+          // Rows have variable heights. Narrow the search using laid-out indexes.
           if (index < sliver.indexOf(first)) {
             upper = sampledOffset;
           } else if (index > sliver.indexOf(last)) {
@@ -31247,13 +31239,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return;
           }
           final next = (lower + upper) / 2;
-          if ((next - sampledOffset).abs() > 0.5) {
-            seek(next, remaining - 1);
-          }
+          if ((next - sampledOffset).abs() > 0.5) seek(next, remaining - 1);
         });
       }
 
       seek(index == 0 ? lower : (lower + upper) / 2, 24);
+    }
+
+    void focusFileGroup(Key key, int index, Object? document) {
+      const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtStart;
+      bool focus() => focusRenderedResult(key, alignment);
+      if (focus() || _problemsScrollController.positions.length != 1) return;
+
+      var render =
+          FocusManager.instance.primaryFocus?.context?.findRenderObject();
+      while (render != null && render is! RenderSliverList) {
+        render = render.parent;
+      }
+      if (render is! RenderSliverList) return;
+
+      final position = _problemsScrollController.position;
+      final first = render.firstChild;
+      if (!position.hasContentDimensions ||
+          first == null ||
+          render.indexOf(first) <= index) {
+        return;
+      }
+      revealResult(
+        render,
+        position,
+        index,
+        focus,
+        canFocus: () =>
+            document == null || _collapsedProblemGroups[document] != true,
+      );
     }
 
     int groupIndexAtItem(int item) {
@@ -31352,6 +31371,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       RenderSliverList sliver,
       ScrollPosition position, {
       required bool forward,
+      bool fullyVisible = true,
     }) {
       final viewport = RenderAbstractViewport.maybeOf(sliver);
       if (viewport == null) return null;
@@ -31365,7 +31385,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (top < end && bottom > start) {
           final index = sliver.indexOf(child);
           intersecting ??= index;
-          if (top >= start - 0.5 && bottom <= end + 0.5) return index;
+          if (!fullyVisible || (top >= start - 0.5 && bottom <= end + 0.5)) {
+            return index;
+          }
         }
         child = forward ? sliver.childBefore(child) : sliver.childAfter(child);
       }
@@ -31635,6 +31657,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final group = groups[groupIndex];
         final fileName = group.fileName;
         final groupKey = groupKeyAt(groupIndex);
+        final resultKey = selectionRows[i];
+        Widget rememberFocus(Widget child) => Focus(
+          canRequestFocus: false,
+          skipTraversal: true,
+          includeSemantics: false,
+          onFocusChange: (focused) {
+            if (focused) selection.lastFocusedRow = resultKey;
+          },
+          child: child,
+        );
+
         if (!tableMode && i == group.firstItem) {
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
@@ -31674,7 +31707,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             if (!result.modified) toggle?.call();
           }
 
-          return Semantics(
+          final header = Semantics(
             key: groupKey,
             container: true,
             header: true,
@@ -31763,6 +31796,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
             ),
           );
+          return rememberFocus(header);
         }
         final rowNumber = i - group.firstItem + (tableMode ? 1 : 0);
         final d = diagnostics[group.firstDiagnostic + rowNumber - 1];
@@ -31901,7 +31935,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
               ),
             },
-            child: row,
+            child: rememberFocus(row),
           ),
         );
       },
@@ -32008,6 +32042,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
 
+    void focusResultsFromFilter(ProblemsResultSelection selection) {
+      final firstSelected = selection.firstSelected;
+      if (firstSelected != null) {
+        final remembered =
+            selectionRows.indexOf(selection.lastFocusedRow ?? firstSelected);
+        final index =
+            remembered >= 0 ? remembered : selectionRows.indexOf(firstSelected);
+        if (index < 0) {
+          _problemsResultsFocus.requestFocus();
+          return;
+        }
+        final result = selectionRows[index];
+        final key = result is Key ? result : ValueKey(result);
+        bool focus() => focusRenderedResult(
+              key,
+              ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+            );
+        if (focus()) return;
+        _problemsResultsFocus.requestFocus();
+        final layout = laidOutResults();
+        if (layout != null) {
+          revealResult(layout.sliver, layout.position, index, focus);
+        }
+        return;
+      }
+
+      void selectInitial(int index) {
+        selection.followNavigation(selectionRows, null, index);
+      }
+
+      if (tableMode) {
+        focusBoundary(forward: false, onFocused: selectInitial);
+        return;
+      }
+
+      final layout = laidOutResults();
+      final first = layout == null
+          ? null
+          : pageEdge(layout.sliver, layout.position,
+              forward: false, fullyVisible: false);
+      if (first == null) {
+        _problemsResultsFocus.requestFocus();
+        return;
+      }
+      final group = groups[groupIndexAtItem(first)];
+      if (first == group.firstItem && !group.expanded) {
+        final query = _problemsFilterController.text;
+        _problemsResultsFocus.requestFocus();
+        setState(() => _collapsedProblemGroups[group.document!] = null);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final context = _problemsResultsFocus.context;
+          if (mounted &&
+              !_disposing &&
+              !_problemsTableMode &&
+              _problemsResultsFocus.hasPrimaryFocus &&
+              _problemsFilterController.text == query &&
+              context != null) {
+            Actions.maybeInvoke(context, const _FocusProblemsResultsIntent());
+          }
+        });
+        return;
+      }
+
+      final marker = first == group.firstItem ? first + 1 : first;
+      if (!focusResultAt(marker, forward: true, onFocused: selectInitial)) {
+        _problemsResultsFocus.requestFocus();
+      }
+    }
+
     Widget withResultShortcuts(ProblemsResultSelection selection) {
       final mac = Theme.of(context).platform == TargetPlatform.macOS;
       ValueChanged<int> afterNavigation() {
@@ -32019,7 +32122,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             followAndPreview(selection, previous, next);
       }
 
-      return resultsRegion(
+      final region = resultsRegion(
         list(selection),
         onKeyEvent: (_, event) {
           const escape = SingleActivator(LogicalKeyboardKey.escape);
@@ -32075,6 +32178,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             if (index != null) selection.toggleFocused(selectionRows[index]);
           },
         },
+      );
+      return Actions(
+        actions: {
+          _FocusProblemsResultsIntent:
+              CallbackAction<_FocusProblemsResultsIntent>(onInvoke: (_) {
+            focusResultsFromFilter(selection);
+            return true;
+          }),
+        },
+        child: region,
       );
     }
 
