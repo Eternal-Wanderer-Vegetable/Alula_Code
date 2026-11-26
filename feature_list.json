@@ -4321,6 +4321,18 @@
       "evidence": "Problems 支持通过前导 ! 反选已有文本匹配。Windows 和 Linux 各通过 22 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0bc8a37f 的 CI 45733973013 四项与 Platform Availability 45733966557 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.286-problems-text-negation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-339",
+      "name": "P05.287 CMD-11 Problems 来源筛选",
+      "description": "从查询提取 @source: 和 !@source: 条件，按来源精确包含或排除，再应用文本和范围筛选。",
+      "dependencies": [
+        "feat-338"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -30692,7 +30692,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: _problemsFilterController,
       builder: (context, value, _) {
-        final filter = value.text.trim().toLowerCase();
+        final includedSources = <String>{};
+        final excludedSources = <String>{};
+        final filter = value.text.toLowerCase().replaceAllMapped(
+          RegExp(r'(!)?@source:(?:"([^"]*)"|([^\s,]+))\s*'),
+          (match) {
+            final source = match.group(2) ?? match.group(3)!;
+            final filters =
+                match.group(1) == null ? includedSources : excludedSources;
+            filters.add(source == '"' ? '' : source);
+            return '';
+          },
+        ).trim();
+        final hasSourceFilters =
+            includedSources.isNotEmpty || excludedSources.isNotEmpty;
         final negateText = filter.startsWith('!');
         final query = negateText
             ? filter.replaceFirst(RegExp(r'^!+'), '').trimLeft()
@@ -30709,6 +30722,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             continue;
           }
           hasProblemsInScope = true;
+          if (hasSourceFilters) {
+            final rawSource = diagnostic['source'];
+            final source = rawSource is String && rawSource.isNotEmpty
+                ? rawSource.toLowerCase()
+                : null;
+            if (excludedSources.contains(source) ||
+                (includedSources.isNotEmpty &&
+                    !includedSources.contains(source))) {
+              continue;
+            }
+          }
           if (_visibleProblemSeverities.contains(severity) &&
               (query.isEmpty ||
                   _matchesProblemsText(diagnostic, query) != negateText)) {
