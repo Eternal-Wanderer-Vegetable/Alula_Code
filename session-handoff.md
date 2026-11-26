@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.292 / feat-344 完成。Problems 标题区可折叠全部文件组，保留查询、计数和隐藏组状态，并聚焦首组。Windows 和 Linux 各通过 18 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c10ed73f 的 CI 45756883961 四项与 Platform Availability 45759360367 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.292-problems-collapse-all.md。
 - P05.291 / feat-343 完成。Problems 文件组支持鼠标及键盘收起展开，筛选及面板重开保留状态。Windows 和 Linux 各通过 19 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b79e83 的 CI 45753255875 四项与 Platform Availability 45753251673 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.291-problems-group-toggle.md。
 - P05.290 / feat-342 完成。Problems 按文档显示文件名、目录和可见诊断数，同名文件分组独立。Windows 和 Linux 各通过 15 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c3ea41be 的 CI 45749684572 四项与 Platform Availability 45749681680 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.290-problems-file-groups.md。
 - P05.289 / feat-341 完成。Problems 诊断位置从第 1 行和第 1 列开始显示。Windows 和 Linux 各通过 14 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 26901998 的 CI 45746036539 四项与 Platform Availability 45746031982 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md。
@@ -309,6 +310,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.292 Problems 折叠全部文件组](docs/diagnostics/2026-11-26-p05/p05.292-problems-collapse-all.md)。
 [P05.291 Problems 文件组收起和展开](docs/diagnostics/2026-11-26-p05/p05.291-problems-group-toggle.md)。
 [P05.290 Problems 按文件分组呈现](docs/diagnostics/2026-11-26-p05/p05.290-problems-file-groups.md)。
 [P05.289 Problems 行列显示](docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md)。
@@ -507,4 +509,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.291 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 折叠全部文件组。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.292 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 文件组左右方向键。PR #3 保持草稿，macOS 实机暂缓。
