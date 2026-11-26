@@ -31027,6 +31027,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemCount += 1 + (expanded ? end - first : 0);
       first = end;
     }
+    void focusRenderedResult(
+      Key key,
+      ScrollPositionAlignmentPolicy alignmentPolicy,
+    ) {
+      final resultsContext = _problemsResultsFocus.context;
+      for (final node in _problemsResultsFocus.traversalDescendants) {
+        final nodeContext = node.context;
+        if (nodeContext == null || !nodeContext.mounted) continue;
+        var matches = false;
+        nodeContext.visitAncestorElements((ancestor) {
+          if (ancestor == resultsContext) return false;
+          matches = ancestor.widget.key == key;
+          return !matches;
+        });
+        if (!matches) continue;
+        FocusTraversalPolicy.defaultTraversalRequestFocusCallback(
+          node,
+          alignmentPolicy: alignmentPolicy,
+        );
+        return;
+      }
+    }
+
     return ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
@@ -31043,6 +31066,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         final group = groups[low];
         final fileName = group.fileName;
+        final groupKey = ValueKey(
+          'problems-file-group-${group.identity ?? group.firstDiagnostic}',
+        );
         if (i == group.firstItem) {
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
@@ -31061,9 +31087,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ? null
               : () => setCollapsed(_collapsedProblemGroups[document] != true);
           return Semantics(
-            key: ValueKey(
-              'problems-file-group-${group.identity ?? group.firstDiagnostic}',
-            ),
+            key: groupKey,
             container: true,
             header: true,
             button: toggle != null,
@@ -31080,8 +31104,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 if (document != null) ...{
                   const SingleActivator(LogicalKeyboardKey.arrowLeft):
                       () => setCollapsed(true),
-                  const SingleActivator(LogicalKeyboardKey.arrowRight):
-                      () => setCollapsed(false),
+                  const SingleActivator(LogicalKeyboardKey.arrowRight): () {
+                    if (_collapsedProblemGroups[document] == true) {
+                      setCollapsed(false);
+                    } else {
+                      focusRenderedResult(
+                        ValueKey((groupKey, 1)),
+                        ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+                      );
+                    }
+                  },
                 },
               },
               child: InkWell(
@@ -31151,7 +31183,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           2 => (Icons.warning_amber_rounded, Colors.orangeAccent),
           _ => (Icons.info_outline, Colors.lightBlueAccent),
         };
-        return ListTile(
+        final row = ListTile(
+          key: ValueKey((groupKey, i - group.firstItem)),
           dense: true,
           contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
           onTap: canOpen ? () => _openDiagnostic(d) : null,
@@ -31171,6 +31204,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
             style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
           ),
+        );
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
+              focusRenderedResult(
+                groupKey,
+                ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+              );
+            },
+            const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
+          },
+          child: row,
         );
       },
     );
