@@ -93,6 +93,7 @@ import 'auxiliary_tab_drop_target.dart';
 import 'command_history.dart';
 import 'tree_find.dart';
 import 'goto_position.dart';
+import 'problems_path_filter.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
 import 'open_editors_sort_order.dart';
@@ -30694,22 +30695,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       builder: (context, value, _) {
         final includedSources = <String>{};
         final excludedSources = <String>{};
-        final filter = value.text.toLowerCase().replaceAllMapped(
-          RegExp(r'(!)?@source:(?:"([^"]*)"|([^\s,]+))\s*'),
+        final filter = value.text.replaceAllMapped(
+          RegExp(
+            r'(!)?@source:(?:"([^"]*)"|([^\s,]+))\s*',
+            caseSensitive: false,
+          ),
           (match) {
             final source = match.group(2) ?? match.group(3)!;
             final filters =
                 match.group(1) == null ? includedSources : excludedSources;
-            filters.add(source == '"' ? '' : source);
+            filters.add(source == '"' ? '' : source.toLowerCase());
             return '';
           },
         ).trim();
         final hasSourceFilters =
             includedSources.isNotEmpty || excludedSources.isNotEmpty;
         final negateText = filter.startsWith('!');
-        final query = negateText
-            ? filter.replaceFirst(RegExp(r'^!+'), '').trimLeft()
-            : filter;
+        final query = (negateText
+                ? filter.replaceFirst(RegExp(r'^!+'), '').trimLeft()
+                : filter)
+            .toLowerCase();
+        final pathFilter = ProblemsPathFilter(filter);
+        final pathMatches = <int, ProblemsPathMatch>{};
+        if (!pathFilter.isEmpty) {
+          for (final doc in _allDocs) {
+            final filePath = doc.path;
+            if (filePath != null) pathMatches[doc.id] = pathFilter.match(filePath);
+          }
+        }
         final diagnostics = <Map<String, Object?>>[];
         final activeId = _active?.id;
         var totalProblems = 0;
@@ -30722,6 +30735,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             continue;
           }
           hasProblemsInScope = true;
+          final pathMatch = pathMatches[diagnostic['_documentId']];
+          if (pathMatch == ProblemsPathMatch.excluded) continue;
           if (hasSourceFilters) {
             final rawSource = diagnostic['source'];
             final source = rawSource is String && rawSource.isNotEmpty
@@ -30734,7 +30749,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             }
           }
           if (_visibleProblemSeverities.contains(severity) &&
-              (query.isEmpty ||
+              (pathMatch == ProblemsPathMatch.included ||
+                  query.isEmpty ||
                   _matchesProblemsText(diagnostic, query) != negateText)) {
             diagnostics.add(diagnostic);
           }
