@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.318 / feat-370 完成。Problems 树支持逐条诊断收起和展开消息。单行诊断无需切换，五行诊断可完整展开。筛选、组折叠及树表切换保留各条诊断的行显示状态。Windows 与 Linux 各通过 20 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 be5f9c3a 的 CI 45889370217 四项与 Platform Availability 45889363360 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.318-problems-message-lines.md。
 - P05.317 / feat-369 完成。固定版对照将 Problems 文件组、两行诊断、表头和表格行校准为 22、44、24、24 逻辑像素。树诊断首行显示来源、代码和位置。Windows 与 Linux 各通过 11 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6b0f9605 的 CI 45885827159 四项与 Platform Availability 45885819195 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md。
 - P05.316 / feat-368 完成。Problems 树、表格或空结果区键入普通字符会聚焦筛选，并按筛选框已有选区插入首字符。已配置的单键和组合键沿用命令路由。Windows、Linux 各通过 27 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 f2d90924 的 CI 45881599093 四项与 Platform Availability 45881591502 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.316-problems-type-to-filter.md。
 - P05.315 / feat-367 完成。Problems 筛选框主键加 Down 恢复结果焦点和选择。无选择时初始化树或表格的诊断焦点，无匹配时聚焦结果消息。Windows、Linux 各通过 31 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da76c3d1 的 CI 45877029835 四项与 Platform Availability 45877021466 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.315-problems-filter-entry.md。
@@ -335,6 +336,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.318 Problems 树诊断消息行显示切换](docs/diagnostics/2026-11-27-p05/p05.318-problems-message-lines.md)。
 [P05.317 Problems 树与表格视觉对照](docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md)。
 [P05.316 Problems 结果区键入聚焦筛选](docs/diagnostics/2026-11-27-p05/p05.316-problems-type-to-filter.md)。
 [P05.315 Problems 筛选框进入结果区的焦点目标](docs/diagnostics/2026-11-27-p05/p05.315-problems-filter-entry.md)。
@@ -559,4 +561,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.317 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 树诊断消息行显示切换。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.318 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 结果筛选匹配高亮。PR #3 保持草稿，macOS 实机暂缓。
