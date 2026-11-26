@@ -222,6 +222,31 @@ class ProblemsTableSelection {
     if (_anchor != null && !rows.contains(_anchor)) _anchor = null;
   }
 
+  void _toggle(Object key) {
+    if (!_selected.remove(key)) _selected.add(key);
+  }
+
+  void toggleFocused(Object key) => _update(() => _toggle(key));
+
+  void selectAll(List<Object> rows) {
+    _update(() {
+      _selected
+        ..clear()
+        ..addAll(rows);
+    });
+  }
+
+  void extendAfterFocus(List<Object> rows, int? previous, int next) {
+    _update(() {
+      final target = rows[next];
+      if (_selected.contains(target)) {
+        if (previous != null) _selected.remove(rows[previous]);
+      } else {
+        _selected.add(target);
+      }
+    });
+  }
+
   void select(
     List<Object> rows,
     int index, {
@@ -233,8 +258,13 @@ class ProblemsTableSelection {
       final target = rows[index];
       if (!extend) {
         _anchor = target;
-        if (!toggle) _selected.clear();
-        if (!_selected.remove(target)) _selected.add(target);
+        if (toggle) {
+          _toggle(target);
+        } else {
+          _selected
+            ..clear()
+            ..add(target);
+        }
         return;
       }
 

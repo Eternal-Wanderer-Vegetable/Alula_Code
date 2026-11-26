@@ -4501,6 +4501,18 @@
       "evidence": "Problems 表格支持平台主修改键鼠标多选和 Shift 点击范围选择。Windows 和 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 3be63842 的 CI 45809951326 四项与 Platform Availability 45809943449 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.301-problems-table-selection.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-354",
+      "name": "P05.302 LAY-16 Problems 表格键盘选择",
+      "description": "Problems 表格结果获焦时支持 Shift 方向键调整选择、平台主键全选、主键加 Shift 和 Enter 切换当前项。验收筛选框与编辑器的键位隔离。",
+      "dependencies": [
+        "feat-353"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

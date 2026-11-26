@@ -31599,26 +31599,67 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         );
       },
     );
-    return resultsRegion(
-      tableMode
-          ? ProblemsTable(
-              body: (selection) {
-                if (selection.hasState) selection.retainVisible(selectionRows);
-                return list(selection);
-              },
-            )
-          : list(),
-      shortcuts: {
-        const SingleActivator(LogicalKeyboardKey.home):
-            () => focusBoundary(forward: false),
-        const SingleActivator(LogicalKeyboardKey.end):
-            () => focusBoundary(forward: true),
-        const SingleActivator(LogicalKeyboardKey.pageUp):
-            () => focusPage(forward: false),
-        const SingleActivator(LogicalKeyboardKey.pageDown):
-            () => focusPage(forward: true),
-      },
-    );
+
+    int? currentResultIndex() {
+      final layout = laidOutResults();
+      return layout == null ? null : focusedResultIndex(layout.sliver);
+    }
+
+    void focusAndExtend(
+      ProblemsTableSelection selection, {
+      required bool forward,
+    }) {
+      final previous = currentResultIndex();
+      final next = previous == null
+          ? 0
+          : (previous + (forward ? 1 : -1)).clamp(0, itemCount - 1).toInt();
+      if (focusResultAt(next, forward: forward)) {
+        selection.extendAfterFocus(selectionRows, previous, next);
+      }
+    }
+
+    Widget withResultShortcuts([ProblemsTableSelection? selection]) {
+      final mac = Theme.of(context).platform == TargetPlatform.macOS;
+      return resultsRegion(
+        list(selection),
+        shortcuts: {
+          const SingleActivator(LogicalKeyboardKey.home):
+              () => focusBoundary(forward: false),
+          const SingleActivator(LogicalKeyboardKey.end):
+              () => focusBoundary(forward: true),
+          const SingleActivator(LogicalKeyboardKey.pageUp):
+              () => focusPage(forward: false),
+          const SingleActivator(LogicalKeyboardKey.pageDown):
+              () => focusPage(forward: true),
+          if (selection != null) ...{
+            const SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
+                () => focusAndExtend(selection, forward: false),
+            const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
+                () => focusAndExtend(selection, forward: true),
+            SingleActivator(LogicalKeyboardKey.keyA, control: !mac, meta: mac):
+                () => selection.selectAll(selectionRows),
+            SingleActivator(
+              LogicalKeyboardKey.enter,
+              control: !mac,
+              meta: mac,
+              shift: true,
+            ): () {
+              final index = currentResultIndex();
+              if (index != null) selection.toggleFocused(selectionRows[index]);
+            },
+          },
+        },
+      );
+    }
+
+    return tableMode
+        ? ProblemsTable(
+            body: (selection) {
+              if (selection.hasState) selection.retainVisible(selectionRows);
+              return withResultShortcuts(selection);
+            },
+          )
+        : withResultShortcuts();
   }
 
   Widget _buildCompletionPanel() {
