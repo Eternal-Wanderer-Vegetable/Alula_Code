@@ -30695,12 +30695,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final query = value.text.trim().toLowerCase();
         final diagnostics = <Map<String, Object?>>[];
         final activeId = _active?.id;
-        var hasProblems = false;
+        var totalProblems = 0;
         var hasProblemsInScope = false;
         for (final diagnostic in _diagnostics) {
           final severity = (diagnostic['severity'] as num?)?.toInt() ?? 3;
           if (severity < 1 || severity > 3) continue;
-          hasProblems = true;
+          totalProblems++;
           if (_problemsActiveFileOnly && diagnostic['_documentId'] != activeId) {
             continue;
           }
@@ -30710,6 +30710,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             diagnostics.add(diagnostic);
           }
         }
+        final visibleProblems = diagnostics.length;
+        final countLabel = visibleProblems < totalProblems
+            ? '显示 $visibleProblems 条，共 $totalProblems 条'
+            : null;
+        final colors = Theme.of(context).colorScheme;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -30730,6 +30735,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (countLabel != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Tooltip(
+                            message: countLabel,
+                            excludeFromSemantics: true,
+                            child: Badge(
+                              backgroundColor: colors.surfaceContainerHighest,
+                              textColor: colors.onSurfaceVariant,
+                              label: Text(
+                                '$visibleProblems / $totalProblems',
+                                key: const ValueKey('problems-filter-count'),
+                                semanticsLabel: countLabel,
+                              ),
+                            ),
+                          ),
+                        ),
                       if (value.text.isNotEmpty)
                         IconButton(
                           tooltip: '清除诊断文本筛选',
@@ -30779,7 +30801,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 skipTraversal: true,
                 child: _buildDiagnosticResults(
                   diagnostics,
-                  hasProblems: hasProblems,
+                  hasProblems: totalProblems != 0,
                   hasProblemsInScope: hasProblemsInScope,
                 ),
               ),
