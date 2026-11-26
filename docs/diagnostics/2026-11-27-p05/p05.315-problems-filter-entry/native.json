@@ -1,0 +1,6546 @@
+{
+  "product": "da76c3d1685e6b19326f9b65f7d46742925d269e",
+  "tree": "432722e56c3596c9d8696bbbee5d0a9538cbbc47",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "432722e56c3596c9d8696bbbee5d0a9538cbbc47",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "8352cf8631b4d087ffe9090c8306736f2b0ce3689a511d7f55d16b8e52c04c27",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "af2b7c8b462b796d4e422fcfa97ccf6d6f9cf86677f653b5756a9acb06edcadb",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "2c2ac202543604b6fe1c2aa2dff91cd22391a2937ed1370ddd29eaeb8653440c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "6fc89c4c58960eab94fe32593a233d8ff9ce8281096320aa8d4644ca342b4c72",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "d5123294ece3065dc3062ffe78d9a2b4aae47764e7de5e6292b8615d906b6fe3",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "d5123294ece3065dc3062ffe78d9a2b4aae47764e7de5e6292b8615d906b6fe3",
+  "acceptanceDriverSha256": "3d209b5d9bce5984e17a2f6ab6b5791a6809fd35757b263a372ed5585266e55d",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b",
+      "src/vs/workbench/contrib/markers/browser/markersView.ts": "f7db413f12fcde3f895b630ac79f93b9c8d975ce05f66b7e842a905113713f1f",
+      "src/vs/workbench/contrib/markers/browser/markersTable.ts": "129cf05db8c8eda1b463918db864bf22edbe2666089a767ff3361786b3d83623",
+      "src/vs/base/browser/ui/tree/abstractTree.ts": "9fc5cceb5b12520c7e8707fe39bf898858fcebc93c13e3ae14198d4095149d52"
+    }
+  },
+  "localLogsSha256": {
+    "p05-315-full.log": "05b20ac8f8f672ca173a07f757c32985065710025d62afe7567d7ff93e6ae6f7",
+    "p05-315-focused.log": "485496cb262cd1bb4b668afde7ea2b3aee84494b7f429ae79bc6183326891e83",
+    "p05-315-targeted.log": "06435c68e87a1928f2b3e9e84e7b61b21ae30d75f286fbd8f2e9f49530454442",
+    "p05-315-analyze.log": "2dcc677286fe85b309e034dbe9fe6c0dda5324fcbbd7feba41995d3053c4f2fe",
+    "p05-315-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-315-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "c4861ffd32fe46d0ecdc4d3a61a00250f719349d081af219a1c3e66724c87196"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "c4861ffd32fe46d0ecdc4d3a61a00250f719349d081af219a1c3e66724c87196"
+    }
+  },
+  "preedit": {
+    "_buildDiagnosticResults": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "ffdbdd80e4c767222ef57fc39b23ca6be288f0206e6f88bc430fc45fb06f407f",
+      "callers": [
+        "_buildDiagnosticsPanel"
+      ],
+      "processes": []
+    },
+    "ProblemsResultSelection": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "9ceaa44049f3d6b9f934d24b702455c2decf46b413b819ba9354ba7aaa4ee484",
+      "callers": [
+        "_ProblemsResultSelectionScopeState",
+        "workbench_page.dart"
+      ],
+      "processes": []
+    },
+    "_onProblemsPaneKey": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "2d8042bcccd9f18d7a9a4a9d21e7ffe5490aed9166168f9d8c195b6a07ff010f",
+      "callers": [],
+      "processes": []
+    },
+    "retainVisible": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "39849d4cf0727904afcbe4716c05f6056b759dcee641f4243fe5fc6a005ce785",
+      "callers": [],
+      "processes": []
+    },
+    "followNavigation": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "5373069ac1c6a0258df441285945613ba3e1561e4bf95ad064a480c095172a66",
+      "callers": [],
+      "processes": []
+    },
+    "list": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'list' not found",
+      "sha256": "62b2135161862f41aa88e432cd37ed417e1a666cc1b8eb08578bab8099c47717"
+    },
+    "pageEdge": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'pageEdge' not found",
+      "sha256": "dd4bd8576a1bbdff1be6210424a7b54eff7447c0b012ce20b6594f55af924dd6"
+    },
+    "withResultShortcuts": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'withResultShortcuts' not found",
+      "sha256": "566aafa4a2af909d1d2503b811d4c8be238d043dad6016c2353d018e453d23f7"
+    },
+    "resultsRegion": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'resultsRegion' not found",
+      "sha256": "24b8b314ef5d89d7c61ebfdf0e227b690b919bd1f156396894703cb9770d571b"
+    },
+    "focusBoundary": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'focusBoundary' not found",
+      "sha256": "8afbaac03afbac0919de6e559a0662177e953e8643b8e8c72a019d4cd2cc7a5a"
+    },
+    "focusRenderedResult": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'focusRenderedResult' not found",
+      "sha256": "1e0bd91d5fbcb179ad67ed693c3d3acf8d69d17a5ab11918ff162371c40437a0"
+    },
+    "focusResultAt": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'focusResultAt' not found",
+      "sha256": "8e78385cc496d65c31b02dd836c08ab4b97b429a532a1dea3c928ca1de85f14b"
+    },
+    "focusFileGroup": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'focusFileGroup' not found",
+      "sha256": "a79272e66fcb7b6aa47103bab30ee9aed292312119c2db8e5db4556750384a84"
+    },
+    "callSiteVerification": {
+      "sha256": "188a319ceebca96a261475323171a66f05b2ef932139863c0e532ea513ac2238",
+      "calls": [
+        "HEAD:app/lib/workbench/problems_table.dart:187:  final Widget Function(ProblemsResultSelection) builder;",
+        "HEAD:app/lib/workbench/problems_table.dart:196:  late final _selection = ProblemsResultSelection(setState);",
+        "HEAD:app/lib/workbench/problems_table.dart:210:class ProblemsResultSelection {",
+        "HEAD:app/lib/workbench/problems_table.dart:211:  ProblemsResultSelection(this._update);",
+        "HEAD:app/lib/workbench/problems_table.dart:272:  void retainVisible(List<Object> rows) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:30008:          onKeyEvent: _onProblemsPaneKey,",
+        "HEAD:app/lib/workbench/workbench_page.dart:30801:  KeyEventResult _onProblemsPaneKey(FocusNode _, KeyEvent event) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:30917:                  onKeyEvent: _onProblemsPaneKey,",
+        "HEAD:app/lib/workbench/workbench_page.dart:30995:              child: _buildDiagnosticResults(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31007:  Widget _buildDiagnosticResults(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31012:    Widget resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31030:      return resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31039:      return resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31049:      return resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31057:      return resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31140:    bool focusRenderedResult(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31208:      if (focusRenderedResult(key, alignment)) return;",
+        "HEAD:app/lib/workbench/workbench_page.dart:31235:          if (focusRenderedResult(key, alignment) || remaining == 1) return;",
+        "HEAD:app/lib/workbench/workbench_page.dart:31280:    bool focusResultAt(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31289:      final focused = focusRenderedResult(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31323:    void focusBoundary({",
+        "HEAD:app/lib/workbench/workbench_page.dart:31328:      if (focusResultAt(item, forward: forward, onFocused: onFocused)) return;",
+        "HEAD:app/lib/workbench/workbench_page.dart:31339:            if (!focusResultAt(item, forward: forward, onFocused: onFocused) &&",
+        "HEAD:app/lib/workbench/workbench_page.dart:31351:    int? pageEdge(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31392:      final edge = pageEdge(sliver, position, forward: forward);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31395:          focusResultAt(edge, forward: forward, onFocused: onFocused)) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31402:        final next = pageEdge(sliver, position, forward: forward);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31404:          focusResultAt(next, forward: forward, onFocused: onFocused);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31409:    late final diagnosticKeys = ProblemsResultSelection.rowKeys(diagnostics);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31463:      ProblemsResultSelection selection,",
+        "HEAD:app/lib/workbench/workbench_page.dart:31529:      if (!focusRenderedResult(key, alignment)) return;",
+        "HEAD:app/lib/workbench/workbench_page.dart:31569:            !focusRenderedResult(key, alignment)) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31606:      ProblemsResultSelection selection,",
+        "HEAD:app/lib/workbench/workbench_page.dart:31630:    Widget list(ProblemsResultSelection selection) => ListView.builder(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31670:            focusRenderedResult(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31701:                      focusRenderedResult(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31807:          focusRenderedResult(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31923:      if (focusResultAt(next, forward: forward)) onMoved(previous, next);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31926:    void previewDiagnostic(ProblemsResultSelection selection, int index) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31947:      ProblemsResultSelection selection, {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31962:      ProblemsResultSelection selection,",
+        "HEAD:app/lib/workbench/workbench_page.dart:31972:      ProblemsResultSelection selection, {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31982:    void selectAllTreeResults(ProblemsResultSelection selection) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:32011:    Widget withResultShortcuts(ProblemsResultSelection selection) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:32022:      return resultsRegion(",
+        "HEAD:app/lib/workbench/workbench_page.dart:32023:        list(selection),",
+        "HEAD:app/lib/workbench/workbench_page.dart:32044:              () => focusBoundary(forward: false, onFocused: afterNavigation()),",
+        "HEAD:app/lib/workbench/workbench_page.dart:32046:              () => focusBoundary(forward: true, onFocused: afterNavigation()),",
+        "HEAD:app/lib/workbench/workbench_page.dart:32084:        if (selection.hasState) selection.retainVisible(selectionRows);",
+        "HEAD:app/lib/workbench/workbench_page.dart:32085:        final results = withResultShortcuts(selection);",
+        "HEAD:app/lib/workbench/problems_table.dart:277:  bool followNavigation(List<Object> rows, int? previousIndex, int nextIndex) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31206:    void focusFileGroup(Key key, int index, Object? document) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:31886:                focusFileGroup(groupKey, group.firstItem, group.document);",
+        "HEAD:app/lib/workbench/workbench_page.dart:31966:      if (selection.followNavigation(selectionRows, previous, next)) {",
+        "HEAD:app/lib/workbench/workbench_page.dart:32016:          selection.followNavigation(selectionRows, previous, previous);"
+      ]
+    }
+  },
+  "macosPhysical": "deferred",
+  "windowsFirstAttempt": {
+    "outcome": "fixture guard rejected a missing test literal before typing it",
+    "reportSha256": "8e681389ba22ce6a844adad394eacd94311a108d9f1d57715d4973affe05009c",
+    "runnerSha256": "340d205f3e35547a0a275e4827538df81576a185012f41d26f1b2b51697f965c",
+    "probeSteps": [
+      "ready",
+      "editor-caret-established",
+      "provider-published-three-markers",
+      "tree-starts-without-selection",
+      "initial-filter-focus",
+      "tree-initial-focus-selects-first-diagnostic-without-opening",
+      "tree-click-can-preview-second-diagnostic",
+      "keyboard-focuses-filter",
+      "filter-text-keeps-matching-selection",
+      "tree-entry-restores-selected-second-row",
+      "tree-second-file-added-to-selection",
+      "multi-selection-filter-focus",
+      "tree-entry-preserves-multi-selection-and-right-row-focus",
+      "tree-remembers-current-row-even-when-unselected",
+      "unselected-row-filter-focus",
+      "tree-entry-restores-unselected-focus-without-overwriting-selection",
+      "collapse-first-tree-file",
+      "clear-selection-with-first-group-collapsed",
+      "collapsed-group-filter-focus",
+      "initial-tree-entry-expands-first-group-and-focuses-its-first-diagnostic",
+      "focus-filter-for-no-match"
+    ],
+    "sameProductAot": true
+  },
+  "linuxVirtualized": {
+    "reportSha256": "48ee8ee46d467137507db4fc85fbbacf5c84009c8cd058d1795c52b20755c467",
+    "driverSha256": "85f4484f9c6c23b03c4515c7e1ab0ffe13c84d43396ebc5b5897dabadb118225",
+    "acceptanceSha256": "f1b734f2ca8b8bddc05caf1706497e7c1c8320000b7dd14c9b13c1865fb85766",
+    "diagnostics": 43,
+    "checks": 12,
+    "focus": {
+      "first": {
+        "target": "src/left/other.rs [Ln 1, Col 28]",
+        "rowWasUnmounted": true,
+        "documentId": 3,
+        "selection": [
+          27,
+          33
+        ],
+        "resultsFocused": true,
+        "selected": true
+      },
+      "last": {
+        "target": "src/right/other.rs [Ln 1, Col 36]",
+        "rowWasUnmounted": true,
+        "documentId": 4,
+        "selection": [
+          35,
+          40
+        ],
+        "resultsFocused": true,
+        "selected": true
+      }
+    },
+    "exit": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "firstFixtureAttemptSha256": "0e9b52eec93baa78891f678a71d1ebe2eb38779812cab7c325806551dfbae37c"
+  },
+  "windows": {
+    "tree": "432722e56c3596c9d8696bbbee5d0a9538cbbc47",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "5a0b8a20ea0402c4a69b6789d9f3a475a09556fc87136b90b071570446a49fd7",
+    "fixtureSha256": "d5123294ece3065dc3062ffe78d9a2b4aae47764e7de5e6292b8615d906b6fe3",
+    "runnerSha256": "77396a63cb5a1ba6ce846c4364383f793230d47238869a8415d58cc84b768752",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "ready": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "editor-caret-established": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "provider-published-three-markers": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "tree-starts-without-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          -1,
+          -1
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "initial-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-initial-focus-selects-first-diagnostic-without-opening": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-click-can-preview-second-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "keyboard-focuses-filter": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "filter-text-keeps-matching-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-restores-selected-second-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-second-file-added-to-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "multi-selection-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-preserves-multi-selection-and-right-row-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-remembers-current-row-even-when-unselected": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": true,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "unselected-row-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-restores-unselected-focus-without-overwriting-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": true,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "collapse-first-tree-file": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": true,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              516.104,
+              976.8,
+              582.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "clear-selection-with-first-group-collapsed": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": true,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              516.104,
+              976.8,
+              582.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "collapsed-group-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              516.104,
+              976.8,
+              582.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "initial-tree-entry-expands-first-group-and-focuses-its-first-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "focus-filter-for-no-match": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              557.104,
+              976.8,
+              623.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              648.104,
+              976.8,
+              714.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "no-match-filter-remains-focused": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "zzznomarkerzz",
+        "filterSelection": [
+          13,
+          13
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "no-match-entry-focuses-results-message": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": true,
+        "resultsFocused": true,
+        "resultsPrimary": true,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "zzznomarkerzz",
+        "filterSelection": [
+          13,
+          13
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "narrow-filter-to-right-file": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "usize",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-initial-entry-after-no-match-targets-only-filtered-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "usize",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              557.104
+            ]
+          }
+        ],
+        "table": []
+      },
+      "table-mode-active": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "usize",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "clear-filter-back-to-three-table-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "table-initial-entry-selects-first-diagnostic-without-opening": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "table-selects-two-files": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "table-filter-focus-with-existing-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "table-entry-restores-last-focus-and-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 1490.096,
+        "editorCaretY": 335.3,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-caret-established": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-published-three-markers": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-starts-without-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "initial-filter-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-initial-focus-selects-first-diagnostic-without-opening": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-click-can-preview-second-diagnostic": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "keyboard-focuses-filter": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "filter-text-keeps-matching-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-entry-restores-selected-second-row": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-second-file-added-to-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "multi-selection-filter-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-entry-preserves-multi-selection-and-right-row-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-remembers-current-row-even-when-unselected": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "unselected-row-filter-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-entry-restores-unselected-focus-without-overwriting-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "collapse-first-tree-file": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "clear-selection-with-first-group-collapsed": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "collapsed-group-filter-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "initial-tree-entry-expands-first-group-and-focuses-its-first-diagnostic": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "focus-filter-for-no-match": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "no-match-filter-remains-focused": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "no-match-entry-focuses-results-message": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "narrow-filter-to-right-file": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-initial-entry-after-no-match-targets-only-filtered-diagnostic": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-mode-active": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "clear-filter-back-to-three-table-rows": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-initial-entry-selects-first-diagnostic-without-opening": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-selects-two-files": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-filter-focus-with-existing-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-entry-restores-last-focus-and-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+a",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+a",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+a",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "BackSpace",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "profile": "E:\\temp\\alula-p05-315-problems-filter-entry\\probe-1795717811261971900",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          702
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          702
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          926
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          926
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          1039
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          1039
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": true,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          1039
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          1039
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": true,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          786
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          786
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          912
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          912
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": true,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      }
+    ],
+    "fixturePositions": [
+      "1:8",
+      "rust-analyzer",
+      "E0308",
+      "zzznomarkerzz",
+      "usize"
+    ],
+    "kind": "problemsFilterEntry",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "previewRange": [
+      2311,
+      2312
+    ],
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "fc2f0510ea6c529f690613bd4e149cc49db5ef4593c3206ae2fcb0d9704aff73"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "432722e56c3596c9d8696bbbee5d0a9538cbbc47",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 21633,
+            "ppid": 21632,
+            "private": 261791744,
+            "pss": 288536576,
+            "working_set": 340602880
+          }
+        ],
+        "root_pid": 21633,
+        "total_private_bytes": 261791744,
+        "total_private_mib": 249.7,
+        "total_working_set_bytes": 340602880
+      }
+    },
+    "aotSha256": "e740eebddb53141bdec36b2f78379e798ec27261a4aee6139e11066601a0df47",
+    "fixtureSha256": "d5123294ece3065dc3062ffe78d9a2b4aae47764e7de5e6292b8615d906b6fe3",
+    "runnerSha256": "fd19c2c6a8afedd54341523d2662f86508e7ecd2ac0109e4d2f8138ff66baf5a",
+    "steps": {
+      "ready": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "editor-caret-established": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "provider-published-three-markers": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "filterSelection": null,
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "tree-starts-without-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          -1,
+          -1
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "initial-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-initial-focus-selects-first-diagnostic-without-opening": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-click-can-preview-second-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "keyboard-focuses-filter": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "filter-text-keeps-matching-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-restores-selected-second-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-second-file-added-to-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "multi-selection-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-preserves-multi-selection-and-right-row-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-remembers-current-row-even-when-unselected": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": true,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "unselected-row-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-entry-restores-unselected-focus-without-overwriting-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": true,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "collapse-first-tree-file": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": true,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              544.52,
+              1200.0,
+              610.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "clear-selection-with-first-group-collapsed": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": true,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              544.52,
+              1200.0,
+              610.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "collapsed-group-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              544.52,
+              1200.0,
+              610.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "initial-tree-entry-expands-first-group-and-focuses-its-first-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "focus-filter-for-no-match": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "other.rs，第 82 行，第 27 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              585.52,
+              1200.0,
+              651.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              676.52,
+              1200.0,
+              742.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "no-match-filter-remains-focused": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "zzznomarkerzz",
+        "filterSelection": [
+          13,
+          13
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "no-match-entry-focuses-results-message": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": true,
+        "resultsFocused": true,
+        "resultsPrimary": true,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "zzznomarkerzz",
+        "filterSelection": [
+          13,
+          13
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": []
+      },
+      "narrow-filter-to-right-file": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "usize",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "tree-initial-entry-after-no-match-targets-only-filtered-diagnostic": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "usize",
+        "filterSelection": [
+          5,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "selected": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              585.52
+            ]
+          }
+        ],
+        "table": []
+      },
+      "table-mode-active": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "usize",
+        "filterSelection": [
+          0,
+          5
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "clear-filter-back-to-three-table-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "table-initial-entry-selects-first-diagnostic-without-opening": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "table-selects-two-files": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "table-filter-focus-with-existing-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "table-entry-restores-last-focus-and-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          2311,
+          2312
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "noFilterResults": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "filterSelection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 1461.48,
+        "editorCaretY": 364.5,
+        "groupHeaders": [],
+        "problemRows": [],
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "requestedWindowWidth": 1200,
+    "characterDelayMs": 12,
+    "profile": "/tmp/alula-p05-177-xvfb-25pftkwv",
+    "nativeClicks": [
+      {
+        "screen": [
+          740,
+          489
+        ],
+        "actual": [
+          740,
+          489
+        ],
+        "logical": [
+          719.76,
+          441.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          519
+        ],
+        "actual": [
+          784,
+          519
+        ],
+        "logical": [
+          763.76,
+          470.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          667
+        ],
+        "actual": [
+          784,
+          667
+        ],
+        "logical": [
+          763.76,
+          618.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          758
+        ],
+        "actual": [
+          784,
+          758
+        ],
+        "logical": [
+          763.76,
+          709.52
+        ],
+        "control": true,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          758
+        ],
+        "actual": [
+          784,
+          758
+        ],
+        "logical": [
+          763.76,
+          709.52
+        ],
+        "control": true,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          555
+        ],
+        "actual": [
+          784,
+          555
+        ],
+        "logical": [
+          763.76,
+          507.02
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          519
+        ],
+        "actual": [
+          784,
+          519
+        ],
+        "logical": [
+          763.76,
+          470.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          1172,
+          471
+        ],
+        "actual": [
+          1172,
+          471
+        ],
+        "logical": [
+          1152.0,
+          422.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          519
+        ],
+        "actual": [
+          784,
+          519
+        ],
+        "logical": [
+          763.76,
+          470.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          656
+        ],
+        "actual": [
+          697,
+          656
+        ],
+        "logical": [
+          677.1999999999999,
+          607.52
+        ],
+        "control": true,
+        "shift": false,
+        "secondary": false
+      }
+    ],
+    "kind": "problemsFilterEntry",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "previewRange": [
+      2311,
+      2312
+    ],
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "rawReportSha256": "1bcefe872b91d9961bf418155734c424f3a1dec5246be317f0ca067ba53b7a03"
+  }
+}
