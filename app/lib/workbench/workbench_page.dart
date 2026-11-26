@@ -31042,6 +31042,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             Expanded(
               child: _buildDiagnosticResults(
                 diagnostics,
+                highlightQuery: negateText ? '' : query,
                 hasProblems: totalProblems != 0,
                 hasProblemsInScope: hasProblemsInScope,
               ),
@@ -31054,9 +31055,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildDiagnosticResults(
     List<Map<String, Object?>> diagnostics, {
+    required String highlightQuery,
     required bool hasProblems,
     required bool hasProblemsInScope,
   }) {
+    TextSpan matchLabel(String label) => highlightQuery.isEmpty || label.isEmpty
+        ? TextSpan(text: label)
+        : treeFindLabel(
+            highlightQuery,
+            label,
+            fuzzy: !label.toLowerCase().contains(highlightQuery),
+          );
+
+    Text tableLabel(String value, {String suffix = ''}) {
+      final label = matchLabel(value);
+      if (label.children == null) return Text('$value$suffix');
+      return Text.rich(TextSpan(children: [
+        label,
+        if (suffix.isNotEmpty) TextSpan(text: suffix),
+      ]));
+    }
+
+    Text tableMessage(String message) {
+      if (!message.contains('\n')) return tableLabel(message);
+      final flat = message.replaceAll('\n', ' ');
+      if (highlightQuery.isEmpty) return Text(flat);
+      final lines = message.split('\n').map(matchLabel).toList();
+      if (lines.every((line) => line.children == null)) return Text(flat);
+      return Text.rich(TextSpan(children: [
+        for (var i = 0; i < lines.length; i++) ...[
+          if (i > 0) const TextSpan(text: ' '),
+          lines[i],
+        ],
+      ]));
+    }
+
     Widget resultsRegion(
       Widget child, {
       Map<ShortcutActivator, VoidCallback> shortcuts = const {},
@@ -31718,6 +31751,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
         if (!tableMode && i == group.firstItem) {
           final directory = group.directory;
+          final fileLabel = matchLabel(fileName);
           final colors = Theme.of(context).colorScheme;
           final document = group.document;
           final selected = selection.contains(selectionRows[i]);
@@ -31812,8 +31846,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         Expanded(
                           child: Text.rich(
                             TextSpan(
-                              text: fileName,
+                              text: fileLabel.text,
                               children: [
+                                ...?fileLabel.children,
                                 if (directory != null)
                                   TextSpan(
                                     text: '  $directory',
@@ -31923,10 +31958,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
                 child: Icon(icon, size: 14, color: color),
               ),
-              code: Text(code),
-              message: Text(message.replaceAll('\n', ' ')),
-              file: Text(location == null ? filePath : '$filePath $location'),
-              source: Text(source),
+              code: tableLabel(code),
+              message: tableMessage(message),
+              file: tableLabel(
+                filePath,
+                suffix: location == null ? '' : ' $location',
+              ),
+              source: tableLabel(source),
             ),
           );
         } else {
@@ -31971,11 +32009,47 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             location ?? fileName,
           ].join('  ');
 
-          Text messageLine(String line) => Text(
-            line,
-            style: const TextStyle(fontSize: 12),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Text messageLine(String line) {
+            final label = matchLabel(line);
+            const style = TextStyle(fontSize: 12);
+            if (label.children == null) {
+              return Text(
+                line,
+                style: style,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              );
+            }
+            return Text.rich(
+              label,
+              style: style,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          }
+
+          final sourceMatch = matchLabel(source);
+          final codeMatch = matchLabel(code);
+          final hasMetadataMatch =
+              sourceMatch.children != null || codeMatch.children != null;
+          final metadata = hasMetadataMatch
+              ? TextSpan(children: [
+                  sourceMatch,
+                  if (source.isNotEmpty && code.isNotEmpty)
+                    const TextSpan(text: '('),
+                  codeMatch,
+                  if (source.isNotEmpty && code.isNotEmpty)
+                    const TextSpan(text: ')'),
+                  if (sourceLabel.isNotEmpty) const TextSpan(text: '  '),
+                  TextSpan(text: location ?? fileName),
+                ])
+              : null;
+          final metadataLabel = sourceLabel.isEmpty
+              ? positionLabel
+              : '$sourceLabel，$positionLabel';
+          final metadataStyle = TextStyle(
+            fontSize: 10,
+            color: colors.onSurfaceVariant,
           );
 
           row = ListTile(
@@ -32003,19 +32077,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       Flexible(flex: 2, child: messageLine(lines.first)),
                       const SizedBox(width: 8),
                       Flexible(
-                        child: Text(
-                          description,
-                          key: const ValueKey('problems-tree-location'),
-                          semanticsLabel: sourceLabel.isEmpty
-                              ? positionLabel
-                              : '$sourceLabel，$positionLabel',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: colors.onSurfaceVariant,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: metadata != null
+                            ? Text.rich(
+                                metadata,
+                                key: const ValueKey('problems-tree-location'),
+                                semanticsLabel: metadataLabel,
+                                style: metadataStyle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : Text(
+                                description,
+                                key: const ValueKey('problems-tree-location'),
+                                semanticsLabel: metadataLabel,
+                                style: metadataStyle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                       ),
                       if (messageToggle != null) SizedBox(width: treeLineHeight),
                     ],
