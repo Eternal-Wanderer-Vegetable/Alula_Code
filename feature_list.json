@@ -4357,6 +4357,18 @@
       "evidence": "Problems 诊断位置从第 1 行和第 1 列开始显示。Windows 和 Linux 各通过 14 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 26901998 的 CI 45746036539 四项与 Platform Availability 45746031982 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-342",
+      "name": "P05.290 CMD-11 Problems 按文件分组呈现",
+      "description": "将可见诊断按文档身份分组，在虚拟列表中呈现文件、目录与匹配计数。",
+      "dependencies": [
+        "feat-341"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

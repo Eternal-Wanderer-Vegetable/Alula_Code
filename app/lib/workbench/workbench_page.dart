@@ -30912,12 +30912,120 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       );
     }
+    // Diagnostics are published in contiguous batches per document. Record
+    // the section boundaries so the virtual list can address the original rows.
+    final pathsById = {for (final doc in _allDocs) doc.id: doc.path};
+    final workspace = _workspaceRoot;
+    final groups = <({
+      Object? identity,
+      String fileName,
+      String? directory,
+      int firstDiagnostic,
+      int firstItem,
+      int count,
+    })>[];
+    for (var first = 0; first < diagnostics.length;) {
+      final marker = diagnostics[first];
+      final identity = marker['_documentId'] ?? marker['file'];
+      var end = first + 1;
+      while (end < diagnostics.length &&
+          (diagnostics[end]['_documentId'] ?? diagnostics[end]['file']) ==
+              identity) {
+        end++;
+      }
+      final path = pathsById[marker['_documentId']];
+      String? directory;
+      if (path != null) {
+        directory = p.dirname(path);
+        if (workspace != null &&
+            (p.equals(workspace, directory) ||
+                p.isWithin(workspace, directory))) {
+          directory = p.relative(directory, from: workspace);
+        }
+        directory = directory == '.' ? null : directory.replaceAll('\\', '/');
+      }
+      groups.add((
+        identity: identity,
+        fileName: '${marker['file'] ?? ''}',
+        directory: directory,
+        firstDiagnostic: first,
+        firstItem: first + groups.length,
+        count: end - first,
+      ));
+      first = end;
+    }
     return ListView.builder(
-      itemCount: diagnostics.length,
+      itemCount: diagnostics.length + groups.length,
       itemBuilder: (context, i) {
-        final d = diagnostics[i];
+        var low = 0;
+        var high = groups.length - 1;
+        while (low < high) {
+          final middle = (low + high + 1) ~/ 2;
+          if (groups[middle].firstItem <= i) {
+            low = middle;
+          } else {
+            high = middle - 1;
+          }
+        }
+        final group = groups[low];
+        final fileName = group.fileName;
+        if (i == group.firstItem) {
+          final directory = group.directory;
+          final colors = Theme.of(context).colorScheme;
+          return Semantics(
+            key: ValueKey(
+              'problems-file-group-${group.identity ?? group.firstDiagnostic}',
+            ),
+            container: true,
+            header: true,
+            excludeSemantics: true,
+            label: [
+              fileName,
+              if (directory != null) directory,
+              '${group.count} 条诊断',
+            ].join('，'),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+              child: Row(
+                children: [
+                  const Icon(Icons.description_outlined, size: 14),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        text: fileName,
+                        children: [
+                          if (directory != null)
+                            TextSpan(
+                              text: '  $directory',
+                              style: TextStyle(
+                                color: colors.onSurfaceVariant,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                        ],
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Badge(
+                    backgroundColor: colors.surfaceContainerHighest,
+                    textColor: colors.onSurfaceVariant,
+                    label: Text('${group.count}'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        final d = diagnostics[group.firstDiagnostic + i - group.firstItem - 1];
         final canOpen = _diagnosticEditor(d) != null;
-        final fileName = '${d['file'] ?? ''}';
         final position = switch ((d['line'], d['character'])) {
           (final int line, final int column) when line >= 0 && column >= 0 =>
             (line: line + 1, column: column + 1),
@@ -30931,6 +31039,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         };
         return ListTile(
           dense: true,
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
           onTap: canOpen ? () => _openDiagnostic(d) : null,
           leading: Icon(icon, size: 16, color: color),
           title: Text(
@@ -30942,7 +31051,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           subtitle: Text(
             position == null
                 ? fileName
-                : '$fileName · [Ln ${position.line}, Col ${position.column}]',
+                : '[Ln ${position.line}, Col ${position.column}]',
             semanticsLabel: position == null
                 ? null
                 : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
