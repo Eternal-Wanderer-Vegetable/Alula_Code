@@ -30805,20 +30805,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   KeyEventResult _onProblemsPaneKey(FocusNode _, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final keyboard = HardwareKeyboard.instance;
-    final binding = _keybindings.bindingForChord(
-      KeyChord(
-        key: event.logicalKey,
-        control: keyboard.isControlPressed,
-        shift: keyboard.isShiftPressed,
-        alt: keyboard.isAltPressed,
-        meta: keyboard.isMetaPressed,
-      ),
-      matchesWhen: (condition) => switch (condition) {
-        'problemsViewFocus' => _problemsPanelFocus.hasFocus,
-        'problemsFilterFocus' => _problemsFilterFocus.hasFocus,
-        _ => _commands.context.matches(condition),
-      },
+    final chord = KeyChord(
+      key: event.logicalKey,
+      control: keyboard.isControlPressed,
+      shift: keyboard.isShiftPressed,
+      alt: keyboard.isAltPressed,
+      meta: keyboard.isMetaPressed,
     );
+    bool matchesWhen(String? condition) => switch (condition) {
+      'problemsViewFocus' => _problemsPanelFocus.hasFocus,
+      'problemsFilterFocus' => _problemsFilterFocus.hasFocus,
+      _ => _commands.context.matches(condition),
+    };
+    final binding = _keybindings.bindingForChord(chord, matchesWhen: matchesWhen);
     switch (binding?.commandId) {
       case 'problems.action.focusFilter':
         _problemsFilterFocus.requestFocus();
@@ -30832,8 +30831,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         return KeyEventResult.handled;
       default:
-        return KeyEventResult.ignored;
+        break;
     }
+    if (!_problemsResultsFocus.hasFocus) return KeyEventResult.ignored;
+    if (_awaitingMoveSelectionChord ||
+        _keybindings.hasSequencePrefix(
+          chord,
+          matchesWhen: _commands.context.matches,
+          isCommandEnabled: _commands.isEnabled,
+        )) {
+      return _handleCommandChord(event);
+    }
+    if (binding != null || chord.control || chord.meta || chord.alt) {
+      return KeyEventResult.ignored;
+    }
+
+    final character = event.character;
+    if (character == null ||
+        character.trim().isEmpty ||
+        LogicalKeyboardKey.isControlCharacter(character)) {
+      return KeyEventResult.ignored;
+    }
+
+    final value = _problemsFilterController.value;
+    final selection = value.selection;
+    final hasSelection = selection.isValid && selection.end <= value.text.length;
+    final start = hasSelection ? selection.start : value.text.length;
+    final end = hasSelection ? selection.end : start;
+    _problemsFilterFocus.requestFocus();
+    // Apply the key after the field's focus listener adjusts its selection.
+    scheduleMicrotask(() {
+      if (!mounted ||
+          _disposing ||
+          !_problemsFilterFocus.hasPrimaryFocus ||
+          _problemsFilterController.text != value.text) {
+        return;
+      }
+      _problemsFilterController.value = TextEditingValue(
+        text: value.text.replaceRange(start, end, character),
+        selection: TextSelection.collapsed(offset: start + character.length),
+      );
+    });
+    return KeyEventResult.handled;
   }
 
   Widget _buildDiagnosticsPanel() {
