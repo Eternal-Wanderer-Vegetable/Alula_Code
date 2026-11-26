@@ -31119,25 +31119,49 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       seek(index == 0 ? lower : (lower + upper) / 2, 24);
     }
 
+    int groupIndexAtItem(int item) {
+      var low = 0;
+      var high = groups.length - 1;
+      while (low < high) {
+        final middle = (low + high + 1) ~/ 2;
+        if (groups[middle].firstItem <= item) {
+          low = middle;
+        } else {
+          high = middle - 1;
+        }
+      }
+      return low;
+    }
+
+    ValueKey<String> groupKeyAt(int groupIndex) {
+      final group = groups[groupIndex];
+      return ValueKey(
+        'problems-file-group-${group.identity ?? group.firstDiagnostic}',
+      );
+    }
+
+    void focusAdjacentResult(int item, int delta) {
+      final next = item + delta;
+      if (next < 0 || next >= itemCount) return;
+      final groupIndex = groupIndexAtItem(next);
+      final groupKey = groupKeyAt(groupIndex);
+      final withinGroup = next - groups[groupIndex].firstItem;
+      focusRenderedResult(
+        withinGroup == 0 ? groupKey : ValueKey((groupKey, withinGroup)),
+        delta < 0
+            ? ScrollPositionAlignmentPolicy.keepVisibleAtStart
+            : ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+      );
+    }
+
     return ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
       itemBuilder: (context, i) {
-        var low = 0;
-        var high = groups.length - 1;
-        while (low < high) {
-          final middle = (low + high + 1) ~/ 2;
-          if (groups[middle].firstItem <= i) {
-            low = middle;
-          } else {
-            high = middle - 1;
-          }
-        }
-        final group = groups[low];
+        final groupIndex = groupIndexAtItem(i);
+        final group = groups[groupIndex];
         final fileName = group.fileName;
-        final groupKey = ValueKey(
-          'problems-file-group-${group.identity ?? group.firstDiagnostic}',
-        );
+        final groupKey = groupKeyAt(groupIndex);
         if (i == group.firstItem) {
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
@@ -31171,6 +31195,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: CallbackShortcuts(
               bindings: {
                 if (document != null) ...{
+                  const SingleActivator(LogicalKeyboardKey.arrowUp):
+                      () => focusAdjacentResult(i, -1),
+                  const SingleActivator(LogicalKeyboardKey.arrowDown):
+                      () => focusAdjacentResult(i, 1),
                   const SingleActivator(LogicalKeyboardKey.arrowLeft):
                       () => setCollapsed(true),
                   const SingleActivator(LogicalKeyboardKey.arrowRight): () {
@@ -31276,6 +31304,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         );
         return CallbackShortcuts(
           bindings: {
+            const SingleActivator(LogicalKeyboardKey.arrowUp):
+                () => focusAdjacentResult(i, -1),
+            const SingleActivator(LogicalKeyboardKey.arrowDown):
+                () => focusAdjacentResult(i, 1),
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
               focusFileGroup(groupKey, group.firstItem, group.document);
             },
