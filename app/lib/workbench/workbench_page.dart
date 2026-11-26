@@ -315,6 +315,10 @@ class _FocusProblemsResultsIntent extends Intent {
   final bool initializeSelection;
 }
 
+class _ClearProblemsSelectionIntent extends Intent {
+  const _ClearProblemsSelectionIntent();
+}
+
 enum _ProblemsFilterOption {
   errors('显示错误', 'toggleErrors', severity: 1),
   warnings('显示警告', 'toggleWarnings', severity: 2),
@@ -331,6 +335,8 @@ enum _ProblemsFilterOption {
       'workbench.actions.workbench.panel.markers.view.$_commandSuffix';
 }
 
+const _problemsCollapseAllCommandId =
+    'workbench.actions.treeView.workbench.panel.markers.view.collapseAll';
 const _problemsViewAsTreeCommandId =
     'workbench.actions.table.workbench.panel.markers.view.viewAsTree';
 const _problemsViewAsTableCommandId =
@@ -1412,6 +1418,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '问题',
       '显示为表格',
       () async => _applyProblemsViewMode(true),
+    );
+    reg(
+      _problemsCollapseAllCommandId,
+      '问题',
+      '折叠全部文件组',
+      () async => _collapseAllProblemGroups(),
     );
     for (final option in _ProblemsFilterOption.values) {
       reg(
@@ -4320,6 +4332,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final typeHierarchyAvailable =
         _commands.context['editorHasTypeHierarchyProvider'] == true;
     final problemsMenuCommands = {
+      _problemsCollapseAllCommandId,
       _problemsViewAsTreeCommandId,
       _problemsViewAsTableCommandId,
       for (final option in _ProblemsFilterOption.values) option.commandId,
@@ -30385,7 +30398,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           IconButton(
                             key: const ValueKey('problems-collapse-all'),
                             tooltip: '折叠全部文件组',
-                            onPressed: _collapseAllProblemGroups,
+                            onPressed: () =>
+                                _runCommand(_problemsCollapseAllCommandId),
                             icon: const Icon(Icons.unfold_less, size: 16),
                             visualDensity: VisualDensity.compact,
                           ),
@@ -30811,6 +30825,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _collapseAllProblemGroups() {
+    if (!_problemsViewActive || _problemsTableMode) return;
+    final context = _problemsResultsFocus.context;
+    if (context != null) {
+      Actions.maybeInvoke(context, const _ClearProblemsSelectionIntent());
+    }
     final diagnosedIds = <int>{};
     for (final diagnostic in _diagnostics) {
       final id = diagnostic['_documentId'];
@@ -30828,10 +30847,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
 
     bool canFocus() =>
-        mounted &&
-        !_disposing &&
-        !_layout.isCollapsed('panel') &&
-        _panelTab.index == PanelViewTab.diagnostics.index;
+        mounted && !_disposing && _problemsViewActive && !_problemsTableMode;
 
     void focusFirstGroup() {
       if (!canFocus()) return;
@@ -32500,6 +32516,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               initializeSelection: intent.initializeSelection,
             );
             return true;
+          }),
+          _ClearProblemsSelectionIntent:
+              CallbackAction<_ClearProblemsSelectionIntent>(onInvoke: (_) {
+            selection.clearForEscape(null);
+            selection.resetInteraction();
+            selection.lastFocusedRow = null;
+            return null;
           }),
         },
         child: region,

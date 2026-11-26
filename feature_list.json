@@ -4753,6 +4753,18 @@
       "evidence": "Problems 的错误、警告、信息及仅活动文件使用固定版独立命令。键位和筛选菜单同步，筛选可以组合。Windows 与 Linux 各通过 32 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c5ea9fe7 的 CI 45905258788 四项与 Platform Availability 45905249222 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.322-problems-filter-option-commands.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-375",
+      "name": "P05.323 LAY-16 / CMD-11 Problems 折叠全部命令",
+      "description": "将 Problems 树的折叠全部标题动作绑定到固定版命令，同时清除选择并聚焦第一组。复验筛选、表格和非活动视图。",
+      "dependencies": [
+        "feat-374"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
