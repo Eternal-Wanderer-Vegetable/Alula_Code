@@ -7,9 +7,9 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 
 class ProblemsTable extends StatefulWidget {
-  const ProblemsTable({super.key, required this.body});
+  const ProblemsTable({super.key, required this.child});
 
-  final Widget Function(ProblemsTableSelection) body;
+  final Widget child;
 
   @override
   State<ProblemsTable> createState() => _ProblemsTableState();
@@ -29,14 +29,6 @@ class _ProblemsTableState extends State<ProblemsTable> {
   static const _minimumSpace = 440.0;
 
   List<double> _shares = _defaultShares;
-  late final _selection = ProblemsTableSelection(setState);
-
-  @override
-  void dispose() {
-    _selection.dispose();
-    super.dispose();
-  }
-
   List<double> _minimums(double space) {
     if (space >= _minimumSpace) return _minimumWidths;
     final scale = space / _minimumSpace;
@@ -176,7 +168,7 @@ class _ProblemsTableState extends State<ProblemsTable> {
                         ),
                       ),
                     ),
-                    Expanded(child: widget.body(_selection)),
+                    Expanded(child: widget.child),
                   ],
                 ),
                 ...sashes,
@@ -189,10 +181,34 @@ class _ProblemsTableState extends State<ProblemsTable> {
   }
 }
 
+class ProblemsResultSelectionScope extends StatefulWidget {
+  const ProblemsResultSelectionScope({super.key, required this.builder});
+
+  final Widget Function(ProblemsResultSelection) builder;
+
+  @override
+  State<ProblemsResultSelectionScope> createState() =>
+      _ProblemsResultSelectionScopeState();
+}
+
+class _ProblemsResultSelectionScopeState
+    extends State<ProblemsResultSelectionScope> {
+  late final _selection = ProblemsResultSelection(setState);
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_selection);
+
+  @override
+  void dispose() {
+    _selection.dispose();
+    super.dispose();
+  }
+}
+
 enum ProblemsCopyAction { diagnostics, message }
 
-class ProblemsTableSelection {
-  ProblemsTableSelection(this._update);
+class ProblemsResultSelection {
+  ProblemsResultSelection(this._update);
 
   final void Function(VoidCallback) _update;
   final Set<Object> _selected = {};

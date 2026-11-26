@@ -31406,7 +31406,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       });
     }
 
-    late final selectionRows = ProblemsTableSelection.rowKeys(diagnostics);
+    late final diagnosticKeys = ProblemsResultSelection.rowKeys(diagnostics);
+    late final selectionRows = tableMode
+        ? diagnosticKeys
+        : <Object>[
+            for (var i = 0; i < groups.length; i++) ...[
+              groupKeyAt(i),
+              if (groups[i].expanded)
+                ...diagnosticKeys.getRange(
+                  groups[i].firstDiagnostic,
+                  groups[i].firstDiagnostic + groups[i].count,
+                ),
+            ],
+          ];
     bool openCurrentDiagnostic(
       Map<String, Object?> marker, {
       bool preserveFocus = false,
@@ -31426,19 +31438,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
     }
 
-    Iterable<Map<String, Object?>> tableClipboardRows(
-      ProblemsTableSelection selection,
-      int index,
-    ) sync* {
-      if (!selection.contains(selectionRows[index])) {
-        yield diagnostics[index];
-        return;
-      }
-      for (var i = 0; i < diagnostics.length; i++) {
-        if (selection.contains(selectionRows[i])) yield diagnostics[i];
-      }
-    }
-
     Iterable<Map<String, Object?>> fileClipboardRows(Object? identity) =>
         _diagnostics.where((marker) {
           final severity = (marker['severity'] as num?)?.toInt() ?? 3;
@@ -31446,6 +31445,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               severity >= 1 &&
               severity <= 3;
         });
+
+    Iterable<Map<String, Object?>> clipboardRowsAt(int index) sync* {
+      if (tableMode) {
+        yield diagnostics[index];
+        return;
+      }
+      final group = groups[groupIndexAtItem(index)];
+      if (index == group.firstItem) {
+        yield* fileClipboardRows(group.identity);
+      } else {
+        yield diagnostics[group.firstDiagnostic + index - group.firstItem - 1];
+      }
+    }
+
+    Iterable<Map<String, Object?>> selectedClipboardRows(
+      ProblemsResultSelection selection,
+      int index,
+    ) sync* {
+      if (!selection.contains(selectionRows[index])) {
+        yield* clipboardRowsAt(index);
+        return;
+      }
+      final copied = Set<Map<String, Object?>>.identity();
+      for (var i = 0; i < selectionRows.length; i++) {
+        if (selection.contains(selectionRows[i])) {
+          for (final marker in clipboardRowsAt(i)) {
+            if (tableMode || copied.add(marker)) yield marker;
+          }
+        }
+      }
+    }
 
     Future<void> copyProblems(
       Iterable<Map<String, Object?>> markers,
@@ -31572,7 +31602,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
         };
 
-    Widget list([ProblemsTableSelection? selection]) => ListView.builder(
+    ({bool modified, bool doubleClick}) selectResult(
+      ProblemsResultSelection selection,
+      int index, {
+      int? clickCount,
+    }) {
+      final keyboard = HardwareKeyboard.instance;
+      final extend = keyboard.isShiftPressed;
+      final toggle =
+          macPlatform ? keyboard.isMetaPressed : keyboard.isControlPressed;
+      final modified = extend || toggle;
+      final doubleClick = tableMode &&
+          selection.registerRowActivation(
+            selectionRows[index],
+            modified ? null : clickCount,
+          );
+      final layout = extend ? laidOutResults() : null;
+      selection.select(
+        selectionRows,
+        index,
+        extend: extend,
+        toggle: toggle,
+        focusedIndex: layout == null ? null : focusedResultIndex(layout.sliver),
+      );
+      return (modified: modified, doubleClick: doubleClick);
+    }
+
+    Widget list(ProblemsResultSelection selection) => ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
       itemBuilder: (context, i) {
@@ -31584,8 +31640,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
           final document = group.document;
+          final selected = selection.contains(selectionRows[i]);
           Iterable<Map<String, Object?>> getMarkers() =>
-              fileClipboardRows(group.identity);
+              selectedClipboardRows(selection, i);
           void openMenu([Offset? position]) => unawaited(
                 showProblemsContextMenu(
                   groupKey,
@@ -31607,13 +31664,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final VoidCallback? toggle = document == null
               ? null
               : () => setCollapsed(_collapsedProblemGroups[document] != true);
+          void selectGroup() {
+            final result = selectResult(selection, i);
+            focusRenderedResult(
+              groupKey,
+              ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+            );
+            if (!result.modified) toggle?.call();
+          }
+
           return Semantics(
             key: groupKey,
             container: true,
             header: true,
             button: toggle != null,
             expanded: toggle == null ? null : group.expanded,
-            onTap: toggle,
+            onTap: selectGroup,
+            selected: selected,
             excludeSemantics: true,
             label: [
               fileName,
@@ -31643,54 +31710,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
               },
               child: InkWell(
-                onTap: toggle,
+                onTap: selectGroup,
                 onSecondaryTapUp: (details) => openMenu(details.globalPosition),
                 excludeFromSemantics: true,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
-                  child: Row(
-                    children: [
-                      if (toggle != null) ...[
-                        Icon(
-                          group.expanded
-                            ? Icons.expand_more
-                            : Icons.chevron_right,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 2),
-                      ],
-                      const Icon(Icons.description_outlined, size: 14),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            text: fileName,
-                            children: [
-                              if (directory != null)
-                                TextSpan(
-                                  text: '  $directory',
-                                  style: TextStyle(
-                                    color: colors.onSurfaceVariant,
-                                    fontWeight: FontWeight.normal,
+                child: Ink(
+                  color: selected ? colors.secondaryContainer : null,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+                    child: Row(
+                      children: [
+                        if (toggle != null) ...[
+                          Icon(
+                            group.expanded
+                              ? Icons.expand_more
+                              : Icons.chevron_right,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 2),
+                        ],
+                        const Icon(Icons.description_outlined, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              text: fileName,
+                              children: [
+                                if (directory != null)
+                                  TextSpan(
+                                    text: '  $directory',
+                                    style: TextStyle(
+                                      color: colors.onSurfaceVariant,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Badge(
-                        backgroundColor: colors.surfaceContainerHighest,
-                        textColor: colors.onSurfaceVariant,
-                        label: Text('${group.count}'),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Badge(
+                          backgroundColor: colors.surfaceContainerHighest,
+                          textColor: colors.onSurfaceVariant,
+                          label: Text('${group.count}'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -31716,17 +31786,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? null
             : '[Ln ${position.line}, Col ${position.column}]';
         final rowKey = ValueKey((groupKey, rowNumber));
-        final menuRowKey = selection == null ? rowKey : ValueKey(selectionRows[i]);
+        final menuRowKey = tableMode ? ValueKey(selectionRows[i]) : rowKey;
+        final colors = Theme.of(context).colorScheme;
         Iterable<Map<String, Object?>> getMarkers() =>
-            selection == null ? [d] : tableClipboardRows(selection, i);
+            selectedClipboardRows(selection, i);
         void openMenu([Offset? position]) => unawaited(
               showProblemsContextMenu(
                 menuRowKey,
                 getMarkers,
                 globalPosition: position,
-                beforeShow: selection == null
-                    ? null
-                    : () => selection.registerRowActivation(selectionRows[i], null),
+                beforeShow: tableMode
+                    ? () => selection.registerRowActivation(selectionRows[i], null)
+                    : null,
               ),
             );
         final onOpen = canOpen ? () => _openDiagnostic(d) : null;
@@ -31734,30 +31805,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (tableMode) {
           final directory = group.directory;
           final filePath = directory == null ? fileName : '$directory/$fileName';
-          final tableSelection = selection!;
-          final colors = Theme.of(context).colorScheme;
 
           void selectRow({int? clickCount}) {
-            final keyboard = HardwareKeyboard.instance;
-            final extend = keyboard.isShiftPressed;
-            final toggle = Theme.of(context).platform == TargetPlatform.macOS
-                ? keyboard.isMetaPressed
-                : keyboard.isControlPressed;
-            final modified = extend || toggle;
-            final doubleClick = tableSelection.registerRowActivation(
-              selectionRows[i],
-              modified ? null : clickCount,
-            );
-            final layout = extend ? laidOutResults() : null;
-            tableSelection.select(
-              selectionRows,
-              i,
-              extend: extend,
-              toggle: toggle,
-              focusedIndex:
-                  layout == null ? null : focusedResultIndex(layout.sliver),
-            );
-
+            final (modified: modified, doubleClick: doubleClick) =
+                selectResult(selection, i, clickCount: clickCount);
             final activate = clickCount == null || doubleClick;
             if (!modified &&
                 activate &&
@@ -31778,8 +31829,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             dense: true,
             minTileHeight: 30,
             contentPadding: EdgeInsets.zero,
-            selected: tableSelection.hasSelection &&
-                tableSelection.contains(selectionRows[i]),
+            selected: selection.contains(selectionRows[i]),
             selectedColor: colors.onSecondaryContainer,
             selectedTileColor: colors.secondaryContainer,
             onTap: selectRow,
@@ -31829,7 +31879,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             key: rowKey,
             dense: true,
             contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
-            onTap: onOpen,
+            selected: selection.contains(selectionRows[i]),
+            selectedColor: colors.onSecondaryContainer,
+            selectedTileColor: colors.secondaryContainer,
+            onTap: () {
+              final result = selectResult(selection, i);
+              if (!result.modified && onOpen != null && onOpen()) return;
+              focusRenderedResult(
+                rowKey,
+                ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              );
+            },
             leading: Icon(icon, size: 16, color: color),
             title: Text(
               message,
@@ -31889,7 +31949,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     void focusAndExtend(
-      ProblemsTableSelection selection, {
+      ProblemsResultSelection selection, {
       required bool forward,
     }) {
       moveTableFocus(
@@ -31899,7 +31959,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-    void previewDiagnostic(ProblemsTableSelection selection, int index) {
+    void previewDiagnostic(ProblemsResultSelection selection, int index) {
       final marker = diagnostics[index];
       selection.previewWhenSelected(selectionRows[index], () {
         if (!mounted ||
@@ -31913,7 +31973,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     void followAndPreview(
-      ProblemsTableSelection selection,
+      ProblemsResultSelection selection,
       int? previous,
       int next,
     ) {
@@ -31923,7 +31983,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     void focusAndFollow(
-      ProblemsTableSelection selection, {
+      ProblemsResultSelection selection, {
       required bool forward,
     }) {
       moveTableFocus(
@@ -31933,10 +31993,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-    Widget withResultShortcuts([ProblemsTableSelection? selection]) {
+    Widget withResultShortcuts(ProblemsResultSelection selection) {
       final mac = Theme.of(context).platform == TargetPlatform.macOS;
       ValueChanged<int>? afterNavigation() {
-        if (selection == null) return null;
+        if (!tableMode) return null;
         final previous = currentResultIndex();
         if (previous != null) {
           selection.followNavigation(selectionRows, previous, previous);
@@ -31947,7 +32007,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
       return resultsRegion(
         list(selection),
-        onKeyEvent: selection == null
+        onKeyEvent: !tableMode
             ? null
             : (_, event) {
                 const escape = SingleActivator(LogicalKeyboardKey.escape);
@@ -31976,7 +32036,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               () => focusPage(forward: false, onFocused: afterNavigation()),
           const SingleActivator(LogicalKeyboardKey.pageDown):
               () => focusPage(forward: true, onFocused: afterNavigation()),
-          if (selection != null) ...{
+          if (tableMode) ...{
             const SingleActivator(LogicalKeyboardKey.arrowUp):
                 () => focusAndFollow(selection, forward: false),
             const SingleActivator(LogicalKeyboardKey.arrowDown):
@@ -32004,14 +32064,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-    return tableMode
-        ? ProblemsTable(
-            body: (selection) {
-              if (selection.hasState) selection.retainVisible(selectionRows);
-              return withResultShortcuts(selection);
-            },
-          )
-        : withResultShortcuts();
+    return ProblemsResultSelectionScope(
+      key: ValueKey(tableMode),
+      builder: (selection) {
+        if (selection.hasState) selection.retainVisible(selectionRows);
+        final results = withResultShortcuts(selection);
+        return tableMode ? ProblemsTable(child: results) : results;
+      },
+    );
   }
 
   Widget _buildCompletionPanel() {

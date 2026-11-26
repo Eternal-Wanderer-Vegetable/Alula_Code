@@ -4585,6 +4585,18 @@
       "evidence": "Problems 树的文件组与诊断行支持上下文菜单和复制。Windows、Linux 各通过 23 项真实诊断检查和 8 次系统剪贴板回读。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ad745bb9 的 CI 45845189260 四项与 Platform Availability 45845176864 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.308-problems-tree-copy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-361",
+      "name": "P05.309 LAY-16 / CMD-11 Problems 树诊断行追加选择与范围选择",
+      "description": "树诊断行及文件组支持主键追加与 Shift 范围选择。保留当前编辑位置，复验文件组与诊断复制范围、折叠、筛选及表格回归。",
+      "dependencies": [
+        "feat-360"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
