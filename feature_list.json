@@ -4381,6 +4381,18 @@
       "evidence": "Problems 文件组支持鼠标及键盘收起展开，筛选及面板重开保留状态。Windows 和 Linux 各通过 19 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b79e83 的 CI 45753255875 四项与 Platform Availability 45753251673 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.291-problems-group-toggle.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-344",
+      "name": "P05.292 CMD-11 Problems 折叠全部文件组",
+      "description": "从 Problems 标题区折叠所有已有文件组，并保留筛选、计数和编辑器选区。",
+      "dependencies": [
+        "feat-343"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -739,6 +739,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
   bool _problemsActiveFileOnly = false;
   final _collapsedProblemGroups = Expando<bool>();
+  final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -23729,6 +23730,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _problemsPanelFocus.dispose();
     _problemsFilterFocus.dispose();
     _problemsResultsFocus.dispose();
+    _problemsScrollController.dispose();
     _problemsFilterController.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
@@ -30314,6 +30316,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   child: _buildPanelViewDropTarget(_buildPanelTabs()),
                 ),
                 ListenableBuilder(
+                  listenable: _panelTab,
+                  builder: (context, _) {
+                    if (_panelTab.index != PanelViewTab.diagnostics.index) {
+                      return const SizedBox.shrink();
+                    }
+                    return IconButton(
+                      key: const ValueKey('problems-collapse-all'),
+                      tooltip: '折叠全部文件组',
+                      onPressed: _collapseAllProblemGroups,
+                      icon: const Icon(Icons.unfold_less, size: 16),
+                      visualDensity: VisualDensity.compact,
+                    );
+                  },
+                ),
+                ListenableBuilder(
                   listenable: _layout,
                   builder: (context, _) {
                     final maximized = _layout.panelMaximized;
@@ -30637,6 +30654,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           !_layout.isCollapsed('panel') &&
           _panelTab.index == index) {
         _problemsPanelFocus.requestFocus();
+      }
+    });
+  }
+
+  void _collapseAllProblemGroups() {
+    final diagnosedIds = <int>{};
+    for (final diagnostic in _diagnostics) {
+      final id = diagnostic['_documentId'];
+      final severity = (diagnostic['severity'] as num?)?.toInt() ?? 3;
+      if (id is int && severity >= 1 && severity <= 3) {
+        diagnosedIds.add(id);
+      }
+    }
+    setState(() {
+      for (final doc in _allDocs) {
+        if (diagnosedIds.contains(doc.id)) {
+          _collapsedProblemGroups[doc._shared] = true;
+        }
+      }
+    });
+
+    bool canFocus() =>
+        mounted &&
+        !_disposing &&
+        !_layout.isCollapsed('panel') &&
+        _panelTab.index == PanelViewTab.diagnostics.index;
+
+    void focusFirstGroup() {
+      if (!canFocus()) return;
+      final first = _problemsScrollController.hasClients
+          ? _problemsResultsFocus.traversalDescendants.firstOrNull
+          : null;
+      (first ?? _problemsResultsFocus).requestFocus();
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!canFocus()) return;
+      final position = _problemsScrollController.hasClients
+          ? _problemsScrollController.position
+          : null;
+      if (position != null && position.pixels != position.minScrollExtent) {
+        position.jumpTo(position.minScrollExtent);
+        WidgetsBinding.instance.addPostFrameCallback((_) => focusFirstGroup());
+      } else {
+        focusFirstGroup();
       }
     });
   }
@@ -30966,6 +31028,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       first = end;
     }
     return ListView.builder(
+      controller: _problemsScrollController,
       itemCount: itemCount,
       itemBuilder: (context, i) {
         var low = 0;
