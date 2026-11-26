@@ -32035,26 +32035,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
       return resultsRegion(
         list(selection),
-        onKeyEvent: !tableMode
-            ? null
-            : (_, event) {
-                const escape = SingleActivator(LogicalKeyboardKey.escape);
-                if (event is! KeyDownEvent ||
-                    !escape.accepts(event, HardwareKeyboard.instance)) {
-                  return KeyEventResult.ignored;
-                }
-                final index = currentResultIndex();
-                if (index == null && !selection.hasSelection) {
-                  return KeyEventResult.ignored;
-                }
-                final focused = index == null ? null : selectionRows[index];
-                if (selection.clearForEscape(focused)) {
-                  if (index != null) previewDiagnostic(selection, index);
-                } else {
-                  _problemsResultsFocus.requestFocus();
-                }
-                return KeyEventResult.handled;
-              },
+        onKeyEvent: (_, event) {
+          const escape = SingleActivator(LogicalKeyboardKey.escape);
+          if (event is! KeyDownEvent ||
+              !escape.accepts(event, HardwareKeyboard.instance)) {
+            return KeyEventResult.ignored;
+          }
+          final index = currentResultIndex();
+          if (index == null && !selection.hasSelection) {
+            return KeyEventResult.ignored;
+          }
+          final focused = index == null ? null : selectionRows[index];
+          if (!selection.clearForEscape(focused)) {
+            _problemsResultsFocus.requestFocus();
+          } else if (tableMode && index != null) {
+            previewDiagnostic(selection, index);
+          }
+          return KeyEventResult.handled;
+        },
         shortcuts: {
           const SingleActivator(LogicalKeyboardKey.home):
               () => focusBoundary(forward: false, onFocused: afterNavigation()),
