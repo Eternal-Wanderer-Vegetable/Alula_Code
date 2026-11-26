@@ -4309,6 +4309,18 @@
       "evidence": "Problems 筛选隐藏诊断时显示匹配数与工作区总数。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 f5edd5f5 的 CI 45728723879 四项与 Platform Availability 45728716888 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.285-problems-filter-count.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-338",
+      "name": "P05.286 CMD-11 Problems 文本反选筛选",
+      "description": "在 Problems 筛选框识别开头的 ! 反选文本匹配，并与现有范围、严重级别和计数同步。",
+      "dependencies": [
+        "feat-337"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

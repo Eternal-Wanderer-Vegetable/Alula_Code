@@ -30692,7 +30692,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: _problemsFilterController,
       builder: (context, value, _) {
-        final query = value.text.trim().toLowerCase();
+        final filter = value.text.trim().toLowerCase();
+        final negateText = filter.startsWith('!');
+        final query = negateText
+            ? filter.replaceFirst(RegExp(r'^!+'), '').trimLeft()
+            : filter;
         final diagnostics = <Map<String, Object?>>[];
         final activeId = _active?.id;
         var totalProblems = 0;
@@ -30706,7 +30710,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
           hasProblemsInScope = true;
           if (_visibleProblemSeverities.contains(severity) &&
-              (query.isEmpty || _matchesProblemsText(diagnostic, query))) {
+              (query.isEmpty ||
+                  _matchesProblemsText(diagnostic, query) != negateText)) {
             diagnostics.add(diagnostic);
           }
         }
