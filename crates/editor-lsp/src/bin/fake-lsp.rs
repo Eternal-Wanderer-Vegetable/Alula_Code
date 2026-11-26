@@ -77,6 +77,7 @@ fn main() {
                             "severity": 1,
                             "message": "fake error from fake-lsp",
                             "source": "fake-lsp",
+                            "code": 42,
                         }],
                     },
                 }));

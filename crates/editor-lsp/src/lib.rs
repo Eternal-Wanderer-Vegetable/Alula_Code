@@ -24,6 +24,13 @@ pub use hierarchy::{
     HierarchyPosition, HierarchyRange,
 };
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum DiagnosticCode {
+    Integer(i64),
+    Text(String),
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Diagnostic {
     /// LSP severity：1=Error 2=Warning 3=Information 4=Hint
@@ -39,6 +46,8 @@ pub struct Diagnostic {
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub code: Option<DiagnosticCode>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1130,6 +1139,9 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                                     .get("source")
                                     .and_then(|v| v.as_str())
                                     .map(|s| s.to_string()),
+                                code: d
+                                    .get("code")
+                                    .and_then(|value| DiagnosticCode::deserialize(value).ok()),
                             })
                         })
                         .collect()

@@ -96,6 +96,7 @@ import 'command_history.dart';
 import 'tree_find.dart';
 import 'goto_position.dart';
 import 'problems_path_filter.dart';
+import 'problems_table.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
 import 'open_editors_sort_order.dart';
@@ -740,6 +741,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final TextEditingController _problemsFilterController = TextEditingController();
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
   bool _problemsActiveFileOnly = false;
+  bool _problemsTableMode = false;
   final _collapsedProblemGroups = Expando<bool>();
   final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
@@ -5622,6 +5624,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
         'openEditorsSortOrder': _openEditorsSortOrder.name,
+        'problemsViewMode': _problemsTableMode ? 'table' : 'tree',
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
         'welcomeVisible': _welcomeVisible,
@@ -5767,6 +5770,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       data['preventPinnedEditorClose'],
     );
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
+    _problemsTableMode = data['problemsViewMode'] == 'table';
     _openEditorsSortOrder = OpenEditorsSortOrder.parse(data['openEditorsSortOrder']);
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
@@ -30323,12 +30327,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     if (_panelTab.index != PanelViewTab.diagnostics.index) {
                       return const SizedBox.shrink();
                     }
-                    return IconButton(
-                      key: const ValueKey('problems-collapse-all'),
-                      tooltip: '折叠全部文件组',
-                      onPressed: _collapseAllProblemGroups,
-                      icon: const Icon(Icons.unfold_less, size: 16),
-                      visualDensity: VisualDensity.compact,
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!_problemsTableMode)
+                          IconButton(
+                            key: const ValueKey('problems-collapse-all'),
+                            tooltip: '折叠全部文件组',
+                            onPressed: _collapseAllProblemGroups,
+                            icon: const Icon(Icons.unfold_less, size: 16),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        IconButton(
+                          key: const ValueKey('problems-view-mode-toggle'),
+                          tooltip: _problemsTableMode ? '显示为树' : '显示为表格',
+                          onPressed: _toggleProblemsViewMode,
+                          icon: Icon(
+                            _problemsTableMode
+                                ? Icons.account_tree_outlined
+                                : Icons.table_rows_outlined,
+                            size: 16,
+                          ),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -30657,6 +30679,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _panelTab.index == index) {
         _problemsPanelFocus.requestFocus();
       }
+    });
+  }
+
+  void _toggleProblemsViewMode() {
+    final focus = FocusManager.instance.primaryFocus?.context;
+    final markerKey = _problemsResultsFocus.hasFocus
+        ? focus?.findAncestorWidgetOfExactType<ListTile>()?.key
+        : null;
+    setState(() => _problemsTableMode = !_problemsTableMode);
+    _scheduleStateSave();
+    if (markerKey == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _disposing ||
+          _panelTab.index != PanelViewTab.diagnostics.index ||
+          !_problemsPanelFocus.hasFocus ||
+          _problemsFilterFocus.hasFocus) {
+        return;
+      }
+      for (final node in _problemsResultsFocus.traversalDescendants) {
+        if (node.context?.findAncestorWidgetOfExactType<ListTile>()?.key ==
+            markerKey) {
+          FocusTraversalPolicy.defaultTraversalRequestFocusCallback(
+            node,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          );
+          return;
+        }
+      }
+      _problemsResultsFocus.requestFocus();
     });
   }
 
@@ -31004,6 +31057,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     // Diagnostics are published in contiguous batches per document. Record
     // the section boundaries so the virtual list can address the original rows.
+    final tableMode = _problemsTableMode;
     final documentsById = {for (final doc in _allDocs) doc.id: doc};
     final workspace = _workspaceRoot;
     final groups = <({
@@ -31051,7 +31105,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         firstItem: itemCount,
         count: end - first,
       ));
-      itemCount += 1 + (expanded ? end - first : 0);
+      itemCount += tableMode ? end - first : 1 + (expanded ? end - first : 0);
       first = end;
     }
     bool focusRenderedResult(
@@ -31200,7 +31254,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final groupKey = groupKeyAt(groupIndex);
       final withinGroup = item - groups[groupIndex].firstItem;
       return focusRenderedResult(
-        withinGroup == 0 ? groupKey : ValueKey((groupKey, withinGroup)),
+        !tableMode && withinGroup == 0
+            ? groupKey
+            : ValueKey((groupKey, withinGroup + (tableMode ? 1 : 0))),
         forward
             ? ScrollPositionAlignmentPolicy.keepVisibleAtEnd
             : ScrollPositionAlignmentPolicy.keepVisibleAtStart,
@@ -31310,7 +31366,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final group = groups[groupIndex];
         final fileName = group.fileName;
         final groupKey = groupKeyAt(groupIndex);
-        if (i == group.firstItem) {
+        if (!tableMode && i == group.firstItem) {
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
           final document = group.document;
@@ -31415,7 +31471,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           );
         }
-        final d = diagnostics[group.firstDiagnostic + i - group.firstItem - 1];
+        final rowNumber = i - group.firstItem + (tableMode ? 1 : 0);
+        final d = diagnostics[group.firstDiagnostic + rowNumber - 1];
         final canOpen = _diagnosticEditor(d) != null;
         final position = switch ((d['line'], d['character'])) {
           (final int line, final int column) when line >= 0 && column >= 0 =>
@@ -31428,28 +31485,59 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           2 => (Icons.warning_amber_rounded, Colors.orangeAccent),
           _ => (Icons.info_outline, Colors.lightBlueAccent),
         };
-        final row = ListTile(
-          key: ValueKey((groupKey, i - group.firstItem)),
-          dense: true,
-          contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
-          onTap: canOpen ? () => _openDiagnostic(d) : null,
-          leading: Icon(icon, size: 16, color: color),
-          title: Text(
-            '${d['message'] ?? ''}',
-            style: const TextStyle(fontSize: 12),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            position == null
-                ? fileName
-                : '[Ln ${position.line}, Col ${position.column}]',
-            semanticsLabel: position == null
-                ? null
-                : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
-            style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
-          ),
-        );
+        final message = '${d['message'] ?? ''}';
+        final location = position == null
+            ? null
+            : '[Ln ${position.line}, Col ${position.column}]';
+        final rowKey = ValueKey((groupKey, rowNumber));
+        final onOpen = canOpen ? () => _openDiagnostic(d) : null;
+        final ListTile row;
+        if (tableMode) {
+          final directory = group.directory;
+          final filePath = directory == null ? fileName : '$directory/$fileName';
+          row = ListTile(
+            key: rowKey,
+            dense: true,
+            minTileHeight: 30,
+            contentPadding: EdgeInsets.zero,
+            onTap: onOpen,
+            title: ProblemsTableLine(
+              severity: Semantics(
+                label: switch (severity) {
+                  1 => '错误',
+                  2 => '警告',
+                  _ => '信息',
+                },
+                child: Icon(icon, size: 14, color: color),
+              ),
+              code: Text('${d['code'] ?? ''}'),
+              message: Text(message.replaceAll('\n', ' ')),
+              file: Text(location == null ? filePath : '$filePath $location'),
+              source: Text('${d['source'] ?? ''}'),
+            ),
+          );
+        } else {
+          row = ListTile(
+            key: rowKey,
+            dense: true,
+            contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
+            onTap: onOpen,
+            leading: Icon(icon, size: 16, color: color),
+            title: Text(
+              message,
+              style: const TextStyle(fontSize: 12),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              location ?? fileName,
+              semanticsLabel: position == null
+                  ? null
+                  : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+            ),
+          );
+        }
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.arrowUp):
@@ -31457,7 +31545,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             const SingleActivator(LogicalKeyboardKey.arrowDown):
                 () => focusResultAt(i + 1, forward: true),
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
-              focusFileGroup(groupKey, group.firstItem, group.document);
+              if (!tableMode) {
+                focusFileGroup(groupKey, group.firstItem, group.document);
+              }
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
           },
@@ -31466,7 +31556,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
     );
     return resultsRegion(
-      list,
+      tableMode ? ProblemsTable(body: list) : list,
       shortcuts: {
         const SingleActivator(LogicalKeyboardKey.home):
             () => focusBoundary(forward: false),

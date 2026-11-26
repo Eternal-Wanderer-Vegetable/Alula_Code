@@ -32,6 +32,12 @@ fn full_roundtrip_against_fake_lsp() {
     assert_eq!(serialized["endLine"], 0);
     assert_eq!(serialized["endCharacter"], 1);
     assert_eq!(serialized["documentVersion"], 7);
+    assert_eq!(serialized["code"], 42);
+    let mut previous = serialized;
+    previous.as_object_mut().unwrap().remove("code");
+    let legacy: editor_lsp::Diagnostic =
+        serde_json::from_value(previous).expect("decode diagnostic without optional code");
+    assert!(legacy.code.is_none());
 
     // completion → 同步响应
     let items = server

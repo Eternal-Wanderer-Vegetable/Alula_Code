@@ -4453,6 +4453,18 @@
       "evidence": "Problems 支持 Home、End、Page Up 和 Page Down 的首尾及翻页焦点导航，并保留筛选框的文本键位。Windows 和 Linux 各通过 33 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 9e46f366 的 CI 45787992981 四项与 Platform Availability 45787982708 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.297-problems-list-pages.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-350",
+      "name": "P05.298 LAY-16 / CMD-11 Problems 表格模式与诊断列",
+      "description": "Problems 支持树与虚拟化诊断表格切换，保持现有筛选和精确范围打开，保留语言服务诊断代码及视图模式。",
+      "dependencies": [
+        "feat-349"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
