@@ -31614,7 +31614,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final modified = extend || toggle;
       final doubleClick = selection.registerRowActivation(
         selectionRows[index],
-        tableMode && !modified ? clickCount : null,
+        modified ? null : clickCount,
       );
       final layout = extend ? laidOutResults() : null;
       selection.select(
@@ -31648,6 +31648,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   getMarkers,
                   copyMessage: false,
                   globalPosition: position,
+                  beforeShow: () =>
+                      selection.registerRowActivation(selectionRows[i], null),
                 ),
               );
           void setCollapsed(bool collapsed) {
@@ -31764,7 +31766,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         final rowNumber = i - group.firstItem + (tableMode ? 1 : 0);
         final d = diagnostics[group.firstDiagnostic + rowNumber - 1];
-        final canOpen = _diagnosticEditor(d) != null;
         final position = switch ((d['line'], d['character'])) {
           (final int line, final int column) when line >= 0 && column >= 0 =>
             (line: line + 1, column: column + 1),
@@ -31781,7 +31782,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? null
             : '[Ln ${position.line}, Col ${position.column}]';
         final rowKey = ValueKey((groupKey, rowNumber));
-        final menuRowKey = tableMode ? ValueKey(selectionRows[i]) : rowKey;
+        final menuRowKey = ValueKey(selectionRows[i]);
         final colors = Theme.of(context).colorScheme;
         Iterable<Map<String, Object?>> getMarkers() =>
             selectedClipboardRows(selection, i);
@@ -31790,36 +31791,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 menuRowKey,
                 getMarkers,
                 globalPosition: position,
-                beforeShow: tableMode
-                    ? () => selection.registerRowActivation(selectionRows[i], null)
-                    : null,
+                beforeShow: () =>
+                    selection.registerRowActivation(selectionRows[i], null),
               ),
             );
-        final onOpen = canOpen ? () => _openDiagnostic(d) : null;
+        void selectRow({int? clickCount}) {
+          final (modified: modified, doubleClick: doubleClick) =
+              selectResult(selection, i, clickCount: clickCount);
+          final activate = clickCount == null || doubleClick;
+          if (!modified &&
+              activate &&
+              openCurrentDiagnostic(d, pinPreview: doubleClick)) {
+            return;
+          }
+          focusRenderedResult(
+            rowKey,
+            ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          );
+          if (!modified && !activate) {
+            openCurrentDiagnostic(d, preserveFocus: true);
+          }
+        }
+
         final Widget row;
         if (tableMode) {
           final directory = group.directory;
           final filePath = directory == null ? fileName : '$directory/$fileName';
 
-          void selectRow({int? clickCount}) {
-            final (modified: modified, doubleClick: doubleClick) =
-                selectResult(selection, i, clickCount: clickCount);
-            final activate = clickCount == null || doubleClick;
-            if (!modified &&
-                activate &&
-                openCurrentDiagnostic(d, pinPreview: doubleClick)) {
-              return;
-            }
-            focusRenderedResult(
-              rowKey,
-              ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-            );
-            if (!modified && !activate) {
-              openCurrentDiagnostic(d, preserveFocus: true);
-            }
-          }
-
-          final tile = ListTile(
+          row = ListTile(
             key: rowKey,
             dense: true,
             minTileHeight: 30,
@@ -31843,32 +31842,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               source: Text('${d['source'] ?? ''}'),
             ),
           );
-          final mouseTaps =
-              GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
-            () => SerialTapGestureRecognizer(
-              supportedDevices: const {PointerDeviceKind.mouse},
-              allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
-            ),
-            (recognizer) {
-              recognizer.onSerialTapUp =
-                  (details) => selectRow(clickCount: details.count);
-            },
-          );
-          row = RawGestureDetector(
-            key: menuRowKey,
-            gestures: {
-              SerialTapGestureRecognizer: mouseTaps,
-              TapGestureRecognizer:
-                  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                TapGestureRecognizer.new,
-                (recognizer) {
-                  recognizer.onSecondaryTapUp =
-                      (details) => openMenu(details.globalPosition);
-                },
-              ),
-            },
-            child: tile,
-          );
         } else {
           row = ListTile(
             key: rowKey,
@@ -31877,14 +31850,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             selected: selection.contains(selectionRows[i]),
             selectedColor: colors.onSecondaryContainer,
             selectedTileColor: colors.secondaryContainer,
-            onTap: () {
-              final result = selectResult(selection, i);
-              if (!result.modified && onOpen != null && onOpen()) return;
-              focusRenderedResult(
-                rowKey,
-                ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-              );
-            },
+            onTap: selectRow,
             leading: Icon(icon, size: 16, color: color),
             title: Text(
               message,
@@ -31901,6 +31867,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           );
         }
+        final mouseTaps =
+            GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
+          () => SerialTapGestureRecognizer(
+            supportedDevices: const {PointerDeviceKind.mouse},
+            allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
+          ),
+          (recognizer) {
+            recognizer.onSerialTapUp =
+                (details) => selectRow(clickCount: details.count);
+          },
+        );
         return CallbackShortcuts(
           bindings: {
             ...clipboardShortcuts(openMenu, getMarkers),
@@ -31911,12 +31888,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
           },
-          child: tableMode
-              ? row
-              : GestureDetector(
-                  onSecondaryTapUp: (details) => openMenu(details.globalPosition),
-                  child: row,
-                ),
+          child: RawGestureDetector(
+            key: menuRowKey,
+            gestures: {
+              SerialTapGestureRecognizer: mouseTaps,
+              TapGestureRecognizer:
+                  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                TapGestureRecognizer.new,
+                (recognizer) {
+                  recognizer.onSecondaryTapUp =
+                      (details) => openMenu(details.globalPosition);
+                },
+              ),
+            },
+            child: row,
+          ),
         );
       },
     );
