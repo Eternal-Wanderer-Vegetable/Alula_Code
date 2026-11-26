@@ -4345,6 +4345,18 @@
       "evidence": "Problems 支持文件路径的包含和排除模式，保留文本、来源和活动文件筛选。Windows 和 Linux 各通过 26 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 04c99521 的 CI 45742059488 四项与 Platform Availability 45742053207 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.288-problems-path-globs.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-341",
+      "name": "P05.289 CMD-11 Problems 行列显示",
+      "description": "将诊断起点转换为面向用户的一基行列，并保留 Rust、LSP 和导航中的原始范围。",
+      "dependencies": [
+        "feat-340"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

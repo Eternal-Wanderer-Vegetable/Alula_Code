@@ -30917,6 +30917,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemBuilder: (context, i) {
         final d = diagnostics[i];
         final canOpen = _diagnosticEditor(d) != null;
+        final fileName = '${d['file'] ?? ''}';
+        final position = switch ((d['line'], d['character'])) {
+          (final int line, final int column) when line >= 0 && column >= 0 =>
+            (line: line + 1, column: column + 1),
+          _ => null,
+        };
         final severity = (d['severity'] as num?)?.toInt() ?? 3;
         final (icon, color) = switch (severity) {
           1 => (Icons.error, Colors.redAccent),
@@ -30934,7 +30940,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
-            '${d['file'] ?? ''} · L${d['line']} C${d['character']}',
+            position == null
+                ? fileName
+                : '$fileName · [Ln ${position.line}, Col ${position.column}]',
+            semanticsLabel: position == null
+                ? null
+                : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
             style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
           ),
         );
