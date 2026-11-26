@@ -222,6 +222,16 @@ class ProblemsTableSelection {
     if (_anchor != null && !rows.contains(_anchor)) _anchor = null;
   }
 
+  bool clearForEscape(Object? focusedKey) {
+    final retained = _selected.length > 1 ? focusedKey : null;
+    _update(() {
+      _selected.clear();
+      if (retained != null) _selected.add(retained);
+      _anchor = null;
+    });
+    return retained != null;
+  }
+
   void _toggle(Object key) {
     if (!_selected.remove(key)) _selected.add(key);
   }

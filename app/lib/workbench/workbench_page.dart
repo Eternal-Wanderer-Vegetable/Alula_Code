@@ -30987,6 +30987,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Widget resultsRegion(
       Widget child, {
       Map<ShortcutActivator, VoidCallback> shortcuts = const {},
+      FocusOnKeyEventCallback? onKeyEvent,
     }) {
       return CallbackShortcuts(
         bindings: shortcuts,
@@ -30994,6 +30995,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           key: const ValueKey('problems-results-focus'),
           focusNode: _problemsResultsFocus,
           skipTraversal: true,
+          onKeyEvent: onKeyEvent,
           child: child,
         ),
       );
@@ -31622,6 +31624,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final mac = Theme.of(context).platform == TargetPlatform.macOS;
       return resultsRegion(
         list(selection),
+        onKeyEvent: selection == null
+            ? null
+            : (_, event) {
+                const escape = SingleActivator(LogicalKeyboardKey.escape);
+                if (event is! KeyDownEvent ||
+                    !escape.accepts(event, HardwareKeyboard.instance)) {
+                  return KeyEventResult.ignored;
+                }
+                final index = currentResultIndex();
+                if (index == null && !selection.hasSelection) {
+                  return KeyEventResult.ignored;
+                }
+                final focused = index == null ? null : selectionRows[index];
+                if (!selection.clearForEscape(focused)) {
+                  _problemsResultsFocus.requestFocus();
+                }
+                return KeyEventResult.handled;
+              },
         shortcuts: {
           const SingleActivator(LogicalKeyboardKey.home):
               () => focusBoundary(forward: false),

@@ -4513,6 +4513,18 @@
       "evidence": "Problems 表格键盘支持 Shift 方向键、主键全选及主键加 Shift 和 Enter 切换当前行。Windows 和 Linux 各通过 25 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ce78600a 的 CI 45814052100 四项与 Platform Availability 45814043608 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.302-problems-keyboard-selection.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-355",
+      "name": "P05.303 LAY-16 Problems 表格 Escape 清除选择",
+      "description": "在 Problems 表格结果区通过 Escape 收拢多选、清除单选和行焦点及重置锚点。验证筛选框与编辑器作用域。",
+      "dependencies": [
+        "feat-354"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
