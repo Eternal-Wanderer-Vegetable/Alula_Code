@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.295 / feat-347 完成。Problems 的左方向键从诊断行定位并聚焦已移出渲染范围的所属组。Windows 和 Linux 各通过 16 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b7ec45 的 CI 45771719109 四项与 Platform Availability 45771715172 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.295-problems-offscreen-parent.md。
 - P05.294 / feat-346 完成。Problems 的右方向键可从展开组进入首条诊断，左方向键可从诊断返回已渲染的组标题。Windows 和 Linux 各通过 30 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 44f9a3c6 的 CI 45766920493 四项与 Platform Availability 45766915175 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.294-problems-child-focus.md。
 - P05.293 / feat-345 完成。Problems 获焦文件组用左方向键折叠、右方向键展开。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b49c7c23 的 CI 45762648173 四项与 Platform Availability 45762643498 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.293-problems-group-arrows.md。
 - P05.292 / feat-344 完成。Problems 标题区可折叠全部文件组，保留查询、计数和隐藏组状态，并聚焦首组。Windows 和 Linux 各通过 18 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c10ed73f 的 CI 45756883961 四项与 Platform Availability 45759360367 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.292-problems-collapse-all.md。
@@ -72,7 +73,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 CMD-11 Problems 跨视口返回所属文件组。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 CMD-11 Problems 结果列表上下方向键。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
