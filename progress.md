@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.323 / feat-375 完成。Problems 树支持固定版折叠全部命令，标题按钮和键位共用入口。折叠清除选择并聚焦首组。Windows 与 Linux 各通过 28 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da2c882a 的 CI 45908041815 四项与 Platform Availability 45908034768 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md。
 - P05.322 / feat-374 完成。Problems 的错误、警告、信息及仅活动文件使用固定版独立命令。键位和筛选菜单同步，筛选可以组合。Windows 与 Linux 各通过 32 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c5ea9fe7 的 CI 45905258788 四项与 Platform Availability 45905249222 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.322-problems-filter-option-commands.md。
 - P05.321 / feat-373 完成。Problems 支持固定版树表模式命令及标题按钮。重复命令保持模式，切换保留可见诊断选择、焦点及筛选。Windows 与 Linux 各通过 31 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c746d8ad 的 CI 45902357697 四项与 Platform Availability 45902351441 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.321-problems-view-mode-commands.md。
 - P05.320 / feat-372 完成。Problems 树悬停显示完整诊断和文件路径，表格按列提示完整消息、代码、路径位置及来源。Windows 与 Linux 各通过 26 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0107f185 的 CI 45897688227 四项与 Platform Availability 45897680204 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.320-problems-diagnostic-hover.md。
@@ -100,7 +101,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 折叠全部命令。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 全局消息行显示命令。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

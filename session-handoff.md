@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.323 / feat-375 完成。Problems 树支持固定版折叠全部命令，标题按钮和键位共用入口。折叠清除选择并聚焦首组。Windows 与 Linux 各通过 28 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da2c882a 的 CI 45908041815 四项与 Platform Availability 45908034768 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md。
 - P05.322 / feat-374 完成。Problems 的错误、警告、信息及仅活动文件使用固定版独立命令。键位和筛选菜单同步，筛选可以组合。Windows 与 Linux 各通过 32 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c5ea9fe7 的 CI 45905258788 四项与 Platform Availability 45905249222 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.322-problems-filter-option-commands.md。
 - P05.321 / feat-373 完成。Problems 支持固定版树表模式命令及标题按钮。重复命令保持模式，切换保留可见诊断选择、焦点及筛选。Windows 与 Linux 各通过 31 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c746d8ad 的 CI 45902357697 四项与 Platform Availability 45902351441 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.321-problems-view-mode-commands.md。
 - P05.320 / feat-372 完成。Problems 树悬停显示完整诊断和文件路径，表格按列提示完整消息、代码、路径位置及来源。Windows 与 Linux 各通过 26 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0107f185 的 CI 45897688227 四项与 Platform Availability 45897680204 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.320-problems-diagnostic-hover.md。
@@ -340,6 +341,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.323 Problems 折叠全部命令](docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md)。
 [P05.322 Problems 筛选选项命令](docs/diagnostics/2026-11-27-p05/p05.322-problems-filter-option-commands.md)。
 [P05.321 Problems 树表模式命令](docs/diagnostics/2026-11-27-p05/p05.321-problems-view-mode-commands.md)。
 [P05.320 Problems 诊断悬停状态](docs/diagnostics/2026-11-27-p05/p05.320-problems-diagnostic-hover.md)。
@@ -569,4 +571,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.322 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 折叠全部命令。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.323 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 全局消息行显示命令。PR #3 保持草稿，macOS 实机暂缓。
