@@ -4477,6 +4477,18 @@
       "evidence": "Problems 表格三个分隔线支持拖动和双击复位，表头与全部已渲染诊断行对齐。Windows 和两档 Linux 窗宽各通过 27 个交互和 5 个重启检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0e0f1c8a 的 CI 45800476980 四项与 Platform Availability 45800468034 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.299-problems-table-resize.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-352",
+      "name": "P05.300 LAY-16 / CMD-11 Problems 诊断代码筛选",
+      "description": "Problems 树与表格的文本筛选匹配字符串和整数诊断代码。验证真实 provider、数字代码协议夹具、大小写、反选和定位。",
+      "dependencies": [
+        "feat-351"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

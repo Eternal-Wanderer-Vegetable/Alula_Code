@@ -30765,9 +30765,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final file = diagnostic['file'];
     final source = diagnostic['source'];
+    final code = diagnostic['code'];
     final message = diagnostic['message'];
     return file is String && matches(file) ||
         source is String && matches(source) ||
+        (code is String || code is int) && matches(code.toString()) ||
         message is String && message.split('\n').any(matches);
   }
 
