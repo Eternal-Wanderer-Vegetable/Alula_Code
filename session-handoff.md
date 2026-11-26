@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.296 / feat-348 完成。Problems 在组标题和诊断行之间按可见顺序处理上下方向键，并将目标滚入视口。Windows 和 Linux 各通过 27 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 92e520cb 的 CI 45776138475 四项与 Platform Availability 45776132784 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.296-problems-vertical-navigation.md。
 - P05.295 / feat-347 完成。Problems 的左方向键从诊断行定位并聚焦已移出渲染范围的所属组。Windows 和 Linux 各通过 16 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b7ec45 的 CI 45771719109 四项与 Platform Availability 45771715172 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.295-problems-offscreen-parent.md。
 - P05.294 / feat-346 完成。Problems 的右方向键可从展开组进入首条诊断，左方向键可从诊断返回已渲染的组标题。Windows 和 Linux 各通过 30 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 44f9a3c6 的 CI 45766920493 四项与 Platform Availability 45766915175 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.294-problems-child-focus.md。
 - P05.293 / feat-345 完成。Problems 获焦文件组用左方向键折叠、右方向键展开。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b49c7c23 的 CI 45762648173 四项与 Platform Availability 45762643498 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.293-problems-group-arrows.md。
@@ -313,6 +314,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.296 Problems 结果列表上下方向键](docs/diagnostics/2026-11-26-p05/p05.296-problems-vertical-navigation.md)。
 [P05.295 Problems 跨视口返回所属文件组](docs/diagnostics/2026-11-26-p05/p05.295-problems-offscreen-parent.md)。
 [P05.294 Problems 组标题与诊断行左右键焦点](docs/diagnostics/2026-11-26-p05/p05.294-problems-child-focus.md)。
 [P05.293 Problems 文件组左右方向键](docs/diagnostics/2026-11-26-p05/p05.293-problems-group-arrows.md)。
@@ -515,4 +517,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.295 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 结果列表上下方向键。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.296 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 结果列表首尾与翻页导航。PR #3 保持草稿，macOS 实机暂缓。

@@ -4437,8 +4437,8 @@
       "dependencies": [
         "feat-347"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 在组标题和诊断行之间按可见顺序处理上下方向键，并将目标滚入视口。Windows 和 Linux 各通过 27 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 92e520cb 的 CI 45776138475 四项与 Platform Availability 45776132784 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.296-problems-vertical-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
