@@ -4533,8 +4533,8 @@
       "dependencies": [
         "feat-355"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 表格普通键盘导航同步与原焦点重合的单项选择，并更新范围锚点。Windows 和 Linux 各通过 26 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 68aea4b3 的 CI 45823959170 四项与 Platform Availability 45823951413 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.304-problems-selection-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

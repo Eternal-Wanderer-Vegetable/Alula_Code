@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.304 / feat-356 完成。Problems 表格普通键盘导航同步与原焦点重合的单项选择，并更新范围锚点。Windows 和 Linux 各通过 26 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 68aea4b3 的 CI 45823959170 四项与 Platform Availability 45823951413 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.304-problems-selection-navigation.md。
 - P05.303 / feat-355 完成。Problems 表格 Escape 收拢多选、清除单选或行焦点并重置范围锚点。Windows 和 Linux 各通过 28 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0e219821 的 CI 45818926199 四项与 Platform Availability 45818914535 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.303-problems-escape-selection.md。
 - P05.302 / feat-354 完成。Problems 表格键盘支持 Shift 方向键、主键全选及主键加 Shift 和 Enter 切换当前行。Windows 和 Linux 各通过 25 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ce78600a 的 CI 45814052100 四项与 Platform Availability 45814043608 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.302-problems-keyboard-selection.md。
 - P05.301 / feat-353 完成。Problems 表格支持平台主修改键鼠标多选和 Shift 点击范围选择。Windows 和 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 3be63842 的 CI 45809951326 四项与 Platform Availability 45809943449 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.301-problems-table-selection.md。
@@ -321,6 +322,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.304 Problems 表格单选随焦点导航](docs/diagnostics/2026-11-26-p05/p05.304-problems-selection-navigation.md)。
 [P05.303 Problems 表格 Escape 清除选择](docs/diagnostics/2026-11-26-p05/p05.303-problems-escape-selection.md)。
 [P05.302 Problems 表格键盘选择](docs/diagnostics/2026-11-26-p05/p05.302-problems-keyboard-selection.md)。
 [P05.301 Problems 表格鼠标多选与范围选择](docs/diagnostics/2026-11-26-p05/p05.301-problems-table-selection.md)。
@@ -531,4 +533,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.303 收尾 CI。按 docs/03 和固定版本推进 LAY-16 Problems 表格单选随焦点导航。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.304 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 表格键盘诊断预览与保留焦点。PR #3 保持草稿，macOS 实机暂缓。
