@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.301 / feat-353 完成。Problems 表格支持平台主修改键鼠标多选和 Shift 点击范围选择。Windows 和 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 3be63842 的 CI 45809951326 四项与 Platform Availability 45809943449 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.301-problems-table-selection.md。
 - P05.300 / feat-352 完成。Problems 树和表格按字符串或整数诊断代码筛选。Windows 和 Linux 各通过 19 个真实 rust-analyzer 检查。Linux 整数协议夹具通过 13 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b8ac1220 的 CI 45804379758 四项与 Platform Availability 45805956616 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.300-problems-code-filter.md。
 - P05.299 / feat-351 完成。Problems 表格三个分隔线支持拖动和双击复位，表头与全部已渲染诊断行对齐。Windows 和两档 Linux 窗宽各通过 27 个交互和 5 个重启检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0e0f1c8a 的 CI 45800476980 四项与 Platform Availability 45800468034 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.299-problems-table-resize.md。
 - P05.298 / feat-350 完成。Problems 支持虚拟化诊断表、真实诊断代码与模式恢复。Windows 和 Linux 各通过 16 个交互和 5 个同一会话重启检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 633789c9 的 CI 45794082508 四项与 Platform Availability 45794069459 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.298-problems-table.md。
@@ -78,7 +79,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 LAY-16 Problems 表格多选与范围选择。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 LAY-16 Problems 表格键盘选择。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
