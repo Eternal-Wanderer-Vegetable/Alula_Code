@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.317 / feat-369 完成。固定版对照将 Problems 文件组、两行诊断、表头和表格行校准为 22、44、24、24 逻辑像素。树诊断首行显示来源、代码和位置。Windows 与 Linux 各通过 11 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6b0f9605 的 CI 45885827159 四项与 Platform Availability 45885819195 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md。
 - P05.316 / feat-368 完成。Problems 树、表格或空结果区键入普通字符会聚焦筛选，并按筛选框已有选区插入首字符。已配置的单键和组合键沿用命令路由。Windows、Linux 各通过 27 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 f2d90924 的 CI 45881599093 四项与 Platform Availability 45881591502 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.316-problems-type-to-filter.md。
 - P05.315 / feat-367 完成。Problems 筛选框主键加 Down 恢复结果焦点和选择。无选择时初始化树或表格的诊断焦点，无匹配时聚焦结果消息。Windows、Linux 各通过 31 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da76c3d1 的 CI 45877029835 四项与 Platform Availability 45877021466 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.315-problems-filter-entry.md。
 - P05.314 / feat-366 完成。Problems 树诊断行单击预览并保留焦点，双击显式打开并固定已有预览标签。Windows、Linux 各通过 20 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a7ed06f5 的 CI 45873005067 四项与 Platform Availability 45872997470 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.314-problems-tree-mouse-preview.md。
@@ -94,7 +95,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 树与表格视觉对照。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 树诊断消息行显示切换。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

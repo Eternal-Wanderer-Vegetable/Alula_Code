@@ -1,0 +1,3919 @@
+{
+  "product": "6b0f9605d4d2d83ad914146d94c9d3d44019772e",
+  "tree": "9e7ef1ea17eb7bfaa9dedf8d2eea0665f15dd015",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9e7ef1ea17eb7bfaa9dedf8d2eea0665f15dd015",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "8352cf8631b4d087ffe9090c8306736f2b0ce3689a511d7f55d16b8e52c04c27",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "af2b7c8b462b796d4e422fcfa97ccf6d6f9cf86677f653b5756a9acb06edcadb",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "a94654c7f47feaf9e541e49916a4b0ccaf55e60db411193c531d9b0bbf7860a4",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "bf1ff356942c4aff9d5927f0e119f1edf06913c3701477707b1ff22665dc284d",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "57d65dde8fc881d76ac86f26e21bfe5ed20eafee32c3ac3cc42722013ba8ab8d",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "57d65dde8fc881d76ac86f26e21bfe5ed20eafee32c3ac3cc42722013ba8ab8d",
+  "acceptanceDriverSha256": "edf90cbe4676fc58e9946d955fc2e58ce72ff08d2e6fea370b63a6a071580820",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts": "671ab982fe86e5f9cc37b53cb9b0c8615ccfef91c4da68e85cd1ce9230a6f9e4",
+      "src/vs/workbench/contrib/markers/browser/markersTable.ts": "129cf05db8c8eda1b463918db864bf22edbe2666089a767ff3361786b3d83623"
+    },
+    "reportSha256": "797a8a6eb51d975eca6c96c6a71036ea6ad6c4d56d507d662a067aafc7b3a100",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "fixtureSha256": "3990ce874e0044411e5969898195682ea267803c0120881a2328f39d411a986f",
+    "browser": "Chrome/150.0.7871.250",
+    "devicePixelRatio": 1.25,
+    "panelWidth": 702.4000244140625,
+    "rowHeights": {
+      "fileGroup": 22,
+      "treeTwoLines": 44,
+      "tableHeader": 24,
+      "tableRow": 24
+    },
+    "isolatedSharedDataVerified": true
+  },
+  "windowsBaseline": {
+    "tree": "9539b0882ed98c6b7072a38457881e3edf309280",
+    "reportSha256": "f856fdc0b7ceb3a602aaec8f0c75e4b15cdf871f0023526dad59bfe8ecb548e2",
+    "aotSha256": "33400a51e5498b955a518954f07447ecfd7a0b30b97424a7a42f70c823bbcb83",
+    "dpi": 120,
+    "rowHeights": {
+      "fileGroup": 25,
+      "treeTwoLines": 66,
+      "tableHeader": 28,
+      "tableRow": 34
+    }
+  },
+  "images": {
+    "reference-tree.png": {
+      "width": 704,
+      "height": 262,
+      "sha256": "3a05c8f51e7e47449c0d646d42d997d0e09161f77cb74a30d58ad51ec07197a7"
+    },
+    "before-tree.png": {
+      "width": 879,
+      "height": 440,
+      "sha256": "f5476b25f1b91b9db1d4080ea6bd0c4df6248bb7602ed28484f0bd0393f629a2"
+    },
+    "reference-table.png": {
+      "width": 704,
+      "height": 262,
+      "sha256": "544f0578da49dd188f33ff487d245384e647b530cdbaa02997f706287975cbd4"
+    },
+    "before-table.png": {
+      "width": 879,
+      "height": 292,
+      "sha256": "aa55d19936507aebbbcbd99c8be2a3cfd416b82389cb069d11087ccb0c3f3ca9"
+    },
+    "after-tree.png": {
+      "width": 879,
+      "height": 350,
+      "sha256": "6d8765e772828cde5623e6cf7db6de89facb884dcdf8dc40c4a05a5f5a659b17"
+    },
+    "after-table.png": {
+      "width": 879,
+      "height": 250,
+      "sha256": "5ce326edad5e73cb6236902e38996532c998b09545fc451329b39f5fb227b927"
+    }
+  },
+  "localLogsSha256": {
+    "p05-317-full.log": "518ffdfeefac4f476127e7fe46556f1f9bd3e3c5ca15f2318c95d46d8eb2922e",
+    "p05-317-focused.log": "4935d2eeb30e9b3c62e5234a936e60d2e38247968cde74176193143b6170bd70",
+    "p05-317-targeted.log": "187a7e73be9e7bc1af34afef2a7a65cefbedd5901a20485b4b7f4efaa4b6c225",
+    "p05-317-analyze.log": "0c146828a42e6b764851f4c5e46013c63192b7eead143b179e4682764cd6ee58",
+    "p05-317-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-317-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "420a69d453e3cc7dcaf6bb740038b8809eb51de43fed78439a8e93db0b1d4b5a"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "420a69d453e3cc7dcaf6bb740038b8809eb51de43fed78439a8e93db0b1d4b5a"
+    }
+  },
+  "preedit": {
+    "_buildDiagnosticResults": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "ffdbdd80e4c767222ef57fc39b23ca6be288f0206e6f88bc430fc45fb06f407f",
+      "callers": [
+        "_buildDiagnosticsPanel"
+      ],
+      "processes": []
+    },
+    "ProblemsTable": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "cb3e620387dc3e8056ce3e89755de6cee5e2458c6161428855b69aa9f04f94dd",
+      "callers": [
+        "workbench_page.dart",
+        "_buildDiagnosticResults"
+      ],
+      "processes": []
+    },
+    "ProblemsTableLine": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "415537034377a36441ae29626c1c7496a34fece66e258fd702b8f4577a4dd128",
+      "callers": [
+        "workbench_page.dart",
+        "build",
+        "_buildDiagnosticResults"
+      ],
+      "processes": [
+        {
+          "name": "build",
+          "type": "Function",
+          "filePath": "app/lib/workbench/problems_table.dart",
+          "affected_process_count": 2,
+          "total_hits": 2,
+          "earliest_broken_step": 1
+        }
+      ]
+    },
+    "ProblemsTable-build": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "e6758b90da79f51b676bde055b9e86e94c8daf7e10a58f769df72c954cc318df",
+      "callers": [],
+      "processes": []
+    },
+    "list": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'list' not found",
+      "sha256": "62b2135161862f41aa88e432cd37ed417e1a666cc1b8eb08578bab8099c47717"
+    },
+    "callSiteVerification": {
+      "sha256": "ed1979c0ad8e5f349c3ef4aeff969c7542f3d9842db79764a6a4701f637549e3",
+      "calls": [
+        "HEAD:app/lib/workbench/problems_table.dart:9:class ProblemsTable extends StatefulWidget {",
+        "HEAD:app/lib/workbench/problems_table.dart:10:  const ProblemsTable({super.key, required this.child});",
+        "HEAD:app/lib/workbench/problems_table.dart:15:  State<ProblemsTable> createState() => _ProblemsTableState();",
+        "HEAD:app/lib/workbench/problems_table.dart:18:class _ProblemsTableState extends State<ProblemsTable> {",
+        "HEAD:app/lib/workbench/problems_table.dart:158:                        child: ProblemsTableLine(",
+        "HEAD:app/lib/workbench/problems_table.dart:387:class ProblemsTableLine extends StatelessWidget {",
+        "HEAD:app/lib/workbench/problems_table.dart:388:  const ProblemsTableLine({",
+        "HEAD:app/lib/workbench/workbench_page.dart:31036:              child: _buildDiagnosticResults(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31048:  Widget _buildDiagnosticResults(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31691:    Widget list(ProblemsResultSelection selection) => ListView.builder(",
+        "HEAD:app/lib/workbench/workbench_page.dart:31903:            title: ProblemsTableLine(",
+        "HEAD:app/lib/workbench/workbench_page.dart:32165:        list(selection),",
+        "HEAD:app/lib/workbench/workbench_page.dart:32238:        return tableMode ? ProblemsTable(child: results) : results;"
+      ]
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "9e7ef1ea17eb7bfaa9dedf8d2eea0665f15dd015",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "874213f3a135cbe77e0d7ca9d11a58fc98a384a99df7af37cf91fac7dd44717b",
+    "fixtureSha256": "57d65dde8fc881d76ac86f26e21bfe5ed20eafee32c3ac3cc42722013ba8ab8d",
+    "runnerSha256": "b5d54b91158b409baa82405cfe8a3e0f665195041e23619eb407bc4de0d83f8a",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "ready": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "editor-ready": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "provider-ready": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "tree-visual": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              488.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              576.104,
+              976.8,
+              598.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 33]",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 33 列",
+            "messageBounds": [
+              [
+                333.952,
+                490.104,
+                438.051609375,
+                508.104
+              ],
+              [
+                333.952,
+                512.104,
+                495.4441875,
+                530.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              491.604,
+              577.004734375,
+              506.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              488.104,
+              976.8,
+              532.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "metadata": "rustc(E0308)  [Ln 82, Col 27]",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "rustc(E0308)，other.rs，第 82 行，第 27 列",
+            "messageBounds": [
+              [
+                333.952,
+                534.104,
+                438.051609375,
+                552.104
+              ],
+              [
+                333.952,
+                556.104,
+                508.92465625,
+                574.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              535.604,
+              582.895359375,
+              550.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              532.104,
+              976.8,
+              576.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                333.952,
+                600.104,
+                438.051609375,
+                618.104
+              ],
+              [
+                333.952,
+                622.104,
+                504.29575,
+                640.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              601.604,
+              577.004734375,
+              616.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              598.104,
+              976.8,
+              642.104
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "table-visual": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          273.952,
+          466.104,
+          976.8,
+          490.104
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                495.104,
+                309.952,
+                509.104
+              ],
+              [
+                309.952,
+                493.104,
+                409.952,
+                511.104
+              ],
+              [
+                409.952,
+                493.104,
+                710.088,
+                511.104
+              ],
+              [
+                710.088,
+                493.104,
+                876.8,
+                511.104
+              ],
+              [
+                876.8,
+                493.104,
+                976.8,
+                511.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              490.104,
+              976.8,
+              514.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                519.104,
+                309.952,
+                533.104
+              ],
+              [
+                309.952,
+                517.104,
+                409.952,
+                535.104
+              ],
+              [
+                409.952,
+                517.104,
+                710.088,
+                535.104
+              ],
+              [
+                710.088,
+                517.104,
+                876.8,
+                535.104
+              ],
+              [
+                876.8,
+                517.104,
+                976.8,
+                535.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              514.104,
+              976.8,
+              538.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                543.104,
+                309.952,
+                557.104
+              ],
+              [
+                309.952,
+                541.104,
+                409.952,
+                559.104
+              ],
+              [
+                409.952,
+                541.104,
+                710.088,
+                559.104
+              ],
+              [
+                710.088,
+                541.104,
+                876.8,
+                559.104
+              ],
+              [
+                876.8,
+                541.104,
+                976.8,
+                559.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              538.104,
+              976.8,
+              562.104
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            273.952,
+            466.104,
+            309.952,
+            490.104
+          ],
+          [
+            309.952,
+            469.104,
+            409.952,
+            487.104
+          ],
+          [
+            409.952,
+            469.604,
+            710.088,
+            486.604
+          ],
+          [
+            710.088,
+            469.604,
+            876.8,
+            486.604
+          ],
+          [
+            876.8,
+            469.604,
+            976.8,
+            486.604
+          ]
+        ]
+      },
+      "dense-table-column-can-resize": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          273.952,
+          466.104,
+          976.8,
+          490.104
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                495.104,
+                309.952,
+                509.104
+              ],
+              [
+                309.952,
+                493.104,
+                451.55200000000013,
+                511.104
+              ],
+              [
+                451.55200000000013,
+                493.104,
+                710.088,
+                511.104
+              ],
+              [
+                710.088,
+                493.104,
+                876.8,
+                511.104
+              ],
+              [
+                876.8,
+                493.104,
+                976.8,
+                511.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              490.104,
+              976.8,
+              514.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                519.104,
+                309.952,
+                533.104
+              ],
+              [
+                309.952,
+                517.104,
+                451.55200000000013,
+                535.104
+              ],
+              [
+                451.55200000000013,
+                517.104,
+                710.088,
+                535.104
+              ],
+              [
+                710.088,
+                517.104,
+                876.8,
+                535.104
+              ],
+              [
+                876.8,
+                517.104,
+                976.8,
+                535.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              514.104,
+              976.8,
+              538.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                543.104,
+                309.952,
+                557.104
+              ],
+              [
+                309.952,
+                541.104,
+                451.55200000000013,
+                559.104
+              ],
+              [
+                451.55200000000013,
+                541.104,
+                710.088,
+                559.104
+              ],
+              [
+                710.088,
+                541.104,
+                876.8,
+                559.104
+              ],
+              [
+                876.8,
+                541.104,
+                976.8,
+                559.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              538.104,
+              976.8,
+              562.104
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            273.952,
+            466.104,
+            309.952,
+            490.104
+          ],
+          [
+            309.952,
+            469.104,
+            451.55200000000013,
+            487.104
+          ],
+          [
+            451.55200000000013,
+            469.604,
+            710.088,
+            486.604
+          ],
+          [
+            710.088,
+            469.604,
+            876.8,
+            486.604
+          ],
+          [
+            876.8,
+            469.604,
+            976.8,
+            486.604
+          ]
+        ]
+      },
+      "dense-table-column-resets": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          273.952,
+          466.104,
+          976.8,
+          490.104
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                495.104,
+                309.952,
+                509.104
+              ],
+              [
+                309.952,
+                493.104,
+                409.952,
+                511.104
+              ],
+              [
+                409.952,
+                493.104,
+                710.088,
+                511.104
+              ],
+              [
+                710.088,
+                493.104,
+                876.8,
+                511.104
+              ],
+              [
+                876.8,
+                493.104,
+                976.8,
+                511.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              490.104,
+              976.8,
+              514.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                519.104,
+                309.952,
+                533.104
+              ],
+              [
+                309.952,
+                517.104,
+                409.952,
+                535.104
+              ],
+              [
+                409.952,
+                517.104,
+                710.088,
+                535.104
+              ],
+              [
+                710.088,
+                517.104,
+                876.8,
+                535.104
+              ],
+              [
+                876.8,
+                517.104,
+                976.8,
+                535.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              514.104,
+              976.8,
+              538.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                543.104,
+                309.952,
+                557.104
+              ],
+              [
+                309.952,
+                541.104,
+                409.952,
+                559.104
+              ],
+              [
+                409.952,
+                541.104,
+                710.088,
+                559.104
+              ],
+              [
+                710.088,
+                541.104,
+                876.8,
+                559.104
+              ],
+              [
+                876.8,
+                541.104,
+                976.8,
+                559.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              538.104,
+              976.8,
+              562.104
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            273.952,
+            466.104,
+            309.952,
+            490.104
+          ],
+          [
+            309.952,
+            469.104,
+            409.952,
+            487.104
+          ],
+          [
+            409.952,
+            469.604,
+            710.088,
+            486.604
+          ],
+          [
+            710.088,
+            469.604,
+            876.8,
+            486.604
+          ],
+          [
+            876.8,
+            469.604,
+            976.8,
+            486.604
+          ]
+        ]
+      },
+      "dense-table-row-previews-with-results-focus": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": true,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          273.952,
+          466.104,
+          976.8,
+          490.104
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                495.104,
+                309.952,
+                509.104
+              ],
+              [
+                309.952,
+                493.104,
+                409.952,
+                511.104
+              ],
+              [
+                409.952,
+                493.104,
+                710.088,
+                511.104
+              ],
+              [
+                710.088,
+                493.104,
+                876.8,
+                511.104
+              ],
+              [
+                876.8,
+                493.104,
+                976.8,
+                511.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              490.104,
+              976.8,
+              514.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                519.104,
+                309.952,
+                533.104
+              ],
+              [
+                309.952,
+                517.104,
+                409.952,
+                535.104
+              ],
+              [
+                409.952,
+                517.104,
+                710.088,
+                535.104
+              ],
+              [
+                710.088,
+                517.104,
+                876.8,
+                535.104
+              ],
+              [
+                876.8,
+                517.104,
+                976.8,
+                535.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": true,
+            "selected": true,
+            "bounds": [
+              273.952,
+              514.104,
+              976.8,
+              538.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                543.104,
+                309.952,
+                557.104
+              ],
+              [
+                309.952,
+                541.104,
+                409.952,
+                559.104
+              ],
+              [
+                409.952,
+                541.104,
+                710.088,
+                559.104
+              ],
+              [
+                710.088,
+                541.104,
+                876.8,
+                559.104
+              ],
+              [
+                876.8,
+                541.104,
+                976.8,
+                559.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              538.104,
+              976.8,
+              562.104
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            273.952,
+            466.104,
+            309.952,
+            490.104
+          ],
+          [
+            309.952,
+            469.104,
+            409.952,
+            487.104
+          ],
+          [
+            409.952,
+            469.604,
+            710.088,
+            486.604
+          ],
+          [
+            710.088,
+            469.604,
+            876.8,
+            486.604
+          ],
+          [
+            876.8,
+            469.604,
+            976.8,
+            486.604
+          ]
+        ]
+      },
+      "dense-table-row-double-click-pins-preview": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          273.952,
+          466.104,
+          976.8,
+          490.104
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                495.104,
+                309.952,
+                509.104
+              ],
+              [
+                309.952,
+                493.104,
+                409.952,
+                511.104
+              ],
+              [
+                409.952,
+                493.104,
+                710.088,
+                511.104
+              ],
+              [
+                710.088,
+                493.104,
+                876.8,
+                511.104
+              ],
+              [
+                876.8,
+                493.104,
+                976.8,
+                511.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              490.104,
+              976.8,
+              514.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                519.104,
+                309.952,
+                533.104
+              ],
+              [
+                309.952,
+                517.104,
+                409.952,
+                535.104
+              ],
+              [
+                409.952,
+                517.104,
+                710.088,
+                535.104
+              ],
+              [
+                710.088,
+                517.104,
+                876.8,
+                535.104
+              ],
+              [
+                876.8,
+                517.104,
+                976.8,
+                535.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": true,
+            "bounds": [
+              273.952,
+              514.104,
+              976.8,
+              538.104
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                273.952,
+                543.104,
+                309.952,
+                557.104
+              ],
+              [
+                309.952,
+                541.104,
+                409.952,
+                559.104
+              ],
+              [
+                409.952,
+                541.104,
+                710.088,
+                559.104
+              ],
+              [
+                710.088,
+                541.104,
+                876.8,
+                559.104
+              ],
+              [
+                876.8,
+                541.104,
+                976.8,
+                559.104
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              273.952,
+              538.104,
+              976.8,
+              562.104
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            273.952,
+            466.104,
+            309.952,
+            490.104
+          ],
+          [
+            309.952,
+            469.104,
+            409.952,
+            487.104
+          ],
+          [
+            409.952,
+            469.604,
+            710.088,
+            486.604
+          ],
+          [
+            710.088,
+            469.604,
+            876.8,
+            486.604
+          ],
+          [
+            876.8,
+            469.604,
+            976.8,
+            486.604
+          ]
+        ]
+      },
+      "return-to-dense-tree": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": false,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              488.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              576.104,
+              976.8,
+              598.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 33]",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 33 列",
+            "messageBounds": [
+              [
+                333.952,
+                490.104,
+                438.051609375,
+                508.104
+              ],
+              [
+                333.952,
+                512.104,
+                495.4441875,
+                530.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              491.604,
+              577.004734375,
+              506.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              488.104,
+              976.8,
+              532.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "metadata": "rustc(E0308)  [Ln 82, Col 27]",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "rustc(E0308)，other.rs，第 82 行，第 27 列",
+            "messageBounds": [
+              [
+                333.952,
+                534.104,
+                438.051609375,
+                552.104
+              ],
+              [
+                333.952,
+                556.104,
+                508.92465625,
+                574.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              535.604,
+              582.895359375,
+              550.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              532.104,
+              976.8,
+              576.104
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                333.952,
+                600.104,
+                438.051609375,
+                618.104
+              ],
+              [
+                333.952,
+                622.104,
+                504.29575,
+                640.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              601.604,
+              577.004734375,
+              616.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              598.104,
+              976.8,
+              642.104
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "dense-file-header-collapses-group": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": true,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": true,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              488.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              488.104,
+              976.8,
+              510.104
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                333.952,
+                512.104,
+                438.051609375,
+                530.104
+              ],
+              [
+                333.952,
+                534.104,
+                504.29575,
+                552.104
+              ]
+            ],
+            "metadataBounds": [
+              446.051609375,
+              513.604,
+              577.004734375,
+              528.604
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              273.952,
+              510.104,
+              976.8,
+              554.104
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "tree-visual": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-visual": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "dense-table-column-can-resize": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "dense-table-column-resets": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "dense-table-row-previews-with-results-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "dense-table-row-double-click-pins-preview": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "return-to-dense-tree": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "dense-file-header-collapses-group": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "profile": "E:\\temp\\alula-p05-317-problems-row-density\\probe-1795721921452537300",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          702
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          702
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1534,
+          786
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1534,
+          786
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": true,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          846
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          846
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          846
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          846
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": true,
+        "secondary": false
+      },
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          784
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          784
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      }
+    ],
+    "fixturePositions": [
+      "1:8",
+      "rust-analyzer"
+    ],
+    "treeImage": {
+      "path": "E:\\temp\\alula-p05-317-problems-row-density\\probe-1795721921452537300\\tree.png",
+      "logicalBounds": [
+        273.952,
+        370.104,
+        976.8,
+        650.104
+      ],
+      "screenBounds": [
+        1312,
+        651,
+        2191,
+        1001
+      ],
+      "sha256": "6d8765e772828cde5623e6cf7db6de89facb884dcdf8dc40c4a05a5f5a659b17"
+    },
+    "tableImage": {
+      "path": "E:\\temp\\alula-p05-317-problems-row-density\\probe-1795721921452537300\\table.png",
+      "logicalBounds": [
+        273.952,
+        370.104,
+        976.8,
+        570.104
+      ],
+      "screenBounds": [
+        1312,
+        651,
+        2191,
+        901
+      ],
+      "sha256": "5ce326edad5e73cb6236902e38996532c998b09545fc451329b39f5fb227b927"
+    },
+    "nativeSashDrags": [
+      {
+        "points": [
+          [
+            1482,
+            786
+          ],
+          [
+            1489,
+            786
+          ],
+          [
+            1495,
+            786
+          ],
+          [
+            1502,
+            786
+          ],
+          [
+            1508,
+            786
+          ],
+          [
+            1515,
+            786
+          ],
+          [
+            1521,
+            786
+          ],
+          [
+            1528,
+            786
+          ],
+          [
+            1534,
+            786
+          ]
+        ],
+        "logicalDelta": 42,
+        "foregroundOwned": true
+      }
+    ],
+    "kind": "problemsRowDensity",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "2d474f04c5d661db6d660b8922e5ee58ae469ec0660af0134adaf20d82b3c000"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "9e7ef1ea17eb7bfaa9dedf8d2eea0665f15dd015",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1404,
+            "ppid": 1403,
+            "private": 261525504,
+            "pss": 288205824,
+            "working_set": 340430848
+          }
+        ],
+        "root_pid": 1404,
+        "total_private_bytes": 261525504,
+        "total_private_mib": 249.4,
+        "total_working_set_bytes": 340430848
+      }
+    },
+    "aotSha256": "9e0f4ec6106869e1ce6332d61e8f9a003631539f68ff06ab2e5c0dcf4f66077e",
+    "fixtureSha256": "57d65dde8fc881d76ac86f26e21bfe5ed20eafee32c3ac3cc42722013ba8ab8d",
+    "runnerSha256": "40aecd655750c407ff1d6c835bd2de963e304952ea1308b3ed0f10d6f2a39c5b",
+    "steps": {
+      "ready": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          0,
+          0
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "editor-ready": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "provider-ready": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "tree-visual": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              516.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              604.52,
+              1200.0,
+              626.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 33]",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 33 列",
+            "messageBounds": [
+              [
+                387.52,
+                518.52,
+                493.40470458984373,
+                536.52
+              ],
+              [
+                387.52,
+                540.52,
+                555.5411181640625,
+                558.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              520.02,
+              634.8345751953125,
+              535.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              516.52,
+              1200.0,
+              560.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "metadata": "rustc(E0308)  [Ln 82, Col 27]",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "rustc(E0308)，other.rs，第 82 行，第 27 列",
+            "messageBounds": [
+              [
+                387.52,
+                562.52,
+                493.40470458984373,
+                580.52
+              ],
+              [
+                387.52,
+                584.52,
+                568.4092211914062,
+                602.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              564.02,
+              640.9745745849609,
+              579.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              560.52,
+              1200.0,
+              604.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                387.52,
+                628.52,
+                493.40470458984373,
+                646.52
+              ],
+              [
+                387.52,
+                650.52,
+                565.0491748046875,
+                668.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              630.02,
+              634.8345751953125,
+              645.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              626.52,
+              1200.0,
+              670.52
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "table-visual": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          327.52,
+          494.52,
+          1200.0,
+          518.52
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                523.52,
+                363.52,
+                537.52
+              ],
+              [
+                363.52,
+                521.52,
+                468.08,
+                539.52
+              ],
+              [
+                468.08,
+                521.52,
+                886.3199999999999,
+                539.52
+              ],
+              [
+                886.3199999999999,
+                521.52,
+                1095.44,
+                539.52
+              ],
+              [
+                1095.44,
+                521.52,
+                1200.0,
+                539.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              518.52,
+              1200.0,
+              542.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                547.52,
+                363.52,
+                561.52
+              ],
+              [
+                363.52,
+                545.52,
+                468.08,
+                563.52
+              ],
+              [
+                468.08,
+                545.52,
+                886.3199999999999,
+                563.52
+              ],
+              [
+                886.3199999999999,
+                545.52,
+                1095.44,
+                563.52
+              ],
+              [
+                1095.44,
+                545.52,
+                1200.0,
+                563.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              542.52,
+              1200.0,
+              566.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                571.52,
+                363.52,
+                585.52
+              ],
+              [
+                363.52,
+                569.52,
+                468.08,
+                587.52
+              ],
+              [
+                468.08,
+                569.52,
+                886.3199999999999,
+                587.52
+              ],
+              [
+                886.3199999999999,
+                569.52,
+                1095.44,
+                587.52
+              ],
+              [
+                1095.44,
+                569.52,
+                1200.0,
+                587.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              566.52,
+              1200.0,
+              590.52
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            327.52,
+            494.52,
+            363.52,
+            518.52
+          ],
+          [
+            363.52,
+            498.02,
+            468.08,
+            515.02
+          ],
+          [
+            468.08,
+            498.02,
+            886.3199999999999,
+            515.02
+          ],
+          [
+            886.3199999999999,
+            498.02,
+            1095.44,
+            515.02
+          ],
+          [
+            1095.44,
+            498.02,
+            1200.0,
+            515.02
+          ]
+        ]
+      },
+      "dense-table-column-can-resize": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          327.52,
+          494.52,
+          1200.0,
+          518.52
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                523.52,
+                363.52,
+                537.52
+              ],
+              [
+                363.52,
+                521.52,
+                510.08,
+                539.52
+              ],
+              [
+                510.08,
+                521.52,
+                886.3199999999999,
+                539.52
+              ],
+              [
+                886.3199999999999,
+                521.52,
+                1095.44,
+                539.52
+              ],
+              [
+                1095.44,
+                521.52,
+                1200.0,
+                539.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              518.52,
+              1200.0,
+              542.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                547.52,
+                363.52,
+                561.52
+              ],
+              [
+                363.52,
+                545.52,
+                510.08,
+                563.52
+              ],
+              [
+                510.08,
+                545.52,
+                886.3199999999999,
+                563.52
+              ],
+              [
+                886.3199999999999,
+                545.52,
+                1095.44,
+                563.52
+              ],
+              [
+                1095.44,
+                545.52,
+                1200.0,
+                563.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              542.52,
+              1200.0,
+              566.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                571.52,
+                363.52,
+                585.52
+              ],
+              [
+                363.52,
+                569.52,
+                510.08,
+                587.52
+              ],
+              [
+                510.08,
+                569.52,
+                886.3199999999999,
+                587.52
+              ],
+              [
+                886.3199999999999,
+                569.52,
+                1095.44,
+                587.52
+              ],
+              [
+                1095.44,
+                569.52,
+                1200.0,
+                587.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              566.52,
+              1200.0,
+              590.52
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            327.52,
+            494.52,
+            363.52,
+            518.52
+          ],
+          [
+            363.52,
+            498.02,
+            510.08,
+            515.02
+          ],
+          [
+            510.08,
+            498.02,
+            886.3199999999999,
+            515.02
+          ],
+          [
+            886.3199999999999,
+            498.02,
+            1095.44,
+            515.02
+          ],
+          [
+            1095.44,
+            498.02,
+            1200.0,
+            515.02
+          ]
+        ]
+      },
+      "dense-table-column-resets": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          7,
+          7
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          327.52,
+          494.52,
+          1200.0,
+          518.52
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                523.52,
+                363.52,
+                537.52
+              ],
+              [
+                363.52,
+                521.52,
+                468.08,
+                539.52
+              ],
+              [
+                468.08,
+                521.52,
+                886.3199999999999,
+                539.52
+              ],
+              [
+                886.3199999999999,
+                521.52,
+                1095.44,
+                539.52
+              ],
+              [
+                1095.44,
+                521.52,
+                1200.0,
+                539.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              518.52,
+              1200.0,
+              542.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                547.52,
+                363.52,
+                561.52
+              ],
+              [
+                363.52,
+                545.52,
+                468.08,
+                563.52
+              ],
+              [
+                468.08,
+                545.52,
+                886.3199999999999,
+                563.52
+              ],
+              [
+                886.3199999999999,
+                545.52,
+                1095.44,
+                563.52
+              ],
+              [
+                1095.44,
+                545.52,
+                1200.0,
+                563.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              542.52,
+              1200.0,
+              566.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                571.52,
+                363.52,
+                585.52
+              ],
+              [
+                363.52,
+                569.52,
+                468.08,
+                587.52
+              ],
+              [
+                468.08,
+                569.52,
+                886.3199999999999,
+                587.52
+              ],
+              [
+                886.3199999999999,
+                569.52,
+                1095.44,
+                587.52
+              ],
+              [
+                1095.44,
+                569.52,
+                1200.0,
+                587.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              566.52,
+              1200.0,
+              590.52
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            327.52,
+            494.52,
+            363.52,
+            518.52
+          ],
+          [
+            363.52,
+            498.02,
+            468.08,
+            515.02
+          ],
+          [
+            468.08,
+            498.02,
+            886.3199999999999,
+            515.02
+          ],
+          [
+            886.3199999999999,
+            498.02,
+            1095.44,
+            515.02
+          ],
+          [
+            1095.44,
+            498.02,
+            1200.0,
+            515.02
+          ]
+        ]
+      },
+      "dense-table-row-previews-with-results-focus": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": 3,
+        "resultsFocused": true,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          327.52,
+          494.52,
+          1200.0,
+          518.52
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                523.52,
+                363.52,
+                537.52
+              ],
+              [
+                363.52,
+                521.52,
+                468.08,
+                539.52
+              ],
+              [
+                468.08,
+                521.52,
+                886.3199999999999,
+                539.52
+              ],
+              [
+                886.3199999999999,
+                521.52,
+                1095.44,
+                539.52
+              ],
+              [
+                1095.44,
+                521.52,
+                1200.0,
+                539.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              518.52,
+              1200.0,
+              542.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                547.52,
+                363.52,
+                561.52
+              ],
+              [
+                363.52,
+                545.52,
+                468.08,
+                563.52
+              ],
+              [
+                468.08,
+                545.52,
+                886.3199999999999,
+                563.52
+              ],
+              [
+                886.3199999999999,
+                545.52,
+                1095.44,
+                563.52
+              ],
+              [
+                1095.44,
+                545.52,
+                1200.0,
+                563.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": true,
+            "selected": true,
+            "bounds": [
+              327.52,
+              542.52,
+              1200.0,
+              566.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                571.52,
+                363.52,
+                585.52
+              ],
+              [
+                363.52,
+                569.52,
+                468.08,
+                587.52
+              ],
+              [
+                468.08,
+                569.52,
+                886.3199999999999,
+                587.52
+              ],
+              [
+                886.3199999999999,
+                569.52,
+                1095.44,
+                587.52
+              ],
+              [
+                1095.44,
+                569.52,
+                1200.0,
+                587.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              566.52,
+              1200.0,
+              590.52
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            327.52,
+            494.52,
+            363.52,
+            518.52
+          ],
+          [
+            363.52,
+            498.02,
+            468.08,
+            515.02
+          ],
+          [
+            468.08,
+            498.02,
+            886.3199999999999,
+            515.02
+          ],
+          [
+            886.3199999999999,
+            498.02,
+            1095.44,
+            515.02
+          ],
+          [
+            1095.44,
+            498.02,
+            1200.0,
+            515.02
+          ]
+        ]
+      },
+      "dense-table-row-double-click-pins-preview": {
+        "documentId": 3,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": false,
+        "groupHeaders": [],
+        "problemRows": [],
+        "tableHeaderBounds": [
+          327.52,
+          494.52,
+          1200.0,
+          518.52
+        ],
+        "tableRows": [
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                523.52,
+                363.52,
+                537.52
+              ],
+              [
+                363.52,
+                521.52,
+                468.08,
+                539.52
+              ],
+              [
+                468.08,
+                521.52,
+                886.3199999999999,
+                539.52
+              ],
+              [
+                886.3199999999999,
+                521.52,
+                1095.44,
+                539.52
+              ],
+              [
+                1095.44,
+                521.52,
+                1200.0,
+                539.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              518.52,
+              1200.0,
+              542.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-3",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                547.52,
+                363.52,
+                561.52
+              ],
+              [
+                363.52,
+                545.52,
+                468.08,
+                563.52
+              ],
+              [
+                468.08,
+                545.52,
+                886.3199999999999,
+                563.52
+              ],
+              [
+                886.3199999999999,
+                545.52,
+                1095.44,
+                563.52
+              ],
+              [
+                1095.44,
+                545.52,
+                1200.0,
+                563.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": true,
+            "bounds": [
+              327.52,
+              542.52,
+              1200.0,
+              566.52
+            ]
+          },
+          {
+            "groupKey": "problems-file-group-4",
+            "severity": "错误",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "source": "rustc",
+            "cells": [
+              [
+                327.52,
+                571.52,
+                363.52,
+                585.52
+              ],
+              [
+                363.52,
+                569.52,
+                468.08,
+                587.52
+              ],
+              [
+                468.08,
+                569.52,
+                886.3199999999999,
+                587.52
+              ],
+              [
+                886.3199999999999,
+                569.52,
+                1095.44,
+                587.52
+              ],
+              [
+                1095.44,
+                569.52,
+                1200.0,
+                587.52
+              ]
+            ],
+            "canOpen": true,
+            "focused": false,
+            "selected": false,
+            "bounds": [
+              327.52,
+              566.52,
+              1200.0,
+              590.52
+            ]
+          }
+        ],
+        "headerCells": [
+          [
+            327.52,
+            494.52,
+            363.52,
+            518.52
+          ],
+          [
+            363.52,
+            498.02,
+            468.08,
+            515.02
+          ],
+          [
+            468.08,
+            498.02,
+            886.3199999999999,
+            515.02
+          ],
+          [
+            886.3199999999999,
+            498.02,
+            1095.44,
+            515.02
+          ],
+          [
+            1095.44,
+            498.02,
+            1200.0,
+            515.02
+          ]
+        ]
+      },
+      "return-to-dense-tree": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": false,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              516.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              604.52,
+              1200.0,
+              626.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 33]",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 33 列",
+            "messageBounds": [
+              [
+                387.52,
+                518.52,
+                493.40470458984373,
+                536.52
+              ],
+              [
+                387.52,
+                540.52,
+                555.5411181640625,
+                558.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              520.02,
+              634.8345751953125,
+              535.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              516.52,
+              1200.0,
+              560.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "metadata": "rustc(E0308)  [Ln 82, Col 27]",
+            "location": "[Ln 82, Col 27]",
+            "locationLabel": "rustc(E0308)，other.rs，第 82 行，第 27 列",
+            "messageBounds": [
+              [
+                387.52,
+                562.52,
+                493.40470458984373,
+                580.52
+              ],
+              [
+                387.52,
+                584.52,
+                568.4092211914062,
+                602.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              564.02,
+              640.9745745849609,
+              579.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              560.52,
+              1200.0,
+              604.52
+            ]
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                387.52,
+                628.52,
+                493.40470458984373,
+                646.52
+              ],
+              [
+                387.52,
+                650.52,
+                565.0491748046875,
+                668.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              630.02,
+              634.8345751953125,
+              645.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              626.52,
+              1200.0,
+              670.52
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      },
+      "dense-file-header-collapses-group": {
+        "documentId": 3,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "selection": [
+          2311,
+          2312
+        ],
+        "savedPreviewDocumentId": null,
+        "resultsFocused": true,
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "selected": true,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              516.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "selected": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              516.52,
+              1200.0,
+              538.52
+            ]
+          }
+        ],
+        "problemRows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "metadata": "rustc(E0308)  [Ln 1, Col 36]",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "rustc(E0308)，other.rs，第 1 行，第 36 列",
+            "messageBounds": [
+              [
+                387.52,
+                540.52,
+                493.40470458984373,
+                558.52
+              ],
+              [
+                387.52,
+                562.52,
+                565.0491748046875,
+                580.52
+              ]
+            ],
+            "metadataBounds": [
+              501.40470458984373,
+              542.02,
+              634.8345751953125,
+              557.02
+            ],
+            "canOpen": true,
+            "selected": false,
+            "focused": false,
+            "bounds": [
+              327.52,
+              538.52,
+              1200.0,
+              582.52
+            ]
+          }
+        ],
+        "tableHeaderBounds": null,
+        "tableRows": [],
+        "headerCells": []
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "requestedWindowWidth": 1200,
+    "characterDelayMs": 12,
+    "profile": "/tmp/alula-p05-177-xvfb-zqi05sxp",
+    "nativeClicks": [
+      {
+        "screen": [
+          740,
+          489
+        ],
+        "actual": [
+          740,
+          489
+        ],
+        "logical": [
+          719.76,
+          441.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          1172,
+          471
+        ],
+        "actual": [
+          1172,
+          471
+        ],
+        "logical": [
+          1152.0,
+          422.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          603
+        ],
+        "actual": [
+          697,
+          603
+        ],
+        "logical": [
+          677.1999999999999,
+          554.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          1172,
+          471
+        ],
+        "actual": [
+          1172,
+          471
+        ],
+        "logical": [
+          1152.0,
+          422.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          554
+        ],
+        "actual": [
+          784,
+          554
+        ],
+        "logical": [
+          763.76,
+          505.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      }
+    ],
+    "treeImage": {
+      "path": "/tmp/alula-p05-177-xvfb-zqi05sxp/tree.xwd",
+      "sha256": "4d37ed7979a4f7b3287852203717652fd74ab91d5cd07b9a04d2791b3952a986"
+    },
+    "tableImage": {
+      "path": "/tmp/alula-p05-177-xvfb-zqi05sxp/table.xwd",
+      "sha256": "2f8fe8e86f9190a17a687f98232417b3cf210753682d6eea7219f08d53a15411"
+    },
+    "nativeSashDrags": [
+      {
+        "points": [
+          [
+            488,
+            555
+          ],
+          [
+            493,
+            555
+          ],
+          [
+            499,
+            555
+          ],
+          [
+            504,
+            555
+          ],
+          [
+            509,
+            555
+          ],
+          [
+            514,
+            555
+          ],
+          [
+            520,
+            555
+          ],
+          [
+            525,
+            555
+          ],
+          [
+            530,
+            555
+          ]
+        ],
+        "logicalDelta": 42,
+        "foregroundOwned": true
+      }
+    ],
+    "nativeDoubleClicks": [
+      {
+        "logical": [
+          510.0799999999999,
+          506.52
+        ],
+        "control": false,
+        "shift": false,
+        "clickCount": 2,
+        "delayMs": 90
+      },
+      {
+        "logical": [
+          677.1999999999999,
+          554.52
+        ],
+        "control": false,
+        "shift": false,
+        "clickCount": 2,
+        "delayMs": 90
+      }
+    ],
+    "kind": "problemsRowDensity",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "rawReportSha256": "8dc22f81ada38e64a1055c6d4675df301c7f2d59bd761bb692f259499f472463"
+  }
+}
