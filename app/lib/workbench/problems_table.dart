@@ -11,6 +11,9 @@ class ProblemsTable extends StatefulWidget {
 
   final Widget child;
 
+  static double rowHeight(BuildContext context) =>
+      math.max(24.0, MediaQuery.textScalerOf(context).scale(24));
+
   @override
   State<ProblemsTable> createState() => _ProblemsTableState();
 }
@@ -154,7 +157,7 @@ class _ProblemsTableState extends State<ProblemsTable> {
                     ColoredBox(
                       color: colors.surfaceContainer,
                       child: SizedBox(
-                        height: 28,
+                        height: ProblemsTable.rowHeight(context),
                         child: ProblemsTableLine(
                           header: true,
                           severity: Semantics(

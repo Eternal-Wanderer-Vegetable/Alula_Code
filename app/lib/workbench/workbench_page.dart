@@ -31128,6 +31128,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     // Diagnostics are published in contiguous batches per document. Record
     // the section boundaries so the virtual list can address the original rows.
     final tableMode = _problemsTableMode;
+    final treeLineHeight =
+        math.max(22.0, MediaQuery.textScalerOf(context).scale(22));
     final documentsById = {for (final doc in _allDocs) doc.id: doc};
     final workspace = _workspaceRoot;
     final groups = <({
@@ -31784,8 +31786,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 excludeFromSemantics: true,
                 child: Ink(
                   color: selected ? colors.secondaryContainer : null,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+                  child: Container(
+                    height: treeLineHeight,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       children: [
                         if (toggle != null) ...[
@@ -31851,6 +31854,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _ => (Icons.info_outline, Colors.lightBlueAccent),
         };
         final message = '${d['message'] ?? ''}';
+        final source = '${d['source'] ?? ''}';
+        final code = '${d['code'] ?? ''}';
         final location = position == null
             ? null
             : '[Ln ${position.line}, Col ${position.column}]';
@@ -31894,7 +31899,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           row = ListTile(
             key: rowKey,
             dense: true,
-            minTileHeight: 30,
+            minTileHeight: ProblemsTable.rowHeight(context),
+            minVerticalPadding: 0,
             contentPadding: EdgeInsets.zero,
             selected: selection.contains(selectionRows[i]),
             selectedColor: colors.onSecondaryContainer,
@@ -31909,34 +31915,85 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
                 child: Icon(icon, size: 14, color: color),
               ),
-              code: Text('${d['code'] ?? ''}'),
+              code: Text(code),
               message: Text(message.replaceAll('\n', ' ')),
               file: Text(location == null ? filePath : '$filePath $location'),
-              source: Text('${d['source'] ?? ''}'),
+              source: Text(source),
             ),
           );
         } else {
+          final lines = message.isEmpty
+              ? const ['']
+              : LineSplitter.split(message).take(3).toList(growable: false);
+          final sourceLabel = source.isEmpty || code.isEmpty
+              ? '$source$code'
+              : '$source($code)';
+          final positionLabel = position == null
+              ? fileName
+              : '$fileName，第 ${position.line} 行，第 ${position.column} 列';
+          final description = [
+            if (sourceLabel.isNotEmpty) sourceLabel,
+            location ?? fileName,
+          ].join('  ');
+
+          Text messageLine(String line) => Text(
+            line,
+            style: const TextStyle(fontSize: 12),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          );
+
           row = ListTile(
             key: rowKey,
             dense: true,
+            minTileHeight: treeLineHeight * lines.length,
+            minVerticalPadding: 0,
             contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
+            titleAlignment: ListTileTitleAlignment.top,
             selected: selection.contains(selectionRows[i]),
             selectedColor: colors.onSecondaryContainer,
             selectedTileColor: colors.secondaryContainer,
             onTap: selectRow,
-            leading: Icon(icon, size: 16, color: color),
-            title: Text(
-              message,
-              style: const TextStyle(fontSize: 12),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            leading: Padding(
+              padding: EdgeInsets.only(top: (treeLineHeight - 16) / 2),
+              child: Icon(icon, size: 16, color: color),
             ),
-            subtitle: Text(
-              location ?? fileName,
-              semanticsLabel: position == null
-                  ? null
-                  : '$fileName，第 ${position.line} 行，第 ${position.column} 列',
-              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: treeLineHeight,
+                  child: Row(
+                    children: [
+                      Flexible(flex: 2, child: messageLine(lines.first)),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          description,
+                          key: const ValueKey('problems-tree-location'),
+                          semanticsLabel: sourceLabel.isEmpty
+                              ? positionLabel
+                              : '$sourceLabel，$positionLabel',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: colors.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                for (final line in lines.skip(1))
+                  SizedBox(
+                    height: treeLineHeight,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: messageLine(line),
+                    ),
+                  ),
+              ],
             ),
           );
         }
