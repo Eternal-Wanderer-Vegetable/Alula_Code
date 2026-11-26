@@ -4485,8 +4485,8 @@
       "dependencies": [
         "feat-351"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 树和表格按字符串或整数诊断代码筛选。Windows 和 Linux 各通过 19 个真实 rust-analyzer 检查。Linux 整数协议夹具通过 13 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b8ac1220 的 CI 45804379758 四项与 Platform Availability 45805956616 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.300-problems-code-filter.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
