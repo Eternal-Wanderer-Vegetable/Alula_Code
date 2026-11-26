@@ -27,7 +27,8 @@ import 'package:flutter/gestures.dart'
         PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'
-    show RenderBox, RenderEditable, RenderSliverList;
+    show RenderAbstractViewport, RenderBox, RenderEditable, RenderObject,
+        RenderSliverList;
 import 'package:flutter/semantics.dart'
     show CustomSemanticsAction, SemanticsBinding, SemanticsService;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
@@ -30829,90 +30830,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-              child: TextField(
-                key: const ValueKey('problems-text-filter'),
-                controller: _problemsFilterController,
-                focusNode: _problemsFilterFocus,
-                autocorrect: false,
-                enableSuggestions: false,
-                style: const TextStyle(fontSize: 12),
-                decoration: InputDecoration(
-                  hintText: '筛选诊断',
-                  isDense: true,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (countLabel != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Tooltip(
-                            message: countLabel,
-                            excludeFromSemantics: true,
-                            child: Badge(
-                              backgroundColor: colors.surfaceContainerHighest,
-                              textColor: colors.onSurfaceVariant,
-                              label: Text(
-                                '$visibleProblems / $totalProblems',
-                                key: const ValueKey('problems-filter-count'),
-                                semanticsLabel: countLabel,
+              child: DefaultTextEditingShortcuts(
+                child: Focus(
+                  canRequestFocus: false,
+                  skipTraversal: true,
+                  onKeyEvent: _onProblemsPaneKey,
+                  child: TextField(
+                    key: const ValueKey('problems-text-filter'),
+                    controller: _problemsFilterController,
+                    focusNode: _problemsFilterFocus,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: '筛选诊断',
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (countLabel != null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Tooltip(
+                                message: countLabel,
+                                excludeFromSemantics: true,
+                                child: Badge(
+                                  backgroundColor: colors.surfaceContainerHighest,
+                                  textColor: colors.onSurfaceVariant,
+                                  label: Text(
+                                    '$visibleProblems / $totalProblems',
+                                    key: const ValueKey('problems-filter-count'),
+                                    semanticsLabel: countLabel,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      if (value.text.isNotEmpty)
-                        IconButton(
-                          tooltip: '清除诊断文本筛选',
-                          icon: const Icon(Icons.close, size: 16),
-                          visualDensity: VisualDensity.compact,
-                          onPressed: () {
-                            _problemsFilterController.clear();
-                            _problemsFilterFocus.requestFocus();
-                          },
-                        ),
-                      PopupMenuButton<_ProblemsFilterOption>(
-                        tooltip: '诊断筛选选项',
-                        icon: const Icon(Icons.filter_list, size: 16),
-                        onSelected: (option) {
-                          setState(() {
-                            final severity = option.severity;
-                            if (severity == null) {
-                              _problemsActiveFileOnly = !_problemsActiveFileOnly;
-                            } else if (!_visibleProblemSeverities.remove(severity)) {
-                              _visibleProblemSeverities.add(severity);
-                            }
-                          });
-                        },
-                        itemBuilder: (context) => [
-                          for (final option in _ProblemsFilterOption.values) ...[
-                            if (option == _ProblemsFilterOption.activeFile)
-                              const PopupMenuDivider(),
-                            CheckedPopupMenuItem<_ProblemsFilterOption>(
-                              value: option,
-                              checked: option.severity == null
-                                  ? _problemsActiveFileOnly
-                                  : _visibleProblemSeverities.contains(option.severity),
-                              child: Text(option.label),
+                          if (value.text.isNotEmpty)
+                            IconButton(
+                              tooltip: '清除诊断文本筛选',
+                              icon: const Icon(Icons.close, size: 16),
+                              visualDensity: VisualDensity.compact,
+                              onPressed: () {
+                                _problemsFilterController.clear();
+                                _problemsFilterFocus.requestFocus();
+                              },
                             ),
-                          ],
+                          PopupMenuButton<_ProblemsFilterOption>(
+                            tooltip: '诊断筛选选项',
+                            icon: const Icon(Icons.filter_list, size: 16),
+                            onSelected: (option) {
+                              setState(() {
+                                final severity = option.severity;
+                                if (severity == null) {
+                                  _problemsActiveFileOnly = !_problemsActiveFileOnly;
+                                } else if (!_visibleProblemSeverities.remove(severity)) {
+                                  _visibleProblemSeverities.add(severity);
+                                }
+                              });
+                            },
+                            itemBuilder: (context) => [
+                              for (final option in _ProblemsFilterOption.values) ...[
+                                if (option == _ProblemsFilterOption.activeFile)
+                                  const PopupMenuDivider(),
+                                CheckedPopupMenuItem<_ProblemsFilterOption>(
+                                  value: option,
+                                  checked: option.severity == null
+                                      ? _problemsActiveFileOnly
+                                      : _visibleProblemSeverities.contains(option.severity),
+                                  child: Text(option.label),
+                                ),
+                              ],
+                            ],
+                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
             Expanded(
-              child: Focus(
-                key: const ValueKey('problems-results-focus'),
-                focusNode: _problemsResultsFocus,
-                skipTraversal: true,
-                child: _buildDiagnosticResults(
-                  diagnostics,
-                  hasProblems: totalProblems != 0,
-                  hasProblemsInScope: hasProblemsInScope,
-                ),
+              child: _buildDiagnosticResults(
+                diagnostics,
+                hasProblems: totalProblems != 0,
+                hasProblemsInScope: hasProblemsInScope,
               ),
             ),
           ],
@@ -30926,52 +30929,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required bool hasProblems,
     required bool hasProblemsInScope,
   }) {
+    Widget resultsRegion(
+      Widget child, {
+      Map<ShortcutActivator, VoidCallback> shortcuts = const {},
+    }) {
+      return CallbackShortcuts(
+        bindings: shortcuts,
+        child: Focus(
+          key: const ValueKey('problems-results-focus'),
+          focusNode: _problemsResultsFocus,
+          skipTraversal: true,
+          child: child,
+        ),
+      );
+    }
+
     if (!_lspReady && !hasProblems) {
-      return Center(
-        child: Text('LSP 未启动\n打开文件夹后从编辑器右上角启动',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+      return resultsRegion(
+        Center(
+          child: Text('LSP 未启动\n打开文件夹后从编辑器右上角启动',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+        ),
       );
     }
     if (_problemsActiveFileOnly && !hasProblemsInScope) {
-      return Center(
-        child: Text(
-          '当前文件没有诊断',
-          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+      return resultsRegion(
+        Center(
+          child: Text(
+            '当前文件没有诊断',
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+          ),
         ),
       );
     }
     if (!hasProblems) {
-      return Center(
-        child: Text('无诊断（代码干净）',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+      return resultsRegion(
+        Center(
+          child: Text('无诊断（代码干净）',
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+        ),
       );
     }
     if (diagnostics.isEmpty) {
-      return Center(
-        child: SingleChildScrollView(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 4,
-            children: [
-              Text(
-                '没有匹配的诊断',
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _visibleProblemSeverities
-                      ..clear()
-                      ..addAll(const [1, 2, 3]);
-                  });
-                  _problemsFilterController.clear();
-                  _problemsFilterFocus.requestFocus();
-                },
-                child: const Text('清除筛选'),
-              ),
-            ],
+      return resultsRegion(
+        Center(
+          child: SingleChildScrollView(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 4,
+              children: [
+                Text(
+                  '没有匹配的诊断',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _visibleProblemSeverities
+                        ..clear()
+                        ..addAll(const [1, 2, 3]);
+                    });
+                    _problemsFilterController.clear();
+                    _problemsFilterFocus.requestFocus();
+                  },
+                  child: const Text('清除筛选'),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -31052,6 +31078,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return false;
     }
 
+    void jumpResults(
+      RenderSliverList sliver,
+      ScrollPosition position,
+      double offset,
+      ValueChanged<double> afterLayout, {
+      bool? endBoundary,
+    }) {
+      final destination =
+          offset.clamp(position.minScrollExtent, position.maxScrollExtent)
+              .toDouble();
+      if (destination == position.pixels && endBoundary == null) return;
+      final query = _problemsFilterController.text;
+      final panelTab = _panelTab.index;
+      _problemsResultsFocus.requestFocus();
+      if (destination != position.pixels) position.jumpTo(destination);
+      final sampledOffset = position.pixels;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted ||
+            _disposing ||
+            !_problemsResultsFocus.hasPrimaryFocus ||
+            !_problemsScrollController.positions.contains(position) ||
+            !sliver.attached ||
+            _problemsFilterController.text != query ||
+            _panelTab.index != panelTab) {
+          return;
+        }
+        final expected = sampledOffset.clamp(
+          position.minScrollExtent,
+          position.maxScrollExtent,
+        );
+        final requestedBoundary = endBoundary == true
+            ? position.maxScrollExtent
+            : position.minScrollExtent;
+        final reachedBoundary = endBoundary != null &&
+            (position.pixels - requestedBoundary).abs() <= 0.5;
+        if ((position.pixels - expected).abs() <= 0.5 || reachedBoundary) {
+          afterLayout(position.pixels);
+        }
+      });
+      if (endBoundary != null) WidgetsBinding.instance.ensureVisualUpdate();
+    }
+
     void focusFileGroup(Key key, int index, Object? document) {
       const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtStart;
       if (focusRenderedResult(key, alignment)) return;
@@ -31073,26 +31141,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return;
       }
 
-      final query = _problemsFilterController.text;
-      final panelTab = _panelTab.index;
       var lower = position.minScrollExtent;
       var upper = position.pixels;
-      // Hold results focus as the virtual list replaces the focused row.
-      _problemsResultsFocus.requestFocus();
 
       void seek(double offset, int remaining) {
-        position.jumpTo(offset);
-        final sampledOffset = position.pixels;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted ||
-              _disposing ||
-              !_problemsResultsFocus.hasPrimaryFocus ||
-              !_problemsScrollController.positions.contains(position) ||
-              !sliver.attached ||
-              _problemsFilterController.text != query ||
-              _panelTab.index != panelTab ||
-              (document != null && _collapsedProblemGroups[document] == true) ||
-              position.pixels != sampledOffset) {
+        jumpResults(sliver, position, offset, (sampledOffset) {
+          if (document != null && _collapsedProblemGroups[document] == true) {
             return;
           }
           if (focusRenderedResult(key, alignment) || remaining == 1) return;
@@ -31140,21 +31194,115 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-    void focusAdjacentResult(int item, int delta) {
-      final next = item + delta;
-      if (next < 0 || next >= itemCount) return;
-      final groupIndex = groupIndexAtItem(next);
+    bool focusResultAt(int item, {required bool forward}) {
+      if (item < 0 || item >= itemCount) return false;
+      final groupIndex = groupIndexAtItem(item);
       final groupKey = groupKeyAt(groupIndex);
-      final withinGroup = next - groups[groupIndex].firstItem;
-      focusRenderedResult(
+      final withinGroup = item - groups[groupIndex].firstItem;
+      return focusRenderedResult(
         withinGroup == 0 ? groupKey : ValueKey((groupKey, withinGroup)),
-        delta < 0
-            ? ScrollPositionAlignmentPolicy.keepVisibleAtStart
-            : ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+        forward
+            ? ScrollPositionAlignmentPolicy.keepVisibleAtEnd
+            : ScrollPositionAlignmentPolicy.keepVisibleAtStart,
       );
     }
 
-    return ListView.builder(
+    ({RenderSliverList sliver, ScrollPosition position})? laidOutResults() {
+      if (_problemsScrollController.positions.length != 1) return null;
+      final position = _problemsScrollController.position;
+      if (!position.hasContentDimensions) return null;
+      final root = _problemsResultsFocus.context?.findRenderObject();
+      if (root == null) return null;
+      RenderSliverList? list;
+      void findList(RenderObject render) {
+        if (list != null) return;
+        if (render is RenderSliverList) {
+          list = render;
+        } else {
+          render.visitChildren(findList);
+        }
+      }
+
+      findList(root);
+      final sliver = list;
+      if (sliver == null || sliver.geometry == null) return null;
+      return (sliver: sliver, position: position);
+    }
+
+    void focusBoundary({required bool forward}) {
+      final item = forward ? itemCount - 1 : 0;
+      if (focusResultAt(item, forward: forward)) return;
+      final layout = laidOutResults();
+      if (layout == null) return;
+      final (:sliver, :position) = layout;
+
+      void reveal(int remaining) {
+        final offset =
+            forward ? position.maxScrollExtent : position.minScrollExtent;
+        jumpResults(
+          sliver, position, offset,
+          (_) {
+            if (!focusResultAt(item, forward: forward) && remaining > 1) {
+              reveal(remaining - 1);
+            }
+          },
+          endBoundary: forward,
+        );
+      }
+
+      reveal(24);
+    }
+
+    int? pageEdge(
+      RenderSliverList sliver,
+      ScrollPosition position, {
+      required bool forward,
+    }) {
+      final viewport = RenderAbstractViewport.maybeOf(sliver);
+      if (viewport == null) return null;
+      final start = position.pixels;
+      final end = start + position.viewportDimension;
+      int? intersecting;
+      var child = forward ? sliver.lastChild : sliver.firstChild;
+      while (child != null) {
+        final top = viewport.getOffsetToReveal(child, 0).offset;
+        final bottom = top + child.size.height;
+        if (top < end && bottom > start) {
+          final index = sliver.indexOf(child);
+          intersecting ??= index;
+          if (top >= start - 0.5 && bottom <= end + 0.5) return index;
+        }
+        child = forward ? sliver.childBefore(child) : sliver.childAfter(child);
+      }
+      return intersecting;
+    }
+
+    void focusPage({required bool forward}) {
+      final layout = laidOutResults();
+      if (layout == null) return;
+      final (:sliver, :position) = layout;
+      var render =
+          FocusManager.instance.primaryFocus?.context?.findRenderObject();
+      while (render != null && render.parent != sliver) {
+        render = render.parent;
+      }
+      final current = render is RenderBox ? sliver.indexOf(render) : null;
+      final edge = pageEdge(sliver, position, forward: forward);
+      if (edge != null &&
+          (current == null || (forward ? edge > current : edge < current)) &&
+          focusResultAt(edge, forward: forward)) {
+        return;
+      }
+
+      final offset = position.pixels +
+          (forward ? position.viewportDimension : -position.viewportDimension);
+      jumpResults(sliver, position, offset, (_) {
+        final next = pageEdge(sliver, position, forward: forward);
+        if (next != null) focusResultAt(next, forward: forward);
+      });
+    }
+
+    final list = ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
       itemBuilder: (context, i) {
@@ -31196,9 +31344,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               bindings: {
                 if (document != null) ...{
                   const SingleActivator(LogicalKeyboardKey.arrowUp):
-                      () => focusAdjacentResult(i, -1),
+                      () => focusResultAt(i - 1, forward: false),
                   const SingleActivator(LogicalKeyboardKey.arrowDown):
-                      () => focusAdjacentResult(i, 1),
+                      () => focusResultAt(i + 1, forward: true),
                   const SingleActivator(LogicalKeyboardKey.arrowLeft):
                       () => setCollapsed(true),
                   const SingleActivator(LogicalKeyboardKey.arrowRight): () {
@@ -31305,9 +31453,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.arrowUp):
-                () => focusAdjacentResult(i, -1),
+                () => focusResultAt(i - 1, forward: false),
             const SingleActivator(LogicalKeyboardKey.arrowDown):
-                () => focusAdjacentResult(i, 1),
+                () => focusResultAt(i + 1, forward: true),
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
               focusFileGroup(groupKey, group.firstItem, group.document);
             },
@@ -31315,6 +31463,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           },
           child: row,
         );
+      },
+    );
+    return resultsRegion(
+      list,
+      shortcuts: {
+        const SingleActivator(LogicalKeyboardKey.home):
+            () => focusBoundary(forward: false),
+        const SingleActivator(LogicalKeyboardKey.end):
+            () => focusBoundary(forward: true),
+        const SingleActivator(LogicalKeyboardKey.pageUp):
+            () => focusPage(forward: false),
+        const SingleActivator(LogicalKeyboardKey.pageDown):
+            () => focusPage(forward: true),
       },
     );
   }
