@@ -4741,6 +4741,18 @@
       "evidence": "Problems 支持固定版树表模式命令及标题按钮。重复命令保持模式，切换保留可见诊断选择、焦点及筛选。Windows 与 Linux 各通过 31 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c746d8ad 的 CI 45902357697 四项与 Platform Availability 45902351441 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.321-problems-view-mode-commands.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-374",
+      "name": "P05.322 LAY-16 / CMD-11 Problems 筛选选项命令",
+      "description": "Problems 三种严重级别和仅活动文件使用固定版筛选命令，菜单与用户键位共享状态，复验筛选合成和活动视图条件。",
+      "dependencies": [
+        "feat-373"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

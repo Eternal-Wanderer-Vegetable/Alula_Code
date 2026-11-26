@@ -316,15 +316,19 @@ class _FocusProblemsResultsIntent extends Intent {
 }
 
 enum _ProblemsFilterOption {
-  errors('显示错误', severity: 1),
-  warnings('显示警告', severity: 2),
-  information('显示信息', severity: 3),
-  activeFile('仅显示活动文件');
+  errors('显示错误', 'toggleErrors', severity: 1),
+  warnings('显示警告', 'toggleWarnings', severity: 2),
+  information('显示信息', 'toggleInfos', severity: 3),
+  activeFile('仅显示活动文件', 'toggleActiveFile');
 
-  const _ProblemsFilterOption(this.label, {this.severity});
+  const _ProblemsFilterOption(this.label, this._commandSuffix, {this.severity});
 
   final String label;
+  final String _commandSuffix;
   final int? severity;
+
+  String get commandId =>
+      'workbench.actions.workbench.panel.markers.view.$_commandSuffix';
 }
 
 const _problemsViewAsTreeCommandId =
@@ -1409,6 +1413,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '显示为表格',
       () async => _applyProblemsViewMode(true),
     );
+    for (final option in _ProblemsFilterOption.values) {
+      reg(
+        option.commandId,
+        '问题',
+        option.label,
+        () async => _applyProblemsFilterOption(option),
+      );
+    }
     reg(
       'workbench.action.showNotifications',
       '查看',
@@ -4307,11 +4319,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _commands.context['editorHasCallHierarchyProvider'] == true;
     final typeHierarchyAvailable =
         _commands.context['editorHasTypeHierarchyProvider'] == true;
+    final problemsMenuCommands = {
+      _problemsViewAsTreeCommandId,
+      _problemsViewAsTableCommandId,
+      for (final option in _ProblemsFilterOption.values) option.commandId,
+    };
     final available = [
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
-            c.id != _problemsViewAsTreeCommandId &&
-            c.id != _problemsViewAsTableCommandId &&
+            !problemsMenuCommands.contains(c.id) &&
             !_isCurrentActivityBarLocationCommand(c.id, currentLocation) &&
             (c.id != 'editor.showCallHierarchy' || callHierarchyAvailable) &&
             (c.id != 'editor.showTypeHierarchy' || typeHierarchyAvailable))
@@ -30743,13 +30759,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  bool get _problemsViewActive =>
+      !_layout.isCollapsed('panel') &&
+      _panelTab.index == PanelViewTab.diagnostics.index;
+
   void _applyProblemsViewMode(bool tableMode) {
-    if (_layout.isCollapsed('panel') ||
-        _panelTab.index != PanelViewTab.diagnostics.index ||
-        _problemsTableMode == tableMode) {
-      return;
-    }
+    if (!_problemsViewActive || _problemsTableMode == tableMode) return;
     _toggleProblemsViewMode();
+  }
+
+  void _applyProblemsFilterOption(_ProblemsFilterOption option) {
+    if (!_problemsViewActive) return;
+    setState(() {
+      final severity = option.severity;
+      if (severity == null) {
+        _problemsActiveFileOnly = !_problemsActiveFileOnly;
+      } else if (!_visibleProblemSeverities.remove(severity)) {
+        _visibleProblemSeverities.add(severity);
+      }
+    });
   }
 
   void _toggleProblemsViewMode() {
@@ -31041,16 +31069,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           PopupMenuButton<_ProblemsFilterOption>(
                             tooltip: '诊断筛选选项',
                             icon: const Icon(Icons.filter_list, size: 16),
-                            onSelected: (option) {
-                              setState(() {
-                                final severity = option.severity;
-                                if (severity == null) {
-                                  _problemsActiveFileOnly = !_problemsActiveFileOnly;
-                                } else if (!_visibleProblemSeverities.remove(severity)) {
-                                  _visibleProblemSeverities.add(severity);
-                                }
-                              });
-                            },
+                            onSelected: (option) => _runCommand(option.commandId),
                             itemBuilder: (context) => [
                               for (final option in _ProblemsFilterOption.values) ...[
                                 if (option == _ProblemsFilterOption.activeFile)
