@@ -26,7 +26,8 @@ import 'package:flutter/gestures.dart'
         PointerDeviceKind,
         PointerUpEvent;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
+import 'package:flutter/rendering.dart'
+    show RenderBox, RenderEditable, RenderSliverList;
 import 'package:flutter/semantics.dart'
     show CustomSemanticsAction, SemanticsBinding, SemanticsService;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
@@ -31027,7 +31028,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       itemCount += 1 + (expanded ? end - first : 0);
       first = end;
     }
-    void focusRenderedResult(
+    bool focusRenderedResult(
       Key key,
       ScrollPositionAlignmentPolicy alignmentPolicy,
     ) {
@@ -31046,8 +31047,76 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           node,
           alignmentPolicy: alignmentPolicy,
         );
+        return true;
+      }
+      return false;
+    }
+
+    void focusFileGroup(Key key, int index, Object? document) {
+      const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtStart;
+      if (focusRenderedResult(key, alignment)) return;
+      if (_problemsScrollController.positions.length != 1) return;
+
+      var render =
+          FocusManager.instance.primaryFocus?.context?.findRenderObject();
+      while (render != null && render is! RenderSliverList) {
+        render = render.parent;
+      }
+      if (render is! RenderSliverList) return;
+
+      final sliver = render;
+      final position = _problemsScrollController.position;
+      final first = sliver.firstChild;
+      if (!position.hasContentDimensions ||
+          first == null ||
+          sliver.indexOf(first) <= index) {
         return;
       }
+
+      final query = _problemsFilterController.text;
+      final panelTab = _panelTab.index;
+      var lower = position.minScrollExtent;
+      var upper = position.pixels;
+      // Hold results focus as the virtual list replaces the focused row.
+      _problemsResultsFocus.requestFocus();
+
+      void seek(double offset, int remaining) {
+        position.jumpTo(offset);
+        final sampledOffset = position.pixels;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted ||
+              _disposing ||
+              !_problemsResultsFocus.hasPrimaryFocus ||
+              !_problemsScrollController.positions.contains(position) ||
+              !sliver.attached ||
+              _problemsFilterController.text != query ||
+              _panelTab.index != panelTab ||
+              (document != null && _collapsedProblemGroups[document] == true) ||
+              position.pixels != sampledOffset) {
+            return;
+          }
+          if (focusRenderedResult(key, alignment) || remaining == 1) return;
+
+          final first = sliver.firstChild;
+          final last = sliver.lastChild;
+          if (first == null || last == null) return;
+          // The rows have variable heights. Use their rendered indexes to
+          // narrow the scroll range until the group's actual bounds are known.
+          if (index < sliver.indexOf(first)) {
+            upper = sampledOffset;
+          } else if (index > sliver.indexOf(last)) {
+            lower = sampledOffset;
+          } else {
+            return;
+          }
+          final next = (lower + upper) / 2;
+          if ((next - sampledOffset).abs() > 0.5) {
+            seek(next, remaining - 1);
+          }
+        });
+      }
+
+      seek(index == 0 ? lower : (lower + upper) / 2, 24);
     }
 
     return ListView.builder(
@@ -31208,10 +31277,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
-              focusRenderedResult(
-                groupKey,
-                ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-              );
+              focusFileGroup(groupKey, group.firstItem, group.document);
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
           },
