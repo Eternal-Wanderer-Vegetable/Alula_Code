@@ -4413,8 +4413,8 @@
       "dependencies": [
         "feat-345"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 的右方向键可从展开组进入首条诊断，左方向键可从诊断返回已渲染的组标题。Windows 和 Linux 各通过 30 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 44f9a3c6 的 CI 45766920493 四项与 Platform Availability 45766915175 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.294-problems-child-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
