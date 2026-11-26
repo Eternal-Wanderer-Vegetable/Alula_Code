@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class ProblemsTable extends StatefulWidget {
   const ProblemsTable({super.key, required this.body});
 
-  final Widget body;
+  final Widget Function(ProblemsTableSelection) body;
 
   @override
   State<ProblemsTable> createState() => _ProblemsTableState();
@@ -28,6 +28,7 @@ class _ProblemsTableState extends State<ProblemsTable> {
   static const _minimumSpace = 440.0;
 
   List<double> _shares = _defaultShares;
+  late final _selection = ProblemsTableSelection(setState);
 
   List<double> _minimums(double space) {
     if (space >= _minimumSpace) return _minimumWidths;
@@ -168,7 +169,7 @@ class _ProblemsTableState extends State<ProblemsTable> {
                         ),
                       ),
                     ),
-                    Expanded(child: widget.body),
+                    Expanded(child: widget.body(_selection)),
                   ],
                 ),
                 ...sashes,
@@ -178,6 +179,85 @@ class _ProblemsTableState extends State<ProblemsTable> {
         },
       ),
     );
+  }
+}
+
+class ProblemsTableSelection {
+  ProblemsTableSelection(this._update);
+
+  final void Function(VoidCallback) _update;
+  final Set<Object> _selected = {};
+  Object? _anchor;
+
+  bool get hasSelection => _selected.isNotEmpty;
+  bool get hasState => hasSelection || _anchor != null;
+
+  bool contains(Object key) => _selected.contains(key);
+
+  static List<Object> rowKeys(List<Map<String, Object?>> diagnostics) {
+    final occurrences = <Object, int>{};
+    return diagnostics.map<Object>((diagnostic) {
+      final marker = (
+        document: diagnostic['_documentId'] ?? diagnostic['file'],
+        line: diagnostic['line'],
+        character: diagnostic['character'],
+        endLine: diagnostic['endLine'],
+        endCharacter: diagnostic['endCharacter'],
+        severity: diagnostic['severity'],
+        code: diagnostic['code'],
+        source: diagnostic['source'],
+        message: diagnostic['message'],
+      );
+      final occurrence = occurrences.update(
+        marker,
+        (count) => count + 1,
+        ifAbsent: () => 0,
+      );
+      return (marker, occurrence);
+    }).toList(growable: false);
+  }
+
+  void retainVisible(List<Object> rows) {
+    _selected.retainAll(rows);
+    if (_anchor != null && !rows.contains(_anchor)) _anchor = null;
+  }
+
+  void select(
+    List<Object> rows,
+    int index, {
+    required bool extend,
+    required bool toggle,
+    int? focusedIndex,
+  }) {
+    _update(() {
+      final target = rows[index];
+      if (!extend) {
+        _anchor = target;
+        if (!toggle) _selected.clear();
+        if (!_selected.remove(target)) _selected.add(target);
+        return;
+      }
+
+      final currentAnchor = _anchor;
+      final anchorIndex =
+          currentAnchor == null ? -1 : rows.indexOf(currentAnchor);
+      final anchor = anchorIndex >= 0 ? anchorIndex : focusedIndex ?? index;
+      _anchor = rows[anchor];
+
+      // Replace the contiguous selection around the anchor and keep other ranges.
+      var first = anchor;
+      var last = anchor;
+      while (first > 0 && _selected.contains(rows[first - 1])) {
+        first--;
+      }
+      while (last + 1 < rows.length && _selected.contains(rows[last + 1])) {
+        last++;
+      }
+      _selected
+        ..removeAll(rows.getRange(first, last + 1))
+        ..addAll(rows.getRange(
+            math.min(anchor, index), math.max(anchor, index) + 1));
+    });
   }
 }
 

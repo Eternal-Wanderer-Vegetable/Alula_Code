@@ -31335,16 +31335,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return intersecting;
     }
 
-    void focusPage({required bool forward}) {
-      final layout = laidOutResults();
-      if (layout == null) return;
-      final (:sliver, :position) = layout;
+    int? focusedResultIndex(RenderSliverList sliver) {
       var render =
           FocusManager.instance.primaryFocus?.context?.findRenderObject();
       while (render != null && render.parent != sliver) {
         render = render.parent;
       }
-      final current = render is RenderBox ? sliver.indexOf(render) : null;
+      return render is RenderBox ? sliver.indexOf(render) : null;
+    }
+
+    void focusPage({required bool forward}) {
+      final layout = laidOutResults();
+      if (layout == null) return;
+      final (:sliver, :position) = layout;
+      final current = focusedResultIndex(sliver);
       final edge = pageEdge(sliver, position, forward: forward);
       if (edge != null &&
           (current == null || (forward ? edge > current : edge < current)) &&
@@ -31360,7 +31364,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       });
     }
 
-    final list = ListView.builder(
+    late final selectionRows = ProblemsTableSelection.rowKeys(diagnostics);
+    Widget list([ProblemsTableSelection? selection]) => ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
       itemBuilder: (context, i) {
@@ -31497,12 +31502,49 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (tableMode) {
           final directory = group.directory;
           final filePath = directory == null ? fileName : '$directory/$fileName';
+          final tableSelection = selection!;
+          final colors = Theme.of(context).colorScheme;
           row = ListTile(
             key: rowKey,
             dense: true,
             minTileHeight: 30,
             contentPadding: EdgeInsets.zero,
-            onTap: onOpen,
+            selected: tableSelection.hasSelection &&
+                tableSelection.contains(selectionRows[i]),
+            selectedColor: colors.onSecondaryContainer,
+            selectedTileColor: colors.secondaryContainer,
+            onTap: () {
+              final keyboard = HardwareKeyboard.instance;
+              final extend = keyboard.isShiftPressed;
+              final toggle = Theme.of(context).platform == TargetPlatform.macOS
+                  ? keyboard.isMetaPressed
+                  : keyboard.isControlPressed;
+              final layout = extend ? laidOutResults() : null;
+              tableSelection.select(
+                selectionRows,
+                i,
+                extend: extend,
+                toggle: toggle,
+                focusedIndex: layout == null
+                    ? null
+                    : focusedResultIndex(layout.sliver),
+              );
+
+              if (!extend && !toggle && onOpen != null) {
+                if (onOpen()) return;
+                // A poll can replace the diagnostic during a mouse gesture.
+                if (!_diagnostics.contains(d)) {
+                  final current = _diagnostics
+                      .where((marker) => mapEquals(marker, d))
+                      .firstOrNull;
+                  if (current != null && _openDiagnostic(current)) return;
+                }
+              }
+              focusRenderedResult(
+                rowKey,
+                ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              );
+            },
             title: ProblemsTableLine(
               severity: Semantics(
                 label: switch (severity) {
@@ -31558,7 +31600,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
     );
     return resultsRegion(
-      tableMode ? ProblemsTable(body: list) : list,
+      tableMode
+          ? ProblemsTable(
+              body: (selection) {
+                if (selection.hasState) selection.retainVisible(selectionRows);
+                return list(selection);
+              },
+            )
+          : list(),
       shortcuts: {
         const SingleActivator(LogicalKeyboardKey.home):
             () => focusBoundary(forward: false),

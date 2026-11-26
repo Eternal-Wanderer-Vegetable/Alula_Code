@@ -4489,6 +4489,18 @@
       "evidence": "Problems 树和表格按字符串或整数诊断代码筛选。Windows 和 Linux 各通过 19 个真实 rust-analyzer 检查。Linux 整数协议夹具通过 13 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b8ac1220 的 CI 45804379758 四项与 Platform Availability 45805956616 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.300-problems-code-filter.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-353",
+      "name": "P05.301 LAY-16 Problems 表格鼠标多选与范围选择",
+      "description": "在 Problems 表格使用默认平台主修改键切换单行选择，使用 Shift 点击扩大或缩小范围。验证真实诊断、选择锚点、筛选、发布刷新和精确打开。",
+      "dependencies": [
+        "feat-352"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
