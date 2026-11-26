@@ -4329,8 +4329,8 @@
       "dependencies": [
         "feat-338"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 支持 @source: 和 !@source: 精确筛选诊断来源。Windows 和 Linux 各通过 18 个真实 rust-analyzer 检查点与 17 个多来源协议检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ffb8153a 的 CI 45737980650 四项与 Platform Availability 45737976717 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.287-problems-source-filter.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

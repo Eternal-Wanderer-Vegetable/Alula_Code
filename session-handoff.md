@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.287 / feat-339 完成。Problems 支持 @source: 和 !@source: 精确筛选诊断来源。Windows 和 Linux 各通过 18 个真实 rust-analyzer 检查点与 17 个多来源协议检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ffb8153a 的 CI 45737980650 四项与 Platform Availability 45737976717 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.287-problems-source-filter.md。
 - P05.286 / feat-338 完成。Problems 支持通过前导 ! 反选已有文本匹配。Windows 和 Linux 各通过 22 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0bc8a37f 的 CI 45733973013 四项与 Platform Availability 45733966557 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.286-problems-text-negation.md。
 - P05.285 / feat-337 完成。Problems 筛选隐藏诊断时显示匹配数与工作区总数。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 f5edd5f5 的 CI 45728723879 四项与 Platform Availability 45728716888 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.285-problems-filter-count.md。
 - P05.284 / feat-336 完成。Problems 使用 Ctrl+F 聚焦筛选，Ctrl+↓ 聚焦结果，保留查询和选区。Windows 和 Linux 各通过 20 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6590fa1f 的 CI 45725008755 四项与 Platform Availability 45725003640 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.284-problems-focus-routes.md。
@@ -304,6 +305,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.287 Problems 来源筛选](docs/diagnostics/2026-11-26-p05/p05.287-problems-source-filter.md)。
 [P05.286 Problems 文本反选筛选](docs/diagnostics/2026-11-26-p05/p05.286-problems-text-negation.md)。
 [P05.285 Problems 筛选计数](docs/diagnostics/2026-11-26-p05/p05.285-problems-filter-count.md)。
 [P05.284 Problems 筛选与结果焦点切换](docs/diagnostics/2026-11-26-p05/p05.284-problems-focus-routes.md)。
@@ -497,4 +499,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.286 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 来源筛选语法。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.287 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 文件路径模式筛选。PR #3 保持草稿，macOS 实机暂缓。
