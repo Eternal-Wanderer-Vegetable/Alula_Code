@@ -4545,8 +4545,8 @@
       "dependencies": [
         "feat-356"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 表格单项键盘选择预览精确范围并保留结果焦点。Windows 和 Linux 各通过 24 项真实诊断检查，含视口外第 82 行和快速取消。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 86cfb706 的 CI 45829401050 四项与 Platform Availability 45829391864 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.305-problems-keyboard-preview.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
