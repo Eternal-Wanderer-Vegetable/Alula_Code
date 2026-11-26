@@ -4693,6 +4693,18 @@
       "evidence": "固定版对照将 Problems 文件组、两行诊断、表头和表格行校准为 22、44、24、24 逻辑像素。树诊断首行显示来源、代码和位置。Windows 与 Linux 各通过 11 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6b0f9605 的 CI 45885827159 四项与 Platform Availability 45885819195 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-370",
+      "name": "P05.318 LAY-16 / CMD-11 Problems 树诊断消息行显示切换",
+      "description": "在 Problems 树中独立展开或收起多行诊断消息，保留筛选和布局切换的显示状态，保证控件操作不打开诊断。",
+      "dependencies": [
+        "feat-369"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

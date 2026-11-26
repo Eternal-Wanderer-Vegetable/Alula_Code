@@ -750,6 +750,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _problemsTableMode = false;
   bool _problemsContextMenuOpen = false;
   final _collapsedProblemGroups = Expando<bool>();
+  final _singleLineProblemMessages = <Object>{};
   final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
@@ -14101,6 +14102,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = 'LSP 未启动';
         _diagnostics.clear();
+        _singleLineProblemMessages.clear();
         _syntaxByDoc.clear();
         _syntaxVersionByDoc.clear();
         _semanticTokensByDoc.clear();
@@ -17634,6 +17636,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _diagnostics
           ..clear()
           ..addAll(diags);
+        if (_singleLineProblemMessages.isNotEmpty) {
+          _singleLineProblemMessages.retainAll(
+            ProblemsResultSelection.rowKeys(diags),
+          );
+        }
       });
     } catch (_) {
     } finally {
@@ -31892,6 +31899,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
 
         final Widget row;
+        Widget? messageToggle;
         if (tableMode) {
           final directory = group.directory;
           final filePath = directory == null ? fileName : '$directory/$fileName';
@@ -31924,7 +31932,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         } else {
           final lines = message.isEmpty
               ? const ['']
-              : LineSplitter.split(message).take(3).toList(growable: false);
+              : LineSplitter.split(message).toList(growable: false);
+          final messageKey = selectionRows[i];
+          final singleLine = _singleLineProblemMessages.contains(messageKey);
+          if (lines.length > 1) {
+            messageToggle = Semantics(
+              key: const ValueKey('problems-tree-toggle-lines'),
+              expanded: !singleLine,
+              child: SizedBox.square(
+                dimension: treeLineHeight,
+                child: IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  tooltip: singleLine ? '显示多行诊断消息' : '显示单行诊断消息',
+                  icon: Icon(
+                    singleLine ? Icons.expand_more : Icons.expand_less,
+                    size: 14,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (!_singleLineProblemMessages.remove(messageKey)) {
+                        _singleLineProblemMessages.add(messageKey);
+                      }
+                    });
+                  },
+                ),
+              ),
+            );
+          }
           final sourceLabel = source.isEmpty || code.isEmpty
               ? '$source$code'
               : '$source($code)';
@@ -31946,7 +31981,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           row = ListTile(
             key: rowKey,
             dense: true,
-            minTileHeight: treeLineHeight * lines.length,
+            minTileHeight: treeLineHeight * (singleLine ? 1 : lines.length),
             minVerticalPadding: 0,
             contentPadding: const EdgeInsetsDirectional.fromSTEB(24, 0, 16, 0),
             titleAlignment: ListTileTitleAlignment.top,
@@ -31982,10 +32017,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      if (messageToggle != null) SizedBox(width: treeLineHeight),
                     ],
                   ),
                 ),
-                for (final line in lines.skip(1))
+                for (final line in singleLine ? const <String>[] : lines.skip(1))
                   SizedBox(
                     height: treeLineHeight,
                     child: Align(
@@ -32008,6 +32044,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 (details) => selectRow(clickCount: details.count);
           },
         );
+        final resultTile = RawGestureDetector(
+          key: menuRowKey,
+          gestures: {
+            SerialTapGestureRecognizer: mouseTaps,
+            TapGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+              TapGestureRecognizer.new,
+              (recognizer) {
+                recognizer.onSecondaryTapUp =
+                    (details) => openMenu(details.globalPosition);
+              },
+            ),
+          },
+          child: rememberFocus(row),
+        );
         return CallbackShortcuts(
           bindings: {
             ...clipboardShortcuts(openMenu, getMarkers),
@@ -32018,21 +32069,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
           },
-          child: RawGestureDetector(
-            key: menuRowKey,
-            gestures: {
-              SerialTapGestureRecognizer: mouseTaps,
-              TapGestureRecognizer:
-                  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                TapGestureRecognizer.new,
-                (recognizer) {
-                  recognizer.onSecondaryTapUp =
-                      (details) => openMenu(details.globalPosition);
-                },
-              ),
-            },
-            child: rememberFocus(row),
-          ),
+          child: messageToggle == null
+              ? resultTile
+              : Stack(
+                  children: [
+                    resultTile,
+                    PositionedDirectional(
+                      top: 0,
+                      end: 16,
+                      child: messageToggle,
+                    ),
+                  ],
+                ),
         );
       },
     );
