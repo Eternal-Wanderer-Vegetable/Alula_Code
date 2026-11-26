@@ -4569,8 +4569,8 @@
       "dependencies": [
         "feat-358"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 表格可用右键或键盘打开菜单，支持复制诊断和仅复制消息。Windows 和 Linux 各通过 18 项真实诊断检查和 6 次剪贴板回读。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 28b850b5 的 CI 45840262874 四项与 Platform Availability 45840254892 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.307-problems-context-copy.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

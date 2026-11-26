@@ -1,0 +1,3007 @@
+{
+  "product": "28b850b59eacfa02d7d747f19f3f877cadf04ada",
+  "tree": "439bcc349d4d7560c305d221ab67394fc61174ab",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "439bcc349d4d7560c305d221ab67394fc61174ab",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "8352cf8631b4d087ffe9090c8306736f2b0ce3689a511d7f55d16b8e52c04c27",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "af2b7c8b462b796d4e422fcfa97ccf6d6f9cf86677f653b5756a9acb06edcadb",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "1049000cf87bc225909528af9562f4c92e56f7891b96fb7a290f1d961adfb540",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "dec370baaa1782780c9672cbbf6cc89b847f48cd7bb223895fffc4c06d70173c",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "f81012756047074374994b102d645683fb8348e9ba273afda638bda3738fe330",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "f81012756047074374994b102d645683fb8348e9ba273afda638bda3738fe330",
+  "acceptanceDriverSha256": "f260cae28fd0ab0f7834362e91281c58363762a3b1f744a30bc4b9c8cfc687df",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b",
+      "src/vs/workbench/contrib/markers/browser/markersView.ts": "f7db413f12fcde3f895b630ac79f93b9c8d975ce05f66b7e842a905113713f1f",
+      "src/vs/workbench/contrib/markers/browser/markersModel.ts": "d25619e3c7dec2cbf18db94b2351307e83f8cbf0548863301ccc515e98afb6ac",
+      "src/vs/base/browser/ui/list/listWidget.ts": "2d7801465f466d7a271b98f8e34b1136875a655284a7f93e2f4a5d77d1c4a7d6"
+    }
+  },
+  "localLogsSha256": {
+    "p05-307-full.log": "44f6de6da2e9c7b20835222c19e4635b39f5c904cc39fa9c71dd21e4c4c9ad9c",
+    "p05-307-focused.log": "0e636e5e7b0012613b86a19d1c2ad1fc648a84d5fa446cafa2bc65742f4f88a1",
+    "p05-307-targeted.log": "bad1def101f7e2008afb623fcc7f3949f2f4923068eb33ec8f2ff233c94d2b7f",
+    "p05-307-analyze.log": "ef2a954701bd6a6a4fd16e49e4b9ff5ee1e0707db3c280b857e2cdbe965d76f1",
+    "p05-307-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-307-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "f10b5d5fa03821a5b37bb951e9a1437a8d52bc2f4d702cd2c7fd8d6a8f629eb6"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 8,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "f10b5d5fa03821a5b37bb951e9a1437a8d52bc2f4d702cd2c7fd8d6a8f629eb6"
+    }
+  },
+  "preedit": {
+    "_buildDiagnosticResults": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "ffdbdd80e4c767222ef57fc39b23ca6be288f0206e6f88bc430fc45fb06f407f",
+      "callers": [
+        "_buildDiagnosticsPanel"
+      ],
+      "processes": []
+    },
+    "ProblemsTableSelection": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "b81beeb52adb15f5447d8c88dd1d530892a661c3d1721e21b8ea0da82c27d371",
+      "callers": [
+        "_ProblemsTableState",
+        "workbench_page.dart"
+      ],
+      "processes": []
+    },
+    "registerRowActivation": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "85b7b99be0e0811c5f6ec9ac6a1fd8603838e50e3a6a4daa9a1c6e922611b947",
+      "callers": [],
+      "processes": []
+    },
+    "_diagnosticEditor": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "8e5ca05a930c5973ecf713958dc169bdb54939ad1504520f458e90f0c082e2d4",
+      "callers": [
+        "_buildDiagnosticResults",
+        "_navigateDiagnostics",
+        "_openDiagnostic"
+      ],
+      "processes": [
+        {
+          "name": "initState",
+          "type": "Function",
+          "filePath": "app/lib/workbench/workbench_page.dart",
+          "affected_process_count": 9,
+          "total_hits": 9,
+          "earliest_broken_step": 1
+        },
+        {
+          "name": "_registerCommands",
+          "type": "Function",
+          "filePath": "app/lib/workbench/workbench_page.dart",
+          "affected_process_count": 2,
+          "total_hits": 2,
+          "earliest_broken_step": 1
+        }
+      ]
+    },
+    "list": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'list' not found",
+      "sha256": "62b2135161862f41aa88e432cd37ed417e1a666cc1b8eb08578bab8099c47717"
+    },
+    "focusRenderedResult": {
+      "risk": "UNKNOWN",
+      "lookup": "Target 'focusRenderedResult' not found",
+      "sha256": "1e0bd91d5fbcb179ad67ed693c3d3acf8d69d17a5ab11918ff162371c40437a0"
+    },
+    "callSiteVerification": {
+      "sha256": "8717a800dec2e8f83bcf496f7d906e4e16e163f3a66b5acb9b524bea75dd02c0",
+      "calls": [
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/problems_table.dart:201:  bool registerRowActivation(Object key, int? clickCount) {",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31138:    bool focusRenderedResult(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31206:      if (focusRenderedResult(key, alignment)) return;",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31233:          if (focusRenderedResult(key, alignment) || remaining == 1) return;",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31287:      final focused = focusRenderedResult(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31427:    Widget list([ProblemsTableSelection? selection]) => ListView.builder(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31478:                      focusRenderedResult(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31574:            final doubleClick = tableSelection.registerRowActivation(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31594:            focusRenderedResult(",
+        "83a21099f71d1650db44e8187b0ae7fc5b509f26:app/lib/workbench/workbench_page.dart:31760:        list(selection),"
+      ]
+    }
+  },
+  "windowsInitialAttempt": {
+    "phase": "clipboard-restoration",
+    "driverExitSigned": -1073740771,
+    "driverExitHex": "0xC000041D",
+    "lastFixtureMeasurement": "main-filter-control-c-keeps-filter-focus-185278673152300",
+    "productProcessExitedAfterOwnedWindowClose": true,
+    "originalClipboardRestoration": "unverified",
+    "runnerSha256": "f1fc45114c17704d83309b20af136679bb9724545d919e699a7e7f412830fa32",
+    "stagedTree": "439bcc349d4d7560c305d221ab67394fc61174ab"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "439bcc349d4d7560c305d221ab67394fc61174ab",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "b207bb6fb94e39419707800f4eb6f31fe06e45139711c23f8e1632e3b7db73e6",
+    "fixtureSha256": "f81012756047074374994b102d645683fb8348e9ba273afda638bda3738fe330",
+    "runnerSha256": "90a6ffb36b3e32dd2d8a8746b25fbedec8f5b06e49d917b703564bdb719c1fa0",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "ready": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": []
+      },
+      "editor-caret-established": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": []
+      },
+      "provider-published-three-markers": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": []
+      },
+      "default-tree-with-three-diagnostics": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": []
+      },
+      "table-default-has-no-selected-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "control-click-selects-first-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "control-click-selects-two-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-selected-row-keeps-multi-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            448.0,
+            519.2,
+            560.0,
+            567.2
+          ],
+          "problems-table-copy-message": [
+            448.0,
+            567.2,
+            560.0,
+            615.2
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "copy-message-restores-clicked-row-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "shift-f10-opens-context-menu-for-focused-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            273.952,
+            536.104,
+            385.952,
+            584.104
+          ],
+          "problems-table-copy-message": [
+            273.952,
+            584.104,
+            385.952,
+            632.104
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "escape-restores-focus-and-keeps-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-unselected-row-keeps-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            448.0,
+            552.8,
+            560.0,
+            600.8
+          ],
+          "problems-table-copy-message": [
+            448.0,
+            600.8,
+            560.0,
+            648.8
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "copy-message-uses-only-unselected-focused-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": true,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-opens-structured-copy-option": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            448.0,
+            552.8,
+            560.0,
+            600.8
+          ],
+          "problems-table-copy-message": [
+            448.0,
+            600.8,
+            560.0,
+            648.8
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "structured-copy-restores-focus-without-preview": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": true,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "ordinary-navigation-preserves-multi-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "control-c-copies-selected-diagnostics": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "filter-control-c-keeps-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          358.104
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.9,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "editor-caret-established": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-published-three-markers": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "default-tree-with-three-diagnostics": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "table-default-has-no-selected-rows": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "control-click-selects-first-row": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "control-click-selects-two-rows": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "right-click-selected-row-keeps-multi-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "copy-message-restores-clicked-row-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "shift-f10-opens-context-menu-for-focused-row": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "escape-restores-focus-and-keeps-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "right-click-unselected-row-keeps-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "copy-message-uses-only-unselected-focused-row": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "right-click-opens-structured-copy-option": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "structured-copy-restores-focus-without-preview": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "ordinary-navigation-preserves-multi-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "control-c-copies-selected-diagnostics": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "filter-control-c-keeps-filter-focus": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "shift+F10",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+c",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+a",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+c",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "profile": "E:\\temp\\alula-p05-307-problems-context-copy\\probe-1795703535351779700",
+    "fixturePositions": [
+      "1:8",
+      "rust-analyzer",
+      "E0308"
+    ],
+    "nativeClickChecks": [
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          827
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          827
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": true,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          912
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          912
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": true,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          827
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          827
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": true
+      },
+      {
+        "point": [
+          1600,
+          927
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1600,
+          927
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          869
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          869
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": true
+      },
+      {
+        "point": [
+          1600,
+          969
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1600,
+          969
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1670,
+          869
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1670,
+          869
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": true
+      },
+      {
+        "point": [
+          1600,
+          909
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1600,
+          909
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      },
+      {
+        "point": [
+          1752,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      }
+    ],
+    "kind": "problemsContextCopy",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "clipboardReadback": {
+      "selected-message": {
+        "content": "mismatched types\nexpected `u32`, found `&str`\nmismatched types\nexpected `usize`, found `bool`",
+        "kind": "plain"
+      },
+      "cancel-preserves-clipboard": {
+        "content": "mismatched types\nexpected `u32`, found `&str`\nmismatched types\nexpected `usize`, found `bool`",
+        "kind": "plain"
+      },
+      "focused-only-message": {
+        "content": "mismatched types\nexpected `bool`, found integer",
+        "kind": "plain"
+      },
+      "focused-only-json": {
+        "content": [
+          {
+            "resource": "/e:/temp/alula-p05-307-problems-context-copy/probe-1795703535351779700/workspace/src/left/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 82,
+            "startColumn": 27,
+            "endLineNumber": 82,
+            "endColumn": 28
+          }
+        ],
+        "kind": "json"
+      },
+      "selected-json": {
+        "content": [
+          {
+            "resource": "/e:/temp/alula-p05-307-problems-context-copy/probe-1795703535351779700/workspace/src/left/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 1,
+            "startColumn": 33,
+            "endLineNumber": 1,
+            "endColumn": 43
+          },
+          {
+            "resource": "/e:/temp/alula-p05-307-problems-context-copy/probe-1795703535351779700/workspace/src/right/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 1,
+            "startColumn": 36,
+            "endLineNumber": 1,
+            "endColumn": 41
+          }
+        ],
+        "kind": "json"
+      },
+      "filter-text": {
+        "content": "E0308",
+        "kind": "plain"
+      }
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "clipboardRestored": true,
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "870864c25f1e1db78d3eda269a0c82d0ef5b67230de262578c77cfaab151fbb3"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "439bcc349d4d7560c305d221ab67394fc61174ab",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 59073,
+            "ppid": 59072,
+            "private": 261742592,
+            "pss": 287723520,
+            "working_set": 340918272
+          }
+        ],
+        "root_pid": 59073,
+        "total_private_bytes": 261742592,
+        "total_private_mib": 249.6,
+        "total_working_set_bytes": 340918272
+      }
+    },
+    "aotSha256": "de75c74587f6d5eeeffc5c08b15aa3d1b21be8b116b799d2018410da79434076",
+    "fixtureSha256": "f81012756047074374994b102d645683fb8348e9ba273afda638bda3738fe330",
+    "runnerSha256": "f205f4c74622a5f79dcca0d76a0022380e556718fbb07a63c1fa27334b9517d2",
+    "steps": {
+      "ready": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": []
+      },
+      "editor-caret-established": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": []
+      },
+      "provider-published-three-markers": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "modeTooltip": null,
+        "panelCollapsed": true,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": null,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": []
+      },
+      "default-tree-with-three-diagnostics": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为表格",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": []
+      },
+      "table-default-has-no-selected-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "control-click-selects-first-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          }
+        ]
+      },
+      "control-click-selects-two-rows": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-selected-row-keeps-multi-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            565.0,
+            548.0,
+            677.0,
+            596.0
+          ],
+          "problems-table-copy-message": [
+            565.0,
+            596.0,
+            677.0,
+            644.0
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "copy-message-restores-clicked-row-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "shift-f10-opens-context-menu-for-focused-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            327.52,
+            564.52,
+            439.52,
+            612.52
+          ],
+          "problems-table-copy-message": [
+            327.52,
+            612.52,
+            439.52,
+            660.52
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "escape-restores-focus-and-keeps-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-unselected-row-keeps-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            565.0,
+            582.0,
+            677.0,
+            630.0
+          ],
+          "problems-table-copy-message": [
+            565.0,
+            630.0,
+            677.0,
+            678.0
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "copy-message-uses-only-unselected-focused-row": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": true,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "right-click-opens-structured-copy-option": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {
+          "problems-table-copy": [
+            565.0,
+            582.0,
+            677.0,
+            630.0
+          ],
+          "problems-table-copy-message": [
+            565.0,
+            630.0,
+            677.0,
+            678.0
+          ]
+        },
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "structured-copy-restores-focus-without-preview": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": true,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      },
+      "ordinary-navigation-preserves-multi-selection": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "control-c-copies-selected-diagnostics": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": false,
+        "filterText": "",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": true,
+            "selected": true
+          }
+        ]
+      },
+      "filter-control-c-keeps-filter-focus": {
+        "abi": 46,
+        "documentId": 3,
+        "selection": [
+          7,
+          7
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "modeTooltip": "显示为树",
+        "panelCollapsed": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "copyMenu": {},
+        "filterFocused": true,
+        "filterText": "E0308",
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          386.52
+        ],
+        "editorScrollOffset": 0.0,
+        "editorCaretY": 124.5,
+        "table": [
+          {
+            "file": "src/left/other.rs [Ln 1, Col 33]",
+            "code": "E0308",
+            "message": "mismatched types expected `u32`, found `&str`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          },
+          {
+            "file": "src/left/other.rs [Ln 82, Col 27]",
+            "code": "E0308",
+            "message": "mismatched types expected `bool`, found integer",
+            "source": "rustc",
+            "focused": false,
+            "selected": false
+          },
+          {
+            "file": "src/right/other.rs [Ln 1, Col 36]",
+            "code": "E0308",
+            "message": "mismatched types expected `usize`, found `bool`",
+            "source": "rustc",
+            "focused": false,
+            "selected": true
+          }
+        ]
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "requestedWindowWidth": 1200,
+    "characterDelayMs": 12,
+    "profile": "/tmp/alula-p05-177-xvfb-_4s73v1v",
+    "nativeClicks": [
+      {
+        "screen": [
+          740,
+          489
+        ],
+        "actual": [
+          740,
+          489
+        ],
+        "logical": [
+          719.76,
+          441.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          1172,
+          471
+        ],
+        "actual": [
+          1172,
+          471
+        ],
+        "logical": [
+          1152.0,
+          422.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          588
+        ],
+        "actual": [
+          697,
+          588
+        ],
+        "logical": [
+          677.1999999999999,
+          539.52
+        ],
+        "control": true,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          656
+        ],
+        "actual": [
+          697,
+          656
+        ],
+        "logical": [
+          677.1999999999999,
+          607.52
+        ],
+        "control": true,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          588
+        ],
+        "actual": [
+          697,
+          588
+        ],
+        "logical": [
+          677.1999999999999,
+          539.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": true
+      },
+      {
+        "screen": [
+          641,
+          668
+        ],
+        "actual": [
+          641,
+          668
+        ],
+        "logical": [
+          621.0,
+          620.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          622
+        ],
+        "actual": [
+          697,
+          622
+        ],
+        "logical": [
+          677.1999999999999,
+          573.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": true
+      },
+      {
+        "screen": [
+          641,
+          702
+        ],
+        "actual": [
+          641,
+          702
+        ],
+        "logical": [
+          621.0,
+          654.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          697,
+          622
+        ],
+        "actual": [
+          697,
+          622
+        ],
+        "logical": [
+          677.1999999999999,
+          573.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": true
+      },
+      {
+        "screen": [
+          641,
+          654
+        ],
+        "actual": [
+          641,
+          654
+        ],
+        "logical": [
+          621.0,
+          606.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      },
+      {
+        "screen": [
+          784,
+          519
+        ],
+        "actual": [
+          784,
+          519
+        ],
+        "logical": [
+          763.76,
+          470.52
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      }
+    ],
+    "kind": "problemsContextCopy",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "clipboardReadback": {
+      "selected-message": {
+        "content": "mismatched types\nexpected `u32`, found `&str`\nmismatched types\nexpected `usize`, found `bool`",
+        "kind": "plain"
+      },
+      "cancel-preserves-clipboard": {
+        "content": "mismatched types\nexpected `u32`, found `&str`\nmismatched types\nexpected `usize`, found `bool`",
+        "kind": "plain"
+      },
+      "focused-only-message": {
+        "content": "mismatched types\nexpected `bool`, found integer",
+        "kind": "plain"
+      },
+      "focused-only-json": {
+        "content": [
+          {
+            "resource": "/tmp/alula-p05-177-xvfb-_4s73v1v/workspace/src/left/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 82,
+            "startColumn": 27,
+            "endLineNumber": 82,
+            "endColumn": 28
+          }
+        ],
+        "kind": "json"
+      },
+      "selected-json": {
+        "content": [
+          {
+            "resource": "/tmp/alula-p05-177-xvfb-_4s73v1v/workspace/src/left/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 1,
+            "startColumn": 33,
+            "endLineNumber": 1,
+            "endColumn": 43
+          },
+          {
+            "resource": "/tmp/alula-p05-177-xvfb-_4s73v1v/workspace/src/right/other.rs",
+            "severity": 8,
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "source": "rustc",
+            "code": "E0308",
+            "startLineNumber": 1,
+            "startColumn": 36,
+            "endLineNumber": 1,
+            "endColumn": 41
+          }
+        ],
+        "kind": "json"
+      },
+      "filter-text": {
+        "content": "E0308",
+        "kind": "plain"
+      }
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 81,
+        "line": 81,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 81,
+        "line": 81,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "rawReportSha256": "c38ea09e724e033c4228dd6c49225c97d8b952cd29520b18f035ec6b984a1cf8"
+  }
+}

@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.307 / feat-359 完成。Problems 表格可用右键或键盘打开菜单，支持复制诊断和仅复制消息。Windows 和 Linux 各通过 18 项真实诊断检查和 6 次剪贴板回读。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 28b850b5 的 CI 45840262874 四项与 Platform Availability 45840254892 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.307-problems-context-copy.md。
 - P05.306 / feat-358 完成。Problems 表格普通单击预览并保留结果焦点，双击打开并固定已有预览标签。Windows 和 Linux 各通过 17 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 63f56696 的 CI 45834954426 四项与 Platform Availability 45834940305 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.306-problems-mouse-preview.md。
 - P05.305 / feat-357 完成。Problems 表格单项键盘选择预览精确范围并保留结果焦点。Windows 和 Linux 各通过 24 项真实诊断检查，含视口外第 82 行和快速取消。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 86cfb706 的 CI 45829401050 四项与 Platform Availability 45829391864 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.305-problems-keyboard-preview.md。
 - P05.304 / feat-356 完成。Problems 表格普通键盘导航同步与原焦点重合的单项选择，并更新范围锚点。Windows 和 Linux 各通过 26 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 68aea4b3 的 CI 45823959170 四项与 Platform Availability 45823951413 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.304-problems-selection-navigation.md。
@@ -324,6 +325,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.307 Problems 表格上下文菜单与诊断复制](docs/diagnostics/2026-11-26-p05/p05.307-problems-context-copy.md)。
 [P05.306 Problems 表格鼠标单击预览与双击打开](docs/diagnostics/2026-11-26-p05/p05.306-problems-mouse-preview.md)。
 [P05.305 Problems 表格键盘诊断预览与保留焦点](docs/diagnostics/2026-11-26-p05/p05.305-problems-keyboard-preview.md)。
 [P05.304 Problems 表格单选随焦点导航](docs/diagnostics/2026-11-26-p05/p05.304-problems-selection-navigation.md)。
@@ -537,4 +539,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.306 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 表格上下文菜单与诊断复制。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.307 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 树上下文菜单与文件组复制。PR #3 保持草稿，macOS 实机暂缓。
