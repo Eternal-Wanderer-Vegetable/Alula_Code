@@ -240,6 +240,8 @@ class ProblemsResultSelection {
   void dispose() => _previewTimer?.cancel();
 
   bool get hasSelection => _selected.isNotEmpty;
+  int get selectedCount => _selected.length;
+  Object? get firstSelected => _selected.firstOrNull;
   bool get hasState => hasSelection || _anchor != null;
 
   bool contains(Object key) => _selected.contains(key);

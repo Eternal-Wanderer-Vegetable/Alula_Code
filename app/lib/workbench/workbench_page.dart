@@ -31954,8 +31954,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }) {
       moveTableFocus(
         forward,
-        (previous, next) =>
-            selection.extendAfterFocus(selectionRows, previous, next),
+        (previous, next) {
+          if (tableMode || previous != next) {
+            selection.extendAfterFocus(selectionRows, previous, next);
+          }
+        },
       );
     }
 
@@ -31991,6 +31994,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (previous, next) =>
             followAndPreview(selection, previous, next),
       );
+    }
+
+    void selectAllTreeResults(ProblemsResultSelection selection) {
+      final focused = currentResultIndex();
+      final focusedKey = focused == null ? null : selectionRows[focused];
+      final startKey = focusedKey != null && !selection.contains(focusedKey)
+          ? focusedKey
+          : selection.firstSelected;
+      final start = startKey == null ? -1 : selectionRows.indexOf(startKey);
+      if (start < 0) {
+        selection.selectAll(selectionRows);
+        return;
+      }
+      final group = groups[groupIndexAtItem(start)];
+      final parent = group.firstItem;
+      if (start == parent) {
+        selection.selectAll(selectionRows);
+        return;
+      }
+      final children =
+          selectionRows.getRange(parent + 1, parent + 1 + group.count);
+      selection.selectAll([
+        if (selection.selectedCount == children.length) selectionRows[parent],
+        ...children,
+      ]);
     }
 
     Widget withResultShortcuts(ProblemsResultSelection selection) {
@@ -32041,24 +32069,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 () => focusAndFollow(selection, forward: false),
             const SingleActivator(LogicalKeyboardKey.arrowDown):
                 () => focusAndFollow(selection, forward: true),
-            const SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
-                () => focusAndExtend(selection, forward: false),
-            const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
-                () => focusAndExtend(selection, forward: true),
-            SingleActivator(LogicalKeyboardKey.keyA, control: !mac, meta: mac):
-                () {
-                  selection.selectAll(selectionRows);
-                  if (selectionRows.length == 1) previewDiagnostic(selection, 0);
-                },
-            SingleActivator(
-              LogicalKeyboardKey.enter,
-              control: !mac,
-              meta: mac,
-              shift: true,
-            ): () {
-              final index = currentResultIndex();
-              if (index != null) selection.toggleFocused(selectionRows[index]);
-            },
+          },
+          const SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
+              () => focusAndExtend(selection, forward: false),
+          const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
+              () => focusAndExtend(selection, forward: true),
+          SingleActivator(LogicalKeyboardKey.keyA, control: !mac, meta: mac):
+              () {
+            if (tableMode) {
+              selection.selectAll(selectionRows);
+              if (selectionRows.length == 1) previewDiagnostic(selection, 0);
+            } else {
+              selectAllTreeResults(selection);
+            }
+          },
+          SingleActivator(
+            LogicalKeyboardKey.enter,
+            control: !mac,
+            meta: mac,
+            shift: true,
+          ): () {
+            final index = currentResultIndex();
+            if (index != null) selection.toggleFocused(selectionRows[index]);
           },
         },
       );
