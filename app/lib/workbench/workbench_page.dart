@@ -310,7 +310,9 @@ typedef ReferencesRequest = Future<ReferencesResult?> Function(
 );
 
 class _FocusProblemsResultsIntent extends Intent {
-  const _FocusProblemsResultsIntent();
+  const _FocusProblemsResultsIntent({this.initializeSelection = true});
+
+  final bool initializeSelection;
 }
 
 enum _ProblemsFilterOption {
@@ -324,6 +326,11 @@ enum _ProblemsFilterOption {
   final String label;
   final int? severity;
 }
+
+const _problemsViewAsTreeCommandId =
+    'workbench.actions.table.workbench.panel.markers.view.viewAsTree';
+const _problemsViewAsTableCommandId =
+    'workbench.actions.table.workbench.panel.markers.view.viewAsTable';
 
 class WorkbenchPage extends StatefulWidget {
   WorkbenchPage({
@@ -1389,6 +1396,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '聚焦问题',
       () async => _openProblems(),
+    );
+    reg(
+      _problemsViewAsTreeCommandId,
+      '问题',
+      '显示为树',
+      () async => _applyProblemsViewMode(false),
+    );
+    reg(
+      _problemsViewAsTableCommandId,
+      '问题',
+      '显示为表格',
+      () async => _applyProblemsViewMode(true),
     );
     reg(
       'workbench.action.showNotifications',
@@ -4291,6 +4310,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final available = [
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
+            c.id != _problemsViewAsTreeCommandId &&
+            c.id != _problemsViewAsTableCommandId &&
             !_isCurrentActivityBarLocationCommand(c.id, currentLocation) &&
             (c.id != 'editor.showCallHierarchy' || callHierarchyAvailable) &&
             (c.id != 'editor.showTypeHierarchy' || typeHierarchyAvailable))
@@ -30355,7 +30376,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         IconButton(
                           key: const ValueKey('problems-view-mode-toggle'),
                           tooltip: _problemsTableMode ? '显示为树' : '显示为表格',
-                          onPressed: _toggleProblemsViewMode,
+                          onPressed: () => _runCommand(
+                            _problemsTableMode
+                                ? _problemsViewAsTreeCommandId
+                                : _problemsViewAsTableCommandId,
+                          ),
                           icon: Icon(
                             _problemsTableMode
                                 ? Icons.account_tree_outlined
@@ -30718,34 +30743,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _applyProblemsViewMode(bool tableMode) {
+    if (_layout.isCollapsed('panel') ||
+        _panelTab.index != PanelViewTab.diagnostics.index ||
+        _problemsTableMode == tableMode) {
+      return;
+    }
+    _toggleProblemsViewMode();
+  }
+
   void _toggleProblemsViewMode() {
-    final focus = FocusManager.instance.primaryFocus?.context;
-    final markerKey = _problemsResultsFocus.hasFocus
-        ? focus?.findAncestorWidgetOfExactType<ListTile>()?.key
-        : null;
-    setState(() => _problemsTableMode = !_problemsTableMode);
+    final restoreFocus = _problemsResultsFocus.hasFocus;
+    final tableMode = !_problemsTableMode;
+    setState(() => _problemsTableMode = tableMode);
     _scheduleStateSave();
-    if (markerKey == null) return;
+    if (!restoreFocus) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted ||
           _disposing ||
+          _problemsTableMode != tableMode ||
+          _layout.isCollapsed('panel') ||
           _panelTab.index != PanelViewTab.diagnostics.index ||
-          !_problemsPanelFocus.hasFocus ||
-          _problemsFilterFocus.hasFocus) {
+          _problemsFilterFocus.hasFocus ||
+          (FocusManager.instance.primaryFocus != null &&
+              !_problemsPanelFocus.hasFocus)) {
         return;
       }
-      for (final node in _problemsResultsFocus.traversalDescendants) {
-        if (node.context?.findAncestorWidgetOfExactType<ListTile>()?.key ==
-            markerKey) {
-          FocusTraversalPolicy.defaultTraversalRequestFocusCallback(
-            node,
-            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-          );
-          return;
-        }
+      final context = _problemsResultsFocus.context;
+      if (context == null ||
+          Actions.maybeInvoke(
+                context,
+                const _FocusProblemsResultsIntent(initializeSelection: false),
+              ) !=
+              true) {
+        _problemsResultsFocus.requestFocus();
       }
-      _problemsResultsFocus.requestFocus();
     });
   }
 
@@ -32298,13 +32331,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
 
-    void focusResultsFromFilter(ProblemsResultSelection selection) {
+    void focusResultsFromFilter(
+      ProblemsResultSelection selection, {
+      required bool initializeSelection,
+    }) {
       final firstSelected = selection.firstSelected;
-      if (firstSelected != null) {
-        final remembered =
-            selectionRows.indexOf(selection.lastFocusedRow ?? firstSelected);
-        final index =
-            remembered >= 0 ? remembered : selectionRows.indexOf(firstSelected);
+      if (firstSelected != null || !initializeSelection) {
+        final remembered = selection.lastFocusedRow;
+        var index = remembered == null ? -1 : selectionRows.indexOf(remembered);
+        if (index < 0 && firstSelected != null) {
+          index = selectionRows.indexOf(firstSelected);
+        }
         if (index < 0) {
           _problemsResultsFocus.requestFocus();
           return;
@@ -32438,8 +32475,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return Actions(
         actions: {
           _FocusProblemsResultsIntent:
-              CallbackAction<_FocusProblemsResultsIntent>(onInvoke: (_) {
-            focusResultsFromFilter(selection);
+              CallbackAction<_FocusProblemsResultsIntent>(onInvoke: (intent) {
+            focusResultsFromFilter(
+              selection,
+              initializeSelection: intent.initializeSelection,
+            );
             return true;
           }),
         },
@@ -32448,9 +32488,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     return ProblemsResultSelectionScope(
-      key: ValueKey(tableMode),
+      tableMode: tableMode,
       builder: (selection) {
-        if (selection.hasState) selection.retainVisible(selectionRows);
+        if (selection.hasState) {
+          if (tableMode) {
+            for (var i = 0; i < groups.length; i++) {
+              final key = groupKeyAt(i);
+              if (!selection.contains(key)) continue;
+              final group = groups[i];
+              selection.replaceSelectedGroup(
+                key,
+                diagnosticKeys.getRange(
+                  group.firstDiagnostic,
+                  group.firstDiagnostic + group.count,
+                ),
+              );
+            }
+          }
+          selection.retainVisible(selectionRows);
+        }
         final results = withResultShortcuts(selection);
         return tableMode ? ProblemsTable(child: results) : results;
       },

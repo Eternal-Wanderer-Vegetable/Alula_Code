@@ -185,8 +185,13 @@ class _ProblemsTableState extends State<ProblemsTable> {
 }
 
 class ProblemsResultSelectionScope extends StatefulWidget {
-  const ProblemsResultSelectionScope({super.key, required this.builder});
+  const ProblemsResultSelectionScope({
+    super.key,
+    required this.tableMode,
+    required this.builder,
+  });
 
+  final bool tableMode;
   final Widget Function(ProblemsResultSelection) builder;
 
   @override
@@ -197,6 +202,14 @@ class ProblemsResultSelectionScope extends StatefulWidget {
 class _ProblemsResultSelectionScopeState
     extends State<ProblemsResultSelectionScope> {
   late final _selection = ProblemsResultSelection(setState);
+
+  @override
+  void didUpdateWidget(covariant ProblemsResultSelectionScope oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.tableMode != widget.tableMode) {
+      _selection.resetInteraction();
+    }
+  }
 
   @override
   Widget build(BuildContext context) => widget.builder(_selection);
@@ -244,6 +257,13 @@ class ProblemsResultSelection {
 
   void dispose() => _previewTimer?.cancel();
 
+  void resetInteraction() {
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    _lastPlainClick = null;
+    _anchor = null;
+  }
+
   bool get hasSelection => _selected.isNotEmpty;
   int get selectedCount => _selected.length;
   Object? get firstSelected => _selected.firstOrNull;
@@ -272,6 +292,10 @@ class ProblemsResultSelection {
       );
       return (marker, occurrence);
     }).toList(growable: false);
+  }
+
+  void replaceSelectedGroup(Object group, Iterable<Object> markers) {
+    if (_selected.remove(group)) _selected.addAll(markers);
   }
 
   void retainVisible(List<Object> rows) {
