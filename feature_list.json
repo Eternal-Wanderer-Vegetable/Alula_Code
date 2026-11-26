@@ -4293,8 +4293,8 @@
       "dependencies": [
         "feat-335"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 使用 Ctrl+F 聚焦筛选，Ctrl+↓ 聚焦结果，保留查询和选区。Windows 和 Linux 各通过 20 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6590fa1f 的 CI 45725008755 四项与 Platform Availability 45725003640 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.284-problems-focus-routes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
