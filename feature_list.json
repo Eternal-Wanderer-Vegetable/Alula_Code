@@ -4461,8 +4461,8 @@
       "dependencies": [
         "feat-349"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 支持虚拟化诊断表、真实诊断代码与模式恢复。Windows 和 Linux 各通过 16 个交互和 5 个同一会话重启检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 633789c9 的 CI 45794082508 四项与 Platform Availability 45794069459 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.298-problems-table.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.298 / feat-350 完成。Problems 支持虚拟化诊断表、真实诊断代码与模式恢复。Windows 和 Linux 各通过 16 个交互和 5 个同一会话重启检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 633789c9 的 CI 45794082508 四项与 Platform Availability 45794069459 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.298-problems-table.md。
 - P05.297 / feat-349 完成。Problems 支持 Home、End、Page Up 和 Page Down 的首尾及翻页焦点导航，并保留筛选框的文本键位。Windows 和 Linux 各通过 33 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 9e46f366 的 CI 45787992981 四项与 Platform Availability 45787982708 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.297-problems-list-pages.md。
 - P05.296 / feat-348 完成。Problems 在组标题和诊断行之间按可见顺序处理上下方向键，并将目标滚入视口。Windows 和 Linux 各通过 27 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 92e520cb 的 CI 45776138475 四项与 Platform Availability 45776132784 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.296-problems-vertical-navigation.md。
 - P05.295 / feat-347 完成。Problems 的左方向键从诊断行定位并聚焦已移出渲染范围的所属组。Windows 和 Linux 各通过 16 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b7ec45 的 CI 45771719109 四项与 Platform Availability 45771715172 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.295-problems-offscreen-parent.md。
@@ -315,6 +316,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.298 Problems 表格模式与诊断列](docs/diagnostics/2026-11-26-p05/p05.298-problems-table.md)。
 [P05.297 Problems 结果列表首尾与翻页导航](docs/diagnostics/2026-11-26-p05/p05.297-problems-list-pages.md)。
 [P05.296 Problems 结果列表上下方向键](docs/diagnostics/2026-11-26-p05/p05.296-problems-vertical-navigation.md)。
 [P05.295 Problems 跨视口返回所属文件组](docs/diagnostics/2026-11-26-p05/p05.295-problems-offscreen-parent.md)。
@@ -519,4 +521,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.297 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 表格视图。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.298 收尾 CI。按 docs/03 和固定版本推进 LAY-16 Problems 表格列宽拖动与复位。PR #3 保持草稿，macOS 实机暂缓。
