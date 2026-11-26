@@ -8,6 +8,7 @@ Last Updated: 2026-11-26
 
 ## Current State
 
+- P05.291 / feat-343 完成。Problems 文件组支持鼠标及键盘收起展开，筛选及面板重开保留状态。Windows 和 Linux 各通过 19 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 d7b79e83 的 CI 45753255875 四项与 Platform Availability 45753251673 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.291-problems-group-toggle.md。
 - P05.290 / feat-342 完成。Problems 按文档显示文件名、目录和可见诊断数，同名文件分组独立。Windows 和 Linux 各通过 15 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c3ea41be 的 CI 45749684572 四项与 Platform Availability 45749681680 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.290-problems-file-groups.md。
 - P05.289 / feat-341 完成。Problems 诊断位置从第 1 行和第 1 列开始显示。Windows 和 Linux 各通过 14 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 26901998 的 CI 45746036539 四项与 Platform Availability 45746031982 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md。
 - P05.288 / feat-340 完成。Problems 支持文件路径的包含和排除模式，保留文本、来源和活动文件筛选。Windows 和 Linux 各通过 26 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 04c99521 的 CI 45742059488 四项与 Platform Availability 45742053207 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.288-problems-path-globs.md。
@@ -308,6 +309,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.291 Problems 文件组收起和展开](docs/diagnostics/2026-11-26-p05/p05.291-problems-group-toggle.md)。
 [P05.290 Problems 按文件分组呈现](docs/diagnostics/2026-11-26-p05/p05.290-problems-file-groups.md)。
 [P05.289 Problems 行列显示](docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md)。
 [P05.288 Problems 文件路径模式筛选](docs/diagnostics/2026-11-26-p05/p05.288-problems-path-globs.md)。
@@ -505,4 +507,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.290 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 文件组收起和展开。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.291 收尾 CI。按 docs/03 和固定版本推进 CMD-11 Problems 折叠全部文件组。PR #3 保持草稿，macOS 实机暂缓。
