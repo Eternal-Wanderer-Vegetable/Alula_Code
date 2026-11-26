@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.289 / feat-341 完成。Problems 诊断位置从第 1 行和第 1 列开始显示。Windows 和 Linux 各通过 14 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 26901998 的 CI 45746036539 四项与 Platform Availability 45746031982 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.289-problems-row-position.md。
 - P05.288 / feat-340 完成。Problems 支持文件路径的包含和排除模式，保留文本、来源和活动文件筛选。Windows 和 Linux 各通过 26 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 04c99521 的 CI 45742059488 四项与 Platform Availability 45742053207 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.288-problems-path-globs.md。
 - P05.287 / feat-339 完成。Problems 支持 @source: 和 !@source: 精确筛选诊断来源。Windows 和 Linux 各通过 18 个真实 rust-analyzer 检查点与 17 个多来源协议检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ffb8153a 的 CI 45737980650 四项与 Platform Availability 45737976717 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.287-problems-source-filter.md。
 - P05.286 / feat-338 完成。Problems 支持通过前导 ! 反选已有文本匹配。Windows 和 Linux 各通过 22 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0bc8a37f 的 CI 45733973013 四项与 Platform Availability 45733966557 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.286-problems-text-negation.md。
@@ -66,7 +67,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 CMD-11 Problems 来源筛选语法。通用面板切换的状态栏同步留在布局项。当前 Problems 行的零基位置显示留在面板呈现项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 CMD-11 Problems 按文件分组呈现。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
