@@ -189,6 +189,8 @@ class _ProblemsTableState extends State<ProblemsTable> {
   }
 }
 
+enum ProblemsCopyAction { diagnostics, message }
+
 class ProblemsTableSelection {
   ProblemsTableSelection(this._update);
 
@@ -197,6 +199,7 @@ class ProblemsTableSelection {
   Object? _anchor;
   Object? _lastPlainClick;
   Timer? _previewTimer;
+  bool contextMenuOpen = false;
 
   bool registerRowActivation(Object key, int? clickCount) {
     _previewTimer?.cancel();

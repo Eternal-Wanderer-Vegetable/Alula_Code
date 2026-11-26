@@ -25,7 +25,8 @@ import 'package:flutter/gestures.dart'
         PointerDownEvent,
         PointerDeviceKind,
         PointerUpEvent,
-        SerialTapGestureRecognizer;
+        SerialTapGestureRecognizer,
+        TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'
     show RenderAbstractViewport, RenderBox, RenderEditable, RenderObject,
@@ -31424,6 +31425,108 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
     }
 
+    Future<void> copyTableDiagnostics(
+      ProblemsTableSelection selection,
+      int index,
+      ProblemsCopyAction action,
+    ) {
+      final markers = selection.contains(selectionRows[index])
+          ? [
+              for (var i = 0; i < diagnostics.length; i++)
+                if (selection.contains(selectionRows[i])) diagnostics[i],
+            ]
+          : [diagnostics[index]];
+      final text = switch (action) {
+        ProblemsCopyAction.message =>
+          markers.map((marker) => marker['message'] ?? '').join('\n'),
+        ProblemsCopyAction.diagnostics => const JsonEncoder.withIndent('\t')
+            .convert(markers.map((marker) {
+          final document = documentsById[marker['_documentId']];
+          final uri = Uri.tryParse(document?.uri ?? '');
+          final resource = uri != null && uri.path.isNotEmpty
+              ? Uri.decodeComponent(uri.path)
+              : document?.path ?? '${marker['file'] ?? ''}';
+          return <String, Object?>{
+            'resource': resource,
+            'severity': switch (marker['severity']) {
+              1 => 8,
+              2 => 4,
+              4 => 1,
+              _ => 2,
+            },
+            'message': '${marker['message'] ?? ''}',
+            if (marker['source'] case final String source) 'source': source,
+            if (marker['code'] case final Object code) 'code': code,
+            for (final (field, source) in const [
+              ('startLineNumber', 'line'),
+              ('startColumn', 'character'),
+              ('endLineNumber', 'endLine'),
+              ('endColumn', 'endCharacter'),
+            ])
+              if (marker[source] case final int value) field: value + 1,
+          };
+        }).toList()),
+      };
+      return Clipboard.setData(ClipboardData(text: text));
+    }
+
+    Future<void> showTableContextMenu(
+      ProblemsTableSelection selection,
+      int index, [
+      Offset? globalPosition,
+    ]) async {
+      if (selection.contextMenuOpen || !mounted || _disposing) return;
+      final key = ValueKey(selectionRows[index]);
+      const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtEnd;
+      if (!focusRenderedResult(key, alignment)) return;
+      final overlay = Navigator.of(context).overlay?.context.findRenderObject();
+      if (overlay is! RenderBox || !overlay.attached) return;
+      final focusedRow =
+          FocusManager.instance.primaryFocus?.context?.findRenderObject();
+      final anchor = globalPosition ??
+          (focusedRow is RenderBox && focusedRow.attached && focusedRow.hasSize
+              ? focusedRow.localToGlobal(Offset(0, focusedRow.size.height))
+              : null);
+      if (anchor == null) return;
+
+      selection.registerRowActivation(selectionRows[index], null);
+      selection.contextMenuOpen = true;
+      try {
+        final menuWorkspace = _workspaceRoot;
+        final action = await showMenu<ProblemsCopyAction>(
+          context: context,
+          position: RelativeRect.fromRect(
+            overlay.globalToLocal(anchor) & Size.zero,
+            Offset.zero & overlay.size,
+          ),
+          items: const [
+            PopupMenuItem(
+              key: ValueKey('problems-table-copy'),
+              value: ProblemsCopyAction.diagnostics,
+              child: Text('复制'),
+            ),
+            PopupMenuItem(
+              key: ValueKey('problems-table-copy-message'),
+              value: ProblemsCopyAction.message,
+              child: Text('复制消息'),
+            ),
+          ],
+        );
+        if (!mounted ||
+            _disposing ||
+            !_problemsTableMode ||
+            _workspaceRoot != menuWorkspace) {
+          return;
+        }
+        focusRenderedResult(key, alignment);
+        if (action != null) {
+          await copyTableDiagnostics(selection, index, action);
+        }
+      } finally {
+        selection.contextMenuOpen = false;
+      }
+    }
+
     Widget list([ProblemsTableSelection? selection]) => ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
@@ -31638,7 +31741,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
           row = RawGestureDetector(
             key: ValueKey(selectionRows[i]),
-            gestures: {SerialTapGestureRecognizer: mouseTaps},
+            gestures: {
+              SerialTapGestureRecognizer: mouseTaps,
+              TapGestureRecognizer:
+                  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                TapGestureRecognizer.new,
+                (recognizer) {
+                  recognizer.onSecondaryTapUp = (details) => unawaited(
+                        showTableContextMenu(
+                          tableSelection,
+                          i,
+                          details.globalPosition,
+                        ),
+                      );
+                },
+              ),
+            },
             child: tile,
           );
         } else {
@@ -31663,8 +31781,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           );
         }
+        final mac = Theme.of(context).platform == TargetPlatform.macOS;
         return CallbackShortcuts(
           bindings: {
+            if (selection != null) ...{
+              const SingleActivator(
+                LogicalKeyboardKey.contextMenu,
+                includeRepeats: false,
+              ): () => unawaited(showTableContextMenu(selection, i)),
+              const SingleActivator(
+                LogicalKeyboardKey.f10,
+                shift: true,
+                includeRepeats: false,
+              ): () => unawaited(showTableContextMenu(selection, i)),
+              SingleActivator(
+                LogicalKeyboardKey.keyC,
+                control: !mac,
+                meta: mac,
+                includeRepeats: false,
+              ): () => unawaited(
+                    copyTableDiagnostics(
+                      selection,
+                      i,
+                      ProblemsCopyAction.diagnostics,
+                    ),
+                  ),
+            },
             if (!tableMode) ...{
               const SingleActivator(LogicalKeyboardKey.arrowUp):
                   () => focusResultAt(i - 1, forward: false),

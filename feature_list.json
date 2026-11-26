@@ -4561,6 +4561,18 @@
       "evidence": "Problems 表格普通单击预览并保留结果焦点，双击打开并固定已有预览标签。Windows 和 Linux 各通过 17 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 63f56696 的 CI 45834954426 四项与 Platform Availability 45834940305 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.306-problems-mouse-preview.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-359",
+      "name": "P05.307 LAY-16 / CMD-11 Problems 表格上下文菜单与诊断复制",
+      "description": "在 Problems 表格通过右键或键盘打开上下文菜单，复制结构化诊断或仅复制消息。保留表格选择、结果焦点和编辑器位置。",
+      "dependencies": [
+        "feat-358"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
