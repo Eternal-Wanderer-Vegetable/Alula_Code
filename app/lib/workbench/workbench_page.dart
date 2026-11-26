@@ -738,6 +738,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final TextEditingController _problemsFilterController = TextEditingController();
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
   bool _problemsActiveFileOnly = false;
+  final _collapsedProblemGroups = Expando<bool>();
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -30914,16 +30915,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     // Diagnostics are published in contiguous batches per document. Record
     // the section boundaries so the virtual list can address the original rows.
-    final pathsById = {for (final doc in _allDocs) doc.id: doc.path};
+    final documentsById = {for (final doc in _allDocs) doc.id: doc};
     final workspace = _workspaceRoot;
     final groups = <({
       Object? identity,
+      Object? document,
+      bool expanded,
       String fileName,
       String? directory,
       int firstDiagnostic,
       int firstItem,
       int count,
     })>[];
+    var itemCount = 0;
     for (var first = 0; first < diagnostics.length;) {
       final marker = diagnostics[first];
       final identity = marker['_documentId'] ?? marker['file'];
@@ -30933,7 +30937,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               identity) {
         end++;
       }
-      final path = pathsById[marker['_documentId']];
+      final openDocument = documentsById[marker['_documentId']];
+      final document = openDocument?._shared;
+      final expanded =
+          document == null || _collapsedProblemGroups[document] != true;
+      final path = openDocument?.path;
       String? directory;
       if (path != null) {
         directory = p.dirname(path);
@@ -30946,16 +30954,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       groups.add((
         identity: identity,
+        document: document,
+        expanded: expanded,
         fileName: '${marker['file'] ?? ''}',
         directory: directory,
         firstDiagnostic: first,
-        firstItem: first + groups.length,
+        firstItem: itemCount,
         count: end - first,
       ));
+      itemCount += 1 + (expanded ? end - first : 0);
       first = end;
     }
     return ListView.builder(
-      itemCount: diagnostics.length + groups.length,
+      itemCount: itemCount,
       itemBuilder: (context, i) {
         var low = 0;
         var high = groups.length - 1;
@@ -30972,54 +30983,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (i == group.firstItem) {
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
+          final document = group.document;
+          final VoidCallback? toggle = document == null
+              ? null
+              : () => setState(() {
+                    _collapsedProblemGroups[document] =
+                        _collapsedProblemGroups[document] == true ? null : true;
+                  });
           return Semantics(
             key: ValueKey(
               'problems-file-group-${group.identity ?? group.firstDiagnostic}',
             ),
             container: true,
             header: true,
+            button: toggle != null,
+            expanded: toggle == null ? null : group.expanded,
+            onTap: toggle,
             excludeSemantics: true,
             label: [
               fileName,
               if (directory != null) directory,
               '${group.count} 条诊断',
             ].join('，'),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
-              child: Row(
-                children: [
-                  const Icon(Icons.description_outlined, size: 14),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        text: fileName,
-                        children: [
-                          if (directory != null)
-                            TextSpan(
-                              text: '  $directory',
-                              style: TextStyle(
-                                color: colors.onSurfaceVariant,
-                                fontWeight: FontWeight.normal,
+            child: InkWell(
+              onTap: toggle,
+              excludeFromSemantics: true,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+                child: Row(
+                  children: [
+                    if (toggle != null) ...[
+                      Icon(
+                        group.expanded ? Icons.expand_more : Icons.chevron_right,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 2),
+                    ],
+                    const Icon(Icons.description_outlined, size: 14),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text.rich(
+                        TextSpan(
+                          text: fileName,
+                          children: [
+                            if (directory != null)
+                              TextSpan(
+                                text: '  $directory',
+                                style: TextStyle(
+                                  color: colors.onSurfaceVariant,
+                                  fontWeight: FontWeight.normal,
+                                ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Badge(
-                    backgroundColor: colors.surfaceContainerHighest,
-                    textColor: colors.onSurfaceVariant,
-                    label: Text('${group.count}'),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Badge(
+                      backgroundColor: colors.surfaceContainerHighest,
+                      textColor: colors.onSurfaceVariant,
+                      label: Text('${group.count}'),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

@@ -4369,6 +4369,18 @@
       "evidence": "Problems 按文档显示文件名、目录和可见诊断数，同名文件分组独立。Windows 和 Linux 各通过 15 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c3ea41be 的 CI 45749684572 四项与 Platform Availability 45749681680 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.290-problems-file-groups.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-343",
+      "name": "P05.291 CMD-11 Problems 文件组收起和展开",
+      "description": "允许通过鼠标和键盘控制文件组的展开状态，并在筛选或收起面板后保留该状态。",
+      "dependencies": [
+        "feat-342"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
