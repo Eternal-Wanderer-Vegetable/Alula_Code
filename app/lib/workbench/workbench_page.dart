@@ -31252,12 +31252,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-    bool focusResultAt(int item, {required bool forward}) {
+    bool focusResultAt(
+      int item, {
+      required bool forward,
+      ValueChanged<int>? onFocused,
+    }) {
       if (item < 0 || item >= itemCount) return false;
       final groupIndex = groupIndexAtItem(item);
       final groupKey = groupKeyAt(groupIndex);
       final withinGroup = item - groups[groupIndex].firstItem;
-      return focusRenderedResult(
+      final focused = focusRenderedResult(
         !tableMode && withinGroup == 0
             ? groupKey
             : ValueKey((groupKey, withinGroup + (tableMode ? 1 : 0))),
@@ -31265,6 +31269,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? ScrollPositionAlignmentPolicy.keepVisibleAtEnd
             : ScrollPositionAlignmentPolicy.keepVisibleAtStart,
       );
+      if (focused) onFocused?.call(item);
+      return focused;
     }
 
     ({RenderSliverList sliver, ScrollPosition position})? laidOutResults() {
@@ -31289,9 +31295,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return (sliver: sliver, position: position);
     }
 
-    void focusBoundary({required bool forward}) {
+    void focusBoundary({
+      required bool forward,
+      ValueChanged<int>? onFocused,
+    }) {
       final item = forward ? itemCount - 1 : 0;
-      if (focusResultAt(item, forward: forward)) return;
+      if (focusResultAt(item, forward: forward, onFocused: onFocused)) return;
       final layout = laidOutResults();
       if (layout == null) return;
       final (:sliver, :position) = layout;
@@ -31302,7 +31311,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         jumpResults(
           sliver, position, offset,
           (_) {
-            if (!focusResultAt(item, forward: forward) && remaining > 1) {
+            if (!focusResultAt(item, forward: forward, onFocused: onFocused) &&
+                remaining > 1) {
               reveal(remaining - 1);
             }
           },
@@ -31346,7 +31356,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return render is RenderBox ? sliver.indexOf(render) : null;
     }
 
-    void focusPage({required bool forward}) {
+    void focusPage({
+      required bool forward,
+      ValueChanged<int>? onFocused,
+    }) {
       final layout = laidOutResults();
       if (layout == null) return;
       final (:sliver, :position) = layout;
@@ -31354,7 +31367,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final edge = pageEdge(sliver, position, forward: forward);
       if (edge != null &&
           (current == null || (forward ? edge > current : edge < current)) &&
-          focusResultAt(edge, forward: forward)) {
+          focusResultAt(edge, forward: forward, onFocused: onFocused)) {
         return;
       }
 
@@ -31362,7 +31375,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           (forward ? position.viewportDimension : -position.viewportDimension);
       jumpResults(sliver, position, offset, (_) {
         final next = pageEdge(sliver, position, forward: forward);
-        if (next != null) focusResultAt(next, forward: forward);
+        if (next != null) {
+          focusResultAt(next, forward: forward, onFocused: onFocused);
+        }
       });
     }
 
@@ -31586,10 +31601,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         return CallbackShortcuts(
           bindings: {
-            const SingleActivator(LogicalKeyboardKey.arrowUp):
-                () => focusResultAt(i - 1, forward: false),
-            const SingleActivator(LogicalKeyboardKey.arrowDown):
-                () => focusResultAt(i + 1, forward: true),
+            if (!tableMode) ...{
+              const SingleActivator(LogicalKeyboardKey.arrowUp):
+                  () => focusResultAt(i - 1, forward: false),
+              const SingleActivator(LogicalKeyboardKey.arrowDown):
+                  () => focusResultAt(i + 1, forward: true),
+            },
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
               if (!tableMode) {
                 focusFileGroup(groupKey, group.firstItem, group.document);
@@ -31607,21 +31624,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return layout == null ? null : focusedResultIndex(layout.sliver);
     }
 
-    void focusAndExtend(
-      ProblemsTableSelection selection, {
-      required bool forward,
-    }) {
+    void moveTableFocus(
+      bool forward,
+      void Function(int? previous, int next) onMoved,
+    ) {
       final previous = currentResultIndex();
       final next = previous == null
           ? 0
           : (previous + (forward ? 1 : -1)).clamp(0, itemCount - 1).toInt();
-      if (focusResultAt(next, forward: forward)) {
-        selection.extendAfterFocus(selectionRows, previous, next);
-      }
+      if (focusResultAt(next, forward: forward)) onMoved(previous, next);
+    }
+
+    void focusAndExtend(
+      ProblemsTableSelection selection, {
+      required bool forward,
+    }) {
+      moveTableFocus(
+        forward,
+        (previous, next) =>
+            selection.extendAfterFocus(selectionRows, previous, next),
+      );
+    }
+
+    void focusAndFollow(
+      ProblemsTableSelection selection, {
+      required bool forward,
+    }) {
+      moveTableFocus(
+        forward,
+        (previous, next) =>
+            selection.followNavigation(selectionRows, previous, next),
+      );
     }
 
     Widget withResultShortcuts([ProblemsTableSelection? selection]) {
       final mac = Theme.of(context).platform == TargetPlatform.macOS;
+      ValueChanged<int>? afterNavigation() {
+        if (selection == null) return null;
+        final previous = currentResultIndex();
+        if (previous != null) {
+          selection.followNavigation(selectionRows, previous, previous);
+        }
+        return (next) =>
+            selection.followNavigation(selectionRows, previous, next);
+      }
+
       return resultsRegion(
         list(selection),
         onKeyEvent: selection == null
@@ -31644,14 +31691,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               },
         shortcuts: {
           const SingleActivator(LogicalKeyboardKey.home):
-              () => focusBoundary(forward: false),
+              () => focusBoundary(forward: false, onFocused: afterNavigation()),
           const SingleActivator(LogicalKeyboardKey.end):
-              () => focusBoundary(forward: true),
+              () => focusBoundary(forward: true, onFocused: afterNavigation()),
           const SingleActivator(LogicalKeyboardKey.pageUp):
-              () => focusPage(forward: false),
+              () => focusPage(forward: false, onFocused: afterNavigation()),
           const SingleActivator(LogicalKeyboardKey.pageDown):
-              () => focusPage(forward: true),
+              () => focusPage(forward: true, onFocused: afterNavigation()),
           if (selection != null) ...{
+            const SingleActivator(LogicalKeyboardKey.arrowUp):
+                () => focusAndFollow(selection, forward: false),
+            const SingleActivator(LogicalKeyboardKey.arrowDown):
+                () => focusAndFollow(selection, forward: true),
             const SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
                 () => focusAndExtend(selection, forward: false),
             const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):

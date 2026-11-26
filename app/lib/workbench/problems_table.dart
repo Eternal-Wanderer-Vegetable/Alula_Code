@@ -222,6 +222,24 @@ class ProblemsTableSelection {
     if (_anchor != null && !rows.contains(_anchor)) _anchor = null;
   }
 
+  void followNavigation(List<Object> rows, int? previousIndex, int nextIndex) {
+    final previous = previousIndex == null ? null : rows[previousIndex];
+    final next = rows[nextIndex];
+    _anchor = next;
+    if (previous == next) return;
+
+    final followsFocus = previous == null
+        ? _selected.isEmpty
+        : _selected.length == 1 && _selected.contains(previous);
+    if (!followsFocus) return;
+
+    _update(() {
+      _selected
+        ..clear()
+        ..add(next);
+    });
+  }
+
   bool clearForEscape(Object? focusedKey) {
     final retained = _selected.length > 1 ? focusedKey : null;
     _update(() {
