@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.285 / feat-337 完成。Problems 筛选隐藏诊断时显示匹配数与工作区总数。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 f5edd5f5 的 CI 45728723879 四项与 Platform Availability 45728716888 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.285-problems-filter-count.md。
 - P05.284 / feat-336 完成。Problems 使用 Ctrl+F 聚焦筛选，Ctrl+↓ 聚焦结果，保留查询和选区。Windows 和 Linux 各通过 20 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6590fa1f 的 CI 45725008755 四项与 Platform Availability 45725003640 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.284-problems-focus-routes.md。
 - P05.283 / feat-335 完成。Problems 无匹配时可清除筛选。重置文本与错误、警告、信息级别，保留活动文件范围。Windows 通过 27 个原生检查点，Linux 通过 29 个。专题 184/184，Flutter 1,888 项通过、2 项跳过。产品 7452ea34 的 CI 45719548456 四项与 Platform Availability 45719537632 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.283-problems-clear-filters.md。
 - P05.282 / feat-334 完成。Problems 可仅显示活动文件，随编辑器切换更新，同步应用文本和级别筛选。Windows、Linux 各通过 29 个真实 rust-analyzer 检查点。专题 184/184，Flutter 1,888 passed / 2 skipped。产品 25237a38 的 CI 45713333226 四项与 Platform Availability 45713325741 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.282-problems-active-file.md。
@@ -62,7 +63,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 CMD-11 Problems 筛选计数。通用面板切换的状态栏同步留在布局项。当前 Problems 行的零基位置显示留在面板呈现项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 CMD-11 Problems 文本反选筛选。通用面板切换的状态栏同步留在布局项。当前 Problems 行的零基位置显示留在面板呈现项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
