@@ -31691,10 +31691,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               bindings: {
                 ...clipboardShortcuts(openMenu, getMarkers),
                 if (document != null) ...{
-                  const SingleActivator(LogicalKeyboardKey.arrowUp):
-                      () => focusResultAt(i - 1, forward: false),
-                  const SingleActivator(LogicalKeyboardKey.arrowDown):
-                      () => focusResultAt(i + 1, forward: true),
                   const SingleActivator(LogicalKeyboardKey.arrowLeft):
                       () => setCollapsed(true),
                   const SingleActivator(LogicalKeyboardKey.arrowRight): () {
@@ -31909,12 +31905,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return CallbackShortcuts(
           bindings: {
             ...clipboardShortcuts(openMenu, getMarkers),
-            if (!tableMode) ...{
-              const SingleActivator(LogicalKeyboardKey.arrowUp):
-                  () => focusResultAt(i - 1, forward: false),
-              const SingleActivator(LogicalKeyboardKey.arrowDown):
-                  () => focusResultAt(i + 1, forward: true),
-            },
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
               if (!tableMode) {
                 focusFileGroup(groupKey, group.firstItem, group.document);
@@ -31980,7 +31970,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       int? previous,
       int next,
     ) {
-      if (selection.followNavigation(selectionRows, previous, next)) {
+      if (selection.followNavigation(selectionRows, previous, next) &&
+          tableMode) {
         previewDiagnostic(selection, next);
       }
     }
@@ -32023,8 +32014,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     Widget withResultShortcuts(ProblemsResultSelection selection) {
       final mac = Theme.of(context).platform == TargetPlatform.macOS;
-      ValueChanged<int>? afterNavigation() {
-        if (!tableMode) return null;
+      ValueChanged<int> afterNavigation() {
         final previous = currentResultIndex();
         if (previous != null) {
           selection.followNavigation(selectionRows, previous, previous);
@@ -32062,12 +32052,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               () => focusPage(forward: false, onFocused: afterNavigation()),
           const SingleActivator(LogicalKeyboardKey.pageDown):
               () => focusPage(forward: true, onFocused: afterNavigation()),
-          if (tableMode) ...{
-            const SingleActivator(LogicalKeyboardKey.arrowUp):
-                () => focusAndFollow(selection, forward: false),
-            const SingleActivator(LogicalKeyboardKey.arrowDown):
-                () => focusAndFollow(selection, forward: true),
-          },
+          const SingleActivator(LogicalKeyboardKey.arrowUp):
+              () => focusAndFollow(selection, forward: false),
+          const SingleActivator(LogicalKeyboardKey.arrowDown):
+              () => focusAndFollow(selection, forward: true),
           const SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
               () => focusAndExtend(selection, forward: false),
           const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
