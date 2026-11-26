@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.314 / feat-366 完成。Problems 树诊断行单击预览并保留焦点，双击显式打开并固定已有预览标签。Windows、Linux 各通过 20 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a7ed06f5 的 CI 45873005067 四项与 Platform Availability 45872997470 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.314-problems-tree-mouse-preview.md。
 - P05.313 / feat-365 完成。Problems 树键盘单项选择预览精确诊断范围，并保留树结果焦点。Windows、Linux 各通过 32 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 1ca25bd4 的 CI 45867472563 四项与 Platform Availability 45869286072 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.313-problems-tree-keyboard-preview.md。
 - P05.312 / feat-364 完成。Problems 树在普通键盘导航时更新与焦点匹配的单选，并刷新 Shift 范围锚点。Windows、Linux 各通过 33 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a4bc6d41 的 CI 45863284974 四项与 Platform Availability 45863274864 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.312-problems-tree-selection-navigation.md。
 - P05.311 / feat-363 完成。Problems 树结果区支持 Escape 收拢多选、清除行焦点并重置范围锚点。Windows、Linux 各通过 34 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c807ef48 的 CI 45858875538 四项与 Platform Availability 45858861008 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.311-problems-tree-escape.md。
@@ -331,6 +332,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.314 Problems 树鼠标单击预览与双击打开](docs/diagnostics/2026-11-27-p05/p05.314-problems-tree-mouse-preview.md)。
 [P05.313 Problems 树键盘诊断预览与保留焦点](docs/diagnostics/2026-11-27-p05/p05.313-problems-tree-keyboard-preview.md)。
 [P05.312 Problems 树单选跟随普通键盘焦点](docs/diagnostics/2026-11-27-p05/p05.312-problems-tree-selection-navigation.md)。
 [P05.311 Problems 树 Escape 选择与焦点恢复](docs/diagnostics/2026-11-27-p05/p05.311-problems-tree-escape.md)。
@@ -551,4 +553,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.313 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 树鼠标单击预览与双击打开。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.314 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 筛选框进入结果区的焦点目标。PR #3 保持草稿，macOS 实机暂缓。

@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.314 / feat-366 完成。Problems 树诊断行单击预览并保留焦点，双击显式打开并固定已有预览标签。Windows、Linux 各通过 20 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a7ed06f5 的 CI 45873005067 四项与 Platform Availability 45872997470 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.314-problems-tree-mouse-preview.md。
 - P05.313 / feat-365 完成。Problems 树键盘单项选择预览精确诊断范围，并保留树结果焦点。Windows、Linux 各通过 32 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 1ca25bd4 的 CI 45867472563 四项与 Platform Availability 45869286072 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.313-problems-tree-keyboard-preview.md。
 - P05.312 / feat-364 完成。Problems 树在普通键盘导航时更新与焦点匹配的单选，并刷新 Shift 范围锚点。Windows、Linux 各通过 33 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a4bc6d41 的 CI 45863284974 四项与 Platform Availability 45863274864 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.312-problems-tree-selection-navigation.md。
 - P05.311 / feat-363 完成。Problems 树结果区支持 Escape 收拢多选、清除行焦点并重置范围锚点。Windows、Linux 各通过 34 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 c807ef48 的 CI 45858875538 四项与 Platform Availability 45858861008 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.311-problems-tree-escape.md。
@@ -91,7 +92,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 树鼠标单击预览与双击打开。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。 Linux 复验中展开文件组后，筛选框 Ctrl+Down 将焦点移到第 82 行诊断，此目标选择留待与固定版单独核对。
+- 下一步。按固定版本推进 LAY-16 / CMD-11 Problems 筛选框进入结果区的焦点目标。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。双平台实测中重新展开文件组后，筛选框 Ctrl+Down 移至第 82 行诊断。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
