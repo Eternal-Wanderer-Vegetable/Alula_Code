@@ -4605,8 +4605,8 @@
       "dependencies": [
         "feat-361"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 树支持分层全选、Shift 调整范围和主键加 Shift+Enter 切换获焦项。Windows、Linux 各通过 29 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6a26b212 的 CI 45854554105 四项与 Platform Availability 45854546374 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.310-problems-tree-keyboard-selection.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
