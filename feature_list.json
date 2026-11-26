@@ -4401,8 +4401,8 @@
       "dependencies": [
         "feat-344"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 获焦文件组用左方向键折叠、右方向键展开。Windows 和 Linux 各通过 21 个原生检查点。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b49c7c23 的 CI 45762648173 四项与 Platform Availability 45762643498 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.293-problems-group-arrows.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
