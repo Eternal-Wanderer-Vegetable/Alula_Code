@@ -4717,6 +4717,18 @@
       "evidence": "Problems 树分别标出文件名、逐行消息、来源和代码中的匹配。表格在对应列标出匹配。Windows 与 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 7f76f138 的 CI 45893336652 四项与 Platform Availability 45893327178 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.319-problems-match-highlights.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-372",
+      "name": "P05.320 LAY-16 Problems 诊断悬停状态",
+      "description": "Problems 树按悬停目标显示完整诊断或文件路径，表格按列显示消息、来源、诊断代码和路径位置。复验挂载和释放、选择焦点及原生提示。",
+      "dependencies": [
+        "feat-371"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

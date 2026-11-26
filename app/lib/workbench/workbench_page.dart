@@ -31059,6 +31059,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required bool hasProblems,
     required bool hasProblemsInScope,
   }) {
+    Widget hoverLabel(Key key, String message, Widget child) {
+      if (message.isEmpty) return child;
+      return Tooltip(
+        key: key,
+        message: message,
+        excludeFromSemantics: true,
+        triggerMode: TooltipTriggerMode.manual,
+        waitDuration: const Duration(milliseconds: 300),
+        constraints: const BoxConstraints(maxWidth: 480),
+        margin: const EdgeInsets.all(8),
+        child: child,
+      );
+    }
+
     TextSpan matchLabel(String label) => highlightQuery.isEmpty || label.isEmpty
         ? TextSpan(text: label)
         : treeFindLabel(
@@ -31177,6 +31191,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       Object? document,
       bool expanded,
       String fileName,
+      String? path,
       String? directory,
       int firstDiagnostic,
       int firstItem,
@@ -31212,6 +31227,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         document: document,
         expanded: expanded,
         fileName: '${marker['file'] ?? ''}',
+        path: path == null ? null : p.normalize(path),
         directory: directory,
         firstDiagnostic: first,
         firstItem: itemCount,
@@ -31844,27 +31860,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         const Icon(Icons.description_outlined, size: 14),
                         const SizedBox(width: 6),
                         Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              text: fileLabel.text,
-                              children: [
-                                ...?fileLabel.children,
-                                if (directory != null)
-                                  TextSpan(
-                                    text: '  $directory',
-                                    style: TextStyle(
-                                      color: colors.onSurfaceVariant,
-                                      fontWeight: FontWeight.normal,
+                          child: hoverLabel(
+                            groupKey,
+                            group.path ?? fileName,
+                            Text.rich(
+                              TextSpan(
+                                text: fileLabel.text,
+                                children: [
+                                  ...?fileLabel.children,
+                                  if (directory != null)
+                                    TextSpan(
+                                      text: '  $directory',
+                                      style: TextStyle(
+                                        color: colors.onSurfaceVariant,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
-                                  ),
-                              ],
+                                ],
+                              ),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -31958,13 +31978,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
                 child: Icon(icon, size: 14, color: color),
               ),
-              code: tableLabel(code),
-              message: tableMessage(message),
-              file: tableLabel(
-                filePath,
-                suffix: location == null ? '' : ' $location',
+              code: hoverLabel(
+                menuRowKey,
+                source.isNotEmpty && code.isNotEmpty ? '$source ($code)' : '',
+                tableLabel(code),
               ),
-              source: tableLabel(source),
+              message: hoverLabel(menuRowKey, message, tableMessage(message)),
+              file: hoverLabel(
+                menuRowKey,
+                location == null
+                    ? group.path ?? filePath
+                    : '${group.path ?? filePath} $location',
+                tableLabel(
+                  filePath,
+                  suffix: location == null ? '' : ' $location',
+                ),
+              ),
+              source: hoverLabel(menuRowKey, source, tableLabel(source)),
             ),
           );
         } else {
@@ -32067,47 +32097,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               padding: EdgeInsets.only(top: (treeLineHeight - 16) / 2),
               child: Icon(icon, size: 16, color: color),
             ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: treeLineHeight,
-                  child: Row(
-                    children: [
-                      Flexible(flex: 2, child: messageLine(lines.first)),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: metadata != null
-                            ? Text.rich(
-                                metadata,
-                                key: const ValueKey('problems-tree-location'),
-                                semanticsLabel: metadataLabel,
-                                style: metadataStyle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : Text(
-                                description,
-                                key: const ValueKey('problems-tree-location'),
-                                semanticsLabel: metadataLabel,
-                                style: metadataStyle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                      ),
-                      if (messageToggle != null) SizedBox(width: treeLineHeight),
-                    ],
-                  ),
-                ),
-                for (final line in singleLine ? const <String>[] : lines.skip(1))
+            title: hoverLabel(
+              menuRowKey,
+              message,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   SizedBox(
                     height: treeLineHeight,
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: messageLine(line),
+                    child: Row(
+                      children: [
+                        Flexible(flex: 2, child: messageLine(lines.first)),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: metadata != null
+                              ? Text.rich(
+                                  metadata,
+                                  key: const ValueKey('problems-tree-location'),
+                                  semanticsLabel: metadataLabel,
+                                  style: metadataStyle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : Text(
+                                  description,
+                                  key: const ValueKey('problems-tree-location'),
+                                  semanticsLabel: metadataLabel,
+                                  style: metadataStyle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                        ),
+                        if (messageToggle != null) SizedBox(width: treeLineHeight),
+                      ],
                     ),
                   ),
-              ],
+                  for (final line in singleLine ? const <String>[] : lines.skip(1))
+                    SizedBox(
+                      height: treeLineHeight,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: messageLine(line),
+                      ),
+                    ),
+                ],
+              ),
             ),
           );
         }
