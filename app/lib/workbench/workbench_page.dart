@@ -744,6 +744,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Set<int> _visibleProblemSeverities = {1, 2, 3};
   bool _problemsActiveFileOnly = false;
   bool _problemsTableMode = false;
+  bool _problemsContextMenuOpen = false;
   final _collapsedProblemGroups = Expando<bool>();
   final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
@@ -31425,22 +31426,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
     }
 
-    Future<void> copyTableDiagnostics(
+    Iterable<Map<String, Object?>> tableClipboardRows(
       ProblemsTableSelection selection,
       int index,
+    ) sync* {
+      if (!selection.contains(selectionRows[index])) {
+        yield diagnostics[index];
+        return;
+      }
+      for (var i = 0; i < diagnostics.length; i++) {
+        if (selection.contains(selectionRows[i])) yield diagnostics[i];
+      }
+    }
+
+    Iterable<Map<String, Object?>> fileClipboardRows(Object? identity) =>
+        _diagnostics.where((marker) {
+          final severity = (marker['severity'] as num?)?.toInt() ?? 3;
+          return (marker['_documentId'] ?? marker['file']) == identity &&
+              severity >= 1 &&
+              severity <= 3;
+        });
+
+    Future<void> copyProblems(
+      Iterable<Map<String, Object?>> markers,
       ProblemsCopyAction action,
-    ) {
-      final markers = selection.contains(selectionRows[index])
-          ? [
-              for (var i = 0; i < diagnostics.length; i++)
-                if (selection.contains(selectionRows[i])) diagnostics[i],
-            ]
-          : [diagnostics[index]];
+    ) async {
+      final rows = markers.toList();
+      if (rows.isEmpty) return;
       final text = switch (action) {
         ProblemsCopyAction.message =>
-          markers.map((marker) => marker['message'] ?? '').join('\n'),
+          rows.map((marker) => marker['message'] ?? '').join('\n'),
         ProblemsCopyAction.diagnostics => const JsonEncoder.withIndent('\t')
-            .convert(markers.map((marker) {
+            .convert(rows.map((marker) {
           final document = documentsById[marker['_documentId']];
           final uri = Uri.tryParse(document?.uri ?? '');
           final resource = uri != null && uri.path.isNotEmpty
@@ -31467,16 +31484,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           };
         }).toList()),
       };
-      return Clipboard.setData(ClipboardData(text: text));
+      await Clipboard.setData(ClipboardData(text: text));
     }
 
-    Future<void> showTableContextMenu(
-      ProblemsTableSelection selection,
-      int index, [
+    Future<void> showProblemsContextMenu(
+      Key key,
+      Iterable<Map<String, Object?>> Function() getMarkers, {
+      bool copyMessage = true,
       Offset? globalPosition,
-    ]) async {
-      if (selection.contextMenuOpen || !mounted || _disposing) return;
-      final key = ValueKey(selectionRows[index]);
+      VoidCallback? beforeShow,
+    }) async {
+      if (_problemsContextMenuOpen || !mounted || _disposing) return;
       const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtEnd;
       if (!focusRenderedResult(key, alignment)) return;
       final overlay = Navigator.of(context).overlay?.context.findRenderObject();
@@ -31489,8 +31507,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : null);
       if (anchor == null) return;
 
-      selection.registerRowActivation(selectionRows[index], null);
-      selection.contextMenuOpen = true;
+      beforeShow?.call();
+      final menuKeyPrefix = tableMode ? 'problems-table' : 'problems-tree';
+      _problemsContextMenuOpen = true;
       try {
         final menuWorkspace = _workspaceRoot;
         final action = await showMenu<ProblemsCopyAction>(
@@ -31499,33 +31518,59 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             overlay.globalToLocal(anchor) & Size.zero,
             Offset.zero & overlay.size,
           ),
-          items: const [
+          items: [
             PopupMenuItem(
-              key: ValueKey('problems-table-copy'),
+              key: ValueKey('$menuKeyPrefix-copy'),
               value: ProblemsCopyAction.diagnostics,
-              child: Text('复制'),
+              child: const Text('复制'),
             ),
-            PopupMenuItem(
-              key: ValueKey('problems-table-copy-message'),
-              value: ProblemsCopyAction.message,
-              child: Text('复制消息'),
-            ),
+            if (copyMessage)
+              PopupMenuItem(
+                key: ValueKey('$menuKeyPrefix-copy-message'),
+                value: ProblemsCopyAction.message,
+                child: const Text('复制消息'),
+              ),
           ],
         );
         if (!mounted ||
             _disposing ||
-            !_problemsTableMode ||
-            _workspaceRoot != menuWorkspace) {
+            _problemsTableMode != tableMode ||
+            _workspaceRoot != menuWorkspace ||
+            !focusRenderedResult(key, alignment)) {
           return;
         }
-        focusRenderedResult(key, alignment);
         if (action != null) {
-          await copyTableDiagnostics(selection, index, action);
+          await copyProblems(getMarkers(), action);
         }
       } finally {
-        selection.contextMenuOpen = false;
+        _problemsContextMenuOpen = false;
       }
     }
+
+
+    final macPlatform = Theme.of(context).platform == TargetPlatform.macOS;
+    Map<ShortcutActivator, VoidCallback> clipboardShortcuts(
+      VoidCallback openMenu,
+      Iterable<Map<String, Object?>> Function() getMarkers,
+    ) => {
+          const SingleActivator(
+            LogicalKeyboardKey.contextMenu,
+            includeRepeats: false,
+          ): openMenu,
+          const SingleActivator(
+            LogicalKeyboardKey.f10,
+            shift: true,
+            includeRepeats: false,
+          ): openMenu,
+          SingleActivator(
+            LogicalKeyboardKey.keyC,
+            control: !macPlatform,
+            meta: macPlatform,
+            includeRepeats: false,
+          ): () => unawaited(
+                copyProblems(getMarkers(), ProblemsCopyAction.diagnostics),
+              ),
+        };
 
     Widget list([ProblemsTableSelection? selection]) => ListView.builder(
       controller: _problemsScrollController,
@@ -31539,6 +31584,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
           final document = group.document;
+          Iterable<Map<String, Object?>> getMarkers() =>
+              fileClipboardRows(group.identity);
+          void openMenu([Offset? position]) => unawaited(
+                showProblemsContextMenu(
+                  groupKey,
+                  getMarkers,
+                  copyMessage: false,
+                  globalPosition: position,
+                ),
+              );
           void setCollapsed(bool collapsed) {
             if (document == null ||
                 (_collapsedProblemGroups[document] == true) == collapsed) {
@@ -31567,6 +31622,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ].join('，'),
             child: CallbackShortcuts(
               bindings: {
+                ...clipboardShortcuts(openMenu, getMarkers),
                 if (document != null) ...{
                   const SingleActivator(LogicalKeyboardKey.arrowUp):
                       () => focusResultAt(i - 1, forward: false),
@@ -31588,6 +31644,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               },
               child: InkWell(
                 onTap: toggle,
+                onSecondaryTapUp: (details) => openMenu(details.globalPosition),
                 excludeFromSemantics: true,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
@@ -31659,6 +31716,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? null
             : '[Ln ${position.line}, Col ${position.column}]';
         final rowKey = ValueKey((groupKey, rowNumber));
+        final menuRowKey = selection == null ? rowKey : ValueKey(selectionRows[i]);
+        Iterable<Map<String, Object?>> getMarkers() =>
+            selection == null ? [d] : tableClipboardRows(selection, i);
+        void openMenu([Offset? position]) => unawaited(
+              showProblemsContextMenu(
+                menuRowKey,
+                getMarkers,
+                globalPosition: position,
+                beforeShow: selection == null
+                    ? null
+                    : () => selection.registerRowActivation(selectionRows[i], null),
+              ),
+            );
         final onOpen = canOpen ? () => _openDiagnostic(d) : null;
         final Widget row;
         if (tableMode) {
@@ -31740,20 +31810,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             },
           );
           row = RawGestureDetector(
-            key: ValueKey(selectionRows[i]),
+            key: menuRowKey,
             gestures: {
               SerialTapGestureRecognizer: mouseTaps,
               TapGestureRecognizer:
                   GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
                 TapGestureRecognizer.new,
                 (recognizer) {
-                  recognizer.onSecondaryTapUp = (details) => unawaited(
-                        showTableContextMenu(
-                          tableSelection,
-                          i,
-                          details.globalPosition,
-                        ),
-                      );
+                  recognizer.onSecondaryTapUp =
+                      (details) => openMenu(details.globalPosition);
                 },
               ),
             },
@@ -31781,32 +31846,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           );
         }
-        final mac = Theme.of(context).platform == TargetPlatform.macOS;
         return CallbackShortcuts(
           bindings: {
-            if (selection != null) ...{
-              const SingleActivator(
-                LogicalKeyboardKey.contextMenu,
-                includeRepeats: false,
-              ): () => unawaited(showTableContextMenu(selection, i)),
-              const SingleActivator(
-                LogicalKeyboardKey.f10,
-                shift: true,
-                includeRepeats: false,
-              ): () => unawaited(showTableContextMenu(selection, i)),
-              SingleActivator(
-                LogicalKeyboardKey.keyC,
-                control: !mac,
-                meta: mac,
-                includeRepeats: false,
-              ): () => unawaited(
-                    copyTableDiagnostics(
-                      selection,
-                      i,
-                      ProblemsCopyAction.diagnostics,
-                    ),
-                  ),
-            },
+            ...clipboardShortcuts(openMenu, getMarkers),
             if (!tableMode) ...{
               const SingleActivator(LogicalKeyboardKey.arrowUp):
                   () => focusResultAt(i - 1, forward: false),
@@ -31820,7 +31862,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
           },
-          child: row,
+          child: tableMode
+              ? row
+              : GestureDetector(
+                  onSecondaryTapUp: (details) => openMenu(details.globalPosition),
+                  child: row,
+                ),
         );
       },
     );
