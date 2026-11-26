@@ -30460,7 +30460,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return _allDocs.where(matches).firstOrNull;
   }
 
-  bool _openDiagnostic(Map<String, Object?> diagnostic) {
+  bool _openDiagnostic(
+    Map<String, Object?> diagnostic, {
+    bool preserveFocus = false,
+  }) {
     if (!_diagnostics.contains(diagnostic)) return false;
     final target = _diagnosticEditor(diagnostic);
     if (target == null) return false;
@@ -30532,7 +30535,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     _setDocSelection(visible, selection);
     _lastOpenedDiagnostic = (diagnostic: diagnostic, selection: selection);
-    _focusEditorAfterLayout(group, visible);
+    if (preserveFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted ||
+            _disposing ||
+            !_problemsResultsFocus.hasFocus ||
+            !identical(group.active, visible) ||
+            visible.doc.version != version ||
+            visible.selection != selection) {
+          return;
+        }
+        visible.inputFieldKey.currentState?.revealSelection();
+      });
+    } else {
+      _focusEditorAfterLayout(group, visible);
+    }
     return true;
   }
 
@@ -31646,6 +31663,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+
+    void previewDiagnostic(ProblemsTableSelection selection, int index) {
+      final marker = diagnostics[index];
+      selection.previewWhenSelected(selectionRows[index], () {
+        if (!mounted ||
+            _disposing ||
+            !_problemsTableMode ||
+            !_problemsResultsFocus.hasFocus) {
+          return;
+        }
+        final current = _diagnostics.contains(marker)
+            ? marker
+            : _diagnostics
+                .where((candidate) => mapEquals(candidate, marker))
+                .firstOrNull;
+        if (current != null) _openDiagnostic(current, preserveFocus: true);
+      });
+    }
+
+    void followAndPreview(
+      ProblemsTableSelection selection,
+      int? previous,
+      int next,
+    ) {
+      if (selection.followNavigation(selectionRows, previous, next)) {
+        previewDiagnostic(selection, next);
+      }
+    }
+
     void focusAndFollow(
       ProblemsTableSelection selection, {
       required bool forward,
@@ -31653,7 +31699,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       moveTableFocus(
         forward,
         (previous, next) =>
-            selection.followNavigation(selectionRows, previous, next),
+            followAndPreview(selection, previous, next),
       );
     }
 
@@ -31666,7 +31712,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           selection.followNavigation(selectionRows, previous, previous);
         }
         return (next) =>
-            selection.followNavigation(selectionRows, previous, next);
+            followAndPreview(selection, previous, next);
       }
 
       return resultsRegion(
@@ -31684,7 +31730,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   return KeyEventResult.ignored;
                 }
                 final focused = index == null ? null : selectionRows[index];
-                if (!selection.clearForEscape(focused)) {
+                if (selection.clearForEscape(focused)) {
+                  if (index != null) previewDiagnostic(selection, index);
+                } else {
                   _problemsResultsFocus.requestFocus();
                 }
                 return KeyEventResult.handled;
@@ -31708,7 +31756,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             const SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
                 () => focusAndExtend(selection, forward: true),
             SingleActivator(LogicalKeyboardKey.keyA, control: !mac, meta: mac):
-                () => selection.selectAll(selectionRows),
+                () {
+                  selection.selectAll(selectionRows);
+                  if (selectionRows.length == 1) previewDiagnostic(selection, 0);
+                },
             SingleActivator(
               LogicalKeyboardKey.enter,
               control: !mac,

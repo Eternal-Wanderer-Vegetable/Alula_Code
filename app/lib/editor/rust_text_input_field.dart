@@ -1238,15 +1238,24 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     });
   }
 
-  RenderEditable? _findEditableRenderObject(BuildContext subtree) {
+  EditableTextState? _findEditableTextState(BuildContext subtree) {
     if (subtree is StatefulElement && subtree.state is EditableTextState) {
-      return (subtree.state as EditableTextState).renderEditable;
+      return subtree.state as EditableTextState;
     }
-    RenderEditable? found;
+    EditableTextState? found;
     subtree.visitChildElements((child) {
-      found ??= _findEditableRenderObject(child);
+      found ??= _findEditableTextState(child);
     });
     return found;
+  }
+
+  RenderEditable? _findEditableRenderObject(BuildContext subtree) =>
+      _findEditableTextState(subtree)?.renderEditable;
+
+  void revealSelection() {
+    final selection = _controller.selection;
+    if (!selection.isValid) return;
+    _findEditableTextState(context)?.bringIntoView(selection.extent);
   }
 
   /// Changes the local selection while keeping the input window's acknowledged

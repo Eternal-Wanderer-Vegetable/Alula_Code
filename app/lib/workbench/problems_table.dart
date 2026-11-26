@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' show SemanticsRole;
 
@@ -29,6 +30,12 @@ class _ProblemsTableState extends State<ProblemsTable> {
 
   List<double> _shares = _defaultShares;
   late final _selection = ProblemsTableSelection(setState);
+
+  @override
+  void dispose() {
+    _selection.dispose();
+    super.dispose();
+  }
 
   List<double> _minimums(double space) {
     if (space >= _minimumSpace) return _minimumWidths;
@@ -188,6 +195,17 @@ class ProblemsTableSelection {
   final void Function(VoidCallback) _update;
   final Set<Object> _selected = {};
   Object? _anchor;
+  Timer? _previewTimer;
+
+  void previewWhenSelected(Object key, VoidCallback open) {
+    _previewTimer?.cancel();
+    _previewTimer = Timer(const Duration(milliseconds: 75), () {
+      _previewTimer = null;
+      if (_selected.length == 1 && _selected.contains(key)) open();
+    });
+  }
+
+  void dispose() => _previewTimer?.cancel();
 
   bool get hasSelection => _selected.isNotEmpty;
   bool get hasState => hasSelection || _anchor != null;
@@ -222,22 +240,23 @@ class ProblemsTableSelection {
     if (_anchor != null && !rows.contains(_anchor)) _anchor = null;
   }
 
-  void followNavigation(List<Object> rows, int? previousIndex, int nextIndex) {
+  bool followNavigation(List<Object> rows, int? previousIndex, int nextIndex) {
     final previous = previousIndex == null ? null : rows[previousIndex];
     final next = rows[nextIndex];
     _anchor = next;
-    if (previous == next) return;
+    if (previous == next) return false;
 
     final followsFocus = previous == null
         ? _selected.isEmpty
         : _selected.length == 1 && _selected.contains(previous);
-    if (!followsFocus) return;
+    if (!followsFocus) return false;
 
     _update(() {
       _selected
         ..clear()
         ..add(next);
     });
+    return true;
   }
 
   bool clearForEscape(Object? focusedKey) {
