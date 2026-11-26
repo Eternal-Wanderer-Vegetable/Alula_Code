@@ -4521,8 +4521,8 @@
       "dependencies": [
         "feat-354"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 表格 Escape 收拢多选、清除单选或行焦点并重置范围锚点。Windows 和 Linux 各通过 28 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0e219821 的 CI 45818926199 四项与 Platform Availability 45818914535 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-26-p05/p05.303-problems-escape-selection.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

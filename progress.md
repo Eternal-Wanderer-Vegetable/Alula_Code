@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-26 更新）
 
+- P05.303 / feat-355 完成。Problems 表格 Escape 收拢多选、清除单选或行焦点并重置范围锚点。Windows 和 Linux 各通过 28 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0e219821 的 CI 45818926199 四项与 Platform Availability 45818914535 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.303-problems-escape-selection.md。
 - P05.302 / feat-354 完成。Problems 表格键盘支持 Shift 方向键、主键全选及主键加 Shift 和 Enter 切换当前行。Windows 和 Linux 各通过 25 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ce78600a 的 CI 45814052100 四项与 Platform Availability 45814043608 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.302-problems-keyboard-selection.md。
 - P05.301 / feat-353 完成。Problems 表格支持平台主修改键鼠标多选和 Shift 点击范围选择。Windows 和 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 3be63842 的 CI 45809951326 四项与 Platform Availability 45809943449 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.301-problems-table-selection.md。
 - P05.300 / feat-352 完成。Problems 树和表格按字符串或整数诊断代码筛选。Windows 和 Linux 各通过 19 个真实 rust-analyzer 检查。Linux 整数协议夹具通过 13 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 b8ac1220 的 CI 45804379758 四项与 Platform Availability 45805956616 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-26-p05/p05.300-problems-code-filter.md。
@@ -80,7 +81,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本推进 LAY-16 Problems 表格 Escape 清除选择。固定版表格开启 selectionNavigation，单项选择与焦点重合时随焦点移动，另行验收。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
+- 下一步。按固定版本推进 LAY-16 Problems 表格单选随焦点导航。固定版的单项键盘选择同时触发保留结果区焦点的编辑器预览，单独验收。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
