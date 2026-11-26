@@ -319,6 +319,18 @@ class _ClearProblemsSelectionIntent extends Intent {
   const _ClearProblemsSelectionIntent();
 }
 
+class _ProblemsMessageLines {
+  bool defaultSingleLine = false;
+  final overrides = <Object>{};
+
+  bool isSingleLine(Object marker) =>
+      defaultSingleLine != overrides.contains(marker);
+
+  void toggle(Object marker) {
+    if (!overrides.remove(marker)) overrides.add(marker);
+  }
+}
+
 enum _ProblemsFilterOption {
   errors('显示错误', 'toggleErrors', severity: 1),
   warnings('显示警告', 'toggleWarnings', severity: 2),
@@ -335,6 +347,8 @@ enum _ProblemsFilterOption {
       'workbench.actions.workbench.panel.markers.view.$_commandSuffix';
 }
 
+const _problemsShowSingleLineCommandId = 'problems.action.showSinglelineMessage';
+const _problemsShowMultiLineCommandId = 'problems.action.showMultilineMessage';
 const _problemsCollapseAllCommandId =
     'workbench.actions.treeView.workbench.panel.markers.view.collapseAll';
 const _problemsViewAsTreeCommandId =
@@ -767,7 +781,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _problemsTableMode = false;
   bool _problemsContextMenuOpen = false;
   final _collapsedProblemGroups = Expando<bool>();
-  final _singleLineProblemMessages = <Object>{};
+  final _problemsMessageLines = _ProblemsMessageLines();
   final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
@@ -1424,6 +1438,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '问题',
       '折叠全部文件组',
       () async => _collapseAllProblemGroups(),
+    );
+    reg(
+      _problemsShowSingleLineCommandId,
+      '问题',
+      '显示单行诊断消息',
+      () async => _setProblemsMessageLines(singleLine: true),
+    );
+    reg(
+      _problemsShowMultiLineCommandId,
+      '问题',
+      '显示多行诊断消息',
+      () async => _setProblemsMessageLines(singleLine: false),
     );
     for (final option in _ProblemsFilterOption.values) {
       reg(
@@ -4331,6 +4357,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _commands.context['editorHasCallHierarchyProvider'] == true;
     final typeHierarchyAvailable =
         _commands.context['editorHasTypeHierarchyProvider'] == true;
+    final showProblemsMessageCommands = _problemsViewActive;
     final problemsMenuCommands = {
       _problemsCollapseAllCommandId,
       _problemsViewAsTreeCommandId,
@@ -4341,6 +4368,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
             !problemsMenuCommands.contains(c.id) &&
+            (showProblemsMessageCommands ||
+                c.id != _problemsShowSingleLineCommandId &&
+                    c.id != _problemsShowMultiLineCommandId) &&
             !_isCurrentActivityBarLocationCommand(c.id, currentLocation) &&
             (c.id != 'editor.showCallHierarchy' || callHierarchyAvailable) &&
             (c.id != 'editor.showTypeHierarchy' || typeHierarchyAvailable))
@@ -5683,6 +5713,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'openEditorsCollapsed': _openEditorsCollapsed,
         'openEditorsSortOrder': _openEditorsSortOrder.name,
         'problemsViewMode': _problemsTableMode ? 'table' : 'tree',
+        'problemsDefaultSingleLine': _problemsMessageLines.defaultSingleLine,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
         'welcomeVisible': _welcomeVisible,
@@ -5829,6 +5860,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
     _problemsTableMode = data['problemsViewMode'] == 'table';
+    _problemsMessageLines.defaultSingleLine =
+        data['problemsDefaultSingleLine'] == true;
     _openEditorsSortOrder = OpenEditorsSortOrder.parse(data['openEditorsSortOrder']);
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
@@ -14152,7 +14185,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = 'LSP 未启动';
         _diagnostics.clear();
-        _singleLineProblemMessages.clear();
+        _problemsMessageLines.overrides.clear();
         _syntaxByDoc.clear();
         _syntaxVersionByDoc.clear();
         _semanticTokensByDoc.clear();
@@ -17686,10 +17719,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _diagnostics
           ..clear()
           ..addAll(diags);
-        if (_singleLineProblemMessages.isNotEmpty) {
-          _singleLineProblemMessages.retainAll(
-            ProblemsResultSelection.rowKeys(diags),
-          );
+        final overrides = _problemsMessageLines.overrides;
+        if (overrides.isNotEmpty) {
+          overrides.retainAll(ProblemsResultSelection.rowKeys(diags));
         }
       });
     } catch (_) {
@@ -30777,6 +30809,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       !_layout.isCollapsed('panel') &&
       _panelTab.index == PanelViewTab.diagnostics.index;
 
+  void _setProblemsMessageLines({required bool singleLine}) {
+    final lines = _problemsMessageLines;
+    if (!_problemsViewActive ||
+        (lines.defaultSingleLine == singleLine && lines.overrides.isEmpty)) {
+      return;
+    }
+    setState(() {
+      lines.defaultSingleLine = singleLine;
+      lines.overrides.clear();
+    });
+    _scheduleStateSave();
+  }
+
   void _applyProblemsViewMode(bool tableMode) {
     if (!_problemsViewActive || _problemsTableMode == tableMode) return;
     _toggleProblemsViewMode();
@@ -32070,7 +32115,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ? const ['']
               : LineSplitter.split(message).toList(growable: false);
           final messageKey = selectionRows[i];
-          final singleLine = _singleLineProblemMessages.contains(messageKey);
+          final singleLine = _problemsMessageLines.isSingleLine(messageKey);
           if (lines.length > 1) {
             messageToggle = Semantics(
               key: const ValueKey('problems-tree-toggle-lines'),
@@ -32086,11 +32131,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     size: 14,
                   ),
                   onPressed: () {
-                    setState(() {
-                      if (!_singleLineProblemMessages.remove(messageKey)) {
-                        _singleLineProblemMessages.add(messageKey);
-                      }
-                    });
+                    setState(() => _problemsMessageLines.toggle(messageKey));
                   },
                 ),
               ),

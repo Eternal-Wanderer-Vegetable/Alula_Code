@@ -4765,6 +4765,18 @@
       "evidence": "Problems 树支持固定版折叠全部命令，标题按钮和键位共用入口。折叠清除选择并聚焦首组。Windows 与 Linux 各通过 28 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da2c882a 的 CI 45908041815 四项与 Platform Availability 45908034768 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-376",
+      "name": "P05.324 LAY-16 / CMD-11 Problems 全局消息行显示命令",
+      "description": "注册 Problems 全局单行与多行命令，复用逐条显示状态；在旧会话继续默认多行，新设置保存到会话并验证重启。",
+      "dependencies": [
+        "feat-375"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
