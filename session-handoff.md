@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.320 / feat-372 完成。Problems 树悬停显示完整诊断和文件路径，表格按列提示完整消息、代码、路径位置及来源。Windows 与 Linux 各通过 26 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 0107f185 的 CI 45897688227 四项与 Platform Availability 45897680204 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.320-problems-diagnostic-hover.md。
 - P05.319 / feat-371 完成。Problems 树分别标出文件名、逐行消息、来源和代码中的匹配。表格在对应列标出匹配。Windows 与 Linux 各通过 24 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 7f76f138 的 CI 45893336652 四项与 Platform Availability 45893327178 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.319-problems-match-highlights.md。
 - P05.318 / feat-370 完成。Problems 树支持逐条诊断收起和展开消息。单行诊断无需切换，五行诊断可完整展开。筛选、组折叠及树表切换保留各条诊断的行显示状态。Windows 与 Linux 各通过 20 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 be5f9c3a 的 CI 45889370217 四项与 Platform Availability 45889363360 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.318-problems-message-lines.md。
 - P05.317 / feat-369 完成。固定版对照将 Problems 文件组、两行诊断、表头和表格行校准为 22、44、24、24 逻辑像素。树诊断首行显示来源、代码和位置。Windows 与 Linux 各通过 11 项。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 6b0f9605 的 CI 45885827159 四项与 Platform Availability 45885819195 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md。
@@ -337,6 +338,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.320 Problems 诊断悬停状态](docs/diagnostics/2026-11-27-p05/p05.320-problems-diagnostic-hover.md)。
 [P05.319 Problems 结果筛选匹配高亮](docs/diagnostics/2026-11-27-p05/p05.319-problems-match-highlights.md)。
 [P05.318 Problems 树诊断消息行显示切换](docs/diagnostics/2026-11-27-p05/p05.318-problems-message-lines.md)。
 [P05.317 Problems 树与表格视觉对照](docs/diagnostics/2026-11-27-p05/p05.317-problems-row-density.md)。
@@ -563,4 +565,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.319 收尾 CI。按 docs/03 和固定版本推进 LAY-16 Problems 诊断悬停状态。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.320 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 树表模式命令。PR #3 保持草稿，macOS 实机暂缓。
