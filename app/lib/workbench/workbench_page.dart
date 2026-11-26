@@ -24,7 +24,8 @@ import 'package:flutter/gestures.dart'
         PointerCancelEvent,
         PointerDownEvent,
         PointerDeviceKind,
-        PointerUpEvent;
+        PointerUpEvent,
+        SerialTapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'
     show RenderAbstractViewport, RenderBox, RenderEditable, RenderObject,
@@ -30463,6 +30464,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _openDiagnostic(
     Map<String, Object?> diagnostic, {
     bool preserveFocus = false,
+    bool pinPreview = false,
   }) {
     if (!_diagnostics.contains(diagnostic)) return false;
     final target = _diagnosticEditor(diagnostic);
@@ -30535,6 +30537,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     _setDocSelection(visible, selection);
     _lastOpenedDiagnostic = (diagnostic: diagnostic, selection: selection);
+    if (pinPreview && group.previewDocId == visible.id) {
+      setState(() => group.previewDocId = null);
+      _scheduleStateSave();
+    }
     if (preserveFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted ||
@@ -31399,6 +31405,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     late final selectionRows = ProblemsTableSelection.rowKeys(diagnostics);
+    bool openCurrentDiagnostic(
+      Map<String, Object?> marker, {
+      bool preserveFocus = false,
+      bool pinPreview = false,
+    }) {
+      // The provider can republish the same diagnostic during an input event.
+      final current = _diagnostics.contains(marker)
+          ? marker
+          : _diagnostics
+              .where((candidate) => mapEquals(candidate, marker))
+              .firstOrNull;
+      return current != null &&
+          _openDiagnostic(
+            current,
+            preserveFocus: preserveFocus,
+            pinPreview: pinPreview,
+          );
+    }
+
     Widget list([ProblemsTableSelection? selection]) => ListView.builder(
       controller: _problemsScrollController,
       itemCount: itemCount,
@@ -31532,13 +31557,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : '[Ln ${position.line}, Col ${position.column}]';
         final rowKey = ValueKey((groupKey, rowNumber));
         final onOpen = canOpen ? () => _openDiagnostic(d) : null;
-        final ListTile row;
+        final Widget row;
         if (tableMode) {
           final directory = group.directory;
           final filePath = directory == null ? fileName : '$directory/$fileName';
           final tableSelection = selection!;
           final colors = Theme.of(context).colorScheme;
-          row = ListTile(
+
+          void selectRow({int? clickCount}) {
+            final keyboard = HardwareKeyboard.instance;
+            final extend = keyboard.isShiftPressed;
+            final toggle = Theme.of(context).platform == TargetPlatform.macOS
+                ? keyboard.isMetaPressed
+                : keyboard.isControlPressed;
+            final modified = extend || toggle;
+            final doubleClick = tableSelection.registerRowActivation(
+              selectionRows[i],
+              modified ? null : clickCount,
+            );
+            final layout = extend ? laidOutResults() : null;
+            tableSelection.select(
+              selectionRows,
+              i,
+              extend: extend,
+              toggle: toggle,
+              focusedIndex:
+                  layout == null ? null : focusedResultIndex(layout.sliver),
+            );
+
+            final activate = clickCount == null || doubleClick;
+            if (!modified &&
+                activate &&
+                openCurrentDiagnostic(d, pinPreview: doubleClick)) {
+              return;
+            }
+            focusRenderedResult(
+              rowKey,
+              ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+            );
+            if (!modified && !activate) {
+              openCurrentDiagnostic(d, preserveFocus: true);
+            }
+          }
+
+          final tile = ListTile(
             key: rowKey,
             dense: true,
             minTileHeight: 30,
@@ -31547,38 +31609,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 tableSelection.contains(selectionRows[i]),
             selectedColor: colors.onSecondaryContainer,
             selectedTileColor: colors.secondaryContainer,
-            onTap: () {
-              final keyboard = HardwareKeyboard.instance;
-              final extend = keyboard.isShiftPressed;
-              final toggle = Theme.of(context).platform == TargetPlatform.macOS
-                  ? keyboard.isMetaPressed
-                  : keyboard.isControlPressed;
-              final layout = extend ? laidOutResults() : null;
-              tableSelection.select(
-                selectionRows,
-                i,
-                extend: extend,
-                toggle: toggle,
-                focusedIndex: layout == null
-                    ? null
-                    : focusedResultIndex(layout.sliver),
-              );
-
-              if (!extend && !toggle && onOpen != null) {
-                if (onOpen()) return;
-                // A poll can replace the diagnostic during a mouse gesture.
-                if (!_diagnostics.contains(d)) {
-                  final current = _diagnostics
-                      .where((marker) => mapEquals(marker, d))
-                      .firstOrNull;
-                  if (current != null && _openDiagnostic(current)) return;
-                }
-              }
-              focusRenderedResult(
-                rowKey,
-                ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-              );
-            },
+            onTap: selectRow,
             title: ProblemsTableLine(
               severity: Semantics(
                 label: switch (severity) {
@@ -31593,6 +31624,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               file: Text(location == null ? filePath : '$filePath $location'),
               source: Text('${d['source'] ?? ''}'),
             ),
+          );
+          final mouseTaps =
+              GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
+            () => SerialTapGestureRecognizer(
+              supportedDevices: const {PointerDeviceKind.mouse},
+              allowedButtonsFilter: (buttons) => buttons == kPrimaryButton,
+            ),
+            (recognizer) {
+              recognizer.onSerialTapUp =
+                  (details) => selectRow(clickCount: details.count);
+            },
+          );
+          row = RawGestureDetector(
+            key: ValueKey(selectionRows[i]),
+            gestures: {SerialTapGestureRecognizer: mouseTaps},
+            child: tile,
           );
         } else {
           row = ListTile(
@@ -31663,7 +31710,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
-
     void previewDiagnostic(ProblemsTableSelection selection, int index) {
       final marker = diagnostics[index];
       selection.previewWhenSelected(selectionRows[index], () {
@@ -31673,12 +31719,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !_problemsResultsFocus.hasFocus) {
           return;
         }
-        final current = _diagnostics.contains(marker)
-            ? marker
-            : _diagnostics
-                .where((candidate) => mapEquals(candidate, marker))
-                .firstOrNull;
-        if (current != null) _openDiagnostic(current, preserveFocus: true);
+        openCurrentDiagnostic(marker, preserveFocus: true);
       });
     }
 

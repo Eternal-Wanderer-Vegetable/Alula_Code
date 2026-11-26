@@ -195,9 +195,23 @@ class ProblemsTableSelection {
   final void Function(VoidCallback) _update;
   final Set<Object> _selected = {};
   Object? _anchor;
+  Object? _lastPlainClick;
   Timer? _previewTimer;
 
+  bool registerRowActivation(Object key, int? clickCount) {
+    _previewTimer?.cancel();
+    _previewTimer = null;
+    final doubleClick = clickCount != null &&
+        clickCount > 1 &&
+        _lastPlainClick == key &&
+        _selected.length == 1 &&
+        _selected.contains(key);
+    _lastPlainClick = clickCount == null || doubleClick ? null : key;
+    return doubleClick;
+  }
+
   void previewWhenSelected(Object key, VoidCallback open) {
+    _lastPlainClick = null;
     _previewTimer?.cancel();
     _previewTimer = Timer(const Duration(milliseconds: 75), () {
       _previewTimer = null;
