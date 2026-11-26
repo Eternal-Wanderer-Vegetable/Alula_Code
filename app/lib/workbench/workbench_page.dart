@@ -31612,11 +31612,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final toggle =
           macPlatform ? keyboard.isMetaPressed : keyboard.isControlPressed;
       final modified = extend || toggle;
-      final doubleClick = tableMode &&
-          selection.registerRowActivation(
-            selectionRows[index],
-            modified ? null : clickCount,
-          );
+      final doubleClick = selection.registerRowActivation(
+        selectionRows[index],
+        tableMode && !modified ? clickCount : null,
+      );
       final layout = extend ? laidOutResults() : null;
       selection.select(
         selectionRows,
@@ -31938,6 +31937,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (focusResultAt(next, forward: forward)) onMoved(previous, next);
     }
 
+    void previewDiagnostic(ProblemsResultSelection selection, int index) {
+      if (selection.selectedCount != 1) return;
+      var markerIndex = index;
+      if (!tableMode) {
+        final group = groups[groupIndexAtItem(index)];
+        if (index == group.firstItem) return;
+        markerIndex = group.firstDiagnostic + index - group.firstItem - 1;
+      }
+      final marker = diagnostics[markerIndex];
+      selection.previewWhenSelected(selectionRows[index], () {
+        if (!mounted ||
+            _disposing ||
+            _problemsTableMode != tableMode ||
+            !_problemsResultsFocus.hasFocus) {
+          return;
+        }
+        openCurrentDiagnostic(marker, preserveFocus: true);
+      });
+    }
+
     void focusAndExtend(
       ProblemsResultSelection selection, {
       required bool forward,
@@ -31947,22 +31966,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (previous, next) {
           if (tableMode || previous != next) {
             selection.extendAfterFocus(selectionRows, previous, next);
+            if (!tableMode) previewDiagnostic(selection, next);
           }
         },
       );
-    }
-
-    void previewDiagnostic(ProblemsResultSelection selection, int index) {
-      final marker = diagnostics[index];
-      selection.previewWhenSelected(selectionRows[index], () {
-        if (!mounted ||
-            _disposing ||
-            !_problemsTableMode ||
-            !_problemsResultsFocus.hasFocus) {
-          return;
-        }
-        openCurrentDiagnostic(marker, preserveFocus: true);
-      });
     }
 
     void followAndPreview(
@@ -31970,8 +31977,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       int? previous,
       int next,
     ) {
-      if (selection.followNavigation(selectionRows, previous, next) &&
-          tableMode) {
+      if (selection.followNavigation(selectionRows, previous, next)) {
         previewDiagnostic(selection, next);
       }
     }
@@ -32006,10 +32012,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       final children =
           selectionRows.getRange(parent + 1, parent + 1 + group.count);
+      final includeParent = selection.selectedCount == children.length;
       selection.selectAll([
-        if (selection.selectedCount == children.length) selectionRows[parent],
+        if (includeParent) selectionRows[parent],
         ...children,
       ]);
+      if (!includeParent && children.length == 1) {
+        previewDiagnostic(selection, parent + 1);
+      }
     }
 
     Widget withResultShortcuts(ProblemsResultSelection selection) {
@@ -32038,7 +32048,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final focused = index == null ? null : selectionRows[index];
           if (!selection.clearForEscape(focused)) {
             _problemsResultsFocus.requestFocus();
-          } else if (tableMode && index != null) {
+          } else if (index != null) {
             previewDiagnostic(selection, index);
           }
           return KeyEventResult.handled;

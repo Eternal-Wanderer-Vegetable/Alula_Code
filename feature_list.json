@@ -4633,6 +4633,18 @@
       "evidence": "Problems 树在普通键盘导航时更新与焦点匹配的单选，并刷新 Shift 范围锚点。Windows、Linux 各通过 33 项真实诊断检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 a4bc6d41 的 CI 45863284974 四项与 Platform Availability 45863274864 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.312-problems-tree-selection-navigation.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-365",
+      "name": "P05.313 LAY-16 / CMD-11 Problems 树键盘诊断预览与保留焦点",
+      "description": "Problems 树键盘选择预览单条诊断，保留结果焦点并揭示精确范围。验证文件组、Shift、单结果全选、Esc、取消及显式打开。",
+      "dependencies": [
+        "feat-364"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
