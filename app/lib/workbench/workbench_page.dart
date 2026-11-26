@@ -31047,12 +31047,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final directory = group.directory;
           final colors = Theme.of(context).colorScheme;
           final document = group.document;
+          void setCollapsed(bool collapsed) {
+            if (document == null ||
+                (_collapsedProblemGroups[document] == true) == collapsed) {
+              return;
+            }
+            setState(() {
+              _collapsedProblemGroups[document] = collapsed ? true : null;
+            });
+          }
+
           final VoidCallback? toggle = document == null
               ? null
-              : () => setState(() {
-                    _collapsedProblemGroups[document] =
-                        _collapsedProblemGroups[document] == true ? null : true;
-                  });
+              : () => setCollapsed(_collapsedProblemGroups[document] != true);
           return Semantics(
             key: ValueKey(
               'problems-file-group-${group.identity ?? group.firstDiagnostic}',
@@ -31068,52 +31075,64 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               if (directory != null) directory,
               '${group.count} 条诊断',
             ].join('，'),
-            child: InkWell(
-              onTap: toggle,
-              excludeFromSemantics: true,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
-                child: Row(
-                  children: [
-                    if (toggle != null) ...[
-                      Icon(
-                        group.expanded ? Icons.expand_more : Icons.chevron_right,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 2),
-                    ],
-                    const Icon(Icons.description_outlined, size: 14),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                          text: fileName,
-                          children: [
-                            if (directory != null)
-                              TextSpan(
-                                text: '  $directory',
-                                style: TextStyle(
-                                  color: colors.onSurfaceVariant,
-                                  fontWeight: FontWeight.normal,
+            child: CallbackShortcuts(
+              bindings: {
+                if (document != null) ...{
+                  const SingleActivator(LogicalKeyboardKey.arrowLeft):
+                      () => setCollapsed(true),
+                  const SingleActivator(LogicalKeyboardKey.arrowRight):
+                      () => setCollapsed(false),
+                },
+              },
+              child: InkWell(
+                onTap: toggle,
+                excludeFromSemantics: true,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+                  child: Row(
+                    children: [
+                      if (toggle != null) ...[
+                        Icon(
+                          group.expanded
+                            ? Icons.expand_more
+                            : Icons.chevron_right,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 2),
+                      ],
+                      const Icon(Icons.description_outlined, size: 14),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            text: fileName,
+                            children: [
+                              if (directory != null)
+                                TextSpan(
+                                  text: '  $directory',
+                                  style: TextStyle(
+                                    color: colors.onSurfaceVariant,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Badge(
-                      backgroundColor: colors.surfaceContainerHighest,
-                      textColor: colors.onSurfaceVariant,
-                      label: Text('${group.count}'),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Badge(
+                        backgroundColor: colors.surfaceContainerHighest,
+                        textColor: colors.onSurfaceVariant,
+                        label: Text('${group.count}'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
