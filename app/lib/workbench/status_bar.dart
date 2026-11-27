@@ -12,6 +12,7 @@ class AlulaStatusBar extends StatelessWidget {
     required this.detail,
     required this.lspStatus,
     required this.diagnosticsCount,
+    this.onToggleProblems,
     required this.tabCount,
     required this.abiVersion,
     this.resourcePressure,
@@ -38,6 +39,7 @@ class AlulaStatusBar extends StatelessWidget {
   final String detail;
   final String lspStatus;
   final int diagnosticsCount;
+  final VoidCallback? onToggleProblems;
   final int tabCount;
   final int abiVersion;
   final String? resourcePressure;
@@ -62,6 +64,8 @@ class AlulaStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final diagnostics = '诊断 $diagnosticsCount';
+    final combinedCount = onToggleProblems == null ? ' · $diagnostics' : '';
     return Container(
       height: 24,
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -77,7 +81,7 @@ class AlulaStatusBar extends StatelessWidget {
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
           Flexible(
             child: Text(
-              '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
+              '$lspStatus$combinedCount · 标签 $tabCount · '
               'ABI v$abiVersion · 同步 $syncCount 次',
               maxLines: 1,
               softWrap: false,
@@ -86,6 +90,20 @@ class AlulaStatusBar extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
             ),
           ),
+          if (onToggleProblems case final toggleProblems?) ...[
+            const SizedBox(width: 8),
+            Tooltip(
+              message: '切换问题',
+              child: InkWell(
+                key: const ValueKey('status-problems'),
+                onTap: toggleProblems,
+                child: Text(
+                  diagnostics,
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
           if (encodingLabel != null && onEncodingTap != null) ...[
             const SizedBox(width: 10),
             InkWell(

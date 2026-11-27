@@ -347,6 +347,8 @@ enum _ProblemsFilterOption {
       'workbench.actions.workbench.panel.markers.view.$_commandSuffix';
 }
 
+const _showErrorsWarningsCommandId = 'workbench.action.showErrorsWarnings';
+const _toggleProblemsCommandId = 'workbench.actions.view.toggleProblems';
 const _problemsShowSingleLineCommandId = 'problems.action.showSinglelineMessage';
 const _problemsShowMultiLineCommandId = 'problems.action.showMultilineMessage';
 const _problemsCollapseAllCommandId =
@@ -1420,6 +1422,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '聚焦问题',
       () async => _openProblems(),
+    );
+    reg(
+      _showErrorsWarningsCommandId,
+      '问题',
+      '显示错误和警告',
+      () async => _openProblems(preserveFocus: true),
+    );
+    reg(
+      _toggleProblemsCommandId,
+      '查看',
+      '切换问题',
+      () async => _toggleProblems(),
     );
     reg(
       _problemsViewAsTreeCommandId,
@@ -4365,6 +4379,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _commands.context['editorHasTypeHierarchyProvider'] == true;
     final showProblemsMessageCommands = _problemsViewActive;
     final problemsMenuCommands = {
+      _showErrorsWarningsCommandId,
+      _toggleProblemsCommandId,
       problemsClearFilterTextCommandId,
       _problemsCollapseAllCommandId,
       _problemsViewAsTreeCommandId,
@@ -24448,6 +24464,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 detail: _statusDetail,
                 lspStatus: _lspStatus,
                 diagnosticsCount: _diagnostics.length,
+                onToggleProblems: () => _runCommand(_toggleProblemsCommandId),
                 tabCount: _groups.values
                     .fold(0, (count, group) => count + group.docs.length),
                 abiVersion: _abiVersion,
@@ -30781,40 +30798,60 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool toggleWhenFocused = false,
     bool preserveFocus = false,
   }) {
-    final index = PanelViewTab.diagnostics.index;
     if (toggleWhenFocused &&
         !preserveFocus &&
         _problemsPanelFocus.hasFocus &&
-        !_layout.isCollapsed('panel') &&
-        _panelTab.index == index) {
-      setState(() => _layout.toggleRegion('panel'));
-      final editor = _active;
-      if (editor != null) {
-        final group = _ownerOfView(editor);
-        if (group != null) _focusEditorAfterLayout(group, editor);
-      }
+        _problemsViewActive) {
+      _closeProblems();
       return;
     }
 
+    const tab = PanelViewTab.diagnostics;
     setState(() {
       _layout.showRegion('panel');
-      _panelTab.index = index;
+      _panelTab.index = tab.index;
+      _layout.setPanelGroupPaneCollapsed(tab, panelGroupOriginalPane, false);
     });
     if (preserveFocus) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted &&
-          !_disposing &&
-          !_layout.isCollapsed('panel') &&
-          _panelTab.index == index) {
+      if (mounted && !_disposing && _problemsViewActive) {
         _problemsPanelFocus.requestFocus();
       }
     });
   }
 
+  void _toggleProblems() {
+    if (_problemsViewActive) {
+      _closeProblems(collapseGroupedPane: true);
+    } else {
+      _openProblems();
+    }
+  }
+
+  void _closeProblems({bool collapseGroupedPane = false}) {
+    final problemsFocused = _problemsPanelFocus.hasFocus;
+    final collapsedGroup = collapseGroupedPane &&
+        _layout.setPanelGroupPaneCollapsed(
+          PanelViewTab.diagnostics,
+          panelGroupOriginalPane,
+          true,
+        );
+    if (!collapsedGroup) setState(() => _layout.toggleRegion('panel'));
+    if (collapsedGroup && !problemsFocused) return;
+
+    final editor = _active;
+    if (editor == null) return;
+    final group = _ownerOfView(editor);
+    if (group != null) _focusEditorAfterLayout(group, editor);
+  }
+
   bool get _problemsViewActive =>
       !_layout.isCollapsed('panel') &&
-      _panelTab.index == PanelViewTab.diagnostics.index;
+      _panelTab.index == PanelViewTab.diagnostics.index &&
+      !(_layout.root.panelGroupCollapsedPanes[PanelViewTab.diagnostics]
+              ?.contains(panelGroupOriginalPane) ??
+          false);
 
   void _setProblemsMessageLines({required bool singleLine}) {
     final lines = _problemsMessageLines;
