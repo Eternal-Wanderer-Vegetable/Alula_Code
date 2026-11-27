@@ -105,6 +105,7 @@ import 'open_editors_sort_order.dart';
 import 'breadcrumb_navigation.dart';
 import 'call_hierarchy.dart';
 import 'definition_peek.dart';
+import 'diagnostic_navigation_peek.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'context_keys.dart';
@@ -874,6 +875,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   var _problemsStatusCounts = const ProblemsStatusCounts();
   ({Map<String, Object?> diagnostic, TextSelection selection})?
       _lastOpenedDiagnostic;
+  _DiagnosticNavigationDetail? _diagnosticNavigation;
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
   Map<int, int> _syntaxVersionByDoc = {};
   Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
@@ -2220,6 +2222,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       shortcut: _keybindings.shortcutFor('closeReferenceSearch'),
       when: 'referenceSearchVisible',
+    );
+    reg(
+      closeMarkersNavigationCommandId,
+      '导航',
+      '关闭诊断详情',
+      () async => _closeDiagnosticNavigation(),
+      when: 'markersNavigationVisible',
     );
     reg(
       'openReferenceToSide',
@@ -4017,6 +4026,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout.restoreEditorGroups();
     }
     final active = _active;
+    if (!_isCurrentDiagnosticNavigation(active)) _diagnosticNavigation = null;
     final peek = _definitionPeek;
     final peekVisible = peek != null && _isCurrentDefinitionPeek(peek);
     final openHierarchy = _callHierarchy;
@@ -4056,6 +4066,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands.context.setValues({
       'editorActive': active != null,
       'referenceSearchVisible': peekVisible,
+      'markersNavigationVisible': _diagnosticNavigation != null,
       'peekWidgetVisible': peekVisible,
       'callHierarchyVisible': callHierarchyVisible,
       'callHierarchyHasRoots': callHierarchyVisible && hierarchyHasRoots,
@@ -4381,6 +4392,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _commands.context['editorHasTypeHierarchyProvider'] == true;
     final showProblemsMessageCommands = _problemsViewActive;
     final problemsMenuCommands = {
+      closeMarkersNavigationCommandId,
       _showErrorsWarningsCommandId,
       _toggleProblemsCommandId,
       problemsClearFilterTextCommandId,
@@ -17759,6 +17771,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..clear()
       ..addAll(diagnostics);
     _problemsStatusCounts = counts;
+    final detail = _diagnosticNavigation;
+    if (detail != null &&
+        !diagnostics.any((entry) => mapEquals(entry, detail.diagnostic))) {
+      _diagnosticNavigation = null;
+      _commands.context.setValue('markersNavigationVisible', false);
+    }
   }
 
   void _updateLanguageServicePolling() {
@@ -26224,7 +26242,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(activeDoc);
     final body = CallbackShortcuts(
       bindings: {
-        if (!_breadcrumbs.isActive)
+        if (!_breadcrumbs.isActive &&
+            (_pasteSelectorOpen || _shouldShowPasteAsWidget(g)))
           const SingleActivator(LogicalKeyboardKey.escape): () =>
               unawaited(_hidePasteWidget()),
       },
@@ -29336,7 +29355,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 rangeDecorations: rangeDecorations,
                                 caretOverlay: _buildDefinitionPeek(active) ??
                                     _buildCallHierarchy(active) ??
-                                    choiceOverlay,
+                                    choiceOverlay ??
+                                    _buildDiagnosticNavigation(active),
                                 focusNode: _focusNodeFor(g, active),
                                 scrollController: active.editorScrollController,
                                 inputFormatter:
@@ -30903,9 +30923,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     for (var attempt = 0; attempt < markers.length; attempt++) {
-      if (_openDiagnostic(markers[index].diagnostic)) return;
+      final diagnostic = markers[index].diagnostic;
+      if (_openDiagnostic(diagnostic)) {
+        final source = _active;
+        if (source != null) {
+          setState(() {
+            _diagnosticNavigation = (
+              source: source,
+              version: source.doc.version,
+              selection: source.selection,
+              diagnostic: diagnostic,
+              ordinal: index + 1,
+              total: markers.length,
+            );
+          });
+          _commands.context.setValue('markersNavigationVisible', true);
+        }
+        return;
+      }
       index = (index + step) % markers.length;
     }
+  }
+
+  bool _isCurrentDiagnosticNavigation(OpenDoc? active) {
+    final detail = _diagnosticNavigation;
+    return detail != null &&
+        active != null &&
+        identical(detail.source, active) &&
+        detail.version == active.doc.version &&
+        detail.selection == active.selection;
+  }
+
+  void _closeDiagnosticNavigation() {
+    final detail = _diagnosticNavigation;
+    if (detail == null) return;
+    setState(() => _diagnosticNavigation = null);
+    _commands.context.setValue('markersNavigationVisible', false);
+    if (!identical(_active, detail.source)) return;
+    final group = _ownerOfView(detail.source);
+    if (group != null) _focusEditorAfterLayout(group, detail.source);
+  }
+
+  Widget? _buildDiagnosticNavigation(OpenDoc active) {
+    final detail = _diagnosticNavigation;
+    if (detail == null || !_isCurrentDiagnosticNavigation(active)) return null;
+    final diagnostic = detail.diagnostic;
+    final code = diagnostic['code'];
+    return DiagnosticNavigationPeek(
+      fileName: active.name,
+      ordinal: detail.ordinal,
+      total: detail.total,
+      severity: diagnostic['severity'] as int,
+      message: diagnostic['message'] as String? ?? '',
+      source: diagnostic['source'] as String?,
+      code: code is String || code is int ? code.toString() : null,
+      onClose: _closeDiagnosticNavigation,
+    );
   }
 
   void _openProblems({
@@ -33731,6 +33804,15 @@ class _CallHierarchySession {
     targets = newTargets;
   }
 }
+
+typedef _DiagnosticNavigationDetail = ({
+  OpenDoc source,
+  int version,
+  TextSelection selection,
+  Map<String, Object?> diagnostic,
+  int ordinal,
+  int total,
+});
 
 class _DefinitionPeekSession {
   _DefinitionPeekSession({

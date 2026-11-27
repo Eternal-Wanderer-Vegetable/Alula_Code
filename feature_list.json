@@ -4849,6 +4849,18 @@
       "evidence": "Problems 标签聚焦时，Shift+F10 和菜单键调用同一个徽标菜单，取消与选择后恢复标签焦点。Windows 与 Linux 各通过 24 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 1a780e64 的 CI 45930823376 四项与 Platform Availability 45930815133 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-383",
+      "name": "P05.331 CMD-11 编辑器内诊断导航详情",
+      "description": "从已校验诊断导航展示消息、来源、级别和序号，复用编辑器光标定位浮层，核对关闭和失效。",
+      "dependencies": [
+        "feat-382"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
