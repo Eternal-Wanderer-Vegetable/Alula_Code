@@ -248,6 +248,7 @@ class RustTextInputField extends StatefulWidget {
     this.horizontalScrollController,
     this.rangeDecorations = const [],
     this.caretOverlay,
+    this.caretOverlayAnchorUtf16,
     this.syntaxTokens = const [],
     this.syntaxVersion = -1,
     this.syntaxTokenColor,
@@ -289,6 +290,10 @@ class RustTextInputField extends StatefulWidget {
   /// Optional popup positioned beside the local caret and clamped to the
   /// visible editor viewport.
   final Widget? caretOverlay;
+
+  /// Absolute document offset for the overlay. The selection extent is used
+  /// when this offset is outside the current bounded input window.
+  final int? caretOverlayAnchorUtf16;
   final List<Map<String, Object?>> syntaxTokens;
   final int syntaxVersion;
   final Color Function(String kind)? syntaxTokenColor;
@@ -1305,6 +1310,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _setHorizontalScrollController(widget.horizontalScrollController);
     _syncCaretOverlayScrollListeners();
     _syncFoldSymbols();
+    _scheduleCaretOverlayAnchorReveal();
     _scheduleCaretOverlayUpdate();
   }
 
@@ -1336,11 +1342,18 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       _disposeOwnedHorizontalScrollController();
       _setHorizontalScrollController(widget.horizontalScrollController);
     }
-    if (oldWidget.scrollController != widget.scrollController ||
-        oldWidget.horizontalScrollController !=
-            widget.horizontalScrollController ||
-        oldWidget.caretOverlay != widget.caretOverlay) {
-      _syncCaretOverlayScrollListeners();
+    final overlaySourceChanged =
+        oldWidget.scrollController != widget.scrollController ||
+            oldWidget.horizontalScrollController !=
+                widget.horizontalScrollController ||
+            oldWidget.caretOverlay != widget.caretOverlay;
+    final anchorChanged =
+        oldWidget.caretOverlayAnchorUtf16 != widget.caretOverlayAnchorUtf16;
+    if (overlaySourceChanged) _syncCaretOverlayScrollListeners();
+    if (anchorChanged) _scheduleCaretOverlayAnchorReveal();
+    if (overlaySourceChanged ||
+        oldWidget.inputWindow != widget.inputWindow ||
+        anchorChanged) {
       _scheduleCaretOverlayUpdate();
     }
     if (widget.caretOverlay == null) _caretRectInOverlay = null;
@@ -1662,6 +1675,32 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         ?.addListener(_scheduleCaretOverlayUpdate);
   }
 
+  TextPosition _caretOverlayPosition(TextSelection selection) {
+    final anchor = widget.caretOverlayAnchorUtf16;
+    final offset =
+        anchor == null ? null : anchor - widget.inputWindow.startUtf16;
+    return offset != null && offset >= 0 && offset <= _controller.text.length
+        ? TextPosition(offset: offset)
+        : selection.extent;
+  }
+
+  void _scheduleCaretOverlayAnchorReveal() {
+    final anchor = widget.caretOverlayAnchorUtf16;
+    if (anchor == null) return;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          widget.caretOverlay == null ||
+          widget.caretOverlayAnchorUtf16 != anchor) {
+        return;
+      }
+      final selection = _controller.selection;
+      if (selection.isValid) {
+        _findEditableTextState(context)
+            ?.bringIntoView(_caretOverlayPosition(selection));
+      }
+    });
+  }
+
   void _scheduleCaretOverlayUpdate() {
     if (widget.caretOverlay == null || _caretOverlayUpdateScheduled) return;
     _caretOverlayUpdateScheduled = true;
@@ -1678,7 +1717,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           !overlayObject.hasSize) {
         return;
       }
-      final caret = editable.getLocalRectForCaret(selection.extent);
+      final caret =
+          editable.getLocalRectForCaret(_caretOverlayPosition(selection));
       final globalRect = Rect.fromPoints(
         editable.localToGlobal(caret.topLeft),
         editable.localToGlobal(caret.bottomRight),

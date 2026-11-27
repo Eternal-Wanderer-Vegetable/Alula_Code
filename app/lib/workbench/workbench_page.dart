@@ -29277,6 +29277,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         );
       }
     }
+    final caretOverlay = _buildDefinitionPeek(active) ??
+        _buildCallHierarchy(active) ??
+        choiceOverlay ??
+        _buildDiagnosticNavigation(active);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -29353,10 +29357,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ),
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
-                                caretOverlay: _buildDefinitionPeek(active) ??
-                                    _buildCallHierarchy(active) ??
-                                    choiceOverlay ??
-                                    _buildDiagnosticNavigation(active),
+                                caretOverlay: caretOverlay,
+                                caretOverlayAnchorUtf16:
+                                    caretOverlay is DiagnosticNavigationPeek
+                                        ? _diagnosticNavigation?.anchorUtf16
+                                        : null,
                                 focusNode: _focusNodeFor(g, active),
                                 scrollController: active.editorScrollController,
                                 inputFormatter:
@@ -30825,6 +30830,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) return;
     _flushInput(active, commitComposition: true);
     final current = _currentNavigationLocation();
+    final previousCursor = _isCurrentDiagnosticNavigation(active)
+        ? _diagnosticNavigation!.anchorUtf16
+        : active.selection.extentOffset;
     final markers = <({
       Map<String, Object?> diagnostic,
       String uri,
@@ -30927,11 +30935,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (_openDiagnostic(diagnostic)) {
         final source = _active;
         if (source != null) {
+          final selection = source.selection;
+          final cursor = identical(source, active)
+              ? previousCursor
+              : selection.extentOffset;
+          final anchor = cursor >= selection.start && cursor <= selection.end
+              ? cursor
+              : selection.start;
           setState(() {
             _diagnosticNavigation = (
               source: source,
               version: source.doc.version,
-              selection: source.selection,
+              selection: selection,
+              anchorUtf16: anchor,
               diagnostic: diagnostic,
               ordinal: index + 1,
               total: markers.length,
@@ -33809,6 +33825,7 @@ typedef _DiagnosticNavigationDetail = ({
   OpenDoc source,
   int version,
   TextSelection selection,
+  int anchorUtf16,
   Map<String, Object?> diagnostic,
   int ordinal,
   int total,
