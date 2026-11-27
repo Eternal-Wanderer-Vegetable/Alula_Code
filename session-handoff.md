@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.330 / feat-382 完成。Problems 标签聚焦时，Shift+F10 和菜单键调用同一个徽标菜单，取消与选择后恢复标签焦点。Windows 与 Linux 各通过 24 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 1a780e64 的 CI 45930823376 四项与 Platform Availability 45930815133 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md。
 - P05.329 / feat-381 完成。Problems 标签右键菜单切换徽标显隐，布局配置档保存偏好。隐藏时悬停和状态栏继续显示准确数量。Windows 与 Linux 各通过 42 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 cff3f543 的 CI 45927733285 四项与 Platform Availability 45927725109 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.329-problems-badge-visibility.md。
 - P05.328 / feat-380 完成。Problems 标题徽标显示全局错误、警告和信息总数，零值隐藏。悬停与可访问标签保留精确总数和快捷键。Windows 与 Linux 各通过 48 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 5d7fb4d3 的 CI 45925038660 四项与 Platform Availability 45925033057 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.328-problems-title-badge.md。
 - P05.327 / feat-379 完成。Problems 状态栏分别展示错误、警告及非零信息计数，排除 Hint。悬停与可访问标签保留精确数，筛选仅改变视图内结果。Windows 与 Linux 各通过 19 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 c63ac21a 的 CI 45922186293 四项与 Platform Availability 45922181305 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.327-problems-status-counts.md。
@@ -347,6 +348,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.330 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md)。
 [P05.329 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.329-problems-badge-visibility.md)。
 [P05.328 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.328-problems-title-badge.md)。
 [P05.327 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.327-problems-status-counts.md)。
@@ -583,4 +585,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.329 收尾 CI。按 docs/03 和固定版本核对 Problems 标签键盘菜单入口。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.330 收尾 CI。按 docs/03 和固定版本盘点 Problems 的 CMD-11 验收证据与剩余差异。PR #3 保持草稿，macOS 实机暂缓。
