@@ -4977,8 +4977,8 @@
       "dependencies": [
         "feat-392"
       ],
-      "status": "in-progress",
-      "evidence": "待 ABI、两个方向和回绕排序、固定版、Windows/Linux 原生及托管验证。",
+      "status": "done",
+      "evidence": "F8 系列详情合并当前版本的已打开诊断与未打开文件缓存计数，正确显示序号与总数。Windows 与 Linux 各通过 16 项原生检查及固定版对照。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 51ad53e2 的 CI 45976377860 四项与 Platform Availability 45976370139 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.341-diagnostic-workspace-count.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
