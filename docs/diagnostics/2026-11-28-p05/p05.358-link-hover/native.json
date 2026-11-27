@@ -1,0 +1,275 @@
+{
+  "product": "716da95374a31ca8c09cf00a89781495c778fcc7",
+  "tree": "e2fa77b6d500a9c237938ddef96843fd46f00eb8",
+  "abi": 51,
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "file": "src/vs/editor/contrib/links/browser/links.ts",
+    "lines": [
+      69,
+      187
+    ],
+    "sha256": "c0bf8ab8b78eb731a82c85afcd179a4a47681ed0e6ea5735876373636d196426"
+  },
+  "windows": {
+    "rawReportSha256": "9322bd64fb8f44022ff733430f56a3ede44c832d8784a238e9c1526d08e0c08e",
+    "fixtureSha256": "5ddc16b479f31b9a9a1ccb55475dd38e34158279746fcdb95ba54a0e05793524",
+    "runnerSha256": "3b3dc8b92d8060dce68d0e4c4e569830da1186bfab32172b935e3314cfeaa1b9",
+    "aotSha256": "227ca5321005e8382f869ca767550bc268a927987730800a1a18c3b01c4739b7",
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "sourceSha256": "efcfd8966e827c5af043a33c9da2124bf70b2b0b938dae8938fbcbeab67d239d",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-ready",
+      "unmodified-hover-keeps-the-editor-cursor",
+      "stationary-modifier-shows-hand-and-exact-underline",
+      "stationary-release-restores-the-editor-cursor",
+      "stationary-second-press-reactivates-same-range",
+      "moving-to-ordinary-text-clears-the-link-feedback",
+      "moving-back-restores-the-exact-link-feedback",
+      "leaving-the-editor-clears-link-feedback",
+      "return-with-modifier-restores-link-feedback",
+      "drag-clears-link-feedback-without-opening-target",
+      "hover-restores-link-decoration-after-drag",
+      "final-modifier-release-clears-link-state",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native cursor movement and real Control key events",
+    "windowEnvironment": 120,
+    "firstActiveRange": [
+      1,
+      13,
+      122
+    ],
+    "clearOnStationaryRelease": true,
+    "verifiedSystemCursorHandle": true
+  },
+  "linux": {
+    "rawReportSha256": "844fca30aa8ead5ded793220a5379f13e99f28f2cc78e59214e4554d495424f8",
+    "fixtureSha256": "5ddc16b479f31b9a9a1ccb55475dd38e34158279746fcdb95ba54a0e05793524",
+    "runnerSha256": "de4e8be4c670b527b83cbfd45606852bab7f3e9318cb40b3ba6c6e39222a4466",
+    "aotSha256": "27b5f8d1e256a0d75688bc6b1aabf9ab7cf68510853c2078142780b4a843ffc1",
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "sourceSha256": "81a13af4abcc6f71ce7e5d6f7d993ab8b646fe3ee91dc0109b9e721181712880",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-ready",
+      "unmodified-hover-keeps-the-editor-cursor",
+      "stationary-modifier-shows-hand-and-exact-underline",
+      "stationary-release-restores-the-editor-cursor",
+      "stationary-second-press-reactivates-same-range",
+      "moving-to-ordinary-text-clears-the-link-feedback",
+      "moving-back-restores-the-exact-link-feedback",
+      "leaving-the-editor-clears-link-feedback",
+      "return-with-modifier-restores-link-feedback",
+      "drag-clears-link-feedback-without-opening-target",
+      "hover-restores-link-decoration-after-drag",
+      "final-modifier-release-clears-link-state",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native cursor movement and real Control key events",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "firstActiveRange": [
+      1,
+      13,
+      95
+    ],
+    "clearOnStationaryRelease": true,
+    "verifiedSystemCursorHandle": false
+  },
+  "memory": {
+    "method": "Native Xvfb process tree mem-probe, same hover sequence and small local file fixture",
+    "samplesPerPhase": 3,
+    "summaries": {
+      "p05.357": {
+        "unmodified": {
+          "processes": 1,
+          "privateMiB": 225.31,
+          "workingSetMiB": 299.68
+        },
+        "active": {
+          "processes": 1,
+          "privateMiB": 225.63,
+          "workingSetMiB": 300.17
+        },
+        "released": {
+          "processes": 1,
+          "privateMiB": 225.91,
+          "workingSetMiB": 300.45
+        }
+      },
+      "p05.358": {
+        "unmodified": {
+          "processes": 1,
+          "privateMiB": 229.57,
+          "workingSetMiB": 304.07
+        },
+        "active": {
+          "processes": 1,
+          "privateMiB": 220.1,
+          "workingSetMiB": 294.8
+        },
+        "released": {
+          "processes": 1,
+          "privateMiB": 223.16,
+          "workingSetMiB": 297.86
+        }
+      }
+    },
+    "previousNativeReportSha256": "a3bc1e298a2ee0716a028699a280bafbe53dff3abf9652852fd13f664101e364",
+    "previousTree": "ad7db9f255d1d51b9f334e21b62d305fb1f0da39",
+    "repoBaseline": {
+      "path": "docs/baselines/2026-10-26/alula-w2-empty.json",
+      "platform": "windows",
+      "summary": {
+        "peak_private": 214675456,
+        "stable_private": 199073792,
+        "final_private": 199077888,
+        "final_working_set": 115838976
+      },
+      "comparable": false
+    }
+  },
+  "localChecks": {
+    "p05-358-targeted.log": "e7ded36016396a2f5ed97722c4708e7ec84722d079ca4363436cae4cb697b586",
+    "p05-358-focused.log": "af93fa558dc69b874fbb405c59411d54b7a640562329e11ac294b502b37560af",
+    "p05-358-analyze.log": "d01ff4359e5c823b2d619c25c81a9356f4fe83023007c725d038284f51aca2d0",
+    "p05-358-full.log": "707b71090b022bcfeaa21e54a7db74121b90a32a561e64fbb4fdd5193cec1de7",
+    "p05-358-link-hover-repro.log": "fbfc01f32a741a8ff7e61f77a35e0dfa0b671daa857c53edc5fbbadf3fb37431",
+    "p05-358-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe",
+    "p05-358-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitNexus": {
+    "all": {
+      "summary": {
+        "changed_count": 16,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "7432e230e2ff4b60878351cf74cc9045efd94502ce4310f780923127e5fb0ee3"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 16,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "7432e230e2ff4b60878351cf74cc9045efd94502ce4310f780923127e5fb0ee3"
+    }
+  },
+  "preeditImpact": {
+    "pointer-range": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._fileLinkPathAtPointer#4",
+        "name": "_fileLinkPathAtPointer",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "fd52b6dd5266266f56c3ba05ba1fc024de316cf4663abcf8d1f4a45b6dd7c916"
+    },
+    "state-build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "state-dispose": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.dispose#0",
+        "name": "dispose",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "eb005badf46e2be488f10b54fb165256081f23d8642a6ac4edeb3add73d26f5d"
+    },
+    "state-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.didUpdateWidget#1",
+        "name": "didUpdateWidget",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "837a46890e9e0bc2210ec93a64fcbbd7fa6ed14ecd804f69a60f23cd4566e19c"
+    },
+    "state": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState",
+        "name": "RustTextInputFieldState",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "d40089d1326dd92375ccbfbf190bbf8b0d8dd1547dc74acf33951a6d55dd3a80"
+    },
+    "widget": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputField",
+        "name": "RustTextInputField",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 3,
+        "modules_affected": 3
+      },
+      "sha256": "d786de57d8f561ab4cdc69a69ca55e576e5ee9696440fe52b0ec4e48031a66f0"
+    },
+    "workbench-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildEditor#2",
+        "name": "_buildEditor",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "387ac69276510a35b0018c7a62fd64381d079d400bd734675345dc7cf01fad83"
+    }
+  }
+}
