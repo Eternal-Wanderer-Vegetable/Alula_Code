@@ -1,0 +1,2769 @@
+{
+  "product": "15db24a39834582a42953643b45af388964cceb3",
+  "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/editor_scroll_controller.dart": "985f5f45d887c0bf70dcf0be693aef548c0ca717cae53442f671f7763261344a",
+      "app/lib/editor/rust_text_input_field.dart": "d95fd38ea4d624a9b6a5541beca8fe4522a11510e2a93da7c6860abf2f7d3a2f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "0e7fac43109137cc07d54f3a36745450d3e416c83178659d75b09198442350f4",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "315c848c6fd4d3286702cd9e465e8c42a2e6ed042c4a544cf91fe6452e712a6d",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+  "acceptanceDriverSha256": "152e36855b0a69fcce216449a91b224d6ba2f92dcd0eb35be6913f2c068a185e",
+  "localLogsSha256": {
+    "p05-337-regression.log": "349332ebdd4032573b45b741ea56263c037cb5d27820f5ea2d9a27d06b85ef34",
+    "p05-337-full.log": "b638ddf434856c0e13ac651ea9a31df8bfb1058b542773bf7e4fe17e6b1e8c40",
+    "p05-337-focused.log": "4e6324a4c82dabfcbb2254b8cb77c96191836ead1e21fec778fa0afab56ec349",
+    "p05-337-targeted.log": "f9b2effc4495a99188c96a2dea5056ef5f19f09f6702655f0b995eee19957c7a",
+    "p05-337-analyze.log": "a8908cca5ab85b348ba0f2b204b039378b44ff390bc0c44dce44a9c9b00c1af2",
+    "p05-337-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 24,
+        "affected_count": 0,
+        "changed_files": 6,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "925ecfd79fdcb2b111c98170fa3b2c04e17f7bf0df2fd9af21da7d30964147e0"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 24,
+        "affected_count": 0,
+        "changed_files": 6,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "925ecfd79fdcb2b111c98170fa3b2c04e17f7bf0df2fd9af21da7d30964147e0"
+    }
+  },
+  "preedit": {
+    "anchor-reveal": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._scheduleCaretOverlayAnchorReveal#0",
+        "name": "_scheduleCaretOverlayAnchorReveal",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "sha256": "71639d05aae14f25d84951b9d5e11c17925656993cff1f1d1467714571230339"
+    },
+    "editor-field": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputField",
+        "name": "RustTextInputField",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 3,
+        "modules_affected": 3
+      },
+      "sha256": "a188afea36814d8484b153ebdf36dce227617abf6ece8730fb4ec7a0088b69ff"
+    },
+    "field-build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "field-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.didUpdateWidget#1",
+        "name": "didUpdateWidget",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "837a46890e9e0bc2210ec93a64fcbbd7fa6ed14ecd804f69a60f23cd4566e19c"
+    },
+    "inline-gap": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._inlineGapLayout#6",
+        "name": "_inlineGapLayout",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "0d72969dbdd038552c34a00f54dc6e8c92337aef12a520fcb6780976ef147711"
+    },
+    "open-doc-copy": {
+      "target": {
+        "id": "Constructor:app/lib/workbench/workbench_page.dart:OpenDoc._viewOf",
+        "name": "_viewOf",
+        "type": "Constructor",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "aaf26df83004c422be967ccfe4d556d629d3d6616ee45d8aa98cb497d63dbee8"
+    },
+    "open-doc-create": {
+      "target": {
+        "id": "Constructor:app/lib/workbench/workbench_page.dart:OpenDoc.OpenDoc#11",
+        "name": "OpenDoc",
+        "type": "Constructor",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "a5c48f1dad94c4eb075b2404c17878562636c29b4525bf99bfb6dc03bff5628d"
+    },
+    "open-doc": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:OpenDoc",
+        "name": "OpenDoc",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 26,
+        "processes_affected": 4,
+        "modules_affected": 3
+      },
+      "sha256": "9d8948893533ac1eaca9c200326e0c0eec62f4c7a09d0946acad24c927034d6a"
+    },
+    "overlay-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._scheduleCaretOverlayUpdate#0",
+        "name": "_scheduleCaretOverlayUpdate",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "sha256": "8abd2d56e74aac75fd29125f208487c15a560f408de98ddb8ad91f91686cc5d3"
+    }
+  },
+  "macosPhysical": "deferred",
+  "nativeCheckCountPerPlatform": 22,
+  "priorProductControl": {
+    "short": {
+      "tree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+      "sha256": "b120b06b181231336cba1060574d4c9f340957bc22a93e7c34d54928c435a095",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "anchor": 28,
+      "inlineBounds": null,
+      "checked": [
+        "real terminal comment range diagnostic",
+        "last canonical row used floating fallback",
+        "Escape maintained exact range",
+        "disk source bytes unchanged"
+      ]
+    },
+    "long": {
+      "tree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+      "sha256": "46f088b4e8998fba76f2e321479ba156175453aa2b253dd6f9647b080d1e3562",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "anchor": 2989,
+      "inlineBounds": null,
+      "checked": [
+        "real terminal comment range diagnostic",
+        "last canonical row used floating fallback",
+        "Escape maintained exact range",
+        "disk source bytes unchanged"
+      ]
+    }
+  },
+  "geometry": {
+    "windows": {
+      "short": {
+        "terminalLine": 2,
+        "eofUtf16": 28,
+        "gutterMinusCaretBefore": 0.799999999999983,
+        "gutterMinusCaretOpened": 0.799999999999983,
+        "gutterMinusCaretReopened": 0.799999999999983,
+        "openedHeight": 76.0,
+        "openedAddedScrollExtent": 0.0,
+        "reopenedHeight": 76.0,
+        "reopenedAddedScrollExtent": 0.0
+      },
+      "long": {
+        "terminalLine": 83,
+        "eofUtf16": 2989,
+        "gutterMinusCaretBefore": 1.7999999999999545,
+        "gutterMinusCaretOpened": 2.199999999999818,
+        "gutterMinusCaretReopened": 2.199999999999818,
+        "openedHeight": 76.0,
+        "openedAddedScrollExtent": 71.80000000000018,
+        "reopenedHeight": 76.0,
+        "reopenedAddedScrollExtent": 71.80000000000018
+      }
+    },
+    "linux": {
+      "short": {
+        "terminalLine": 2,
+        "eofUtf16": 28,
+        "gutterMinusCaretBefore": 0.0,
+        "gutterMinusCaretOpened": 0.0,
+        "gutterMinusCaretReopened": 0.0,
+        "openedHeight": 76.0,
+        "openedAddedScrollExtent": 0.0,
+        "reopenedHeight": 76.0,
+        "reopenedAddedScrollExtent": 0.0
+      },
+      "long": {
+        "terminalLine": 83,
+        "eofUtf16": 2989,
+        "gutterMinusCaretBefore": 0.0,
+        "gutterMinusCaretOpened": 0.0,
+        "gutterMinusCaretReopened": 0.0,
+        "openedHeight": 76.0,
+        "openedAddedScrollExtent": 72.0,
+        "reopenedHeight": 76.0,
+        "reopenedAddedScrollExtent": 72.0
+      }
+    }
+  },
+  "memProbeSha256": "20d578e9ba5903e038b878274e76931162681f80d895f6e17dee874c0638df18",
+  "fixedReference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "browser": "Chrome/150.0.7871.250",
+    "checks": {
+      "short": {
+        "text": "short terminal row diagnosticrust-analyzer(syntax-error)",
+        "stale": false,
+        "zoneTop": 127.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 2,
+            "bottom": 127.80000305175781
+          },
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          }
+        ],
+        "editorFocused": true,
+        "seedReceipt": {
+          "id": "short",
+          "line": 1,
+          "column": 14,
+          "markerCount": 1
+        }
+      },
+      "long": {
+        "text": "long blank terminal row diagnosticrust-analyzer(syntax-error)",
+        "stale": false,
+        "zoneTop": 299.8000183105469,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 83,
+            "bottom": 299.8000183105469
+          },
+          {
+            "n": 82,
+            "bottom": 280.8000183105469
+          },
+          {
+            "n": 81,
+            "bottom": 261.8000030517578
+          },
+          {
+            "n": 80,
+            "bottom": 242.8000030517578
+          }
+        ],
+        "editorFocused": true,
+        "seedReceipt": {
+          "id": "long",
+          "line": 82,
+          "column": 0,
+          "markerCount": 1
+        }
+      }
+    },
+    "profile": "E:\\temp\\alula-p05-337-diagnostic-terminal\\reference-1795762477205232300",
+    "inputKind": "controlled terminal ranges with pinned Code OSS F8",
+    "rawReportSha256": "5500d2bc49e7ba75316e37a93b0e635cb4c765cfa0d6f0fe9716f1db92d1be4b",
+    "probeSha256": "7459823c74633026e93774b619915633308eb294daef3c0e82cc4417fe58483a",
+    "extensionSha256": "d71dd81b6e4661176e7a314294fee9624bf4af98af7db0e49930c6cbf277e13b"
+  },
+  "windows": {
+    "short": {
+      "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "1acfb3258fba23720c6b54f89e7b9a9fcac5730d5b2de880bf39cef4a6970598",
+      "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+      "runnerSha256": "7809e589496a988fac3eea740b48c43f83675500d6885844655806dd34fc2a1c",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "owned-editor-surface": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "focus-last-line-end": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "provider-publishes-terminal-error": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "terminal-row-uses-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 1,
+            "total": 1,
+            "severity": 1,
+            "message": "unterminated block comment",
+            "isStale": false,
+            "source": "rustc",
+            "code": "E0758",
+            "bounds": [
+              319.952,
+              160.20000000000002,
+              960.8000000000001,
+              236.20000000000002
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 28,
+          "diagnosticAnchorRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "diagnosticInlineBounds": [
+            319.952,
+            160.20000000000002,
+            960.8000000000001,
+            236.20000000000002
+          ],
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "same-eof-before-reopening": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "reopen-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 1,
+            "total": 2,
+            "severity": 1,
+            "message": "Syntax Error: Missing trailing `*/` symbols to terminate the block comment",
+            "isStale": false,
+            "source": "rust-analyzer",
+            "code": "syntax-error",
+            "bounds": [
+              319.952,
+              160.20000000000002,
+              960.8000000000001,
+              236.20000000000002
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 28,
+          "diagnosticAnchorRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "diagnosticInlineBounds": [
+            319.952,
+            160.20000000000002,
+            960.8000000000001,
+            236.20000000000002
+          ],
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            452.0,
+            135.20000000000002,
+            454.0,
+            156.20000000000002
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "owned-editor-surface": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "focus-last-line-end": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-terminal-error": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "terminal-row-uses-inline-slot": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "same-eof-before-reopening": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "reopen-inline-slot": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "alt+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "alt+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "End",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-337-diagnostic-terminal\\probe-1795764016780652000",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            702
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            702
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        }
+      ],
+      "fixturePositions": [
+        "2:15",
+        "rust-analyzer",
+        "2:15"
+      ],
+      "kind": "diagnosticTerminal",
+      "case": "short",
+      "checked": [
+        "real terminal comment range diagnostic",
+        "native focus and canonical EOF anchor",
+        "inline slot directly after final caret",
+        "gutter matches editable terminal row",
+        "slot fits editor viewport",
+        "terminal caret X unchanged",
+        "short extent unchanged or long extent temporarily increased",
+        "Escape keeps exact range and resets extent",
+        "reopen at same source position",
+        "native End collapses to valid EOF and resets extent",
+        "disk source bytes unchanged"
+      ],
+      "sources": {
+        "active": "502a7740f354eeb2451c0f7d85133b8a35fae3b6c5d601eff80941ea214d24f1",
+        "neutral": "aa7a46d0047a81a74db8b164524250549136fea0e9a5b6778982408a37fd4ec8"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "7b40a5d7bff74b406b3272ed6e4a2204ee0831c2ddf78fd08807cf5f3a8a3f93"
+    },
+    "long": {
+      "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "1acfb3258fba23720c6b54f89e7b9a9fcac5730d5b2de880bf39cef4a6970598",
+      "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+      "runnerSha256": "7809e589496a988fac3eea740b48c43f83675500d6885844655806dd34fc2a1c",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "owned-editor-surface": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            1836.0,
+            330.0,
+            1857.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "focus-last-line-end": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            688.0,
+            330.0,
+            709.0
+          ],
+          "editorScrollOffset": 1148.2,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "provider-publishes-terminal-error": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            688.0,
+            330.0,
+            709.0
+          ],
+          "editorScrollOffset": 1148.2,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "terminal-row-uses-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 2,
+            "total": 2,
+            "severity": 1,
+            "message": "Syntax Error: Missing trailing `*/` symbols to terminate the block comment",
+            "isStale": false,
+            "source": "rust-analyzer",
+            "code": "syntax-error",
+            "bounds": [
+              319.952,
+              641.0,
+              960.8000000000001,
+              717.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 2989,
+          "diagnosticAnchorRect": [
+            328.0,
+            616.0,
+            330.0,
+            637.0
+          ],
+          "diagnosticInlineBounds": [
+            319.952,
+            641.0,
+            960.8000000000001,
+            717.0
+          ],
+          "eofCaretRect": [
+            328.0,
+            616.0,
+            330.0,
+            637.0
+          ],
+          "editorScrollOffset": 1219.8000000000002,
+          "editorScrollExtent": 1220.0000000000002,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            688.0,
+            330.0,
+            709.0
+          ],
+          "editorScrollOffset": 1148.2,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "same-eof-before-reopening": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            688.0,
+            330.0,
+            709.0
+          ],
+          "editorScrollOffset": 1148.2,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "reopen-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 2,
+            "total": 2,
+            "severity": 1,
+            "message": "Syntax Error: Missing trailing `*/` symbols to terminate the block comment",
+            "isStale": false,
+            "source": "rust-analyzer",
+            "code": "syntax-error",
+            "bounds": [
+              319.952,
+              641.0,
+              960.8000000000001,
+              717.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 2989,
+          "diagnosticAnchorRect": [
+            328.0,
+            616.0,
+            330.0,
+            637.0
+          ],
+          "diagnosticInlineBounds": [
+            319.952,
+            641.0,
+            960.8000000000001,
+            717.0
+          ],
+          "eofCaretRect": [
+            328.0,
+            616.0,
+            330.0,
+            637.0
+          ],
+          "editorScrollOffset": 1219.8000000000002,
+          "editorScrollExtent": 1220.0000000000002,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            281.952,
+            102.0,
+            968.8000000000001,
+            720.8
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            328.0,
+            688.0,
+            330.0,
+            709.0
+          ],
+          "editorScrollOffset": 1148.2,
+          "editorScrollExtent": 1148.2,
+          "editorUnpaddedScrollExtent": 1148.2,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "owned-editor-surface": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "focus-last-line-end": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-terminal-error": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "terminal-row-uses-inline-slot": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "same-eof-before-reopening": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "reopen-inline-slot": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "alt+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "alt+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "End",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-337-diagnostic-terminal\\probe-1795763953083539700",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            702
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            702
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        }
+      ],
+      "fixturePositions": [
+        "83:1",
+        "rust-analyzer",
+        "83:1"
+      ],
+      "kind": "diagnosticTerminal",
+      "case": "long",
+      "checked": [
+        "real terminal comment range diagnostic",
+        "native focus and canonical EOF anchor",
+        "inline slot directly after final caret",
+        "gutter matches editable terminal row",
+        "slot fits editor viewport",
+        "terminal caret X unchanged",
+        "short extent unchanged or long extent temporarily increased",
+        "Escape keeps exact range and resets extent",
+        "reopen at same source position",
+        "native End collapses to valid EOF and resets extent",
+        "disk source bytes unchanged"
+      ],
+      "sources": {
+        "active": "35433fac73e534e7cf48b723b3ba6bca9af546a0975838fd755465eb3fed901a",
+        "neutral": "aa7a46d0047a81a74db8b164524250549136fea0e9a5b6778982408a37fd4ec8"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "2ad8a4ca84cfa45e5af0db450a6a69c55b47e4f9af2c40ce2acf40807edbedbf"
+    }
+  },
+  "linux": {
+    "short": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+      "processTreeSamples": {
+        "provider-publishes-terminal-error": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 7806,
+              "ppid": 7805,
+              "private": 257142784,
+              "pss": 283998208,
+              "working_set": 336547840
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8017,
+              "ppid": 7806,
+              "private": 609673216,
+              "pss": 616531968,
+              "working_set": 632705024
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8178,
+              "ppid": 8017,
+              "private": 4816896,
+              "pss": 12039168,
+              "working_set": 28106752
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8177,
+              "ppid": 8017,
+              "private": 4808704,
+              "pss": 12030976,
+              "working_set": 28098560
+            }
+          ],
+          "root_pid": 7806,
+          "total_private_bytes": 876441600,
+          "total_private_mib": 835.8,
+          "total_working_set_bytes": 1025458176
+        },
+        "terminal-row-uses-inline-slot": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 7806,
+              "ppid": 7805,
+              "private": 257187840,
+              "pss": 284044288,
+              "working_set": 336584704
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8017,
+              "ppid": 7806,
+              "private": 609673216,
+              "pss": 616532992,
+              "working_set": 632705024
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8178,
+              "ppid": 8017,
+              "private": 4816896,
+              "pss": 12040192,
+              "working_set": 28106752
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8177,
+              "ppid": 8017,
+              "private": 4808704,
+              "pss": 12032000,
+              "working_set": 28098560
+            }
+          ],
+          "root_pid": 7806,
+          "total_private_bytes": 876486656,
+          "total_private_mib": 835.9,
+          "total_working_set_bytes": 1025495040
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 7806,
+              "ppid": 7805,
+              "private": 256651264,
+              "pss": 283511808,
+              "working_set": 336048128
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8017,
+              "ppid": 7806,
+              "private": 609673216,
+              "pss": 616535040,
+              "working_set": 632705024
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8178,
+              "ppid": 8017,
+              "private": 4816896,
+              "pss": 12041216,
+              "working_set": 28106752
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 8177,
+              "ppid": 8017,
+              "private": 4808704,
+              "pss": 12033024,
+              "working_set": 28098560
+            }
+          ],
+          "root_pid": 7806,
+          "total_private_bytes": 875950080,
+          "total_private_mib": 835.4,
+          "total_working_set_bytes": 1024958464
+        }
+      },
+      "aotSha256": "a5ab2b9a1f3e359ee8c36751238de7c94fe1e2a662b2b8ff5a50d712cd3bc855",
+      "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+      "runnerSha256": "e9781fe993d0257140298229c201a7b9bd6728697683b07eec0392c20e91a77b",
+      "steps": {
+        "owned-editor-surface": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "focus-last-line-end": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "provider-publishes-terminal-error": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "terminal-row-uses-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 1,
+            "total": 1,
+            "severity": 1,
+            "message": "unterminated block comment",
+            "isStale": false,
+            "source": "rustc",
+            "code": "E0758",
+            "bounds": [
+              373.52,
+              160.0,
+              1096.0,
+              236.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 28,
+          "diagnosticAnchorRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "diagnosticInlineBounds": [
+            373.52,
+            160.0,
+            1096.0,
+            236.0
+          ],
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "same-eof-before-reopening": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "reopen-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            14,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 1,
+            "total": 1,
+            "severity": 1,
+            "message": "unterminated block comment",
+            "isStale": false,
+            "source": "rustc",
+            "code": "E0758",
+            "bounds": [
+              373.52,
+              160.0,
+              1096.0,
+              236.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 28,
+          "diagnosticAnchorRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "diagnosticInlineBounds": [
+            373.52,
+            160.0,
+            1096.0,
+            236.0
+          ],
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            28,
+            28
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            1,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            498.0,
+            135.0,
+            500.0,
+            156.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 0.0,
+          "editorUnpaddedScrollExtent": 0.0,
+          "abi": 46,
+          "matchedTextSha256": "13bc08f7da20fd865767d4482acbdf097a46f366ac894abac6ae7bfcc5ba80bb"
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-z46y7qnb",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            489
+          ],
+          "actual": [
+            740,
+            489
+          ],
+          "logical": [
+            719.76,
+            441.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        }
+      ],
+      "kind": "diagnosticTerminal",
+      "case": "short",
+      "checked": [
+        "real terminal comment range diagnostic",
+        "native focus and canonical EOF anchor",
+        "inline slot directly after final caret",
+        "gutter matches editable terminal row",
+        "slot fits editor viewport",
+        "terminal caret X unchanged",
+        "short extent unchanged or long extent temporarily increased",
+        "Escape keeps exact range and resets extent",
+        "reopen at same source position",
+        "native End collapses to valid EOF and resets extent",
+        "disk source bytes unchanged"
+      ],
+      "sources": {
+        "active": "502a7740f354eeb2451c0f7d85133b8a35fae3b6c5d601eff80941ea214d24f1",
+        "neutral": "aa7a46d0047a81a74db8b164524250549136fea0e9a5b6778982408a37fd4ec8"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "sampledPidFinalLiveness": {
+        "7806": false,
+        "8017": false,
+        "8177": false,
+        "8178": false
+      },
+      "rawReportSha256": "8286329672e55089368f9dc06a26197d45e74ed2512f2f1cdc21652200b4e21a"
+    },
+    "long": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+      "processTreeSamples": {
+        "provider-publishes-terminal-error": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 8689,
+              "ppid": 8686,
+              "private": 272302080,
+              "pss": 299156480,
+              "working_set": 351793152
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8939,
+              "ppid": 8689,
+              "private": 624906240,
+              "pss": 631739392,
+              "working_set": 647831552
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9100,
+              "ppid": 8939,
+              "private": 4755456,
+              "pss": 12009472,
+              "working_set": 28090368
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9099,
+              "ppid": 8939,
+              "private": 4751360,
+              "pss": 12007424,
+              "working_set": 28139520
+            }
+          ],
+          "root_pid": 8689,
+          "total_private_bytes": 906715136,
+          "total_private_mib": 864.7,
+          "total_working_set_bytes": 1055854592
+        },
+        "terminal-row-uses-inline-slot": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 8689,
+              "ppid": 8686,
+              "private": 278073344,
+              "pss": 304924672,
+              "working_set": 357564416
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8939,
+              "ppid": 8689,
+              "private": 624906240,
+              "pss": 631737344,
+              "working_set": 647831552
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9100,
+              "ppid": 8939,
+              "private": 4755456,
+              "pss": 12008448,
+              "working_set": 28090368
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9099,
+              "ppid": 8939,
+              "private": 4751360,
+              "pss": 12006400,
+              "working_set": 28139520
+            }
+          ],
+          "root_pid": 8689,
+          "total_private_bytes": 912486400,
+          "total_private_mib": 870.2,
+          "total_working_set_bytes": 1061625856
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "n_processes": 4,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 8689,
+              "ppid": 8686,
+              "private": 278937600,
+              "pss": 305788928,
+              "working_set": 358428672
+            },
+            {
+              "name": "rust-analyzer",
+              "peak_private": 0,
+              "pid": 8939,
+              "ppid": 8689,
+              "private": 624906240,
+              "pss": 631737344,
+              "working_set": 647831552
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9100,
+              "ppid": 8939,
+              "private": 4755456,
+              "pss": 12008448,
+              "working_set": 28090368
+            },
+            {
+              "name": "rust-analyzer-p",
+              "peak_private": 0,
+              "pid": 9099,
+              "ppid": 8939,
+              "private": 4751360,
+              "pss": 12006400,
+              "working_set": 28139520
+            }
+          ],
+          "root_pid": 8689,
+          "total_private_bytes": 913350656,
+          "total_private_mib": 871.0,
+          "total_working_set_bytes": 1062490112
+        }
+      },
+      "aotSha256": "a5ab2b9a1f3e359ee8c36751238de7c94fe1e2a662b2b8ff5a50d712cd3bc855",
+      "fixtureSha256": "5b7beef012170fe2d234b0889c94221fd818a9877228607bc874a31b5462d38d",
+      "runnerSha256": "e9781fe993d0257140298229c201a7b9bd6728697683b07eec0392c20e91a77b",
+      "steps": {
+        "owned-editor-surface": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            0,
+            0
+          ],
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            1836.0,
+            384.0,
+            1857.0
+          ],
+          "editorScrollOffset": 0.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "focus-last-line-end": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            747.0,
+            384.0,
+            768.0
+          ],
+          "editorScrollOffset": 1089.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "provider-publishes-terminal-error": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            747.0,
+            384.0,
+            768.0
+          ],
+          "editorScrollOffset": 1089.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "terminal-row-uses-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 2,
+            "total": 2,
+            "severity": 1,
+            "message": "Syntax Error: Missing trailing `*/` symbols to terminate the block comment",
+            "isStale": false,
+            "source": "rust-analyzer",
+            "code": "syntax-error",
+            "bounds": [
+              373.7651171875,
+              700.0,
+              1096.0,
+              776.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 2989,
+          "diagnosticAnchorRect": [
+            382.0,
+            675.0,
+            384.0,
+            696.0
+          ],
+          "diagnosticInlineBounds": [
+            373.7651171875,
+            700.0,
+            1096.0,
+            776.0
+          ],
+          "eofCaretRect": [
+            382.0,
+            675.0,
+            384.0,
+            696.0
+          ],
+          "editorScrollOffset": 1161.0,
+          "editorScrollExtent": 1161.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "escape-dismisses-slot-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            747.0,
+            384.0,
+            768.0
+          ],
+          "editorScrollOffset": 1089.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "same-eof-before-reopening": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            747.0,
+            384.0,
+            768.0
+          ],
+          "editorScrollOffset": 1089.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "reopen-inline-slot": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2974,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": {
+            "fileName": "other.rs",
+            "ordinal": 2,
+            "total": 2,
+            "severity": 1,
+            "message": "Syntax Error: Missing trailing `*/` symbols to terminate the block comment",
+            "isStale": false,
+            "source": "rust-analyzer",
+            "code": "syntax-error",
+            "bounds": [
+              373.7651171875,
+              700.0,
+              1096.0,
+              776.0
+            ]
+          },
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": 2989,
+          "diagnosticAnchorRect": [
+            382.0,
+            675.0,
+            384.0,
+            696.0
+          ],
+          "diagnosticInlineBounds": [
+            373.7651171875,
+            700.0,
+            1096.0,
+            776.0
+          ],
+          "eofCaretRect": [
+            382.0,
+            675.0,
+            384.0,
+            696.0
+          ],
+          "editorScrollOffset": 1161.0,
+          "editorScrollExtent": 1161.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        },
+        "native-end-keeps-eof-and-releases-padding": {
+          "documentId": 3,
+          "version": 1,
+          "selection": [
+            2989,
+            2989
+          ],
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "panelCollapsed": true,
+          "editorBounds": [
+            335.52,
+            102.0,
+            1104.0,
+            780.0
+          ],
+          "diagnosticNavigation": null,
+          "statusDiagnosticsCounts": [
+            2,
+            0,
+            0
+          ],
+          "diagnosticAnchor": null,
+          "diagnosticAnchorRect": null,
+          "diagnosticInlineBounds": null,
+          "eofCaretRect": [
+            382.0,
+            747.0,
+            384.0,
+            768.0
+          ],
+          "editorScrollOffset": 1089.0,
+          "editorScrollExtent": 1089.0,
+          "editorUnpaddedScrollExtent": 1089.0,
+          "abi": 46,
+          "matchedTextSha256": "011f87e88c40c8fd00629114505105d3e72ff846eed69daae26526d678757498"
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-0tawrl0g",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            489
+          ],
+          "actual": [
+            740,
+            489
+          ],
+          "logical": [
+            719.76,
+            441.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        }
+      ],
+      "kind": "diagnosticTerminal",
+      "case": "long",
+      "checked": [
+        "real terminal comment range diagnostic",
+        "native focus and canonical EOF anchor",
+        "inline slot directly after final caret",
+        "gutter matches editable terminal row",
+        "slot fits editor viewport",
+        "terminal caret X unchanged",
+        "short extent unchanged or long extent temporarily increased",
+        "Escape keeps exact range and resets extent",
+        "reopen at same source position",
+        "native End collapses to valid EOF and resets extent",
+        "disk source bytes unchanged"
+      ],
+      "sources": {
+        "active": "35433fac73e534e7cf48b723b3ba6bca9af546a0975838fd755465eb3fed901a",
+        "neutral": "aa7a46d0047a81a74db8b164524250549136fea0e9a5b6778982408a37fd4ec8"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "sampledPidFinalLiveness": {
+        "8689": false,
+        "8939": false,
+        "9099": false,
+        "9100": false
+      },
+      "rawReportSha256": "3f11274bc1dd67582fca2ac6f13a246831b2a93a41035ccbebcf49f644afdbd0"
+    }
+  }
+}

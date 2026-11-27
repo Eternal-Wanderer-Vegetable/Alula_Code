@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.337 / feat-389 完成。普通末行和末尾空行可原位显示诊断详情，关闭后回收临时滚动范围。Windows 与 Linux 各通过 22 项原生检查及固定版末行对照。专题 266/266，Flutter 1,912 项通过、2 项跳过。产品 15db24a3 的 CI 45958124739 四项与 Platform Availability 45958119533 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.337-diagnostic-terminal.md。
 - P05.336 / feat-388 完成。同一诊断重新发布后更新详情和稳定占位，撤回后标记过期，恢复时清除过期标记。Windows 与 Linux 各通过 14 项原生检查及固定版对照。专题 224/224，Flutter 1,908 项通过、2 项跳过。产品 622e7f84 的 CI 45953667653 四项与 Platform Availability 45953661705 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md。
 - P05.335 / feat-387 完成。诊断详情占位按消息行数与视口高度计算，反向导航恢复对应高度。Windows 与 Linux 各通过 28 项原生检查及固定版高度对照。专题 219/219，Flutter 1,903 项通过、2 项跳过。产品 b2fb5b47 的 CI 45950638451 四项与 Platform Availability 45950632895 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.335-diagnostic-inline-height.md。
 - P05.334 / feat-386 完成。后续代码行以 Tab 开头时支持诊断详情行内占位，保留制表符、缩进宽度和横向光标坐标。Windows 与 Linux 各通过 24 项原生检查。专题 217/217，Flutter 1,901 项通过、2 项跳过。产品 dd3e60b8 的 CI 45947957446 四项与 Platform Availability 45947951728 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.334-diagnostic-inline-tabs.md。
@@ -114,7 +115,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。继续核对 CMD-11 诊断详情末行与空行的占位坐标，核对锚点内范围改变及跨未打开文件的证据。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标，核对锚点内范围改变及跨未打开文件的证据。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
