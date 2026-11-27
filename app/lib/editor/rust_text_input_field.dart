@@ -370,6 +370,7 @@ class RustTextInputField extends StatefulWidget {
     this.wordWrap = false,
     this.horizontalScrollController,
     this.rangeDecorations = const [],
+    this.canHoverFileLink,
     this.caretOverlay,
     this.caretOverlayAnchorUtf16,
     this.reserveCaretOverlayLineSpace = false,
@@ -411,6 +412,9 @@ class RustTextInputField extends StatefulWidget {
   final bool wordWrap;
   final ScrollController? horizontalScrollController;
   final List<EditorRangeDecoration> rangeDecorations;
+
+  /// Enables file-link feedback for a host that also handles modifier-click.
+  final bool Function(DocumentFileLink link)? canHoverFileLink;
 
   /// Optional popup positioned beside the local caret and clamped to the
   /// visible editor viewport.
@@ -657,6 +661,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     );
   }
 
+  Offset? _fileLinkHoverPosition;
+  DocumentFileLink? _hoveredFileLink;
+
   @visibleForTesting
   bool get hasActiveMouseDragAutoScrollTimer =>
       _mouseDragAutoScrollTimer != null;
@@ -666,6 +673,126 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final editable = _findEditableRenderObject(context);
     if (editable == null) return null;
     return editable.getPositionForPoint(globalPosition).offset;
+  }
+
+  /// Matches an absolute document offset against the glyphs at both pointer
+  /// positions. A nearby caret position alone can also refer to blank space.
+  DocumentFileLink? fileLinkAtPointer(
+    int offset,
+    Offset position, {
+    Offset? release,
+  }) {
+    final window = widget.inputWindow;
+    if (window.version != window.document.version || window.hasComposition) {
+      return null;
+    }
+    final cached = _hoveredFileLink;
+    final link =
+        cached != null &&
+            cached.version == window.version &&
+            cached.startUtf16 <= offset &&
+            offset <= cached.endUtf16
+        ? cached
+        : window.document.fileLinkAt(offset);
+    if (link == null || link.version != window.version) return null;
+    final editable = _findEditableRenderObject(context);
+    if (editable == null || !editable.attached) return null;
+    final boxes = editable.getBoxesForSelection(
+      TextSelection(
+        baseOffset: (link.startUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+        extentOffset: (link.endUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+      ),
+    );
+    bool hitsLink(Offset point) {
+      final local = editable.globalToLocal(point);
+      return boxes.any((box) => box.toRect().contains(local));
+    }
+
+    return hitsLink(position) && (release == null || hitsLink(release))
+        ? link
+        : null;
+  }
+
+  void _onFileLinkHover(Offset position) {
+    if (_fileLinkHoverPosition == null) {
+      HardwareKeyboard.instance.addHandler(_onFileLinkModifier);
+      widget.scrollController?.addListener(_clearFileLinkHover);
+      _horizontalScrollController.addListener(_clearFileLinkHover);
+    }
+    _fileLinkHoverPosition = position;
+    _updateFileLinkHover();
+  }
+
+  bool _onFileLinkModifier(KeyEvent event) {
+    if (event is! KeyRepeatEvent) {
+      const modifierKeys = [
+        LogicalKeyboardKey.controlLeft,
+        LogicalKeyboardKey.controlRight,
+        LogicalKeyboardKey.metaLeft,
+        LogicalKeyboardKey.metaRight,
+        LogicalKeyboardKey.shiftLeft,
+        LogicalKeyboardKey.shiftRight,
+      ];
+      if (modifierKeys.contains(event.logicalKey)) _updateFileLinkHover();
+    }
+    return false;
+  }
+
+  void _updateFileLinkHover() {
+    DocumentFileLink? link;
+    final keyboard = HardwareKeyboard.instance;
+    final modifier = defaultTargetPlatform == TargetPlatform.macOS
+        ? keyboard.isMetaPressed
+        : keyboard.isControlPressed;
+    final position = _fileLinkHoverPosition;
+    final isAllowed = widget.canHoverFileLink;
+    if (modifier &&
+        !keyboard.isShiftPressed &&
+        position != null &&
+        isAllowed != null) {
+      final window = widget.inputWindow;
+      final offset = _textOffsetAtGlobalPosition(position);
+      if (offset != null && offset >= 0 && offset <= window.text.length) {
+        link = fileLinkAtPointer(window.startUtf16 + offset, position);
+        if (link != null &&
+            !identical(link, _hoveredFileLink) &&
+            !isAllowed(link)) {
+          link = null;
+        }
+      }
+    }
+    if (link != _hoveredFileLink && mounted) {
+      setState(() => _hoveredFileLink = link);
+    }
+  }
+
+  void _detachFileLinkHover(ScrollController? verticalScroll) {
+    if (_fileLinkHoverPosition == null) return;
+    _fileLinkHoverPosition = null;
+    _hoveredFileLink = null;
+    HardwareKeyboard.instance.removeHandler(_onFileLinkModifier);
+    verticalScroll?.removeListener(_clearFileLinkHover);
+    _horizontalScrollController.removeListener(_clearFileLinkHover);
+  }
+
+  void _clearFileLinkHover() {
+    final wasActive = _hoveredFileLink != null;
+    _detachFileLinkHover(widget.scrollController);
+    if (!wasActive || !mounted) return;
+    final scheduler = SchedulerBinding.instance;
+    if (scheduler.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      scheduler.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
   }
 
   EditorTextDragPayload? _editorTextDragPayloadAt(Offset globalPosition) {
@@ -1459,6 +1586,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void didUpdateWidget(covariant RustTextInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.inputWindow != widget.inputWindow ||
+        oldWidget.scrollController != widget.scrollController ||
+        oldWidget.horizontalScrollController !=
+            widget.horizontalScrollController ||
+        widget.canHoverFileLink == null) {
+      _detachFileLinkHover(oldWidget.scrollController);
+    }
     if (oldWidget.inputWindow != widget.inputWindow &&
         _columnDragPointer != null) {
       _scheduleMouseDragCaretToViewportEdge();
@@ -2487,34 +2621,53 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             ))
         .copyWith(visualDensity: VisualDensity.standard);
     final textStyle = inputBaseStyle.merge(editorStyle);
-    Widget buildField(StrutStyle? inlineStrut) => Listener(
-      onPointerDown: _handlePointerDown,
-      onPointerMove: _handlePointerMove,
-      onPointerUp: _handlePointerUp,
-      onPointerCancel: _handlePointerCancel,
-      child: TextField(
-        key: const ValueKey<String>('rust-bounded-text-input'),
-        controller: _controller,
-        focusNode: _focusNode,
-        scrollController: widget.scrollController,
-        inputFormatters:
-            widget.inputFormatter == null ? null : [widget.inputFormatter!],
-        autofocus: widget.autofocus,
-        contextMenuBuilder: widget.contextMenuBuilder ??
-            (_, state) =>
-                AdaptiveTextSelectionToolbar.editableText(editableTextState: state),
-        onTap: widget.onTap,
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        expands: true,
-        textAlignVertical: TextAlignVertical.top,
-        style: editorStyle,
-        strutStyle: _controller.hasVisibleFoldedRanges
-            ? StrutStyle.disabled
-            : inlineStrut,
-        decoration: decoration,
-      ),
-    );
+    Widget buildField(StrutStyle? inlineStrut, bool linkHovered) {
+      final hoverEnabled = widget.canHoverFileLink != null;
+      final field = Listener(
+        onPointerDown: hoverEnabled
+            ? (event) {
+                _clearFileLinkHover();
+                _handlePointerDown(event);
+              }
+            : _handlePointerDown,
+        onPointerMove: _handlePointerMove,
+        onPointerUp: _handlePointerUp,
+        onPointerCancel: _handlePointerCancel,
+        child: TextField(
+          key: const ValueKey<String>('rust-bounded-text-input'),
+          controller: _controller,
+          focusNode: _focusNode,
+          mouseCursor: linkHovered ? SystemMouseCursors.click : null,
+          scrollController: widget.scrollController,
+          inputFormatters: widget.inputFormatter == null
+              ? null
+              : [widget.inputFormatter!],
+          autofocus: widget.autofocus,
+          contextMenuBuilder:
+              widget.contextMenuBuilder ??
+              (_, state) => AdaptiveTextSelectionToolbar.editableText(
+                editableTextState: state,
+              ),
+          onTap: widget.onTap,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          expands: true,
+          textAlignVertical: TextAlignVertical.top,
+          style: editorStyle,
+          strutStyle: _controller.hasVisibleFoldedRanges
+              ? StrutStyle.disabled
+              : inlineStrut,
+          decoration: decoration,
+        ),
+      );
+      if (!hoverEnabled) return field;
+      return MouseRegion(
+        onHover: (event) => _onFileLinkHover(event.position),
+        onExit: (_) => _clearFileLinkHover(),
+        child: field,
+      );
+    }
+
     final gutterStyle = textStyle.copyWith(fontSize: 11);
     final padding = (decoration.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
@@ -2636,6 +2789,24 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     style: textStyle,
                     withComposing: true,
                   );
+                  final window = widget.inputWindow;
+                  final hover = _hoveredFileLink;
+                  final linkHovered =
+                      hover != null &&
+                      hover.version == window.version &&
+                      hover.version == window.document.version &&
+                      !window.hasComposition;
+                  final rangeDecorations = !linkHovered
+                      ? widget.rangeDecorations
+                      : [
+                          ...widget.rangeDecorations,
+                          EditorRangeDecoration(
+                            documentVersion: hover.version,
+                            startUtf16: hover.startUtf16,
+                            endUtf16: hover.endUtf16,
+                            underlineColor: theme.colorScheme.primary,
+                          ),
+                        ];
                   final editorContent = Stack(
                     fit: StackFit.expand,
                     children: [
@@ -2661,7 +2832,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             ),
                           ),
                         ),
-                      if (widget.rangeDecorations.any(
+                      if (rangeDecorations.any(
                           (decoration) => decoration.backgroundColor != null))
                         Positioned.fill(
                           child: IgnorePointer(
@@ -2672,7 +2843,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                 strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
-                                decorations: widget.rangeDecorations,
+                                decorations: rangeDecorations,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -2687,7 +2858,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         label: widget.semanticsLabel,
                         value: editingValue.text,
                         textField: true,
-                        child: buildField(inlineStrut),
+                        child: buildField(inlineStrut, linkHovered),
                       ),
                       if (widget.showIndentGuides ||
                           widget.whitespaceMode != EditorWhitespaceMode.none)
@@ -2733,7 +2904,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             ),
                           ),
                         ),
-                      if (widget.rangeDecorations.any(
+                      if (rangeDecorations.any(
                         (decoration) =>
                             decoration.borderColor != null ||
                             decoration.underlineColor != null,
@@ -2747,7 +2918,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                 strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
-                                decorations: widget.rangeDecorations,
+                                decorations: rangeDecorations,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -3010,6 +3181,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   @override
   void dispose() {
+    _detachFileLinkHover(widget.scrollController);
     _stopMouseDrag();
     _stopColumnDrag();
     _listenedCaretVerticalScrollController

@@ -23363,34 +23363,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Offset down,
     Offset up,
   ) {
-    final window = view.inputWindow;
-    if (window.version != view.doc.version || window.hasComposition) {
-      return null;
-    }
-    final link = view.doc.fileLinkAt(offset);
-    if (link == null || link.version != view.doc.version) return null;
-    final field = view.inputFieldKey.currentState;
-    final editable = field == null ? null : _findRenderEditable(field.context);
-    if (editable == null || !editable.attached) return null;
-    final boxes = editable.getBoxesForSelection(
-      TextSelection(
-        baseOffset: (link.startUtf16 - window.startUtf16).clamp(
-          0,
-          window.text.length,
-        ),
-        extentOffset: (link.endUtf16 - window.startUtf16).clamp(
-          0,
-          window.text.length,
-        ),
-      ),
+    final link = view.inputFieldKey.currentState?.fileLinkAtPointer(
+      offset,
+      down,
+      release: up,
     );
-    bool hitsLink(Offset point) {
-      final local = editable.globalToLocal(point);
-      return boxes.any((box) => box.toRect().contains(local));
-    }
-
-    if (!hitsLink(down) || !hitsLink(up)) return null;
-    return _localFileLinkPath(link);
+    return link == null ? null : _localFileLinkPath(link);
   }
 
   void _onEditorPointerCancel(PointerCancelEvent event) {
@@ -29721,6 +29699,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ),
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
+                                canHoverFileLink: (link) =>
+                                    _localFileLinkPath(link) != null,
                                 caretOverlay: caretOverlay,
                                 reserveCaretOverlayLineSpace:
                                     caretOverlay is DiagnosticNavigationPeek,
