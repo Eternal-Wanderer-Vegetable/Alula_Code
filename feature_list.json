@@ -4905,8 +4905,8 @@
       "dependencies": [
         "feat-386"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "诊断详情占位按消息行数与视口高度计算，反向导航恢复对应高度。Windows 与 Linux 各通过 28 项原生检查及固定版高度对照。专题 219/219，Flutter 1,903 项通过、2 项跳过。产品 b2fb5b47 的 CI 45950638451 四项与 Platform Availability 45950632895 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.335-diagnostic-inline-height.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
