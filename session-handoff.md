@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.349 / feat-401 完成。诊断位于最后一个换行符前时，详情占据行间空间，末尾空行和行号移至详情之后。Windows 与 Linux 各通过 10 项原生检查及固定版对照。专题 272/272，Flutter 1,929 项通过、2 项跳过。产品 f93eddc4 的 CI 46015873957 四项与 Platform Availability 46015867782 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.349-diagnostic-trailing-break.md。
 - P05.348 / feat-400 完成。关闭最后一个挂接语言服务的编辑器时更新 Problems 工作区诊断，支持面板重开和原文件定位。Windows 与 Linux 各通过 10 项原生检查。专题 188/188，Flutter 1,923 项通过、2 项跳过。产品 0ac80899 的 CI 46009720250 四项与 Platform Availability 46009712308 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.348-problems-last-editor.md。
 - P05.347 / feat-399 完成。Problems 未打开文件组支持独立鼠标与键盘折叠、当前页折叠全部及状态保留。Windows 与 Linux 各通过 14 项原生检查。专题 187/187，Flutter 1,922 项通过、2 项跳过。产品 209f689a 的 CI 46005033363 四项与 Platform Availability 46005025752 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.347-problems-unopened-groups.md。
 - P05.346 / feat-398 完成。Problems 行可单击预览、Enter 打开或双击固定未打开文件。匹配当前文档版本后选区，并按入口保留或转移焦点。Windows 与 Linux 各通过 11 项原生检查。专题 187/187，Flutter 1,922 项通过、2 项跳过。产品 32d4725e 的 CI 46000369135 四项与 Platform Availability 46000364045 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.346-problems-open-unopened.md。
@@ -366,6 +367,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.349 最后换行符前的诊断详情](docs/diagnostics/2026-11-27-p05/p05.349-diagnostic-trailing-break.md)。
 [P05.348 Problems 最后编辑器关闭后的诊断](docs/diagnostics/2026-11-27-p05/p05.348-problems-last-editor.md)。
 [P05.347 Problems 未打开文件组折叠](docs/diagnostics/2026-11-27-p05/p05.347-problems-unopened-groups.md)。
 [P05.346 Problems 打开未打开文件的诊断](docs/diagnostics/2026-11-27-p05/p05.346-problems-open-unopened.md)。
@@ -621,4 +623,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.348 收尾 CI。按 docs/03 核对诊断详情遇到中间空行或末尾换行时的行内占位。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.349 收尾 CI。按 docs/03 继续核对诊断锚点在中间空行时的行内占位。PR #3 保持草稿，macOS 实机暂缓。
