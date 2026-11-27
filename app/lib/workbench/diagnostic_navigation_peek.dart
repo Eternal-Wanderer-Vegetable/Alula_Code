@@ -22,6 +22,11 @@ class DiagnosticNavigationPeek extends StatelessWidget {
   final String? source;
   final String? code;
 
+  static final _lineBreak = RegExp(r'\r\n|\r|\n');
+
+  int get preferredHeightInEditorLines =>
+      4 + _lineBreak.allMatches(message).take(16).length;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;

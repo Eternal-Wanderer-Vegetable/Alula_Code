@@ -29360,6 +29360,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 caretOverlay: caretOverlay,
                                 reserveCaretOverlayLineSpace:
                                     caretOverlay is DiagnosticNavigationPeek,
+                                caretOverlayHeightInLines:
+                                    caretOverlay is DiagnosticNavigationPeek
+                                        ? caretOverlay.preferredHeightInEditorLines
+                                        : null,
                                 caretOverlayAnchorUtf16:
                                     caretOverlay is DiagnosticNavigationPeek
                                         ? _diagnosticNavigation?.anchorUtf16

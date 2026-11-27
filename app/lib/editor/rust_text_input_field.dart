@@ -348,6 +348,7 @@ class RustTextInputField extends StatefulWidget {
     this.caretOverlay,
     this.caretOverlayAnchorUtf16,
     this.reserveCaretOverlayLineSpace = false,
+    this.caretOverlayHeightInLines,
     this.syntaxTokens = const [],
     this.syntaxVersion = -1,
     this.syntaxTokenColor,
@@ -397,6 +398,9 @@ class RustTextInputField extends StatefulWidget {
   /// If the anchor has a following line, reserve space in the editor for
   /// the overlay while keeping the underlying text selection intact.
   final bool reserveCaretOverlayLineSpace;
+
+  /// Requested inline space in editor lines. The viewport can cap this size.
+  final int? caretOverlayHeightInLines;
   final List<Map<String, Object?>> syntaxTokens;
   final int syntaxVersion;
   final Color Function(String kind)? syntaxTokenColor;
@@ -476,6 +480,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   final GlobalKey _editorOverlayStackKey = GlobalKey();
   Rect? _caretRectInOverlay;
   Rect? _inlineOverlayRect;
+  bool _inlineOverlayRevealScheduled = false;
+  ({TextStyle style, double scale, double height})? _inlineOverlayLineMetrics;
   bool _caretOverlayUpdateScheduled = false;
   ScrollController? _listenedCaretVerticalScrollController;
   ScrollController? _listenedCaretHorizontalScrollController;
@@ -1793,12 +1799,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _scheduleCaretOverlayAnchorReveal() {
-    final anchor = widget.caretOverlayAnchorUtf16;
-    if (anchor == null) return;
+    if (widget.caretOverlayAnchorUtf16 == null ||
+        _inlineOverlayRevealScheduled) {
+      return;
+    }
+    _inlineOverlayRevealScheduled = true;
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      _inlineOverlayRevealScheduled = false;
       if (!mounted ||
           widget.caretOverlay == null ||
-          widget.caretOverlayAnchorUtf16 != anchor) {
+          widget.caretOverlayAnchorUtf16 == null) {
         return;
       }
       final selection = _controller.selection;
@@ -2138,7 +2148,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final lineStart =
         localAnchor == 0 ? 0 : text.lastIndexOf('\n', localAnchor - 1) + 1;
     if (text.substring(lineStart, lineBreak).trim().isEmpty) return null;
-    final height = (viewportHeight - 56).clamp(0, 132).toDouble();
+    var availableHeight = viewportHeight - 56;
+    var requestedHeight = 132.0;
+    if (widget.caretOverlayHeightInLines case final lines?) {
+      final lineHeight = _inlineOverlayLineHeight(textStyle, scale);
+      final maximumLines =
+          (viewportHeight * 0.8 / lineHeight).clamp(12.0, 20.0);
+      requestedHeight = lines.clamp(4, maximumLines).toDouble() * lineHeight;
+      availableHeight = viewportHeight - (2 * lineHeight + 14);
+    }
+    final height = availableHeight.clamp(0.0, requestedHeight).toDouble();
     if (height < 48) return null;
     return (
       text: text,
@@ -2147,6 +2166,22 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       scale: scale,
       tabStyle: text.codeUnitAt(lineBreak + 1) == 0x09 ? textStyle : null,
     );
+  }
+
+  double _inlineOverlayLineHeight(TextStyle style, double scale) {
+    if (_inlineOverlayLineMetrics case final metrics?
+        when metrics.style == style && metrics.scale == scale) {
+      return metrics.height;
+    }
+    final painter = TextPainter(
+      text: TextSpan(text: 'M', style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.linear(scale),
+    );
+    final height = painter.preferredLineHeight.clamp(1.0, double.infinity).toDouble();
+    painter.dispose();
+    _inlineOverlayLineMetrics = (style: style, scale: scale, height: height);
+    return height;
   }
 
   double _inlineTabLetterSpacing(TextStyle style, double scale) {
@@ -2303,6 +2338,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                   ),
                           );
                     _inlineOverlayRect = null;
+                    _scheduleCaretOverlayAnchorReveal();
                     _scheduleCaretOverlayUpdate();
                   }
                   final inlineStrut = gap == null ||
