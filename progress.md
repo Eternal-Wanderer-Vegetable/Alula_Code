@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.353 / feat-405 完成。状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md。
 - P05.352 / feat-404 完成。最后一个挂接编辑器关闭后，迟到诊断通过版本化订阅自动更新状态栏和 Problems。Windows 与 Linux 各通过 18 项原生检查，专题 143/143，Flutter 1,949 项通过、2 项跳过。产品 758e7eb7 的 CI 46032966666 四项与 Platform Availability 46032961585 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md。
 - P05.351 / feat-403 完成。中间空行后紧接非缩进代码且首个可视行包含空格或 Tab 时，详情在空行和代码之间占位。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 292/292，Flutter 1,949 项通过、2 项跳过。产品 b899d754 的 CI 46026259681 四项与 Platform Availability 46026251031 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.351-diagnostic-interior-whitespace.md。
 - P05.350 / feat-402 完成。中间空行后紧接空格或 Tab 缩进的代码时，详情占据行间空间，空行光标与后续代码位置可复验。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 280/280，Flutter 1,937 项通过、2 项跳过。产品 23d5debd 的 CI 46021124849 四项与 Platform Availability 46021117030 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.350-diagnostic-interior-blank.md。
@@ -130,7 +131,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。继续核对无可用空白和连续空行的布局。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。无可用空白和连续空行的布局仍待核对，连续空行的 LF/CRLF 浮层行为已在 Linux 复现。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

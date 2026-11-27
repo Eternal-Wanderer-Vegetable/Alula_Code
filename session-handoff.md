@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.353 / feat-405 完成。状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md。
 - P05.352 / feat-404 完成。最后一个挂接编辑器关闭后，迟到诊断通过版本化订阅自动更新状态栏和 Problems。Windows 与 Linux 各通过 18 项原生检查，专题 143/143，Flutter 1,949 项通过、2 项跳过。产品 758e7eb7 的 CI 46032966666 四项与 Platform Availability 46032961585 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md。
 - P05.351 / feat-403 完成。中间空行后紧接非缩进代码且首个可视行包含空格或 Tab 时，详情在空行和代码之间占位。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 292/292，Flutter 1,949 项通过、2 项跳过。产品 b899d754 的 CI 46026259681 四项与 Platform Availability 46026251031 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.351-diagnostic-interior-whitespace.md。
 - P05.350 / feat-402 完成。中间空行后紧接空格或 Tab 缩进的代码时，详情占据行间空间，空行光标与后续代码位置可复验。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 280/280，Flutter 1,937 项通过、2 项跳过。产品 23d5debd 的 CI 46021124849 四项与 Platform Availability 46021117030 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.350-diagnostic-interior-blank.md。
@@ -370,6 +371,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.353 通用面板与状态栏同步](docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md)。
 [P05.352 空闲工作区诊断自动刷新](docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md)。
 [P05.351 中间空行与后续非缩进代码的诊断详情](docs/diagnostics/2026-11-27-p05/p05.351-diagnostic-interior-whitespace.md)。
 [P05.350 中间空行与后续缩进代码的诊断详情](docs/diagnostics/2026-11-27-p05/p05.350-diagnostic-interior-blank.md)。
@@ -629,4 +631,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.352 收尾 CI。按 docs/03 继续核对诊断详情在连续空行和后续行无可用空白时的位置。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.353 收尾 CI。按 docs/03 核对 520 像素整窗的标题栏溢出和布局入口。保留诊断详情无可用空白和连续空行的待复验场景。PR #3 保持草稿，macOS 实机暂缓。

@@ -5123,8 +5123,8 @@
         "feat-378",
         "feat-404"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、两端原生与托管验收。",
+      "status": "done",
+      "evidence": "状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
