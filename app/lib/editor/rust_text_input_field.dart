@@ -567,6 +567,18 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   TextEditingValue get editingValue => _controller.value;
 
+  /// The horizontal position of an attached, unwrapped editor viewport.
+  ScrollPosition? get horizontalScrollPosition {
+    if (widget.wordWrap) return null;
+    final position = _horizontalScrollController.positions.singleOrNull;
+    if (position == null ||
+        !position.hasPixels ||
+        !position.hasContentDimensions) {
+      return null;
+    }
+    return position;
+  }
+
   /// Shows a bounded, non-interactive view without moving the editing caret.
   void previewSymbolLines({
     required int firstLine,

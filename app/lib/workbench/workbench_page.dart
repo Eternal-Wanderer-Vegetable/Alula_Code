@@ -528,6 +528,23 @@ class _EditorGroupBounds {
   double get centerY => (top + bottom) / 2;
 }
 
+typedef _VisibleLockedScrollPositions = ({
+  ScrollPosition vertical,
+  ScrollPosition? horizontal,
+});
+
+typedef _LockedHorizontalScrollOrigin = ({
+  ScrollPosition position,
+  double pixels,
+  VoidCallback onScroll,
+});
+
+typedef _LockedScrollOrigin = ({
+  ScrollPosition vertical,
+  double top,
+  _LockedHorizontalScrollOrigin? horizontal,
+});
+
 class _WorkbenchPageState extends State<WorkbenchPage>
     with TickerProviderStateMixin, WindowListener {
   static const _untitledId = 1;
@@ -748,7 +765,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _auxiliaryFocusHandlerReady = false;
   // LAY-15：锁定后按可见视图起点同步，Alt 按住暂时使用原有比例同步。
   bool _lockedScrolling = false;
-  final _lockedScrollAnchors = <ScrollPosition, double>{};
+  final _lockedScrollAnchors = <OpenDoc, _LockedScrollOrigin>{};
   bool _lockedScrollAnchorRefreshScheduled = false;
   bool _splitInGroupVertical = false;
   bool _scrollSyncInProgress = false;
@@ -15913,7 +15930,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _ensureScrollSyncListeners();
       _refreshLockedScrollAnchors();
     } else {
-      _lockedScrollAnchors.clear();
+      _clearLockedScrollAnchors();
     }
     _syncCommandContext();
     _scheduleStateSave();
@@ -15941,18 +15958,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  Set<ScrollPosition> _visibleLockedScrollPositions() {
-    final visible = <ScrollPosition>{};
+  Map<OpenDoc, _VisibleLockedScrollPositions> _visibleLockedScrollPositions() {
+    final visible = <OpenDoc, _VisibleLockedScrollPositions>{};
     final maximized = _layout.maximizedEditorRegion;
     for (final group in _groups.values) {
       if (maximized != null && group.region != maximized) continue;
       for (final view in group.active?._tabViews ?? const <OpenDoc>[]) {
         if (view._viewDisposed) continue;
-        final position = view.editorScrollController.positions.singleOrNull;
-        if (position != null &&
-            position.hasPixels &&
-            position.hasContentDimensions) {
-          visible.add(position);
+        final vertical = view.editorScrollController.positions.singleOrNull;
+        if (vertical != null &&
+            vertical.hasPixels &&
+            vertical.hasContentDimensions) {
+          visible[view] = (
+            vertical: vertical,
+            horizontal:
+                view.inputFieldKey.currentState?.horizontalScrollPosition,
+          );
         }
       }
     }
@@ -15962,28 +15983,85 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _refreshLockedScrollAnchors() {
     final visible = _visibleLockedScrollPositions();
     if (_hasLockedScrollAnchors(visible)) return;
-    _lockedScrollAnchors
-      ..clear()
-      ..addEntries(
-        visible.map((position) => MapEntry(position, position.pixels)),
+    _clearLockedScrollAnchors();
+    for (final entry in visible.entries) {
+      final view = entry.key;
+      final vertical = entry.value.vertical;
+      final horizontal = entry.value.horizontal;
+      _LockedHorizontalScrollOrigin? horizontalOrigin;
+      if (horizontal != null) {
+        void onScroll() => _applyLockedScrollDisplacement(view);
+        horizontal.addListener(onScroll);
+        horizontalOrigin = (
+          position: horizontal,
+          pixels: horizontal.pixels,
+          onScroll: onScroll,
+        );
+      }
+      _lockedScrollAnchors[view] = (
+        vertical: vertical,
+        top: vertical.pixels,
+        horizontal: horizontalOrigin,
       );
+    }
   }
 
-  bool _hasLockedScrollAnchors(Set<ScrollPosition> visible) =>
-      visible.length == _lockedScrollAnchors.length &&
-      visible.every(_lockedScrollAnchors.containsKey);
-
-  void _applyLockedScrollDisplacement(ScrollPosition source) {
-    final visible = _visibleLockedScrollPositions();
-    if (!visible.contains(source) || !_hasLockedScrollAnchors(visible)) return;
-    final displacement = source.pixels - _lockedScrollAnchors[source]!;
-    for (final target in visible) {
-      if (identical(target, source)) continue;
-      final offset = (_lockedScrollAnchors[target]! + displacement)
-          .clamp(target.minScrollExtent, target.maxScrollExtent)
-          .toDouble();
-      if (target.pixels != offset) target.jumpTo(offset);
+  void _clearLockedScrollAnchors() {
+    for (final anchor in _lockedScrollAnchors.values) {
+      final horizontal = anchor.horizontal;
+      if (horizontal != null) {
+        horizontal.position.removeListener(horizontal.onScroll);
+      }
     }
+    _lockedScrollAnchors.clear();
+  }
+
+  bool _hasLockedScrollAnchors(
+    Map<OpenDoc, _VisibleLockedScrollPositions> visible,
+  ) =>
+      visible.length == _lockedScrollAnchors.length &&
+      visible.entries.every((entry) {
+        final anchor = _lockedScrollAnchors[entry.key];
+        return identical(anchor?.vertical, entry.value.vertical) &&
+            identical(anchor?.horizontal?.position, entry.value.horizontal);
+      });
+
+  void _applyLockedScrollDisplacement(OpenDoc source) {
+    if (!_lockedScrolling || _disposing || _scrollSyncInProgress) return;
+    final origin = _lockedScrollAnchors[source];
+    if (origin == null ||
+        !_hasLockedScrollAnchors(_visibleLockedScrollPositions())) {
+      return;
+    }
+    final topDelta = origin.vertical.pixels - origin.top;
+    final horizontal = origin.horizontal;
+    final leftDelta = horizontal == null
+        ? null
+        : horizontal.position.pixels - horizontal.pixels;
+    _scrollSyncInProgress = true;
+    try {
+      for (final entry in _lockedScrollAnchors.entries) {
+        if (identical(entry.key, source)) continue;
+        final target = entry.value;
+        _jumpLockedScrollPosition(target.vertical, target.top + topDelta);
+        final targetHorizontal = target.horizontal;
+        if (leftDelta != null && targetHorizontal != null) {
+          _jumpLockedScrollPosition(
+            targetHorizontal.position,
+            targetHorizontal.pixels + leftDelta,
+          );
+        }
+      }
+    } finally {
+      _scrollSyncInProgress = false;
+    }
+  }
+
+  void _jumpLockedScrollPosition(ScrollPosition target, double requested) {
+    final offset = requested
+        .clamp(target.minScrollExtent, target.maxScrollExtent)
+        .toDouble();
+    if (target.pixels != offset) target.jumpTo(offset);
   }
 
   void _attachScrollSyncListener(OpenDoc doc) {
@@ -15996,19 +16074,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _onLockedScroll(OpenDoc source, ScrollController controller) {
     final holdSync = HardwareKeyboard.instance.isAltPressed;
     if (!_lockedScrolling && !holdSync) return;
-    if (_scrollSyncInProgress || source._viewDisposed) return;
+    if (_disposing || _scrollSyncInProgress || source._viewDisposed) return;
     final position = controller.positions.singleOrNull;
     if (position == null ||
         !position.hasContentDimensions ||
         position.maxScrollExtent <= 0) {
       return;
     }
+    if (_lockedScrolling) {
+      _applyLockedScrollDisplacement(source);
+      return;
+    }
     _scrollSyncInProgress = true;
     try {
-      if (_lockedScrolling) {
-        _applyLockedScrollDisplacement(position);
-        return;
-      }
       final ratio = position.pixels / position.maxScrollExtent;
       final sourceGroup = _ownerOfView(source);
       for (final group in _groups.values) {
@@ -24292,6 +24370,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    _clearLockedScrollAnchors();
     FocusManager.instance.removeListener(_syncNotificationFocusContext);
     FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
     for (final cancel in _quickOpenCancellations.toList()) { cancel(); }

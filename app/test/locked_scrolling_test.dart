@@ -61,17 +61,35 @@ RustTextInputField _fieldForDocument(WidgetTester tester, int documentId) =>
           (field) => field.inputWindow.document.id == documentId,
         );
 
+ScrollController _horizontalController(
+  WidgetTester tester,
+  RustTextInputField field,
+) {
+  final viewport = find.descendant(
+    of: find.byWidget(field),
+    matching: find.byWidgetPredicate(
+      (widget) =>
+          widget is SingleChildScrollView &&
+          widget.scrollDirection == Axis.horizontal,
+    ),
+  );
+  return tester.widget<SingleChildScrollView>(viewport).controller!;
+}
+
 void main() {
   late _Harness h;
 
   /// Seeds two horizontal groups: alpha（120 行）与 beta（60 行），长度
   /// 不同以便观察滚动位移。
-  Future<void> seedTwoGroups(WidgetTester tester, _Harness harness) async {
+  Future<void> seedTwoGroups(WidgetTester tester, _Harness harness,
+      {bool wideLines = false}) async {
     final alpha = StringBuffer();
+    if (wideLines) alpha.writeln(List.filled(470, "a").join());
     for (var i = 0; i < 120; i++) {
       alpha.writeln('alpha line $i');
     }
     final beta = StringBuffer();
+    if (wideLines) beta.writeln(List.filled(310, "b").join());
     for (var i = 0; i < 60; i++) {
       beta.writeln('beta line $i');
     }
@@ -189,6 +207,96 @@ void main() {
     expect(alpha.offset, alphaRebased + 30);
     expect(tester.takeException(), isNull);
     await h.disposeWorkbench(tester);
+  });
+
+  testWidgets('locked scrolling applies both axes from independent origins',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h, wideLines: true);
+    await h.mount(tester);
+    final alpha = _fieldForDocument(tester, 10);
+    final beta = _fieldForDocument(tester, 11);
+    final alphaX = _horizontalController(tester, alpha);
+    final betaX = _horizontalController(tester, beta);
+    final alphaY = alpha.scrollController!;
+    final betaY = beta.scrollController!;
+    expect(alphaX.position.maxScrollExtent,
+        greaterThan(betaX.position.maxScrollExtent + 150));
+    expect(betaX.position.maxScrollExtent, greaterThan(150));
+    alphaX.jumpTo(140);
+    betaX.jumpTo(45);
+    alphaY.jumpTo(250);
+    betaY.jumpTo(100);
+    await tester.pumpAndSettle();
+
+    await h.commands!.execute('workbench.action.toggleLockedScrolling');
+    await tester.pumpAndSettle();
+    expect([alphaX.offset, betaX.offset], [140, 45]);
+    alphaX.jumpTo(210);
+    await tester.pumpAndSettle();
+    expect(betaX.offset, 115);
+    expect([alphaY.offset, betaY.offset], [250, 100]);
+    betaX.jumpTo(20);
+    await tester.pumpAndSettle();
+    expect(alphaX.offset, 115);
+
+    alphaY.jumpTo(320);
+    await tester.pumpAndSettle();
+    expect(betaY.offset, 170);
+    expect([alphaX.offset, betaX.offset], [115, 20]);
+
+    alphaX.jumpTo(alphaX.position.maxScrollExtent);
+    await tester.pumpAndSettle();
+    expect(betaX.offset, betaX.position.maxScrollExtent);
+    alphaX.jumpTo(140);
+    await tester.pumpAndSettle();
+    expect(betaX.offset, 45);
+
+    await h.commands!.execute('workbench.action.toggleLockedScrolling');
+    await tester.pumpAndSettle();
+    betaX.jumpTo(80);
+    await tester.pumpAndSettle();
+    expect(alphaX.offset, 140);
+    await h.disposeWorkbench(tester);
+  });
+
+  testWidgets('horizontal anchors follow separate split views and rejoin',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h, wideLines: true);
+    await h.mount(tester);
+    final alpha = _horizontalController(tester, _fieldForDocument(tester, 10));
+    alpha.jumpTo(130);
+    await tester.pumpAndSettle();
+
+    await h.commands!.execute('workbench.action.toggleLockedScrolling');
+    await h.commands!.execute('workbench.action.splitEditorInGroup');
+    await tester.pumpAndSettle();
+    final sameDocument = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .where((field) => field.inputWindow.document.id == 11)
+        .map((field) => _horizontalController(tester, field))
+        .toList();
+    expect(sameDocument, hasLength(2));
+    final [source, peer] = sameDocument;
+    expect(identical(source, peer), isFalse);
+    final offsets = [alpha.offset, source.offset, peer.offset];
+    source.jumpTo(offsets[1] + 35);
+    await tester.pumpAndSettle();
+    expect([alpha.offset, peer.offset], [offsets[0] + 35, offsets[2] + 35]);
+
+    await h.commands!.execute('workbench.action.joinEditorInGroup');
+    await tester.pumpAndSettle();
+    final remaining =
+        _horizontalController(tester, _fieldForDocument(tester, 11));
+    final alphaRebased = alpha.offset;
+    remaining.jumpTo(remaining.offset + 25);
+    await tester.pumpAndSettle();
+    expect(alpha.offset, alphaRebased + 25);
+    await h.disposeWorkbench(tester);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(

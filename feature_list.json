@@ -5255,6 +5255,18 @@
       "evidence": "锁定后按可见视图起始位置同步纵向位移，拆分、合并与越界返回通过。Windows 与 Linux 各通过 16 项原生检查，专题 242/242，Flutter 1,976 项通过、2 项跳过。产品 ea4aa75 的 CI 46081981014 四项和 Platform Availability 46081976626 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.363-locked-scroll-origin.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-416",
+      "name": "P05.364 LAY-15 同窗横向锁定滚动位移",
+      "description": "记录同窗可见编辑视图的横向起点，按源视图两轴位移同步，按各视图范围夹取，并在拆分、合并和解除锁定时维护监听。",
+      "dependencies": [
+        "feat-415"
+      ],
+      "status": "in-progress",
+      "evidence": "待登记精确构建及原生证据。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
