@@ -4813,6 +4813,18 @@
       "evidence": "Problems 状态栏分别展示错误、警告及非零信息计数，排除 Hint。悬停与可访问标签保留精确数，筛选仅改变视图内结果。Windows 与 Linux 各通过 19 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 c63ac21a 的 CI 45922186293 四项与 Platform Availability 45922181305 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.327-problems-status-counts.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-380",
+      "name": "P05.328 CMD-11 Problems 视图标题计数徽标",
+      "description": "在诊断面板标题展示基于固定版活动徽标规则的全局诊断总数，核对零值、提示、筛选和分组。",
+      "dependencies": [
+        "feat-379"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

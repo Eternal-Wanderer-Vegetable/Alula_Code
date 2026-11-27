@@ -30403,6 +30403,49 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Tab _buildProblemsPanelTab() {
+    final title = _standardPanelTitle(PanelViewTab.diagnostics);
+    final shortcut = _keybindings.shortcutFor('workbench.actions.view.problems');
+    final count = _problemsStatusCounts.total;
+    final activity = ActivityBarBadge.number(
+      value: count,
+      description: '共 $count 条诊断',
+    );
+    final number = activity.numberText;
+    final keyedTitle = shortcut == null ? title : '$title ($shortcut)';
+    final description = number == null
+        ? keyedTitle
+        : '$keyedTitle - ${activity.accessibleDescription}';
+    final colors = Theme.of(context).colorScheme;
+
+    return Tab(
+      key: const ValueKey('panel-problems-tab'),
+      child: Tooltip(
+        message: description,
+        excludeFromSemantics: true,
+        child: Semantics(
+          label: description,
+          excludeSemantics: true,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(title),
+              if (number != null) ...[
+                const SizedBox(width: 6),
+                Badge(
+                  key: const ValueKey('panel-problems-count'),
+                  backgroundColor: colors.surfaceContainerHighest,
+                  textColor: colors.onSurfaceVariant,
+                  label: Text(number),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildPanelTabs() {
     return Focus(
       skipTraversal: true,
@@ -30426,7 +30469,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             tabAlignment: TabAlignment.start,
             tabs: [
               for (final tab in PanelViewTab.values)
-                Tab(text: _standardPanelTitle(tab)),
+                if (tab == PanelViewTab.diagnostics)
+                  _buildProblemsPanelTab()
+                else
+                  Tab(text: _standardPanelTitle(tab)),
               for (final view in _panelHostedViews)
                 _buildPanelHostedViewTab(view),
             ],
