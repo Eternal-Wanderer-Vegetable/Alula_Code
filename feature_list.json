@@ -4873,6 +4873,18 @@
       "evidence": "诊断详情按标记起点或范围内光标定位，导航自动滚动到视野外的锚点。固定版 5 项锚点对照通过，Windows 与 Linux 各通过 21 项原生检查。专题 209/209，Flutter 1,893 项通过、2 项跳过。产品 2e385d93 的 CI 45937681280 四项与 Platform Availability 45937676318 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.332-diagnostic-navigation-anchor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-385",
+      "name": "P05.333 CMD-11 诊断详情编辑器行内占位",
+      "description": "为在界内且后跟有效换行的诊断锚点留出编辑器行内空间，复验删除占位后的坐标与编辑。",
+      "dependencies": [
+        "feat-384"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -48,6 +49,7 @@ class _SyntaxTextEditingController extends TextEditingController {
   String _windowText = '';
   Color Function(String kind)? _colorForKind;
   List<EditorFoldRange> _foldedRanges = const [];
+  ({_EditorInlineGapLayout layout, _EditorInlineGapSpan span})? inlineGap;
 
   void configureSyntax({
     required List<Map<String, Object?>> tokens,
@@ -138,7 +140,9 @@ class _SyntaxTextEditingController extends TextEditingController {
   }) {
     final visible = _visibleTokens();
     final foldedRanges = _visibleFoldedRanges();
-    if (visible.isEmpty && foldedRanges.isEmpty) {
+    final configuredGap = inlineGap;
+    final gap = configuredGap?.layout.text == text ? configuredGap : null;
+    if (visible.isEmpty && foldedRanges.isEmpty && gap == null) {
       return super.buildTextSpan(
         context: context,
         style: style,
@@ -151,6 +155,15 @@ class _SyntaxTextEditingController extends TextEditingController {
             ? value.composing
             : null;
     final boundaries = <int>{0, text.length};
+    final indentOffset = gap == null ? null : gap.layout.lineBreak + 1;
+    if (gap != null && indentOffset != null) {
+      boundaries
+        ..add(gap.layout.lineBreak)
+        ..add(indentOffset);
+      if (text.codeUnitAt(indentOffset) == 0x20) {
+        boundaries.add(indentOffset + 1);
+      }
+    }
     for (final token in visible) {
       boundaries
         ..add(token.start)
@@ -191,6 +204,13 @@ class _SyntaxTextEditingController extends TextEditingController {
       final isFolded = foldedIndex < foldedRanges.length &&
           foldedRanges[foldedIndex].hiddenStartUtf16 <= start &&
           foldedRanges[foldedIndex].hiddenEndUtf16 >= end;
+      if (gap != null &&
+          start == gap.layout.lineBreak &&
+          !isFolded &&
+          !isComposing) {
+        spans.add(gap.span);
+        continue;
+      }
       final segmentStyle = isFolded
           ? const TextStyle(
               color: Color(0x00000000),
@@ -205,13 +225,79 @@ class _SyntaxTextEditingController extends TextEditingController {
                   decoration: isComposing ? TextDecoration.underline : null,
                 );
       spans.add(
-        TextSpan(
-          text: text.substring(start, end),
-          style: segmentStyle,
-        ),
+        start == indentOffset && text.codeUnitAt(start) == 0x20
+            ? _EditorInlineIndentSpan(style: segmentStyle)
+            : TextSpan(
+                text: text.substring(start, end),
+                style: segmentStyle,
+              ),
       );
     }
     return TextSpan(style: style, children: spans);
+  }
+}
+
+typedef _EditorInlineGapLayout = ({
+  String text,
+  int lineBreak,
+  Size size,
+  double scale,
+});
+
+/// Lays a sized space in place of a single LF without changing the input
+/// text, the editable's UTF-16 indexing or the line break in its semantics.
+class _EditorInlineGapSpan extends WidgetSpan {
+  _EditorInlineGapSpan({
+    required this.size,
+    required double scale,
+  }) : super(
+          alignment: PlaceholderAlignment.top,
+          child: SizedBox(
+            width: size.width / scale,
+            height: size.height / scale,
+          ),
+        );
+
+  final Size size;
+
+  @override
+  void build(
+    ui.ParagraphBuilder builder, {
+    TextScaler textScaler = TextScaler.noScaling,
+    List<PlaceholderDimensions>? dimensions,
+  }) {
+    builder.addPlaceholder(size.width, size.height, alignment);
+  }
+
+  @override
+  void computeToPlainText(
+    StringBuffer buffer, {
+    bool includeSemanticsLabels = true,
+    bool includePlaceholders = true,
+  }) {
+    if (includePlaceholders) buffer.write('\n');
+  }
+
+  @override
+  void computeSemanticsInformation(
+    List<InlineSpanSemanticsInformation> collector,
+  ) {
+    collector.add(const InlineSpanSemanticsInformation('\n'));
+  }
+}
+
+/// Keeps the first indentation space on the line following the placeholder.
+class _EditorInlineIndentSpan extends TextSpan {
+  const _EditorInlineIndentSpan({super.style})
+      : super(text: '\u00a0', semanticsLabel: ' ');
+
+  @override
+  void computeToPlainText(
+    StringBuffer buffer, {
+    bool includeSemanticsLabels = true,
+    bool includePlaceholders = true,
+  }) {
+    buffer.write(' ');
   }
 }
 
@@ -249,6 +335,7 @@ class RustTextInputField extends StatefulWidget {
     this.rangeDecorations = const [],
     this.caretOverlay,
     this.caretOverlayAnchorUtf16,
+    this.reserveCaretOverlayLineSpace = false,
     this.syntaxTokens = const [],
     this.syntaxVersion = -1,
     this.syntaxTokenColor,
@@ -294,6 +381,10 @@ class RustTextInputField extends StatefulWidget {
   /// Absolute document offset for the overlay. The selection extent is used
   /// when this offset is outside the current bounded input window.
   final int? caretOverlayAnchorUtf16;
+
+  /// If the anchor has a following line, reserve space in the editor for
+  /// the overlay while keeping the underlying text selection intact.
+  final bool reserveCaretOverlayLineSpace;
   final List<Map<String, Object?>> syntaxTokens;
   final int syntaxVersion;
   final Color Function(String kind)? syntaxTokenColor;
@@ -372,6 +463,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   final GlobalKey _horizontalViewportKey = GlobalKey();
   final GlobalKey _editorOverlayStackKey = GlobalKey();
   Rect? _caretRectInOverlay;
+  Rect? _inlineOverlayRect;
   bool _caretOverlayUpdateScheduled = false;
   ScrollController? _listenedCaretVerticalScrollController;
   ScrollController? _listenedCaretHorizontalScrollController;
@@ -1547,6 +1639,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required TextSpan textSpan,
     required TextDirection textDirection,
     required TextScaler textScaler,
+    required StrutStyle? strutStyle,
     required EdgeInsets padding,
     required double textWidth,
   }) {
@@ -1556,6 +1649,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (textWidth - padding.horizontal)
             .clamp(1, double.infinity)
@@ -1593,6 +1687,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required TextSpan textSpan,
     required TextDirection textDirection,
     required TextScaler textScaler,
+    required StrutStyle? strutStyle,
     required EdgeInsets padding,
     required double textWidth,
     required double viewportHeight,
@@ -1603,6 +1698,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (textWidth - padding.horizontal)
             .clamp(1, double.infinity)
@@ -1694,10 +1790,15 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         return;
       }
       final selection = _controller.selection;
-      if (selection.isValid) {
-        _findEditableTextState(context)
-            ?.bringIntoView(_caretOverlayPosition(selection));
+      final editable = _findEditableTextState(context);
+      if (!selection.isValid || editable == null) return;
+      final gap = _controller.inlineGap?.layout;
+      if (gap != null && gap.text == _controller.text) {
+        // Reveal the following row and then the anchor. When navigating up
+        // from below the gap, revealing only the following row hides the pane.
+        editable.bringIntoView(TextPosition(offset: gap.lineBreak + 1));
       }
+      editable.bringIntoView(_caretOverlayPosition(selection));
     });
   }
 
@@ -1727,8 +1828,34 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         overlayObject.globalToLocal(globalRect.topLeft),
         overlayObject.globalToLocal(globalRect.bottomRight),
       );
-      if (_caretRectInOverlay == localRect) return;
-      setState(() => _caretRectInOverlay = localRect);
+      final gap = _controller.inlineGap?.layout;
+      final slot = gap != null && gap.text == _controller.text
+          ? editable
+              .getBoxesForSelection(
+                TextSelection(
+                  baseOffset: gap.lineBreak,
+                  extentOffset: gap.lineBreak + 1,
+                ),
+              )
+              .firstOrNull
+              ?.toRect()
+          : null;
+      final inlineRect = slot == null
+          ? null
+          : Rect.fromPoints(
+              overlayObject.globalToLocal(editable.localToGlobal(slot.topLeft)),
+              overlayObject.globalToLocal(
+                editable.localToGlobal(slot.bottomRight),
+              ),
+            );
+      if (_caretRectInOverlay == localRect &&
+          _inlineOverlayRect == inlineRect) {
+        return;
+      }
+      setState(() {
+        _caretRectInOverlay = localRect;
+        _inlineOverlayRect = inlineRect;
+      });
     });
   }
 
@@ -1969,6 +2096,46 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _documentLineCount = position.lineCount;
   }
 
+  _EditorInlineGapLayout? _inlineGapLayout(
+    TextEditingValue value, {
+    required EditorFoldLayout folds,
+    required double width,
+    required double viewportHeight,
+    required double scale,
+  }) {
+    final anchor = widget.caretOverlayAnchorUtf16;
+    if (!widget.reserveCaretOverlayLineSpace ||
+        widget.caretOverlay == null ||
+        anchor == null ||
+        value.text != widget.inputWindow.text ||
+        value.composing.isValid && !value.composing.isCollapsed) {
+      return null;
+    }
+    final localAnchor = anchor - widget.inputWindow.startUtf16;
+    final text = value.text;
+    if (localAnchor < 0 || localAnchor >= text.length) return null;
+    final lineBreak = text.indexOf('\n', localAnchor);
+    if (lineBreak < 0 ||
+        lineBreak + 1 == text.length ||
+        text.codeUnitAt(lineBreak + 1) == 0x09 ||
+        folds.collapsedRanges.any((range) =>
+            range.hiddenStartUtf16 <= lineBreak &&
+            lineBreak < range.hiddenEndUtf16)) {
+      return null;
+    }
+    final lineStart =
+        localAnchor == 0 ? 0 : text.lastIndexOf('\n', localAnchor - 1) + 1;
+    if (text.substring(lineStart, lineBreak).trim().isEmpty) return null;
+    final height = (viewportHeight - 56).clamp(0, 132).toDouble();
+    if (height < 48) return null;
+    return (
+      text: text,
+      lineBreak: lineBreak,
+      size: Size(width, height),
+      scale: scale,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _updateLineMetadata();
@@ -2003,7 +2170,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
               isCollapsed: true,
             ))
         .copyWith(visualDensity: VisualDensity.standard);
-    final field = Listener(
+    final textStyle = inputBaseStyle.merge(editorStyle);
+    Widget buildField(StrutStyle? inlineStrut) => Listener(
       onPointerDown: _handlePointerDown,
       onPointerMove: _handlePointerMove,
       onPointerUp: _handlePointerUp,
@@ -2025,16 +2193,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         expands: true,
         textAlignVertical: TextAlignVertical.top,
         style: editorStyle,
-        strutStyle:
-            _controller.hasVisibleFoldedRanges ? StrutStyle.disabled : null,
+        strutStyle: _controller.hasVisibleFoldedRanges
+            ? StrutStyle.disabled
+            : inlineStrut,
         decoration: decoration,
       ),
-    );
-    final textStyle = inputBaseStyle.merge(editorStyle);
-    final editorTextSpan = _controller.buildTextSpan(
-      context: context,
-      style: textStyle,
-      withComposing: true,
     );
     final gutterStyle = textStyle.copyWith(fontSize: 11);
     final padding = (decoration.contentPadding ?? EdgeInsets.zero)
@@ -2079,6 +2242,41 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           textDirection: textDirection,
                           padding: padding,
                         ).clamp(editorWidth, double.infinity).toDouble();
+                  final fontSize = textStyle.fontSize ?? 14;
+                  final gap = _inlineGapLayout(
+                    editingValue,
+                    folds: foldLayout,
+                    width: (contentWidth - padding.horizontal)
+                        .clamp(1.0, double.infinity)
+                        .toDouble(),
+                    viewportHeight: constraints.maxHeight,
+                    scale: textScaler.scale(fontSize) / fontSize,
+                  );
+                  if (_controller.inlineGap?.layout != gap) {
+                    _controller.inlineGap = gap == null
+                        ? null
+                        : (
+                            layout: gap,
+                            span: _EditorInlineGapSpan(
+                              size: gap.size,
+                              scale: gap.scale,
+                            ),
+                          );
+                    _inlineOverlayRect = null;
+                    _scheduleCaretOverlayUpdate();
+                  }
+                  final inlineStrut = gap == null ||
+                          _controller.hasVisibleFoldedRanges
+                      ? null
+                      : StrutStyle.fromTextStyle(
+                          textStyle,
+                          forceStrutHeight: false,
+                        );
+                  final editorTextSpan = _controller.buildTextSpan(
+                    context: context,
+                    style: textStyle,
+                    withComposing: true,
+                  );
                   final editorContent = Stack(
                     fit: StackFit.expand,
                     children: [
@@ -2089,6 +2287,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
                                 decorations: [previewRange],
@@ -2111,6 +2310,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
                                 decorations: widget.rangeDecorations,
@@ -2128,7 +2328,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         label: widget.semanticsLabel,
                         value: editingValue.text,
                         textField: true,
-                        child: field,
+                        child: buildField(inlineStrut),
                       ),
                       if (widget.showIndentGuides ||
                           widget.whitespaceMode != EditorWhitespaceMode.none)
@@ -2138,6 +2338,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorTextDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -2160,6 +2361,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: _AdditionalSelectionsPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 selections: widget.additionalSelections,
                                 style: textStyle,
                                 textDirection: textDirection,
@@ -2183,6 +2385,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
                                 decorations: widget.rangeDecorations,
@@ -2234,6 +2437,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     final controls = _foldControlTargets(
                       layout: foldLayout,
                       textSpan: editorTextSpan,
+                      strutStyle: inlineStrut,
                       textDirection: textDirection,
                       textScaler: textScaler,
                       padding: padding,
@@ -2247,6 +2451,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           painter: EditorGutterPainter(
                             text: editingValue.text,
                             textSpan: editorTextSpan,
+                            strutStyle: inlineStrut,
                             firstLineNumber: _firstLineNumber,
                             style: textStyle,
                             textDirection: textDirection,
@@ -2327,6 +2532,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                           details: details,
                                           layout: foldLayout,
                                           textSpan: editorTextSpan,
+                                          strutStyle: inlineStrut,
                                           textDirection: textDirection,
                                           textScaler: textScaler,
                                           padding: padding,
@@ -2342,7 +2548,19 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         ),
                       ),
                       if (widget.caretOverlay case final overlay?)
-                        if (_caretRectInOverlay case final caretRect?)
+                        if (gap != null)
+                          if (_inlineOverlayRect case final rect?)
+                            Positioned(
+                              key: const ValueKey('rust-editor-inline-overlay'),
+                              left: gutterWidth + 8,
+                              right: 8,
+                              top: rect.top + 4,
+                              height: rect.height - 8,
+                              child: overlay,
+                            )
+                          else
+                            const SizedBox.shrink()
+                        else if (_caretRectInOverlay case final caretRect?)
                           CustomSingleChildLayout(
                             delegate: _CaretOverlayPositionDelegate(caretRect),
                             child: overlay,
@@ -2491,6 +2709,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   _AdditionalSelectionsPainter({
     required this.text,
     required this.textSpan,
+    this.strutStyle,
     required this.selections,
     required this.style,
     required this.textDirection,
@@ -2502,6 +2721,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
 
   final String text;
   final TextSpan textSpan;
+  final StrutStyle? strutStyle;
   final List<TextSelection> selections;
   final TextStyle style;
   final TextDirection textDirection;
@@ -2517,6 +2737,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (size.width - padding.horizontal)
             .clamp(1, double.infinity)
@@ -2561,6 +2782,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   bool shouldRepaint(covariant _AdditionalSelectionsPainter oldDelegate) =>
       oldDelegate.text != text ||
       oldDelegate.textSpan != textSpan ||
+      oldDelegate.strutStyle != strutStyle ||
       !listEquals(oldDelegate.selections, selections) ||
       oldDelegate.style != style ||
       oldDelegate.textDirection != textDirection ||

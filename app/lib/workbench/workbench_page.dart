@@ -29358,6 +29358,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
                                 caretOverlay: caretOverlay,
+                                reserveCaretOverlayLineSpace:
+                                    caretOverlay is DiagnosticNavigationPeek,
                                 caretOverlayAnchorUtf16:
                                     caretOverlay is DiagnosticNavigationPeek
                                         ? _diagnosticNavigation?.anchorUtf16
