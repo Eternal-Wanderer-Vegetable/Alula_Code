@@ -5127,6 +5127,20 @@
       "evidence": "状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-406",
+      "name": "P05.354 LAY-02 窄窗标题栏控件可用性",
+      "description": "标题栏按菜单与窗口按钮的实际宽度限制命令中心，复验 640 与 520 逻辑像素下的控件及普通宽度恢复。",
+      "dependencies": [
+        "feat-061",
+        "feat-312",
+        "feat-405"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、两端原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

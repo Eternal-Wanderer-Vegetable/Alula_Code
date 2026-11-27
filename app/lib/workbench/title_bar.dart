@@ -6,6 +6,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -551,106 +552,128 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
           ? chrome.titleBarHeight
           : WindowChromeConfiguration.customTitleBarHeight,
       decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
-      child: Row(
+      child: CustomMultiChildLayout(
+        delegate: _TitleBarLayout(Directionality.of(context)),
         children: [
-          const SizedBox(width: 10),
-          if (chrome.isCustom) ...[
-            ListenableBuilder(
-              listenable: widget.commands,
-              builder: (context, _) {
-                final command = widget.commands.byId('view.commandPalette');
-                final enabled = command != null &&
-                    widget.commands.isEnabled('view.commandPalette');
-                final hint = command?.shortcut == null
-                    ? '打开命令面板'
-                    : '打开命令面板，${command!.shortcut}';
-                return Tooltip(
-                  message: widget.windowTitle,
-                  child: Semantics(
-                    key: const ValueKey('command-center'),
-                    button: true,
-                    enabled: enabled,
-                    label: '命令中心，当前窗口：${widget.windowTitle}',
-                    hint: hint,
-                    onTap: enabled ? _openCommandCenter : null,
-                    child: SizedBox(
-                      width: 240,
-                      height: chrome.titleBarHeight,
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: InkWell(
-                          key: const ValueKey('command-center-control'),
-                          focusNode: _commandCenterFocusNode,
-                          canRequestFocus: enabled,
-                          onTap: enabled ? _openCommandCenter : null,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                widget.windowTitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 13),
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.commandCenter,
+              child: ListenableBuilder(
+                listenable: widget.commands,
+                builder: (context, _) {
+                  final command = widget.commands.byId('view.commandPalette');
+                  final enabled = command != null &&
+                      widget.commands.isEnabled('view.commandPalette');
+                  final hint = command?.shortcut == null
+                      ? '打开命令面板'
+                      : '打开命令面板，${command!.shortcut}';
+                  return Tooltip(
+                    message: widget.windowTitle,
+                    child: Semantics(
+                      key: const ValueKey('command-center'),
+                      button: true,
+                      enabled: enabled,
+                      label: '命令中心，当前窗口：${widget.windowTitle}',
+                      hint: hint,
+                      onTap: enabled ? _openCommandCenter : null,
+                      child: SizedBox(
+                        width: 240,
+                        height: chrome.titleBarHeight,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: InkWell(
+                            key: const ValueKey('command-center-control'),
+                            focusNode: _commandCenterFocusNode,
+                            canRequestFocus: enabled,
+                            onTap: enabled ? _openCommandCenter : null,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  widget.windowTitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(width: 10),
-          ],
-          if (showFlutterMenuBar)
-            Theme(
-              data: Theme.of(context).copyWith(platform: chrome.targetPlatform),
-              child: Focus(
-                focusNode: _menuBarFocusNode,
-                onKeyEvent: _handleMenuKeyEvent,
-                child: ListenableBuilder(
-                  listenable: widget.commands,
-                  builder: (context, _) => MenuBar(
-                    style: _menuBarStyle,
-                    children: [
-                      for (var index = 0; index < widget.menus.length; index++)
-                        _MenuButton(
-                          title: widget.menus[index].$1,
-                          items: widget.menus[index].$2,
-                          commands: widget.commands,
-                          controller: _menuControllers[index],
-                          submenuControllerForPath: (path) =>
-                              _submenuControllers.putIfAbsent(
-                            _menuControllerKey(index, path),
-                            MenuController.new,
-                          ),
-                          enableMnemonics: widget.enableMenuBarMnemonics,
-                          persistentMnemonics: _mnemonicsVisible,
-                          onCommandExecuted: _restoreWorkbenchFocus,
-                        ),
-                    ],
-                  ),
-                ),
+                  );
+                },
               ),
             ),
-          if (chrome.isCustom && widget.layoutControlsBuilder != null)
-            _buildLayoutControls(context),
-          Expanded(
-            child: chrome.isCustom
-                ? _dragArea(
-                    const SizedBox.expand(),
-                    key: const ValueKey('titlebar-drag-region'),
-                  )
-                : const SizedBox.expand(),
+          LayoutId(
+            id: _TitleBarPart.menus,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (showFlutterMenuBar)
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(platform: chrome.targetPlatform),
+                    child: Focus(
+                      focusNode: _menuBarFocusNode,
+                      onKeyEvent: _handleMenuKeyEvent,
+                      child: ListenableBuilder(
+                        listenable: widget.commands,
+                        builder: (context, _) => MenuBar(
+                          style: _menuBarStyle,
+                          children: [
+                            for (var index = 0;
+                                index < widget.menus.length;
+                                index++)
+                              _MenuButton(
+                                title: widget.menus[index].$1,
+                                items: widget.menus[index].$2,
+                                commands: widget.commands,
+                                controller: _menuControllers[index],
+                                submenuControllerForPath: (path) =>
+                                    _submenuControllers.putIfAbsent(
+                                  _menuControllerKey(index, path),
+                                  MenuController.new,
+                                ),
+                                enableMnemonics: widget.enableMenuBarMnemonics,
+                                persistentMnemonics: _mnemonicsVisible,
+                                onCommandExecuted: _restoreWorkbenchFocus,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                if (chrome.isCustom && widget.layoutControlsBuilder != null)
+                  _buildLayoutControls(context),
+              ],
+            ),
           ),
-          if (widget.notificationButton != null) ...[
-            widget.notificationButton!,
-            const SizedBox(width: 8),
-          ],
-          if (showCustomControls) ..._buildWindowButtons(),
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.dragArea,
+              child: _dragArea(
+                const SizedBox.expand(),
+                key: const ValueKey('titlebar-drag-region'),
+              ),
+            ),
+          LayoutId(
+            id: _TitleBarPart.trailing,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.notificationButton != null) ...[
+                  widget.notificationButton!,
+                  const SizedBox(width: 8),
+                ],
+                if (showCustomControls) ..._buildWindowButtons(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -956,6 +979,68 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       ),
     ];
   }
+}
+
+enum _TitleBarPart { commandCenter, menus, dragArea, trailing }
+
+class _TitleBarLayout extends MultiChildLayoutDelegate {
+  _TitleBarLayout(this.direction);
+
+  final TextDirection direction;
+
+  @override
+  void performLayout(Size size) {
+    final trailing =
+        layoutChild(_TitleBarPart.trailing, BoxConstraints.loose(size));
+    final trailingStart = size.width - trailing.width;
+    final leadingInset = math.min(10.0, trailingStart);
+    final menu = layoutChild(
+      _TitleBarPart.menus,
+      BoxConstraints.loose(Size(trailingStart - leadingInset, size.height)),
+    );
+
+    void place(_TitleBarPart part, Size child, double start) {
+      final left = direction == TextDirection.ltr
+          ? start
+          : size.width - start - child.width;
+      positionChild(part, Offset(left, (size.height - child.height) / 2));
+    }
+
+    var start = leadingInset;
+    if (hasChild(_TitleBarPart.commandCenter)) {
+      final available = trailingStart - start - menu.width;
+      final spacing = math.min(10.0, available);
+      final remaining = available - spacing;
+      // Keep a drag target at narrow widths when the command center has room.
+      final dragWidth = math.min(
+        size.height,
+        math.max(0.0, remaining - size.height),
+      );
+      final command = layoutChild(
+        _TitleBarPart.commandCenter,
+        BoxConstraints.loose(Size(remaining - dragWidth, size.height)),
+      );
+      place(_TitleBarPart.commandCenter, command, start);
+      start += command.width + spacing;
+    }
+    place(_TitleBarPart.menus, menu, start);
+    start += menu.width;
+    if (hasChild(_TitleBarPart.dragArea)) {
+      final drag = layoutChild(
+        _TitleBarPart.dragArea,
+        BoxConstraints.tightFor(
+          width: math.max(0.0, trailingStart - start),
+          height: size.height,
+        ),
+      );
+      place(_TitleBarPart.dragArea, drag, start);
+    }
+    place(_TitleBarPart.trailing, trailing, trailingStart);
+  }
+
+  @override
+  bool shouldRelayout(_TitleBarLayout oldDelegate) =>
+      direction != oldDelegate.direction;
 }
 
 class _WindowButton extends StatelessWidget {

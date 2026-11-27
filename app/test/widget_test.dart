@@ -681,6 +681,70 @@ void main() {
     expect(sidebarRegion, findsOneWidget);
   });
 
+  testWidgets(
+    'narrow workbench title keeps the command center, menus and controls in reach',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      for (final width in [640.0, 520.0, 1024.0]) {
+        tester.view.physicalSize = Size(width, 720);
+        await tester.pumpWidget(AlulaApp(
+          autoFolder: fixtureRoot,
+          layoutStore: store,
+          sessionStore: session,
+          keybindingsStore: keybindings,
+          windowControls: true,
+        ));
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(tester.takeException(), isNull, reason: 'width $width');
+        final titleBar = find.byType(AlulaTitleBar);
+        final titleBounds = tester.getRect(titleBar);
+        final center = find.byKey(const ValueKey('command-center-control'));
+        final layout = find.byKey(const ValueKey('layout-controls-control'));
+        final close =
+            find.descendant(of: titleBar, matching: find.byTooltip('关闭'));
+        final fileMenu = find.descendant(
+          of: titleBar,
+          matching: find.byTooltip('文件'),
+        );
+        final controls = [center, layout, fileMenu];
+        if (Theme.of(tester.element(titleBar)).platform ==
+            TargetPlatform.linux) {
+          controls.add(close);
+        }
+        for (final control in controls) {
+          expect(control, findsOneWidget, reason: 'width $width');
+          final rect = tester.getRect(control);
+          expect(rect.width, greaterThan(0));
+          expect(rect.left, greaterThanOrEqualTo(titleBounds.left));
+          expect(rect.right, lessThanOrEqualTo(titleBounds.right));
+        }
+        if (controls.contains(close)) {
+          expect(tester.getRect(close).right, closeTo(titleBounds.right, 0.01));
+        }
+        if (width >= 1024) {
+          expect(tester.getSize(center).width, 240);
+        }
+        await tester.tap(center);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        await tester.tap(layout);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('layout-control-view.togglePanel')),
+          findsOneWidget,
+        );
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+      }
+    },
+    variant: const TargetPlatformVariant(
+        {TargetPlatform.windows, TargetPlatform.linux}),
+  );
+
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
