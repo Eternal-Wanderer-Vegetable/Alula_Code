@@ -52,7 +52,7 @@ class _SyntaxTextEditingController extends TextEditingController {
   List<EditorFoldRange> _foldedRanges = const [];
   ({
     _EditorInlineGapLayout layout,
-    _EditorInlineGapSpan span,
+    InlineSpan span,
     double? tabLetterSpacing,
   })? inlineGap;
 
@@ -161,7 +161,15 @@ class _SyntaxTextEditingController extends TextEditingController {
             : null;
     final boundaries = <int>{0, text.length};
     final gapOffset = gap?.layout.spanOffset;
-    final indentOffset = gap == null || gap.layout.followingWhitespace != null
+    final styledSeparator = gap?.layout.separatorStyle != null;
+    final gapEnd = gapOffset == null
+        ? null
+        : styledSeparator
+            ? gap!.layout.lineBreak + 1
+            : gapOffset + 1;
+    final indentOffset = gap == null ||
+            styledSeparator ||
+            gap.layout.followingWhitespace != null
         ? null
         : gap.layout.lineBreak + 1;
     final nextCharacter = indentOffset == null ? null : text[indentOffset];
@@ -170,7 +178,7 @@ class _SyntaxTextEditingController extends TextEditingController {
     if (gapOffset != null) {
       boundaries
         ..add(gapOffset)
-        ..add(gapOffset + 1);
+        ..add(gapEnd!);
     }
     if (indent != null) boundaries.add(indentOffset! + 1);
     for (final token in visible) {
@@ -187,6 +195,9 @@ class _SyntaxTextEditingController extends TextEditingController {
       boundaries
         ..add(composing.start)
         ..add(composing.end);
+    }
+    if (styledSeparator) {
+      boundaries.removeWhere((offset) => gapOffset! < offset && offset < gapEnd!);
     }
     final sortedBoundaries = boundaries.toList()..sort();
     final spans = <InlineSpan>[];
@@ -263,6 +274,7 @@ typedef _EditorInlineGapLayout = ({
   double scale,
   TextStyle? tabStyle,
   _EditorGapWhitespace? followingWhitespace,
+  TextStyle? separatorStyle,
 });
 
 /// Reserves room for the overlay while preserving the input and UTF-16
@@ -520,6 +532,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   })? _terminalScrollPadding;
   bool _inlineOverlayRevealScheduled = false;
   ({TextStyle style, double scale, double height})? _inlineOverlayLineMetrics;
+  ({
+    TextStyle style,
+    TextScaler scaler,
+    TextDirection direction,
+    double height,
+    TextStyle? separatorStyle,
+  })? _inlineSeparatorStyle;
   bool _caretOverlayUpdateScheduled = false;
   ScrollController? _listenedCaretVerticalScrollController;
   ScrollController? _listenedCaretHorizontalScrollController;
@@ -2154,36 +2173,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         );
       } else {
         _releaseTerminalScrollPadding();
-        final slot = gap != null && gap.text == _controller.text
-            ? editable
-                .getBoxesForSelection(
-                  TextSelection(
-                    baseOffset: gap.spanOffset,
-                    extentOffset: gap.spanOffset + 1,
-                  ),
-                )
-                .firstOrNull
-                ?.toRect()
-            : null;
-        if (slot == null) {
-          inlineRect = null;
-        } else {
-          final top =
-              overlayObject.globalToLocal(editable.localToGlobal(slot.topLeft));
-          inlineRect = gap?.followingWhitespace == null
-              ? Rect.fromPoints(
-                  top,
-                  overlayObject.globalToLocal(
-                    editable.localToGlobal(slot.bottomRight),
-                  ),
-                )
-              : Rect.fromLTWH(
-                  0,
-                  top.dy,
-                  overlayObject.size.width,
-                  gap!.size.height,
-                );
-        }
+        inlineRect = gap == null || gap.text != _controller.text
+            ? null
+            : _inlineGapRect(editable, overlayObject, gap);
       }
       final localRect = caretRect();
       if (_caretRectInOverlay == localRect &&
@@ -2195,6 +2187,43 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         _inlineOverlayRect = inlineRect;
       });
     });
+  }
+
+  Rect? _inlineGapRect(
+    RenderEditable editable,
+    RenderBox overlay,
+    _EditorInlineGapLayout gap,
+  ) {
+    Offset local(Offset point) =>
+        overlay.globalToLocal(editable.localToGlobal(point));
+
+    if (gap.separatorStyle != null) {
+      final nextRow = editable.getLocalRectForCaret(
+        TextPosition(offset: gap.lineBreak + 1),
+      );
+      final bottom = local(nextRow.topLeft).dy;
+      return Rect.fromLTWH(
+        0,
+        bottom - gap.size.height,
+        overlay.size.width,
+        gap.size.height,
+      );
+    }
+
+    final slot = editable
+        .getBoxesForSelection(
+          TextSelection(
+            baseOffset: gap.spanOffset,
+            extentOffset: gap.spanOffset + 1,
+          ),
+        )
+        .firstOrNull
+        ?.toRect();
+    if (slot == null) return null;
+    final top = local(slot.topLeft);
+    return gap.followingWhitespace == null
+        ? Rect.fromPoints(top, local(slot.bottomRight))
+        : Rect.fromLTWH(0, top.dy, overlay.size.width, gap.size.height);
   }
 
   void _releaseTerminalScrollPadding() {
@@ -2548,6 +2577,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required double viewportHeight,
     required double scale,
     required TextStyle textStyle,
+    required TextScaler textScaler,
     required TextDirection textDirection,
   }) {
     final anchor = widget.caretOverlayAnchorUtf16;
@@ -2576,6 +2606,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final nextLine = lineBreak + 1;
     var spanOffset = lineBreak;
     _EditorGapWhitespace? followingWhitespace;
+    TextStyle? separatorStyle;
     if (text.substring(lineStart, lineBreak).trim().isEmpty) {
       final nextBreak = text.indexOf('\n', nextLine);
       final candidate = _measureGapWhitespace(
@@ -2585,14 +2616,31 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         style: textStyle,
         textDirection: textDirection,
       );
-      if (candidate == null) return null;
-      spanOffset = nextLine + candidate.offset;
-      if (folds.collapsedRanges.any((range) =>
-          range.hiddenStartUtf16 <= spanOffset &&
-          nextLine < range.hiddenEndUtf16)) {
-        return null;
+      if (candidate != null) {
+        spanOffset = nextLine + candidate.offset;
+        if (folds.collapsedRanges.any((range) =>
+            range.hiddenStartUtf16 <= spanOffset &&
+            nextLine < range.hiddenEndUtf16)) {
+          return null;
+        }
+        followingWhitespace = candidate;
+      } else {
+        final separatorStart =
+            lineBreak > 0 && text.codeUnitAt(lineBreak - 1) == 0x0d
+                ? lineBreak - 1
+                : lineBreak;
+        if (lineStart != separatorStart || _controller.hasVisibleFoldedRanges) {
+          return null;
+        }
+        separatorStyle = _measureInlineSeparatorStyle(
+          textStyle,
+          textScaler,
+          textDirection,
+          height,
+        );
+        if (separatorStyle == null) return null;
+        spanOffset = separatorStart;
       }
-      followingWhitespace = candidate;
     }
     return (
       text: text,
@@ -2600,11 +2648,81 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       spanOffset: spanOffset,
       size: Size(width, height),
       scale: scale,
-      tabStyle: followingWhitespace == null && text.codeUnitAt(nextLine) == 0x09
+      tabStyle: followingWhitespace == null &&
+              separatorStyle == null &&
+              text.codeUnitAt(nextLine) == 0x09
           ? textStyle
           : null,
       followingWhitespace: followingWhitespace,
+      separatorStyle: separatorStyle,
     );
+  }
+
+  TextStyle? _measureInlineSeparatorStyle(
+    TextStyle style,
+    TextScaler scaler,
+    TextDirection direction,
+    double height,
+  ) {
+    if (_inlineSeparatorStyle case final saved?
+        when saved.style == style &&
+            saved.scaler == scaler &&
+            saved.direction == direction &&
+            saved.height == height) {
+      return saved.separatorStyle;
+    }
+    final scaledFontSize = scaler.scale(style.fontSize ?? 14);
+    if (!scaledFontSize.isFinite || scaledFontSize <= 0) return null;
+    // This font has zero ascent and adds descent on the original line break.
+    // The editor strut preserves the blank row's normal caret and line number.
+    TextStyle separator(double descent) => TextStyle(
+          fontFamily: 'AlulaEditorLineGap',
+          leadingDistribution: TextLeadingDistribution.proportional,
+          height: descent / scaledFontSize,
+        );
+    final painter = TextPainter(
+      textDirection: direction,
+      textScaler: scaler,
+      strutStyle: StrutStyle.fromTextStyle(style, forceStrutHeight: false),
+    );
+    (double, double) rowTops(TextStyle? lineBreakStyle) {
+      painter.text = TextSpan(style: style, children: [
+        const TextSpan(text: 'M\n'),
+        TextSpan(text: '\n', style: lineBreakStyle),
+        const TextSpan(text: 'M'),
+      ]);
+      painter.layout();
+      return (
+        painter.getOffsetForCaret(const TextPosition(offset: 2), Rect.zero).dy,
+        painter.getOffsetForCaret(const TextPosition(offset: 3), Rect.zero).dy,
+      );
+    }
+
+    TextStyle? measuredStyle;
+    try {
+      final (anchor, next) = rowTops(null);
+      final (probeAnchor, probeNext) = rowTops(separator(height));
+      final shift = probeNext - next;
+      final descent = height + (height - shift);
+      if ((probeAnchor - anchor).abs() <= 1 && shift > 0 && descent > 0) {
+        final candidate = separator(descent);
+        final (candidateAnchor, candidateNext) = rowTops(candidate);
+        if ((candidateAnchor - anchor).abs() <= 1 &&
+            (candidateNext - next - height).abs() <= 1) {
+          measuredStyle = candidate;
+        }
+      }
+    } finally {
+      painter.dispose();
+    }
+    _inlineSeparatorStyle = (
+      style: style,
+      scaler: scaler,
+      direction: direction,
+      height: height,
+      separatorStyle: measuredStyle,
+    );
+    return measuredStyle;
   }
 
   _EditorGapWhitespace? _measureGapWhitespace(
@@ -2680,6 +2798,26 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     painter.dispose();
     _inlineOverlayLineMetrics = (style: style, scale: scale, height: height);
     return height;
+  }
+
+  InlineSpan _inlineGapSpan(_EditorInlineGapLayout gap) {
+    if (gap.separatorStyle case final style?) {
+      return TextSpan(
+        text: gap.text.substring(gap.spanOffset, gap.lineBreak + 1),
+        style: style,
+      );
+    }
+    final whitespace = gap.followingWhitespace;
+    return _EditorInlineGapSpan(
+      size: whitespace == null
+          ? gap.size
+          : Size(whitespace.width, whitespace.height + gap.size.height),
+      scale: gap.scale,
+      sourceCharacter: whitespace?.character ?? '\n',
+      baselineOffset: whitespace == null
+          ? null
+          : whitespace.ascent + gap.size.height,
+    );
   }
 
   double _inlineTabLetterSpacing(TextStyle style, double scale) {
@@ -2837,27 +2975,15 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     viewportHeight: constraints.maxHeight,
                     scale: textScaler.scale(fontSize) / fontSize,
                     textStyle: textStyle,
+                    textScaler: textScaler,
                     textDirection: textDirection,
                   );
                   if (_controller.inlineGap?.layout != gap) {
-                    final whitespace = gap?.followingWhitespace;
                     _controller.inlineGap = gap == null
                         ? null
                         : (
                             layout: gap,
-                            span: _EditorInlineGapSpan(
-                              size: whitespace == null
-                                  ? gap.size
-                                  : Size(
-                                      whitespace.width,
-                                      whitespace.height + gap.size.height,
-                                    ),
-                              scale: gap.scale,
-                              sourceCharacter: whitespace?.character ?? '\n',
-                              baselineOffset: whitespace == null
-                                  ? null
-                                  : whitespace.ascent + gap.size.height,
-                            ),
+                            span: _inlineGapSpan(gap),
                             tabLetterSpacing: gap.tabStyle == null
                                 ? null
                                 : _inlineTabLetterSpacing(

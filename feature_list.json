@@ -5219,6 +5219,18 @@
       "evidence": "本地文件 URI 的行列和区间通过命令、点击、悬停提示及侧开定位。Windows 和 Linux 各通过 12 项原生检查，专题 177/177，Flutter 1,966 项通过、2 项跳过。产品 c368d40 的 CI 46070717736 四项及 Platform Availability 46070711541 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.360-file-link-location.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-413",
+      "name": "P05.361 CMD-11 无可用空白和连续空行的诊断详情占位",
+      "description": "F8 在真实空行之后留出诊断详情位置，覆盖紧接无可用空白的代码和连续空行，保持原换行与光标、行号、选区和文件字节。",
+      "dependencies": [
+        "feat-403"
+      ],
+      "status": "in-progress",
+      "evidence": "待登记精确构建及原生证据。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

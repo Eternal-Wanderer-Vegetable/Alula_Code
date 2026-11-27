@@ -49,3 +49,6 @@ flutter:
     - family: AlulaSeti
       fonts:
         - asset: assets/seti/seti.ttf
+    - family: AlulaEditorLineGap
+      fonts:
+        - asset: assets/editor/line_gap.ttf

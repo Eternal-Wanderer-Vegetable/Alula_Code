@@ -3,9 +3,17 @@ import 'package:alula_app/editor/editor_rendering.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    final loader = FontLoader('AlulaEditorLineGap')
+      ..addFont(rootBundle.load('assets/editor/line_gap.ttf'));
+    await loader.load();
+  });
+
   for (final eol in ['\n', '\r\n']) {
     final encoding = eol == '\n' ? 'LF' : 'CRLF';
     for (final wordWrap in [true, false]) {
@@ -15,6 +23,10 @@ void main() {
           'code',
           'blank before indent',
           'blank before code',
+          if (indent == '    ') ...[
+            'blank before compact code',
+            'blank before consecutive empty lines',
+          ],
           if (wordWrap) 'blank before wrapped whitespace',
         });
         testWidgets(
@@ -29,7 +41,14 @@ void main() {
               'long_prefix_that_wraps_without_space',
             _ => '',
           };
-          final nextLine = '$prefix${indent}second row';
+          final nextLine = switch (variant) {
+            'blank before compact code' => 'nextCall(🐙);',
+            'blank before consecutive empty lines' => '$eol${eol}nextCall(🐙);',
+            _ => '$prefix${indent}second row',
+          };
+          final nextCode = nextLine.endsWith('nextCall(🐙);')
+              ? 'nextCall(🐙);'
+              : 'second row';
           final core = AlulaCore.load();
           final source = '\ufeff// 🦊 first$eol'
               '${blankAnchor ? eol : ''}$nextLine$eol'
@@ -71,8 +90,10 @@ void main() {
           final offsets = [
             0,
             anchor,
-            source.indexOf(nextLine),
-            source.indexOf('second row'),
+            blankAnchor
+                ? source.indexOf(eol, anchor) + eol.length
+                : source.indexOf(nextLine),
+            source.indexOf(nextCode),
             source.indexOf('third row'),
           ];
           List<Rect> locations() {
@@ -141,14 +162,16 @@ void main() {
             final inlineGutter = gutterTops();
             final slot =
                 find.byKey(const ValueKey('rust-editor-inline-overlay'));
-            if (narrow) {
-              expect(slot, findsNothing);
-              expect(after, before);
-              expect(inlineGutter, initialGutter);
-              expect(caretHits(), initialHits);
-              return;
-            }
             expect(slot, findsOneWidget);
+            if (narrow || nextCode != 'second row') {
+              final render = tester
+                  .state<EditableTextState>(find.byType(EditableText))
+                  .renderEditable;
+              final nextRowTop = render.localToGlobal(after[2].topLeft).dy;
+              final pane = tester.getRect(slot);
+              expect(pane.bottom + 4, closeTo(nextRowTop, 1));
+              expect(after[2].top - before[2].top, closeTo(pane.height + 8, 1));
+            }
             expect(after.first.top, closeTo(before.first.top, 1));
             if (blankAnchor) {
               expect(after[1], before[1]);
@@ -158,7 +181,8 @@ void main() {
             expect(after[2].top - before[2].top, greaterThan(100));
             expect(after[3].left - after[2].left,
                 closeTo(before[3].left - before[2].left, 1));
-            expect(after[3].top, closeTo(after[2].top, 1));
+            expect(after[3].top - after[2].top,
+                closeTo(before[3].top - before[2].top, 1));
             expect(after.last.top - after[2].top,
                 closeTo(before.last.top - before[2].top, 1));
             for (var index = 0; index < offsets.length; index++) {
