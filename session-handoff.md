@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.336 / feat-388 完成。同一诊断重新发布后更新详情和稳定占位，撤回后标记过期，恢复时清除过期标记。Windows 与 Linux 各通过 14 项原生检查及固定版对照。专题 224/224，Flutter 1,908 项通过、2 项跳过。产品 622e7f84 的 CI 45953667653 四项与 Platform Availability 45953661705 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md。
 - P05.335 / feat-387 完成。诊断详情占位按消息行数与视口高度计算，反向导航恢复对应高度。Windows 与 Linux 各通过 28 项原生检查及固定版高度对照。专题 219/219，Flutter 1,903 项通过、2 项跳过。产品 b2fb5b47 的 CI 45950638451 四项与 Platform Availability 45950632895 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.335-diagnostic-inline-height.md。
 - P05.334 / feat-386 完成。后续代码行以 Tab 开头时支持诊断详情行内占位，保留制表符、缩进宽度和横向光标坐标。Windows 与 Linux 各通过 24 项原生检查。专题 217/217，Flutter 1,901 项通过、2 项跳过。产品 dd3e60b8 的 CI 45947957446 四项与 Platform Availability 45947951728 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.334-diagnostic-inline-tabs.md。
 - P05.333 / feat-385 完成。诊断详情在普通标记行后留出空间，代码和行号同步移动，关闭后回到原坐标。Windows 与 Linux 各通过 24 项原生检查，LF/CRLF 及换行开关的四项组件回归通过。专题 213/213，Flutter 1,897 项通过、2 项跳过。产品 777a1df8 的 CI 45941207035 四项与 Platform Availability 45941201677 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.333-diagnostic-inline-space.md。
@@ -353,6 +354,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.336 诊断详情原位更新与过期](docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md)。
 [P05.335 诊断详情占位高度](docs/diagnostics/2026-11-27-p05/p05.335-diagnostic-inline-height.md)。
 [P05.334 诊断详情后续行 Tab 缩进](docs/diagnostics/2026-11-27-p05/p05.334-diagnostic-inline-tabs.md)。
 [P05.333 诊断详情编辑器行内占位](docs/diagnostics/2026-11-27-p05/p05.333-diagnostic-inline-space.md)。
@@ -595,4 +597,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.335 收尾 CI。按 docs/03 和固定版本核对诊断详情末行与空行的占位坐标，以及标记重新发布后的详情状态。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.336 收尾 CI。按 docs/03 和固定版本核对诊断详情末行与空行的占位坐标，并核对锚点内范围改变及跨未打开文件的证据。PR #3 保持草稿，macOS 实机暂缓。

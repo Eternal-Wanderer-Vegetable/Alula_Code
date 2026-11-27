@@ -4917,8 +4917,8 @@
       "dependencies": [
         "feat-387"
       ],
-      "status": "in-progress",
-      "evidence": "待本地完整验证、固定版对照、Windows/Linux 原生和托管检查。",
+      "status": "done",
+      "evidence": "同一诊断重新发布后更新详情和稳定占位，撤回后标记过期，恢复时清除过期标记。Windows 与 Linux 各通过 14 项原生检查及固定版对照。专题 224/224，Flutter 1,908 项通过、2 项跳过。产品 622e7f84 的 CI 45953667653 四项与 Platform Availability 45953661705 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

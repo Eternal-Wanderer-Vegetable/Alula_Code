@@ -1,0 +1,1709 @@
+{
+  "product": "622e7f8436387a8ea13f8b28764ebe9b03c7b459",
+  "tree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/rust_text_input_field.dart": "dddf73ab9e9cd3325f1cea535a1a803be7d6a73999ecce6510440a26e9b1729b",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "0e7fac43109137cc07d54f3a36745450d3e416c83178659d75b09198442350f4",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "bdeeb286051ba1e224451531061f6331e04385e6d8d32a58fb693d6f49c0ac5a",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "b38ec436b5408ead3e262a37c8fc894add804b79253c85b8bb8984615648f3fb",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "b38ec436b5408ead3e262a37c8fc894add804b79253c85b8bb8984615648f3fb",
+  "acceptanceDriverSha256": "1d16dd653bcb51ee14012b927a6d0c7a53bfed243254531c9df57db6b776b4bf",
+  "localLogsSha256": {
+    "p05-336-regression.log": "e745962bea1db9841e0e0c180f900f1ae2ede844b1745572c61ebaf8cb601f62",
+    "p05-336-full.log": "741f9831b338ac4611358006fab330ed658ff6c57e6e47338a5bde0a4b85b1a3",
+    "p05-336-focused.log": "3d9d597c7332b2742e7a0d057af15d3d2d0b61c8f210b26adf99662a771bb5f6",
+    "p05-336-targeted.log": "d7c75051fe7018c1e0bd708968ec9da3304b7f2036a62df9a8ef2e30d43e72e5",
+    "p05-336-analyze.log": "7f200a1420197d8d6cfc686f0f04def3ae57669a49e7d2a1a0d3d1440c655486",
+    "p05-336-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 22,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "b8d86d0e02fa86b0d846544e4fa910a97a8bc165b12042e7bb3610686de5f7ba"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 22,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "b8d86d0e02fa86b0d846544e4fa910a97a8bc165b12042e7bb3610686de5f7ba"
+    }
+  },
+  "preedit": {
+    "DiagnosticNavigationPeek": {
+      "target": {
+        "id": "Class:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationPeek",
+        "name": "DiagnosticNavigationPeek",
+        "type": "Class",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "cc657892b37ec83f122f652694e6bc4de37acb7e841e2eef97d7450bb29a9116"
+    },
+    "_DiagnosticNavigationDetail": {
+      "target": {
+        "id": "TypeAlias:app/lib/workbench/workbench_page.dart:_DiagnosticNavigationDetail",
+        "name": "_DiagnosticNavigationDetail",
+        "type": "",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b9ffabc3c44e0d975b051e28387152630c4dab4855c5b88c997f14f8326cae12"
+    },
+    "_buildDiagnosticNavigation": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildDiagnosticNavigation#1",
+        "name": "_buildDiagnosticNavigation",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "853afb5e64127c6d0b25379a242c0d3edc3a311cd921667d18f5d6035a79e2bc"
+    },
+    "_navigateDiagnostics": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._navigateDiagnostics#2",
+        "name": "_navigateDiagnostics",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "d90a4bbf96a9ff7a162f15814cfa79f31a1763ca89675d4a14d764fca2f39e44"
+    },
+    "_openFolder": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openFolder#1",
+        "name": "_openFolder",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "65296aac281dc32c622b1105a09a33ea0701e344c8f10ca4c6aa3f45b235cfcf"
+    },
+    "_replaceDiagnostics": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._replaceDiagnostics#1",
+        "name": "_replaceDiagnostics",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "fd89ffe52738e84bb3505c8c31eae903991b9389dc10f5fcb2de47c8095ac1a3"
+    },
+    "diagnostic-peek-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationPeek.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "92cfef67c0af736d1851a7b37868d0b07c3206933cdc4fbe5f4d08708306042e"
+    },
+    "preferred-height": {
+      "target": {
+        "id": "Property:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationPeek.preferredHeightInEditorLines",
+        "name": "preferredHeightInEditorLines",
+        "type": "",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "4d1ac48e67c818ba2a47f0373876a36a3af552ce2032800eba842390a1ea050a"
+    }
+  },
+  "macosPhysical": "deferred",
+  "nativeCheckCountPerPlatform": 14,
+  "priorProductControl": {
+    "tree": "53c42376503b63813cc79c2492cb968e8ca4c7a0",
+    "rawReportSha256": "3e89f4395d7f33f9d2c3ec535c2a3c64f034a72ce461c25af7117452eb0b3f88",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "checked": [
+      "actual provider published same-range new message",
+      "control closed selected diagnostic without source edit",
+      "same raw same-version and range",
+      "no active source byte changes"
+    ],
+    "initialDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: old dependency detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    },
+    "republishedDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    }
+  },
+  "fixedReference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "browser": "Chrome/150.0.7871.250",
+    "checks": {
+      "original": {
+        "text": "old dependency detailsecond linerustc(deprecated)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 95,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 222.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 241.8000030517578
+          }
+        ],
+        "editorFocused": true
+      },
+      "republished": {
+        "text": "republished dependency detailsecond detailthird detailfourth detailrustc(deprecated)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 95,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 222.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 241.8000030517578
+          }
+        ],
+        "editorFocused": true
+      },
+      "withdrawn-showed-stale": {
+        "text": "republished dependency detailsecond detailthird detailfourth detailrustc(deprecated)",
+        "stale": true,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 133,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 260.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 279.8000183105469
+          }
+        ],
+        "editorFocused": true
+      },
+      "republished-after-withdrawal": {
+        "text": "restored dependency detailrustc(deprecated)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 133,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 260.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 279.8000183105469
+          }
+        ],
+        "editorFocused": true
+      }
+    },
+    "profile": "E:\\temp\\alula-p05-336-diagnostic-refresh\\reference-1795760631677662800",
+    "inputKind": "controlled same-range marker publications with Code OSS workbench visible",
+    "seedReceipt": {
+      "line": 0,
+      "column": 7,
+      "markerCount": 1
+    },
+    "rawReportSha256": "57750ca5f8a69d1476034e41a35d7e72b8157624c3060e101e4c287876816883",
+    "probeSha256": "53a16922a052ad422185153a334b587ed0c9545e6be3d0e6b4a38a1b6229a331",
+    "extensionSha256": "725d2d1f005cb13991832b35f3b5031dcf2b5ac7d79849e231f6f9a58c67a852"
+  },
+  "windows": {
+    "tree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "df67ce1a415b1615f58507d2efbd3dcc152258a20762a5d7e110c41ae452757c",
+    "fixtureSha256": "b38ec436b5408ead3e262a37c8fc894add804b79253c85b8bb8984615648f3fb",
+    "runnerSha256": "c024920e32e2b9caa0a144d53d751195558b2583552aa60143eafb2579bb5a6a",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "isolated-editor-ready": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "seeded-active-file-focused": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          89,
+          89
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "position-before-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-publishes-original-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "f8-opens-original-warning-in-gap": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: old dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          626.4000000000001,
+          115.2,
+          628.4000000000001,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-republishes-open-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          626.4000000000001,
+          115.2,
+          628.4000000000001,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-withdraws-warning-with-detail-stale": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+          "isStale": true,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            283.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          2,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          626.4000000000001,
+          115.2,
+          628.4000000000001,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          283.123046875
+        ],
+        "diagnosticHeightInLines": 7,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-restores-warning-and-clears-stale": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: restored dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            283.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          626.4000000000001,
+          115.2,
+          628.4000000000001,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          283.123046875
+        ],
+        "diagnosticHeightInLines": 7,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "escape-closes-refreshed-detail": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "f8-reopens-latest-message-with-fresh-height": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: restored dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 44,
+        "diagnosticAnchorRect": [
+          713.6,
+          115.2,
+          715.6,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "escape-releases-reopened-slot": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "clientRectPhysical": [
+      0,
+      0,
+      1221,
+      941
+    ],
+    "nativeFocus": {
+      "isolated-editor-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "seeded-active-file-focused": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "position-before-warning": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-publishes-original-warning": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "f8-opens-original-warning-in-gap": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-republishes-open-warning": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-withdraws-warning-with-detail-stale": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-restores-warning-and-clears-stale": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "escape-closes-refreshed-detail": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "f8-reopens-latest-message-with-fresh-height": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "escape-releases-reopened-slot": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "alt+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "profile": "E:\\temp\\alula-p05-336-diagnostic-refresh\\probe-1795761521414144500",
+    "mode": "product",
+    "kind": "diagnosticRefresh",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          702
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          702
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      }
+    ],
+    "fixturePositions": [
+      "1:1",
+      "rust-analyzer"
+    ],
+    "checked": [
+      "refresh same marker in place",
+      "preserve editor focus",
+      "preserve selection and document version",
+      "preserve anchor and marker ordinal",
+      "same inline height before and after reissue",
+      "withdrawal holds last message",
+      "withdrawal marks stale and recalculates height",
+      "republication clears stale",
+      "republication retains adjusted inline height",
+      "Escape releases refreshed slot",
+      "reopen current-file diagnostic with fresh height",
+      "Escape releases reopened slot",
+      "same raw same-version and range",
+      "no active source byte changes"
+    ],
+    "heightSequence": [
+      101.365234375,
+      101.365234375,
+      143.365234375,
+      143.365234375,
+      101.365234375
+    ],
+    "initialDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: old dependency detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    },
+    "republishedDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    },
+    "originalHeight": 101.365234375,
+    "editedSourceSha256": "13827bdb196b159a9e0bdbf0f46a97a800ee0fad31a6509a244c48b3f1066a47",
+    "savedProblemsViewMode": "tree",
+    "savedDefaultSingleLine": false,
+    "initialStoredBadgeHidden": false,
+    "savedProblemsBadgeHidden": false,
+    "savedBadgeFieldPresent": false,
+    "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "63e36e5e96afba659f9d505d89ff8954848e72d4e9ec907991dce0f1699a52c2"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "d084e292bd478462b82c31d2b9e74c2a6902ac76",
+    "processTreeSamples": {},
+    "aotSha256": "f37b4c4710125e12084aba365b8a998622d78d3d5a4af7a9081e25d5562a3510",
+    "fixtureSha256": "b38ec436b5408ead3e262a37c8fc894add804b79253c85b8bb8984615648f3fb",
+    "runnerSha256": "37242ed3a5c3bec3f0104cab892779d3d09208a3ffa23b98d2e5a0f8a348a03a",
+    "steps": {
+      "isolated-editor-ready": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "seeded-active-file-focused": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          89,
+          89
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "position-before-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-publishes-original-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "f8-opens-original-warning-in-gap": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: old dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-republishes-open-warning": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-withdraws-warning-with-detail-stale": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+          "isStale": true,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            286.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          2,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          286.17578125
+        ],
+        "diagnosticHeightInLines": 7,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "provider-restores-warning-and-clears-stale": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 4,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: restored dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            286.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 34,
+        "diagnosticAnchorRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          286.17578125
+        ],
+        "diagnosticHeightInLines": 7,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "escape-closes-refreshed-detail": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "f8-reopens-latest-message-with-fresh-height": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 2,
+          "message": "use of deprecated function `dependency`: restored dependency detail\n`#[warn(deprecated)]` on by default",
+          "isStale": false,
+          "source": "rustc",
+          "code": "deprecated",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": 44,
+        "diagnosticAnchorRect": [
+          766.0,
+          114.0,
+          768.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "diagnosticHeightInLines": 5,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      },
+      "escape-releases-reopened-slot": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          34,
+          44
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          3,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "diagnosticHeightInLines": null,
+        "abi": 46,
+        "matchedTextSha256": "2318c795d18e7fb4d22365b17b528355e6dc5d5a97d201f1ea76c29699d9a413"
+      }
+    },
+    "profile": "/tmp/alula-p05-177-xvfb-x_1bvzn5",
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "requestedWindowWidth": 1200,
+    "characterDelayMs": 12,
+    "mode": "product",
+    "kind": "diagnosticRefresh",
+    "nativeClicks": [
+      {
+        "screen": [
+          740,
+          489
+        ],
+        "actual": [
+          740,
+          489
+        ],
+        "logical": [
+          719.76,
+          441.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      }
+    ],
+    "checked": [
+      "refresh same marker in place",
+      "preserve editor focus",
+      "preserve selection and document version",
+      "preserve anchor and marker ordinal",
+      "same inline height before and after reissue",
+      "withdrawal holds last message",
+      "withdrawal marks stale and recalculates height",
+      "republication clears stale",
+      "republication retains adjusted inline height",
+      "Escape releases refreshed slot",
+      "reopen current-file diagnostic with fresh height",
+      "Escape releases reopened slot",
+      "same raw same-version and range",
+      "no active source byte changes"
+    ],
+    "heightSequence": [
+      104.3515625,
+      104.3515625,
+      146.3515625,
+      146.3515625,
+      104.3515625
+    ],
+    "initialDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: old dependency detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    },
+    "republishedDiagnostic": {
+      "character": 34,
+      "code": "deprecated",
+      "documentVersion": 1,
+      "endCharacter": 44,
+      "endLine": 0,
+      "line": 0,
+      "message": "use of deprecated function `dependency`: republished dependency detail\nsecond detail\nthird detail\n`#[warn(deprecated)]` on by default",
+      "severity": 2,
+      "source": "rustc"
+    },
+    "originalHeight": 104.3515625,
+    "editedSourceSha256": "13827bdb196b159a9e0bdbf0f46a97a800ee0fad31a6509a244c48b3f1066a47",
+    "savedProblemsViewMode": "tree",
+    "savedDefaultSingleLine": false,
+    "initialStoredBadgeHidden": false,
+    "savedProblemsBadgeHidden": false,
+    "savedBadgeFieldPresent": false,
+    "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "rawReportSha256": "06fbbf00e37988b3f9e437af339843fe3fd8cb55e4631f02b0d7ab47fbf558a8"
+  }
+}
