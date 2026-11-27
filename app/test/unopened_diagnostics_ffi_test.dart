@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:alula_app/bridge/alula_core.dart';
@@ -35,6 +36,19 @@ void main() {
       '0',
       'unopened-diagnostics',
     ]);
+    final firstSignal = Completer<void>();
+    final nextSignal = Completer<void>();
+    var signals = 0;
+    final subscription = core.lsp.subscribeDiagnostics(doc.id, () {
+      signals++;
+      if (signals == 1) firstSignal.complete();
+      if (signals == 2) nextSignal.complete();
+    });
+    expect(subscription, isNotNull);
+    final watch = subscription!;
+    addTearDown(watch.close);
+    expect(core.lsp.subscribeDiagnostics(doc.id, () {}), isNull);
+
     core.lsp.setUri(doc.id, open);
     core.lsp.didOpen(doc.id, languageId: 'rust');
 
@@ -150,6 +164,30 @@ void main() {
         'InvalidDiagnosticPage',
       )),
     );
+    await firstSignal.future.timeout(const Duration(seconds: 3));
+    expect(signals, 1);
+
+    Future<void> publishFor(String uri) async {
+      core.lsp.didClose(doc.id);
+      core.lsp.setUri(doc.id, uri);
+      core.lsp.didOpen(doc.id, languageId: 'rust');
+      final timer = Stopwatch()..start();
+      while (core.lsp.diagnostics(doc.id).isEmpty &&
+          timer.elapsed < const Duration(seconds: 3)) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      expect(core.lsp.diagnostics(doc.id), isNotEmpty);
+    }
+
+    watch.resume();
+    await publishFor('file:///E:/fixture/next.rs');
+    await nextSignal.future.timeout(const Duration(seconds: 3));
+    expect(signals, 2);
+
+    watch.close();
+    await publishFor('file:///E:/fixture/after_unsubscribe.rs');
+    await Future<void>.delayed(Duration.zero);
+    expect(signals, 2);
     expect(doc.resync().content, source);
     expect(doc.version, 1);
   });

@@ -898,6 +898,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Map<int, int> _semanticTokensVersionByDoc = {};
   final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
+  LspDiagnosticSubscription? _idleDiagnosticSubscription;
   bool _polling = false;
   bool _problemsWorkspaceVisible = false;
   List<String> _completionItems = const [];
@@ -17981,13 +17982,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final timer = _pollTimer;
       timer?.cancel();
       _pollTimer = null;
-      // Reproject the last editor's cached diagnostics with no live owner.
-      if (timer != null) _pollLanguageServices();
+      final subscribed = _subscribeToIdleDiagnostics();
+      // Refresh the snapshot once after entry to an idle workspace.
+      if (timer != null || subscribed) _pollLanguageServices();
       return;
     }
+    _closeIdleDiagnosticSubscription();
     _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
       _pollLanguageServices();
     });
+  }
+
+  bool _subscribeToIdleDiagnostics() {
+    final request = _workspaceSymbolRequestDoc;
+    if (_disposing ||
+        !_lspReady ||
+        request == null ||
+        _idleDiagnosticSubscription != null) {
+      return false;
+    }
+    late final LspDiagnosticSubscription? subscription;
+    subscription = request.core.lsp.subscribeDiagnostics(request.id, () {
+      if (!mounted ||
+          _disposing ||
+          !identical(subscription, _idleDiagnosticSubscription)) {
+        return;
+      }
+      subscription!.resume();
+      _pollLanguageServices();
+    });
+    _idleDiagnosticSubscription = subscription;
+    return subscription != null;
+  }
+
+  void _closeIdleDiagnosticSubscription() {
+    final subscription = _idleDiagnosticSubscription;
+    _idleDiagnosticSubscription = null;
+    subscription?.close();
   }
 
   void _scheduleSyntaxRefresh(int docId) {
@@ -24110,6 +24141,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final root = _workspaceRoot;
     final requestDoc = _workspaceSymbolRequestDoc;
     _workspaceSymbolRequestDoc = null;
+    _closeIdleDiagnosticSubscription();
     try {
       if (_lspReady && core != null && root != null) {
         core.lsp.shutdownWorkspace(root);

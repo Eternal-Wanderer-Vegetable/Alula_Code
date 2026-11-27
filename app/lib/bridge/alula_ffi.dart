@@ -47,6 +47,8 @@ DynamicLibrary loadAlulaCore() {
   );
 }
 
+typedef LspDiagnosticsChangedNative = Void Function();
+
 /// C 导出函数的原始绑定。
 class AlulaFfi {
   final DynamicLibrary lib;
@@ -310,6 +312,24 @@ class AlulaFfi {
           Pointer<Utf8> Function(int, Pointer<Utf8>)>(
     'alula_lsp_unopened_diagnostics_page',
   );
+
+  late final Pointer<Void> Function(
+          int, Pointer<NativeFunction<LspDiagnosticsChangedNative>>)
+      lspDiagnosticsSubscribe = lib.lookupFunction<
+          Pointer<Void> Function(
+              Uint64, Pointer<NativeFunction<LspDiagnosticsChangedNative>>),
+          Pointer<Void> Function(
+              int, Pointer<NativeFunction<LspDiagnosticsChangedNative>>)>(
+    'alula_lsp_diagnostics_subscribe',
+  );
+
+  late final void Function(Pointer<Void>) lspDiagnosticsResume =
+      lib.lookupFunction<Void Function(Pointer<Void>),
+          void Function(Pointer<Void>)>('alula_lsp_diagnostics_resume');
+
+  late final void Function(Pointer<Void>) lspDiagnosticsUnsubscribe =
+      lib.lookupFunction<Void Function(Pointer<Void>),
+          void Function(Pointer<Void>)>('alula_lsp_diagnostics_unsubscribe');
 
   late final Pointer<Utf8> Function(int, int, int) _completion =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),

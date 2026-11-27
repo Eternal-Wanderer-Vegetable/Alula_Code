@@ -16,13 +16,14 @@ export 'alula_merge.dart'
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'alula_ffi.dart';
 import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 49;
+const int expectedAbiVersion = 50;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -737,7 +738,27 @@ typedef WorkspaceDiagnosticCandidate = ({
   int fileTotal,
 });
 
-/// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
+/// A workspace diagnostic subscription and its native callback.
+class LspDiagnosticSubscription {
+  LspDiagnosticSubscription._(this._ffi, this._handle, this._callback);
+
+  final AlulaFfi _ffi;
+  Pointer<Void> _handle;
+  final NativeCallable<LspDiagnosticsChangedNative> _callback;
+
+  void resume() {
+    if (_handle != nullptr) _ffi.lspDiagnosticsResume(_handle);
+  }
+
+  void close() {
+    if (_handle == nullptr) return;
+    _ffi.lspDiagnosticsUnsubscribe(_handle);
+    _handle = nullptr;
+    _callback.close();
+  }
+}
+
+/// LSP / 语法能力的语义封装，见 docs/02 §2.2。
 class AlulaLsp {
   final AlulaCore _core;
 
@@ -1076,6 +1097,26 @@ class AlulaLsp {
     _check(raw);
     final result = jsonDecode(raw) as Map<String, Object?>;
     return result['page'] as Map<String, Object?>;
+  }
+
+  LspDiagnosticSubscription? subscribeDiagnostics(
+    int id,
+    void Function() onChange,
+  ) {
+    final callback = NativeCallable<LspDiagnosticsChangedNative>.listener(onChange)
+      ..keepIsolateAlive = false;
+    try {
+      final handle =
+          _core._ffi.lspDiagnosticsSubscribe(id, callback.nativeFunction);
+      if (handle != nullptr) {
+        return LspDiagnosticSubscription._(_core._ffi, handle, callback);
+      }
+    } catch (_) {
+      callback.close();
+      rethrow;
+    }
+    callback.close();
+    return null;
   }
 
   /// Asynchronously request versioned LSP semantic tokens; unsupported servers return null.

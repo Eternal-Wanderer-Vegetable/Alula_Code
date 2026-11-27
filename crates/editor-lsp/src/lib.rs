@@ -12,7 +12,7 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::process::{ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
 use std::sync::mpsc;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Weak};
 use std::time::{Duration, Instant};
 
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
@@ -307,6 +307,12 @@ static DIAGNOSTIC_REVISIONS: AtomicU64 = AtomicU64::new(1);
 struct DiagnosticCache {
     by_uri: BTreeMap<String, Vec<Diagnostic>>,
     revision: u64,
+    listener: Option<DiagnosticListener>,
+}
+
+struct DiagnosticListener {
+    callback: extern "C" fn(),
+    pending: bool,
 }
 
 impl DiagnosticCache {
@@ -314,6 +320,7 @@ impl DiagnosticCache {
         Self {
             by_uri: BTreeMap::new(),
             revision: DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed),
+            listener: None,
         }
     }
 
@@ -337,6 +344,10 @@ impl DiagnosticCache {
 
     fn advance_revision(&mut self) {
         self.revision = DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed);
+        if let Some(listener) = self.listener.as_mut().filter(|listener| !listener.pending) {
+            listener.pending = true;
+            (listener.callback)();
+        }
     }
 }
 
@@ -384,6 +395,39 @@ pub struct LspServer {
     child: Mutex<SupervisedChild>,
     shared: Arc<Shared>,
     next_id: AtomicI64,
+}
+
+/// A diagnostic cache subscription that does not keep its server alive.
+pub struct DiagnosticSubscription {
+    shared: Weak<Shared>,
+}
+
+impl DiagnosticSubscription {
+    /// Accept another signal before the caller reads the diagnostic snapshot.
+    pub fn resume(&self) {
+        if let Some(shared) = self.shared.upgrade() {
+            let mut cache = shared
+                .diagnostics
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            if let Some(listener) = cache.listener.as_mut() {
+                listener.pending = false;
+            }
+        }
+    }
+}
+
+impl Drop for DiagnosticSubscription {
+    fn drop(&mut self) {
+        if let Some(shared) = self.shared.upgrade() {
+            // The callback is invoked under this same lock.
+            shared
+                .diagnostics
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner())
+                .listener = None;
+        }
+    }
 }
 
 /// 已发送的 JSON-RPC 请求。创建与轮询均不等待服务端响应；调用方应在完成、
@@ -922,6 +966,27 @@ impl LspServer {
             Ok(mut child) => child.try_wait().map(|s| s.is_none()).unwrap_or(false),
             Err(_) => false,
         }
+    }
+
+    /// Subscribe the workspace diagnostic consumer to cache changes.
+    ///
+    /// The callback posts an asynchronous signal and returns without calling
+    /// into the cache. It must remain valid until the subscription is dropped.
+    pub fn subscribe_diagnostics(
+        &self,
+        callback: extern "C" fn(),
+    ) -> Option<DiagnosticSubscription> {
+        let mut cache = self.shared.diagnostics.lock().ok()?;
+        if cache.listener.is_some() {
+            return None;
+        }
+        cache.listener = Some(DiagnosticListener {
+            callback,
+            pending: false,
+        });
+        Some(DiagnosticSubscription {
+            shared: Arc::downgrade(&self.shared),
+        })
     }
 
     /// shutdown + exit 握手并回收进程。

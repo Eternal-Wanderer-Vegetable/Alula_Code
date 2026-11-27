@@ -42,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 49;
+pub const ALULA_ABI_VERSION: u32 = 50;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -2602,6 +2602,58 @@ pub unsafe extern "C" fn alula_lsp_unopened_diagnostics_page(
     })
 }
 
+/// Subscribe to changes in the diagnostic cache for the workspace of id.
+/// A null result means the workspace is unavailable or already subscribed.
+///
+/// # Safety
+/// A provided callback must be valid until the subscription is closed and
+/// must post a signal without reentering the diagnostics cache.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_subscribe(
+    id: u64,
+    callback: Option<extern "C" fn()>,
+) -> *mut std::ffi::c_void {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Some(callback) = callback else {
+            return std::ptr::null_mut();
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return std::ptr::null_mut();
+        };
+        server
+            .subscribe_diagnostics(callback)
+            .map_or(std::ptr::null_mut(), |subscription| {
+                Box::into_raw(Box::new(subscription)).cast()
+            })
+    }))
+    .unwrap_or(std::ptr::null_mut())
+}
+
+/// Allow another diagnostic signal before checking the current snapshot.
+///
+/// # Safety
+/// handle must be null or a live subscription from this library.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_resume(handle: *mut std::ffi::c_void) {
+    if let Some(subscription) =
+        unsafe { handle.cast::<editor_lsp::DiagnosticSubscription>().as_ref() }
+    {
+        subscription.resume();
+    }
+}
+
+/// Remove the subscription before closing the callback.
+///
+/// # Safety
+/// handle must be null or a live subscription from this library. Each
+/// non-null handle can be closed once with no concurrent use of that handle.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_unsubscribe(handle: *mut std::ffi::c_void) {
+    if !handle.is_null() {
+        drop(unsafe { Box::from_raw(handle.cast::<editor_lsp::DiagnosticSubscription>()) });
+    }
+}
+
 /// Start one cancellable full semantic-token request for a Rust document.
 #[no_mangle]
 pub extern "C" fn alula_semantic_tokens_start(id: u64, timeout_ms: u64) -> *mut c_char {
@@ -3798,7 +3850,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 49);
+        assert_eq!(alula_abi_version(), 50);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {
