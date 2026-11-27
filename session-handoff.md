@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.333 / feat-385 完成。诊断详情在普通标记行后留出空间，代码和行号同步移动，关闭后回到原坐标。Windows 与 Linux 各通过 24 项原生检查，LF/CRLF 及换行开关的四项组件回归通过。专题 213/213，Flutter 1,897 项通过、2 项跳过。产品 777a1df8 的 CI 45941207035 四项与 Platform Availability 45941201677 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.333-diagnostic-inline-space.md。
 - P05.332 / feat-384 完成。诊断详情按标记起点或范围内光标定位，导航自动滚动到视野外的锚点。固定版 5 项锚点对照通过，Windows 与 Linux 各通过 21 项原生检查。专题 209/209，Flutter 1,893 项通过、2 项跳过。产品 2e385d93 的 CI 45937681280 四项与 Platform Availability 45937676318 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.332-diagnostic-navigation-anchor.md。
 - P05.331 / feat-383 完成。F8 系列导航显示光标旁的诊断详情，支持跨已打开文件和本文件循环。关闭保留焦点与选区，编辑与移动会关闭过期详情。Windows 与 Linux 各通过 18 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 5d64aaaa 的 CI 45934519362 四项与 Platform Availability 45934510494 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.331-diagnostic-navigation-detail.md。
 - P05.330 / feat-382 完成。Problems 标签聚焦时，Shift+F10 和菜单键调用同一个徽标菜单，取消与选择后恢复标签焦点。Windows 与 Linux 各通过 24 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 1a780e64 的 CI 45930823376 四项与 Platform Availability 45930815133 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md。
@@ -350,6 +351,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.333 诊断详情编辑器行内占位](docs/diagnostics/2026-11-27-p05/p05.333-diagnostic-inline-space.md)。
 [P05.332 诊断详情标记锚点](docs/diagnostics/2026-11-27-p05/p05.332-diagnostic-navigation-anchor.md)。
 [P05.331 编辑器内诊断导航详情](docs/diagnostics/2026-11-27-p05/p05.331-diagnostic-navigation-detail.md)。
 [P05.330 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md)。
@@ -589,4 +591,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.332 收尾 CI。按 docs/03 和固定版本推进诊断详情的编辑器行内占位，保护文本、行号、光标、选区和折叠坐标。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.333 收尾 CI。按 docs/03 和固定版本核对诊断详情末行、空行和 Tab 缩进的占位规则与视口范围。PR #3 保持草稿，macOS 实机暂缓。
