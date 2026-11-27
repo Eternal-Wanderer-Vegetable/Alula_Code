@@ -5097,8 +5097,8 @@
       "dependencies": [
         "feat-402"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、两端原生与托管验收。",
+      "status": "done",
+      "evidence": "中间空行后紧接非缩进代码且首个可视行包含空格或 Tab 时，详情在空行和代码之间占位。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 292/292，Flutter 1,949 项通过、2 项跳过。产品 b899d754 的 CI 46026259681 四项与 Platform Availability 46026251031 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.351-diagnostic-interior-whitespace.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
