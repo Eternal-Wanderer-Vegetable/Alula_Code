@@ -107,29 +107,35 @@ class DiagnosticNavigationPeek extends StatelessWidget {
 }
 
 class DiagnosticNavigationSnapshot {
-  DiagnosticNavigationSnapshot(Map<String, Object?> diagnostic)
-      : this._(diagnostic, false, _heightFor(diagnostic));
+  DiagnosticNavigationSnapshot(
+    Map<String, Object?> diagnostic, {
+    ({int line, int character})? anchor,
+  }) : this._(diagnostic, false, _heightFor(diagnostic), anchor);
 
   const DiagnosticNavigationSnapshot._(
     this.diagnostic,
     this.isStale,
     this.heightInEditorLines,
+    this._anchor,
   );
 
   final Map<String, Object?> diagnostic;
   final bool isStale;
   final int heightInEditorLines;
+  final ({int line, int character})? _anchor;
 
   static const _identityFields = [
     '_documentId',
     'documentVersion',
+    'severity',
+    'source',
+    'code',
+  ];
+  static const _rangeFields = [
     'line',
     'character',
     'endLine',
     'endCharacter',
-    'severity',
-    'source',
-    'code',
   ];
 
   static int _heightFor(Map<String, Object?> diagnostic) =>
@@ -137,30 +143,64 @@ class DiagnosticNavigationSnapshot {
         diagnostic['message'] as String? ?? '',
       );
 
+  bool _coversAnchor(Map<String, Object?> entry) {
+    final anchor = _anchor;
+    if (anchor == null) return false;
+    final line = entry['line'];
+    final character = entry['character'];
+    final endLine = entry['endLine'];
+    final endCharacter = entry['endCharacter'];
+    if (line is! int ||
+        character is! int ||
+        endLine is! int ||
+        endCharacter is! int ||
+        line < 0 ||
+        character < 0 ||
+        endCharacter < 0) {
+      return false;
+    }
+    final startsBeforeAnchor = line < anchor.line ||
+        (line == anchor.line && character <= anchor.character);
+    final endsAfterAnchor = endLine > anchor.line ||
+        (endLine == anchor.line && endCharacter >= anchor.character);
+    return startsBeforeAnchor && endsAfterAnchor;
+  }
+
   DiagnosticNavigationSnapshot reconcile(
     Iterable<Map<String, Object?>> diagnostics,
   ) {
     Map<String, Object?>? replacement;
+    var replacementMatchesRange = false;
     var ambiguous = false;
     for (final entry in diagnostics) {
       if (mapEquals(entry, diagnostic)) {
         return isStale
-            ? DiagnosticNavigationSnapshot._(entry, false, heightInEditorLines)
+            ? DiagnosticNavigationSnapshot._(
+                entry, false, heightInEditorLines, _anchor)
             : this;
       }
       if (!_identityFields.every((key) => entry[key] == diagnostic[key])) {
         continue;
       }
-      if (replacement != null && !mapEquals(replacement, entry)) {
+      final sameRange =
+          _rangeFields.every((key) => entry[key] == diagnostic[key]);
+      if (!sameRange && (replacementMatchesRange || !_coversAnchor(entry))) {
+        continue;
+      }
+      if (replacement == null || (sameRange && !replacementMatchesRange)) {
+        replacement = entry;
+        replacementMatchesRange = sameRange;
+        ambiguous = false;
+      } else if (!mapEquals(replacement, entry)) {
         ambiguous = true;
       }
-      replacement ??= entry;
     }
     if (replacement != null && !ambiguous) {
       return DiagnosticNavigationSnapshot._(
         replacement,
         false,
         heightInEditorLines,
+        _anchor,
       );
     }
     return isStale
@@ -169,6 +209,7 @@ class DiagnosticNavigationSnapshot {
             diagnostic,
             true,
             _heightFor(diagnostic),
+            _anchor,
           );
   }
 }

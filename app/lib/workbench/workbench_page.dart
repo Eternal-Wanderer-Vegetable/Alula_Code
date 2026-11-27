@@ -30974,13 +30974,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final anchor = cursor >= selection.start && cursor <= selection.end
               ? cursor
               : selection.start;
+          ({int line, int character})? anchorPosition;
+          try {
+            final position = source.doc.positionAt(anchor);
+            if (position.version == source.doc.version &&
+                position.offsetUtf16 == anchor) {
+              anchorPosition = (line: position.line, character: position.character);
+            }
+          } on AlulaException {
+            // The selected marker can still be refreshed by its exact range.
+          }
           setState(() {
             _diagnosticNavigation = (
               source: source,
               version: source.doc.version,
               selection: selection,
               anchorUtf16: anchor,
-              snapshot: DiagnosticNavigationSnapshot(diagnostic),
+              snapshot: DiagnosticNavigationSnapshot(
+                diagnostic,
+                anchor: anchorPosition,
+              ),
               ordinal: index + 1,
               total: markers.length,
             );
