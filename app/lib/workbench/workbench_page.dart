@@ -890,6 +890,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     int total,
     Stopwatch elapsed,
   })? _pendingDiagnosticNavigation;
+  _PendingProblemsOpen? _pendingProblemsOpen;
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
   Map<int, int> _syntaxVersionByDoc = {};
   Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
@@ -17791,6 +17792,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       });
       _resolvePendingDiagnosticNavigation();
+      _resolvePendingProblemsOpen();
     } catch (_) {
     } finally {
       _polling = false;
@@ -17912,6 +17914,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..clear()
       ..addAll(diagnostics);
     _unopenedProblemsSummary = unopened;
+    if (resetNavigation) _pendingProblemsOpen = null;
     _problemsStatusCounts = ProblemsStatusCounts(
       errors: counts.errors + unopenedCounts.errors,
       warnings: counts.warnings + unopenedCounts.warnings,
@@ -31306,16 +31309,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  void _resolvePendingDiagnosticNavigation() {
-    final pending = _pendingDiagnosticNavigation;
-    if (pending == null) return;
-    if (!_isPendingDiagnosticNavigationCurrent(_active)) {
-      _cancelPendingDiagnosticNavigation();
-      return;
-    }
-    final target = pending.target;
-    final group = _ownerOfView(target);
-    if (group == null || !_focusNodeFor(group, target).hasPrimaryFocus) return;
+  Map<String, Object?>? _matchingCurrentDiagnostic(
+    OpenDoc target,
+    int version,
+    Map<String, Object?> candidate,
+  ) {
     const matchingFields = [
       'severity',
       'source',
@@ -31326,16 +31324,142 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'endLine',
       'endCharacter',
     ];
-    final published = _diagnostics
+    return _diagnostics
         .where(
           (diagnostic) =>
               diagnostic['_documentId'] == target.id &&
-              diagnostic['documentVersion'] == pending.version &&
+              diagnostic['documentVersion'] == version &&
               matchingFields.every(
-                (field) => diagnostic[field] == pending.candidate[field],
+                (field) => diagnostic[field] == candidate[field],
               ),
         )
         .firstOrNull;
+  }
+
+  Future<void> _openUnopenedProblem(
+    Map<String, Object?> marker, {
+    required bool preserveFocus,
+    required bool pinPreview,
+  }) async {
+    final providerUri = marker['_providerUri'] as String;
+    final path = marker['_resourcePath'] as String;
+    final snapshot = _unopenedProblemsSummary?.snapshot;
+    if (snapshot == null) return;
+    final source = _active;
+    final sourceGroup = _focused;
+    final sourceVersion = source?.doc.version;
+    final sourceSelection = source?.selection;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    final previous = _pendingProblemsOpen;
+    final origin =
+        previous != null &&
+            previous.request == _diagnosticNavigationRequest &&
+            identical(previous.target, source) &&
+            previous.target.uri == providerUri
+        ? previous.origin
+        : _currentNavigationLocation();
+    final request = ++_diagnosticNavigationRequest;
+    _pendingProblemsOpen = null;
+    _cancelPendingDiagnosticNavigation();
+    bool current() =>
+        mounted &&
+        !_disposing &&
+        _problemsViewActive &&
+        !_problemsActiveFileOnly &&
+        request == _diagnosticNavigationRequest &&
+        workspaceGeneration == _quickOpenWorkspaceGeneration;
+
+    await _openFileByPath(
+      path,
+      providerUri: providerUri,
+      asPreview: !pinPreview,
+      pinPreview: pinPreview,
+      targetForOpen: (existing) =>
+          current() &&
+              _unopenedProblemsSummary?.snapshot == snapshot &&
+              identical(_focused, sourceGroup) &&
+              identical(_active, source) &&
+              source?.doc.version == sourceVersion &&
+              source?.selection == sourceSelection
+          ? _editorGroupForImplicitOpen(existing: existing)
+          : null,
+    );
+    if (!current()) return;
+    final target = _active;
+    if (target == null ||
+        !target.lspAttached ||
+        target.path == null ||
+        _problemsResourceUri(target.path!) != marker['_resourceUri']) {
+      return;
+    }
+    final group = _ownerOfView(target);
+    if (group == null) return;
+    _pendingProblemsOpen = (
+      request: request,
+      workspaceGeneration: workspaceGeneration,
+      target: target,
+      version: target.doc.version,
+      selection: target.selection,
+      candidate: marker,
+      origin: origin,
+      preserveFocus: preserveFocus,
+      pinPreview: pinPreview,
+      elapsed: Stopwatch()..start(),
+    );
+    if (!preserveFocus) _focusEditorAfterLayout(group, target);
+  }
+
+  void _resolvePendingProblemsOpen() {
+    final pending = _pendingProblemsOpen;
+    if (pending == null) return;
+    final target = pending.target;
+    final group = _ownerOfView(target);
+    if (_disposing ||
+        !_problemsViewActive ||
+        pending.request != _diagnosticNavigationRequest ||
+        pending.workspaceGeneration != _quickOpenWorkspaceGeneration ||
+        !identical(target, _active) ||
+        group == null ||
+        target.doc.version != pending.version ||
+        target.selection != pending.selection ||
+        pending.elapsed.elapsed >= const Duration(seconds: 8)) {
+      _pendingProblemsOpen = null;
+      return;
+    }
+    final editorFocused = _focusNodeFor(group, target).hasPrimaryFocus;
+    if (!_problemsResultsFocus.hasFocus &&
+        (pending.preserveFocus || !editorFocused)) {
+      _pendingProblemsOpen = null;
+      return;
+    }
+    if (!pending.preserveFocus && !editorFocused) return;
+    final published = _matchingCurrentDiagnostic(
+      target,
+      pending.version,
+      pending.candidate,
+    );
+    if (published == null) return;
+    _pendingProblemsOpen = null;
+    _openDiagnostic(
+      published,
+      origin: pending.origin,
+      preserveFocus: pending.preserveFocus,
+      pinPreview: pending.pinPreview,
+    );
+  }
+
+  void _resolvePendingDiagnosticNavigation() {
+    final pending = _pendingDiagnosticNavigation;
+    if (pending == null) return;
+    if (!_isPendingDiagnosticNavigationCurrent(_active)) {
+      _cancelPendingDiagnosticNavigation();
+      return;
+    }
+    final target = pending.target;
+    final group = _ownerOfView(target);
+    if (group == null || !_focusNodeFor(group, target).hasPrimaryFocus) return;
+    final published =
+        _matchingCurrentDiagnostic(target, pending.version, pending.candidate);
     if (published == null) return;
     _cancelPendingDiagnosticNavigation();
     if (_openDiagnostic(published, origin: pending.origin)) {
@@ -32374,12 +32498,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : _diagnostics
               .where((candidate) => mapEquals(candidate, marker))
               .firstOrNull;
-      return current != null &&
-          _openDiagnostic(
-            current,
-            preserveFocus: preserveFocus,
-            pinPreview: pinPreview,
-          );
+      if (current != null) {
+        return _openDiagnostic(
+          current,
+          preserveFocus: preserveFocus,
+          pinPreview: pinPreview,
+        );
+      }
+      final page = _unopenedProblemsSummary?.page;
+      if (!_problemsViewActive ||
+          _problemsActiveFileOnly ||
+          page == null ||
+          !page.diagnostics.contains(marker)) {
+        return false;
+      }
+      unawaited(_openUnopenedProblem(
+        marker,
+        preserveFocus: preserveFocus,
+        pinPreview: pinPreview,
+      ));
+      return true;
     }
 
     Iterable<Map<String, Object?>> fileClipboardRows(Object? identity) =>
@@ -34292,6 +34430,19 @@ typedef _UnopenedProblemsSummary = ({
   String snapshot,
   ProblemsStatusCounts counts,
   _ProblemsWorkspacePage? page,
+});
+
+typedef _PendingProblemsOpen = ({
+  int request,
+  int workspaceGeneration,
+  OpenDoc target,
+  int version,
+  TextSelection selection,
+  Map<String, Object?> candidate,
+  NavigationLocation? origin,
+  bool preserveFocus,
+  bool pinPreview,
+  Stopwatch elapsed,
 });
 
 typedef _DiagnosticNavigationDetail = ({

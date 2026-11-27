@@ -20,7 +20,9 @@ import 'helpers/native_drag_drop.dart';
 void main() {
   setUp(mockNativeDragDrop);
 
-  testWidgets('F8 opens a cached URI without selecting an unversioned range',
+  final openingRoutes = ValueVariant<String>({'F8', 'Problems'});
+  testWidgets(
+      'cached navigation preserves selection until a current diagnostic',
       (tester) async {
     tester.view.physicalSize = const Size(1600, 1200);
     tester.view.devicePixelRatio = 1;
@@ -144,9 +146,13 @@ void main() {
     );
     expect(
         tester.widget<TextField>(input).controller!.text, 'fn source() {}\n');
-    await tester.tap(input);
-    await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.f8);
+    if (openingRoutes.currentValue == 'Problems') {
+      await tester.tap(later);
+    } else {
+      await tester.tap(input);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f8);
+    }
     await tester.pump(const Duration(milliseconds: 120));
     expect(tester.widget<TextField>(input).controller!.text, newText);
     expect(tester.widget<TextField>(input).controller!.selection,
@@ -169,5 +175,5 @@ void main() {
     await tester.pumpAndSettle();
     expect(await switching, CommandExecutionStatus.executed);
     expect(statusCounts().total, 0);
-  });
+  }, variant: openingRoutes);
 }
