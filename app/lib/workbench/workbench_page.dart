@@ -202,6 +202,12 @@ const Map<String, Color> _tokenColors = {
 };
 
 const int _editorInputWindowUtf16 = 16384;
+
+typedef _LocalFileLinkTarget = ({String path, String fragment});
+
+final _fileLinkSelectionFragment = RegExp(
+  r'^L?([0-9]+)(?:,([0-9]+))?(?:-L?([0-9]+)(?:,([0-9]+))?)?',
+);
 const int _editorCompositionReserveUtf16 = 256;
 const int _maxSnippetInsertionSelections = 64;
 const int _maxSnippetInsertionPlaceholderOccurrences = 4096;
@@ -5643,23 +5649,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _selectQuickOpenLocation(OpenDoc doc, QuickOpenQuery query) {
     _flushInput(doc);
-    final document = doc.doc;
+    final selection = _documentLocationSelection(
+      doc.doc,
+      startLine: query.line!,
+      startColumn: query.column ?? 1,
+      endLine: query.endLine ?? query.line!,
+      endColumn: query.endLine == null ? query.column ?? 1 : query.endColumn ?? 1,
+    );
+    final window = doc.inputWindow;
+    if (selection.end - selection.start > window.maxWindowUtf16 ~/ 2 &&
+        (selection.start < window.startUtf16 ||
+            selection.end > window.endUtf16)) {
+      _setCrossWindowLineSelection(doc, selection);
+    } else {
+      _setDocSelection(doc, selection);
+    }
+  }
+
+  TextSelection _documentLocationSelection(
+    AlulaDoc document, {
+    required int startLine,
+    required int startColumn,
+    required int endLine,
+    required int endColumn,
+  }) {
     final metadata = document.lineOffset(0);
     int offsetAt(int line, int column, {bool extendPastSurrogate = false}) {
+      if (line < 1) return 0;
       if (line > metadata.lineCount) return metadata.totalUtf16Length;
-      final resolved = document.positionOffset(line - 1, column - 1);
-      if (extendPastSurrogate && resolved.character == column - 2) {
-        final next = document.positionOffset(line - 1, column);
-        if (next.character == column) return next.offsetUtf16;
+      final character = (column - 1).clamp(0, metadata.totalUtf16Length);
+      final resolved = document.positionOffset(line - 1, character);
+      if (extendPastSurrogate && resolved.character == character - 1) {
+        final next = document.positionOffset(line - 1, character + 1);
+        if (next.character == character + 1) return next.offsetUtf16;
       }
       return resolved.offsetUtf16;
     }
 
-    var startLine = query.line!;
-    var startColumn = query.column ?? 1;
-    var endLine = query.endLine ?? startLine;
-    var endColumn =
-        query.endLine == null ? startColumn : query.endColumn ?? 1;
     if (startLine > endLine ||
         (startLine == endLine && startColumn > endColumn)) {
       (startLine, endLine) = (endLine, startLine);
@@ -5669,14 +5695,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final end = startLine == endLine && startColumn == endColumn
         ? start
         : offsetAt(endLine, endColumn, extendPastSurrogate: true);
-    final selection = TextSelection(baseOffset: start, extentOffset: end);
-    final window = doc.inputWindow;
-    if (end - start > window.maxWindowUtf16 ~/ 2 &&
-        (start < window.startUtf16 || end > window.endUtf16)) {
-      _setCrossWindowLineSelection(doc, selection);
-    } else {
-      _setDocSelection(doc, selection);
-    }
+    return TextSelection(baseOffset: start, extentOffset: end);
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
@@ -23180,11 +23199,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (caret < 0) return;
     final link = source.doc.fileLinkAt(caret);
     if (link == null || link.version != source.doc.version) return;
-    final path = _localFileLinkPath(link);
-    if (path != null) await _openEditorFileLink(path);
+    final target = _localFileLinkPath(link);
+    if (target != null) await _openEditorFileLink(target);
   }
 
-  String? _localFileLinkPath(DocumentFileLink link) {
+  _LocalFileLinkTarget? _localFileLinkPath(DocumentFileLink link) {
     final uri = Uri.tryParse(link.uri);
     if (uri == null ||
         !uri.hasAuthority ||
@@ -23193,18 +23212,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         uri.path.startsWith('//')) {
       return null;
     }
-    final path = _pathFromFileUri(link.uri);
+    final path = _pathFromFileUri(uri.removeFragment().toString());
     if (path == null ||
         path.contains('\u0000') ||
         FileSystemEntity.typeSync(path) != FileSystemEntityType.file) {
       return null;
     }
-    return path;
+    return (path: path, fragment: uri.fragment);
   }
 
-  Future<void> _openEditorFileLink(String path, {EditorGroup? beside}) async {
+  Future<void> _openEditorFileLink(
+    _LocalFileLinkTarget link, {
+    EditorGroup? beside,
+  }) async {
     await _openFileByPath(
-      path,
+      link.path,
       targetForOpen: beside == null
           ? null
           : (existing) => _quickAccessSideGroup(beside, existing),
@@ -23212,8 +23234,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (!mounted) return;
     final target = _active;
     final targetPath = target?.path;
-    if (target != null && targetPath != null && _pathsEqual(targetPath, path)) {
+    if (target != null &&
+        targetPath != null &&
+        _pathsEqual(targetPath, link.path)) {
+      _selectFileLinkLocation(target, link.fragment);
       _focusEditorAfterLayout(_focused, target);
+    }
+  }
+
+  void _selectFileLinkLocation(OpenDoc target, String fragment) {
+    final String decoded;
+    try {
+      decoded = Uri.decodeComponent(fragment);
+    } on FormatException {
+      return;
+    }
+    final match = _fileLinkSelectionFragment.firstMatch(decoded);
+    if (match == null) return;
+    // Match the model's clamping for coordinates beyond the document even
+    // when a decimal coordinate exceeds Dart's native integer range.
+    int coordinate(String? value) =>
+        value == null ? 1 : int.tryParse(value) ?? 0x7fffffffffffffff;
+
+    final startLine = coordinate(match[1]);
+    final startColumn = coordinate(match[2]);
+    final endLine = match[3];
+    _flushInput(target, commitComposition: true);
+    final selection = _documentLocationSelection(
+      target.doc,
+      startLine: startLine,
+      startColumn: startColumn,
+      endLine: endLine == null ? startLine : coordinate(endLine),
+      endColumn: endLine == null ? startColumn : coordinate(match[4]),
+    );
+    final window = target.inputWindow;
+    if (!selection.isCollapsed &&
+        (selection.start < window.startUtf16 ||
+            selection.end > window.endUtf16)) {
+      _setCrossWindowDragSelection(target, selection, started: true);
+      if (target.crossWindowSelection == selection &&
+          selection.end > target.inputWindow.endUtf16) {
+        target.replaceInputWindow(selection.extentOffset);
+      }
+    } else {
+      _setDocSelection(target, selection);
     }
   }
 
@@ -23330,16 +23394,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !identical(_active, pending.view)) return;
       if (pending.fileLinkVersion == pending.view.doc.version) {
-        final path = _fileLinkPathAtPointer(
+        final target = _fileLinkPathAtPointer(
           pending.view,
           pending.offset,
           pending.position,
           event.position,
         );
-        if (path != null) {
+        if (target != null) {
           unawaited(
             _openEditorFileLink(
-              path,
+              target,
               beside: openBeside ? pending.group : null,
             ),
           );
@@ -23357,7 +23421,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     WidgetsBinding.instance.ensureVisualUpdate();
   }
 
-  String? _fileLinkPathAtPointer(
+  _LocalFileLinkTarget? _fileLinkPathAtPointer(
     OpenDoc view,
     int offset,
     Offset down,
@@ -29703,11 +29767,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     _localFileLinkPath(link) != null,
                                 onOpenFileLink: (link) {
                                   if (!mounted || _disposing) return;
-                                  final path = _localFileLinkPath(link);
-                                  if (path == null) return;
+                                  final target = _localFileLinkPath(link);
+                                  if (target == null) return;
                                   _activateSplitEditorView(g, active);
                                   if (identical(_active, active)) {
-                                    unawaited(_openEditorFileLink(path));
+                                    unawaited(_openEditorFileLink(target));
                                   }
                                 },
                                 caretOverlay: caretOverlay,
