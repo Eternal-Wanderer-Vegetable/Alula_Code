@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.326 / feat-378 完成。Problems 显示命令保留焦点，切换命令与状态栏诊断计数共用可见性规则。分组时保留相邻窗格。Windows 与 Linux 各通过 51 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 84582ad8 的 CI 45918937756 四项与 Platform Availability 45918931490 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.326-problems-visibility-commands.md。
 - P05.325 / feat-377 完成。Problems 清除按钮、筛选焦点下的 Escape 及用户键位使用同一固定版命令，筛选选项和结果区 Escape 行为保留。筛选焦点下的 Escape 优先于未聚焦的 toast。Windows 与 Linux 各通过 73 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 eef024d5 的 CI 45915427698 四项与 Platform Availability 45915422265 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.325-problems-clear-filter-text.md。
 - P05.324 / feat-376 完成。Problems 全局单行与多行保留默认模式，重新应用时清除逐条覆盖。旧会话默认多行。Windows 与 Linux 各通过 25 项初次启动检查及 5 项重启检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 ab49f657 的 CI 45910902300 四项与 Platform Availability 45910896405 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.324-problems-global-message-lines.md。
 - P05.323 / feat-375 完成。Problems 树支持固定版折叠全部命令，标题按钮和键位共用入口。折叠清除选择并聚焦首组。Windows 与 Linux 各通过 28 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 da2c882a 的 CI 45908041815 四项与 Platform Availability 45908034768 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md。
@@ -343,6 +344,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.326 Problems 显示与切换命令](docs/diagnostics/2026-11-27-p05/p05.326-problems-visibility-commands.md)。
 [P05.325 Problems 清除筛选文本命令](docs/diagnostics/2026-11-27-p05/p05.325-problems-clear-filter-text.md)。
 [P05.324 Problems 全局消息行显示命令](docs/diagnostics/2026-11-27-p05/p05.324-problems-global-message-lines.md)。
 [P05.323 Problems 折叠全部命令](docs/diagnostics/2026-11-27-p05/p05.323-problems-collapse-all-command.md)。
@@ -575,4 +577,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.325 收尾 CI。按 docs/03 和固定版本推进 LAY-16 / CMD-11 Problems 显示与切换命令。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.326 收尾 CI。按 docs/03 和固定版本推进 Problems 状态栏诊断分级计数与悬停提示。PR #3 保持草稿，macOS 实机暂缓。
