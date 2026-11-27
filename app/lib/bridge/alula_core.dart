@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 48;
+const int expectedAbiVersion = 49;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -1053,6 +1053,29 @@ class AlulaLsp {
       unopenedBeforeFile: candidate['unopenedBeforeFile'] as int,
       fileTotal: candidate['fileTotal'] as int,
     );
+  }
+
+  /// Returns one page, an unchanged snapshot, or a stale continuation.
+  /// A continuation must use the same open URI set as the first page.
+  Map<String, Object?> unopenedDiagnosticsPage(
+    int id, {
+    required Iterable<String> openUris,
+    int limit = 128,
+    Map<String, Object?>? cursor,
+    String? knownSnapshot,
+  }) {
+    final raw = _core._ffi.lspUnopenedDiagnosticsPageJson(
+      id,
+      jsonEncode({
+        'openUris': openUris.toList(growable: false),
+        'limit': limit,
+        if (cursor != null) 'cursor': cursor,
+        if (knownSnapshot != null) 'knownSnapshot': knownSnapshot,
+      }),
+    );
+    _check(raw);
+    final result = jsonDecode(raw) as Map<String, Object?>;
+    return result['page'] as Map<String, Object?>;
   }
 
   /// Asynchronously request versioned LSP semantic tokens; unsupported servers return null.

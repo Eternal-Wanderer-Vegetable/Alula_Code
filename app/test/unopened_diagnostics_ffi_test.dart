@@ -87,6 +87,69 @@ void main() {
           openUris: const [before, open, after],
         ),
         isNull);
+    final firstPage = core.lsp.unopenedDiagnosticsPage(
+      doc.id,
+      openUris: const [open],
+      limit: 1,
+    );
+    final snapshot = firstPage['snapshot'] as String;
+    final cursor = firstPage['nextCursor'] as Map<String, Object?>;
+    expect(firstPage['status'], 'page');
+    expect(firstPage['counts'], {'errors': 2, 'warnings': 1, 'infos': 0});
+    expect(firstPage['items'], hasLength(1));
+    expect((firstPage['items'] as List).single['uri'], before);
+    final nextPage = core.lsp.unopenedDiagnosticsPage(
+      doc.id,
+      openUris: const [open],
+      limit: 2,
+      cursor: cursor,
+    );
+    expect(nextPage['status'], 'page');
+    expect(nextPage['snapshot'], snapshot);
+    expect(nextPage.containsKey('counts'), isFalse);
+    expect(nextPage['nextCursor'], isNull);
+    expect(
+        (nextPage['items'] as List).map((item) => item['uri']), [after, after]);
+    expect(
+      (nextPage['items'] as List).map((item) => item['diagnostic']['severity']),
+      [2, 1],
+    );
+    final unchanged = core.lsp.unopenedDiagnosticsPage(
+      doc.id,
+      openUris: const [open, open],
+      knownSnapshot: snapshot,
+    );
+    expect(unchanged, {'status': 'unchanged', 'snapshot': snapshot});
+    final stale = core.lsp.unopenedDiagnosticsPage(
+      doc.id,
+      openUris: const [open, before],
+      cursor: cursor,
+    );
+    expect(stale['status'], 'stale');
+    expect(stale['snapshot'], isNot(snapshot));
+    expect(
+      () => core.lsp.unopenedDiagnosticsPage(
+        doc.id,
+        openUris: const [open],
+        cursor: {...cursor, 'markerIndex': 1000},
+      ),
+      throwsA(
+        isA<AlulaException>().having(
+          (error) => error.code,
+          'code',
+          'InvalidDiagnosticPage',
+        ),
+      ),
+    );
+    expect(
+      () => core.lsp
+          .unopenedDiagnosticsPage(doc.id, openUris: const [], limit: 0),
+      throwsA(isA<AlulaException>().having(
+        (error) => error.code,
+        'code',
+        'InvalidDiagnosticPage',
+      )),
+    );
     expect(doc.resync().content, source);
     expect(doc.version, 1);
   });

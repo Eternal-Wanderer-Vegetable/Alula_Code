@@ -42,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 48;
+pub const ALULA_ABI_VERSION: u32 = 49;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -2567,6 +2567,41 @@ pub unsafe extern "C" fn alula_lsp_next_unopened_diagnostic(
     })
 }
 
+/// Read a snapshot page of unopened diagnostics from the server attached to id.
+///
+/// # Safety
+/// query_json must point to a valid NUL-terminated UTF-8 string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_unopened_diagnostics_page(
+    id: u64,
+    query_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let input = match read_c_str(query_json) {
+            Ok(input) => input,
+            Err(error) => return error,
+        };
+        let request: editor_lsp::WorkspaceDiagnosticPageRequest = match serde_json::from_str(input)
+        {
+            Ok(request) => request,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return err_json("NoLsp", json!({ "id": id }));
+        };
+        match server.unopened_diagnostics_page(request) {
+            Ok(page) => to_c_ptr(json!({ "ok": true, "page": page }).to_string()),
+            Err(error) => err_json("InvalidDiagnosticPage", json!(error)),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_lsp_unopened_diagnostics_page"),
+        )
+    })
+}
+
 /// Start one cancellable full semantic-token request for a Rust document.
 #[no_mangle]
 pub extern "C" fn alula_semantic_tokens_start(id: u64, timeout_ms: u64) -> *mut c_char {
@@ -3763,7 +3798,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 48);
+        assert_eq!(alula_abi_version(), 49);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

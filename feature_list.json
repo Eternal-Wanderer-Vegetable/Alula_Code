@@ -4981,6 +4981,18 @@
       "evidence": "F8 系列详情合并当前版本的已打开诊断与未打开文件缓存计数，正确显示序号与总数。Windows 与 Linux 各通过 16 项原生检查及固定版对照。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 51ad53e2 的 CI 45976377860 四项与 Platform Availability 45976370139 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.341-diagnostic-workspace-count.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-394",
+      "name": "P05.342 CMD-11 未打开文件诊断分页快照传输",
+      "description": "为 Problems 宿主提供未打开文件诊断的有界查询、分级计数和快照游标，保留 URI、范围与提供者版本。",
+      "dependencies": [
+        "feat-393"
+      ],
+      "status": "in-progress",
+      "evidence": "待分页和版本门控测试、Windows/Linux 实际语言服务复验、托管与证据登记。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -7,10 +7,10 @@
 //! - textDocument/definition / completion / semanticTokens（可取消异步请求）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::process::{ChildStdin, Command, Stdio};
-use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
 use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -20,7 +20,10 @@ use serde::{Deserialize, Serialize};
 
 mod diagnostic_navigation;
 mod hierarchy;
-pub use diagnostic_navigation::WorkspaceDiagnosticCandidate;
+pub use diagnostic_navigation::{
+    WorkspaceDiagnosticCandidate, WorkspaceDiagnosticCounts, WorkspaceDiagnosticCursor,
+    WorkspaceDiagnosticEntry, WorkspaceDiagnosticPage, WorkspaceDiagnosticPageRequest,
+};
 pub use hierarchy::{
     extract_hierarchy_entries, HierarchyDirection, HierarchyEntry, HierarchyKind,
     HierarchyPosition, HierarchyRange,
@@ -33,7 +36,7 @@ pub enum DiagnosticCode {
     Text(String),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Diagnostic {
     /// LSP severity：1=Error 2=Warning 3=Information 4=Hint
     pub severity: u32,
@@ -299,8 +302,46 @@ struct PendingResponse {
     report_server_errors: bool,
 }
 
+static DIAGNOSTIC_REVISIONS: AtomicU64 = AtomicU64::new(1);
+
+struct DiagnosticCache {
+    by_uri: BTreeMap<String, Vec<Diagnostic>>,
+    revision: u64,
+}
+
+impl DiagnosticCache {
+    fn new() -> Self {
+        Self {
+            by_uri: BTreeMap::new(),
+            revision: DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed),
+        }
+    }
+
+    fn publish(&mut self, uri: String, diagnostics: Vec<Diagnostic>) {
+        if diagnostics.is_empty() {
+            self.discard(&uri);
+        } else if self.by_uri.get(&uri) != Some(&diagnostics) {
+            let is_file = uri.starts_with("file://");
+            self.by_uri.insert(uri, diagnostics);
+            if is_file {
+                self.advance_revision();
+            }
+        }
+    }
+
+    fn discard(&mut self, uri: &str) {
+        if self.by_uri.remove(uri).is_some() && uri.starts_with("file://") {
+            self.advance_revision();
+        }
+    }
+
+    fn advance_revision(&mut self) {
+        self.revision = DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed);
+    }
+}
+
 struct Shared {
-    diagnostics: Mutex<HashMap<String, Vec<Diagnostic>>>,
+    diagnostics: Mutex<DiagnosticCache>,
     pending: Mutex<HashMap<i64, PendingResponse>>,
     server_capabilities: Mutex<Option<serde_json::Value>>,
     /// 写端（send_message 与读线程回复服务端请求共用）
@@ -310,7 +351,7 @@ struct Shared {
 impl Shared {
     fn new(writer: ChildStdin) -> Self {
         Shared {
-            diagnostics: Mutex::new(HashMap::new()),
+            diagnostics: Mutex::new(DiagnosticCache::new()),
             pending: Mutex::new(HashMap::new()),
             server_capabilities: Mutex::new(None),
             writer: Mutex::new(Some(writer)),
@@ -577,7 +618,7 @@ impl LspServer {
         // Reopening can reuse the previous document's version number. Discard
         // its cached markers before accepting publications for this opening.
         if let Ok(mut diagnostics) = self.shared.diagnostics.lock() {
-            diagnostics.remove(uri);
+            diagnostics.discard(uri);
         }
         self.send_message(&serde_json::json!({
             "jsonrpc": "2.0",
@@ -609,7 +650,7 @@ impl LspServer {
         self.shared
             .diagnostics
             .lock()
-            .map(|g| g.get(&key).cloned().unwrap_or_default())
+            .map(|g| g.by_uri.get(&key).cloned().unwrap_or_default())
             .unwrap_or_default()
     }
 
@@ -1161,7 +1202,7 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                 );
             }
             if let Ok(mut g) = shared.diagnostics.lock() {
-                g.insert(normalize_uri(&uri), diags);
+                g.publish(normalize_uri(&uri), diags);
             }
         }
     }
