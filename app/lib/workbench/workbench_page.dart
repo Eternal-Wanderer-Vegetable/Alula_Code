@@ -14221,7 +14221,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspReady = false;
         _lspStarting = false;
         _lspStatus = 'LSP 未启动';
-        _replaceDiagnostics(const []);
+        _replaceDiagnostics(const [], resetNavigation: true);
         _problemsMessageLines.overrides.clear();
         _syntaxByDoc.clear();
         _syntaxVersionByDoc.clear();
@@ -17765,17 +17765,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  void _replaceDiagnostics(List<Map<String, Object?>> diagnostics) {
+  void _replaceDiagnostics(
+    List<Map<String, Object?>> diagnostics, {
+    bool resetNavigation = false,
+  }) {
     final counts = ProblemsStatusCounts.fromDiagnostics(diagnostics);
     _diagnostics
       ..clear()
       ..addAll(diagnostics);
     _problemsStatusCounts = counts;
     final detail = _diagnosticNavigation;
-    if (detail != null &&
-        !diagnostics.any((entry) => mapEquals(entry, detail.diagnostic))) {
+    if (detail == null) return;
+    if (resetNavigation || !_isCurrentDiagnosticNavigation(_active)) {
       _diagnosticNavigation = null;
       _commands.context.setValue('markersNavigationVisible', false);
+      return;
+    }
+
+    final snapshot = detail.snapshot.reconcile(diagnostics);
+    if (identical(snapshot, detail.snapshot)) return;
+    _diagnosticNavigation = (
+      source: detail.source,
+      version: detail.version,
+      selection: detail.selection,
+      anchorUtf16: detail.anchorUtf16,
+      snapshot: snapshot,
+      ordinal: detail.ordinal,
+      total: detail.total,
+    );
+    final last = _lastOpenedDiagnostic;
+    if (!snapshot.isStale &&
+        last?.selection == detail.selection &&
+        mapEquals(last?.diagnostic, detail.snapshot.diagnostic)) {
+      _lastOpenedDiagnostic = (
+        diagnostic: snapshot.diagnostic,
+        selection: detail.selection,
+      );
     }
   }
 
@@ -30954,7 +30979,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               version: source.doc.version,
               selection: selection,
               anchorUtf16: anchor,
-              diagnostic: diagnostic,
+              snapshot: DiagnosticNavigationSnapshot(diagnostic),
               ordinal: index + 1,
               total: markers.length,
             );
@@ -30989,7 +31014,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Widget? _buildDiagnosticNavigation(OpenDoc active) {
     final detail = _diagnosticNavigation;
     if (detail == null || !_isCurrentDiagnosticNavigation(active)) return null;
-    final diagnostic = detail.diagnostic;
+    final diagnostic = detail.snapshot.diagnostic;
     final code = diagnostic['code'];
     return DiagnosticNavigationPeek(
       fileName: active.name,
@@ -30999,6 +31024,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       message: diagnostic['message'] as String? ?? '',
       source: diagnostic['source'] as String?,
       code: code is String || code is int ? code.toString() : null,
+      isStale: detail.snapshot.isStale,
+      reservedHeightInEditorLines: detail.snapshot.heightInEditorLines,
       onClose: _closeDiagnosticNavigation,
     );
   }
@@ -33832,7 +33859,7 @@ typedef _DiagnosticNavigationDetail = ({
   int version,
   TextSelection selection,
   int anchorUtf16,
-  Map<String, Object?> diagnostic,
+  DiagnosticNavigationSnapshot snapshot,
   int ordinal,
   int total,
 });
