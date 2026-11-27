@@ -746,8 +746,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _auxiliaryWindowCreationsInProgress = 0;
   bool? _mainWindowFocused;
   bool _auxiliaryFocusHandlerReady = false;
-  // LAY-15：跨编辑器锁定滚动（比例同步 + Alt 按住临时同步）。
+  // LAY-15：锁定后按可见视图起点同步，Alt 按住暂时使用原有比例同步。
   bool _lockedScrolling = false;
+  final _lockedScrollAnchors = <ScrollPosition, double>{};
+  bool _lockedScrollAnchorRefreshScheduled = false;
   bool _splitInGroupVertical = false;
   bool _scrollSyncInProgress = false;
   // LAY-16：Explorer 树 type navigation（键入字符跳转到匹配的可见项）。
@@ -15909,6 +15911,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _lockedScrolling = !_lockedScrolling);
     if (_lockedScrolling) {
       _ensureScrollSyncListeners();
+      _refreshLockedScrollAnchors();
+    } else {
+      _lockedScrollAnchors.clear();
     }
     _syncCommandContext();
     _scheduleStateSave();
@@ -15924,6 +15929,61 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _attachScrollSyncListener(view);
       }
     }
+    if (_lockedScrolling && !_lockedScrollAnchorRefreshScheduled) {
+      _lockedScrollAnchorRefreshScheduled = true;
+      // New views attach their positions after the editor subtree is built.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _lockedScrollAnchorRefreshScheduled = false;
+        if (mounted && !_disposing && _lockedScrolling) {
+          _refreshLockedScrollAnchors();
+        }
+      });
+    }
+  }
+
+  Set<ScrollPosition> _visibleLockedScrollPositions() {
+    final visible = <ScrollPosition>{};
+    final maximized = _layout.maximizedEditorRegion;
+    for (final group in _groups.values) {
+      if (maximized != null && group.region != maximized) continue;
+      for (final view in group.active?._tabViews ?? const <OpenDoc>[]) {
+        if (view._viewDisposed) continue;
+        final position = view.editorScrollController.positions.singleOrNull;
+        if (position != null &&
+            position.hasPixels &&
+            position.hasContentDimensions) {
+          visible.add(position);
+        }
+      }
+    }
+    return visible;
+  }
+
+  void _refreshLockedScrollAnchors() {
+    final visible = _visibleLockedScrollPositions();
+    if (_hasLockedScrollAnchors(visible)) return;
+    _lockedScrollAnchors
+      ..clear()
+      ..addEntries(
+        visible.map((position) => MapEntry(position, position.pixels)),
+      );
+  }
+
+  bool _hasLockedScrollAnchors(Set<ScrollPosition> visible) =>
+      visible.length == _lockedScrollAnchors.length &&
+      visible.every(_lockedScrollAnchors.containsKey);
+
+  void _applyLockedScrollDisplacement(ScrollPosition source) {
+    final visible = _visibleLockedScrollPositions();
+    if (!visible.contains(source) || !_hasLockedScrollAnchors(visible)) return;
+    final displacement = source.pixels - _lockedScrollAnchors[source]!;
+    for (final target in visible) {
+      if (identical(target, source)) continue;
+      final offset = (_lockedScrollAnchors[target]! + displacement)
+          .clamp(target.minScrollExtent, target.maxScrollExtent)
+          .toDouble();
+      if (target.pixels != offset) target.jumpTo(offset);
+    }
   }
 
   void _attachScrollSyncListener(OpenDoc doc) {
@@ -15937,13 +15997,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final holdSync = HardwareKeyboard.instance.isAltPressed;
     if (!_lockedScrolling && !holdSync) return;
     if (_scrollSyncInProgress || source._viewDisposed) return;
-    if (!controller.hasClients) return;
-    final position = controller.position;
-    if (position.maxScrollExtent <= 0) return;
-    final ratio = position.pixels / position.maxScrollExtent;
-    final sourceGroup = _ownerOfView(source);
+    final position = controller.positions.singleOrNull;
+    if (position == null ||
+        !position.hasContentDimensions ||
+        position.maxScrollExtent <= 0) {
+      return;
+    }
     _scrollSyncInProgress = true;
     try {
+      if (_lockedScrolling) {
+        _applyLockedScrollDisplacement(position);
+        return;
+      }
+      final ratio = position.pixels / position.maxScrollExtent;
+      final sourceGroup = _ownerOfView(source);
       for (final group in _groups.values) {
         if (sourceGroup != null && identical(group, sourceGroup)) continue;
         final target = group.active;

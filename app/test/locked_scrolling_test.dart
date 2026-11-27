@@ -65,7 +65,7 @@ void main() {
   late _Harness h;
 
   /// Seeds two horizontal groups: alpha（120 行）与 beta（60 行），长度
-  /// 不同以便观察比例同步。
+  /// 不同以便观察滚动位移。
   Future<void> seedTwoGroups(WidgetTester tester, _Harness harness) async {
     final alpha = StringBuffer();
     for (var i = 0; i < 120; i++) {
@@ -106,41 +106,90 @@ void main() {
   }
 
   testWidgets(
-    'locked scrolling syncs scroll proportionally across groups',
+    'locked scrolling preserves each visible pane anchor with unequal extents',
     (tester) async {
       h = _Harness();
       await h.prepare(workspaceRoot: 'unused');
-      seedTwoGroups(tester, h);
+      await seedTwoGroups(tester, h);
       await h.mount(tester);
 
+      final alpha = _fieldForDocument(tester, 10).scrollController!;
+      final beta = _fieldForDocument(tester, 11).scrollController!;
+      alpha.jumpTo(250);
+      beta.jumpTo(100);
+      await tester.pumpAndSettle();
       await h.commands!.execute('workbench.action.toggleLockedScrolling');
       await tester.pumpAndSettle();
+      expect(alpha.offset, 250);
+      expect(beta.offset, 100);
 
-      final alphaField = _fieldForDocument(tester, 10);
-      final betaField = _fieldForDocument(tester, 11);
-      final alphaMax =
-          alphaField.scrollController!.position.maxScrollExtent;
-      final betaMax = betaField.scrollController!.position.maxScrollExtent;
-      alphaField.scrollController!.jumpTo(alphaMax * 0.5);
+      alpha.jumpTo(320);
       await tester.pumpAndSettle();
-      expect(betaField.scrollController!.offset, greaterThan(0),
-          reason: 'beta scrolled by locked sync');
-      expect(betaField.scrollController!.offset,
-          closeTo(betaMax * 0.5, betaMax * 0.5 * 0.1),
-          reason: 'the sync is proportional to each document length');
+      expect(beta.offset, 170);
+      beta.jumpTo(50);
+      await tester.pumpAndSettle();
+      expect(alpha.offset, 200);
+
+      alpha.jumpTo(alpha.position.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(beta.offset, beta.position.maxScrollExtent);
+      alpha.jumpTo(250);
+      await tester.pumpAndSettle();
+      expect(beta.offset, 100);
 
       await h.commands!.execute('workbench.action.toggleLockedScrolling');
       await tester.pumpAndSettle();
-      alphaField.scrollController!.jumpTo(0);
+      alpha.jumpTo(0);
       await tester.pumpAndSettle();
-      final betaAfter = betaField.scrollController!.offset;
-      alphaField.scrollController!.jumpTo(alphaMax);
-      await tester.pumpAndSettle();
-      expect(betaField.scrollController!.offset, betaAfter,
-          reason: 'scrolling no longer syncs when unlocked');
+      expect(beta.offset, 100);
       await h.disposeWorkbench(tester);
     },
   );
+
+  testWidgets('locked scrolling rebases when same-document split views appear',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h);
+    await h.mount(tester);
+    final alpha = _fieldForDocument(tester, 10).scrollController!;
+    final beta = _fieldForDocument(tester, 11).scrollController!;
+    alpha.jumpTo(150);
+    beta.jumpTo(70);
+    await tester.pumpAndSettle();
+    await h.commands!.execute('workbench.action.toggleLockedScrolling');
+    await tester.pumpAndSettle();
+
+    await h.commands!.execute('workbench.action.splitEditorInGroup');
+    await tester.pumpAndSettle();
+    final views = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .where((field) => field.inputWindow.document.id == 11)
+        .map((field) => field.scrollController!)
+        .toList();
+    expect(views, hasLength(2));
+    final source = views.first;
+    final peer = views.last;
+    final alphaBefore = alpha.offset;
+    final peerBefore = peer.offset;
+    final move = source.offset + 60;
+    expect(move, lessThan(source.position.maxScrollExtent));
+    source.jumpTo(move);
+    await tester.pumpAndSettle();
+    expect(alpha.offset, alphaBefore + 60);
+    expect(peer.offset, peerBefore + 60);
+
+    await h.commands!.execute('workbench.action.joinEditorInGroup');
+    await tester.pumpAndSettle();
+    final remaining = _fieldForDocument(tester, 11).scrollController!;
+    final alphaRebased = alpha.offset;
+    final remainingBefore = remaining.offset;
+    remaining.jumpTo(remainingBefore + 30);
+    await tester.pumpAndSettle();
+    expect(alpha.offset, alphaRebased + 30);
+    expect(tester.takeException(), isNull);
+    await h.disposeWorkbench(tester);
+  });
 
   testWidgets(
     'holding Alt syncs a scroll gesture even when the toggle is off',
@@ -189,8 +238,8 @@ void main() {
       expect(find.byIcon(Icons.lock_open), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsNothing);
 
-      await tester.tap(
-          find.byKey(const ValueKey('status-bar-locked-scrolling')));
+      await tester
+          .tap(find.byKey(const ValueKey('status-bar-locked-scrolling')));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 700));
       expect(find.byIcon(Icons.lock), findsOneWidget,
@@ -198,8 +247,8 @@ void main() {
       expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue,
           reason: 'the state persists through the session journal');
 
-      await tester.tap(
-          find.byKey(const ValueKey('status-bar-locked-scrolling')));
+      await tester
+          .tap(find.byKey(const ValueKey('status-bar-locked-scrolling')));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 700));
       expect(find.byIcon(Icons.lock_open), findsOneWidget);
