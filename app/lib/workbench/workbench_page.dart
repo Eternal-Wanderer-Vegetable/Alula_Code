@@ -29701,6 +29701,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 rangeDecorations: rangeDecorations,
                                 canHoverFileLink: (link) =>
                                     _localFileLinkPath(link) != null,
+                                onOpenFileLink: (link) {
+                                  if (!mounted || _disposing) return;
+                                  final path = _localFileLinkPath(link);
+                                  if (path == null) return;
+                                  _activateSplitEditorView(g, active);
+                                  if (identical(_active, active)) {
+                                    unawaited(_openEditorFileLink(path));
+                                  }
+                                },
                                 caretOverlay: caretOverlay,
                                 reserveCaretOverlayLineSpace:
                                     caretOverlay is DiagnosticNavigationPeek,

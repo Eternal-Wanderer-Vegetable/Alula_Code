@@ -5194,6 +5194,18 @@
       "evidence": "按住 Ctrl/Cmd 悬停在本地链接时显示手形光标和范围下划线，松键或离开时清除。Windows 和 Linux 各通过 13 项原生检查，专题 124/124，Flutter 1,962 项通过、2 项跳过。产品 716da953 的 CI 46062460886 四项及 Platform Availability 46062455967 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-411",
+      "name": "P05.359 CMD-12 本地链接悬停提示与直接打开",
+      "description": "普通悬停显示操作和平台修饰键提示，可移入提示点击打开，退出、滚动与过期时释放。",
+      "dependencies": [
+        "feat-410"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版悬停延迟、普通悬停、直接打开及 Windows/Linux 原生与托管证据待登记。macOS 实机暂缓。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -371,6 +371,7 @@ class RustTextInputField extends StatefulWidget {
     this.horizontalScrollController,
     this.rangeDecorations = const [],
     this.canHoverFileLink,
+    this.onOpenFileLink,
     this.caretOverlay,
     this.caretOverlayAnchorUtf16,
     this.reserveCaretOverlayLineSpace = false,
@@ -415,6 +416,7 @@ class RustTextInputField extends StatefulWidget {
 
   /// Enables file-link feedback for a host that also handles modifier-click.
   final bool Function(DocumentFileLink link)? canHoverFileLink;
+  final ValueChanged<DocumentFileLink>? onOpenFileLink;
 
   /// Optional popup positioned beside the local caret and clamped to the
   /// visible editor viewport.
@@ -661,8 +663,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     );
   }
 
+  static const _fileLinkHintDelay = Duration(milliseconds: 300);
+  bool _trackingFileLinkHover = false;
   Offset? _fileLinkHoverPosition;
   DocumentFileLink? _hoveredFileLink;
+  DocumentFileLink? _fileLinkHint;
+  Timer? _fileLinkHintTimer;
+  OverlayEntry? _fileLinkHintEntry;
 
   @visibleForTesting
   bool get hasActiveMouseDragAutoScrollTimer =>
@@ -686,7 +693,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     if (window.version != window.document.version || window.hasComposition) {
       return null;
     }
-    final cached = _hoveredFileLink;
+    final cached = _hoveredFileLink ?? _fileLinkHint;
     final link =
         cached != null &&
             cached.version == window.version &&
@@ -720,17 +727,123 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _onFileLinkHover(Offset position) {
-    if (_fileLinkHoverPosition == null) {
+    if (!_trackingFileLinkHover) {
+      _trackingFileLinkHover = true;
       HardwareKeyboard.instance.addHandler(_onFileLinkModifier);
       widget.scrollController?.addListener(_clearFileLinkHover);
       _horizontalScrollController.addListener(_clearFileLinkHover);
     }
     _fileLinkHoverPosition = position;
     _updateFileLinkHover();
+    if (widget.onOpenFileLink == null) return;
+    _fileLinkHintTimer?.cancel();
+    final hint = _fileLinkHint;
+    if (hint != null && identical(_fileLinkAtHoverPosition(position), hint)) {
+      return;
+    }
+    _hideFileLinkHint();
+    _fileLinkHintTimer = Timer(_fileLinkHintDelay, _showFileLinkHint);
+  }
+
+  DocumentFileLink? _fileLinkAtHoverPosition(Offset position) {
+    final window = widget.inputWindow;
+    final offset = _textOffsetAtGlobalPosition(position);
+    if (offset == null || offset < 0 || offset > window.text.length) {
+      return null;
+    }
+    return fileLinkAtPointer(window.startUtf16 + offset, position);
+  }
+
+  void _showFileLinkHint() {
+    _fileLinkHintTimer = null;
+    final position = _fileLinkHoverPosition;
+    final isAllowed = widget.canHoverFileLink;
+    if (!mounted || position == null || isAllowed == null) return;
+    final link = _fileLinkAtHoverPosition(position);
+    if (link == null || !isAllowed(link)) return;
+    final overlay = Overlay.maybeOf(context);
+    final box = overlay?.context.findRenderObject();
+    if (overlay == null || box is! RenderBox || !box.hasSize) return;
+    final target = box.globalToLocal(position);
+    final colorScheme = Theme.of(context).colorScheme;
+    final shortcut = defaultTargetPlatform == TargetPlatform.macOS
+        ? '（Cmd+单击）'
+        : '（Ctrl+单击）';
+    final entry = OverlayEntry(
+      builder: (context) => CustomSingleChildLayout(
+        delegate: _FileLinkHintPosition(target),
+        child: MouseRegion(
+          onEnter: (_) => _fileLinkHintTimer?.cancel(),
+          onExit: (_) => _scheduleFileLinkHintDismissal(),
+          child: Material(
+            color: colorScheme.surfaceContainerHigh,
+            elevation: 4,
+            borderRadius: BorderRadius.circular(4),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    key: const ValueKey('editor-file-link-hint-action'),
+                    onPressed: _followFileLinkHint,
+                    child: const Text('打开链接'),
+                  ),
+                  Text(shortcut),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    _fileLinkHint = link;
+    _fileLinkHintEntry = entry;
+    overlay.insert(entry);
+  }
+
+  void _followFileLinkHint() {
+    final link = _fileLinkHint;
+    final onOpen = widget.onOpenFileLink;
+    final window = widget.inputWindow;
+    _clearFileLinkHover();
+    if (link != null &&
+        !window.hasComposition &&
+        link.version == window.version &&
+        link.version == window.document.version) {
+      onOpen?.call(link);
+    }
+  }
+
+  void _hideFileLinkHint() {
+    _fileLinkHint = null;
+    final entry = _fileLinkHintEntry;
+    _fileLinkHintEntry = null;
+    entry?.remove();
+    entry?.dispose();
+  }
+
+  void _scheduleFileLinkHintDismissal() {
+    if (_fileLinkHintEntry == null) return;
+    _fileLinkHintTimer?.cancel();
+    _fileLinkHintTimer = Timer(_fileLinkHintDelay, _clearFileLinkHover);
+  }
+
+  void _exitFileLinkHover() {
+    if (_fileLinkHintEntry == null) {
+      _clearFileLinkHover();
+      return;
+    }
+    _fileLinkHoverPosition = null;
+    if (_hoveredFileLink != null) setState(() => _hoveredFileLink = null);
+    _scheduleFileLinkHintDismissal();
   }
 
   bool _onFileLinkModifier(KeyEvent event) {
-    if (event is! KeyRepeatEvent) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape) {
+      _clearFileLinkHover();
+    } else if (event is! KeyRepeatEvent) {
       const modifierKeys = [
         LogicalKeyboardKey.controlLeft,
         LogicalKeyboardKey.controlRight,
@@ -756,15 +869,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         !keyboard.isShiftPressed &&
         position != null &&
         isAllowed != null) {
-      final window = widget.inputWindow;
-      final offset = _textOffsetAtGlobalPosition(position);
-      if (offset != null && offset >= 0 && offset <= window.text.length) {
-        link = fileLinkAtPointer(window.startUtf16 + offset, position);
-        if (link != null &&
-            !identical(link, _hoveredFileLink) &&
-            !isAllowed(link)) {
-          link = null;
-        }
+      link = _fileLinkAtHoverPosition(position);
+      if (link != null &&
+          !identical(link, _hoveredFileLink) &&
+          !isAllowed(link)) {
+        link = null;
       }
     }
     if (link != _hoveredFileLink && mounted) {
@@ -773,9 +882,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _detachFileLinkHover(ScrollController? verticalScroll) {
-    if (_fileLinkHoverPosition == null) return;
+    if (!_trackingFileLinkHover) return;
+    _trackingFileLinkHover = false;
     _fileLinkHoverPosition = null;
     _hoveredFileLink = null;
+    _fileLinkHintTimer?.cancel();
+    _fileLinkHintTimer = null;
+    _hideFileLinkHint();
     HardwareKeyboard.instance.removeHandler(_onFileLinkModifier);
     verticalScroll?.removeListener(_clearFileLinkHover);
     _horizontalScrollController.removeListener(_clearFileLinkHover);
@@ -1586,7 +1699,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void didUpdateWidget(covariant RustTextInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    final hint = _fileLinkHint;
     if (oldWidget.inputWindow != widget.inputWindow ||
+        (hint != null && hint.version != widget.inputWindow.document.version) ||
+        (oldWidget.onOpenFileLink != null && widget.onOpenFileLink == null) ||
         oldWidget.scrollController != widget.scrollController ||
         oldWidget.horizontalScrollController !=
             widget.horizontalScrollController ||
@@ -2663,7 +2779,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       if (!hoverEnabled) return field;
       return MouseRegion(
         onHover: (event) => _onFileLinkHover(event.position),
-        onExit: (_) => _clearFileLinkHover(),
+        onExit: (_) => _exitFileLinkHover(),
         child: field,
       );
     }
@@ -3202,6 +3318,29 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _disposeOwnedHorizontalScrollController();
     super.dispose();
   }
+}
+
+class _FileLinkHintPosition extends SingleChildLayoutDelegate {
+  const _FileLinkHintPosition(this.target);
+
+  final Offset target;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      constraints.loosen();
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) => positionDependentBox(
+    size: size,
+    childSize: childSize,
+    target: target,
+    preferBelow: false,
+    verticalOffset: 10,
+  );
+
+  @override
+  bool shouldRelayout(covariant _FileLinkHintPosition oldDelegate) =>
+      oldDelegate.target != target;
 }
 
 class _CaretOverlayPositionDelegate extends SingleChildLayoutDelegate {
