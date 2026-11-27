@@ -17763,10 +17763,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final d in _allDocs) {
         if (d.isUntitled || !d.lspAttached) continue;
         try {
-          diags.addAll(core.lsp.diagnostics(d.id).map((diagnostic) => {
+          final diagnostics = core.lsp.diagnostics(d.id);
+          if (diagnostics.isEmpty) continue;
+          final path = d.path;
+          final resourceUri = path == null
+              ? null
+              : Uri.file(_canonicalPath(path), windows: Platform.isWindows)
+                  .toString();
+          diags.addAll(diagnostics.map((diagnostic) => {
                 ...diagnostic,
                 'file': d.name,
                 '_documentId': d.id,
+                if (resourceUri != null) '_resourceUri': resourceUri,
+                if (path != null) '_resourcePath': path,
               }));
         } catch (_) {}
       }
@@ -31629,13 +31638,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 : filter)
             .toLowerCase();
         final pathFilter = ProblemsPathFilter(filter);
-        final pathMatches = <int, ProblemsPathMatch>{};
-        if (!pathFilter.isEmpty) {
-          for (final doc in _allDocs) {
-            final filePath = doc.path;
-            if (filePath != null) pathMatches[doc.id] = pathFilter.match(filePath);
-          }
-        }
+        final pathMatches = <Object?, ProblemsPathMatch>{};
         final diagnostics = <Map<String, Object?>>[];
         final activeId = _active?.id;
         var totalProblems = 0;
@@ -31648,7 +31651,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             continue;
           }
           hasProblemsInScope = true;
-          final pathMatch = pathMatches[diagnostic['_documentId']];
+          final path = diagnostic['_resourcePath'];
+          final pathMatch = !pathFilter.isEmpty && path is String
+              ? pathMatches.putIfAbsent(
+                  ProblemsResultSelection.resourceKey(diagnostic),
+                  () => pathFilter.match(path),
+                )
+              : null;
           if (pathMatch == ProblemsPathMatch.excluded) continue;
           if (hasSourceFilters) {
             final rawSource = diagnostic['source'];
@@ -31911,18 +31920,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     var itemCount = 0;
     for (var first = 0; first < diagnostics.length;) {
       final marker = diagnostics[first];
-      final identity = marker['_documentId'] ?? marker['file'];
+      final identity = ProblemsResultSelection.resourceKey(marker);
       var end = first + 1;
       while (end < diagnostics.length &&
-          (diagnostics[end]['_documentId'] ?? diagnostics[end]['file']) ==
-              identity) {
+          ProblemsResultSelection.resourceKey(diagnostics[end]) == identity) {
         end++;
       }
       final openDocument = documentsById[marker['_documentId']];
       final document = openDocument?._shared;
       final expanded =
           document == null || _collapsedProblemGroups[document] != true;
-      final path = openDocument?.path;
+      final path = marker['_resourcePath'] as String? ?? openDocument?.path;
       String? directory;
       if (path != null) {
         directory = p.dirname(path);
@@ -32271,7 +32279,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Iterable<Map<String, Object?>> fileClipboardRows(Object? identity) =>
         _diagnostics.where((marker) {
           final severity = (marker['severity'] as num?)?.toInt() ?? 3;
-          return (marker['_documentId'] ?? marker['file']) == identity &&
+          return ProblemsResultSelection.resourceKey(marker) == identity &&
               severity >= 1 &&
               severity <= 3;
         });

@@ -5005,6 +5005,18 @@
       "evidence": "状态栏和 Problems 标签徽标包含未打开文件的错误、警告和信息。Windows 与 Linux 各通过 13 项真实 rust-analyzer 检查。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 e58e7661 的 CI 45985332395 四项与 Platform Availability 45985324428 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.343-problems-workspace-summary.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-396",
+      "name": "P05.344 CMD-11 Problems 诊断资源 URI 标识",
+      "description": "按完整规范文件 URI 区分 Problems 的同名诊断和文件组，并用原路径筛选，支持对接未打开文件的快照。",
+      "dependencies": [
+        "feat-395"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、两端原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

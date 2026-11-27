@@ -271,11 +271,16 @@ class ProblemsResultSelection {
 
   bool contains(Object key) => _selected.contains(key);
 
+  static Object? resourceKey(Map<String, Object?> diagnostic) =>
+      diagnostic['_resourceUri'] ??
+      diagnostic['_documentId'] ??
+      diagnostic['file'];
+
   static List<Object> rowKeys(List<Map<String, Object?>> diagnostics) {
     final occurrences = <Object, int>{};
     return diagnostics.map<Object>((diagnostic) {
       final marker = (
-        document: diagnostic['_documentId'] ?? diagnostic['file'],
+        document: resourceKey(diagnostic),
         line: diagnostic['line'],
         character: diagnostic['character'],
         endLine: diagnostic['endLine'],
