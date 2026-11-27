@@ -5165,8 +5165,8 @@
         "feat-025",
         "feat-235"
       ],
-      "status": "in-progress",
-      "evidence": "本地文件 URI、ABI 51、命令面板和 Windows/Linux 原生验证待登记。macOS 实机暂缓。",
+      "status": "done",
+      "evidence": "打开链接命令识别光标下的本地 file URI，目标编辑器接收键盘焦点。Windows 与 Linux 各通过 8 项原生检查，专题 131/131，Flutter 1,956 项通过、2 项跳过。产品 e8dad314 的 CI 46054693322 四项和 Platform Availability 46054687988 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
