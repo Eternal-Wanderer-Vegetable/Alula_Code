@@ -5215,8 +5215,8 @@
         "feat-411",
         "feat-245"
       ],
-      "status": "in-progress",
-      "evidence": "待登记精确构建及原生证据。",
+      "status": "done",
+      "evidence": "本地文件 URI 的行列和区间通过命令、点击、悬停提示及侧开定位。Windows 和 Linux 各通过 12 项原生检查，专题 177/177，Flutter 1,966 项通过、2 项跳过。产品 c368d40 的 CI 46070717736 四项及 Platform Availability 46070711541 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.360-file-link-location.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
