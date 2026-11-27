@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.331 / feat-383 完成。F8 系列导航显示光标旁的诊断详情，支持跨已打开文件和本文件循环。关闭保留焦点与选区，编辑与移动会关闭过期详情。Windows 与 Linux 各通过 18 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 5d64aaaa 的 CI 45934519362 四项与 Platform Availability 45934510494 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.331-diagnostic-navigation-detail.md。
 - P05.330 / feat-382 完成。Problems 标签聚焦时，Shift+F10 和菜单键调用同一个徽标菜单，取消与选择后恢复标签焦点。Windows 与 Linux 各通过 24 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 1a780e64 的 CI 45930823376 四项与 Platform Availability 45930815133 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.330-problems-tab-keyboard-menu.md。
 - P05.329 / feat-381 完成。Problems 标签右键菜单切换徽标显隐，布局配置档保存偏好。隐藏时悬停和状态栏继续显示准确数量。Windows 与 Linux 各通过 42 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 cff3f543 的 CI 45927733285 四项与 Platform Availability 45927725109 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.329-problems-badge-visibility.md。
 - P05.328 / feat-380 完成。Problems 标题徽标显示全局错误、警告和信息总数，零值隐藏。悬停与可访问标签保留精确总数和快捷键。Windows 与 Linux 各通过 48 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 5d7fb4d3 的 CI 45925038660 四项与 Platform Availability 45925033057 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.328-problems-title-badge.md。
@@ -108,7 +109,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本盘点 Problems 的 CMD-11 验收证据与剩余差异。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。按固定版本核对 CMD-11 诊断详情的标记锚点和编辑器行内占位。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
