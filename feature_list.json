@@ -5155,6 +5155,20 @@
       "evidence": "通用面板隐藏后恢复活动编辑器或工作台快捷键焦点。Windows 与 Linux 各通过 17 项原生检查，专题 177/177，Flutter 1,955 项通过、2 项跳过。产品 c5c94581 的 CI 46048247247 四项与 Platform Availability 46048236828 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-408",
+      "name": "P05.356 CMD-12 光标下本地文件链接命令",
+      "description": "由 Rust 按 UTF-16 光标识别本地 file URI，规范 Open Link 命令从现有编辑器文件入口打开。",
+      "dependencies": [
+        "feat-024",
+        "feat-025",
+        "feat-235"
+      ],
+      "status": "in-progress",
+      "evidence": "本地文件 URI、ABI 51、命令面板和 Windows/Linux 原生验证待登记。macOS 实机暂缓。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

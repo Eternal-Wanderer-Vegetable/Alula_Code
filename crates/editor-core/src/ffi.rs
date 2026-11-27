@@ -39,10 +39,11 @@ use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePr
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
+use crate::file_links::file_link_at_utf16;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 50;
+pub const ALULA_ABI_VERSION: u32 = 51;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -1537,6 +1538,34 @@ pub extern "C" fn alula_doc_line_boundary(id: u64, offset_utf16: u64) -> *mut c_
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_boundary")))
+}
+
+/// Read the file URI containing an absolute UTF-16 caret, if present.
+#[no_mangle]
+pub extern "C" fn alula_doc_file_link_at(id: u64, offset_utf16: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        match file_link_at_utf16(&registry_lock(), id, offset_utf16) {
+            Ok((version, link)) => {
+                let link = link.map(|link| {
+                    json!({
+                        "uri": link.uri,
+                        "startUtf16": link.start_utf16,
+                        "endUtf16": link.end_utf16,
+                    })
+                });
+                to_c_ptr(json!({ "ok": true, "version": version, "link": link }).to_string())
+            }
+            Err(ApplyError::UnknownDoc) => err_json("UnknownDoc", json!({ "id": id })),
+            Err(ApplyError::Buffer(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Err(error) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_file_link_at")))
 }
 
 /// Move a document cursor to the adjacent VS Code word-part boundary.
@@ -3850,7 +3879,40 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 50);
+        assert_eq!(alula_abi_version(), 51);
+    }
+
+    #[test]
+    fn file_link_ffi_preserves_version_and_absolute_utf16_range() {
+        let id = 5_356_001;
+        let prefix = "\u{feff}🦊\r\n中🦊 (";
+        let uri = "file:///tmp/%E4%B8%AD%20(a).rs";
+        let content = c(&format!("{prefix}{uri}).\r\n"));
+        let opened = take(unsafe { alula_doc_open(id, content.as_ptr()) });
+        let start = prefix.encode_utf16().count();
+        let end = start + uri.encode_utf16().count();
+        let link = take(alula_doc_file_link_at(id, (start + 9) as u64));
+        assert_eq!(
+            link,
+            json!({
+                "ok": true,
+                "version": opened["version"],
+                "link": { "uri": uri, "startUtf16": start, "endUtf16": end }
+            })
+        );
+        assert_eq!(
+            take(alula_doc_file_link_at(id, (end + 1) as u64)),
+            json!({ "ok": true, "version": opened["version"], "link": null })
+        );
+        assert_eq!(
+            take(alula_doc_file_link_at(id, u64::from(u32::MAX)))["error"]["code"],
+            "InvalidUtf16Offset"
+        );
+        assert_eq!(take(alula_doc_close(id))["ok"], true);
+        assert_eq!(
+            take(alula_doc_file_link_at(id, 0))["error"]["code"],
+            "UnknownDoc"
+        );
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

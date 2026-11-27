@@ -18,6 +18,7 @@ use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
 
 pub mod ffi;
+mod file_links;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ApplyError {

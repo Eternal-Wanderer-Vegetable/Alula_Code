@@ -23,7 +23,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 50;
+const int expectedAbiVersion = 51;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -281,6 +281,21 @@ class DocumentLineBoundary {
     required this.line,
     required this.startUtf16,
     required this.firstNonWhitespaceUtf16,
+    required this.endUtf16,
+  });
+}
+
+/// A file URI and its absolute UTF-16 range in one document version.
+class DocumentFileLink {
+  final int version;
+  final String uri;
+  final int startUtf16;
+  final int endUtf16;
+
+  const DocumentFileLink({
+    required this.version,
+    required this.uri,
+    required this.startUtf16,
     required this.endUtf16,
   });
 }
@@ -1491,6 +1506,31 @@ class AlulaDoc {
     );
     version = boundary.version;
     return boundary;
+  }
+
+  /// Read the file URI containing this absolute document offset.
+  DocumentFileLink? fileLinkAt(int offsetUtf16) {
+    if (offsetUtf16 < 0) {
+      throw RangeError.value(
+          offsetUtf16, 'offsetUtf16', 'must be non-negative');
+    }
+    final r = jsonDecode(core._ffi.docFileLinkAtJson(id, offsetUtf16))
+        as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final link = r['link'] as Map<String, Object?>?;
+    if (link == null) return null;
+    return DocumentFileLink(
+      version: r['version'] as int,
+      uri: link['uri'] as String,
+      startUtf16: link['startUtf16'] as int,
+      endUtf16: link['endUtf16'] as int,
+    );
   }
 
   /// Convert a zero-based LSP UTF-16 line/column to a safe absolute offset.

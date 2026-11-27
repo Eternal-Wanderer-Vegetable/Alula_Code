@@ -1723,6 +1723,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
     );
     reg(
+      'editor.action.openLink',
+      '编辑器',
+      '打开链接',
+      _openFileLinkAtCaret,
+      enablement: 'editorTextFocus',
+    );
+    reg(
       'editor.action.toggleOvertypeInsertMode',
       '编辑器',
       '切换覆写/插入模式',
@@ -23155,6 +23162,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final owner = _ownerOfView(active);
     if (owner != null) _focusEditorAfterLayout(owner, active);
     return true;
+  }
+
+  Future<void> _openFileLinkAtCaret() async {
+    final source = _active;
+    if (source == null) return;
+    _flushInput(source, commitComposition: true);
+    final caret = source.selection.extentOffset;
+    if (caret < 0) return;
+    final link = source.doc.fileLinkAt(caret);
+    if (link == null || link.version != source.doc.version) return;
+    final uri = Uri.tryParse(link.uri);
+    if (uri == null ||
+        !uri.hasAuthority ||
+        uri.authority.isNotEmpty ||
+        !uri.path.startsWith('/') ||
+        uri.path.startsWith('//')) {
+      return;
+    }
+    final path = _pathFromFileUri(link.uri);
+    if (path == null ||
+        path.contains('\u0000') ||
+        FileSystemEntity.typeSync(path) != FileSystemEntityType.file) {
+      return;
+    }
+    await _openFileByPath(path);
+    if (!mounted) return;
+    final target = _active;
+    final targetPath = target?.path;
+    if (target != null && targetPath != null && _pathsEqual(targetPath, path)) {
+      _focusEditorAfterLayout(_focused, target);
+    }
   }
 
   String? _pathFromFileUri(String value) {
