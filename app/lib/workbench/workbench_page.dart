@@ -786,6 +786,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _problemsTableMode = false;
   bool _problemsContextMenuOpen = false;
   final _collapsedProblemGroups = Expando<bool>();
+  final _collapsedUnopenedProblemGroups = <String>{};
   final _problemsMessageLines = _ProblemsMessageLines();
   final _problemsScrollController = ScrollController();
   final _findQuery = TextEditingController();
@@ -17914,7 +17915,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..clear()
       ..addAll(diagnostics);
     _unopenedProblemsSummary = unopened;
-    if (resetNavigation) _pendingProblemsOpen = null;
+    if (resetNavigation) {
+      _pendingProblemsOpen = null;
+      _collapsedUnopenedProblemGroups.clear();
+    }
     _problemsStatusCounts = ProblemsStatusCounts(
       errors: counts.errors + unopenedCounts.errors,
       warnings: counts.warnings + unopenedCounts.warnings,
@@ -31674,6 +31678,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  bool _isProblemGroupCollapsed(Object? resource, Object? document) =>
+      (document != null && _collapsedProblemGroups[document] == true) ||
+      _collapsedUnopenedProblemGroups.contains(resource);
+
+  void _setProblemGroupCollapsed(
+    Object? resource,
+    Object? document,
+    bool collapsed,
+  ) {
+    if (document != null) {
+      _collapsedProblemGroups[document] = collapsed ? true : null;
+    }
+    if (resource is! String) return;
+    if (!collapsed) {
+      _collapsedUnopenedProblemGroups.remove(resource);
+    } else if (document == null &&
+        _collapsedUnopenedProblemGroups.add(resource) &&
+        _collapsedUnopenedProblemGroups.length > _problemsWorkspacePageSize) {
+      _collapsedUnopenedProblemGroups.remove(
+        _collapsedUnopenedProblemGroups.first,
+      );
+    }
+  }
+
   void _collapseAllProblemGroups() {
     if (!_problemsViewActive || _problemsTableMode) return;
     final context = _problemsResultsFocus.context;
@@ -31693,6 +31721,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (diagnosedIds.contains(doc.id)) {
           _collapsedProblemGroups[doc._shared] = true;
         }
+      }
+      final page = _unopenedProblemsSummary?.page;
+      for (final marker in page?.diagnostics ?? const []) {
+        _setProblemGroupCollapsed(marker['_resourceUri'], null, true);
       }
     });
 
@@ -32158,8 +32190,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       final openDocument = documentsById[marker['_documentId']];
       final document = openDocument?._shared;
-      final expanded =
-          document == null || _collapsedProblemGroups[document] != true;
+      final expanded = !_isProblemGroupCollapsed(identity, document);
       final path = marker['_resourcePath'] as String? ?? openDocument?.path;
       String? directory;
       if (path != null) {
@@ -32292,7 +32323,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       seek(index == 0 ? lower : (lower + upper) / 2, 24);
     }
 
-    void focusFileGroup(Key key, int index, Object? document) {
+    void focusFileGroup(
+      Key key,
+      int index,
+      Object? identity,
+      Object? document,
+    ) {
       const alignment = ScrollPositionAlignmentPolicy.keepVisibleAtStart;
       bool focus() => focusRenderedResult(key, alignment);
       if (focus() || _problemsScrollController.positions.length != 1) return;
@@ -32316,8 +32352,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         position,
         index,
         focus,
-        canFocus: () =>
-            document == null || _collapsedProblemGroups[document] != true,
+        canFocus: () => !_isProblemGroupCollapsed(identity, document),
       );
     }
 
@@ -32750,19 +32785,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       selection.registerRowActivation(selectionRows[i], null),
                 ),
               );
+          final canCollapse = document != null || group.identity is String;
           void setCollapsed(bool collapsed) {
-            if (document == null ||
-                (_collapsedProblemGroups[document] == true) == collapsed) {
+            if (!canCollapse ||
+                _isProblemGroupCollapsed(group.identity, document) == collapsed) {
               return;
             }
             setState(() {
-              _collapsedProblemGroups[document] = collapsed ? true : null;
+              _setProblemGroupCollapsed(group.identity, document, collapsed);
             });
           }
 
-          final VoidCallback? toggle = document == null
-              ? null
-              : () => setCollapsed(_collapsedProblemGroups[document] != true);
+          final VoidCallback? toggle = canCollapse
+              ? () => setCollapsed(
+                    !_isProblemGroupCollapsed(group.identity, document),
+                  )
+              : null;
           void selectGroup() {
             final result = selectResult(selection, i);
             focusRenderedResult(
@@ -32789,11 +32827,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: CallbackShortcuts(
               bindings: {
                 ...clipboardShortcuts(openMenu, getMarkers),
-                if (document != null) ...{
+                if (canCollapse) ...{
                   const SingleActivator(LogicalKeyboardKey.arrowLeft):
                       () => setCollapsed(true),
                   const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-                    if (_collapsedProblemGroups[document] == true) {
+                    if (_isProblemGroupCollapsed(group.identity, document)) {
                       setCollapsed(false);
                     } else {
                       focusRenderedResult(
@@ -33139,7 +33177,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ...clipboardShortcuts(openMenu, getMarkers),
             const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
               if (!tableMode) {
-                focusFileGroup(groupKey, group.firstItem, group.document);
+                focusFileGroup(
+                  groupKey,
+                  group.firstItem,
+                  group.identity,
+                  group.document,
+                );
               }
             },
             const SingleActivator(LogicalKeyboardKey.arrowRight): () {},
@@ -33313,7 +33356,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (first == group.firstItem && !group.expanded) {
         final query = _problemsFilterController.text;
         _problemsResultsFocus.requestFocus();
-        setState(() => _collapsedProblemGroups[group.document!] = null);
+        setState(() {
+          _setProblemGroupCollapsed(group.identity, group.document, false);
+        });
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final context = _problemsResultsFocus.context;
           if (mounted &&

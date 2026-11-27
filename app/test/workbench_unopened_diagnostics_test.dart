@@ -129,6 +129,23 @@ void main() {
     expect(earlier, findsOneWidget);
     expect(later, findsOneWidget);
 
+    final earlierGroup = find.byWidgetPredicate((widget) {
+      final key = widget.key;
+      return widget is Semantics &&
+          key is ValueKey<String> &&
+          key.value.startsWith('problems-file-group-') &&
+          key.value.endsWith('/a_unopened.rs');
+    });
+    await tester.tap(earlierGroup);
+    await tester.pumpAndSettle();
+    expect(earlier, findsNothing);
+    expect(later, findsOneWidget);
+    expect(tester.widget<Semantics>(earlierGroup).properties.expanded, isFalse);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(earlier, findsOneWidget);
+    expect(tester.widget<Semantics>(earlierGroup).properties.expanded, isTrue);
+
     const activeOnly =
         'workbench.actions.workbench.panel.markers.view.toggleActiveFile';
     expect(await commands.execute(activeOnly), CommandExecutionStatus.executed);
