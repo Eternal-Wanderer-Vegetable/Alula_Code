@@ -775,6 +775,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _gitDiffStaged = false;
   int _gitDiffGeneration = 0;
   final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
+  final _workbenchKeyboardFocus = FocusNode(debugLabel: 'workbench shortcuts');
   final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
   final _problemsPanelTabAnchorKey = GlobalKey();
   final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
@@ -1425,8 +1426,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'workbench.action.toggleAuxiliaryBar',
       ),
     );
-    reg('view.togglePanel', '查看', '切换面板',
-        () async => _layout.toggleRegion('panel'),
+    reg('view.togglePanel', '查看', '切换面板', () async => _togglePanel(),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
     reg(
@@ -24108,6 +24108,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _gitDiffFocus.dispose();
+    _workbenchKeyboardFocus.dispose();
     _problemsPanelFocus.dispose();
     _problemsFilterFocus.dispose();
     _problemsResultsFocus.dispose();
@@ -24241,6 +24242,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _runCommand(e.value.commandId, arguments: e.value.arguments),
         },
         child: Focus(
+          focusNode: _workbenchKeyboardFocus,
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
           onKeyEvent: (_, event) => _handleCommandChord(
             event,
@@ -24734,7 +24736,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     resourceSource: _resourceStatus?.source,
                     syncCount: _syncCount,
                     panelCollapsed: _layout.isCollapsed('panel'),
-                    onTogglePanel: () => _layout.toggleRegion('panel'),
+                    onTogglePanel: _togglePanel,
                     lockedScrolling: _lockedScrolling,
                     onToggleLockedScrolling: _toggleLockedScrolling,
                     encodingLabel: _active?.fileOptions.statusLabel,
@@ -31642,6 +31644,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _togglePanel() {
+    final wasVisible = !_layout.isCollapsed('panel');
+    _layout.toggleRegion('panel');
+    if (wasVisible) _focusEditorAfterPanelClose();
+  }
+
   void _toggleProblems() {
     if (_problemsViewActive) {
       _closeProblems(collapseGroupedPane: true);
@@ -31658,13 +31666,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           panelGroupOriginalPane,
           true,
         );
-    if (!collapsedGroup) setState(() => _layout.toggleRegion('panel'));
-    if (collapsedGroup && !problemsFocused) return;
+    if (!collapsedGroup) {
+      setState(_togglePanel);
+    } else if (problemsFocused) {
+      _focusEditorAfterPanelClose();
+    }
+  }
 
+  void _focusEditorAfterPanelClose() {
     final editor = _active;
-    if (editor == null) return;
-    final group = _ownerOfView(editor);
-    if (group != null) _focusEditorAfterLayout(group, editor);
+    final group = editor == null ? null : _ownerOfView(editor);
+    if (editor != null && group != null) {
+      _focusEditorAfterLayout(group, editor);
+    } else {
+      _workbenchKeyboardFocus.requestFocus();
+    }
   }
 
   bool get _problemsViewActive =>

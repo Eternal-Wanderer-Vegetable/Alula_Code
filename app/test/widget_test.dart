@@ -4,12 +4,14 @@ import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/status_bar.dart';
 import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
+import 'package:alula_app/workbench/workbench_page.dart';
 import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -744,6 +746,129 @@ void main() {
     variant: const TargetPlatformVariant(
         {TargetPlatform.windows, TargetPlatform.linux}),
   );
+
+
+  for (final withEditor in [true, false]) {
+    testWidgets(
+      'panel shortcut retains the Problems reopen route (editor: $withEditor)',
+      (tester) async {
+        late CommandService commands;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WorkbenchPage(
+              layoutStore: store,
+              sessionStore: session,
+              keybindingsStore: keybindings,
+              onCommandServiceReady: (value) => commands = value,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final editor = find.byType(RustTextInputField);
+        if (withEditor) {
+          await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+          await tester.pumpAndSettle();
+          expect(editor, findsOneWidget);
+        } else {
+          final result = await commands.execute(
+            'workbench.action.closeAllEditors',
+          );
+          expect(result, CommandExecutionStatus.executed);
+          await tester.pumpAndSettle();
+          expect(editor, findsNothing);
+        }
+        final panel = find.byKey(const ValueKey('wb-region-panel'));
+        final problemsFocus = find.byKey(
+          const ValueKey('problems-panel-focus'),
+        );
+        bool hasProblemsFocus() =>
+            tester.widget<Focus>(problemsFocus).focusNode!.hasFocus;
+
+        await tester.tap(find.byKey(const ValueKey('status-problems')));
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(problemsFocus, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+        await tester.pumpAndSettle();
+        expect(panel, findsNothing);
+        if (withEditor) {
+          expect(
+            tester.widget<RustTextInputField>(editor).focusNode?.hasFocus,
+            isTrue,
+          );
+        }
+
+        await pressChord(
+          tester,
+          LogicalKeyboardKey.keyM,
+          control: true,
+          shift: true,
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        final status = find.byType(AlulaStatusBar);
+        await tester.tap(
+          find.descendant(
+            of: status,
+            matching: find.byIcon(Icons.keyboard_arrow_down),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsNothing);
+        if (withEditor) {
+          expect(
+            tester.widget<RustTextInputField>(editor).focusNode?.hasFocus,
+            isTrue,
+          );
+        }
+
+        await pressChord(
+          tester,
+          LogicalKeyboardKey.keyM,
+          control: true,
+          shift: true,
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        if (withEditor) {
+          await pressChord(tester, LogicalKeyboardKey.keyM,
+              control: true, shift: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsNothing);
+          expect(
+            await commands.execute('workbench.action.closeAllEditors'),
+            CommandExecutionStatus.executed,
+          );
+          await tester.pumpAndSettle();
+          expect(editor, findsNothing);
+
+          await tester.tap(find.byKey(const ValueKey('status-problems')));
+          await tester.pumpAndSettle();
+          expect(hasProblemsFocus(), isTrue);
+          await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsNothing);
+
+          await pressChord(tester, LogicalKeyboardKey.keyM,
+              control: true, shift: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsOneWidget);
+          expect(hasProblemsFocus(), isTrue);
+        }
+      },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+      }),
+    );
+  }
 
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(

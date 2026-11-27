@@ -5141,6 +5141,20 @@
       "evidence": "标题栏在 640、520 和 1024 逻辑像素下保持控件可达，放宽后命令中心恢复至 240 像素。Windows 与 Linux 各通过 22 项原生检查，专题 173/173，Flutter 1,951 项通过、2 项跳过。产品 3991f5dc 的 CI 46043740838 四项与 Platform Availability 46043735909 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-407",
+      "name": "P05.355 LAY-20 隐藏面板后恢复编辑器焦点",
+      "description": "通用面板关闭与 Problems 关闭共用编辑器焦点恢复，验证 Ctrl+J 或状态栏隐藏后可用 Ctrl+Shift+M 重开。",
+      "dependencies": [
+        "feat-378",
+        "feat-405",
+        "feat-406"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、两端原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
