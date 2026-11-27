@@ -298,6 +298,9 @@ class WbSplit extends WbNode {
   /// default where every view is allowed to show badges.
   List<String>? activityBarBadgesDisabled;
 
+  /// Root-only preference for the Problems panel tab count.
+  bool problemsBadgeHidden = false;
+
   /// Root-only mapping from built-in Activity Bar view IDs to a side bar.
   /// Null identifies a legacy layout where all built-in views are in Primary.
   Map<String, String>? sidebarViewLocations;
@@ -367,6 +370,7 @@ class WbSplit extends WbNode {
             activityBarBadgesDisabled,
             order: activityBarOrder,
           ),
+        if (problemsBadgeHidden) 'problemsBadgeHidden': true,
         if (sidebarViewLocations != null) ...{
           'sidebarViewLocations':
               normalizeSidebarViewLocations(sidebarViewLocations),
@@ -470,6 +474,7 @@ class WbSplit extends WbNode {
         }
       }
     }
+    split.problemsBadgeHidden = json['problemsBadgeHidden'] == true;
     final panelWeights = json['panelGroupPaneWeights'];
     if (panelWeights is Map) {
       for (final tab in PanelViewTab.values) {

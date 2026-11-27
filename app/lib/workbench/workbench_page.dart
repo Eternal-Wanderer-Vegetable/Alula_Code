@@ -30420,30 +30420,64 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     return Tab(
       key: const ValueKey('panel-problems-tab'),
-      child: Tooltip(
-        message: description,
-        excludeFromSemantics: true,
-        child: Semantics(
-          label: description,
-          excludeSemantics: true,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(title),
-              if (number != null) ...[
-                const SizedBox(width: 6),
-                Badge(
-                  key: const ValueKey('panel-problems-count'),
-                  backgroundColor: colors.surfaceContainerHighest,
-                  textColor: colors.onSurfaceVariant,
-                  label: Text(number),
-                ),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onSecondaryTapUp: (details) =>
+            unawaited(_showProblemsBadgeMenu(details.globalPosition)),
+        child: Tooltip(
+          message: description,
+          excludeFromSemantics: true,
+          child: Semantics(
+            label: description,
+            excludeSemantics: true,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title),
+                if (number != null && !_layout.root.problemsBadgeHidden) ...[
+                  const SizedBox(width: 6),
+                  Badge(
+                    key: const ValueKey('panel-problems-count'),
+                    backgroundColor: colors.surfaceContainerHighest,
+                    textColor: colors.onSurfaceVariant,
+                    label: Text(number),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+
+  Future<void> _showProblemsBadgeMenu(Offset globalPosition) async {
+    final overlay = Navigator.of(context).overlay?.context.findRenderObject();
+    if (overlay is! RenderBox || !overlay.attached) return;
+    final hidden = _layout.root.problemsBadgeHidden;
+    final nextHidden = await showMenu<bool>(
+      context: context,
+      position: RelativeRect.fromRect(
+        overlay.globalToLocal(globalPosition) & Size.zero,
+        Offset.zero & overlay.size,
+      ),
+      items: [
+        PopupMenuItem(
+          key: const ValueKey('panel-problems-toggle-badge'),
+          value: !hidden,
+          child: Text(hidden ? '显示徽标' : '隐藏徽标'),
+        ),
+      ],
+    );
+    if (!mounted ||
+        _disposing ||
+        nextHidden == null ||
+        _layout.root.problemsBadgeHidden == nextHidden) {
+      return;
+    }
+    _layout.root.problemsBadgeHidden = nextHidden;
+    _layout.notifyLayoutChanged();
   }
 
   Widget _buildPanelTabs() {
