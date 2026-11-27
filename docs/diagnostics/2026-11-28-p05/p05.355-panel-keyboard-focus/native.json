@@ -1,0 +1,414 @@
+{
+  "product": "c5c9458114a735c0282806372bd5fe4070a8f6e9",
+  "tree": "250c4c053c01dadc0ea8391f2e0ab01d66be1f08",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "250c4c053c01dadc0ea8391f2e0ab01d66be1f08",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ed0d1b67e22839d3651caf37134df3bb3fbf7c210468601ffb8012b30fa75bdd",
+      "app/lib/bridge/alula_ffi.dart": "27ca44d52361c42c3c1a47413da0dcb56196e31d50e003d612c68847259bb33a",
+      "app/lib/editor/editor_rendering.dart": "7bcb8d538dba1942a60258d83a7dd564915f30f73ae49c221123501c2c951277",
+      "app/lib/editor/editor_scroll_controller.dart": "554f62726d964ad0193c2acdb185089bdddbefab09e91d7f3d0b5379caff5903",
+      "app/lib/editor/rust_text_input_field.dart": "b9fa4f9781b8d0d8d2c339258fd8be57fb9dfb0e8cb50918283b3c4bf210e3f7",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "92bd25875f32eb7bd9e1d7bc1f1a9dbe06638ee0a1fbf0512483809e60159007",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "bd897d9397711a204d409952c3e57ff1b86878971115f6123b25aca52390cd67",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "03dd071ff724df13f4dab6380196a27ac1daaefee97cae7ecc87c502a5a51969",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "f2a097bf9663678860621f5d8b04d26cac4c07f48c100fd754bb0b182ef32c9a",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "28dc2d1476b35c0d4eda2d65b9fc290a148db88aa11a737dc1b0b9765cd83f78",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 50,
+    "fixtureSha256": "850078939ca7f61d0bf13adfaa58390cc705e28f7686abfd2bf59e54ce10201a"
+  },
+  "fixtureSha256": "850078939ca7f61d0bf13adfaa58390cc705e28f7686abfd2bf59e54ce10201a",
+  "sharedAcceptanceFixtureSha256": "ad5e67a95d7e0ee2bc1444ce03f1964ba19f9ce3598c0a25db707b54810ab2eb",
+  "isolatedProfileSeedSha256": "cddc61a61e158dcc8b77ad77d53deabbc27e6f800989dd3ef79cb4d2cfa48d7e",
+  "localLogsSha256": {
+    "p05-355-targeted.log": "5b2d31564e889dce6a573865d0972a39c32898f057697f09b79c3062d85a8e15",
+    "p05-355-focused.log": "e72c9aaacbcba8f09c8b69dbedf04e720f451a23f507ea5103cba88cda18d5be",
+    "p05-355-analyze.log": "1e89f639e691b5d59f5bd6460ad40adb10a674bd1430e078c3d055e7730696af",
+    "p05-355-full.log": "022b23216d3471071ff94c1eb7eea8016db3fdfc7205ff87f3d12c235411c3d5",
+    "p05-355-panel-focus-repro.log": "41e69f5471ff177111d5ce1a9b07faeef1eaa21b4581754669eb0bc699c48cb3",
+    "p05-355-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "oldLinuxReproduction": {
+    "product": "3991f5dce77b9b41a7804bc85f124caab8a6d0a2",
+    "tree": "d682721e63b63bd8e1f556b68384e7a6a8c236ce",
+    "cases": {
+      "saved": {
+        "rawReportSha256": "e4157eeeee77a18a1c84e6067f067d8316b21032fa4100d3276bbdd0847a05c9",
+        "measured": {
+          "editorFocusedAfterHide": false,
+          "problemsFocusedAfterHide": false,
+          "reopenedFromKeyboard": false,
+          "reopenedEditor": "lib.rs 主编辑器",
+          "reopenedDocumentId": 3
+        }
+      },
+      "untitled": {
+        "rawReportSha256": "5cb39a9e334fe33033c04dbb02244642551b80abae434790ae288d02c72a654e",
+        "measured": {
+          "editorFocusedAfterHide": false,
+          "problemsFocusedAfterHide": false,
+          "reopenedFromKeyboard": false,
+          "reopenedEditor": "未命名 主编辑器",
+          "reopenedDocumentId": 1
+        }
+      },
+      "freshEmpty": {
+        "rawReportSha256": "ed40800c0b06dc016b8716b7a46fc1140e4509cfac80c2e1b6941d6248c0cfa6",
+        "measured": {
+          "editorFocusedAfterHide": null,
+          "problemsFocusedAfterHide": false,
+          "reopenedFromKeyboard": true,
+          "reopenedEditor": null,
+          "reopenedDocumentId": null
+        }
+      }
+    }
+  },
+  "initialCandidate": {
+    "tree": "06940ec2b6473de04796bd660655cc9ee4365a9e",
+    "rawReportSha256": "0232e2835d2be5ca24ec5ac5135a9da2a09943b8bb53f2e325ce197dff89f85a",
+    "lastEmptyCaseReopened": false
+  },
+  "windowsSetupAttempts": {
+    "defaultChord": {
+      "rawReportSha256": "b6c5726f831612cff8adb6423e280fd7edf20107a10bb08f025c05096f880a64"
+    },
+    "paletteSearch": {
+      "rawReportSha256": "847d6ea73160fab97cb2a04308918cc38585f70613d071de7ef7f0d536b4cb99"
+    }
+  },
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "kind": "pinned source",
+    "file": "src/vs/workbench/browser/layout.ts",
+    "line": 2165,
+    "sha256": "3686b7da2067cdfa1cbb54ce1e8b23d34748b6655021d3a4c58a76e6b533fe0d"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "10531e3274e432db54d31dba0d4f8a7f4db86e951ad4cc56fe113e6c084f40a8"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "10531e3274e432db54d31dba0d4f8a7f4db86e951ad4cc56fe113e6c084f40a8"
+    }
+  },
+  "preedit": {
+    "active-editor-focus": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._focusEditorAfterLayout#3",
+        "name": "_focusEditorAfterLayout",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 39,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "sha256": "87b8b19e2a3fb5e048ea36dbbc93b4fe4845f89c52029eb35cfdde387b887501"
+    },
+    "build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c2246da05dae4b4f130cc4a728a56a1d33509a263de7fb144125a87a43d8e7d7"
+    },
+    "close-problems": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeProblems#1",
+        "name": "_closeProblems",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "a8038d3a537c6f18abc050b38fadd7883312ae7af7843e090027ff15e3ea6d87"
+    },
+    "dispose": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.dispose#0",
+        "name": "dispose",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    },
+    "focus-after-close": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._focusEditorAfterPanelClose#0",
+        "name": "_focusEditorAfterPanelClose",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "1b0ff579920cd92e2bfeec204230687c322462164f43f6419d90396ef4d04c78"
+    },
+    "live-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c2246da05dae4b4f130cc4a728a56a1d33509a263de7fb144125a87a43d8e7d7"
+    },
+    "live-dispose": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.dispose#0",
+        "name": "dispose",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    },
+    "register": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._registerCommands#0",
+        "name": "_registerCommands",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "b00001de6bf8878c49e31f7ea681c6b763f24866bf147d0c241a0620fcf40217"
+    },
+    "test": {
+      "target": {
+        "id": "Function:app/test/widget_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/widget_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "86196ed64db169b0632d306b5f399ca87817d669e21c61ffdc043e8fa59177f6"
+    },
+    "workbench-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "8ea5170cdcaec4e2bbc570b26dd43dda5a603f76afa7bf5eef644a04da711651"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "rawReportSha256": "c5a1d944e5acf2dffaabf4b57b058906eca4e72ca5e84707b76f05c267ccdbd3",
+    "fixtureSha256": "850078939ca7f61d0bf13adfaa58390cc705e28f7686abfd2bf59e54ce10201a",
+    "runnerSha256": "50682452787514f74e92a6bcf9b47eb8c0f3005b2925c98689b974a380b9d6b0",
+    "aotSha256": "225cecd9237aa31b0f82e3233b639d6292bb329aa2d43c00cd9e2ddf0ed53d89",
+    "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeLibrarySha256": "5d672bb2d225b0645fffcd74ac7bfc0904fcb931818c45fc6233fb41c0064b88",
+    "sourceSha256": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+    "nativeChecks": [
+      "owned-saved-file-ready",
+      "saved-status-opens-and-focuses-problems",
+      "saved-ctrl-j-hides-panel-and-restores-focus",
+      "saved-ctrl-shift-m-reopens-without-an-extra-click",
+      "status-arrow-closes-and-restores-saved-editor-focus",
+      "saved-editor-reopens-after-status-arrow-close",
+      "problems-close-command-returns-to-saved-editor",
+      "closing-last-saved-tab-creates-untitled-editor",
+      "untitled-status-opens-and-focuses-problems",
+      "untitled-ctrl-j-hides-panel-and-restores-focus",
+      "untitled-ctrl-shift-m-reopens-without-an-extra-click",
+      "problems-close-command-returns-to-untitled-editor",
+      "close-all-leaves-no-active-editor",
+      "empty-status-opens-and-focuses-problems",
+      "empty-ctrl-j-hides-panel-and-restores-focus",
+      "empty-ctrl-shift-m-reopens-without-an-extra-click",
+      "preserved-source-bytes"
+    ],
+    "cleanExit": true,
+    "measured": {
+      "saved": {
+        "documentId": 3,
+        "focusedAfterHide": true,
+        "reopened": true
+      },
+      "untitled": {
+        "documentId": 1,
+        "focusedAfterHide": true,
+        "reopened": true
+      },
+      "empty": {
+        "documentId": null,
+        "focusedAfterHide": null,
+        "reopened": true
+      }
+    },
+    "closeAllEntry": "isolatedF7Binding",
+    "windowEnvironment": 120
+  },
+  "linux": {
+    "rawReportSha256": "46ede092e1f3c8645d298f61f17ceaebfeedb605066cea373b11ca21978f7cd9",
+    "fixtureSha256": "850078939ca7f61d0bf13adfaa58390cc705e28f7686abfd2bf59e54ce10201a",
+    "runnerSha256": "7fa126daec1858b629f46dea15df4123f2909f78a52bceace03f9a88f905dde2",
+    "aotSha256": "4a6132a1469b26a02cfd06c25263bdeead85770dd7129d3723efea6111ec706b",
+    "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "nativeLibrarySha256": "53ac62e3815af2bf1d59694b28f6e8a8447d53d5fac7420e29e9f348db71517f",
+    "sourceSha256": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+    "nativeChecks": [
+      "owned-saved-file-ready",
+      "saved-status-opens-and-focuses-problems",
+      "saved-ctrl-j-hides-panel-and-restores-focus",
+      "saved-ctrl-shift-m-reopens-without-an-extra-click",
+      "status-arrow-closes-and-restores-saved-editor-focus",
+      "saved-editor-reopens-after-status-arrow-close",
+      "problems-close-command-returns-to-saved-editor",
+      "closing-last-saved-tab-creates-untitled-editor",
+      "untitled-status-opens-and-focuses-problems",
+      "untitled-ctrl-j-hides-panel-and-restores-focus",
+      "untitled-ctrl-shift-m-reopens-without-an-extra-click",
+      "problems-close-command-returns-to-untitled-editor",
+      "close-all-leaves-no-active-editor",
+      "empty-status-opens-and-focuses-problems",
+      "empty-ctrl-j-hides-panel-and-restores-focus",
+      "empty-ctrl-shift-m-reopens-without-an-extra-click",
+      "preserved-source-bytes"
+    ],
+    "cleanExit": true,
+    "measured": {
+      "saved": {
+        "documentId": 3,
+        "focusedAfterHide": true,
+        "reopened": true
+      },
+      "untitled": {
+        "documentId": 1,
+        "focusedAfterHide": true,
+        "reopened": true
+      },
+      "empty": {
+        "documentId": null,
+        "focusedAfterHide": null,
+        "reopened": true
+      }
+    },
+    "closeAllEntry": "keyboardChord",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\""
+  }
+}

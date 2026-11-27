@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.355 / feat-407 完成。通用面板隐藏后恢复活动编辑器或工作台快捷键焦点。Windows 与 Linux 各通过 17 项原生检查，专题 177/177，Flutter 1,955 项通过、2 项跳过。产品 c5c94581 的 CI 46048247247 四项与 Platform Availability 46048236828 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md。
 - P05.354 / feat-406 完成。标题栏在 640、520 和 1024 逻辑像素下保持控件可达，放宽后命令中心恢复至 240 像素。Windows 与 Linux 各通过 22 项原生检查，专题 173/173，Flutter 1,951 项通过、2 项跳过。产品 3991f5dc 的 CI 46043740838 四项与 Platform Availability 46043735909 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md。
 - P05.353 / feat-405 完成。状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md。
 - P05.352 / feat-404 完成。最后一个挂接编辑器关闭后，迟到诊断通过版本化订阅自动更新状态栏和 Problems。Windows 与 Linux 各通过 18 项原生检查，专题 143/143，Flutter 1,949 项通过、2 项跳过。产品 758e7eb7 的 CI 46032966666 四项与 Platform Availability 46032961585 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md。
@@ -132,7 +133,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。无可用空白和连续空行的布局仍待核对，连续空行的 LF/CRLF 浮层行为已在 Linux 复现。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。无可用空白和连续空行的布局仍待核对，连续空行的 LF/CRLF 浮层行为已在 Linux 复现。按 docs/03 核对 CMD-12 编辑器链接识别、键鼠交互和既有宿主。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

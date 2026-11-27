@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.355 / feat-407 完成。通用面板隐藏后恢复活动编辑器或工作台快捷键焦点。Windows 与 Linux 各通过 17 项原生检查，专题 177/177，Flutter 1,955 项通过、2 项跳过。产品 c5c94581 的 CI 46048247247 四项与 Platform Availability 46048236828 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md。
 - P05.354 / feat-406 完成。标题栏在 640、520 和 1024 逻辑像素下保持控件可达，放宽后命令中心恢复至 240 像素。Windows 与 Linux 各通过 22 项原生检查，专题 173/173，Flutter 1,951 项通过、2 项跳过。产品 3991f5dc 的 CI 46043740838 四项与 Platform Availability 46043735909 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md。
 - P05.353 / feat-405 完成。状态栏箭头随通用面板展开与隐藏同步更新。Windows 与 Linux 各通过 10 项原生检查，专题 171/171，Flutter 1,949 项通过、2 项跳过。产品 f1c515f7 的 CI 46038852549 四项与 Platform Availability 46038846942 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md。
 - P05.352 / feat-404 完成。最后一个挂接编辑器关闭后，迟到诊断通过版本化订阅自动更新状态栏和 Problems。Windows 与 Linux 各通过 18 项原生检查，专题 143/143，Flutter 1,949 项通过、2 项跳过。产品 758e7eb7 的 CI 46032966666 四项与 Platform Availability 46032961585 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md。
@@ -372,6 +373,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.355 隐藏面板后的键盘焦点](docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md)。
 [P05.354 窄窗标题栏控件可用性](docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md)。
 [P05.353 通用面板与状态栏同步](docs/diagnostics/2026-11-28-p05/p05.353-panel-status-sync.md)。
 [P05.352 空闲工作区诊断自动刷新](docs/diagnostics/2026-11-28-p05/p05.352-problems-idle-publications.md)。
@@ -633,4 +635,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.354 收尾 CI。按 docs/03 核对快捷键隐藏通用面板后工作台焦点及 Ctrl+Shift+M 重开 Problems 的路径。继续保留诊断详情无可用空白及连续空行的复验。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.355 收尾 CI。按 docs/03 核对 CMD-12 链接识别和键鼠打开入口，选取已确认的缺口。继续保留诊断详情无可用空白及连续空行的复验。PR #3 保持草稿，macOS 实机暂缓。
