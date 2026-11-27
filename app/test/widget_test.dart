@@ -7,6 +7,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/status_bar.dart';
 import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'helpers/temp_repo.dart';
@@ -615,6 +616,22 @@ void main() {
 
     expect(sidebarRegion, findsOneWidget);
     expect(panelRegion, findsNothing, reason: '面板默认折叠');
+    final statusBar = find.byType(AlulaStatusBar);
+    bool statusPanelCollapsed() =>
+        tester.widget<AlulaStatusBar>(statusBar).panelCollapsed;
+    final panelArrow = find.descendant(
+      of: statusBar,
+      matching: find.byIcon(Icons.keyboard_arrow_up),
+    );
+    expect(statusPanelCollapsed(), isTrue);
+    await tester.tap(panelArrow);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsOneWidget);
+    expect(statusPanelCollapsed(), isFalse, reason: '状态栏点击应同步面板展开图标');
+    await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsNothing);
+    expect(statusPanelCollapsed(), isTrue, reason: '快捷键折叠应同步状态栏');
 
     await tester.tap(layoutControl);
     await tester.pumpAndSettle();
@@ -642,6 +659,14 @@ void main() {
     await tester.tap(panelItem);
     await tester.pumpAndSettle();
     expect(panelRegion, findsOneWidget);
+    expect(statusPanelCollapsed(), isFalse, reason: '布局菜单展开应同步状态栏');
+    expect(
+      find.descendant(
+        of: statusBar,
+        matching: find.byIcon(Icons.keyboard_arrow_down),
+      ),
+      findsOneWidget,
+    );
 
     // View > Appearance 和默认快捷键仍执行相同的注册命令。
     await tester.tap(find.text('查看(V)'));
@@ -651,6 +676,7 @@ void main() {
     await tester.tap(find.text('切换面板(P)'));
     await tester.pumpAndSettle();
     expect(panelRegion, findsNothing);
+    expect(statusPanelCollapsed(), isTrue, reason: '外观菜单折叠应同步状态栏');
     await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
     expect(sidebarRegion, findsOneWidget);
   });

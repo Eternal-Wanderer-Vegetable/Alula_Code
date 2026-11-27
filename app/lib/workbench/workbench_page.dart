@@ -24716,39 +24716,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ),
               ),
               if (!_zenMode)
-              AlulaStatusBar(
-                state: _state,
-                detail: _statusDetail,
-                lspStatus: _lspStatus,
-                problems: _problemsStatusCounts,
-                onToggleProblems: () => _runCommand(_toggleProblemsCommandId),
-                tabCount: _groups.values
-                    .fold(0, (count, group) => count + group.docs.length),
-                abiVersion: _abiVersion,
-                resourcePressure: _resourceStatus?.pressure,
-                availableBytes: _resourceStatus?.availableBytes,
-                totalBytes: _resourceStatus?.totalBytes,
-                resourceSource: _resourceStatus?.source,
-                syncCount: _syncCount,
-                panelCollapsed: _layout.isCollapsed('panel'),
-                onTogglePanel: () => _layout.toggleRegion('panel'),
-                lockedScrolling: _lockedScrolling,
-                onToggleLockedScrolling: _toggleLockedScrolling,
-                encodingLabel: _active?.fileOptions.statusLabel,
-                encodingTooltip: _active?.fileOptions.label,
-                lineEndingLabel: _active?.fileOptions.lineEnding.label,
-                overtypeMode: _overtypeMode && _active != null,
-                onToggleOvertype: _toggleOvertypeInsertMode,
-                onEncodingTap: _active == null
-                    ? null
-                    : () => _showEncodingActions(_active!),
-                onLineEndingTap:
-                    _active == null ? null : _selectLineEndingActive,
-                notificationButton:
-                    notificationInTitleBar ? null : notificationButton,
-                notificationAtStart: _notificationPosition ==
-                    WorkbenchNotificationPosition.bottomLeft,
-              ),
+                ListenableBuilder(
+                  listenable: _layout,
+                  builder: (context, _) => AlulaStatusBar(
+                    state: _state,
+                    detail: _statusDetail,
+                    lspStatus: _lspStatus,
+                    problems: _problemsStatusCounts,
+                    onToggleProblems: () =>
+                        _runCommand(_toggleProblemsCommandId),
+                    tabCount: _groups.values
+                        .fold(0, (count, group) => count + group.docs.length),
+                    abiVersion: _abiVersion,
+                    resourcePressure: _resourceStatus?.pressure,
+                    availableBytes: _resourceStatus?.availableBytes,
+                    totalBytes: _resourceStatus?.totalBytes,
+                    resourceSource: _resourceStatus?.source,
+                    syncCount: _syncCount,
+                    panelCollapsed: _layout.isCollapsed('panel'),
+                    onTogglePanel: () => _layout.toggleRegion('panel'),
+                    lockedScrolling: _lockedScrolling,
+                    onToggleLockedScrolling: _toggleLockedScrolling,
+                    encodingLabel: _active?.fileOptions.statusLabel,
+                    encodingTooltip: _active?.fileOptions.label,
+                    lineEndingLabel: _active?.fileOptions.lineEnding.label,
+                    overtypeMode: _overtypeMode && _active != null,
+                    onToggleOvertype: _toggleOvertypeInsertMode,
+                    onEncodingTap: _active == null
+                        ? null
+                        : () => _showEncodingActions(_active!),
+                    onLineEndingTap:
+                        _active == null ? null : _selectLineEndingActive,
+                    notificationButton:
+                        notificationInTitleBar ? null : notificationButton,
+                    notificationAtStart: _notificationPosition ==
+                        WorkbenchNotificationPosition.bottomLeft,
+                  ),
+                ),
                 ],
               ),
               _buildNotificationLayer(
