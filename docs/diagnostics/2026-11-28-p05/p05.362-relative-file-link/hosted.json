@@ -1,0 +1,201 @@
+{
+  "product": "e61899c58bd9cc1a241654a63f36773ec34d2d71",
+  "tree": "bf91fb2aa91d31c79a9610b72c5ba6743a6455da",
+  "ci": {
+    "id": 46078677276,
+    "sha": "e61899c58bd9cc1a241654a63f36773ec34d2d71",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46078677276",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140772306559,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140772306772,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140772306806,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140772306909,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46078674329,
+    "sha": "e61899c58bd9cc1a241654a63f36773ec34d2d71",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46078674329",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140772296482,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140772296728,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140772296791,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46077105509,
+    "sha": "4c12c6bdbbb265ef589532918b22b55211eda393",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46077105509",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140767292023,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140767292293,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140767292358,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140767292363,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46075649662,
+    "sha": "4574b0c57aa476cc733d65d4f18d564c66b05b27",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46075649662",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140762635787,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140762636240,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140762636496,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 9,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "_buildEditor": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildEditor#2",
+        "name": "_buildEditor",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "receiptSha256": "8de2815f89de3c941d5e341c236e3e788ce2445273a7f4f7f9ed4bb389d56db7"
+    },
+    "_fileLinkPathAtPointer": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._fileLinkPathAtPointer#4",
+        "name": "_fileLinkPathAtPointer",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "fd52b6dd5266266f56c3ba05ba1fc024de316cf4663abcf8d1f4a45b6dd7c916"
+    },
+    "_localFileLinkPath": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._localFileLinkPath#1",
+        "name": "_localFileLinkPath",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "receiptSha256": "bcbc6f2c9775ef904a0d754a04ca0e302c63f92bb0b838ef5c3a96318d36425c"
+    },
+    "_openFileLinkAtCaret": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openFileLinkAtCaret#0",
+        "name": "_openFileLinkAtCaret",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "5464ce41c4daa37290e90e06f40d23343a7f7348247cb216487b3a56ab70ea72"
+    }
+  }
+}

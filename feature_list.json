@@ -5239,8 +5239,8 @@
       "dependencies": [
         "feat-412"
       ],
-      "status": "in-progress",
-      "evidence": "待登记精确构建及原生证据。",
+      "status": "done",
+      "evidence": "两种相对文件 URI 从源文件目录定位，含父目录和编码路径。Windows 与 Linux 各通过 14 项原生检查，专题 186/186，Flutter 1,975 项通过、2 项跳过。产品 e61899c 的 CI 46078677276 四项及 Platform Availability 46078674329 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.362-relative-file-link.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
