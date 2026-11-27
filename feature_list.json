@@ -5037,8 +5037,8 @@
       "dependencies": [
         "feat-397"
       ],
-      "status": "in-progress",
-      "evidence": "等待完整本地、两端原生与托管验收。",
+      "status": "done",
+      "evidence": "Problems 行可单击预览、Enter 打开或双击固定未打开文件。匹配当前文档版本后选区，并按入口保留或转移焦点。Windows 与 Linux 各通过 11 项原生检查。专题 187/187，Flutter 1,922 项通过、2 项跳过。产品 32d4725e 的 CI 46000369135 四项与 Platform Availability 46000364045 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.346-problems-open-unopened.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
