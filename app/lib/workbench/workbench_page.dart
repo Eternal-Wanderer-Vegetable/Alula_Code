@@ -17766,10 +17766,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final diagnostics = core.lsp.diagnostics(d.id);
           if (diagnostics.isEmpty) continue;
           final path = d.path;
-          final resourceUri = path == null
-              ? null
-              : Uri.file(_canonicalPath(path), windows: Platform.isWindows)
-                  .toString();
+          final resourceUri = path == null ? null : _problemsResourceUri(path);
           diags.addAll(diagnostics.map((diagnostic) => {
                 ...diagnostic,
                 'file': d.name,
@@ -17785,7 +17782,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _replaceDiagnostics(diags, unopened: unopened);
         final overrides = _problemsMessageLines.overrides;
         if (overrides.isNotEmpty) {
-          overrides.retainAll(ProblemsResultSelection.rowKeys(diags));
+          overrides.retainAll(
+            ProblemsResultSelection.rowKeys([
+              ...diags,
+              ...?unopened?.page?.diagnostics,
+            ]),
+          );
         }
       });
       _resolvePendingDiagnosticNavigation();
@@ -17800,13 +17802,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (requestDoc == null) return null;
     try {
       final previous = _unopenedProblemsSummary;
+      final showRows = _problemsViewActive;
       final page = requestDoc.core.lsp.unopenedDiagnosticsPage(
         requestDoc.id,
         openUris: _openDiagnosticUris(),
-        limit: 1,
-        knownSnapshot: previous?.snapshot,
+        limit: showRows ? _problemsWorkspacePageSize : 1,
+        knownSnapshot: showRows && previous?.page == null
+            ? null
+            : previous?.snapshot,
       );
-      if (page['status'] == 'unchanged') return previous;
+      if (page['status'] == 'unchanged') {
+        if (previous == null || showRows || previous.page == null) {
+          return previous;
+        }
+        return (
+          snapshot: previous.snapshot,
+          counts: previous.counts,
+          page: null,
+        );
+      }
       final counts = page['counts'] as Map<String, Object?>;
       return (
         snapshot: page['snapshot'] as String,
@@ -17815,9 +17829,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           warnings: counts['warnings'] as int,
           infos: counts['infos'] as int,
         ),
+        page: showRows ? _projectProblemsPage(page, first: true) : null,
       );
     } on AlulaException {
       return null;
+    }
+  }
+
+  String _problemsResourceUri(String path) =>
+      Uri.file(_canonicalPath(path), windows: Platform.isWindows).toString();
+
+  _ProblemsWorkspacePage _projectProblemsPage(
+    Map<String, Object?> page, {
+    required bool first,
+  }) {
+    final openResources = {
+      for (final doc in _allDocs)
+        if (doc.path case final String path) _problemsResourceUri(path),
+    };
+    final byResource = <String, List<Map<String, Object?>>>{};
+    for (final entry in (page['items'] as List).cast<Map<String, Object?>>()) {
+      final providerUri = entry['uri'] as String;
+      final path = _pathFromFileUri(providerUri);
+      if (path == null) continue;
+      final uri = _problemsResourceUri(path);
+      if (openResources.contains(uri)) continue;
+      (byResource[uri] ??= []).add({
+        ...entry['diagnostic'] as Map<String, Object?>,
+        'file': p.basename(path),
+        '_resourceUri': uri,
+        '_resourcePath': path,
+        '_providerUri': providerUri,
+      });
+    }
+    return (
+      diagnostics: [for (final markers in byResource.values) ...markers],
+      nextCursor: page['nextCursor'] as Map<String, Object?>?,
+      first: first,
+    );
+  }
+
+  void _showUnopenedProblemsPage(Map<String, Object?>? cursor) {
+    final requestDoc = _workspaceSymbolRequestDoc;
+    final summary = _unopenedProblemsSummary;
+    if (requestDoc == null ||
+        summary == null ||
+        summary.page == null ||
+        !_problemsViewActive) {
+      return;
+    }
+    try {
+      final page = requestDoc.core.lsp.unopenedDiagnosticsPage(
+        requestDoc.id,
+        openUris: _openDiagnosticUris(),
+        limit: _problemsWorkspacePageSize,
+        cursor: cursor,
+      );
+      if (page['status'] != 'page' || page['snapshot'] != summary.snapshot) {
+        _pollLanguageServices();
+        return;
+      }
+      setState(() {
+        _unopenedProblemsSummary = (
+          snapshot: summary.snapshot,
+          counts: summary.counts,
+          page: _projectProblemsPage(page, first: cursor == null),
+        );
+      });
+    } on AlulaException {
+      _pollLanguageServices();
     }
   }
 
@@ -31639,15 +31719,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toLowerCase();
         final pathFilter = ProblemsPathFilter(filter);
         final pathMatches = <Object?, ProblemsPathMatch>{};
+        final page = _problemsActiveFileOnly
+            ? null
+            : _unopenedProblemsSummary?.page;
+        final allProblems = [..._diagnostics, ...?page?.diagnostics];
         final diagnostics = <Map<String, Object?>>[];
         final activeId = _active?.id;
-        var totalProblems = 0;
+        final totalProblems = _problemsStatusCounts.total;
         var hasProblemsInScope = false;
-        for (final diagnostic in _diagnostics) {
+        for (final diagnostic in allProblems) {
           final severity = (diagnostic['severity'] as num?)?.toInt() ?? 3;
           if (severity < 1 || severity > 3) continue;
-          totalProblems++;
-          if (_problemsActiveFileOnly && diagnostic['_documentId'] != activeId) {
+          if (_problemsActiveFileOnly &&
+              (activeId == null || diagnostic['_documentId'] != activeId)) {
             continue;
           }
           hasProblemsInScope = true;
@@ -31762,11 +31846,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             Expanded(
               child: _buildDiagnosticResults(
                 diagnostics,
+                allProblems: allProblems,
                 highlightQuery: negateText ? '' : query,
                 hasProblems: totalProblems != 0,
                 hasProblemsInScope: hasProblemsInScope,
               ),
             ),
+            if (page != null && (!page.first || page.nextCursor != null))
+              Align(
+                alignment: Alignment.centerRight,
+                child: Wrap(
+                  children: [
+                    if (!page.first)
+                      TextButton(
+                        key: const ValueKey('problems-workspace-first-page'),
+                        onPressed: () => _showUnopenedProblemsPage(null),
+                        child: const Text('回到诊断首页'),
+                      ),
+                    if (page.nextCursor case final cursor?)
+                      TextButton(
+                        key: const ValueKey('problems-workspace-next-page'),
+                        onPressed: () => _showUnopenedProblemsPage(cursor),
+                        child: const Text('下一页工作区诊断'),
+                      ),
+                  ],
+                ),
+              ),
           ],
         );
       },
@@ -31775,6 +31880,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildDiagnosticResults(
     List<Map<String, Object?>> diagnostics, {
+    required List<Map<String, Object?>> allProblems,
     required String highlightQuery,
     required bool hasProblems,
     required bool hasProblemsInScope,
@@ -32277,7 +32383,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     Iterable<Map<String, Object?>> fileClipboardRows(Object? identity) =>
-        _diagnostics.where((marker) {
+        allProblems.where((marker) {
           final severity = (marker['severity'] as num?)?.toInt() ?? 3;
           return ProblemsResultSelection.resourceKey(marker) == identity &&
               severity >= 1 &&
@@ -32327,10 +32433,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ProblemsCopyAction.diagnostics => const JsonEncoder.withIndent('\t')
             .convert(rows.map((marker) {
           final document = documentsById[marker['_documentId']];
-          final uri = Uri.tryParse(document?.uri ?? '');
+          final uri = Uri.tryParse(
+            document?.uri ?? (marker['_providerUri'] as String?) ?? '',
+          );
           final resource = uri != null && uri.path.isNotEmpty
               ? Uri.decodeComponent(uri.path)
-              : document?.path ?? '${marker['file'] ?? ''}';
+              : document?.path ??
+                  marker['_resourcePath'] as String? ??
+                  '${marker['file'] ?? ''}';
           return <String, Object?>{
             'resource': resource,
             'severity': switch (marker['severity']) {
@@ -33098,7 +33208,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
 
       final region = resultsRegion(
-        list(selection),
+        Material(type: MaterialType.transparency, child: list(selection)),
         onKeyEvent: (_, event) {
           const escape = SingleActivator(LogicalKeyboardKey.escape);
           if (event is! KeyDownEvent ||
@@ -34170,9 +34280,18 @@ class _CallHierarchySession {
   }
 }
 
+const _problemsWorkspacePageSize = 128;
+
+typedef _ProblemsWorkspacePage = ({
+  List<Map<String, Object?>> diagnostics,
+  Map<String, Object?>? nextCursor,
+  bool first,
+});
+
 typedef _UnopenedProblemsSummary = ({
   String snapshot,
   ProblemsStatusCounts counts,
+  _ProblemsWorkspacePage? page,
 });
 
 typedef _DiagnosticNavigationDetail = ({

@@ -22,6 +22,10 @@ void main() {
 
   testWidgets('F8 opens a cached URI without selecting an unversioned range',
       (tester) async {
+    tester.view.physicalSize = const Size(1600, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final temp = Directory.systemTemp.createTempSync('alula-f8-unopened');
     final workspace = Directory(p.join(temp.path, 'workspace'))..createSync();
     final source = File(p.join(workspace.path, 'm_open.rs'))
@@ -112,6 +116,28 @@ void main() {
     expect(statusCounts().infos, 0);
     await tester.pump(const Duration(milliseconds: 800));
     expect(statusCounts().total, 4);
+
+    final opening = commands.execute('workbench.actions.view.problems');
+    await tester.pump();
+    expect(await opening, CommandExecutionStatus.executed);
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pumpAndSettle();
+    final earlier = find.textContaining('earlier marker', findRichText: true);
+    final later = find.textContaining('later marker', findRichText: true);
+    expect(earlier, findsOneWidget);
+    expect(later, findsOneWidget);
+
+    const activeOnly =
+        'workbench.actions.workbench.panel.markers.view.toggleActiveFile';
+    expect(await commands.execute(activeOnly), CommandExecutionStatus.executed);
+    await tester.pumpAndSettle();
+    expect(earlier, findsNothing);
+    expect(later, findsNothing);
+    expect(statusCounts().total, 4);
+    expect(await commands.execute(activeOnly), CommandExecutionStatus.executed);
+    await tester.pumpAndSettle();
+    expect(earlier, findsOneWidget);
+    expect(later, findsOneWidget);
     final input = find.descendant(
       of: find.byType(RustTextInputField),
       matching: find.byType(TextField),
