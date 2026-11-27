@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.357 / feat-409 完成。Ctrl/Cmd 点击本地链接打开，附加 Alt 可侧开并复用已有右侧组。Windows 与 Linux 各通过 10 项原生检查，专题 92/92，Flutter 1,959 项通过、2 项跳过。产品 b9cfbdb3 的 CI 46058776187 四项及 Platform Availability 46058770298 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md。
 - P05.356 / feat-408 完成。打开链接命令识别光标下的本地 file URI，目标编辑器接收键盘焦点。Windows 与 Linux 各通过 8 项原生检查，专题 131/131，Flutter 1,956 项通过、2 项跳过。产品 e8dad314 的 CI 46054693322 四项和 Platform Availability 46054687988 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md。
 - P05.355 / feat-407 完成。通用面板隐藏后恢复活动编辑器或工作台快捷键焦点。Windows 与 Linux 各通过 17 项原生检查，专题 177/177，Flutter 1,955 项通过、2 项跳过。产品 c5c94581 的 CI 46048247247 四项与 Platform Availability 46048236828 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md。
 - P05.354 / feat-406 完成。标题栏在 640、520 和 1024 逻辑像素下保持控件可达，放宽后命令中心恢复至 240 像素。Windows 与 Linux 各通过 22 项原生检查，专题 173/173，Flutter 1,951 项通过、2 项跳过。产品 3991f5dc 的 CI 46043740838 四项与 Platform Availability 46043735909 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md。
@@ -374,6 +375,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
 [P05.355 隐藏面板后的键盘焦点](docs/diagnostics/2026-11-28-p05/p05.355-panel-keyboard-focus.md)。
 [P05.354 窄窗标题栏控件可用性](docs/diagnostics/2026-11-28-p05/p05.354-narrow-titlebar.md)。
@@ -637,4 +639,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.356 收尾 CI。按 docs/03 核对 CMD-12 本地链接修饰键和悬停入口，选取依赖已满足的子项。继续保留诊断详情无可用空白及连续空行的复验。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.357 收尾 CI。按 docs/03 继续 CMD-12 本地链接修饰键悬停反馈，核对拖动与普通文本的退出状态。继续保留诊断详情无可用空白及连续空行的复验。PR #3 保持草稿，macOS 实机暂缓。
