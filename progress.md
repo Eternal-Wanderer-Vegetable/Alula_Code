@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.361 / feat-413 完成。真实空行后无可用空白或连续空行时，F8 详情留出空间，键鼠落点与行号保持一致。Windows 与 Linux 各通过 22 项原生检查，固定版两种场景均通过。专题 300/300，Flutter 1,974 项通过、2 项跳过。产品 4574b0c 的 CI 46075659983 四项和 Platform Availability 46075649662 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.361-diagnostic-empty-separator.md。
 - P05.360 / feat-412 完成。本地文件 URI 的行列和区间通过命令、点击、悬停提示及侧开定位。Windows 和 Linux 各通过 12 项原生检查，专题 177/177，Flutter 1,966 项通过、2 项跳过。产品 c368d40 的 CI 46070717736 四项及 Platform Availability 46070711541 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.360-file-link-location.md。
 - P05.359 / feat-411 完成。本地链接普通悬停显示打开操作和平台修饰键，鼠标移入后可直接点击。Windows 和 Linux 各通过 10 项原生检查，专题 127/127，Flutter 1,965 项通过、2 项跳过。产品 02b8f9b1 的 CI 46066055812 四项及 Platform Availability 46066051456 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.359-link-hint.md。
 - P05.358 / feat-410 完成。按住 Ctrl/Cmd 悬停在本地链接时显示手形光标和范围下划线，松键或离开时清除。Windows 和 Linux 各通过 13 项原生检查，专题 124/124，Flutter 1,962 项通过、2 项跳过。产品 716da953 的 CI 46062460886 四项及 Platform Availability 46062455967 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md。

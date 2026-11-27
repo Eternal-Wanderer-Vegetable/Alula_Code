@@ -5227,8 +5227,8 @@
       "dependencies": [
         "feat-403"
       ],
-      "status": "in-progress",
-      "evidence": "待登记精确构建及原生证据。",
+      "status": "done",
+      "evidence": "真实空行后无可用空白或连续空行时，F8 详情留出空间，键鼠落点与行号保持一致。Windows 与 Linux 各通过 22 项原生检查，固定版两种场景均通过。专题 300/300，Flutter 1,974 项通过、2 项跳过。产品 4574b0c 的 CI 46075659983 四项和 Platform Availability 46075649662 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.361-diagnostic-empty-separator.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
