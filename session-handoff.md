@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.339 / feat-391 完成。Rust 和 Dart ABI 47 可从实时工作区缓存按方向读取一条未打开文件的诊断候选，保留服务端版本口径。Windows 和 Linux 的真实 rust-analyzer 与原生库复验通过。专题 96/96，Flutter 1,919 项通过、2 项跳过。产品 8bb56da1 的 CI 45965955233 四项与 Platform Availability 45965945390 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.339-diagnostic-unopened-transport.md。
 - P05.338 / feat-390 完成。诊断范围变化时跟随仍覆盖原锚点的唯一兼容标记。范围移开后显示过期，恢复时原位更新。Windows 与 Linux 各通过 10 项原生检查及固定版对照。专题 234/234，Flutter 1,918 项通过、2 项跳过。产品 2cee5f0e 的 CI 45961335971 四项与 Platform Availability 45961331480 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.338-diagnostic-anchor-refresh.md。
 - P05.337 / feat-389 完成。普通末行和末尾空行可原位显示诊断详情，关闭后回收临时滚动范围。Windows 与 Linux 各通过 22 项原生检查及固定版末行对照。专题 266/266，Flutter 1,912 项通过、2 项跳过。产品 15db24a3 的 CI 45958124739 四项与 Platform Availability 45958119533 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.337-diagnostic-terminal.md。
 - P05.336 / feat-388 完成。同一诊断重新发布后更新详情和稳定占位，撤回后标记过期，恢复时清除过期标记。Windows 与 Linux 各通过 14 项原生检查及固定版对照。专题 224/224，Flutter 1,908 项通过、2 项跳过。产品 622e7f84 的 CI 45953667653 四项与 Platform Availability 45953661705 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md。
@@ -356,6 +357,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.339 未打开文件诊断候选传输](docs/diagnostics/2026-11-27-p05/p05.339-diagnostic-unopened-transport.md)。
 [P05.338 锚点内诊断范围变化](docs/diagnostics/2026-11-27-p05/p05.338-diagnostic-anchor-refresh.md)。
 [P05.337 文件最后一行诊断占位](docs/diagnostics/2026-11-27-p05/p05.337-diagnostic-terminal.md)。
 [P05.336 诊断详情原位更新与过期](docs/diagnostics/2026-11-27-p05/p05.336-diagnostic-refresh.md)。
@@ -601,4 +603,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.338 收尾 CI。按 docs/03 继续核对中间空行、最后换行之前一行的占位以及跨未打开文件的证据。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.339 收尾 CI。按 docs/03 把未打开文件候选接入 F8，打开目标后以服务端文档版本验证范围。PR #3 保持草稿，macOS 实机暂缓。
