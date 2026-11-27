@@ -874,6 +874,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
   var _problemsStatusCounts = const ProblemsStatusCounts();
+  _UnopenedProblemsSummary? _unopenedProblemsSummary;
   ({Map<String, Object?> diagnostic, TextSelection selection})?
       _lastOpenedDiagnostic;
   _DiagnosticNavigationDetail? _diagnosticNavigation;
@@ -17769,9 +17770,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               }));
         } catch (_) {}
       }
+      final unopened = _readUnopenedProblemsSummary();
       if (!mounted) return;
       setState(() {
-        _replaceDiagnostics(diags);
+        _replaceDiagnostics(diags, unopened: unopened);
         final overrides = _problemsMessageLines.overrides;
         if (overrides.isNotEmpty) {
           overrides.retainAll(ProblemsResultSelection.rowKeys(diags));
@@ -17784,15 +17786,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  _UnopenedProblemsSummary? _readUnopenedProblemsSummary() {
+    final requestDoc = _workspaceSymbolRequestDoc;
+    if (requestDoc == null) return null;
+    try {
+      final previous = _unopenedProblemsSummary;
+      final page = requestDoc.core.lsp.unopenedDiagnosticsPage(
+        requestDoc.id,
+        openUris: _openDiagnosticUris(),
+        limit: 1,
+        knownSnapshot: previous?.snapshot,
+      );
+      if (page['status'] == 'unchanged') return previous;
+      final counts = page['counts'] as Map<String, Object?>;
+      return (
+        snapshot: page['snapshot'] as String,
+        counts: ProblemsStatusCounts(
+          errors: counts['errors'] as int,
+          warnings: counts['warnings'] as int,
+          infos: counts['infos'] as int,
+        ),
+      );
+    } on AlulaException {
+      return null;
+    }
+  }
+
   void _replaceDiagnostics(
     List<Map<String, Object?>> diagnostics, {
+    _UnopenedProblemsSummary? unopened,
     bool resetNavigation = false,
   }) {
     final counts = ProblemsStatusCounts.fromDiagnostics(diagnostics);
+    final unopenedCounts = unopened?.counts ?? const ProblemsStatusCounts();
     _diagnostics
       ..clear()
       ..addAll(diagnostics);
-    _problemsStatusCounts = counts;
+    _unopenedProblemsSummary = unopened;
+    _problemsStatusCounts = ProblemsStatusCounts(
+      errors: counts.errors + unopenedCounts.errors,
+      warnings: counts.warnings + unopenedCounts.warnings,
+      infos: counts.infos + unopenedCounts.infos,
+    );
     final detail = _diagnosticNavigation;
     if (detail == null) return;
     if (resetNavigation || !_isCurrentDiagnosticNavigation(_active)) {
@@ -31072,10 +31107,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  ({String path, WorkspaceDiagnosticCandidate candidate})?
-  _readUnopenedDiagnostic(String? cursorUri, bool forward) {
-    final requestDoc = _workspaceSymbolRequestDoc;
-    if (!_lspReady || requestDoc == null) return null;
+  Set<String> _openDiagnosticUris() {
     final openUris = <String>{};
     for (final doc in _allDocs) {
       if (doc.uri case final String uri) openUris.add(uri);
@@ -31083,11 +31115,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         openUris.add(Uri.file(path, windows: Platform.isWindows).toString());
       }
     }
+    return openUris;
+  }
+
+  ({String path, WorkspaceDiagnosticCandidate candidate})?
+  _readUnopenedDiagnostic(String? cursorUri, bool forward) {
+    final requestDoc = _workspaceSymbolRequestDoc;
+    if (!_lspReady || requestDoc == null) return null;
     try {
       final candidate = requestDoc.core.lsp.nextUnopenedDiagnostic(
         requestDoc.id,
         cursorUri: cursorUri,
-        openUris: openUris.toList(),
+        openUris: _openDiagnosticUris(),
         forward: forward,
       );
       if (candidate == null) return null;
@@ -34122,6 +34161,11 @@ class _CallHierarchySession {
     targets = newTargets;
   }
 }
+
+typedef _UnopenedProblemsSummary = ({
+  String snapshot,
+  ProblemsStatusCounts counts,
+});
 
 typedef _DiagnosticNavigationDetail = ({
   OpenDoc source,

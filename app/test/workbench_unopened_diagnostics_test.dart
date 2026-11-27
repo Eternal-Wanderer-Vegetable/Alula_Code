@@ -8,6 +8,7 @@ import 'package:alula_app/workbench/diagnostic_navigation_peek.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/status_bar.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -103,6 +104,14 @@ void main() {
     });
     expect(cached, isNotNull);
     expect(cached!.diagnostic['documentVersion'], isNull);
+    ProblemsStatusCounts statusCounts() =>
+        tester.widget<AlulaStatusBar>(find.byType(AlulaStatusBar)).problems;
+    await tester.pump(const Duration(milliseconds: 800));
+    expect(statusCounts().errors, 3);
+    expect(statusCounts().warnings, 1);
+    expect(statusCounts().infos, 0);
+    await tester.pump(const Duration(milliseconds: 800));
+    expect(statusCounts().total, 4);
     final input = find.descendant(
       of: find.byType(RustTextInputField),
       matching: find.byType(TextField),
@@ -121,5 +130,18 @@ void main() {
     expect(tester.widget<TextField>(input).controller!.selection,
         const TextSelection.collapsed(offset: 0));
     expect(target.readAsBytesSync(), utf8.encode(newBytes));
+
+    final newWorkspace = Directory(p.join(temp.path, 'empty'))..createSync();
+    final switching = commands.execute('file.openFolder');
+    await tester.pumpAndSettle();
+    final folderPath = find.byWidgetPredicate(
+      (widget) =>
+          widget is TextField && widget.decoration?.labelText == '文件夹路径',
+    );
+    await tester.enterText(folderPath, newWorkspace.path);
+    await tester.tap(find.widgetWithText(FilledButton, '打开'));
+    await tester.pumpAndSettle();
+    expect(await switching, CommandExecutionStatus.executed);
+    expect(statusCounts().total, 0);
   });
 }
