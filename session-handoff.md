@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.342 / feat-394 完成。ABI 49 提供未打开文件诊断的分级计数、有界页和快照游标。Windows 与 Linux 真实 rust-analyzer 验证了同名文件 URI、跨页范围、重复查询与游标失效。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 ece7066f 的 CI 45981177371 四项与 Platform Availability 45981171695 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.342-problems-snapshot-transport.md。
 - P05.341 / feat-393 完成。F8 系列详情合并当前版本的已打开诊断与未打开文件缓存计数，正确显示序号与总数。Windows 与 Linux 各通过 16 项原生检查及固定版对照。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 51ad53e2 的 CI 45976377860 四项与 Platform Availability 45976370139 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.341-diagnostic-workspace-count.md。
 - P05.340 / feat-392 完成。F8 和 Shift+F8 可打开未打开的目标文件，保留语言服务 URI，等当前版本诊断后选区和显示详情。Windows 与 Linux 各通过 12 项原生检查，覆盖原光标历史、限制本文件、回绕和源字节。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 22aa66b6 的 CI 45971547595 四项与 Platform Availability 45971543029 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.340-diagnostic-open-navigation.md。
 - P05.339 / feat-391 完成。Rust 和 Dart ABI 47 可从实时工作区缓存按方向读取一条未打开文件的诊断候选，保留服务端版本口径。Windows 和 Linux 的真实 rust-analyzer 与原生库复验通过。专题 96/96，Flutter 1,919 项通过、2 项跳过。产品 8bb56da1 的 CI 45965955233 四项与 Platform Availability 45965945390 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.339-diagnostic-unopened-transport.md。
@@ -359,6 +360,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.342 未打开文件诊断分页快照传输](docs/diagnostics/2026-11-27-p05/p05.342-problems-snapshot-transport.md)。
 [P05.341 工作区诊断序号与总数](docs/diagnostics/2026-11-27-p05/p05.341-diagnostic-workspace-count.md)。
 [P05.340 F8 打开未打开文件的诊断](docs/diagnostics/2026-11-27-p05/p05.340-diagnostic-open-navigation.md)。
 [P05.339 未打开文件诊断候选传输](docs/diagnostics/2026-11-27-p05/p05.339-diagnostic-unopened-transport.md)。
@@ -607,4 +609,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.341 收尾 CI。按 docs/03 核对 Problems 宿主显示未打开文件的诊断，保留中间空行与最后换行之前一行的占位复验。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.342 收尾 CI。按 docs/03 接入 Problems 对未打开文件的工作区诊断统计及显示，保留中间空行与最后换行之前一行的占位复验。PR #3 保持草稿，macOS 实机暂缓。

@@ -1,0 +1,720 @@
+{
+  "product": "ece7066f4aa95396ea7ab55614939d37b2b370a6",
+  "tree": "799fe4aa894370261780219eb34feb7c79c4bee0",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "799fe4aa894370261780219eb34feb7c79c4bee0",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "598fe390eab2c03ade08938e48e980466a11662167b4d481f1b6bc030c4a6106",
+      "app/lib/bridge/alula_ffi.dart": "a219f4e6c365a533d9edb1cc292321c0836293773b9c701bac7b9452cc4cbccc",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/editor_scroll_controller.dart": "985f5f45d887c0bf70dcf0be693aef548c0ca717cae53442f671f7763261344a",
+      "app/lib/editor/rust_text_input_field.dart": "d95fd38ea4d624a9b6a5541beca8fe4522a11510e2a93da7c6860abf2f7d3a2f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "3021be123dd9c6da1fbe8b714cd933109d9a061a8dd0b3255d3b8c1b247d69b3",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "638b2365d4e0c12a1a951c0578b644085ea0122119244317dc37c1eda5751efc",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "ab04d8f76da040b85e1240f4723b61bb8b3f40fce4d9b13daf39757409fc65a6",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 49,
+    "probeSha256": "64a883d34246dc2ff69a0b3398d745255eb081a8a55e898256476be5dece0593"
+  },
+  "probeSha256": "64a883d34246dc2ff69a0b3398d745255eb081a8a55e898256476be5dece0593",
+  "localLogsSha256": {
+    "p05-342-rust-page.log": "13fa237135d6a11c8cb3eef6c09c5246512f9270c02677879ceb45d3cf5e7e04",
+    "p05-342-rust-targeted.log": "d4fe995bd420a33bdc3425983e0975a890f7b99a7a3b6f452576ee1e9cc8be2e",
+    "p05-342-targeted-exact.log": "6e0c2ccf6e1ba24a1f7062d8260eb407619ddab6547c171233b7f512f843aefb",
+    "p05-342-focused.log": "d445f48d2722e5012aecfdc745636e7e9169adc2cf6dfb04b8df2962d1d584c6",
+    "p05-342-analyze.log": "149d6e8a89bb3a62dea3099dbe1960d45d68174c4ba5f0272478a95984fe0141",
+    "p05-342-full.log": "0c81738f8a4d10da95134d644c0a3ea6deabc3cbdfca784b7a563b011bf91ae4",
+    "p05-342-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 63,
+        "affected_count": 5,
+        "changed_files": 8,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_49_spawn",
+          "name": "Spawn → Shared",
+          "process_type": "intra_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            },
+            {
+              "symbol": "new",
+              "step": 4
+            },
+            {
+              "symbol": "Shared",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_173_spawn",
+          "name": "Spawn → New",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            },
+            {
+              "symbol": "new",
+              "step": 3
+            }
+          ]
+        },
+        {
+          "id": "proc_174_spawn",
+          "name": "Spawn → Normalize_uri",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_175_spawn",
+          "name": "Spawn → Diagnostic",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_440_alula_lsp_unopened_d",
+          "name": "Alula_lsp_unopened_diagnostics_page → New",
+          "process_type": "intra_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "alula_lsp_unopened_diagnostics_page",
+              "step": 1
+            }
+          ]
+        }
+      ],
+      "sha256": "38ae448f3d0b324cea9527a007288a47a53c561d21c513cb6b575eb75f4fa45c"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 63,
+        "affected_count": 5,
+        "changed_files": 8,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_49_spawn",
+          "name": "Spawn → Shared",
+          "process_type": "intra_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            },
+            {
+              "symbol": "new",
+              "step": 4
+            },
+            {
+              "symbol": "Shared",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_173_spawn",
+          "name": "Spawn → New",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            },
+            {
+              "symbol": "new",
+              "step": 3
+            }
+          ]
+        },
+        {
+          "id": "proc_174_spawn",
+          "name": "Spawn → Normalize_uri",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_175_spawn",
+          "name": "Spawn → Diagnostic",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "reader_loop",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_440_alula_lsp_unopened_d",
+          "name": "Alula_lsp_unopened_diagnostics_page → New",
+          "process_type": "intra_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "alula_lsp_unopened_diagnostics_page",
+              "step": 1
+            }
+          ]
+        }
+      ],
+      "sha256": "38ae448f3d0b324cea9527a007288a47a53c561d21c513cb6b575eb75f4fa45c"
+    }
+  },
+  "preedit": {
+    "dart-abi": {
+      "target": {
+        "id": "Variable:app/lib/bridge/alula_core.dart:expectedAbiVersion",
+        "name": "expectedAbiVersion",
+        "type": "Variable",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "5febd6e921aa6200d1160e71a2c0812f337e8776e953c8a99e307964e7851787"
+    },
+    "dart-ffi-test": {
+      "target": {
+        "id": "Function:app/test/unopened_diagnostics_ffi_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/unopened_diagnostics_ffi_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "fc1ed8a38c5077f3ad3ae361181a6d8668df72bc8ac523cb9127d85da4ff8c48"
+    },
+    "dart-ffi": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_ffi.dart:AlulaFfi",
+        "name": "AlulaFfi",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_ffi.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 54,
+        "processes_affected": 31,
+        "modules_affected": 5
+      },
+      "sha256": "36322876a5db1269907654d66326fb0e3ee8d615a538f403e5bc4c068fe7242f"
+    },
+    "dart-lsp": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_core.dart:AlulaLsp",
+        "name": "AlulaLsp",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 25,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "29a7b2e1606e7da6300886b7fee9d106de20dd1297b4665e8975b0be5163ae28"
+    },
+    "diagnostic-code": {
+      "target": {
+        "id": "Enum:crates/editor-lsp/src/lib.rs:DiagnosticCode",
+        "name": "DiagnosticCode",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "fa06b5de935a9a28976a4a6c6deab03b80d79c6aa13529b909812af06bc57589"
+    },
+    "diagnostic": {
+      "target": {
+        "id": "Struct:crates/editor-lsp/src/lib.rs:Diagnostic",
+        "name": "Diagnostic",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "sha256": "a8be84ff528d379c77ae92c2a2d466dd048113869f0d0a2905da789a78df66fa"
+    },
+    "rust-abi-test": {
+      "target": {
+        "id": "Function:crates/editor-core/src/ffi.rs:tests.abi_version_is_exposed",
+        "name": "abi_version_is_exposed",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "219fd2ae84d7b3bdfcc0b08887db62f1da61c5e437f0f0f7918206cf1c193f6a"
+    },
+    "rust-abi": {
+      "target": {
+        "id": "Const:crates/editor-core/src/ffi.rs:ALULA_ABI_VERSION",
+        "name": "ALULA_ABI_VERSION",
+        "type": "Const",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3587e08ce9bbc44a3ae640fff416ef66ada4ea554740a4f192b5ea2890d0578"
+    },
+    "rust-did-open": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:LspServer.did_open#4",
+        "name": "did_open",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "0159d24c5c76ed79bd512452cdfc356d9503ddbcbadc32f40a592981a1d020fe"
+    },
+    "rust-directional": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/diagnostic_navigation.rs:LspServer.next_unopened_diagnostic#3",
+        "name": "next_unopened_diagnostic",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/diagnostic_navigation.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "ae8c6bfe2b47e02fd23db30f752c90e0e5fe0c15126c66801ee5be063178010d"
+    },
+    "rust-per-doc": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:LspServer.diagnostics#1",
+        "name": "diagnostics",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "0b6872b8ac1d69606845248c9868d22f0e95ae155cc51b6d7d8f70287f8faf1b"
+    },
+    "rust-reader-loop": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:reader_loop",
+        "name": "reader_loop",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "sha256": "d5a18d0b269a4492d2f4667c93572fa08672027d75a73d8c49d9992acbda5b45"
+    },
+    "shared-new": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:Shared.new#1",
+        "name": "new",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 3,
+        "modules_affected": 6
+      },
+      "sha256": "be72b1ea2535f2ad2eaa072527f827fbde1afba5aa21c9a6351de42f641b83a1"
+    },
+    "shared-struct": {
+      "target": {
+        "id": "Struct:crates/editor-lsp/src/lib.rs:Shared",
+        "name": "Shared",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 3,
+        "modules_affected": 5
+      },
+      "sha256": "bf14320b380c2bd5062dd085017f630dcaad1415b6e9482a91d597cc74069e33"
+    },
+    "shared": {
+      "target": {
+        "name": "Shared"
+      },
+      "risk": "UNKNOWN",
+      "summary": null,
+      "sha256": "dfde050fad6a0523942af63ba078d57d4898dcd00928e15567ff80fd62fe128b"
+    }
+  },
+  "macosPhysical": "deferred",
+  "previousProblemsVisibility": {
+    "windows": {
+      "sourceTree": "cd2c4b76e319a02ef9f1eda54868c8e0da0e8ebd",
+      "rawReportSha256": "80e6035e9b0545f4af15e94e0db198d7183e499e86a68f60cc8a034775c249d9",
+      "statusCounts": [
+        0,
+        0,
+        0
+      ],
+      "rawUnopenedPublications": {
+        "z marker 🐙.rs": 2,
+        "a_unopened.rs": 4
+      }
+    },
+    "linux": {
+      "sourceTree": "cd2c4b76e319a02ef9f1eda54868c8e0da0e8ebd",
+      "rawReportSha256": "d7bd2dd64f0d7ed75d6fb642484d0f30618fad900806b5969822d624eab0cf30",
+      "statusCounts": [
+        0,
+        0,
+        0
+      ],
+      "rawUnopenedPublications": {
+        "z marker 🐙.rs": 2,
+        "a_unopened.rs": 4
+      }
+    }
+  },
+  "linuxResourceSamples": {
+    "rawReportSha256": "0cd5c0df7c5800035fac2a61d0ff0d338f96e409d2ace4eed3b3d0a0dc7cb821",
+    "probeSha256": "7daa03677bfba75ac640b5ba3e3fd2cc24741a9870f6625923f2735a74258deb",
+    "beforeContinuationsPrivateMiB": 605.11,
+    "afterContinuationsPrivateMiB": 605.14,
+    "processes": [
+      "python3",
+      "rust-analyzer",
+      "rust-analyzer-p",
+      "rust-analyzer-p"
+    ],
+    "childProcessesGoneAfterShutdown": true
+  },
+  "windows": {
+    "abi": 49,
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "librarySha256": "56fd375e714b0bd89e61ea3328a593b35407b927f6356848908ae1bec077ec01",
+    "pageCounts": [
+      1,
+      1,
+      1
+    ],
+    "originalCounts": {
+      "errors": 3,
+      "infos": 0,
+      "warnings": 0
+    },
+    "items": [
+      {
+        "diagnostic": {
+          "character": 35,
+          "code": "E0308",
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/a/shared 🦊.rs"
+      },
+      {
+        "diagnostic": {
+          "character": 41,
+          "code": "E0308",
+          "endCharacter": 45,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `bool`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/a/shared 🦊.rs"
+      },
+      {
+        "diagnostic": {
+          "character": 34,
+          "code": "E0308",
+          "endCharacter": 35,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/z/shared 🦊.rs"
+      }
+    ],
+    "unchangedWithDuplicatedOpenUris": {
+      "snapshot": "0000000000000004-b59dfe648d502aa4",
+      "status": "unchanged"
+    },
+    "changedScopeRejectsCursor": {
+      "snapshot": "0000000000000004-8e31253b65a1328d",
+      "status": "stale"
+    },
+    "didOpenRejectsPreviousCursor": {
+      "snapshot": "0000000000000005-b59dfe648d502aa4",
+      "status": "stale"
+    },
+    "freshCurrentDiagnostic": {
+      "character": 34,
+      "code": "E0308",
+      "documentVersion": 1,
+      "endCharacter": 35,
+      "endLine": 0,
+      "line": 0,
+      "message": "mismatched types\nexpected `bool`, found integer",
+      "severity": 1,
+      "source": "rustc"
+    },
+    "freshSameCodeSeverities": [
+      1,
+      4
+    ],
+    "afterOpeningCounts": {
+      "errors": 2,
+      "infos": 0,
+      "warnings": 0
+    },
+    "onlyOneDocumentAttachedDuringPages": true,
+    "sourceBytesPreserved": true,
+    "cleanShutdown": true,
+    "rawReportSha256": "6c580f8ffafa21951ecd1fb9f511f7a781140435dcc790917ce48e2d805f9206",
+    "firstFixtureLogSha256": "f7e10223b5385dd70715ee02a08a27da902dd68e23cee943e2e59ab5793a826b",
+    "initialFixtureMismatch": "Both current diagnostics shared code E0308. The probe now distinguishes error severity from the related hint.",
+    "release": {
+      "abi": 49,
+      "tree": "799fe4aa894370261780219eb34feb7c79c4bee0",
+      "releaseAppSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "probeSha256": "64a883d34246dc2ff69a0b3398d745255eb081a8a55e898256476be5dece0593",
+      "librarySha256": "56fd375e714b0bd89e61ea3328a593b35407b927f6356848908ae1bec077ec01",
+      "aotSha256": "78a6321768d5871a1fbb5248db70a8f1ec8320a7a4803c962b1470ad8ababa31"
+    }
+  },
+  "linux": {
+    "abi": 49,
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "librarySha256": "665778c34653362fba12c70a3142ef49daa80ce8652f1023d638126c235167e5",
+    "pageCounts": [
+      1,
+      1,
+      1
+    ],
+    "originalCounts": {
+      "errors": 3,
+      "infos": 0,
+      "warnings": 0
+    },
+    "items": [
+      {
+        "diagnostic": {
+          "character": 35,
+          "code": "E0308",
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/a/shared 🦊.rs"
+      },
+      {
+        "diagnostic": {
+          "character": 41,
+          "code": "E0308",
+          "endCharacter": 45,
+          "endLine": 1,
+          "line": 1,
+          "message": "mismatched types\nexpected `bool`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/a/shared 🦊.rs"
+      },
+      {
+        "diagnostic": {
+          "character": 34,
+          "code": "E0308",
+          "endCharacter": 35,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        "uri": "src/z/shared 🦊.rs"
+      }
+    ],
+    "unchangedWithDuplicatedOpenUris": {
+      "snapshot": "0000000000000004-c72b6bd127d59ae9",
+      "status": "unchanged"
+    },
+    "changedScopeRejectsCursor": {
+      "snapshot": "0000000000000004-eba2e621708e3730",
+      "status": "stale"
+    },
+    "didOpenRejectsPreviousCursor": {
+      "snapshot": "0000000000000005-c72b6bd127d59ae9",
+      "status": "stale"
+    },
+    "freshCurrentDiagnostic": {
+      "character": 34,
+      "code": "E0308",
+      "documentVersion": 1,
+      "endCharacter": 35,
+      "endLine": 0,
+      "line": 0,
+      "message": "mismatched types\nexpected `bool`, found integer",
+      "severity": 1,
+      "source": "rustc"
+    },
+    "freshSameCodeSeverities": [
+      1,
+      4
+    ],
+    "afterOpeningCounts": {
+      "errors": 2,
+      "infos": 0,
+      "warnings": 0
+    },
+    "onlyOneDocumentAttachedDuringPages": true,
+    "sourceBytesPreserved": true,
+    "cleanShutdown": true,
+    "rawReportSha256": "8abf1992a974bf287531bbb443cafec6ac626200ecf317e42337ad51f4799349",
+    "firstFixtureLogSha256": "68e248472115b845cbd323563607659975bcaa0150ba08e0e6bb4c07b550336e",
+    "initialFixtureMismatch": "Both current diagnostics shared code E0308. The probe now distinguishes error severity from the related hint.",
+    "release": {
+      "tree": "799fe4aa894370261780219eb34feb7c79c4bee0",
+      "abi": 49,
+      "librarySha256": "665778c34653362fba12c70a3142ef49daa80ce8652f1023d638126c235167e5",
+      "probeSha256": "64a883d34246dc2ff69a0b3398d745255eb081a8a55e898256476be5dece0593",
+      "releaseAppSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "aotSha256": "97e47ec9724a48e7412e0593bd4fab323a7b6fcda7479dab56a6765abb69b00c"
+    }
+  }
+}
