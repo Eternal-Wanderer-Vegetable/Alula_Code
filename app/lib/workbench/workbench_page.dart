@@ -50,6 +50,7 @@ import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_sticky_scroll.dart';
 import '../editor/editor_folding.dart';
 import '../editor/editor_rendering.dart';
+import '../editor/editor_scroll_controller.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
@@ -33266,7 +33267,7 @@ class OpenDoc {
           compositionReserveUtf16: _editorCompositionReserveUtf16,
         ),
         inputFieldKey = GlobalKey<RustTextInputFieldState>(),
-        editorScrollController = ScrollController() {
+        editorScrollController = EditorScrollController() {
     _shared.retainView();
   }
 
@@ -33281,7 +33282,7 @@ class OpenDoc {
         ),
         inputFieldKey = GlobalKey<RustTextInputFieldState>(),
         editorScrollController =
-            ScrollController(initialScrollOffset: initialScrollOffset),
+            EditorScrollController(initialScrollOffset: initialScrollOffset),
         additionalSelections = List.unmodifiable(source.additionalSelections),
         foldedLineRanges = List.unmodifiable(source.foldedLineRanges) {
     _shared.retainView();

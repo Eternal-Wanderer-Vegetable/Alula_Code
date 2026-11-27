@@ -22,6 +22,7 @@ import '../bridge/alula_core.dart';
 import 'editor_native_text_drag_drop.dart';
 import 'editor_folding.dart';
 import 'editor_rendering.dart';
+import 'editor_scroll_controller.dart';
 import 'multi_selection.dart';
 import 'occurrence_search.dart' show defaultMultiCursorLimit;
 import 'text_drag_drop.dart';
@@ -480,6 +481,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   final GlobalKey _editorOverlayStackKey = GlobalKey();
   Rect? _caretRectInOverlay;
   Rect? _inlineOverlayRect;
+  double? _terminalOverlayHeight;
+  bool _terminalOverlayRevealRequested = false;
+  ({ScrollController controller, EditorScrollPosition position})?
+      _terminalScrollPadding;
   bool _inlineOverlayRevealScheduled = false;
   ({TextStyle style, double scale, double height})? _inlineOverlayLineMetrics;
   bool _caretOverlayUpdateScheduled = false;
@@ -1460,7 +1465,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final anchorChanged =
         oldWidget.caretOverlayAnchorUtf16 != widget.caretOverlayAnchorUtf16;
     if (overlaySourceChanged) _syncCaretOverlayScrollListeners();
-    if (anchorChanged) _scheduleCaretOverlayAnchorReveal();
+    if (anchorChanged) {
+      _terminalOverlayRevealRequested = true;
+      _scheduleCaretOverlayAnchorReveal();
+    }
     if (overlaySourceChanged ||
         oldWidget.inputWindow != widget.inputWindow ||
         anchorChanged) {
@@ -1825,11 +1833,18 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _scheduleCaretOverlayUpdate() {
-    if (widget.caretOverlay == null || _caretOverlayUpdateScheduled) return;
+    if (_caretOverlayUpdateScheduled ||
+        (widget.caretOverlay == null && _terminalScrollPadding == null)) {
+      return;
+    }
     _caretOverlayUpdateScheduled = true;
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _caretOverlayUpdateScheduled = false;
-      if (!mounted || widget.caretOverlay == null) return;
+      if (!mounted) return;
+      if (widget.caretOverlay == null) {
+        _releaseTerminalScrollPadding();
+        return;
+      }
       final selection = _controller.selection;
       final editable = _findEditableRenderObject(context);
       final overlayObject =
@@ -1840,36 +1855,48 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           !overlayObject.hasSize) {
         return;
       }
-      final caret =
-          editable.getLocalRectForCaret(_caretOverlayPosition(selection));
-      final globalRect = Rect.fromPoints(
-        editable.localToGlobal(caret.topLeft),
-        editable.localToGlobal(caret.bottomRight),
-      );
-      final localRect = Rect.fromPoints(
-        overlayObject.globalToLocal(globalRect.topLeft),
-        overlayObject.globalToLocal(globalRect.bottomRight),
-      );
+      Rect caretRect() {
+        final caret =
+            editable.getLocalRectForCaret(_caretOverlayPosition(selection));
+        return Rect.fromPoints(
+          overlayObject.globalToLocal(editable.localToGlobal(caret.topLeft)),
+          overlayObject.globalToLocal(editable.localToGlobal(caret.bottomRight)),
+        );
+      }
+
       final gap = _controller.inlineGap?.layout;
-      final slot = gap != null && gap.text == _controller.text
-          ? editable
-              .getBoxesForSelection(
-                TextSelection(
-                  baseOffset: gap.lineBreak,
-                  extentOffset: gap.lineBreak + 1,
+      final terminalHeight = _terminalOverlayHeight;
+      final Rect? inlineRect;
+      if (terminalHeight != null) {
+        inlineRect = _terminalInlineRect(
+          editable,
+          overlayObject,
+          caretRect(),
+          terminalHeight,
+        );
+      } else {
+        _releaseTerminalScrollPadding();
+        final slot = gap != null && gap.text == _controller.text
+            ? editable
+                .getBoxesForSelection(
+                  TextSelection(
+                    baseOffset: gap.lineBreak,
+                    extentOffset: gap.lineBreak + 1,
+                  ),
+                )
+                .firstOrNull
+                ?.toRect()
+            : null;
+        inlineRect = slot == null
+            ? null
+            : Rect.fromPoints(
+                overlayObject.globalToLocal(editable.localToGlobal(slot.topLeft)),
+                overlayObject.globalToLocal(
+                  editable.localToGlobal(slot.bottomRight),
                 ),
-              )
-              .firstOrNull
-              ?.toRect()
-          : null;
-      final inlineRect = slot == null
-          ? null
-          : Rect.fromPoints(
-              overlayObject.globalToLocal(editable.localToGlobal(slot.topLeft)),
-              overlayObject.globalToLocal(
-                editable.localToGlobal(slot.bottomRight),
-              ),
-            );
+              );
+      }
+      final localRect = caretRect();
       if (_caretRectInOverlay == localRect &&
           _inlineOverlayRect == inlineRect) {
         return;
@@ -1879,6 +1906,66 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         _inlineOverlayRect = inlineRect;
       });
     });
+  }
+
+  void _releaseTerminalScrollPadding() {
+    final previous = _terminalScrollPadding;
+    _terminalScrollPadding = null;
+    if (previous != null &&
+        previous.controller.positions.contains(previous.position)) {
+      previous.position.reserveTrailingExtent(0);
+    }
+  }
+
+  Rect? _terminalInlineRect(
+    RenderEditable editable,
+    RenderBox overlay,
+    Rect anchor,
+    double height,
+  ) {
+    final reveal = _terminalOverlayRevealRequested;
+    _terminalOverlayRevealRequested = false;
+    final endCaret = editable.getLocalRectForCaret(
+      TextPosition(offset: _controller.text.length),
+    );
+    var top = overlay
+        .globalToLocal(editable.localToGlobal(endCaret.bottomLeft))
+        .dy;
+    final viewportHeight = overlay.size.height;
+    if (top + height - anchor.top > viewportHeight) {
+      _releaseTerminalScrollPadding();
+      return null;
+    }
+
+    final position = editable.offset;
+    final controller = widget.scrollController;
+    if (position is EditorScrollPosition &&
+        controller != null &&
+        controller.positions.contains(position) &&
+        position.hasContentDimensions) {
+      final previous = _terminalScrollPadding;
+      if (previous != null &&
+          (previous.position != position || previous.controller != controller)) {
+        _releaseTerminalScrollPadding();
+      }
+      final destination = position.pixels + top + height - viewportHeight;
+      final trailingExtent =
+          (destination - position.unpaddedMaxScrollExtent)
+              .clamp(0.0, double.infinity).toDouble();
+      final previousPixels = position.pixels;
+      position.reserveTrailingExtent(trailingExtent);
+      _terminalScrollPadding = (controller: controller, position: position);
+      if (reveal && destination > position.pixels) {
+        position.jumpTo(destination
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble());
+      }
+      top -= position.pixels - previousPixels;
+    } else {
+      _releaseTerminalScrollPadding();
+      if (top + height > viewportHeight) return null;
+    }
+    return Rect.fromLTWH(0, top, overlay.size.width, height);
   }
 
   void _disposeOwnedHorizontalScrollController() {
@@ -2118,6 +2205,29 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _documentLineCount = position.lineCount;
   }
 
+  bool _hasTerminalInlineAnchor(
+    TextEditingValue value,
+    EditorFoldLayout folds,
+  ) {
+    final window = widget.inputWindow;
+    final anchor = widget.caretOverlayAnchorUtf16;
+    if (!widget.reserveCaretOverlayLineSpace ||
+        widget.caretOverlay == null ||
+        anchor == null ||
+        window.endUtf16 != window.totalUtf16Length ||
+        value.text != window.text ||
+        value.composing.isValid && !value.composing.isCollapsed) {
+      return false;
+    }
+    final local = anchor - window.startUtf16;
+    if (local < 0 || local > value.text.length) return false;
+    return value.text.indexOf('\n', local) < 0 &&
+        !folds.collapsedRanges.any(
+          (range) => range.hiddenStartUtf16 <= local &&
+              local < range.hiddenEndUtf16,
+        );
+  }
+
   _EditorInlineGapLayout? _inlineGapLayout(
     TextEditingValue value, {
     required EditorFoldLayout folds,
@@ -2148,6 +2258,22 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final lineStart =
         localAnchor == 0 ? 0 : text.lastIndexOf('\n', localAnchor - 1) + 1;
     if (text.substring(lineStart, lineBreak).trim().isEmpty) return null;
+    final height = _inlineOverlayHeight(viewportHeight, textStyle, scale);
+    if (height == null) return null;
+    return (
+      text: text,
+      lineBreak: lineBreak,
+      size: Size(width, height),
+      scale: scale,
+      tabStyle: text.codeUnitAt(lineBreak + 1) == 0x09 ? textStyle : null,
+    );
+  }
+
+  double? _inlineOverlayHeight(
+    double viewportHeight,
+    TextStyle textStyle,
+    double scale,
+  ) {
     var availableHeight = viewportHeight - 56;
     var requestedHeight = 132.0;
     if (widget.caretOverlayHeightInLines case final lines?) {
@@ -2158,14 +2284,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       availableHeight = viewportHeight - (2 * lineHeight + 14);
     }
     final height = availableHeight.clamp(0.0, requestedHeight).toDouble();
-    if (height < 48) return null;
-    return (
-      text: text,
-      lineBreak: lineBreak,
-      size: Size(width, height),
-      scale: scale,
-      tabStyle: text.codeUnitAt(lineBreak + 1) == 0x09 ? textStyle : null,
-    );
+    return height < 48 ? null : height;
   }
 
   double _inlineOverlayLineHeight(TextStyle style, double scale) {
@@ -2337,6 +2456,21 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                     gap.scale,
                                   ),
                           );
+                    _inlineOverlayRect = null;
+                    _scheduleCaretOverlayAnchorReveal();
+                    _scheduleCaretOverlayUpdate();
+                  }
+                  final terminalHeight = gap == null &&
+                          _hasTerminalInlineAnchor(editingValue, foldLayout)
+                      ? _inlineOverlayHeight(
+                          constraints.maxHeight,
+                          textStyle,
+                          textScaler.scale(fontSize) / fontSize,
+                        )
+                      : null;
+                  if (_terminalOverlayHeight != terminalHeight) {
+                    _terminalOverlayHeight = terminalHeight;
+                    _terminalOverlayRevealRequested = terminalHeight != null;
                     _inlineOverlayRect = null;
                     _scheduleCaretOverlayAnchorReveal();
                     _scheduleCaretOverlayUpdate();
@@ -2624,19 +2758,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         ),
                       ),
                       if (widget.caretOverlay case final overlay?)
-                        if (gap != null)
-                          if (_inlineOverlayRect case final rect?)
-                            Positioned(
-                              key: const ValueKey('rust-editor-inline-overlay'),
-                              left: gutterWidth + 8,
-                              right: 8,
-                              top: rect.top + 4,
-                              height: rect.height - 8,
-                              child: overlay,
-                            )
-                          else
-                            const SizedBox.shrink()
-                        else if (_caretRectInOverlay case final caretRect?)
+                        if (_inlineOverlayRect case final rect?)
+                          Positioned(
+                            key: const ValueKey('rust-editor-inline-overlay'),
+                            left: gutterWidth + 8,
+                            right: 8,
+                            top: rect.top + 4,
+                            height: rect.height - 8,
+                            child: overlay,
+                          )
+                        else if (_caretRectInOverlay case final caretRect? when gap == null)
                           CustomSingleChildLayout(
                             delegate: _CaretOverlayPositionDelegate(caretRect),
                             child: overlay,
