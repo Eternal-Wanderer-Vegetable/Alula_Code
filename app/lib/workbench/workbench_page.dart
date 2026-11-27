@@ -774,6 +774,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _gitDiffGeneration = 0;
   final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
   final FocusNode _problemsPanelFocus = FocusNode(debugLabel: 'problems-panel');
+  final _problemsPanelTabAnchorKey = GlobalKey();
   final FocusNode _problemsFilterFocus = FocusNode(debugLabel: 'problems-filter');
   final FocusNode _problemsResultsFocus =
       FocusNode(debugLabel: 'problems-results');
@@ -30421,6 +30422,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Tab(
       key: const ValueKey('panel-problems-tab'),
       child: GestureDetector(
+        key: _problemsPanelTabAnchorKey,
         behavior: HitTestBehavior.opaque,
         onSecondaryTapUp: (details) =>
             unawaited(_showProblemsBadgeMenu(details.globalPosition)),
@@ -30480,9 +30482,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.notifyLayoutChanged();
   }
 
+  KeyEventResult _onProblemsPanelTabKey(FocusNode _, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final keyboard = HardwareKeyboard.instance;
+    final wantsMenu =
+        const SingleActivator(LogicalKeyboardKey.contextMenu)
+                .accepts(event, keyboard) ||
+            const SingleActivator(LogicalKeyboardKey.f10, shift: true)
+                .accepts(event, keyboard);
+    if (!wantsMenu) return KeyEventResult.ignored;
+
+    final anchor = _problemsPanelTabAnchorKey.currentContext;
+    if (anchor == null ||
+        Focus.maybeOf(anchor, createDependency: false)?.hasPrimaryFocus != true) {
+      return KeyEventResult.ignored;
+    }
+    final box = anchor.findRenderObject();
+    if (box is! RenderBox || !box.attached || !box.hasSize) {
+      return KeyEventResult.ignored;
+    }
+    final belowTab = box.localToGlobal(Offset(box.size.width / 2, box.size.height));
+    unawaited(_showProblemsBadgeMenu(belowTab));
+    return KeyEventResult.handled;
+  }
+
   Widget _buildPanelTabs() {
     return Focus(
       skipTraversal: true,
+      onKeyEvent: _onProblemsPanelTabKey,
       child: Builder(
         builder: (context) {
           final focus = Focus.of(context);
