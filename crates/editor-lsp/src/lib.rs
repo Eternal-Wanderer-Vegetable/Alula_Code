@@ -574,6 +574,11 @@ impl LspServer {
         text: &str,
     ) -> Result<(), String> {
         let uri = &normalize_uri(uri);
+        // Reopening can reuse the previous document's version number. Discard
+        // its cached markers before accepting publications for this opening.
+        if let Ok(mut diagnostics) = self.shared.diagnostics.lock() {
+            diagnostics.remove(uri);
+        }
         self.send_message(&serde_json::json!({
             "jsonrpc": "2.0",
             "method": "textDocument/didOpen",

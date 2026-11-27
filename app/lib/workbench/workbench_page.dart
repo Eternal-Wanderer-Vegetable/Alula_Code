@@ -877,6 +877,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   ({Map<String, Object?> diagnostic, TextSelection selection})?
       _lastOpenedDiagnostic;
   _DiagnosticNavigationDetail? _diagnosticNavigation;
+  int _diagnosticNavigationRequest = 0;
+  ({
+    OpenDoc target,
+    int version,
+    TextSelection selection,
+    int workspaceGeneration,
+    Map<String, Object?> candidate,
+    NavigationLocation? origin,
+    int ordinal,
+    int total,
+    Stopwatch elapsed,
+  })? _pendingDiagnosticNavigation;
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
   Map<int, int> _syntaxVersionByDoc = {};
   Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
@@ -4028,6 +4040,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final active = _active;
     if (!_isCurrentDiagnosticNavigation(active)) _diagnosticNavigation = null;
+    if (!_isPendingDiagnosticNavigationCurrent(active)) {
+      _pendingDiagnosticNavigation = null;
+    }
     final peek = _definitionPeek;
     final peekVisible = peek != null && _isCurrentDefinitionPeek(peek);
     final openHierarchy = _callHierarchy;
@@ -4067,7 +4082,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands.context.setValues({
       'editorActive': active != null,
       'referenceSearchVisible': peekVisible,
-      'markersNavigationVisible': _diagnosticNavigation != null,
+      'markersNavigationVisible':
+          _diagnosticNavigation != null || _pendingDiagnosticNavigation != null,
       'peekWidgetVisible': peekVisible,
       'callHierarchyVisible': callHierarchyVisible,
       'callHierarchyHasRoots': callHierarchyVisible && hierarchyHasRoots,
@@ -15132,6 +15148,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openFileByPath(
     String path, {
     String? expectedContent,
+    String? providerUri,
     bool asPreview = false,
     bool pinPreview = false,
     bool inBackground = false,
@@ -15265,7 +15282,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final open = OpenDoc(
         id: id,
         path: path,
-        uri: _pathToUri(path),
+        uri: providerUri ?? _pathToUri(path),
         name: name,
         doc: doc,
         fileOptions: file.options,
@@ -17760,6 +17777,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           overrides.retainAll(ProblemsResultSelection.rowKeys(diags));
         }
       });
+      _resolvePendingDiagnosticNavigation();
     } catch (_) {
     } finally {
       _polling = false;
@@ -30760,6 +30778,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     Map<String, Object?> diagnostic, {
     bool preserveFocus = false,
     bool pinPreview = false,
+    NavigationLocation? origin,
   }) {
     if (!_diagnostics.contains(diagnostic)) return false;
     final target = _diagnosticEditor(diagnostic);
@@ -30804,7 +30823,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return false;
     }
 
-    final from = _currentNavigationLocation();
+    final from = origin ?? _currentNavigationLocation();
     _activateOpenEditorsRow(group, target);
     final visible = group.active;
     if (visible == null ||
@@ -30858,6 +30877,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required bool forward,
     bool currentFileOnly = false,
   }) {
+    _diagnosticNavigationRequest++;
+    _cancelPendingDiagnosticNavigation();
     final active = _active;
     if (active == null) return;
     _flushInput(active, commitComposition: true);
@@ -30865,28 +30886,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final previousCursor = _isCurrentDiagnosticNavigation(active)
         ? _diagnosticNavigation!.anchorUtf16
         : active.selection.extentOffset;
-    final markers = <({
-      Map<String, Object?> diagnostic,
-      String uri,
-      int severity,
-      int line,
-      int character,
-      int endLine,
-      int endCharacter,
-    })>[];
+    final markers =
+        <
+          ({
+            Map<String, Object?> diagnostic,
+            String uri,
+            int severity,
+            int line,
+            int character,
+            int endLine,
+            int endCharacter,
+            String? unopenedPath,
+          })
+        >[];
     final seen = <Object>{};
-    for (final diagnostic in _diagnostics) {
-      if (currentFileOnly && diagnostic['_documentId'] != active.id) continue;
-      final editor = _diagnosticEditor(diagnostic);
-      final uri = editor?.uri;
+    void addMarker(
+      Map<String, Object?> diagnostic,
+      String uri, {
+      String? unopenedPath,
+    }) {
       final severity = diagnostic['severity'];
       final line = diagnostic['line'];
       final character = diagnostic['character'];
       final endLine = diagnostic['endLine'];
       final endCharacter = diagnostic['endCharacter'];
-      if (editor == null ||
-          uri == null ||
-          severity is! int ||
+      if (severity is! int ||
           severity < 1 ||
           severity > 3 ||
           line is! int ||
@@ -30898,10 +30922,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           endCharacter is! int ||
           endCharacter < 0 ||
           endLine == line && endCharacter < character) {
-        continue;
+        return;
       }
       if (!seen.add((
-        editor.id,
+        diagnostic['_documentId'],
         severity,
         line,
         character,
@@ -30910,7 +30934,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         diagnostic['message'],
         diagnostic['source'],
       ))) {
-        continue;
+        return;
       }
       markers.add((
         diagnostic: diagnostic,
@@ -30920,7 +30944,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         character: character,
         endLine: endLine,
         endCharacter: endCharacter,
+        unopenedPath: unopenedPath,
       ));
+    }
+
+    for (final diagnostic in _diagnostics) {
+      if (currentFileOnly && diagnostic['_documentId'] != active.id) continue;
+      final uri = _diagnosticEditor(diagnostic)?.uri;
+      if (uri != null) addMarker(diagnostic, uri);
+    }
+    if (!currentFileOnly) {
+      final candidate = _readUnopenedDiagnostic(current?.uri, forward);
+      if (candidate != null) {
+        addMarker(
+          candidate.diagnostic,
+          candidate.uri,
+          unopenedPath: candidate.path,
+        );
+      }
     }
     if (markers.isEmpty) return;
     markers.sort((a, b) {
@@ -30936,9 +30977,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final step = forward ? 1 : -1;
     final last = _lastOpenedDiagnostic;
     final lastIndex = last != null && active.selection == last.selection
-        ? markers.indexWhere((entry) =>
-            entry.diagnostic['_documentId'] == active.id &&
-            mapEquals(entry.diagnostic, last.diagnostic))
+        ? markers.indexWhere(
+            (entry) =>
+                entry.diagnostic['_documentId'] == active.id &&
+                mapEquals(entry.diagnostic, last.diagnostic),
+          )
         : -1;
     var index = forward ? 0 : markers.length - 1;
     if (lastIndex >= 0) {
@@ -30952,9 +30995,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           index = (forward ? i : i - 1) % markers.length;
           break;
         }
-        final afterStart = current.line > marker.line ||
-            current.line == marker.line && current.character >= marker.character;
-        final beforeEnd = current.line < marker.endLine ||
+        final afterStart =
+            current.line > marker.line ||
+            current.line == marker.line &&
+                current.character >= marker.character;
+        final beforeEnd =
+            current.line < marker.endLine ||
             current.line == marker.endLine &&
                 current.character <= marker.endCharacter;
         if (afterStart && !beforeEnd) continue;
@@ -30963,47 +31009,225 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     for (var attempt = 0; attempt < markers.length; attempt++) {
-      final diagnostic = markers[index].diagnostic;
-      if (_openDiagnostic(diagnostic)) {
-        final source = _active;
-        if (source != null) {
-          final selection = source.selection;
-          final cursor = identical(source, active)
-              ? previousCursor
-              : selection.extentOffset;
-          final anchor = cursor >= selection.start && cursor <= selection.end
-              ? cursor
-              : selection.start;
-          ({int line, int character})? anchorPosition;
-          try {
-            final position = source.doc.positionAt(anchor);
-            if (position.version == source.doc.version &&
-                position.offsetUtf16 == anchor) {
-              anchorPosition = (line: position.line, character: position.character);
-            }
-          } on AlulaException {
-            // The selected marker can still be refreshed by its exact range.
-          }
-          setState(() {
-            _diagnosticNavigation = (
-              source: source,
-              version: source.doc.version,
-              selection: selection,
-              anchorUtf16: anchor,
-              snapshot: DiagnosticNavigationSnapshot(
-                diagnostic,
-                anchor: anchorPosition,
-              ),
-              ordinal: index + 1,
-              total: markers.length,
-            );
-          });
-          _commands.context.setValue('markersNavigationVisible', true);
+      final marker = markers[index];
+      if (marker.unopenedPath case final String path) {
+        unawaited(
+          _openUnopenedDiagnostic(
+            active,
+            path: path,
+            uri: marker.uri,
+            candidate: marker.diagnostic,
+            origin: current,
+            ordinal: index + 1,
+            total: markers.length,
+          ),
+        );
+        return;
+      }
+      if (_openDiagnostic(marker.diagnostic)) {
+        final target = _active;
+        if (target != null) {
+          _showDiagnosticNavigation(
+            target,
+            marker.diagnostic,
+            cursor: identical(target, active)
+                ? previousCursor
+                : target.selection.extentOffset,
+            ordinal: index + 1,
+            total: markers.length,
+          );
         }
         return;
       }
       index = (index + step) % markers.length;
     }
+  }
+
+  ({String uri, String path, Map<String, Object?> diagnostic})?
+  _readUnopenedDiagnostic(String? cursorUri, bool forward) {
+    final requestDoc = _workspaceSymbolRequestDoc;
+    if (!_lspReady || requestDoc == null) return null;
+    final openUris = <String>{};
+    for (final doc in _allDocs) {
+      if (doc.uri case final String uri) openUris.add(uri);
+      if (doc.path case final String path) {
+        openUris.add(Uri.file(path, windows: Platform.isWindows).toString());
+      }
+    }
+    try {
+      final candidate = requestDoc.core.lsp.nextUnopenedDiagnostic(
+        requestDoc.id,
+        cursorUri: cursorUri,
+        openUris: openUris.toList(),
+        forward: forward,
+      );
+      if (candidate == null) return null;
+      final path = _pathFromFileUri(candidate.uri);
+      if (path == null ||
+          _findOpenDocumentByPath(path) != null ||
+          !File(path).existsSync()) {
+        return null;
+      }
+      return (uri: candidate.uri, path: path, diagnostic: candidate.diagnostic);
+    } on AlulaException {
+      return null;
+    }
+  }
+
+  Future<void> _openUnopenedDiagnostic(
+    OpenDoc source, {
+    required String path,
+    required String uri,
+    required Map<String, Object?> candidate,
+    required NavigationLocation? origin,
+    required int ordinal,
+    required int total,
+  }) async {
+    final group = _ownerOfView(source);
+    if (group == null) return;
+    final request = _diagnosticNavigationRequest;
+    final version = source.doc.version;
+    final selection = source.selection;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    bool current() =>
+        mounted &&
+        !_disposing &&
+        request == _diagnosticNavigationRequest &&
+        workspaceGeneration == _quickOpenWorkspaceGeneration;
+    await _openFileByPath(
+      path,
+      providerUri: uri,
+      targetForOpen: (_) =>
+          current() &&
+              identical(_active, source) &&
+              source.doc.version == version &&
+              source.selection == selection
+          ? group
+          : null,
+    );
+    if (!current()) return;
+    final target = _active;
+    if (target == null ||
+        !identical(group.active, target) ||
+        target.uri != uri ||
+        !target.lspAttached) {
+      return;
+    }
+    _pendingDiagnosticNavigation = (
+      target: target,
+      version: target.doc.version,
+      selection: target.selection,
+      workspaceGeneration: workspaceGeneration,
+      candidate: candidate,
+      origin: origin,
+      ordinal: ordinal,
+      total: total,
+      elapsed: Stopwatch()..start(),
+    );
+    _commands.context.setValue('markersNavigationVisible', true);
+    _focusEditorAfterLayout(group, target);
+  }
+
+  bool _isPendingDiagnosticNavigationCurrent(OpenDoc? active) {
+    final pending = _pendingDiagnosticNavigation;
+    return pending != null &&
+        active != null &&
+        !_disposing &&
+        _quickOpenWorkspaceGeneration == pending.workspaceGeneration &&
+        identical(pending.target, active) &&
+        active.doc.version == pending.version &&
+        active.selection == pending.selection &&
+        pending.elapsed.elapsed < const Duration(seconds: 8);
+  }
+
+  void _cancelPendingDiagnosticNavigation() {
+    if (_pendingDiagnosticNavigation == null) return;
+    _pendingDiagnosticNavigation = null;
+    _commands.context.setValue(
+      'markersNavigationVisible',
+      _diagnosticNavigation != null,
+    );
+  }
+
+  void _resolvePendingDiagnosticNavigation() {
+    final pending = _pendingDiagnosticNavigation;
+    if (pending == null) return;
+    if (!_isPendingDiagnosticNavigationCurrent(_active)) {
+      _cancelPendingDiagnosticNavigation();
+      return;
+    }
+    final target = pending.target;
+    final group = _ownerOfView(target);
+    if (group == null || !_focusNodeFor(group, target).hasPrimaryFocus) return;
+    const matchingFields = [
+      'severity',
+      'source',
+      'code',
+      'message',
+      'line',
+      'character',
+      'endLine',
+      'endCharacter',
+    ];
+    final published = _diagnostics
+        .where(
+          (diagnostic) =>
+              diagnostic['_documentId'] == target.id &&
+              diagnostic['documentVersion'] == pending.version &&
+              matchingFields.every(
+                (field) => diagnostic[field] == pending.candidate[field],
+              ),
+        )
+        .firstOrNull;
+    if (published == null) return;
+    _cancelPendingDiagnosticNavigation();
+    if (_openDiagnostic(published, origin: pending.origin)) {
+      _showDiagnosticNavigation(
+        target,
+        published,
+        cursor: target.selection.start,
+        ordinal: pending.ordinal,
+        total: pending.total,
+      );
+    }
+  }
+
+  void _showDiagnosticNavigation(
+    OpenDoc target,
+    Map<String, Object?> diagnostic, {
+    required int cursor,
+    required int ordinal,
+    required int total,
+  }) {
+    final selection = target.selection;
+    final anchor = cursor >= selection.start && cursor <= selection.end
+        ? cursor
+        : selection.start;
+    ({int line, int character})? anchorPosition;
+    try {
+      final position = target.doc.positionAt(anchor);
+      if (position.version == target.doc.version &&
+          position.offsetUtf16 == anchor) {
+        anchorPosition = (line: position.line, character: position.character);
+      }
+    } on AlulaException {
+      // The selected marker can still be refreshed by its exact range.
+    }
+    setState(() {
+      _diagnosticNavigation = (
+        source: target,
+        version: target.doc.version,
+        selection: selection,
+        anchorUtf16: anchor,
+        snapshot: DiagnosticNavigationSnapshot(
+          diagnostic,
+          anchor: anchorPosition,
+        ),
+        ordinal: ordinal,
+        total: total,
+      );
+    });
+    _commands.context.setValue('markersNavigationVisible', true);
   }
 
   bool _isCurrentDiagnosticNavigation(OpenDoc? active) {
@@ -31016,6 +31240,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _closeDiagnosticNavigation() {
+    _diagnosticNavigationRequest++;
+    _cancelPendingDiagnosticNavigation();
     final detail = _diagnosticNavigation;
     if (detail == null) return;
     setState(() => _diagnosticNavigation = null);
