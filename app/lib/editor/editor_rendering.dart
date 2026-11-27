@@ -429,6 +429,7 @@ class EditorGutterPainter extends CustomPainter {
     this.foldableLineIndices = const {},
     this.collapsedLineIndices = const {},
     this.showLineNumbers = true,
+    this.terminalGapHeight = 0,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -448,6 +449,7 @@ class EditorGutterPainter extends CustomPainter {
   final Set<int> foldableLineIndices;
   final Set<int> collapsedLineIndices;
   final bool showLineNumbers;
+  final double terminalGapHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -486,7 +488,9 @@ class EditorGutterPainter extends CustomPainter {
         textScaler: textScaler,
         textWidthBasis: TextWidthBasis.parent,
       )..layout(maxWidth: size.width);
-      final lineTop = padding.top + caret.dy - scrollY;
+      // The empty row after the last newline has no glyphs to move.
+      final gap = line.startUtf16 == text.length ? terminalGapHeight : 0;
+      final lineTop = padding.top + caret.dy - scrollY + gap;
       final numberTop = lineTop + (lineHeight - numberPainter.height) / 2;
       if (showLineNumbers &&
           numberTop + numberPainter.height >= 0 &&
@@ -546,7 +550,8 @@ class EditorGutterPainter extends CustomPainter {
       !setEquals(oldDelegate.hiddenLineIndices, hiddenLineIndices) ||
       !setEquals(oldDelegate.foldableLineIndices, foldableLineIndices) ||
       !setEquals(oldDelegate.collapsedLineIndices, collapsedLineIndices) ||
-      oldDelegate.showLineNumbers != showLineNumbers;
+      oldDelegate.showLineNumbers != showLineNumbers ||
+      oldDelegate.terminalGapHeight != terminalGapHeight;
 }
 
 class EditorTextDecorationPainter extends CustomPainter {

@@ -30,27 +30,29 @@ class EditorScrollPosition extends ScrollPositionWithSingleContext {
     super.debugLabel,
   });
 
-  ({double min, double max})? _textExtent;
+  double? _textMaxScrollExtent;
   double _trailingExtent = 0;
 
-  double get unpaddedMaxScrollExtent => _textExtent?.max ?? maxScrollExtent;
+  double get unpaddedMaxScrollExtent => _textMaxScrollExtent ?? maxScrollExtent;
 
   @override
   bool applyContentDimensions(double minScrollExtent, double maxScrollExtent) {
-    _textExtent = (min: minScrollExtent, max: maxScrollExtent);
+    _textMaxScrollExtent = maxScrollExtent;
     return super.applyContentDimensions(
       minScrollExtent,
       maxScrollExtent + _trailingExtent,
     );
   }
 
-  void reserveTrailingExtent(double extent) {
-    if (extent == _trailingExtent) return;
+  /// The caller invalidates the editor layout when the reservation changes.
+  /// Scrollable updates its drag recognizers during that layout.
+  bool reserveTrailingExtent(double extent) {
+    if (extent == _trailingExtent) return false;
     _trailingExtent = extent;
-    if (_textExtent case final textExtent?) {
-      final maximum = textExtent.max + extent;
+    if (_textMaxScrollExtent case final textMax?) {
+      final maximum = textMax + extent;
       if (hasPixels && pixels > maximum) jumpTo(maximum);
-      super.applyContentDimensions(textExtent.min, maximum);
     }
+    return true;
   }
 }

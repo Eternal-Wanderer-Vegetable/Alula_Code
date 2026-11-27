@@ -5065,6 +5065,18 @@
       "evidence": "关闭最后一个挂接语言服务的编辑器时更新 Problems 工作区诊断，支持面板重开和原文件定位。Windows 与 Linux 各通过 10 项原生检查。专题 188/188，Flutter 1,923 项通过、2 项跳过。产品 0ac80899 的 CI 46009720250 四项与 Platform Availability 46009712308 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.348-problems-last-editor.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-401",
+      "name": "P05.349 CMD-11 诊断在最后一个换行符之前的行内布局",
+      "description": "在最后一个换行符之前显示诊断详情时保留末尾空行，保证点击、滚动和文档末尾的 UTF-16 位置。",
+      "dependencies": [
+        "feat-400"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、两端原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
