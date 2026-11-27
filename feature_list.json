@@ -4885,6 +4885,18 @@
       "evidence": "诊断详情在普通标记行后留出空间，代码和行号同步移动，关闭后回到原坐标。Windows 与 Linux 各通过 24 项原生检查，LF/CRLF 及换行开关的四项组件回归通过。专题 213/213，Flutter 1,897 项通过、2 项跳过。产品 777a1df8 的 CI 45941207035 四项与 Platform Availability 45941201677 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.333-diagnostic-inline-space.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-386",
+      "name": "P05.334 CMD-11 诊断详情后续行 Tab 缩进",
+      "description": "支持在以 Tab 缩进的后续代码行前保留诊断详情占位，复验垂直位移、横向缩进和原有文本。",
+      "dependencies": [
+        "feat-385"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

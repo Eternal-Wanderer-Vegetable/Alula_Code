@@ -49,7 +49,11 @@ class _SyntaxTextEditingController extends TextEditingController {
   String _windowText = '';
   Color Function(String kind)? _colorForKind;
   List<EditorFoldRange> _foldedRanges = const [];
-  ({_EditorInlineGapLayout layout, _EditorInlineGapSpan span})? inlineGap;
+  ({
+    _EditorInlineGapLayout layout,
+    _EditorInlineGapSpan span,
+    double? tabLetterSpacing,
+  })? inlineGap;
 
   void configureSyntax({
     required List<Map<String, Object?>> tokens,
@@ -156,13 +160,14 @@ class _SyntaxTextEditingController extends TextEditingController {
             : null;
     final boundaries = <int>{0, text.length};
     final indentOffset = gap == null ? null : gap.layout.lineBreak + 1;
+    final nextCharacter = indentOffset == null ? null : text[indentOffset];
+    final indent =
+        nextCharacter == ' ' || nextCharacter == '\t' ? nextCharacter : null;
     if (gap != null && indentOffset != null) {
       boundaries
         ..add(gap.layout.lineBreak)
         ..add(indentOffset);
-      if (text.codeUnitAt(indentOffset) == 0x20) {
-        boundaries.add(indentOffset + 1);
-      }
+      if (indent != null) boundaries.add(indentOffset + 1);
     }
     for (final token in visible) {
       boundaries
@@ -224,14 +229,18 @@ class _SyntaxTextEditingController extends TextEditingController {
                   color: token?.color,
                   decoration: isComposing ? TextDecoration.underline : null,
                 );
-      spans.add(
-        start == indentOffset && text.codeUnitAt(start) == 0x20
-            ? _EditorInlineIndentSpan(style: segmentStyle)
-            : TextSpan(
-                text: text.substring(start, end),
-                style: segmentStyle,
-              ),
-      );
+      if (indent != null && start == indentOffset) {
+        final spacing = gap?.tabLetterSpacing;
+        spans.add(_EditorInlineIndentSpan(
+          indent,
+          style: spacing == null
+              ? segmentStyle
+              : (segmentStyle ?? const TextStyle())
+                  .copyWith(letterSpacing: spacing),
+        ));
+        continue;
+      }
+      spans.add(TextSpan(text: text.substring(start, end), style: segmentStyle));
     }
     return TextSpan(style: style, children: spans);
   }
@@ -242,6 +251,7 @@ typedef _EditorInlineGapLayout = ({
   int lineBreak,
   Size size,
   double scale,
+  TextStyle? tabStyle,
 });
 
 /// Lays a sized space in place of a single LF without changing the input
@@ -286,10 +296,12 @@ class _EditorInlineGapSpan extends WidgetSpan {
   }
 }
 
-/// Keeps the first indentation space on the line following the placeholder.
+/// Keeps the first indentation character on the line after the placeholder.
 class _EditorInlineIndentSpan extends TextSpan {
-  const _EditorInlineIndentSpan({super.style})
-      : super(text: '\u00a0', semanticsLabel: ' ');
+  const _EditorInlineIndentSpan(this.indent, {super.style})
+      : super(text: '\u00a0', semanticsLabel: indent);
+
+  final String indent;
 
   @override
   void computeToPlainText(
@@ -297,7 +309,7 @@ class _EditorInlineIndentSpan extends TextSpan {
     bool includeSemanticsLabels = true,
     bool includePlaceholders = true,
   }) {
-    buffer.write(' ');
+    buffer.write(indent);
   }
 }
 
@@ -2102,6 +2114,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required double width,
     required double viewportHeight,
     required double scale,
+    required TextStyle textStyle,
   }) {
     final anchor = widget.caretOverlayAnchorUtf16;
     if (!widget.reserveCaretOverlayLineSpace ||
@@ -2117,7 +2130,6 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final lineBreak = text.indexOf('\n', localAnchor);
     if (lineBreak < 0 ||
         lineBreak + 1 == text.length ||
-        text.codeUnitAt(lineBreak + 1) == 0x09 ||
         folds.collapsedRanges.any((range) =>
             range.hiddenStartUtf16 <= lineBreak &&
             lineBreak < range.hiddenEndUtf16)) {
@@ -2133,7 +2145,28 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       lineBreak: lineBreak,
       size: Size(width, height),
       scale: scale,
+      tabStyle: text.codeUnitAt(lineBreak + 1) == 0x09 ? textStyle : null,
     );
+  }
+
+  double _inlineTabLetterSpacing(TextStyle style, double scale) {
+    final painter = TextPainter(
+      text: TextSpan(text: '\t\u00a0x', style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.linear(scale),
+    )..layout();
+    try {
+      final start =
+          painter.getOffsetForCaret(const TextPosition(offset: 0), Rect.zero).dx;
+      final tabEnd =
+          painter.getOffsetForCaret(const TextPosition(offset: 1), Rect.zero).dx;
+      final spaceEnd =
+          painter.getOffsetForCaret(const TextPosition(offset: 2), Rect.zero).dx;
+      return (style.letterSpacing ?? 0.0) +
+          (tabEnd - start) - (spaceEnd - tabEnd);
+    } finally {
+      painter.dispose();
+    }
   }
 
   @override
@@ -2251,6 +2284,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         .toDouble(),
                     viewportHeight: constraints.maxHeight,
                     scale: textScaler.scale(fontSize) / fontSize,
+                    textStyle: textStyle,
                   );
                   if (_controller.inlineGap?.layout != gap) {
                     _controller.inlineGap = gap == null
@@ -2261,6 +2295,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               size: gap.size,
                               scale: gap.scale,
                             ),
+                            tabLetterSpacing: gap.tabStyle == null
+                                ? null
+                                : _inlineTabLetterSpacing(
+                                    gap.tabStyle!,
+                                    gap.scale,
+                                  ),
                           );
                     _inlineOverlayRect = null;
                     _scheduleCaretOverlayUpdate();
