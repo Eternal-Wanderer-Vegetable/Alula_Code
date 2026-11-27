@@ -1,0 +1,170 @@
+{
+  "recordedAt": "2026-11-27T02:33:11.891139+00:00",
+  "productCI": {
+    "attempt": 1,
+    "conclusion": "success",
+    "headSha": "cff3f543b2a1ab5e15d9acf86d80b5590356ec38",
+    "jobs": [
+      {
+        "completedAt": "2026-11-27T02:20:34Z",
+        "conclusion": "success",
+        "databaseId": 140272941451,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-27T02:20:24Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927733285/job/140272941451"
+      },
+      {
+        "completedAt": "2026-11-27T02:21:59Z",
+        "conclusion": "success",
+        "databaseId": 140272941718,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-27T02:20:23Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927733285/job/140272941718"
+      },
+      {
+        "completedAt": "2026-11-27T02:21:03Z",
+        "conclusion": "success",
+        "databaseId": 140272941720,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-27T02:20:24Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-27T02:21:02Z",
+            "conclusion": "skipped",
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "number": 8,
+            "startedAt": "2026-11-27T02:21:02Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927733285/job/140272941720"
+      },
+      {
+        "completedAt": "2026-11-27T02:30:51Z",
+        "conclusion": "success",
+        "databaseId": 140272941734,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-27T02:20:23Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927733285/job/140272941734"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927733285",
+    "workflowName": "CI"
+  },
+  "productPlatform": {
+    "attempt": 1,
+    "conclusion": "",
+    "headSha": "cff3f543b2a1ab5e15d9acf86d80b5590356ec38",
+    "jobs": [
+      {
+        "completedAt": "2026-11-27T02:24:55Z",
+        "conclusion": "success",
+        "databaseId": 140272918300,
+        "name": "Linux x64 build and launch smoke",
+        "startedAt": "2026-11-27T02:20:19Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927725109/job/140272918300"
+      },
+      {
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "databaseId": 140272918511,
+        "name": "macOS build, launch smoke, and app package",
+        "startedAt": "2026-11-27T02:20:22Z",
+        "status": "in_progress",
+        "steps": [
+          {
+            "completedAt": "0001-01-01T00:00:00Z",
+            "conclusion": "",
+            "name": "Flutter analyze and tests",
+            "number": 8,
+            "startedAt": "2026-11-27T02:26:59Z",
+            "status": "in_progress"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927725109/job/140272918511"
+      },
+      {
+        "completedAt": "2026-11-27T02:32:59Z",
+        "conclusion": "success",
+        "databaseId": 140272918632,
+        "name": "Windows x64 build and launch smoke",
+        "startedAt": "2026-11-27T02:20:21Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927725109/job/140272918632"
+      }
+    ],
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45927725109",
+    "workflowName": "Platform Availability"
+  },
+  "previousEvidenceCI": {
+    "attempt": 1,
+    "conclusion": "success",
+    "headSha": "9b1bf1fbbbee1ca9add4f9679204247af6d475a9",
+    "jobs": [
+      {
+        "completedAt": "2026-11-27T02:15:52Z",
+        "conclusion": "success",
+        "databaseId": 140267608654,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-27T02:03:39Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45926090342/job/140267608654"
+      },
+      {
+        "completedAt": "2026-11-27T02:04:29Z",
+        "conclusion": "success",
+        "databaseId": 140267608960,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-27T02:03:39Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-27T02:04:26Z",
+            "conclusion": "skipped",
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "number": 8,
+            "startedAt": "2026-11-27T02:04:26Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45926090342/job/140267608960"
+      },
+      {
+        "completedAt": "2026-11-27T02:03:45Z",
+        "conclusion": "success",
+        "databaseId": 140267609028,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-27T02:03:39Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45926090342/job/140267609028"
+      },
+      {
+        "completedAt": "2026-11-27T02:05:42Z",
+        "conclusion": "success",
+        "databaseId": 140267609186,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-27T02:03:39Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45926090342/job/140267609186"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45926090342",
+    "workflowName": "CI"
+  }
+}

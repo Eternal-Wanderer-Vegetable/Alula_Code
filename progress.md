@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.329 / feat-381 完成。Problems 标签右键菜单切换徽标显隐，布局配置档保存偏好。隐藏时悬停和状态栏继续显示准确数量。Windows 与 Linux 各通过 42 项原生检查。专题 189/189，Flutter 1,893 项通过、2 项跳过。产品 cff3f543 的 CI 45927733285 四项与 Platform Availability 45927725109 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.329-problems-badge-visibility.md。
 - P05.328 / feat-380 完成。Problems 标题徽标显示全局错误、警告和信息总数，零值隐藏。悬停与可访问标签保留精确总数和快捷键。Windows 与 Linux 各通过 48 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 5d7fb4d3 的 CI 45925038660 四项与 Platform Availability 45925033057 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.328-problems-title-badge.md。
 - P05.327 / feat-379 完成。Problems 状态栏分别展示错误、警告及非零信息计数，排除 Hint。悬停与可访问标签保留精确数，筛选仅改变视图内结果。Windows 与 Linux 各通过 19 项原生检查。专题 188/188，Flutter 1,892 项通过、2 项跳过。产品 c63ac21a 的 CI 45922186293 四项与 Platform Availability 45922181305 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.327-problems-status-counts.md。
 - P05.326 / feat-378 完成。Problems 显示命令保留焦点，切换命令与状态栏诊断计数共用可见性规则。分组时保留相邻窗格。Windows 与 Linux 各通过 51 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 84582ad8 的 CI 45918937756 四项与 Platform Availability 45918931490 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.326-problems-visibility-commands.md。
@@ -106,7 +107,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。按固定版本核对 Problems 标题徽标显隐与恢复。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。按固定版本核对 Problems 标签键盘菜单入口。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 

@@ -1,0 +1,4934 @@
+{
+  "product": "cff3f543b2a1ab5e15d9acf86d80b5590356ec38",
+  "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "8352cf8631b4d087ffe9090c8306736f2b0ce3689a511d7f55d16b8e52c04c27",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "ac5cc84e9570a1d0f69fd22464a7dfa09abfc7ae90ea2c4f3801e817835e4fb2",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "86edf690f6a69f7f488fbf6fccd64dd0db804a5f11e420905575d5b7be629e2e",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+  "acceptanceDriverSha256": "ca676062bd1d6506326605028ec815b754626e3221b9c43507f26b3b6f85e1c8",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/browser/parts/compositeBarActions.ts": "e6f4ab4bf4c17ecb673242075587525a42b21f84dd501af03bb0bcf98cec5edc",
+      "src/vs/workbench/services/views/browser/viewDescriptorService.ts": "e248058a5541428c47be8e029ddf0a70d659497f982848782d7cdd817d64a430",
+      "src/vs/workbench/browser/parts/compositeBar.ts": "8d04e6a7d104825c8fb302fe8e5ec2fa756cac9c2504e8f3caeb5a932a47a211"
+    }
+  },
+  "localLogsSha256": {
+    "p05-329-full.log": "09376b1a3ae8b4225fad82bd5c2a21da4a1805b0a4d0756a40ab3295f715f8b7",
+    "p05-329-focused.log": "c416dea993f4c17a68858abdcf0acc5577316de27cc964b48ba4e1e4a32c98a3",
+    "p05-329-layout-codec.log": "9bafe3fee6b9eb49e693860f0200dcfe8dd0658270b7f3f2f0211ca34c743fc2",
+    "p05-329-targeted.log": "fed24b6ce8bb9b415330dfba53751a60550b50bfa7ed458f98183cd1af34179d",
+    "p05-329-analyze.log": "72c4d2916f739816af51bf949906bbd474db5032ee05fb66cb256f489a99a285",
+    "p05-329-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 9,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_79_build",
+          "name": "Build → WbSplit",
+          "process_type": "cross_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "WbSplit",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_298_build",
+          "name": "Build → WbSplit",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "WbSplit",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "ab09126bc50ed586c6b67cf89cdd47759fad5c5a3102ce4a0e282110e1761443"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 9,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_79_build",
+          "name": "Build → WbSplit",
+          "process_type": "cross_community",
+          "step_count": 5,
+          "changed_steps": [
+            {
+              "symbol": "WbSplit",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_298_build",
+          "name": "Build → WbSplit",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "WbSplit",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "ab09126bc50ed586c6b67cf89cdd47759fad5c5a3102ce4a0e282110e1761443"
+    }
+  },
+  "preedit": {
+    "badge-tab": {
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "5953c1d1e874dcd336643f062d183b35d222ef22fbf7083b1b4aee81b3d30461"
+    },
+    "split-class": {
+      "summary": {
+        "direct": 46,
+        "processes_affected": 8,
+        "modules_affected": 3
+      },
+      "risk": "CRITICAL",
+      "sha256": "ebff3bbb16fe3abcf9253dd10dbff80ceb921193ac715bdeb5378c327794b79b"
+    },
+    "split-write": {
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "0777f6f00a2ddaf4afe9db9b5e46e5a4b832e002e97c4cd7b8e3909fd756c204"
+    },
+    "split-read": {
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "risk": "UNKNOWN",
+      "sha256": "c480ee57cdf2a9d27f6e42e8044360759c7c6d9d1b4c375e602792f551d19cb6"
+    },
+    "layout-notify": {
+      "summary": {
+        "direct": 18,
+        "processes_affected": 4,
+        "modules_affected": 1
+      },
+      "risk": "HIGH",
+      "sha256": "ec8878214461c9b53889b861987e5a128840282aae91a2f352b722dc85d19f79"
+    },
+    "codecSourceConfirmationSha256": "efbb62fc2e1d01e4fd0d69d9b186f31455185bb7b21ae22f9307110607d43560"
+  },
+  "macosPhysical": "deferred",
+  "nativeCheckCountsPerPlatform": {
+    "call": 20,
+    "restore-hidden": 11,
+    "restore-visible": 11
+  },
+  "windows": {
+    "call": {
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "93be241559d9e8c4578890df7c9b783993f131b1b26044f6c94c332b32fc3189",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "8da09031af6999654ebd7203e78f57ec7cfe181ae4b248ede013f368e43e961d",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": null,
+          "problemsTabSemantics": null,
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": null,
+          "problemsTabSemantics": null,
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                249.83129725646972,
+                421.104,
+                358.2727035064697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "zero-count-can-be-hidden-by-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-hide-closes-menu-and-retains-tab": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                212.37328944396972,
+                421.104,
+                395.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "filter-retains-hidden-badge-and-global-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "inactive-diagnostics-tab-keeps-visible-badge": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "inactive-diagnostics-tab-menu-does-not-select-it": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              315.2,
+              400.8,
+              427.2,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "hide-on-inactive-tab-keeps-completion-selected": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "inactive-hidden-badge-retains-exact-tooltip": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                212.37328944396972,
+                421.104,
+                395.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "hidden-inactive-label-offers-show": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "final-cancel-preserves-hidden-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                212.37328944396972,
+                421.104,
+                395.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "isolated-editor-with-panel-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "stable-editor-caret-before-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-problems-title-before-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "cancelled-menu-does-not-change-title": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-count-can-be-hidden-by-preference": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-count-hide-closes-menu-and-retains-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-clears-away-from-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "filter-retains-hidden-badge-and-global-total": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "inactive-diagnostics-tab-keeps-visible-badge": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "inactive-diagnostics-tab-menu-does-not-select-it": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hide-on-inactive-tab-keeps-completion-selected": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "inactive-hidden-badge-retains-exact-tooltip": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hidden-inactive-label-offers-show": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "final-cancel-preserves-hidden-preference": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-329-problems-badge-visibility\\probe-1795745595151979600",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            702
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            702
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1420,
+            719
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1420,
+            719
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            741
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            741
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1420,
+            719
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1420,
+            719
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1453,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1453,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1364,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1364,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1434,
+            719
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1434,
+            719
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer",
+        "u32"
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            1350,
+            679
+          ],
+          "actual": [
+            1350,
+            679
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            1752,
+            476
+          ],
+          "actual": [
+            1752,
+            476
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            1350,
+            679
+          ],
+          "actual": [
+            1350,
+            679
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            1752,
+            476
+          ],
+          "actual": [
+            1752,
+            476
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "call",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": true,
+      "savedBadgeFieldPresent": true,
+      "savedLayoutSha256": "a5b5cb0c04dbb0e0ecab9a2e9eb2ed07d4207c2bca3ac8a6ea791ccd5f8c41f4",
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "0f51b0c5f9d18dd148b119cd0c5d4f84aaf2e45f1f393ca5c10c250ccb3ebeb5"
+    },
+    "restore-hidden": {
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "93be241559d9e8c4578890df7c9b783993f131b1b26044f6c94c332b32fc3189",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "8da09031af6999654ebd7203e78f57ec7cfe181ae4b248ede013f368e43e961d",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                249.83129725646972,
+                421.104,
+                358.2727035064697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                212.37328944396972,
+                421.104,
+                395.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "isolated-editor-with-panel-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "stable-editor-caret-before-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-problems-title-before-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "cancelled-menu-does-not-change-title": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-clears-away-from-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-329-problems-badge-visibility\\probe-1795745595151979600",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1420,
+            719
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1420,
+            719
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer"
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            1350,
+            679
+          ],
+          "actual": [
+            1350,
+            679
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            1752,
+            476
+          ],
+          "actual": [
+            1752,
+            476
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "restore-hidden",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": true,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3e820b81ceb89b393c094852f0ee878b68326aa1ea5175b2f859d0fdbe76ab4d",
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "b57717a65bcf992765a1e27b2f4c5e72a90633f86d1fcae3c938e07c823d474d"
+    },
+    "restore-visible": {
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "93be241559d9e8c4578890df7c9b783993f131b1b26044f6c94c332b32fc3189",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "8da09031af6999654ebd7203e78f57ec7cfe181ae4b248ede013f368e43e961d",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              304.0,
+              400.8,
+              416.0,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                249.83129725646972,
+                421.104,
+                358.2727035064697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                223.37328944396972,
+                421.104,
+                406.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "restored-visible-badge-offers-hide-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              315.2,
+              400.8,
+              427.2,
+              448.8
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "restored-visible-badge-survives-menu-cancellation": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                223.37328944396972,
+                421.104,
+                406.7307113189697,
+                439.104
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "isolated-editor-with-panel-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "stable-editor-caret-before-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-problems-title-before-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "cancelled-menu-does-not-change-title": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "title-hover-clears-away-from-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "restored-visible-badge-offers-hide-with-live-total": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "restored-visible-badge-survives-menu-cancellation": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-329-problems-badge-visibility\\probe-1795745595151979600",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1350,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1350,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1364,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1364,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": true
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer"
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            1364,
+            679
+          ],
+          "actual": [
+            1364,
+            679
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            1752,
+            476
+          ],
+          "actual": [
+            1752,
+            476
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "restore-visible",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3e820b81ceb89b393c094852f0ee878b68326aa1ea5175b2f859d0fdbe76ab4d",
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "3ec8de6438e3451ecef2a9fcd4e5a32ab47415a0b51f7b36affa078c25903439"
+    }
+  },
+  "linux": {
+    "call": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "processTreeSamples": {},
+      "aotSha256": "94bf5e8a7a029b365ed5082188aa5187179b14d065efd4ce9d884c5d6694276b",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "b77affda9ec85921411a6d7b9377b5f80b84b3b60de403131d7f72c5b16332bc",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": null,
+          "problemsTabSemantics": null,
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": null,
+          "problemsTabSemantics": null,
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                303.8047156524658,
+                449.52,
+                411.4352851104736,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "zero-count-can-be-hidden-by-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-hide-closes-menu-and-retains-tab": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                267.9406485748291,
+                449.52,
+                447.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "filter-retains-hidden-badge-and-global-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterCount": "1 / 5",
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 1
+        },
+        "inactive-diagnostics-tab-keeps-visible-badge": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "inactive-diagnostics-tab-menu-does-not-select-it": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              369.0,
+              430.0,
+              481.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "hide-on-inactive-tab-keeps-completion-selected": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "inactive-hidden-badge-retains-exact-tooltip": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                267.9406485748291,
+                449.52,
+                447.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "hidden-inactive-label-offers-show": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "final-cancel-preserves-hidden-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": null,
+          "filterCount": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                267.9406485748291,
+                449.52,
+                447.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-c1gn_l6d",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            489
+          ],
+          "actual": [
+            740,
+            489
+          ],
+          "logical": [
+            719.76,
+            441.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            434,
+            502
+          ],
+          "actual": [
+            434,
+            502
+          ],
+          "logical": [
+            414.0,
+            454.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            784,
+            519
+          ],
+          "actual": [
+            784,
+            519
+          ],
+          "logical": [
+            763.76,
+            470.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            434,
+            502
+          ],
+          "actual": [
+            434,
+            502
+          ],
+          "logical": [
+            414.0,
+            454.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            460,
+            470
+          ],
+          "actual": [
+            460,
+            470
+          ],
+          "logical": [
+            439.82000114440916,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            389,
+            470
+          ],
+          "actual": [
+            389,
+            470
+          ],
+          "logical": [
+            368.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            445,
+            502
+          ],
+          "actual": [
+            445,
+            502
+          ],
+          "logical": [
+            425.0,
+            454.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        }
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "call",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": true,
+      "savedBadgeFieldPresent": true,
+      "savedLayoutSha256": "a5b5cb0c04dbb0e0ecab9a2e9eb2ed07d4207c2bca3ac8a6ea791ccd5f8c41f4",
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "c94bdb99fa6e0adb1fa01cf160df23bf4c829d2164a1a53685ca3c3f62f2d057"
+    },
+    "restore-hidden": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "processTreeSamples": {},
+      "aotSha256": "94bf5e8a7a029b365ed5082188aa5187179b14d065efd4ce9d884c5d6694276b",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "b77affda9ec85921411a6d7b9377b5f80b84b3b60de403131d7f72c5b16332bc",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                303.8047156524658,
+                449.52,
+                411.4352851104736,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                267.9406485748291,
+                449.52,
+                447.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "hidden-badge-offers-show-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "显示徽标",
+            "value": false,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "show-badge-restores-one-count-and-keeps-current-view": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-c1gn_l6d",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            434,
+            502
+          ],
+          "actual": [
+            434,
+            502
+          ],
+          "logical": [
+            414.0,
+            454.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        }
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "restore-hidden",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": true,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3e820b81ceb89b393c094852f0ee878b68326aa1ea5175b2f859d0fdbe76ab4d",
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "955432112641fa991f4f39d0bfc35f48904dedf122c54ff9d94f99ecee9c0eb2"
+    },
+    "restore-visible": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "59efd9caa227ebd5c9c4a3b9d5ffef2b97226647",
+      "processTreeSamples": {},
+      "aotSha256": "94bf5e8a7a029b365ed5082188aa5187179b14d065efd4ce9d884c5d6694276b",
+      "fixtureSha256": "a0fdb060a1aea1a71502a08ef6aa69568b9ab93203df2478a6c8558f9c5ac72c",
+      "runnerSha256": "b77affda9ec85921411a6d7b9377b5f80b84b3b60de403131d7f72c5b16332bc",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "stable-editor-caret-before-problems": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-problems-title-before-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "zero-count-menu-reflects-profile-preference": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              358.0,
+              430.0,
+              470.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "cancelled-menu-does-not-change-title": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M)",
+              "bounds": [
+                303.8047156524658,
+                449.52,
+                411.4352851104736,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 0
+        },
+        "editor-focus-before-starting-diagnostic-provider": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            0,
+            0,
+            0
+          ],
+          "problemsBadgeWidgets": 0,
+          "problemsBadgeNumber": null,
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M)",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M)",
+          "overlayTooltips": [],
+          "visibleProblemRows": 0
+        },
+        "provider-publishes-with-profile-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "title-hover-retains-total-at-current-badge-visibility": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                278.9406485748291,
+                449.52,
+                458.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        },
+        "title-hover-clears-away-from-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "restored-visible-badge-offers-hide-with-live-total": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": {
+            "label": "隐藏徽标",
+            "value": true,
+            "bounds": [
+              369.0,
+              430.0,
+              481.0,
+              478.0
+            ]
+          },
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [],
+          "visibleProblemRows": 5
+        },
+        "restored-visible-badge-survives-menu-cancellation": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "filterFocused": false,
+          "filterText": "",
+          "filterCount": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusDiagnosticsCounts": [
+            3,
+            2,
+            0
+          ],
+          "problemsBadgeWidgets": 1,
+          "problemsBadgeNumber": "5",
+          "problemsBadgeMenu": null,
+          "problemsTabDescription": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "problemsTabSemantics": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+          "overlayTooltips": [
+            {
+              "text": "诊断 (Ctrl+Shift+M) - 共 5 条诊断",
+              "bounds": [
+                278.9406485748291,
+                449.52,
+                458.29935218811033,
+                466.52
+              ]
+            }
+          ],
+          "visibleProblemRows": 5
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-c1gn_l6d",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            378,
+            470
+          ],
+          "actual": [
+            378,
+            470
+          ],
+          "logical": [
+            357.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            389,
+            470
+          ],
+          "actual": [
+            389,
+            470
+          ],
+          "logical": [
+            368.6200003814697,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": true
+        }
+      ],
+      "nativeHoverChecks": [
+        {
+          "expected": [
+            389,
+            470
+          ],
+          "actual": [
+            389,
+            470
+          ],
+          "foregroundOwned": true
+        },
+        {
+          "expected": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "foregroundOwned": true
+        }
+      ],
+      "kind": "problemsBadgeVisibility",
+      "phase": "restore-visible",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "tooltipLabels": {
+        "zero": "诊断 (Ctrl+Shift+M)",
+        "live": "诊断 (Ctrl+Shift+M) - 共 5 条诊断"
+      },
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "initialStoredBadgeHidden": false,
+      "savedProblemsBadgeHidden": false,
+      "savedBadgeFieldPresent": false,
+      "savedLayoutSha256": "3e820b81ceb89b393c094852f0ee878b68326aa1ea5175b2f859d0fdbe76ab4d",
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "1e01d85da4e13f229869ccc6f4ad0cc293d9e70a75d386adf764ea0250eca3e9"
+    }
+  }
+}
