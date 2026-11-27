@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.363 / feat-415 完成。锁定后按可见视图起始位置同步纵向位移，拆分、合并与越界返回通过。Windows 与 Linux 各通过 16 项原生检查，专题 242/242，Flutter 1,976 项通过、2 项跳过。产品 ea4aa75 的 CI 46081981014 四项和 Platform Availability 46081976626 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.363-locked-scroll-origin.md。
 - P05.362 / feat-414 完成。两种相对文件 URI 从源文件目录定位，含父目录和编码路径。Windows 与 Linux 各通过 14 项原生检查，专题 186/186，Flutter 1,975 项通过、2 项跳过。产品 e61899c 的 CI 46078677276 四项及 Platform Availability 46078674329 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.362-relative-file-link.md。
 - P05.361 / feat-413 完成。真实空行后无可用空白或连续空行时，F8 详情留出空间，键鼠落点与行号保持一致。Windows 与 Linux 各通过 22 项原生检查，固定版两种场景均通过。专题 300/300，Flutter 1,974 项通过、2 项跳过。产品 4574b0c 的 CI 46075659983 四项和 Platform Availability 46075649662 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.361-diagnostic-empty-separator.md。
 - P05.360 / feat-412 完成。本地文件 URI 的行列和区间通过命令、点击、悬停提示及侧开定位。Windows 和 Linux 各通过 12 项原生检查，专题 177/177，Flutter 1,966 项通过、2 项跳过。产品 c368d40 的 CI 46070717736 四项及 Platform Availability 46070711541 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.360-file-link-location.md。
@@ -384,6 +385,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.360 本地文件链接行列与区间定位](docs/diagnostics/2026-11-28-p05/p05.360-file-link-location.md)。
 [P05.361 真实空行后的诊断详情占位](docs/diagnostics/2026-11-28-p05/p05.361-diagnostic-empty-separator.md)。
 [P05.362 相对文件 URI 源目录解析](docs/diagnostics/2026-11-28-p05/p05.362-relative-file-link.md)。
+[P05.363 同窗纵向锁定滚动位移](docs/diagnostics/2026-11-28-p05/p05.363-locked-scroll-origin.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -649,4 +651,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.362 收尾 CI。按 docs/03 检查 P05.52 依赖与固定版可见编辑器滚动锚点，优先验证 LAY-15 的同窗锁定滚动。继续核对 32 项范围及 CMD-12 归属。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.363 收尾 CI。按 docs/03 核对 LAY-15 的横向位移和同窗编辑视图，优先补依赖已满足的一项。继续记录 macOS 托管结果，实机暂缓。PR #3 保持草稿。

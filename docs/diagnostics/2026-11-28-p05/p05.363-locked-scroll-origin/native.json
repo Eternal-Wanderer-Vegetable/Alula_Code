@@ -1,0 +1,572 @@
+{
+  "product": "ea4aa75f2bb0e111f102b8c169f0e8c570a892a3",
+  "tree": "9b5e331e9bec0047972f37109b82c7a6ab7753ba",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "875b18d91a9d49fb795246e499ee3f5a5cec79447abf7e885f37fcdb21211177",
+  "sharedAcceptanceSha256": "fe6401da42c4ecd266eed599315f8ce7fffada8da698dbea5a8754ac3dce2248",
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+    "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803",
+    "scrollDisplacementLines": [
+      66,
+      127
+    ],
+    "splitPanesLines": [
+      130,
+      150
+    ]
+  },
+  "baseline": {
+    "path": "docs/baselines/2026-10-26/alula-w2-empty.json",
+    "sha256": "377c455d360c18043824dd1cdbacfc08b7582fcab2aae8cfc57903e2d59764a2",
+    "platform": "windows",
+    "stablePrivateBytes": 199073792,
+    "workload": "empty window"
+  },
+  "initialLinuxFixtureHit": {
+    "rawReportSha256": "76fcb35e839af2a1efaf9956ad74ee438a99526710b2f01843d6b8a0b37aea7d",
+    "wheelAtUnclippedCenter": true,
+    "reportedPaneOffsets": [
+      0,
+      0,
+      0
+    ]
+  },
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "948a5d5d89ca48c5fd473b2d7dac97e98897738f19d301ce5c7865331413efac",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "rawReportSha256": "e9ae88bef39bdf005fdbc5892508e173b7847df84780a6b304a4d96c6a5d6c6f",
+    "runnerSha256": "04ad17113d9722a54f53566c8232b9d65cf3af999ba9cdfe27b8061c19dc7d56",
+    "sourceSha256": {
+      "alpha.txt": "012e6724a1c6fcad52d81c1454fb6ab4a68ef9afc3f44512b5a1d2ce18fffb87",
+      "beta.txt": "9cfb67a07a3d7aafababc39e396c84661877669979b200ec6fae5137aeeeb70d"
+    },
+    "nativeChecks": [
+      "two-visible-text-panes-have-unequal-scroll-extents",
+      "editor-focused-for-isolated-native-shortcut",
+      "unlocked-wheel-seeds-distinct-positive-origins",
+      "toggle-preserves-both-current-scroll-origins",
+      "native-wheel-sends-source-displacement-to-unequal-target",
+      "either-group-can-drive-reverse-displacement",
+      "shorter-pane-clamps-while-original-anchors-stay-live",
+      "reverse-from-boundary-reuses-original-origins",
+      "same-document-group-focused-before-split",
+      "same-document-split-has-distinct-scroll-identities",
+      "wheel-syncs-both-same-document-peer-and-other-group",
+      "join-removes-one-view-and-rebases-remaining-panes",
+      "joined-view-still-sends-displacement-without-stale-panes",
+      "unlock-preserves-current-positions",
+      "unlocked-wheel-leaves-the-other-pane-at-its-current-position",
+      "source-bytes-and-original-documents-preserved"
+    ],
+    "coordinates": {
+      "unlocked-wheel-seeds-distinct-positive-origins": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 240.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "toggle-preserves-both-current-scroll-origins": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 240.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "native-wheel-sends-source-displacement-to-unequal-target": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 320.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "either-group-can-drive-reverse-displacement": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 240.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "shorter-pane-clamps-while-original-anchors-stay-live": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 2160.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 899.2,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "reverse-from-boundary-reuses-original-origins": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "same-document-split-has-distinct-scroll-identities": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 578131178,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "wheel-syncs-both-same-document-peer-and-other-group": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 578131178,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "join-removes-one-view-and-rebases-remaining-panes": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 80.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "joined-view-still-sends-displacement-without-stale-panes": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "unlock-preserves-current-positions": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "unlocked-wheel-leaves-the-other-pane-at-its-current-position": [
+        {
+          "doc": 10,
+          "controller": 611515436,
+          "pixels": 160.0,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 380603519,
+          "pixels": 240.0,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ]
+    },
+    "cleanExit": true,
+    "windowEnvironment": 120,
+    "memProbe": null
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "b88e8b40a56554b8d13a0ac8d5af185868c4e9af0304c5e4f04ec50d5b8bd195",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "c994a61416f9c964674f0da8cbda96771f7e88d653285d3c4d00b46d331752d1",
+    "runnerSha256": "613942539f66f37b4fc22bfa6163484ccf7b022795701c0ecd666e29d154259d",
+    "sourceSha256": {
+      "alpha.txt": "012e6724a1c6fcad52d81c1454fb6ab4a68ef9afc3f44512b5a1d2ce18fffb87",
+      "beta.txt": "9cfb67a07a3d7aafababc39e396c84661877669979b200ec6fae5137aeeeb70d"
+    },
+    "nativeChecks": [
+      "two-visible-text-panes-have-unequal-scroll-extents",
+      "editor-focused-for-isolated-native-shortcut",
+      "unlocked-wheel-seeds-distinct-positive-origins",
+      "toggle-preserves-both-current-scroll-origins",
+      "native-wheel-sends-source-displacement-to-unequal-target",
+      "either-group-can-drive-reverse-displacement",
+      "shorter-pane-clamps-while-original-anchors-stay-live",
+      "reverse-from-boundary-reuses-original-origins",
+      "same-document-group-focused-before-split",
+      "same-document-split-has-distinct-scroll-identities",
+      "wheel-syncs-both-same-document-peer-and-other-group",
+      "join-removes-one-view-and-rebases-remaining-panes",
+      "joined-view-still-sends-displacement-without-stale-panes",
+      "unlock-preserves-current-positions",
+      "unlocked-wheel-leaves-the-other-pane-at-its-current-position",
+      "source-bytes-and-original-documents-preserved"
+    ],
+    "coordinates": {
+      "unlocked-wheel-seeds-distinct-positive-origins": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 159.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "toggle-preserves-both-current-scroll-origins": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 159.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "native-wheel-sends-source-displacement-to-unequal-target": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 212.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "either-group-can-drive-reverse-displacement": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 159.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "shorter-pane-clamps-while-original-anchors-stay-live": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 1431.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 899.9999999999999,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "reverse-from-boundary-reuses-original-origins": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "same-document-split-has-distinct-scroll-identities": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 718926961,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 0.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "wheel-syncs-both-same-document-peer-and-other-group": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 718926961,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "join-removes-one-view-and-rebases-remaining-panes": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 53.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "joined-view-still-sends-displacement-without-stale-panes": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "unlock-preserves-current-positions": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "unlocked-wheel-leaves-the-other-pane-at-its-current-position": [
+        {
+          "doc": 10,
+          "controller": 868970007,
+          "pixels": 106.0,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 885361604,
+          "pixels": 159.0,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ]
+    },
+    "cleanExit": true,
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "memProbe": {
+      "before": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 28312,
+            "ppid": 28304,
+            "private": 255799296,
+            "pss": 281978880,
+            "working_set": 333582336
+          }
+        ],
+        "root_pid": 28312,
+        "total_private_bytes": 255799296,
+        "total_private_mib": 243.9,
+        "total_working_set_bytes": 333582336
+      },
+      "active": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 28312,
+            "ppid": 28304,
+            "private": 252035072,
+            "pss": 278223872,
+            "working_set": 329867264
+          }
+        ],
+        "root_pid": 28312,
+        "total_private_bytes": 252035072,
+        "total_private_mib": 240.4,
+        "total_working_set_bytes": 329867264
+      },
+      "after": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 28312,
+            "ppid": 28304,
+            "private": 248430592,
+            "pss": 274618368,
+            "working_set": 326262784
+          }
+        ],
+        "root_pid": 28312,
+        "total_private_bytes": 248430592,
+        "total_private_mib": 236.9,
+        "total_working_set_bytes": 326262784
+      }
+    }
+  }
+}

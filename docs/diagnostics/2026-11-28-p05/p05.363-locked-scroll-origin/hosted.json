@@ -1,0 +1,233 @@
+{
+  "product": "ea4aa75f2bb0e111f102b8c169f0e8c570a892a3",
+  "tree": "9b5e331e9bec0047972f37109b82c7a6ab7753ba",
+  "ci": {
+    "id": 46081981014,
+    "sha": "ea4aa75f2bb0e111f102b8c169f0e8c570a892a3",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46081981014",
+    "jobs": [
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140782798613,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140782798946,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140782798954,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140782799027,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46081976626,
+    "sha": "ea4aa75f2bb0e111f102b8c169f0e8c570a892a3",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46081976626",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140782784967,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140782785037,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140782785141,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46080099147,
+    "sha": "7cf70eee53cbcdeafe7cef27ef025ce1911f34ff",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46080099147",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140776833282,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140776833505,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140776833532,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140776833596,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46078674329,
+    "sha": "e61899c58bd9cc1a241654a63f36773ec34d2d71",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46078674329",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140772296482,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140772296728,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140772296791,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 10,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "_attachScrollSyncListener": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._attachScrollSyncListener#1",
+        "name": "_attachScrollSyncListener",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "d36eaaf49abb45a79bdc88dafc4af35cce244c1b754cda4df7befab834f020e2"
+    },
+    "_buildEditor": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildEditor#2",
+        "name": "_buildEditor",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "receiptSha256": "4e561fafa849a7a7375a1eb43fba97f385b2894e15982a2c2fc9e6554f3c8759"
+    },
+    "_ensureScrollSyncListeners": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._ensureScrollSyncListeners#0",
+        "name": "_ensureScrollSyncListeners",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "receiptSha256": "d2e4914a68710a5df4c67832295b4ca3136529d7089deaf1c254ed2999cbbdcc"
+    },
+    "_onLockedScroll": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onLockedScroll#2",
+        "name": "_onLockedScroll",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "1b80662622174c47e31420be864fde5b7da737ae4cbf27dda3b45d2a8969e1a4"
+    },
+    "_toggleLockedScrolling": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._toggleLockedScrolling#0",
+        "name": "_toggleLockedScrolling",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "521a55d1bb6a4af7ae68ea0b4fc9b9792267792136f4d5efee4df443b4a35745"
+    },
+    "main": {
+      "target": {
+        "id": "Function:app/test/locked_scrolling_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/locked_scrolling_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "4799a61128f7c289a3507f7ffd26f84af135e1406a216683d6534065eda35419"
+    }
+  }
+}
