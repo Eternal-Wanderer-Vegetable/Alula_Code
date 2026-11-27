@@ -54,14 +54,20 @@ void _expectConflictSlicesMatchResult(AlulaMergeProjection projection) {
 }
 
 void main() {
-  test('Dart ABI guard accepts v46 and rejects older versions', () {
-    AlulaCore.validateAbiVersion(46);
-    expect(() => AlulaCore.validateAbiVersion(45), throwsStateError);
-    expect(() => AlulaCore.validateAbiVersion(44), throwsStateError);
-    expect(() => AlulaCore.validateAbiVersion(43), throwsStateError);
-    expect(() => AlulaCore.validateAbiVersion(42), throwsStateError);
-    expect(() => AlulaCore.validateAbiVersion(41), throwsStateError);
-    expect(() => AlulaCore.validateAbiVersion(40), throwsStateError);
+  test('Dart ABI guard accepts only the current version', () {
+    AlulaCore.validateAbiVersion(expectedAbiVersion);
+    for (final incompatible in [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      expectedAbiVersion - 1,
+      expectedAbiVersion + 1,
+    ]) {
+      expect(() => AlulaCore.validateAbiVersion(incompatible), throwsStateError);
+    }
   });
 
   test('real FFI projection reports unresolved and accepted conflicts', () {

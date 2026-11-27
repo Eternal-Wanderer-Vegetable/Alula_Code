@@ -50,6 +50,51 @@ fn trace(path: &PathBuf, value: &str) {
     file.flush().expect("flush trace file");
 }
 
+fn publish_unopened_diagnostics(message: &Value) {
+    let uri = message["params"]["textDocument"]["uri"]
+        .as_str()
+        .expect("test document URI");
+    let (parent, _) = uri.rsplit_once('/').expect("file URI with parent");
+    let marker = |severity, line, start, end, message: &str| {
+        json!({
+            "severity": severity,
+            "range": {
+                "start": { "line": line, "character": start },
+                "end": { "line": line, "character": end },
+            },
+            "source": "fixture",
+            "code": 30,
+            "message": message,
+        })
+    };
+    for (uri, diagnostics) in [
+        (uri.to_owned(), vec![marker(1, 0, 0, 1, "open file")]),
+        (
+            format!("{parent}/a_unopened.rs"),
+            vec![marker(1, 2, 5, 9, "😀 earlier marker")],
+        ),
+        (
+            format!("{parent}/z_unopened.rs"),
+            vec![
+                marker(2, 0, 0, 1, "warning after errors"),
+                marker(1, 0, 9, 4, "invalid reversed range"),
+                marker(4, 0, 0, 1, "hint"),
+                marker(1, 1, 3, 9, "😀 later marker"),
+            ],
+        ),
+        (
+            "untitled:in-memory".to_owned(),
+            vec![marker(1, 0, 0, 1, "non-file marker")],
+        ),
+    ] {
+        send(json!({
+            "jsonrpc": "2.0",
+            "method": "textDocument/publishDiagnostics",
+            "params": { "uri": uri, "diagnostics": diagnostics },
+        }));
+    }
+}
+
 fn main() {
     let mut args = std::env::args_os().skip(1);
     let trace_path = PathBuf::from(args.next().expect("trace path argument"));
@@ -62,6 +107,8 @@ fn main() {
     let provide_symbol_locations =
         option.as_deref() != Some(std::ffi::OsStr::new("no-symbol-locations"));
     let provide_hierarchy = option.as_deref() == Some(std::ffi::OsStr::new("hierarchy"));
+    let provide_unopened_diagnostics =
+        option.as_deref() == Some(std::ffi::OsStr::new("unopened-diagnostics"));
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     let pending_completions = Arc::new((Mutex::new(HashSet::<i64>::new()), Condvar::new()));
@@ -112,6 +159,10 @@ fn main() {
                         }
                     }},
                 }));
+            }
+            "textDocument/didOpen" if provide_unopened_diagnostics => {
+                trace(&trace_path, method);
+                publish_unopened_diagnostics(&message);
             }
             "textDocument/didOpen" | "textDocument/didChange" | "textDocument/didClose" => {
                 trace(&trace_path, method)

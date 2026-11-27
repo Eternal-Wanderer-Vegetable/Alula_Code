@@ -42,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 46;
+pub const ALULA_ABI_VERSION: u32 = 47;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -2523,6 +2523,50 @@ pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_diagnostics")))
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UnopenedDiagnosticQuery {
+    cursor_uri: Option<String>,
+    open_uris: Vec<String>,
+    forward: bool,
+}
+
+/// Return one unopened file candidate from the language server attached to id.
+///
+/// # Safety
+/// query_json must point to a valid NUL-terminated UTF-8 string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_next_unopened_diagnostic(
+    id: u64,
+    query_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let input = match read_c_str(query_json) {
+            Ok(input) => input,
+            Err(error) => return error,
+        };
+        let query: UnopenedDiagnosticQuery = match serde_json::from_str(input) {
+            Ok(query) => query,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return err_json("NoLsp", json!({ "id": id }));
+        };
+        let candidate = server.next_unopened_diagnostic(
+            query.cursor_uri.as_deref(),
+            &query.open_uris,
+            query.forward,
+        );
+        to_c_ptr(json!({ "ok": true, "candidate": candidate }).to_string())
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_lsp_next_unopened_diagnostic"),
+        )
+    })
+}
+
 /// Start one cancellable full semantic-token request for a Rust document.
 #[no_mangle]
 pub extern "C" fn alula_semantic_tokens_start(id: u64, timeout_ms: u64) -> *mut c_char {
@@ -3719,7 +3763,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 46);
+        assert_eq!(alula_abi_version(), 47);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

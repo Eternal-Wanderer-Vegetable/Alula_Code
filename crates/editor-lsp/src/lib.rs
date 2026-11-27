@@ -18,7 +18,9 @@ use std::time::{Duration, Instant};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
 use serde::{Deserialize, Serialize};
 
+mod diagnostic_navigation;
 mod hierarchy;
+pub use diagnostic_navigation::WorkspaceDiagnosticCandidate;
 pub use hierarchy::{
     extract_hierarchy_entries, HierarchyDirection, HierarchyEntry, HierarchyKind,
     HierarchyPosition, HierarchyRange,

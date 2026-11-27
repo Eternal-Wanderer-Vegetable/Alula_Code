@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 46;
+const int expectedAbiVersion = 47;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -1016,6 +1016,31 @@ class AlulaLsp {
         jsonDecode(_core._ffi.diagnosticsJson(id)) as Map<String, Object?>;
     if (r['ok'] != true) return const [];
     return (r['items'] as List).cast<Map<String, Object?>>();
+  }
+
+  /// Return one directional candidate from the live workspace diagnostics.
+  /// Its provider version can be absent until the file is opened.
+  ({String uri, bool wrapped, Map<String, Object?> diagnostic})?
+      nextUnopenedDiagnostic(
+    int id, {
+    required String? cursorUri,
+    required Iterable<String> openUris,
+    bool forward = true,
+  }) {
+    final raw = _core._ffi.lspNextUnopenedDiagnosticJson(id, jsonEncode({
+      'cursorUri': cursorUri,
+      'openUris': openUris.toList(growable: false),
+      'forward': forward,
+    }));
+    _check(raw);
+    final result = jsonDecode(raw) as Map<String, Object?>;
+    final candidate = result['candidate'] as Map<String, Object?>?;
+    if (candidate == null) return null;
+    return (
+      uri: candidate['uri'] as String,
+      wrapped: candidate['wrapped'] as bool,
+      diagnostic: candidate['diagnostic'] as Map<String, Object?>,
+    );
   }
 
   /// Asynchronously request versioned LSP semantic tokens; unsupported servers return null.

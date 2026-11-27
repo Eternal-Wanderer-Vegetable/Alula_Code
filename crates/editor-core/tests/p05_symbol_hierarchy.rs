@@ -63,7 +63,7 @@ fn expand(doc: u64, version: u64, direction: u8, item: &Value) -> Value {
 
 #[test]
 fn hierarchy_routes_and_cancels_versioned_provider_operations() {
-    assert_eq!(ffi::alula_abi_version(), 46);
+    assert_eq!(ffi::alula_abi_version(), 47);
     let suff = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
