@@ -8,6 +8,7 @@ Last Updated: 2026-11-27
 
 ## Current State
 
+- P05.345 / feat-397 完成。Problems 可按规范 URI 显示未打开文件的诊断，当前页有界，路径与活动文件筛选继续生效。Windows 与 Linux 各通过 12 项原生检查，Linux 另通过 131 条实际诊断的 7 项分页检查。专题 186/186，Flutter 1,921 项通过、2 项跳过。产品 49bcbcce 的 CI 45996017353 四项与 Platform Availability 45996008641 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.345-problems-unopened-list.md。
 - P05.344 / feat-396 完成。Problems 诊断行和文件分组使用规范文件 URI，路径筛选按原路径匹配。Windows 与 Linux 各通过 11 项真实 rust-analyzer 检查，复现同名同内容资源分组、筛选及范围定位。专题 186/186，Flutter 1,921 项通过、2 项跳过。产品 eb80f248 的 CI 45989592318 四项与 Platform Availability 45989581903 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.344-problems-resource-identity.md。
 - P05.343 / feat-395 完成。状态栏和 Problems 标签徽标包含未打开文件的错误、警告和信息。Windows 与 Linux 各通过 13 项真实 rust-analyzer 检查。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 e58e7661 的 CI 45985332395 四项与 Platform Availability 45985324428 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.343-problems-workspace-summary.md。
 - P05.342 / feat-394 完成。ABI 49 提供未打开文件诊断的分级计数、有界页和快照游标。Windows 与 Linux 真实 rust-analyzer 验证了同名文件 URI、跨页范围、重复查询与游标失效。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 ece7066f 的 CI 45981177371 四项与 Platform Availability 45981171695 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.342-problems-snapshot-transport.md。
@@ -362,6 +363,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.345 Problems 未打开文件诊断列表](docs/diagnostics/2026-11-27-p05/p05.345-problems-unopened-list.md)。
 [P05.344 Problems 诊断资源 URI 标识](docs/diagnostics/2026-11-27-p05/p05.344-problems-resource-identity.md)。
 [P05.343 Problems 未打开文件诊断统计](docs/diagnostics/2026-11-27-p05/p05.343-problems-workspace-summary.md)。
 [P05.342 未打开文件诊断分页快照传输](docs/diagnostics/2026-11-27-p05/p05.342-problems-snapshot-transport.md)。
@@ -613,4 +615,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.344 收尾 CI。按 docs/03 将未打开文件的有界诊断页接入 Problems 列表。保留最后一个编辑器关闭后的更新和诊断详情空行占位复验。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.345 收尾 CI。按 docs/03 处理从 Problems 行打开未打开文件与等待当前版本范围。保留最后一个编辑器关闭后的更新和诊断详情空行占位复验。PR #3 保持草稿，macOS 实机暂缓。

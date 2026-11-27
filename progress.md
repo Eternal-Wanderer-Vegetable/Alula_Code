@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-27 更新）
 
+- P05.345 / feat-397 完成。Problems 可按规范 URI 显示未打开文件的诊断，当前页有界，路径与活动文件筛选继续生效。Windows 与 Linux 各通过 12 项原生检查，Linux 另通过 131 条实际诊断的 7 项分页检查。专题 186/186，Flutter 1,921 项通过、2 项跳过。产品 49bcbcce 的 CI 45996017353 四项与 Platform Availability 45996008641 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.345-problems-unopened-list.md。
 - P05.344 / feat-396 完成。Problems 诊断行和文件分组使用规范文件 URI，路径筛选按原路径匹配。Windows 与 Linux 各通过 11 项真实 rust-analyzer 检查，复现同名同内容资源分组、筛选及范围定位。专题 186/186，Flutter 1,921 项通过、2 项跳过。产品 eb80f248 的 CI 45989592318 四项与 Platform Availability 45989581903 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.344-problems-resource-identity.md。
 - P05.343 / feat-395 完成。状态栏和 Problems 标签徽标包含未打开文件的错误、警告和信息。Windows 与 Linux 各通过 13 项真实 rust-analyzer 检查。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 e58e7661 的 CI 45985332395 四项与 Platform Availability 45985324428 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.343-problems-workspace-summary.md。
 - P05.342 / feat-394 完成。ABI 49 提供未打开文件诊断的分级计数、有界页和快照游标。Windows 与 Linux 真实 rust-analyzer 验证了同名文件 URI、跨页范围、重复查询与游标失效。专题 185/185，Flutter 1,920 项通过、2 项跳过。产品 ece7066f 的 CI 45981177371 四项与 Platform Availability 45981171695 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-27-p05/p05.342-problems-snapshot-transport.md。
@@ -122,7 +123,7 @@
 
 - P05.244 / feat-296 完成。F12 多定义与显式 Peek 显示真实候选和只读范围。Windows 实机和 Linux 原生各 13 个观测点，专项 118/118，Flutter 1,840 passed / 2 skipped。产品 ba92c359 的 CI 45218901382 四项及 Platform Availability 45218889524 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.244-definition-peek.md。
 
-- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。将未打开文件的有界诊断页接入 Problems 列表，验证路径筛选与分页更新。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
+- 下一步。继续核对 CMD-11 中间空行及最后换行之前一行的占位坐标。接入 Problems 未打开文件诊断行的同组打开、预览及当前版本范围。通用面板切换的状态栏同步留在布局项。520 像素整窗的标题栏溢出留在布局项。面板被快捷键隐藏后未重新获得工作台键盘焦点时，Ctrl+Shift+M 的重开路径留待布局核对。
 
 - P05.243 / feat-295 完成。ABI 42 保留 Location 与 LocationLink 定义候选及 UTF-16 标识符范围，维持首项入口。Windows 和 Linux 原生 rust-analyzer 均解析到相同跨文件范围及宏的两条目标。本地专项 46/46，Windows 专项 47/47，Flutter 全量 1,837 passed / 2 skipped。产品 623f42d7 的 CI 45210891857 四项及 Platform Availability 45210880747 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-24-p05/p05.243-definition-targets.md。
 
