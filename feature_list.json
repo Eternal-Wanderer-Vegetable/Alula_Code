@@ -4785,8 +4785,8 @@
       "dependencies": [
         "feat-376"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "Problems 清除按钮、筛选焦点下的 Escape 及用户键位使用同一固定版命令，筛选选项和结果区 Escape 行为保留。筛选焦点下的 Escape 优先于未聚焦的 toast。Windows 与 Linux 各通过 73 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 eef024d5 的 CI 45915427698 四项与 Platform Availability 45915422265 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.325-problems-clear-filter-text.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
