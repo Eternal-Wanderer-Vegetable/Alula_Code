@@ -825,9 +825,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   ({EditorGroup group, _SharedOpenDocState document})? _lastMruEditor;
   bool _recentEditorPickerOpen = false;
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
-  final Map<int,
-      ({EditorGroup group, OpenDoc view, int offset, Offset position})>
-      _pendingDefinitionPointers = {};
+  final Map<
+    int,
+    ({
+      EditorGroup group,
+      OpenDoc view,
+      int offset,
+      Offset position,
+      int? fileLinkVersion,
+    })
+  >
+  _pendingDefinitionPointers = {};
   final _definitionPeekFocus = LocationPeekFocus(manageWindowInput: true);
   final _definitionPeekBodyKey = GlobalKey();
   late PeekLayout _definitionPeekLayout = widget.layoutStore.loadPeekLayout();
@@ -23172,21 +23180,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (caret < 0) return;
     final link = source.doc.fileLinkAt(caret);
     if (link == null || link.version != source.doc.version) return;
+    final path = _localFileLinkPath(link);
+    if (path != null) await _openEditorFileLink(path);
+  }
+
+  String? _localFileLinkPath(DocumentFileLink link) {
     final uri = Uri.tryParse(link.uri);
     if (uri == null ||
         !uri.hasAuthority ||
         uri.authority.isNotEmpty ||
         !uri.path.startsWith('/') ||
         uri.path.startsWith('//')) {
-      return;
+      return null;
     }
     final path = _pathFromFileUri(link.uri);
     if (path == null ||
         path.contains('\u0000') ||
         FileSystemEntity.typeSync(path) != FileSystemEntityType.file) {
-      return;
+      return null;
     }
-    await _openFileByPath(path);
+    return path;
+  }
+
+  Future<void> _openEditorFileLink(String path, {EditorGroup? beside}) async {
+    await _openFileByPath(
+      path,
+      targetForOpen: beside == null
+          ? null
+          : (existing) => _quickAccessSideGroup(beside, existing),
+    );
     if (!mounted) return;
     final target = _active;
     final targetPath = target?.path;
@@ -23213,7 +23235,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Platform.isWindows ? a.toLowerCase() == b.toLowerCase() : a == b;
   }
 
-  /// Ctrl+Click 跳转定义：从点击的全局坐标求字符偏移。
+  /// Capture the document position for a link click or definition lookup.
   void _onEditorPointerDown(
     EditorGroup group,
     OpenDoc view,
@@ -23273,19 +23295,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (editable == null) return;
     final pos = editable.getPositionForPoint(event.position);
     final active = view;
-    final localOffset =
-        pos.offset.clamp(0, active.editingValue.text.length).toInt();
+    final localOffset = pos.offset
+        .clamp(0, active.editingValue.text.length)
+        .toInt();
     final offset = active.inputWindow.startUtf16 + localOffset;
     if (alt && !gotoModifier) return;
+    final linkModifier = defaultTargetPlatform == TargetPlatform.macOS
+        ? meta
+        : control;
     _pendingDefinitionPointers[event.pointer] = (
       group: group,
       view: active,
       offset: offset,
       position: event.position,
+      fileLinkVersion:
+          event.kind == PointerDeviceKind.mouse &&
+              linkModifier &&
+              !shift &&
+              !active.inputWindow.hasComposition
+          ? active.doc.version
+          : null,
     );
   }
 
-  /// Apply Ctrl/Cmd+Click after EditableText has processed pointer-up selection.
+  /// Follow the link or look up the definition after the editor handles the tap.
   void _onEditorPointerUp(PointerUpEvent event) {
     _pendingColumnSelectionStarts.remove(event.pointer);
     final pending = _pendingDefinitionPointers.remove(event.pointer);
@@ -23293,8 +23326,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (event.position - pending.position).distance > kTouchSlop) {
       return;
     }
+    final openBeside = HardwareKeyboard.instance.isAltPressed;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !identical(_active, pending.view)) return;
+      if (pending.fileLinkVersion == pending.view.doc.version) {
+        final path = _fileLinkPathAtPointer(
+          pending.view,
+          pending.offset,
+          pending.position,
+          event.position,
+        );
+        if (path != null) {
+          unawaited(
+            _openEditorFileLink(
+              path,
+              beside: openBeside ? pending.group : null,
+            ),
+          );
+          return;
+        }
+      }
       _focusedRegion = pending.group.region;
       _setDocSelection(
         pending.view,
@@ -23302,6 +23353,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
       _runCommand('editor.gotoDef');
     });
+    // A tap on the current caret may leave the editor without a pending frame.
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  String? _fileLinkPathAtPointer(
+    OpenDoc view,
+    int offset,
+    Offset down,
+    Offset up,
+  ) {
+    final window = view.inputWindow;
+    if (window.version != view.doc.version || window.hasComposition) {
+      return null;
+    }
+    final link = view.doc.fileLinkAt(offset);
+    if (link == null || link.version != view.doc.version) return null;
+    final field = view.inputFieldKey.currentState;
+    final editable = field == null ? null : _findRenderEditable(field.context);
+    if (editable == null || !editable.attached) return null;
+    final boxes = editable.getBoxesForSelection(
+      TextSelection(
+        baseOffset: (link.startUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+        extentOffset: (link.endUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+      ),
+    );
+    bool hitsLink(Offset point) {
+      final local = editable.globalToLocal(point);
+      return boxes.any((box) => box.toRect().contains(local));
+    }
+
+    if (!hitsLink(down) || !hitsLink(up)) return null;
+    return _localFileLinkPath(link);
   }
 
   void _onEditorPointerCancel(PointerCancelEvent event) {

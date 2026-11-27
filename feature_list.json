@@ -5169,6 +5169,19 @@
       "evidence": "打开链接命令识别光标下的本地 file URI，目标编辑器接收键盘焦点。Windows 与 Linux 各通过 8 项原生检查，专题 131/131，Flutter 1,956 项通过、2 项跳过。产品 e8dad314 的 CI 46054693322 四项和 Platform Availability 46054687988 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-409",
+      "name": "P05.357 CMD-12 本地链接修饰键点击与侧开",
+      "description": "默认 Ctrl/Cmd 点击本地 URI 在编辑器打开。附加 Alt 打开右侧编辑器组，保留普通文本与定义跳转路径。",
+      "dependencies": [
+        "feat-408",
+        "feat-263"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版默认修饰键、实际链接命中、同组与侧开、Windows/Linux 原生及托管验证待登记。macOS 实机暂缓。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
