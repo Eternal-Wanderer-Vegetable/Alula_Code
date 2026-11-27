@@ -205,6 +205,8 @@ const int _editorInputWindowUtf16 = 16384;
 
 typedef _LocalFileLinkTarget = ({String path, String fragment});
 
+final _relativeFileLinkPrefix = RegExp(r'^file:///{0,2}(?:\.|%2[eE])/');
+final _fileLinkUriQualifier = RegExp(r'[?#]');
 final _fileLinkSelectionFragment = RegExp(
   r'^L?([0-9]+)(?:,([0-9]+))?(?:-L?([0-9]+)(?:,([0-9]+))?)?',
 );
@@ -23199,26 +23201,54 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (caret < 0) return;
     final link = source.doc.fileLinkAt(caret);
     if (link == null || link.version != source.doc.version) return;
-    final target = _localFileLinkPath(link);
+    final target = _localFileLinkPath(source, link);
     if (target != null) await _openEditorFileLink(target);
   }
 
-  _LocalFileLinkTarget? _localFileLinkPath(DocumentFileLink link) {
+  _LocalFileLinkTarget? _localFileLinkPath(
+    OpenDoc source,
+    DocumentFileLink link,
+  ) {
     final uri = Uri.tryParse(link.uri);
-    if (uri == null ||
-        !uri.hasAuthority ||
-        uri.authority.isNotEmpty ||
-        !uri.path.startsWith('/') ||
-        uri.path.startsWith('//')) {
-      return null;
+    if (uri == null || uri.scheme != 'file') return null;
+
+    // Inspect the original token because Uri.parse normalizes dot segments.
+    final raw = Platform.isWindows ? link.uri.replaceAll('\\', '/') : link.uri;
+    final relative = _relativeFileLinkPrefix.firstMatch(raw);
+    final String? path;
+    final String fragment;
+    if (relative != null) {
+      final sourcePath = source.path;
+      if (sourcePath == null) return null;
+      final end = raw.indexOf(_fileLinkUriQualifier, relative.end);
+      final String suffix;
+      try {
+        suffix = Uri.decodeComponent(
+          raw.substring(relative.end, end < 0 ? raw.length : end),
+        );
+      } on FormatException {
+        return null;
+      }
+      if (suffix.isEmpty) return null;
+      path = p.normalize(p.join(p.dirname(sourcePath), './$suffix'));
+      // Resolving relative links against the source replaces URI qualifiers.
+      fragment = '';
+    } else {
+      if (!uri.hasAuthority ||
+          uri.authority.isNotEmpty ||
+          !uri.path.startsWith('/') ||
+          uri.path.startsWith('//')) {
+        return null;
+      }
+      path = _pathFromFileUri(uri.removeFragment().toString());
+      fragment = uri.fragment;
     }
-    final path = _pathFromFileUri(uri.removeFragment().toString());
     if (path == null ||
         path.contains('\u0000') ||
         FileSystemEntity.typeSync(path) != FileSystemEntityType.file) {
       return null;
     }
-    return (path: path, fragment: uri.fragment);
+    return (path: path, fragment: fragment);
   }
 
   Future<void> _openEditorFileLink(
@@ -23432,7 +23462,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       down,
       release: up,
     );
-    return link == null ? null : _localFileLinkPath(link);
+    return link == null ? null : _localFileLinkPath(view, link);
   }
 
   void _onEditorPointerCancel(PointerCancelEvent event) {
@@ -29764,10 +29794,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
                                 canHoverFileLink: (link) =>
-                                    _localFileLinkPath(link) != null,
+                                    _localFileLinkPath(active, link) != null,
                                 onOpenFileLink: (link) {
                                   if (!mounted || _disposing) return;
-                                  final target = _localFileLinkPath(link);
+                                  final target = _localFileLinkPath(active, link);
                                   if (target == null) return;
                                   _activateSplitEditorView(g, active);
                                   if (identical(_active, active)) {
