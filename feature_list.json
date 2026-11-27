@@ -5089,6 +5089,18 @@
       "evidence": "中间空行后紧接空格或 Tab 缩进的代码时，详情占据行间空间，空行光标与后续代码位置可复验。Windows 与 Linux 各通过 20 项原生检查及固定版对照。专题 280/280，Flutter 1,937 项通过、2 项跳过。产品 23d5debd 的 CI 46021124849 四项与 Platform Availability 46021117030 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.350-diagnostic-interior-blank.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-403",
+      "name": "P05.351 CMD-11 中间空行后紧接非缩进代码的诊断详情",
+      "description": "中间空行后的首个可视代码行包含可用空格或 Tab 时，在空行与代码之间显示诊断详情，保留真实换行和光标位置。",
+      "dependencies": [
+        "feat-402"
+      ],
+      "status": "in-progress",
+      "evidence": "等待完整本地、两端原生与托管验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

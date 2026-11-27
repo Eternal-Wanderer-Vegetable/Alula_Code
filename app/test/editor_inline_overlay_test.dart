@@ -11,14 +11,28 @@ void main() {
     for (final wordWrap in [true, false]) {
       for (final indent in ['    ', '\t']) {
         final indentation = indent == '\t' ? 'tab' : 'spaces';
-        final anchorKinds = ValueVariant<bool>({false, true});
+        final anchorKinds = ValueVariant<String>({
+          'code',
+          'blank before indent',
+          'blank before code',
+          if (wordWrap) 'blank before wrapped whitespace',
+        });
         testWidgets(
             'inline overlay keeps code and gutter positions together in $encoding with $indentation (wrap: $wordWrap)',
             (tester) async {
-          final blankAnchor = anchorKinds.currentValue!;
+          final variant = anchorKinds.currentValue!;
+          final blankAnchor = variant != 'code';
+          final narrow = variant == 'blank before wrapped whitespace';
+          final prefix = switch (variant) {
+            'blank before code' => '🐙first',
+            'blank before wrapped whitespace' =>
+              'long_prefix_that_wraps_without_space',
+            _ => '',
+          };
+          final nextLine = '$prefix${indent}second row';
           final core = AlulaCore.load();
           final source = '\ufeff// 🦊 first$eol'
-              '${blankAnchor ? eol : ''}${indent}second row$eol'
+              '${blankAnchor ? eol : ''}$nextLine$eol'
               'third row$eol';
           final anchor = blankAnchor ? source.indexOf(eol) + eol.length : 5;
           final doc = core.openDoc(9756, source);
@@ -36,7 +50,7 @@ void main() {
             await tester.pumpWidget(MaterialApp(
               home: Scaffold(
                 body: SizedBox(
-                  width: 480,
+                  width: narrow ? 136 : 480,
                   height: 350,
                   child: RustTextInputField(
                     inputWindow: window,
@@ -57,7 +71,7 @@ void main() {
           final offsets = [
             0,
             anchor,
-            source.indexOf('${indent}second row'),
+            source.indexOf(nextLine),
             source.indexOf('second row'),
             source.indexOf('third row'),
           ];
@@ -127,10 +141,18 @@ void main() {
             final inlineGutter = gutterTops();
             final slot =
                 find.byKey(const ValueKey('rust-editor-inline-overlay'));
+            if (narrow) {
+              expect(slot, findsNothing);
+              expect(after, before);
+              expect(inlineGutter, initialGutter);
+              expect(caretHits(), initialHits);
+              return;
+            }
             expect(slot, findsOneWidget);
             expect(after.first.top, closeTo(before.first.top, 1));
             if (blankAnchor) {
               expect(after[1], before[1]);
+              expect(after[2].left, closeTo(before[2].left, 0.5));
               expect(caretHits(), initialHits);
             }
             expect(after[2].top - before[2].top, greaterThan(100));

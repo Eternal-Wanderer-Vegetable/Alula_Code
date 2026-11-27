@@ -161,7 +161,7 @@ class _SyntaxTextEditingController extends TextEditingController {
             : null;
     final boundaries = <int>{0, text.length};
     final gapOffset = gap?.layout.spanOffset;
-    final indentOffset = gap == null || gap.layout.leadingIndent != null
+    final indentOffset = gap == null || gap.layout.followingWhitespace != null
         ? null
         : gap.layout.lineBreak + 1;
     final nextCharacter = indentOffset == null ? null : text[indentOffset];
@@ -247,7 +247,8 @@ class _SyntaxTextEditingController extends TextEditingController {
   }
 }
 
-typedef _EditorGapIndent = ({
+typedef _EditorGapWhitespace = ({
+  int offset,
   String character,
   double width,
   double ascent,
@@ -261,12 +262,12 @@ typedef _EditorInlineGapLayout = ({
   Size size,
   double scale,
   TextStyle? tabStyle,
-  _EditorGapIndent? leadingIndent,
+  _EditorGapWhitespace? followingWhitespace,
 });
 
 /// Reserves room for the overlay while preserving the input and UTF-16
-/// indexing. An indented line after an empty row can carry the gap in its
-/// existing whitespace, so the empty row keeps its actual line break.
+/// indexing. An existing space or tab on the first visual line after an
+/// empty row can carry the gap while keeping the actual line break.
 class _EditorInlineGapSpan extends WidgetSpan {
   _EditorInlineGapSpan({
     required this.size,
@@ -1919,7 +1920,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         } else {
           final top =
               overlayObject.globalToLocal(editable.localToGlobal(slot.topLeft));
-          inlineRect = gap?.leadingIndent == null
+          inlineRect = gap?.followingWhitespace == null
               ? Rect.fromPoints(
                   top,
                   overlayObject.globalToLocal(
@@ -2323,48 +2324,48 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final height = _inlineOverlayHeight(viewportHeight, textStyle, scale);
     if (height == null) return null;
     final nextLine = lineBreak + 1;
-    _EditorGapIndent? leadingIndent;
+    var spanOffset = lineBreak;
+    _EditorGapWhitespace? followingWhitespace;
     if (text.substring(lineStart, lineBreak).trim().isEmpty) {
-      if (folds.collapsedRanges.any((range) =>
-          range.hiddenStartUtf16 <= nextLine &&
-          nextLine < range.hiddenEndUtf16)) {
-        return null;
-      }
       final nextBreak = text.indexOf('\n', nextLine);
-      leadingIndent = _measureGapIndent(
+      final candidate = _measureGapWhitespace(
         text.substring(nextLine, nextBreak < 0 ? text.length : nextBreak),
         width: width,
         scale: scale,
         style: textStyle,
         textDirection: textDirection,
       );
-      if (leadingIndent == null) return null;
+      if (candidate == null) return null;
+      spanOffset = nextLine + candidate.offset;
+      if (folds.collapsedRanges.any((range) =>
+          range.hiddenStartUtf16 <= spanOffset &&
+          nextLine < range.hiddenEndUtf16)) {
+        return null;
+      }
+      followingWhitespace = candidate;
     }
     return (
       text: text,
       lineBreak: lineBreak,
-      spanOffset: leadingIndent == null ? lineBreak : nextLine,
+      spanOffset: spanOffset,
       size: Size(width, height),
       scale: scale,
-      tabStyle: leadingIndent == null && text.codeUnitAt(nextLine) == 0x09
+      tabStyle: followingWhitespace == null && text.codeUnitAt(nextLine) == 0x09
           ? textStyle
           : null,
-      leadingIndent: leadingIndent,
+      followingWhitespace: followingWhitespace,
     );
   }
 
-  _EditorGapIndent? _measureGapIndent(
+  _EditorGapWhitespace? _measureGapWhitespace(
     String line, {
     required double width,
     required double scale,
     required TextStyle style,
     required TextDirection textDirection,
   }) {
-    if (line.isEmpty ||
-        (line[0] != ' ' && line[0] != '\t') ||
-        line.trim().isEmpty) {
-      return null;
-    }
+    final offset = line.indexOf(RegExp(r'[ \t]'));
+    if (offset < 0 || line.trim().isEmpty) return null;
     final painter = TextPainter(
       text: TextSpan(text: line, style: style),
       textDirection: textDirection,
@@ -2375,14 +2376,19 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     try {
       final metrics = painter.computeLineMetrics().firstOrNull;
       if (metrics == null) return null;
-      final start =
+      final first =
           painter.getOffsetForCaret(const TextPosition(offset: 0), Rect.zero);
+      final start =
+          painter.getOffsetForCaret(TextPosition(offset: offset), Rect.zero);
       final end =
-          painter.getOffsetForCaret(const TextPosition(offset: 1), Rect.zero);
+          painter.getOffsetForCaret(TextPosition(offset: offset + 1), Rect.zero);
       final advance = end.dx - start.dx;
-      if (start.dy != end.dy || advance <= 0) return null;
+      if (start.dy != first.dy || start.dy != end.dy || advance <= 0) {
+        return null;
+      }
       return (
-        character: line[0],
+        offset: offset,
+        character: line[offset],
         width: advance,
         ascent: metrics.ascent,
         height: metrics.height,
@@ -2565,24 +2571,23 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     textDirection: textDirection,
                   );
                   if (_controller.inlineGap?.layout != gap) {
-                    final leadingIndent = gap?.leadingIndent;
+                    final whitespace = gap?.followingWhitespace;
                     _controller.inlineGap = gap == null
                         ? null
                         : (
                             layout: gap,
                             span: _EditorInlineGapSpan(
-                              size: leadingIndent == null
+                              size: whitespace == null
                                   ? gap.size
                                   : Size(
-                                      leadingIndent.width,
-                                      leadingIndent.height + gap.size.height,
+                                      whitespace.width,
+                                      whitespace.height + gap.size.height,
                                     ),
                               scale: gap.scale,
-                              sourceCharacter:
-                                  leadingIndent?.character ?? '\n',
-                              baselineOffset: leadingIndent == null
+                              sourceCharacter: whitespace?.character ?? '\n',
+                              baselineOffset: whitespace == null
                                   ? null
-                                  : leadingIndent.ascent + gap.size.height,
+                                  : whitespace.ascent + gap.size.height,
                             ),
                             tabLetterSpacing: gap.tabStyle == null
                                 ? null
