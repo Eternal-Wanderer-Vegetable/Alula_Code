@@ -5,13 +5,55 @@ import 'package:flutter/material.dart';
 
 enum WbSyncState { idle, synced, mismatch, error }
 
+class ProblemsStatusCounts {
+  const ProblemsStatusCounts({
+    this.errors = 0,
+    this.warnings = 0,
+    this.infos = 0,
+  });
+
+  factory ProblemsStatusCounts.fromDiagnostics(
+    Iterable<Map<String, Object?>> diagnostics,
+  ) {
+    var errors = 0;
+    var warnings = 0;
+    var infos = 0;
+    for (final diagnostic in diagnostics) {
+      switch (diagnostic['severity']) {
+        case 1:
+          errors++;
+        case 2:
+          warnings++;
+        case 3 || null:
+          infos++;
+      }
+    }
+    return ProblemsStatusCounts(errors: errors, warnings: warnings, infos: infos);
+  }
+
+  final int errors;
+  final int warnings;
+  final int infos;
+
+  int get total => errors + warnings + infos;
+
+  String get description {
+    final parts = [
+      if (errors > 0) '错误 $errors',
+      if (warnings > 0) '警告 $warnings',
+      if (infos > 0) '信息 $infos',
+    ];
+    return parts.isEmpty ? '没有问题' : parts.join('，');
+  }
+}
+
 class AlulaStatusBar extends StatelessWidget {
   const AlulaStatusBar({
     super.key,
     required this.state,
     required this.detail,
     required this.lspStatus,
-    required this.diagnosticsCount,
+    required this.problems,
     this.onToggleProblems,
     required this.tabCount,
     required this.abiVersion,
@@ -38,7 +80,7 @@ class AlulaStatusBar extends StatelessWidget {
   final WbSyncState state;
   final String detail;
   final String lspStatus;
-  final int diagnosticsCount;
+  final ProblemsStatusCounts problems;
   final VoidCallback? onToggleProblems;
   final int tabCount;
   final int abiVersion;
@@ -64,8 +106,8 @@ class AlulaStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final diagnostics = '诊断 $diagnosticsCount';
-    final combinedCount = onToggleProblems == null ? ' · $diagnostics' : '';
+    final combinedCount =
+        onToggleProblems == null ? ' · 诊断 ${problems.total}' : '';
     return Container(
       height: 24,
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -92,14 +134,32 @@ class AlulaStatusBar extends StatelessWidget {
           ),
           if (onToggleProblems case final toggleProblems?) ...[
             const SizedBox(width: 8),
-            Tooltip(
-              message: '切换问题',
-              child: InkWell(
-                key: const ValueKey('status-problems'),
-                onTap: toggleProblems,
-                child: Text(
-                  diagnostics,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+            Semantics(
+              button: true,
+              label: problems.description,
+              child: Tooltip(
+                message: problems.description,
+                excludeFromSemantics: true,
+                child: InkWell(
+                  key: const ValueKey('status-problems'),
+                  onTap: toggleProblems,
+                  child: ExcludeSemantics(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _problemCount(Icons.cancel_outlined, problems.errors),
+                        const SizedBox(width: 6),
+                        _problemCount(
+                          Icons.warning_amber_outlined,
+                          problems.warnings,
+                        ),
+                        if (problems.infos > 0) ...[
+                          const SizedBox(width: 6),
+                          _problemCount(Icons.info_outline, problems.infos),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -195,6 +255,27 @@ class AlulaStatusBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _problemCount(IconData icon, int count) {
+    final color = Colors.grey.shade400;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(
+          _packProblemCount(count),
+          style: TextStyle(color: color, fontSize: 11),
+        ),
+      ],
+    );
+  }
+
+  static String _packProblemCount(int count) {
+    if (count >= 10000) return '10K+';
+    if (count >= 1000) return '${count ~/ 1000}K';
+    return '$count';
   }
 
   String get _resourceLabel => switch (resourcePressure) {

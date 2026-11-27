@@ -870,6 +870,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   AlulaDoc? _workspaceSymbolRequestDoc;
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
+  var _problemsStatusCounts = const ProblemsStatusCounts();
   ({Map<String, Object?> diagnostic, TextSelection selection})?
       _lastOpenedDiagnostic;
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
@@ -14207,7 +14208,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspReady = false;
         _lspStarting = false;
         _lspStatus = 'LSP 未启动';
-        _diagnostics.clear();
+        _replaceDiagnostics(const []);
         _problemsMessageLines.overrides.clear();
         _syntaxByDoc.clear();
         _syntaxVersionByDoc.clear();
@@ -17739,9 +17740,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (!mounted) return;
       setState(() {
-        _diagnostics
-          ..clear()
-          ..addAll(diags);
+        _replaceDiagnostics(diags);
         final overrides = _problemsMessageLines.overrides;
         if (overrides.isNotEmpty) {
           overrides.retainAll(ProblemsResultSelection.rowKeys(diags));
@@ -17751,6 +17750,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     } finally {
       _polling = false;
     }
+  }
+
+  void _replaceDiagnostics(List<Map<String, Object?>> diagnostics) {
+    final counts = ProblemsStatusCounts.fromDiagnostics(diagnostics);
+    _diagnostics
+      ..clear()
+      ..addAll(diagnostics);
+    _problemsStatusCounts = counts;
   }
 
   void _updateLanguageServicePolling() {
@@ -24463,7 +24470,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 state: _state,
                 detail: _statusDetail,
                 lspStatus: _lspStatus,
-                diagnosticsCount: _diagnostics.length,
+                problems: _problemsStatusCounts,
                 onToggleProblems: () => _runCommand(_toggleProblemsCommandId),
                 tabCount: _groups.values
                     .fold(0, (count, group) => count + group.docs.length),

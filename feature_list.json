@@ -4801,6 +4801,18 @@
       "evidence": "Problems 显示命令保留焦点，切换命令与状态栏诊断计数共用可见性规则。分组时保留相邻窗格。Windows 与 Linux 各通过 51 项原生检查。专题 185/185，Flutter 1,889 项通过、2 项跳过。产品 84582ad8 的 CI 45918937756 四项与 Platform Availability 45918931490 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.326-problems-visibility-commands.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-379",
+      "name": "P05.327 CMD-11 Problems 状态栏诊断分级计数与悬停提示",
+      "description": "接入固定版状态栏 Problems 分级计数、紧凑显示和完整悬停、可访问描述，保留计数切换入口。",
+      "dependencies": [
+        "feat-378"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
