@@ -1440,6 +1440,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _collapseAllProblemGroups(),
     );
     reg(
+      problemsClearFilterTextCommandId,
+      '问题',
+      '清除诊断文本筛选',
+      () async => _clearProblemsFilterText(),
+    );
+    reg(
       _problemsShowSingleLineCommandId,
       '问题',
       '显示单行诊断消息',
@@ -4359,6 +4365,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _commands.context['editorHasTypeHierarchyProvider'] == true;
     final showProblemsMessageCommands = _problemsViewActive;
     final problemsMenuCommands = {
+      problemsClearFilterTextCommandId,
       _problemsCollapseAllCommandId,
       _problemsViewAsTreeCommandId,
       _problemsViewAsTableCommandId,
@@ -30827,6 +30834,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _toggleProblemsViewMode();
   }
 
+  void _clearProblemsFilterText() {
+    if (_problemsViewActive) _problemsFilterController.clear();
+  }
+
   void _applyProblemsFilterOption(_ProblemsFilterOption option) {
     if (!_problemsViewActive) return;
     setState(() {
@@ -30948,6 +30959,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     };
     final binding = _keybindings.bindingForChord(chord, matchesWhen: matchesWhen);
     switch (binding?.commandId) {
+      case problemsClearFilterTextCommandId:
+        _runCommand(
+          problemsClearFilterTextCommandId,
+          arguments: binding?.arguments,
+        );
+        return KeyEventResult.handled;
       case 'problems.action.focusFilter':
         _problemsFilterFocus.requestFocus();
         return KeyEventResult.handled;
@@ -31123,7 +31140,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               icon: const Icon(Icons.close, size: 16),
                               visualDensity: VisualDensity.compact,
                               onPressed: () {
-                                _problemsFilterController.clear();
+                                _runCommand(problemsClearFilterTextCommandId);
                                 _problemsFilterFocus.requestFocus();
                               },
                             ),

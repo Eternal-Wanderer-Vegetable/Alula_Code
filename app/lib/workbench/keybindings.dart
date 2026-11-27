@@ -242,6 +242,8 @@ KeyChordSequence? parseChordSequence(String spec) {
   return KeyChordSequence(chords.cast<KeyChord>());
 }
 
+const problemsClearFilterTextCommandId = 'problems.action.clearFilterText';
+
 /// 键位集合：默认表 + 用户覆盖 → 可直接喂给 CallbackShortcuts 的映射。
 class KeybindingSet {
   KeybindingSet._(this._chordToCommands, this._sequenceToCommand);
@@ -384,6 +386,7 @@ class KeybindingSet {
     'list.closeFind': 'listFocus && treeFindOpen',
     'problems.action.focusFilter': 'problemsViewFocus',
     'problems.action.focusProblemsFromFilter': 'problemsFilterFocus',
+    problemsClearFilterTextCommandId: 'problemsFilterFocus',
     'notification.clear': 'notificationFocus',
     'notification.expand': 'notificationRowFocus',
     'notification.collapse': 'notificationRowFocus',
@@ -444,6 +447,8 @@ class KeybindingSet {
         'problems.action.focusProblemsFromFilter':
             platform == TargetPlatform.macOS ? 'cmd+arrowdown' : 'ctrl+arrowdown',
         'notifications.hideToasts': 'escape',
+        // A focused Problems filter takes precedence over an unfocused toast.
+        problemsClearFilterTextCommandId: 'escape',
         'notifications.hideList': 'escape',
         'closeReferenceSearch': 'escape,shift+escape',
         'notifications.focusNextToast': 'arrowdown',
