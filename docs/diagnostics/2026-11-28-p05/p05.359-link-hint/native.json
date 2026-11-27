@@ -1,0 +1,478 @@
+{
+  "product": "02b8f9b1fcf0401f83b1480de1ed4391674de031",
+  "tree": "f7d5432331d8900f8f8b063e187fc728482a5e20",
+  "abi": 51,
+  "pinnedReference": [
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/contrib/links/browser/links.ts",
+      "line": 390,
+      "sha256": "c0bf8ab8b78eb731a82c85afcd179a4a47681ed0e6ea5735876373636d196426"
+    },
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/common/config/editorOptions.ts",
+      "line": 2400,
+      "sha256": "2a09e8e63a4d35eb961169d595fee3c0ceff34316c7d19a279776eb74fc7a4b7"
+    },
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/common/config/editorOptions.ts",
+      "line": 2402,
+      "sha256": "2a09e8e63a4d35eb961169d595fee3c0ceff34316c7d19a279776eb74fc7a4b7"
+    }
+  ],
+  "windows": {
+    "rawReportSha256": "e8f1690f2b1528049e2a8e136ef139c6c34bd3d05c59287c2e3f5c260ec512e4",
+    "fixtureSha256": "37cbb4324242d9d5e57651fe32f58a71831b67546bbc36af2a183fee2d021c25",
+    "runnerSha256": "ce7dbb21fddd68d4f1fedcf1f46e5478d9679d67e019af4a35a560edd2675792",
+    "aotSha256": "814aa359126d6a69d97bf2b0c59a79ca3af6ce123085acd27ae0e58a1e437d40",
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "sourceSha256": "f056dc717f583d3fbea497581dc997e2b6409b696dcd85d53f427e544e3468b3",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-no-link-hint-before-hover",
+      "ordinary-text-dwell-leaves-no-hint",
+      "unmodified-link-dwell",
+      "leaving-link-clears-hint",
+      "re-enter-link-restores-the-action",
+      "escape-dismisses-stationary-hint",
+      "stationary-hint-reappears-after-real-mouse-motion",
+      "pointer-transfers-to-the-action-without-closing-it",
+      "unmodified-action-click-opens-target-and-focuses-editor",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native mouse dwell, Escape, pointer transfer, and unmodified action click",
+    "windowEnvironment": 120,
+    "actionAboveAnchor": true,
+    "actionCaption": "打开链接",
+    "shortcutHint": "（Ctrl+单击）",
+    "targetEditorFocused": true,
+    "directClickUsedModifier": false
+  },
+  "linux": {
+    "rawReportSha256": "e9b6613f7810f05ceb77356586c5c7bccf7154d6864e029bed03a45dcd6f1c74",
+    "fixtureSha256": "37cbb4324242d9d5e57651fe32f58a71831b67546bbc36af2a183fee2d021c25",
+    "runnerSha256": "e20725af1c30e9709b148580ce556aa358d63a307a6a67b0ca7104b9c5f1304f",
+    "aotSha256": "7b5d528abc5f8e40c494847d2e9c2b7c06e38ab31baeb5c46d1c72c7b67221cf",
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "sourceSha256": "c839768c68678d20db384ca6da07b741400e70c8a7d8f6794a71b31b652c22f7",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-no-link-hint-before-hover",
+      "ordinary-text-dwell-leaves-no-hint",
+      "unmodified-link-dwell",
+      "leaving-link-clears-hint",
+      "re-enter-link-restores-the-action",
+      "escape-dismisses-stationary-hint",
+      "stationary-hint-reappears-after-real-mouse-motion",
+      "pointer-transfers-to-the-action-without-closing-it",
+      "unmodified-action-click-opens-target-and-focuses-editor",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native mouse dwell, Escape, pointer transfer, and unmodified action click",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "actionAboveAnchor": true,
+    "actionCaption": "打开链接",
+    "shortcutHint": "（Ctrl+单击）",
+    "targetEditorFocused": true,
+    "directClickUsedModifier": false
+  },
+  "memory": {
+    "sameFixtureMethod": "Linux Xvfb, same small document and real hover sequence, mem-probe tree",
+    "samplesPerPhase": 3,
+    "trialsPerBuild": 3,
+    "runs": {
+      "base": [
+        {
+          "trial": 0,
+          "rawReportSha256": "8008438b71a6aac364d368382257504dd6dd9aabba1f35239c238354f15884ae",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 211.79,
+              "workingSetMiB": 286.02
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 212.11,
+              "workingSetMiB": 286.33
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 212.41,
+              "workingSetMiB": 286.63
+            }
+          }
+        },
+        {
+          "trial": 1,
+          "rawReportSha256": "d1491eaaffc3d28ef32f20427ae798d0a7180b49ddfe606e436744f6e37a0825",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 227.92,
+              "workingSetMiB": 302.44
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 228.23,
+              "workingSetMiB": 302.75
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 228.54,
+              "workingSetMiB": 303.05
+            }
+          }
+        },
+        {
+          "trial": 2,
+          "rawReportSha256": "f33b27d964f2f9b4d1fbca1338bfbf8d68980d3ef3a24de8c937e7f222a7d380",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 227.28,
+              "workingSetMiB": 301.81
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 227.59,
+              "workingSetMiB": 302.12
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 227.89,
+              "workingSetMiB": 302.42
+            }
+          }
+        }
+      ],
+      "candidate": [
+        {
+          "trial": 0,
+          "rawReportSha256": "e9b6613f7810f05ceb77356586c5c7bccf7154d6864e029bed03a45dcd6f1c74",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 231.94,
+              "workingSetMiB": 306.33
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 232.45,
+              "workingSetMiB": 307.66
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 232.86,
+              "workingSetMiB": 308.06
+            }
+          }
+        },
+        {
+          "trial": 1,
+          "rawReportSha256": "8bccd674005246ae45ca8d716d39e225874f8d3c559f6559c4b148a3aec1e818",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 229.57,
+              "workingSetMiB": 304.12
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 230.04,
+              "workingSetMiB": 305.5
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 230.45,
+              "workingSetMiB": 305.91
+            }
+          }
+        },
+        {
+          "trial": 2,
+          "rawReportSha256": "123b5eff7c1ccdda7273e4eb85cfd7a85a4fe61de606b4ddbbedd3526e60fba0",
+          "phases": {
+            "plain": {
+              "processes": 1,
+              "privateMiB": 224.34,
+              "workingSetMiB": 298.91
+            },
+            "dwell": {
+              "processes": 1,
+              "privateMiB": 227.43,
+              "workingSetMiB": 302.93
+            },
+            "cleared": {
+              "processes": 1,
+              "privateMiB": 230.39,
+              "workingSetMiB": 305.91
+            }
+          }
+        }
+      ]
+    },
+    "privateDeltaMiB": {
+      "base": {
+        "dwell": 0.31,
+        "cleared": 0.62
+      },
+      "candidate": {
+        "dwell": 0.51,
+        "cleared": 0.92
+      }
+    },
+    "p05.358Tree": "e2fa77b6d500a9c237938ddef96843fd46f00eb8",
+    "repoBaseline": {
+      "path": "docs/baselines/2026-10-26/alula-w2-empty.json",
+      "platform": "windows",
+      "summary": {
+        "peak_private": 214675456,
+        "stable_private": 199073792,
+        "final_private": 199077888,
+        "final_working_set": 115838976
+      },
+      "comparable": false
+    }
+  },
+  "localChecks": {
+    "p05-359-targeted.log": "9ba927edc73821a8a75b52ea48c0d511c48a7d0a576681508d30334054a83052",
+    "p05-359-focused.log": "ec041c8bf65139cd0b09dce24cacaadd2f4cfa4251c07f03c343b9cf4f40b0c2",
+    "p05-359-analyze.log": "c31e1c748e05c4ff1b55b3c3d2c28e8a67a0b82928d7455e371d2be8c4b3f5cd",
+    "p05-359-full.log": "8efda46c450b9aa47478bd11b2405e63d2d5ac23053ee0be9de55404c77e1624",
+    "p05-359-link-hint-repro.log": "9d3c2618a6b642bcb4b20578e510d5a51807e36c2932276131aa22e4d56b0217",
+    "p05-359-hint-before-loosened-overlay.log": "ea67b2ff919356c1b248e823ecd8d8ba57939ad1d80782384c112264f841fcb6",
+    "p05-359-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe",
+    "p05-359-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitNexus": {
+    "all": {
+      "summary": {
+        "changed_count": 25,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_216_didupdatewidget",
+          "name": "DidUpdateWidget → _hideFileLinkHint",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_hideFileLinkHint",
+              "step": 3
+            }
+          ]
+        },
+        {
+          "id": "proc_327_dispose",
+          "name": "Dispose → _hideFileLinkHint",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_hideFileLinkHint",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "519babdad2d6ac2db6c5addd2c081f8471ff541e2e98347ea91c4bebfce114f5"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 25,
+        "affected_count": 2,
+        "changed_files": 5,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_216_didupdatewidget",
+          "name": "DidUpdateWidget → _hideFileLinkHint",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_hideFileLinkHint",
+              "step": 3
+            }
+          ]
+        },
+        {
+          "id": "proc_327_dispose",
+          "name": "Dispose → _hideFileLinkHint",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_hideFileLinkHint",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "519babdad2d6ac2db6c5addd2c081f8471ff541e2e98347ea91c4bebfce114f5"
+    }
+  },
+  "preeditImpact": {
+    "detach": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._detachFileLinkHover#1",
+        "name": "_detachFileLinkHover",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "8e802740b9ce464e4a37a36658150aa14df26528fb5dd470e681e261ca421b2d"
+    },
+    "hover-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._updateFileLinkHover#0",
+        "name": "_updateFileLinkHover",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "3d42495cc8aef101b106fecd7b135117ad47421a4d053ae4740554d8fbfd0c1b"
+    },
+    "hover": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._onFileLinkHover#1",
+        "name": "_onFileLinkHover",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "7883d230ff916b3edd39c72999d4fe887fb7eced058a2029c384d9d40eb32659"
+    },
+    "modifier": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._onFileLinkModifier#1",
+        "name": "_onFileLinkModifier",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c8d2af1c88d253bbe67663283de7a78fbd59cb474ac73fed2f99cfd5e3a2f45f"
+    },
+    "pointer": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.fileLinkAtPointer#3",
+        "name": "fileLinkAtPointer",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "968d8c966070322209cb778c0b9b813549f89c562857c5c2f48c44f69ca5d3f7"
+    },
+    "state-build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "state-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.didUpdateWidget#1",
+        "name": "didUpdateWidget",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "837a46890e9e0bc2210ec93a64fcbbd7fa6ed14ecd804f69a60f23cd4566e19c"
+    },
+    "state": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState",
+        "name": "RustTextInputFieldState",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "d40089d1326dd92375ccbfbf190bbf8b0d8dd1547dc74acf33951a6d55dd3a80"
+    },
+    "widget": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputField",
+        "name": "RustTextInputField",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 3,
+        "modules_affected": 3
+      },
+      "sha256": "188b3ccf463cd7ac17940e4b157037bbb7ec0f00ac1b47513e5174e966d3dbac"
+    },
+    "workbench-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._buildEditor#2",
+        "name": "_buildEditor",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "8fb34735cbce357fdd80b6641230f6f5ccc06aee709553e5182d8d8883564d50"
+    }
+  }
+}

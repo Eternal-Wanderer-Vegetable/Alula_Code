@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.359 / feat-411 完成。本地链接普通悬停显示打开操作和平台修饰键，鼠标移入后可直接点击。Windows 和 Linux 各通过 10 项原生检查，专题 127/127，Flutter 1,965 项通过、2 项跳过。产品 02b8f9b1 的 CI 46066055812 四项及 Platform Availability 46066051456 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.359-link-hint.md。
 - P05.358 / feat-410 完成。按住 Ctrl/Cmd 悬停在本地链接时显示手形光标和范围下划线，松键或离开时清除。Windows 和 Linux 各通过 13 项原生检查，专题 124/124，Flutter 1,962 项通过、2 项跳过。产品 716da953 的 CI 46062460886 四项及 Platform Availability 46062455967 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md。
 - P05.357 / feat-409 完成。Ctrl/Cmd 点击本地链接打开，附加 Alt 可侧开并复用已有右侧组。Windows 与 Linux 各通过 10 项原生检查，专题 92/92，Flutter 1,959 项通过、2 项跳过。产品 b9cfbdb3 的 CI 46058776187 四项及 Platform Availability 46058770298 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md。
 - P05.356 / feat-408 完成。打开链接命令识别光标下的本地 file URI，目标编辑器接收键盘焦点。Windows 与 Linux 各通过 8 项原生检查，专题 131/131，Flutter 1,956 项通过、2 项跳过。产品 e8dad314 的 CI 46054693322 四项和 Platform Availability 46054687988 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md。
@@ -376,6 +377,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Files
 
+[P05.359 本地链接悬停提示与直接打开](docs/diagnostics/2026-11-28-p05/p05.359-link-hint.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -641,4 +643,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.358 收尾 CI。按 docs/03 核对 CMD-12 余下的识别、提示及 P14 外部打开与可信域归属，选择已满足依赖的子项。继续跟踪 macOS 托管退出菜单证据，实机暂缓。PR #3 保持草稿。
+核对 P05.359 收尾 CI。按 docs/03 核对 CMD-12 路径和 URL 识别缺口以及 P14 阶段的外部打开与可信域归属，选择已满足依赖的子项。继续跟踪 macOS 托管退出菜单，实机暂缓。PR #3 保持草稿。
