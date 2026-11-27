@@ -4893,8 +4893,8 @@
       "dependencies": [
         "feat-385"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "后续代码行以 Tab 开头时支持诊断详情行内占位，保留制表符、缩进宽度和横向光标坐标。Windows 与 Linux 各通过 24 项原生检查。专题 217/217，Flutter 1,901 项通过、2 项跳过。产品 dd3e60b8 的 CI 45947957446 四项与 Platform Availability 45947951728 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-27-p05/p05.334-diagnostic-inline-tabs.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
