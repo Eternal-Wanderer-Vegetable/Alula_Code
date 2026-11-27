@@ -30900,7 +30900,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           })
         >[];
     final seen = <Object>{};
-    void addMarker(
+    bool addMarker(
       Map<String, Object?> diagnostic,
       String uri, {
       String? unopenedPath,
@@ -30922,7 +30922,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           endCharacter is! int ||
           endCharacter < 0 ||
           endLine == line && endCharacter < character) {
-        return;
+        return false;
       }
       if (!seen.add((
         diagnostic['_documentId'],
@@ -30934,7 +30934,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         diagnostic['message'],
         diagnostic['source'],
       ))) {
-        return;
+        return false;
       }
       markers.add((
         diagnostic: diagnostic,
@@ -30946,6 +30946,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         endCharacter: endCharacter,
         unopenedPath: unopenedPath,
       ));
+      return true;
     }
 
     for (final diagnostic in _diagnostics) {
@@ -30953,16 +30954,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final uri = _diagnosticEditor(diagnostic)?.uri;
       if (uri != null) addMarker(diagnostic, uri);
     }
-    if (!currentFileOnly) {
-      final candidate = _readUnopenedDiagnostic(current?.uri, forward);
-      if (candidate != null) {
-        addMarker(
-          candidate.diagnostic,
-          candidate.uri,
-          unopenedPath: candidate.path,
-        );
-      }
-    }
+    final knownOpenTotal = markers.length;
+    final unopened = currentFileOnly
+        ? null
+        : _readUnopenedDiagnostic(current?.uri, forward);
+    final workspaceCandidate =
+        unopened != null &&
+            addMarker(
+              unopened.candidate.diagnostic,
+              unopened.candidate.uri,
+              unopenedPath: unopened.path,
+            )
+        ? unopened.candidate
+        : null;
+    final diagnosticTotal =
+        knownOpenTotal + (workspaceCandidate?.unopenedTotal ?? 0);
     if (markers.isEmpty) return;
     markers.sort((a, b) {
       var order = a.uri.compareTo(b.uri);
@@ -31008,6 +31014,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         break;
       }
     }
+    int ordinalFor(int index) {
+      final candidate = workspaceCandidate;
+      if (candidate == null) return index + 1;
+      final marker = markers[index];
+      if (marker.unopenedPath != null) {
+        return index +
+            candidate.unopenedBeforeFile +
+            (forward ? 1 : candidate.fileTotal);
+      }
+
+      // The selected open marker is reached before the nearest unopened file.
+      // The order and direction determine whether tracking that file wraps.
+      final precedesCandidate = marker.uri.compareTo(candidate.uri) < 0;
+      final precedingUnopened = switch ((forward, precedesCandidate)) {
+        (true, true) => candidate.unopenedBeforeFile,
+        (true, false) => candidate.unopenedTotal,
+        (false, true) => 0,
+        (false, false) => candidate.unopenedBeforeFile + candidate.fileTotal,
+      };
+      final openOrdinal = index + (precedesCandidate ? 1 : 0);
+      return openOrdinal + precedingUnopened;
+    }
+
     for (var attempt = 0; attempt < markers.length; attempt++) {
       final marker = markers[index];
       if (marker.unopenedPath case final String path) {
@@ -31018,8 +31047,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             uri: marker.uri,
             candidate: marker.diagnostic,
             origin: current,
-            ordinal: index + 1,
-            total: markers.length,
+            ordinal: ordinalFor(index),
+            total: diagnosticTotal,
           ),
         );
         return;
@@ -31033,8 +31062,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             cursor: identical(target, active)
                 ? previousCursor
                 : target.selection.extentOffset,
-            ordinal: index + 1,
-            total: markers.length,
+            ordinal: ordinalFor(index),
+            total: diagnosticTotal,
           );
         }
         return;
@@ -31043,7 +31072,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  ({String uri, String path, Map<String, Object?> diagnostic})?
+  ({String path, WorkspaceDiagnosticCandidate candidate})?
   _readUnopenedDiagnostic(String? cursorUri, bool forward) {
     final requestDoc = _workspaceSymbolRequestDoc;
     if (!_lspReady || requestDoc == null) return null;
@@ -31068,7 +31097,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           !File(path).existsSync()) {
         return null;
       }
-      return (uri: candidate.uri, path: path, diagnostic: candidate.diagnostic);
+      return (path: path, candidate: candidate);
     } on AlulaException {
       return null;
     }

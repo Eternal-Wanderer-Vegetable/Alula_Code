@@ -8,7 +8,7 @@ void main() {
   test('unopened diagnostic transport keeps provider positions and version',
       () async {
     final core = AlulaCore.load();
-    expect(core.abiVersion, 47);
+    expect(core.abiVersion, expectedAbiVersion);
     final root = Directory.systemTemp.createTempSync('alula-unopened-ffi');
     final executable = p.join(
       Directory.current.parent.path,
@@ -39,7 +39,7 @@ void main() {
     core.lsp.didOpen(doc.id, languageId: 'rust');
 
     final timer = Stopwatch()..start();
-    ({String uri, bool wrapped, Map<String, Object?> diagnostic})? next;
+    WorkspaceDiagnosticCandidate? next;
     do {
       next = core.lsp.nextUnopenedDiagnostic(
         doc.id,
@@ -52,6 +52,9 @@ void main() {
     expect(next, isNotNull);
     expect(next!.uri, after);
     expect(next.wrapped, isFalse);
+    expect(next.unopenedTotal, 3);
+    expect(next.unopenedBeforeFile, 1);
+    expect(next.fileTotal, 2);
     expect(next.diagnostic['message'], '😀 later marker');
     expect(next.diagnostic['line'], 1);
     expect(next.diagnostic['character'], 3);
@@ -67,6 +70,9 @@ void main() {
     );
     expect(prev?.uri, before);
     expect(prev?.wrapped, isFalse);
+    expect(prev?.unopenedTotal, 3);
+    expect(prev?.unopenedBeforeFile, 0);
+    expect(prev?.fileTotal, 1);
     final wrapped = core.lsp.nextUnopenedDiagnostic(
       doc.id,
       cursorUri: after,

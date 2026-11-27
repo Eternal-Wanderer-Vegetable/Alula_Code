@@ -23,7 +23,7 @@ fn query(id: u64, cursor: Option<&str>, forward: bool, open: &[&str]) -> Value {
 
 #[test]
 fn unopened_diagnostics_are_directional_bounded_and_keep_the_published_range() {
-    assert_eq!(ffi::alula_abi_version(), 47);
+    assert_eq!(ffi::alula_abi_version(), ffi::ALULA_ABI_VERSION);
     let id = 987638;
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -73,6 +73,9 @@ fn unopened_diagnostics_are_directional_bounded_and_keep_the_published_range() {
         std::thread::sleep(Duration::from_millis(20));
     };
     assert_eq!(later["wrapped"], false);
+    assert_eq!(later["unopenedTotal"], 3);
+    assert_eq!(later["unopenedBeforeFile"], 1);
+    assert_eq!(later["fileTotal"], 2);
     assert_eq!(later["diagnostic"]["message"], "😀 later marker");
     assert_eq!(later["diagnostic"]["line"], 1);
     assert_eq!(later["diagnostic"]["character"], 3);
@@ -84,6 +87,9 @@ fn unopened_diagnostics_are_directional_bounded_and_keep_the_published_range() {
     let earlier = &query(id, Some(OPEN), false, &[OPEN])["candidate"];
     assert_eq!(earlier["uri"], EARLIER);
     assert_eq!(earlier["wrapped"], false);
+    assert_eq!(earlier["unopenedTotal"], 3);
+    assert_eq!(earlier["unopenedBeforeFile"], 0);
+    assert_eq!(earlier["fileTotal"], 1);
     assert_eq!(earlier["diagnostic"]["character"], 5);
     let wrapped = &query(id, Some(LATER), true, &[OPEN])["candidate"];
     assert_eq!(wrapped["uri"], EARLIER);
@@ -91,8 +97,16 @@ fn unopened_diagnostics_are_directional_bounded_and_keep_the_published_range() {
     let reverse_wrapped = &query(id, Some(EARLIER), false, &[OPEN])["candidate"];
     assert_eq!(reverse_wrapped["uri"], LATER);
     assert_eq!(reverse_wrapped["wrapped"], true);
+    assert_eq!(reverse_wrapped["unopenedTotal"], 3);
+    assert_eq!(reverse_wrapped["unopenedBeforeFile"], 1);
+    assert_eq!(reverse_wrapped["fileTotal"], 2);
     assert_eq!(reverse_wrapped["diagnostic"]["severity"], 2);
     assert_eq!(query(id, None, true, &[OPEN])["candidate"]["uri"], EARLIER);
+    let only_earlier = &query(id, Some(OPEN), true, &[OPEN, LATER])["candidate"];
+    assert_eq!(only_earlier["uri"], EARLIER);
+    assert_eq!(only_earlier["unopenedTotal"], 1);
+    assert_eq!(only_earlier["unopenedBeforeFile"], 0);
+    assert_eq!(only_earlier["fileTotal"], 1);
     assert!(query(id, None, true, &[EARLIER, OPEN, LATER])["candidate"].is_null());
     assert_eq!(
         take(ffi::alula_doc_resync(id))["content"],

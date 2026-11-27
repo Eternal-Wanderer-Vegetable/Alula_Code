@@ -42,7 +42,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 47;
+pub const ALULA_ABI_VERSION: u32 = 48;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -3763,7 +3763,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 47);
+        assert_eq!(alula_abi_version(), 48);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

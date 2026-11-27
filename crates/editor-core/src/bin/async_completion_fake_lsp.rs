@@ -80,6 +80,7 @@ fn publish_unopened_diagnostics(message: &Value) {
                 marker(1, 0, 9, 4, "invalid reversed range"),
                 marker(4, 0, 0, 1, "hint"),
                 marker(1, 1, 3, 9, "😀 later marker"),
+                marker(1, 1, 3, 9, "😀 later marker"),
             ],
         ),
         (

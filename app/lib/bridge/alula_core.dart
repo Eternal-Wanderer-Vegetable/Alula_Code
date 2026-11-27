@@ -22,7 +22,7 @@ import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 47;
+const int expectedAbiVersion = 48;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -727,6 +727,16 @@ class HierarchyResult {
       );
 }
 
+/// One unopened diagnostic and its workspace count information.
+typedef WorkspaceDiagnosticCandidate = ({
+  String uri,
+  bool wrapped,
+  Map<String, Object?> diagnostic,
+  int unopenedTotal,
+  int unopenedBeforeFile,
+  int fileTotal,
+});
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -1020,8 +1030,7 @@ class AlulaLsp {
 
   /// Return one directional candidate from the live workspace diagnostics.
   /// Its provider version can be absent until the file is opened.
-  ({String uri, bool wrapped, Map<String, Object?> diagnostic})?
-      nextUnopenedDiagnostic(
+  WorkspaceDiagnosticCandidate? nextUnopenedDiagnostic(
     int id, {
     required String? cursorUri,
     required Iterable<String> openUris,
@@ -1040,6 +1049,9 @@ class AlulaLsp {
       uri: candidate['uri'] as String,
       wrapped: candidate['wrapped'] as bool,
       diagnostic: candidate['diagnostic'] as Map<String, Object?>,
+      unopenedTotal: candidate['unopenedTotal'] as int,
+      unopenedBeforeFile: candidate['unopenedBeforeFile'] as int,
+      fileTotal: candidate['fileTotal'] as int,
     );
   }
 
