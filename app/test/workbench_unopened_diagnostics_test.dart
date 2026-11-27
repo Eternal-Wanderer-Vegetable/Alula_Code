@@ -20,7 +20,7 @@ import 'helpers/native_drag_drop.dart';
 void main() {
   setUp(mockNativeDragDrop);
 
-  final openingRoutes = ValueVariant<String>({'F8', 'Problems'});
+  final openingRoutes = ValueVariant<String>({'F8', 'Problems', 'Last editor'});
   testWidgets(
       'cached navigation preserves selection until a current diagnostic',
       (tester) async {
@@ -163,6 +163,37 @@ void main() {
     );
     expect(
         tester.widget<TextField>(input).controller!.text, 'fn source() {}\n');
+    if (openingRoutes.currentValue == 'Last editor') {
+      final sourceMarker = find.textContaining('open file', findRichText: true);
+      for (final hideBeforeClose in [false, true]) {
+        if (hideBeforeClose) {
+          expect(await commands.execute('view.togglePanel'),
+              CommandExecutionStatus.executed);
+          await tester.pumpAndSettle();
+          expect(sourceMarker, findsNothing);
+        }
+        expect(await commands.execute('workbench.action.closeActiveEditor'),
+            CommandExecutionStatus.executed);
+        await tester.pumpAndSettle();
+        expect(statusCounts().total, 4);
+        if (hideBeforeClose) {
+          expect(await commands.execute('workbench.actions.view.problems'),
+              CommandExecutionStatus.executed);
+          await tester.pumpAndSettle();
+        }
+        expect(sourceMarker, findsOneWidget);
+        await tester.tap(sourceMarker);
+        await tester.pump(const Duration(milliseconds: 120));
+        expect(tester.widget<TextField>(input).controller!.text,
+            'fn source() {}\n');
+        await tester.pump(const Duration(milliseconds: 800));
+        expect(tester.widget<TextField>(input).controller!.selection,
+            const TextSelection.collapsed(offset: 0));
+        expect(find.byType(DiagnosticNavigationPeek), findsNothing);
+      }
+      expect(source.readAsStringSync(), 'fn source() {}\n');
+      return;
+    }
     if (openingRoutes.currentValue == 'Problems') {
       await tester.tap(later);
     } else {

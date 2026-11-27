@@ -899,6 +899,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
   bool _polling = false;
+  bool _problemsWorkspaceVisible = false;
   List<String> _completionItems = const [];
 
   static int get _standardPanelTabCount => PanelViewTab.values.length;
@@ -927,6 +928,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _syncCommandContext();
     _scheduleStateSave();
+    _onProblemsWorkspaceVisibilityChanged();
   }
 
   void _syncPanelHostedViews() {
@@ -966,6 +968,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.addListener(_syncPanelHostedViews);
     _layout.addListener(_scheduleStateSave);
     _layout.addListener(_syncPanelMaximizationCommandContext);
+    _problemsWorkspaceVisible = _problemsViewActive;
+    _layout.addListener(_onProblemsWorkspaceVisibilityChanged);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     final savedCommandIds = _commandHistoryStore.load().commandIds;
@@ -17751,13 +17755,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  void _onProblemsWorkspaceVisibilityChanged() {
+    final visible = _problemsViewActive;
+    if (visible == _problemsWorkspaceVisible) return;
+    _problemsWorkspaceVisible = visible;
+    final requestDoc = _workspaceSymbolRequestDoc;
+    if (_pollTimer != null || requestDoc == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pollTimer == null &&
+          identical(requestDoc, _workspaceSymbolRequestDoc) &&
+          visible == _problemsWorkspaceVisible) {
+        _pollLanguageServices();
+      }
+    });
+  }
+
   void _pollLanguageServices() {
     final core = _core;
-    if (core == null || _polling || !_lspReady) return;
+    if (!mounted || _disposing || core == null || _polling || !_lspReady) {
+      return;
+    }
     if (!_allDocs.any((doc) => doc.lspAttached && !doc.isUntitled)) {
       _pollTimer?.cancel();
       _pollTimer = null;
-      return;
     }
     _polling = true;
     try {
@@ -17958,8 +17978,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final shouldPoll =
         _lspReady && _allDocs.any((doc) => doc.lspAttached && !doc.isUntitled);
     if (!shouldPoll) {
-      _pollTimer?.cancel();
+      final timer = _pollTimer;
+      timer?.cancel();
       _pollTimer = null;
+      // Reproject the last editor's cached diagnostics with no live owner.
+      if (timer != null) _pollLanguageServices();
       return;
     }
     _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
@@ -24041,6 +24064,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _primarySidebarFocus.dispose();
     _secondarySidebarFocus.dispose();
     _layout.removeListener(_syncPanelMaximizationCommandContext);
+    _layout.removeListener(_onProblemsWorkspaceVisibilityChanged);
     _searchQuery.dispose();
     _findQuery.dispose();
     _replaceInput.dispose();
