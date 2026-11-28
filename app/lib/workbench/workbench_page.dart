@@ -549,7 +549,7 @@ typedef _LockedScrollOrigin = ({
 });
 
 class _WorkbenchPageState extends State<WorkbenchPage>
-    with TickerProviderStateMixin, WindowListener {
+    with TickerProviderStateMixin, WidgetsBindingObserver, WindowListener {
   static const _untitledId = 1;
   static const _findBarInitialWidth = 419.0;
   static const _maxExplorerCompareUtf16 = 2000000;
@@ -798,6 +798,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final ScrollController _treeScroll = ScrollController();
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _zenMode = false;
+  bool _zenOwnsFullscreen = false;
+  bool _syncingZenFullscreen = false;
+  bool _zenFullscreenSyncRequested = false;
+  bool _checkingZenFullscreenMetrics = false;
+  int _zenModeGeneration = 0;
   bool _zenPreZenSidebarCollapsed = false;
   bool _zenPreZenPanelCollapsed = false;
   // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
@@ -1009,6 +1014,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void initState() {
     super.initState();
     windowManager.addListener(this);
+    WidgetsBinding.instance.addObserver(this);
     // LAY-12a：辅助窗口关闭恢复入口（主窗自身窗口通道）。
     unawaited(_setupAuxiliaryWindowHandlers());
     final saved = widget.layoutStore.tryLoad();
@@ -1042,6 +1048,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _groups['editor'] = EditorGroup('editor');
     }
     _initCore();
+    if (_zenMode && _loadError.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_syncZenFullscreen());
+      });
+    }
     _syncCommandContext();
     _syncPanelMaximizationCommandContext();
     _commands.addListener(_onCommandServiceChanged);
@@ -4304,6 +4315,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void onWindowBlur() {
     _localLockedScrollHold.cancel();
     _onMainWindowFocusChanged(false);
+  }
+
+  @override
+  void onWindowEvent(String eventName) {
+    if ((eventName == 'show' || eventName == 'focus') &&
+        _zenMode &&
+        !_zenOwnsFullscreen) {
+      unawaited(_syncZenFullscreen());
+    }
+  }
+
+  @override
+  void onWindowLeaveFullScreen() {
+    if (!_zenMode ||
+        !_zenOwnsFullscreen ||
+        _closingWorkbenchWindow ||
+        _disposing) {
+      return;
+    }
+    _zenOwnsFullscreen = false;
+    _toggleZenMode();
+  }
+
+  @override
+  void didChangeMetrics() {
+    // The desktop plugin can resize a frameless window without a fullscreen
+    // leave event. Reconcile that transition when the viewport changes.
+    if (!_zenOwnsFullscreen ||
+        _syncingZenFullscreen ||
+        _checkingZenFullscreenMetrics ||
+        _closingWorkbenchWindow ||
+        _disposing) {
+      return;
+    }
+    unawaited(_checkZenFullscreenOnMetrics());
+  }
+
+  Future<void> _checkZenFullscreenOnMetrics() async {
+    final generation = _zenModeGeneration;
+    _checkingZenFullscreenMetrics = true;
+    final bool fullscreen;
+    try {
+      fullscreen = await windowManager.isFullScreen();
+    } on Exception {
+      return;
+    } finally {
+      _checkingZenFullscreenMetrics = false;
+    }
+    if (mounted && generation == _zenModeGeneration && !fullscreen) {
+      onWindowLeaveFullScreen();
+    }
   }
 
   void _syncPanelMaximizationCommandContext() {
@@ -15707,6 +15769,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
   /// 再次切换恢复进入前的侧栏/面板折叠态。会话 journal 持久化。
   void _toggleZenMode() {
+    _zenModeGeneration++;
     setState(() {
       _zenMode = !_zenMode;
       if (_zenMode) {
@@ -15727,6 +15790,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     _syncNotificationFocusContext();
     _scheduleStateSave();
+    unawaited(_syncZenFullscreen());
+  }
+
+  Future<void> _syncZenFullscreen() async {
+    if (!widget.windowControls || _disposing || _closingWorkbenchWindow) {
+      return;
+    }
+    if (_syncingZenFullscreen) {
+      _zenFullscreenSyncRequested = true;
+      return;
+    }
+    _syncingZenFullscreen = true;
+    try {
+      do {
+        _zenFullscreenSyncRequested = false;
+        if (_zenMode) {
+          final fullscreen = await windowManager.isFullScreen();
+          // Capture the native style only after the startup window is visible.
+          // A later show or focus event retries a hidden startup window.
+          if (fullscreen || !await windowManager.isVisible()) continue;
+          if (!mounted || _disposing || _closingWorkbenchWindow) return;
+          if (_zenMode) {
+            await windowManager.setFullScreen(true);
+            _zenOwnsFullscreen = true;
+          }
+        } else if (_zenOwnsFullscreen) {
+          await windowManager.setFullScreen(false);
+          _zenOwnsFullscreen = false;
+        }
+      } while (mounted &&
+          !_disposing &&
+          !_closingWorkbenchWindow &&
+          _zenFullscreenSyncRequested);
+    } on Exception catch (error) {
+      if (mounted && !_disposing) {
+        setState(() => _statusDetail = '无法切换原生全屏：$error');
+      }
+    } finally {
+      _syncingZenFullscreen = false;
+    }
   }
 
   // ---------- 欢迎页（LAY-19a） ----------
@@ -24663,6 +24766,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final cancel in _quickOpenCancellations.toList()) { cancel(); }
     _quickOpenCancellations.clear();
     windowManager.removeListener(this);
+    WidgetsBinding.instance.removeObserver(this);
     unawaited(_auxiliaryWindowsSubscription?.cancel());
     _auxiliaryWindowsSubscription = null;
     final mainWindowController = _mainWindowController;
@@ -24991,8 +25095,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             children: [
               Column(
                 children: [
-              if (!_zenMode)
-              AlulaTitleBar(
+              if (!_zenMode || widget.windowControls)
+              Visibility(
+                visible: !_zenMode,
+                maintainState: widget.windowControls,
+                child: AlulaTitleBar(
                   commands: _commands,
                   windowTitle: windowTitle,
                   notificationButton:
@@ -25349,6 +25456,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       ],
                     ),
                   ]),
+              ),
               if (!_zenMode)
                 WorkbenchNotificationBanners(
                   center: _notifications,

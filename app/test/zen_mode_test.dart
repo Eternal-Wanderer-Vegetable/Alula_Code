@@ -10,6 +10,7 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() {
   late Directory temp;
@@ -23,7 +24,8 @@ void main() {
   Finder zenStrip(String region) =>
       find.byKey(ValueKey('editor-tab-strip-$region'));
 
-  Future<void> mountPage(WidgetTester tester) async {
+  Future<void> mountPage(WidgetTester tester,
+      {bool windowControls = false}) async {
     tester.view.physicalSize = const Size(2400, 1000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -33,7 +35,9 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        windowControls: windowControls,
         onCommandServiceReady: (service) => commands = service,
       ),
     ));
@@ -44,6 +48,7 @@ void main() {
   Future<void> prepareWorkspace(
     WidgetTester tester, {
     bool zenMode = false,
+    bool windowControls = false,
   }) async {
     temp = Directory.systemTemp.createTempSync('alula-zen-mode');
     workspace = Directory('${temp.path}/workspace')..createSync();
@@ -70,7 +75,7 @@ void main() {
         }
       }
     });
-    await mountPage(tester);
+    await mountPage(tester, windowControls: windowControls);
   }
 
   Future<void> execute(WidgetTester tester, String command) async {
@@ -81,6 +86,94 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 700));
   }
+
+  void Function(bool) installNativeFullscreen(
+    WidgetTester tester,
+    List<bool> requests, {
+    bool fullscreen = false,
+    bool Function()? isVisible,
+  }) {
+    var state = fullscreen;
+    final messenger = tester.binding.defaultBinaryMessenger;
+    const channel = MethodChannel('window_manager');
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'isFullScreen':
+          return state;
+        case 'isVisible':
+          return isVisible?.call() ?? true;
+        case 'setFullScreen':
+          state = (call.arguments as Map)['isFullScreen'] as bool;
+          requests.add(state);
+          return null;
+        case 'isMaximized':
+        case 'isMinimized':
+        case 'isFocused':
+        case 'isAlwaysOnTop':
+          return false;
+        default:
+          return null;
+      }
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    return (value) {
+      state = value;
+    };
+  }
+
+  for (final alreadyFullscreen in [false, true]) {
+    testWidgets(
+      'zen only restores fullscreen when it entered it ($alreadyFullscreen)',
+      (tester) async {
+        final requests = <bool>[];
+        installNativeFullscreen(tester, requests,
+            fullscreen: alreadyFullscreen);
+        await prepareWorkspace(tester, windowControls: true);
+        await execute(tester, 'workbench.action.toggleZenMode');
+        expect(find.text('文件(F)'), findsNothing);
+        expect(requests, alreadyFullscreen ? isEmpty : [true]);
+
+        await execute(tester, 'workbench.action.toggleZenMode');
+        expect(find.text('文件(F)'), findsOneWidget);
+        expect(requests, alreadyFullscreen ? isEmpty : [true, false]);
+      },
+    );
+  }
+
+  testWidgets('externally leaving Zen-owned fullscreen restores the shell',
+      (tester) async {
+    final requests = <bool>[];
+    final nativeChanged = installNativeFullscreen(tester, requests);
+    await prepareWorkspace(tester, windowControls: true);
+    await execute(tester, 'workbench.action.toggleZenMode');
+    expect(find.text('文件(F)'), findsNothing);
+
+    nativeChanged(false);
+    final listener = tester.state(find.byType(WorkbenchPage)) as WindowListener;
+    listener.onWindowLeaveFullScreen();
+    await tester.pumpAndSettle();
+    expect(find.text('文件(F)'), findsOneWidget);
+    expect(requests, [true]);
+  });
+
+  testWidgets('viewport changes recover an unreported fullscreen exit',
+      (tester) async {
+    final requests = <bool>[];
+    final nativeChanged = installNativeFullscreen(tester, requests);
+    await prepareWorkspace(tester, windowControls: true);
+    await execute(tester, 'workbench.action.toggleZenMode');
+
+    tester.view.physicalSize = const Size(2300, 1000);
+    await tester.pumpAndSettle();
+    expect(find.text('文件(F)'), findsNothing);
+
+    nativeChanged(false);
+    tester.view.physicalSize = const Size(1150, 750);
+    tester.view.physicalSize = const Size(1149, 749);
+    await tester.pumpAndSettle();
+    expect(find.text('文件(F)'), findsOneWidget);
+    expect(requests, [true]);
+  });
 
   testWidgets(
     'toggling zen mode hides the shell chrome and centers the editor',
@@ -114,7 +207,11 @@ void main() {
   testWidgets(
     'zen mode persists across a session restore',
     (tester) async {
-      await prepareWorkspace(tester, zenMode: true);
+      final requests = <bool>[];
+      installNativeFullscreen(tester, requests);
+      await prepareWorkspace(tester, zenMode: true, windowControls: true);
+      await tester.pumpAndSettle();
+      expect(requests, [true]);
       expect(find.text('文件(F)'), findsNothing,
           reason: 'a zen-mode session restores without the title bar');
       final gridRect = tester.getRect(find.byType(WorkbenchGrid));
@@ -123,10 +220,28 @@ void main() {
 
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpAndSettle();
-      expect(find.text('文件(F)'), findsOneWidget,
-          reason: 'Esc exits zen mode');
+      expect(find.text('文件(F)'), findsOneWidget, reason: 'Esc exits zen mode');
+      expect(requests, [true, false]);
     },
   );
+
+  testWidgets('restored zen waits until the native window is shown',
+      (tester) async {
+    final requests = <bool>[];
+    var visible = false;
+    installNativeFullscreen(tester, requests, isVisible: () => visible);
+    await prepareWorkspace(tester, zenMode: true, windowControls: true);
+    await tester.pumpAndSettle();
+    expect(find.text('文件(F)'), findsNothing);
+    expect(requests, isEmpty);
+
+    visible = true;
+    final listener = tester.state(find.byType(WorkbenchPage)) as WindowListener;
+    listener.onWindowEvent('show');
+    await tester.pumpAndSettle();
+    expect(requests, [true]);
+    expect(find.text('文件(F)'), findsNothing);
+  });
 
   testWidgets(
     'the zen toggle round-trips through the registered command',

@@ -5409,6 +5409,19 @@
       "evidence": "Windows 和 Linux 的正常关停及会话写入失败重试均通过。模态草稿重启后精确恢复，原件保留 BOM、CRLF 和全部字节。定向 15/15，专题 121/121，Flutter 1,996 项通过、2 项跳过。产品 ba15b29 的 CI 46121692160 四项及 Platform Availability 46121689464 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.375-modal-window-recovery.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-428",
+      "name": "P05.376 LAY-14 Zen 原生全屏与窗口生命周期",
+      "description": "默认 Zen 进入原生全屏，只恢复本次进入的全屏。沿用当前关窗及会话恢复，覆盖退出、外部关闭全屏、已有全屏和重启。",
+      "dependencies": [
+        "feat-103",
+        "feat-427"
+      ],
+      "status": "in-progress",
+      "evidence": "Windows/Linux 基线 Zen 只隐藏界面，Windows 隐藏标题栏时系统关窗未结束。固定版全屏、原生关停和重启恢复已实测。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
