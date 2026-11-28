@@ -358,6 +358,7 @@ enum _ProblemsFilterOption {
 }
 
 const _showErrorsWarningsCommandId = 'workbench.action.showErrorsWarnings';
+const _holdLockedScrollingCommandId = 'workbench.action.holdLockedScrolling';
 const _toggleProblemsCommandId = 'workbench.actions.view.toggleProblems';
 const _problemsShowSingleLineCommandId = 'problems.action.showSinglelineMessage';
 const _problemsShowMultiLineCommandId = 'problems.action.showMultilineMessage';
@@ -763,8 +764,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _auxiliaryWindowCreationsInProgress = 0;
   bool? _mainWindowFocused;
   bool _auxiliaryFocusHandlerReady = false;
-  // LAY-15：锁定后按可见视图起点同步，Alt 按住暂时使用原有比例同步。
+  // LAY-15：会话只保存常驻开关，Hold 临时反转其有效状态。
   bool _lockedScrolling = false;
+  bool _lockedScrollingHeld = false;
+  bool get _isLockedScrolling => _lockedScrolling != _lockedScrollingHeld;
   final _lockedScrollAnchors = <OpenDoc, _LockedScrollOrigin>{};
   bool _lockedScrollAnchorRefreshScheduled = false;
   bool _splitInGroupVertical = false;
@@ -2035,6 +2038,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '切换锁定滚动',
       () async => _toggleLockedScrolling(),
     );
+    reg(
+      _holdLockedScrollingCommandId,
+      '查看',
+      '按住锁定滚动',
+      () async => _toggleLockedScrolling(),
+      shortcut: _keybindings.shortcutFor(_holdLockedScrollingCommandId),
+    );
     // Existing toolbar command remains the default right-split action.
     reg(
       'editor.split',
@@ -2808,6 +2818,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _sc(String commandId) {
     final sc = _keybindings.shortcutFor(commandId);
     return sc == null ? '' : '    $sc';
+  }
+
+  void _runShortcutCommand(KeybindingBinding binding) {
+    if (_lockedScrollingHeld) return;
+    if (binding.commandId == _holdLockedScrollingCommandId &&
+        binding.arguments == null) {
+      _setLockedScrollingHeld(true);
+      return;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
   }
 
   /// 执行命令（键位/菜单/面板统一出口）；未知 id（用户键位指向不存在的命令）
@@ -4243,7 +4263,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void onWindowFocus() => _onMainWindowFocusChanged(true);
 
   @override
-  void onWindowBlur() => _onMainWindowFocusChanged(false);
+  void onWindowBlur() {
+    _setLockedScrollingHeld(false);
+    _onMainWindowFocusChanged(false);
+  }
 
   void _syncPanelMaximizationCommandContext() {
     _commands.context.setValues({
@@ -4471,6 +4494,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final available = [
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
+            c.id != _holdLockedScrollingCommandId &&
             !problemsMenuCommands.contains(c.id) &&
             (showProblemsMessageCommands ||
                 c.id != _problemsShowSingleLineCommandId &&
@@ -15926,14 +15950,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _toggleLockedScrolling() {
     setState(() => _lockedScrolling = !_lockedScrolling);
-    if (_lockedScrolling) {
+    _refreshLockedScrollingState();
+    _scheduleStateSave();
+  }
+
+  void _setLockedScrollingHeld(bool held) {
+    if (_disposing || _lockedScrollingHeld == held) return;
+    setState(() => _lockedScrollingHeld = held);
+    if (held) {
+      HardwareKeyboard.instance.addHandler(_onLockedScrollingHoldKey);
+    } else {
+      HardwareKeyboard.instance.removeHandler(_onLockedScrollingHoldKey);
+    }
+    _refreshLockedScrollingState();
+  }
+
+  bool _onLockedScrollingHoldKey(KeyEvent event) {
+    if (event is KeyUpEvent) _setLockedScrollingHeld(false);
+    return false;
+  }
+
+  void _refreshLockedScrollingState() {
+    if (_isLockedScrolling) {
       _ensureScrollSyncListeners();
       _refreshLockedScrollAnchors();
     } else {
       _clearLockedScrollAnchors();
     }
     _syncCommandContext();
-    _scheduleStateSave();
   }
 
   /// 为所有已打开文档的滚动控制器挂同步监听（幂等）。编辑器随打开动态创建，
@@ -15946,12 +15990,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _attachScrollSyncListener(view);
       }
     }
-    if (_lockedScrolling && !_lockedScrollAnchorRefreshScheduled) {
+    if (_isLockedScrolling && !_lockedScrollAnchorRefreshScheduled) {
       _lockedScrollAnchorRefreshScheduled = true;
       // New views attach their positions after the editor subtree is built.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _lockedScrollAnchorRefreshScheduled = false;
-        if (mounted && !_disposing && _lockedScrolling) {
+        if (mounted && !_disposing && _isLockedScrolling) {
           _refreshLockedScrollAnchors();
         }
       });
@@ -16027,7 +16071,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       });
 
   void _applyLockedScrollDisplacement(OpenDoc source) {
-    if (!_lockedScrolling || _disposing || _scrollSyncInProgress) return;
+    if (!_isLockedScrolling || _disposing || _scrollSyncInProgress) return;
     final origin = _lockedScrollAnchors[source];
     if (origin == null ||
         !_hasLockedScrollAnchors(_visibleLockedScrollPositions())) {
@@ -16067,44 +16111,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _attachScrollSyncListener(OpenDoc doc) {
     if (doc._hasScrollSyncListener) return;
     doc._hasScrollSyncListener = true;
-    final controller = doc.editorScrollController;
-    controller.addListener(() => _onLockedScroll(doc, controller));
-  }
-
-  void _onLockedScroll(OpenDoc source, ScrollController controller) {
-    final holdSync = HardwareKeyboard.instance.isAltPressed;
-    if (!_lockedScrolling && !holdSync) return;
-    if (_disposing || _scrollSyncInProgress || source._viewDisposed) return;
-    final position = controller.positions.singleOrNull;
-    if (position == null ||
-        !position.hasContentDimensions ||
-        position.maxScrollExtent <= 0) {
-      return;
-    }
-    if (_lockedScrolling) {
-      _applyLockedScrollDisplacement(source);
-      return;
-    }
-    _scrollSyncInProgress = true;
-    try {
-      final ratio = position.pixels / position.maxScrollExtent;
-      final sourceGroup = _ownerOfView(source);
-      for (final group in _groups.values) {
-        if (sourceGroup != null && identical(group, sourceGroup)) continue;
-        final target = group.active;
-        if (target == null || target.id == source.id) continue;
-        final targetController = target.editorScrollController;
-        if (!targetController.hasClients) continue;
-        final targetPosition = targetController.position;
-        if (targetPosition.maxScrollExtent <= 0) continue;
-        targetController.jumpTo(
-          (ratio * targetPosition.maxScrollExtent)
-              .clamp(0.0, targetPosition.maxScrollExtent),
-        );
-      }
-    } finally {
-      _scrollSyncInProgress = false;
-    }
+    doc.editorScrollController
+        .addListener(() => _applyLockedScrollDisplacement(doc));
   }
 
   // ---------- 浮动辅助窗口（LAY-12a） ----------
@@ -20208,7 +20216,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     KeyEvent event, {
     Set<String>? permittedCommands,
   }) {
-    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (_lockedScrollingHeld || event is! KeyDownEvent) {
+      return KeyEventResult.ignored;
+    }
     final keyboard = HardwareKeyboard.instance;
     final key = event.logicalKey;
     final ctrl = keyboard.isControlPressed;
@@ -20253,7 +20263,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (binding != null &&
           _commands.context.matches(binding.when) &&
           isEnabled(binding.commandId)) {
-        _runCommand(binding.commandId, arguments: binding.arguments);
+        _runShortcutCommand(binding);
         return KeyEventResult.handled;
       }
     }
@@ -24370,6 +24380,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    if (_lockedScrollingHeld) {
+      HardwareKeyboard.instance.removeHandler(_onLockedScrollingHoldKey);
+    }
     _clearLockedScrollAnchors();
     FocusManager.instance.removeListener(_syncNotificationFocusContext);
     FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
@@ -24583,8 +24596,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               )
               .entries
               .where((entry) => _commands.isEnabled(entry.value.commandId)))
-            e.key: () =>
-                _runCommand(e.value.commandId, arguments: e.value.arguments),
+            e.key: () => _runShortcutCommand(e.value),
         },
         child: Focus(
           focusNode: _workbenchKeyboardFocus,
@@ -24594,6 +24606,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             permittedCommands: const {
               'notifications.showList',
               'togglePeekWidgetFocus',
+              _holdLockedScrollingCommandId,
               ..._hierarchyOpenCommands,
             },
           ),
@@ -25082,7 +25095,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     syncCount: _syncCount,
                     panelCollapsed: _layout.isCollapsed('panel'),
                     onTogglePanel: _togglePanel,
-                    lockedScrolling: _lockedScrolling,
+                    lockedScrolling: _isLockedScrolling,
                     onToggleLockedScrolling: _toggleLockedScrolling,
                     encodingLabel: _active?.fileOptions.statusLabel,
                     encodingTooltip: _active?.fileOptions.label,
@@ -29787,7 +29800,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildEditor(EditorGroup g, {OpenDoc? view}) {
-    // 同步监听常挂（Hold 模式在 toggle 关闭时也需要监听），回调内判断开关。
+    // 为当前编辑视图补挂同步监听，回调依据有效锁定状态处理。
     _ensureScrollSyncListeners();
     final active = view ?? g.active;
     if (active == null) {

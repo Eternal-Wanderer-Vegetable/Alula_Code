@@ -5267,6 +5267,18 @@
       "evidence": "锁定后按各可见视图起始位置同步横纵两轴，拆分、合并和范围回转通过。Windows 与 Linux 各通过 17 项原生检查，专题 272/272，Flutter 1,978 项通过、2 项跳过。产品 d7c8dfe 的 CI 46085021722 四项和 Platform Availability 46085017863 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.364-locked-scroll-horizontal.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-417",
+      "name": "P05.365 LAY-15 同窗 Hold 锁定滚动键位",
+      "description": "固定命令的自定义键位临时反转锁定状态，释放或窗口失焦后恢复，在两轴之间保持各视图起点和会话开关。",
+      "dependencies": [
+        "feat-416"
+      ],
+      "status": "in-progress",
+      "evidence": "待登记精确构建及原生证据。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

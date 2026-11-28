@@ -11,6 +11,7 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// 测试工作台状态持有者：集中管理目录/store，避免 late 局部变量被闭包
 /// 捕获后的确定性赋值分析报错。
@@ -299,40 +300,155 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'holding Alt syncs a scroll gesture even when the toggle is off',
-    (tester) async {
-      h = _Harness();
-      await h.prepare(workspaceRoot: 'unused');
-      seedTwoGroups(tester, h);
-      await h.mount(tester);
-      expect(
-        (h.sessionStore!.tryLoad()?['lockedScrolling'] as bool?) ?? false,
-        isFalse,
-      );
+  void bindHold(String key) {
+    File('${h.base}/keybindings.json').writeAsStringSync(jsonEncode([
+      {
+        'key': key,
+        'command': 'workbench.action.holdLockedScrolling',
+        'when': 'editorTextFocus',
+      },
+      {
+        'key': 'f10',
+        'command': 'workbench.action.splitEditorInGroup',
+        'when': 'editorTextFocus',
+      },
+    ]));
+  }
 
-      final alphaField = _fieldForDocument(tester, 10);
-      final betaField = _fieldForDocument(tester, 11);
-      alphaField.scrollController!.jumpTo(
-        alphaField.scrollController!.position.maxScrollExtent * 0.8,
-      );
-      await tester.pumpAndSettle();
-      expect(betaField.scrollController!.offset, 0);
+  testWidgets('unbound Alt leaves vertical pane offsets independent',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h);
+    await h.mount(tester);
+    final alpha = _fieldForDocument(tester, 10).scrollController!;
+    final beta = _fieldForDocument(tester, 11).scrollController!;
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    alpha.jumpTo(300);
+    await tester.pumpAndSettle();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    expect(beta.offset, 0);
+    await h.disposeWorkbench(tester);
+  });
 
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
-      await tester.pump();
-      alphaField.scrollController!.jumpTo(
-        alphaField.scrollController!.position.maxScrollExtent * 0.5,
-      );
-      await tester.pumpAndSettle();
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
-      final betaMax = betaField.scrollController!.position.maxScrollExtent;
-      expect(betaField.scrollController!.offset,
-          closeTo(betaMax * 0.5, betaMax * 0.5 * 0.1),
-          reason: 'Alt-held scroll syncs without the toggle');
-      await h.disposeWorkbench(tester);
-    },
-  );
+  testWidgets('bound Hold syncs both axes until any key release',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h, wideLines: true);
+    bindHold('f8');
+    await h.mount(tester);
+    final alpha = _fieldForDocument(tester, 10);
+    final beta = _fieldForDocument(tester, 11);
+    beta.focusNode!.requestFocus();
+    await tester.pumpAndSettle();
+    final alphaX = _horizontalController(tester, alpha);
+    final betaX = _horizontalController(tester, beta);
+    final alphaY = alpha.scrollController!;
+    final betaY = beta.scrollController!;
+    alphaX.jumpTo(140);
+    betaX.jumpTo(45);
+    alphaY.jumpTo(250);
+    betaY.jumpTo(100);
+    await tester.pumpAndSettle();
+    expect([alphaX.offset, betaX.offset], [140, 45]);
+    expect([alphaY.offset, betaY.offset], [250, 100]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.f8);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    alphaX.jumpTo(210);
+    alphaY.jumpTo(320);
+    await tester.pumpAndSettle();
+    expect([betaX.offset, betaY.offset], [115, 170]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f10);
+    await tester.pumpAndSettle();
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f10);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    alphaX.jumpTo(260);
+    await tester.pumpAndSettle();
+    expect(betaX.offset, 115);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f8);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(h.sessionStore!.tryLoad()?['lockedScrolling'] ?? false, isFalse);
+    await h.disposeWorkbench(tester);
+  });
+
+  testWidgets('native window blur restores the latched lock during Hold',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h, wideLines: true);
+    bindHold('f8');
+    await h.mount(tester);
+    final alpha = _fieldForDocument(tester, 10).scrollController!;
+    final betaField = _fieldForDocument(tester, 11);
+    final beta = betaField.scrollController!;
+    betaField.focusNode!.requestFocus();
+    await tester.pumpAndSettle();
+    alpha.jumpTo(250);
+    beta.jumpTo(100);
+    await tester.pumpAndSettle();
+    await h.commands!.execute('workbench.action.toggleLockedScrolling');
+    await tester.pump(const Duration(milliseconds: 700));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    alpha.jumpTo(300);
+    await tester.pumpAndSettle();
+    expect(beta.offset, 100);
+
+    final windowListener =
+        tester.state(find.byType(WorkbenchPage)) as WindowListener;
+    windowListener.onWindowBlur();
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    alpha.jumpTo(330);
+    await tester.pumpAndSettle();
+    expect(beta.offset, 130);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f8);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue);
+    await h.disposeWorkbench(tester);
+  });
+
+  testWidgets('Hold uses the final chord key and supports command execution',
+      (tester) async {
+    h = _Harness();
+    await h.prepare(workspaceRoot: 'unused');
+    await seedTwoGroups(tester, h);
+    bindHold('ctrl+k f8');
+    await h.mount(tester);
+    _fieldForDocument(tester, 11).focusNode!.requestFocus();
+    await tester.pumpAndSettle();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f8);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+
+    final status =
+        await h.commands!.execute('workbench.action.holdLockedScrolling');
+    await tester.pumpAndSettle();
+    expect(status, CommandExecutionStatus.executed);
+    expect(find.byIcon(Icons.lock), findsOneWidget);
+    await h.disposeWorkbench(tester);
+  });
 
   testWidgets(
     'the status bar indicator reflects and toggles the state with persistence',
