@@ -5519,6 +5519,20 @@
       "evidence": "默认多标签模式的更多操作提供「显示已打开的编辑器」「全部关闭」「关闭已保存」，按点击组处理。取消列表恢复原活动组，共享、固定及未保存的文档按现有规则保护。Windows 发布构建通过菜单路由和原生 Escape，Linux 通过完整键鼠路径，均正常关窗且文件字节一致。定向 9/9，专题 279/279，Flutter 2,018 项通过、2 项跳过。产品 58b6e9b 的 CI 46145963791 四项及 Platform Availability 46145959371 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.383-group-more-actions.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-436",
+      "name": "P05.384 LAY-14 编辑器组更多操作中的锁定与最大化",
+      "description": "默认多标签组菜单可锁定点击组及最大化或还原该组，验证勾选状态、焦点、窗口几何及共享文档。",
+      "dependencies": [
+        "feat-183",
+        "feat-185",
+        "feat-435"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

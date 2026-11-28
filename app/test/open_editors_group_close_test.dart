@@ -214,6 +214,61 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  testWidgets('group toolbar locks and maximizes the clicked inactive group',
+      (tester) async {
+    await prepare(tester);
+    seed(target: [10], other: [10, 20]);
+    await mount(tester);
+
+    final left = find.byKey(const ValueKey('editor-tab-strip-editor'));
+    final right = find.byKey(const ValueKey('editor-tab-strip-editor-2'));
+    final leftBounds = tester.getRect(left);
+    final rightBounds = tester.getRect(right);
+    final locked = find.byKey(const ValueKey('unlock-editor-group-editor'));
+    final lockItem = find.byKey(const ValueKey('editor-group-more-lock-group'));
+    final more = find.byKey(const ValueKey('editor-group-more-actions-editor'));
+
+    expect(activeSplit('editor-2'), findsOneWidget);
+    await tester.tap(more);
+    await tester.pumpAndSettle();
+    expect(
+        tester.widget<CheckedPopupMenuItem<String>>(lockItem).checked, isFalse);
+    await tester.tap(lockItem);
+    await tester.pumpAndSettle();
+    expect(locked, findsOneWidget);
+    expect(activeSplit('editor-2'), findsOneWidget);
+    expect(tester.getRect(left), leftBounds);
+    expect(tester.getRect(right), rightBounds);
+
+    await chooseGroupToolbar(tester, 'editor', 'maximize-group');
+    expect(find.byKey(const ValueKey('restore-editor-group-editor')),
+        findsOneWidget);
+    expect(activeSplit('editor'), findsOneWidget);
+    expect(right, findsNothing);
+    expect(tester.getRect(left).width, greaterThan(leftBounds.width));
+
+    await tester.tap(more);
+    await tester.pumpAndSettle();
+    expect(
+        tester.widget<CheckedPopupMenuItem<String>>(lockItem).checked, isTrue);
+    final toggle =
+        find.byKey(const ValueKey('editor-group-more-maximize-group'));
+    expect(find.descendant(of: toggle, matching: find.text('还原编辑器组')),
+        findsOneWidget);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(tester.getRect(left), leftBounds);
+    expect(tester.getRect(right), rightBounds);
+    expect(activeSplit('editor'), findsOneWidget);
+    expect(locked, findsOneWidget);
+
+    await chooseGroupToolbar(tester, 'editor', 'lock-group');
+    expect(locked, findsNothing);
+    expect(_tab('editor', 10), findsOneWidget);
+    expect(_tab('editor-2', 10), findsOneWidget);
+    expect(_tab('editor-2', 20), findsOneWidget);
+  });
+
   testWidgets('group toolbar picker uses the clicked group and restores focus',
       (tester) async {
     await prepare(tester);

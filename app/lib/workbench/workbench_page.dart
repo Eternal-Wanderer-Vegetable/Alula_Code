@@ -18062,11 +18062,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
   }
 
-  void _toggleMaximizeEditorGroup() {
-    if (!_layout.toggleEditorGroupMaximization(_focusedRegion)) return;
-    final group = _focused;
+  void _toggleMaximizeEditorGroup({EditorGroup? targetGroup}) {
+    final region = targetGroup?.region ?? _focusedRegion;
+    if (!_layout.toggleEditorGroupMaximization(region)) return;
+    final group = targetGroup ?? _focused;
     final active = group.active;
-    if (active != null) _focusEditorAfterLayout(group, active);
+    if (active == null) return;
+    if (group.region == _focusedRegion) {
+      _focusEditorAfterLayout(group, active);
+    } else {
+      _activateEditorFromOverflow(group, active.id);
+    }
   }
 
   void _resizeActiveEditorGroup({bool hideSideBars = false}) {
@@ -28836,6 +28842,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               child: Text('关闭已保存'),
             ),
             const PopupMenuDivider(),
+            if (_groups.length > 1)
+              PopupMenuItem(
+                key: const ValueKey('editor-group-more-maximize-group'),
+                value: 'maximize-group',
+                child: Text(_layout.maximizedEditorRegion == g.region
+                    ? '还原编辑器组'
+                    : '最大化编辑器组'),
+              ),
+            CheckedPopupMenuItem(
+              key: const ValueKey('editor-group-more-lock-group'),
+              value: 'lock-group',
+              checked: g.locked,
+              child: const Text('锁定编辑器组'),
+            ),
+            const PopupMenuDivider(),
             PopupMenuItem(
               key: const ValueKey('editor-group-more-start-lsp'),
               value: 'start-lsp',
@@ -28863,6 +28884,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     isCurrent: isCurrentGroup,
                   ));
                 }
+              case 'maximize-group':
+                _toggleMaximizeEditorGroup(targetGroup: g);
+              case 'lock-group':
+                _setEditorGroupLocked(g, !g.locked);
               case 'start-lsp':
                 _runCommand('lsp.start');
             }
