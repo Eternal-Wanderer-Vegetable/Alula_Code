@@ -25,11 +25,13 @@ import 'auxiliary_window_transfer.dart';
 import 'commands.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
+import 'keybindings.dart';
 import 'locked_scroll_motion.dart';
 import 'quick_input.dart';
 import 'status_bar.dart';
 
 const auxiliaryLockedScrollingMethod = 'alula_locked_scrolling_v1';
+const auxiliaryLockedScrollHoldMethod = 'alula_locked_scroll_hold_v1';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
@@ -175,6 +177,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       'workbench.action.disableCompactAuxiliaryWindow';
   static const _toggleLockedScrollingCommand =
       'workbench.action.toggleLockedScrolling';
+  static const _holdLockedScrollingCommand =
+      'workbench.action.holdLockedScrolling';
 
   AlulaDoc? _doc;
   RustTextInputWindow? _inputWindow;
@@ -191,7 +195,15 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   String? _windowStateError;
   late final ScrollController _scrollController;
   final _editorInputKey = GlobalKey<RustTextInputFieldState>();
-  final FocusNode _editorFocus = FocusNode(debugLabel: 'auxiliary editor');
+  late final FocusNode _editorFocus = FocusNode(
+    debugLabel: 'auxiliary editor',
+    onKeyEvent: _handleAuxiliaryEditorKey,
+  );
+  KeybindingSet? _holdKeybindings;
+  KeyChord? _holdChordPrefix;
+  Timer? _holdChordTimeout;
+  PhysicalKeyboardKey? _auxiliaryHoldKey;
+  int _auxiliaryHoldSequence = 0;
   WindowController? _windowController;
   WindowController? _mainWindowController;
   Future<void> _focusEventQueue = Future<void>.value();
@@ -264,6 +276,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     windowManager.removeListener(this);
     _tabDrag?.deadline?.cancel();
     _tabDrag = null;
+    _releaseAuxiliaryLockedScrollHold();
     _detachLockedScrollView();
     _releaseDocuments();
     final windowController = _windowController;
@@ -348,6 +361,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptGlobalFocusSnapshot(initialSnapshot);
       if (!mounted) return;
       _focusContextConnected = true;
+      unawaited(_loadAuxiliaryHoldKeybindings());
       _scheduleLockedScrollView();
       unawaited(_requestLockedScrolling(toggle: false));
       _requestBoundsReport();
@@ -408,6 +422,151 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptLockedScrollingSnapshot(snapshot);
     } on Object {
       // The main engine may already have shut down with a request in flight.
+    }
+  }
+
+  Future<void> _loadAuxiliaryHoldKeybindings() async {
+    final owner = _mainWindowController;
+    final windowId = _windowController?.windowId;
+    if (owner == null || windowId == null) return;
+    try {
+      final path = await owner.invokeMethod<String>(
+        auxiliaryLockedScrollHoldMethod,
+        {'windowId': windowId, 'keybindings': true},
+      );
+      if (!mounted || _closing || path == null) return;
+      _holdKeybindings = KeybindingSet.load(
+        userJson: KeybindingsStore(path: path).tryLoadText(),
+      );
+    } on Object {
+      // Editing stays available if the main engine is already closing.
+    }
+  }
+
+  KeyEventResult _handleAuxiliaryEditorKey(FocusNode node, KeyEvent event) {
+    if (_auxiliaryHoldKey != null &&
+        event is KeyRepeatEvent &&
+        event.physicalKey == _auxiliaryHoldKey) {
+      return KeyEventResult.handled;
+    }
+    final bindings = _holdKeybindings;
+    if (event is! KeyDownEvent ||
+        bindings == null ||
+        !_focusContextConnected ||
+        _nativeWindowFocused == false ||
+        !node.hasPrimaryFocus ||
+        _closing ||
+        _pendingTransfer != null ||
+        _returningTab ||
+        _auxiliaryHoldKey != null) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    final logical = event.logicalKey;
+    final key = keyboard.isShiftPressed &&
+            logical == LogicalKeyboardKey.bar &&
+            event.physicalKey == PhysicalKeyboardKey.backslash
+        ? LogicalKeyboardKey.backslash
+        : logical;
+    final chord = KeyChord(
+      key: key,
+      control: keyboard.isControlPressed,
+      shift: keyboard.isShiftPressed,
+      alt: keyboard.isAltPressed,
+      meta: keyboard.isMetaPressed,
+    );
+    final context = _compactCommands.context;
+    context.setValues({
+      'editorFocus': true,
+      'editorTextFocus': true,
+      'editorReadonly': false,
+      'isAuxiliaryWindow': true,
+      'isAuxiliaryWindowFocused': true,
+      'quickInputVisible': false,
+    });
+
+    final prefix = _holdChordPrefix;
+    if (prefix != null) {
+      if (const [
+        LogicalKeyboardKey.controlLeft,
+        LogicalKeyboardKey.controlRight,
+        LogicalKeyboardKey.metaLeft,
+        LogicalKeyboardKey.metaRight,
+        LogicalKeyboardKey.shiftLeft,
+        LogicalKeyboardKey.shiftRight,
+        LogicalKeyboardKey.altLeft,
+        LogicalKeyboardKey.altRight,
+      ].contains(logical)) {
+        return KeyEventResult.ignored;
+      }
+      _clearAuxiliaryHoldChord();
+      final sequence = bindings.bindingForSequence([prefix, chord]);
+      if (_acceptsAuxiliaryHoldBinding(sequence)) {
+        return _beginAuxiliaryLockedScrollHold(event.physicalKey);
+      }
+    }
+    if (bindings.hasSequencePrefix(
+      chord,
+      matchesWhen: context.matches,
+      isCommandEnabled: (id) => id == _holdLockedScrollingCommand,
+    )) {
+      _holdChordPrefix = chord;
+      _holdChordTimeout = Timer(
+        const Duration(seconds: 5),
+        _clearAuxiliaryHoldChord,
+      );
+      return KeyEventResult.handled;
+    }
+    if (_acceptsAuxiliaryHoldBinding(
+        bindings.bindingForChord(chord, matchesWhen: context.matches))) {
+      return _beginAuxiliaryLockedScrollHold(event.physicalKey);
+    }
+    return KeyEventResult.ignored;
+  }
+
+  bool _acceptsAuxiliaryHoldBinding(KeybindingBinding? binding) =>
+      binding != null &&
+      binding.commandId == _holdLockedScrollingCommand &&
+      binding.arguments == null &&
+      _compactCommands.context.matches(binding.when);
+
+  KeyEventResult _beginAuxiliaryLockedScrollHold(PhysicalKeyboardKey key) {
+    _auxiliaryHoldKey = key;
+    HardwareKeyboard.instance.addHandler(_onAuxiliaryHoldKey);
+    unawaited(_sendAuxiliaryHoldState(true));
+    return KeyEventResult.handled;
+  }
+
+  bool _onAuxiliaryHoldKey(KeyEvent event) {
+    if (event is KeyUpEvent) _releaseAuxiliaryLockedScrollHold();
+    return false;
+  }
+
+  void _clearAuxiliaryHoldChord() {
+    _holdChordTimeout?.cancel();
+    _holdChordTimeout = null;
+    _holdChordPrefix = null;
+  }
+
+  void _releaseAuxiliaryLockedScrollHold() {
+    _clearAuxiliaryHoldChord();
+    if (_auxiliaryHoldKey == null) return;
+    _auxiliaryHoldKey = null;
+    HardwareKeyboard.instance.removeHandler(_onAuxiliaryHoldKey);
+    unawaited(_sendAuxiliaryHoldState(false));
+  }
+
+  Future<void> _sendAuxiliaryHoldState(bool held) async {
+    final owner = _mainWindowController;
+    final windowId = _windowController?.windowId;
+    if (owner == null || windowId == null) return;
+    try {
+      await owner.invokeMethod<bool>(
+        auxiliaryLockedScrollHoldMethod,
+        {'windowId': windowId, 'sequence': ++_auxiliaryHoldSequence, 'held': held},
+      );
+    } on Object {
+      // A closing main engine cannot retain the auxiliary lease.
     }
   }
 
@@ -889,6 +1048,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   void onWindowBlur() {
     _nativeFocusGeneration++;
     _nativeWindowFocused = false;
+    _releaseAuxiliaryLockedScrollHold();
     _publishAuxiliaryFocusContext(focused: false);
   }
 
@@ -1134,6 +1294,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   }
 
   Future<void> _closeNativeWindow({bool restoreMainFocus = false}) async {
+    _releaseAuxiliaryLockedScrollHold();
     if (defaultTargetPlatform == TargetPlatform.linux) {
       // Unmap the GTK window while its rendering context is still alive.
       try {

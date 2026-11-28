@@ -768,6 +768,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // LAY-15：会话只保存常驻开关，Hold 临时反转其有效状态。
   bool _lockedScrolling = false;
   bool _lockedScrollingHeld = false;
+  String? _lockedScrollHoldWindowId;
+  final _auxiliaryScrollHoldSequences = <String, int>{};
   int _lockedScrollingRevision = 0;
   bool _broadcastingLockedScrolling = false;
   int _lockedScrollAnchorRevision = 0;
@@ -15961,15 +15963,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
-  void _setLockedScrollingHeld(bool held) {
-    if (_disposing || _lockedScrollingHeld == held) return;
-    setState(() => _lockedScrollingHeld = held);
-    if (held) {
-      HardwareKeyboard.instance.addHandler(_onLockedScrollingHoldKey);
-    } else {
+  void _setLockedScrollingHeld(bool held, {String? windowId}) {
+    if (_disposing) return;
+    final previous = _lockedScrollingHeld;
+    final previousWindow = _lockedScrollHoldWindowId;
+    if (held == previous && windowId == previousWindow) return;
+    // A release belongs to the window that started the current hold.
+    if (!held && (!previous || windowId != previousWindow)) return;
+
+    if (previous && previousWindow == null) {
       HardwareKeyboard.instance.removeHandler(_onLockedScrollingHoldKey);
     }
-    _refreshLockedScrollingState();
+    _lockedScrollHoldWindowId = held ? windowId : null;
+    if (held && windowId == null) {
+      HardwareKeyboard.instance.addHandler(_onLockedScrollingHoldKey);
+    }
+    if (previous != held) {
+      setState(() => _lockedScrollingHeld = held);
+      _refreshLockedScrollingState();
+    }
+  }
+
+  Object? _handleAuxiliaryLockedScrollHold(Object? value) {
+    if (!mounted || _disposing || value is! Map) return null;
+    final windowId = value['windowId'];
+    if (windowId is! String || !_auxiliaryWindowIds.contains(windowId)) {
+      return null;
+    }
+    final closing = _auxiliaryCloseReceipts.containsKey(windowId);
+    if (value['keybindings'] == true) {
+      return closing ? null : widget.keybindingsStore.resolvePath();
+    }
+    final sequence = value['sequence'];
+    final held = value['held'];
+    if (sequence is! int ||
+        sequence <= (_auxiliaryScrollHoldSequences[windowId] ?? 0) ||
+        held is! bool ||
+        (held && closing)) {
+      return null;
+    }
+    _auxiliaryScrollHoldSequences[windowId] = sequence;
+    _setLockedScrollingHeld(held, windowId: windowId);
+    return true;
   }
 
   bool _onLockedScrollingHoldKey(KeyEvent event) {
@@ -16259,6 +16294,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
       );
       await self.setWindowMethodHandler((call) async {
+        if (call.method == auxiliaryLockedScrollHoldMethod) {
+          return _handleAuxiliaryLockedScrollHold(call.arguments);
+        }
         if (call.method == lockedScrollMotionMethod) {
           return _handleAuxiliaryScrollMotion(call.arguments);
         }
@@ -16350,6 +16388,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (liveIds.contains(windowId)) continue;
         _auxiliaryWindowIds.remove(windowId);
         removedWindow = true;
+        _auxiliaryScrollHoldSequences.remove(windowId);
+        if (_lockedScrollHoldWindowId == windowId) {
+          _setLockedScrollingHeld(false, windowId: windowId);
+        }
         _auxiliaryWindowBounds.remove(windowId);
         _auxiliaryCloseReceipts.remove(windowId);
         snapshotChanged = _auxiliaryFocusRegistry

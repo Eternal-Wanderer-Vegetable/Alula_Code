@@ -1451,6 +1451,45 @@ void main() {
         await tester.pumpAndSettle();
         expect(status, findsNothing);
         expect(scrollSnapshots.last, {'revision': 2, 'active': false});
+
+        Future<Object?> sendHold(Map<String, Object?> arguments) =>
+            dispatchPlatformMethod(
+              tester,
+              'mixin.one/desktop_multi_window/channels',
+              MethodCall('methodCall', {
+                'channel': 'mixin.one/window_controller/main',
+                'method': auxiliaryLockedScrollHoldMethod,
+                'arguments': arguments,
+              }),
+            );
+
+        Future<void> setAuxiliaryHold(int sequence, bool held) async {
+          await sendHold({
+            'windowId': 'aux-1',
+            'sequence': sequence,
+            'held': held,
+          });
+          await tester.pumpAndSettle();
+        }
+
+        expect(await sendHold({'windowId': 'unknown', 'keybindings': true}), isNull);
+        expect(await sendHold({'windowId': 'aux-1', 'keybindings': true}),
+            '${baseOf()}/keybindings.json');
+        await setAuxiliaryHold(1, true);
+        expect(status, findsOneWidget);
+        await tester.pump(const Duration(milliseconds: 700));
+        expect(sessionStore.tryLoad()?['lockedScrolling'], isFalse);
+        await dispatchPlatformMethod(
+          tester,
+          'window_manager',
+          const MethodCall('onEvent', {'eventName': 'blur'}),
+        );
+        await tester.pumpAndSettle();
+        expect(status, findsOneWidget);
+        await setAuxiliaryHold(2, false);
+        expect(status, findsNothing);
+        await setAuxiliaryHold(1, true);
+        expect(status, findsNothing, reason: 'late begin cannot restore a released lease');
         await tester.pumpWidget(const SizedBox.shrink());
         expect(windowManager.listeners, isNot(contains(mainWindowState)),
             reason: 'the main focus listener must be removed on dispose');

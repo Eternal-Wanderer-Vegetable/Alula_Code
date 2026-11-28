@@ -5329,6 +5329,20 @@
       "evidence": "按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-422",
+      "name": "P05.370 LAY-15 辅助窗口 Hold 锁定滚动键位",
+      "description": "辅助窗使用主工作台的键位配置识别 Hold。主窗持有临时状态，键释放、原生失焦和关闭均恢复常驻开关。复验单键、组合键、焦点条件及跨窗滚动。",
+      "dependencies": [
+        "feat-417",
+        "feat-420",
+        "feat-421"
+      ],
+      "status": "in-progress",
+      "evidence": [],
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
