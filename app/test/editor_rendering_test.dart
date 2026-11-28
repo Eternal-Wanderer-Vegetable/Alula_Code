@@ -434,6 +434,76 @@ void main() {
     skip: _bootstrap.skip != null,
   );
 
+
+  testWidgets(
+    'gutter shares the editable row layout in a deeply scrolled CRLF file',
+    (tester) async {
+      final rows = List.generate(12500, (index) {
+        final line = index + 1;
+        final label = line.toString().padLeft(5, '0');
+        return '$label row text${line % 4 == 0 ? ' 中文 😀' : ''}';
+      });
+      final source = '\ufeff${rows.join('\r\n')}\r\n';
+      final doc = _bootstrap.core!.openDoc(9791, source);
+      final absoluteStart = doc.lineOffset(6599).offsetUtf16;
+      final window = RustTextInputWindow.openAround(
+        doc,
+        selectionUtf16: absoluteStart + 3,
+      );
+      final scroll = ScrollController();
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        scroll.dispose();
+        doc.close();
+      });
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 500,
+            height: 340,
+            child: RustTextInputField(
+              inputWindow: window,
+              scrollController: scroll,
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 15,
+                height: 1.4,
+              ),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.all(12),
+              ),
+            ),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      expect(window.startUtf16, greaterThan(0));
+      final localStart = absoluteStart - window.startUtf16;
+      expect(window.text.startsWith('06600 row text', localStart), isTrue);
+      final localRow = editorLogicalLines(window.text)
+          .indexWhere((line) => line.startUtf16 == localStart);
+      expect(localRow, greaterThan(0));
+      scroll.jumpTo(scroll.position.maxScrollExtent * 0.5);
+      await tester.pumpAndSettle();
+
+      final gutter = tester
+          .widget<CustomPaint>(find.byWidgetPredicate(
+            (widget) =>
+                widget is CustomPaint && widget.painter is EditorGutterPainter,
+          ))
+          .painter! as EditorGutterPainter;
+      final editable = tester
+          .state<EditableTextState>(find.byType(EditableText))
+          .renderEditable;
+      expect(gutter.firstLineNumber + localRow + 1, 6600);
+      expect(gutter.strutStyle, editable.strutStyle);
+      expect(gutter.strutStyle?.forceStrutHeight, isTrue);
+      expect(doc.resync().content, source);
+    },
+    skip: _bootstrap.skip != null,
+  );
+
   testWidgets(
     'Rust-backed gutter resolves absolute line and paints bidi decorations',
     (tester) async {

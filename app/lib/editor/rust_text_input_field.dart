@@ -3038,6 +3038,15 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           textStyle,
                           forceStrutHeight: false,
                         );
+                  // EditableText forces the base strut unless an inline
+                  // overlay or folded view supplies its own line metrics.
+                  final gutterStrut = _controller.hasVisibleFoldedRanges
+                      ? StrutStyle.disabled
+                      : inlineStrut ??
+                          StrutStyle.fromTextStyle(
+                            textStyle,
+                            forceStrutHeight: true,
+                          );
                   final editorTextSpan = _controller.buildTextSpan(
                     context: context,
                     style: textStyle,
@@ -3221,7 +3230,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     final controls = _foldControlTargets(
                       layout: foldLayout,
                       textSpan: editorTextSpan,
-                      strutStyle: inlineStrut,
+                      strutStyle: gutterStrut,
                       textDirection: textDirection,
                       textScaler: textScaler,
                       padding: padding,
@@ -3235,7 +3244,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           painter: EditorGutterPainter(
                             text: editingValue.text,
                             textSpan: editorTextSpan,
-                            strutStyle: inlineStrut,
+                            strutStyle: gutterStrut,
                             firstLineNumber: _firstLineNumber,
                             style: textStyle,
                             textDirection: textDirection,
@@ -3320,7 +3329,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                           details: details,
                                           layout: foldLayout,
                                           textSpan: editorTextSpan,
-                                          strutStyle: inlineStrut,
+                                          strutStyle: gutterStrut,
                                           textDirection: textDirection,
                                           textScaler: textScaler,
                                           padding: padding,
