@@ -1,0 +1,233 @@
+{
+  "product": "9ad4d7f01cc6557c0bf8dfdd0d7dae63272687ee",
+  "tree": "88083af1e845f4cb04653221e5b98747b8d09006",
+  "ci": {
+    "id": 46091528730,
+    "sha": "9ad4d7f01cc6557c0bf8dfdd0d7dae63272687ee",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46091528730",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140813313567,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140813313784,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140813313857,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140813313887,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46091525632,
+    "sha": "9ad4d7f01cc6557c0bf8dfdd0d7dae63272687ee",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46091525632",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140813303111,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140813303307,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140813303371,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46089702367,
+    "sha": "153580e007c15887605b8019f2192d5984b76460",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46089702367",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140807473385,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140807473664,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140807473716,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140807473718,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46088576279,
+    "sha": "d1efa17777bb50506c6e5ebdeca84e440b6caa19",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46088576279",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140803856208,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140803856468,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140803856490,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 5,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "EditorGutterPainter": {
+      "target": {
+        "id": "Class:app/lib/editor/editor_rendering.dart:EditorGutterPainter",
+        "name": "EditorGutterPainter",
+        "type": "Class",
+        "filePath": "app/lib/editor/editor_rendering.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 17,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "6019259fe3da32227d43a180db80dbf186a8f84869ee5fcf44e14c94169b6e67"
+    },
+    "RustTextInputFieldState": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState",
+        "name": "RustTextInputFieldState",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 106,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "6015dc6a652cce78de24b96ae5d905908758cb2c5c7a5f638b5350d7058e39be"
+    },
+    "_updateLineMetadata": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._updateLineMetadata#0",
+        "name": "_updateLineMetadata",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "1b216a7aa9c42154dce3a466a3fa34ff738225c8829c9fe3938d825ebbf8a18d"
+    },
+    "build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "main": {
+      "target": {
+        "id": "Function:app/test/editor_rendering_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/editor_rendering_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "e10d8c2db4aaebbf72af08d99cdd71d49832355dd27a5b3cfb77415e520194a4"
+    },
+    "paint": {
+      "target": {
+        "id": "Method:app/lib/editor/editor_rendering.dart:EditorGutterPainter.paint#2",
+        "name": "paint",
+        "type": "Method",
+        "filePath": "app/lib/editor/editor_rendering.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "23809e8eeb88cdd65dcecddd50a3384c876331c97ccc7e192c0c67026f8ae82b"
+    }
+  }
+}

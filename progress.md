@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.366 / feat-418 完成。修复大文件混合字体时行号逐行漂移。12,500 行样本在跳转、深滚动和窗口切换后逐行对齐。Windows 247 行最大差 0.4 逻辑像素，Linux 246 行坐标重合。专题 162/162，Flutter 1,982 项通过、2 项跳过。产品 9ad4d7f 的 CI 46091528730 四项和 Platform Availability 46091525632 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md。
 - P05.365 / feat-417 完成。自定义 Hold 键位可临时反转同窗锁定，释放和原生失焦后恢复常驻开关。Windows 单键 19 项、Linux 单键 19 项和组合键 22 项通过，专题 363/363，Flutter 1,981 项通过、2 项跳过。产品 d1efa17 的 CI 46088579317 四项及 Platform Availability 46088576279 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.365-locked-scroll-hold.md。
 - P05.364 / feat-416 完成。锁定后按各可见视图起始位置同步横纵两轴，拆分、合并和范围回转通过。Windows 与 Linux 各通过 17 项原生检查，专题 272/272，Flutter 1,978 项通过、2 项跳过。产品 d7c8dfe 的 CI 46085021722 四项和 Platform Availability 46085017863 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.364-locked-scroll-horizontal.md。
 - P05.363 / feat-415 完成。锁定后按可见视图起始位置同步纵向位移，拆分、合并与越界返回通过。Windows 与 Linux 各通过 16 项原生检查，专题 242/242，Flutter 1,976 项通过、2 项跳过。产品 ea4aa75 的 CI 46081981014 四项和 Platform Availability 46081976626 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.363-locked-scroll-origin.md。
@@ -2391,7 +2392,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-- 用户报告长文件行号和正文错位。优先复现和验证长文件滚动、输入窗口边界及跳转。P05.270 已覆盖最多 64 行。\n- LAY-15 同窗横纵位移及 Hold 完成，继续核对状态栏和跨窗归属。
+- P05.366 已复验长文件行号与正文对齐和输入窗口切换。
+- LAY-15 同窗横纵位移及 Hold 完成，继续核对状态栏和跨窗归属。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
