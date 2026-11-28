@@ -221,22 +221,31 @@ class AlulaStatusBar extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(width: 8),
-          if (onToggleLockedScrolling != null)
-            InkWell(
-              key: const ValueKey('status-bar-locked-scrolling'),
-              onTap: onToggleLockedScrolling,
-              child: Tooltip(
-                message: lockedScrolling ? '锁定滚动：开（点击关闭）' : '锁定滚动：关（点击开启）',
-                child: Icon(
-                  lockedScrolling ? Icons.lock : Icons.lock_open,
-                  size: 14,
-                  color: lockedScrolling
-                      ? Colors.lightBlueAccent
-                      : Colors.grey.shade400,
+          if (lockedScrolling && onToggleLockedScrolling != null) ...[
+            const SizedBox(width: 8),
+            Semantics(
+              container: true,
+              button: true,
+              child: InkWell(
+                key: const ValueKey('status-bar-locked-scrolling'),
+                onTap: onToggleLockedScrolling,
+                child: const Tooltip(
+                  message: '滚动锁定已开启',
+                  excludeFromSemantics: true,
+                  child: ColoredBox(
+                    color: Color(0xFF2B435A),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      child: Text(
+                        '滚动已锁定',
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+          ],
           if (notificationButton != null && !notificationAtStart) ...[
             const SizedBox(width: 8),
             notificationButton!,

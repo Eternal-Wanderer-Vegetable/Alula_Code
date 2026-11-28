@@ -79,6 +79,7 @@ ScrollController _horizontalController(
 
 void main() {
   late _Harness h;
+  final statusEntry = find.byKey(const ValueKey('status-bar-locked-scrolling'));
 
   /// Seeds two horizontal groups: alpha（120 行）与 beta（60 行），长度
   /// 不同以便观察滚动位移。
@@ -356,10 +357,10 @@ void main() {
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     await tester.sendKeyRepeatEvent(LogicalKeyboardKey.f8);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     alphaX.jumpTo(210);
     alphaY.jumpTo(320);
     await tester.pumpAndSettle();
@@ -370,7 +371,7 @@ void main() {
     expect(find.byType(RustTextInputField), findsNWidgets(2));
     await tester.sendKeyUpEvent(LogicalKeyboardKey.f10);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    expect(statusEntry, findsNothing);
     alphaX.jumpTo(260);
     await tester.pumpAndSettle();
     expect(betaX.offset, 115);
@@ -400,7 +401,7 @@ void main() {
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    expect(statusEntry, findsNothing);
     alpha.jumpTo(300);
     await tester.pumpAndSettle();
     expect(beta.offset, 100);
@@ -409,13 +410,13 @@ void main() {
         tester.state(find.byType(WorkbenchPage)) as WindowListener;
     windowListener.onWindowBlur();
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     alpha.jumpTo(330);
     await tester.pumpAndSettle();
     expect(beta.offset, 130);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.f8);
     await tester.pump(const Duration(milliseconds: 700));
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue);
     await h.disposeWorkbench(tester);
   });
@@ -433,51 +434,53 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    expect(statusEntry, findsNothing);
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.f8);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.f8);
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock_open), findsOneWidget);
+    expect(statusEntry, findsNothing);
 
     final status =
         await h.commands!.execute('workbench.action.holdLockedScrolling');
     await tester.pumpAndSettle();
     expect(status, CommandExecutionStatus.executed);
-    expect(find.byIcon(Icons.lock), findsOneWidget);
+    expect(statusEntry, findsOneWidget);
     await h.disposeWorkbench(tester);
   });
 
   testWidgets(
-    'the status bar indicator reflects and toggles the state with persistence',
+    'the locked-scrolling status appears only while active and turns off on tap',
     (tester) async {
       h = _Harness();
       await h.prepare(workspaceRoot: 'unused');
-      seedTwoGroups(tester, h);
-      await h.mount(tester);
-      expect(find.byKey(const ValueKey('status-bar-locked-scrolling')),
-          findsOneWidget);
-      expect(find.byIcon(Icons.lock_open), findsOneWidget);
-      expect(find.byIcon(Icons.lock), findsNothing);
+      await seedTwoGroups(tester, h);
+      final semantics = tester.ensureSemantics();
+      try {
+        await h.mount(tester);
+        expect(statusEntry, findsNothing);
 
-      await tester
-          .tap(find.byKey(const ValueKey('status-bar-locked-scrolling')));
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 700));
-      expect(find.byIcon(Icons.lock), findsOneWidget,
-          reason: 'the status bar reflects locked scrolling');
-      expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue,
-          reason: 'the state persists through the session journal');
+        await h.commands!.execute('workbench.action.toggleLockedScrolling');
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 700));
+        expect(statusEntry, findsOneWidget);
+        expect(find.descendant(of: statusEntry, matching: find.text('滚动已锁定')),
+            findsOneWidget);
+        expect(find.bySemanticsLabel('滚动已锁定'), findsOneWidget);
+        expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue);
 
-      await tester
-          .tap(find.byKey(const ValueKey('status-bar-locked-scrolling')));
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 700));
-      expect(find.byIcon(Icons.lock_open), findsOneWidget);
-      expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isFalse);
-      await h.disposeWorkbench(tester);
+        await tester.tap(statusEntry);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 700));
+        expect(statusEntry, findsNothing);
+        expect(find.bySemanticsLabel('滚动已锁定'), findsNothing);
+        expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isFalse);
+      } finally {
+        semantics.dispose();
+        await h.disposeWorkbench(tester);
+      }
     },
   );
 }
