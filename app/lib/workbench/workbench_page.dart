@@ -15783,7 +15783,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- Zen 模式（LAY-14） ----------
 
-  /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
+  /// Zen 模式隐藏活动栏、主侧栏、次侧栏、面板和状态栏，并限制居中编辑器的宽度。
   /// 再次切换独立恢复四个区域的折叠态，会话 journal 保留进入前的快照。
   void _toggleZenMode() {
     if (_hasPendingZenExitChord) _clearPendingCommandChord();
@@ -25088,6 +25088,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     final chrome = WindowChromeConfigurationScope.maybeOf(context) ??
         WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
+    final showTitleBar = !_zenMode || chrome.isCustom;
     final hasRenderedTitleBar =
         chrome.isCustom || chrome.targetPlatform != TargetPlatform.macOS;
     final notificationInTitleBar =
@@ -25153,9 +25154,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             children: [
               Column(
                 children: [
-              if (!_zenMode || widget.windowControls)
+              if (showTitleBar || widget.windowControls)
               Visibility(
-                visible: !_zenMode,
+                visible: showTitleBar,
                 maintainState: widget.windowControls,
                 child: AlulaTitleBar(
                   commands: _commands,

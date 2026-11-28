@@ -9,6 +9,8 @@ import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/status_bar.dart';
+import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,11 +164,11 @@ void main() {
             fullscreen: alreadyFullscreen);
         await prepareWorkspace(tester, windowControls: true);
         await execute(tester, 'workbench.action.toggleZenMode');
-        expect(find.text('文件(F)'), findsNothing);
+        expect(find.byType(AlulaStatusBar), findsNothing);
         expect(requests, alreadyFullscreen ? isEmpty : [true]);
 
         await execute(tester, 'workbench.action.toggleZenMode');
-        expect(find.text('文件(F)'), findsOneWidget);
+        expect(find.byType(AlulaStatusBar), findsOneWidget);
         expect(requests, alreadyFullscreen ? isEmpty : [true, false]);
       },
     );
@@ -178,13 +180,13 @@ void main() {
     final nativeChanged = installNativeFullscreen(tester, requests);
     await prepareWorkspace(tester, windowControls: true);
     await execute(tester, 'workbench.action.toggleZenMode');
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
 
     nativeChanged(false);
     final listener = tester.state(find.byType(WorkbenchPage)) as WindowListener;
     listener.onWindowLeaveFullScreen();
     await tester.pumpAndSettle();
-    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
     expect(requests, [true]);
   });
 
@@ -197,27 +199,27 @@ void main() {
 
     tester.view.physicalSize = const Size(2300, 1000);
     await tester.pumpAndSettle();
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
 
     nativeChanged(false);
     tester.view.physicalSize = const Size(1150, 750);
     tester.view.physicalSize = const Size(1149, 749);
     await tester.pumpAndSettle();
-    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
     expect(requests, [true]);
   });
 
   testWidgets(
-    'toggling zen mode hides the shell chrome and centers the editor',
+    'toggling zen mode hides the status bar and centers the editor',
     (tester) async {
       await prepareWorkspace(tester);
-      expect(find.text('文件(F)'), findsOneWidget);
+      expect(find.byType(AlulaStatusBar), findsOneWidget);
       expect(zenStrip('editor'), findsOneWidget);
 
       await execute(tester, 'workbench.action.toggleZenMode');
       await tester.pumpAndSettle();
-      expect(find.text('文件(F)'), findsNothing,
-          reason: 'zen mode hides the title bar');
+      expect(find.byType(AlulaStatusBar), findsNothing,
+          reason: 'zen mode hides the status bar');
       expect(zenStrip('editor'), findsOneWidget,
           reason: 'the editor remains visible');
 
@@ -228,11 +230,11 @@ void main() {
           reason: 'the centered grid is width-limited');
 
       await pressEscape(tester);
-      expect(find.text('文件(F)'), findsNothing);
+      expect(find.byType(AlulaStatusBar), findsNothing);
       await pressEscape(tester);
-      expect(find.text('文件(F)'), findsOneWidget,
+      expect(find.byType(AlulaStatusBar), findsOneWidget,
           reason:
-              'the second Escape exits zen mode and restores the title bar');
+              'the second Escape exits zen mode and restores the status bar');
       expect(zenStrip('editor'), findsOneWidget);
     },
   );
@@ -245,8 +247,8 @@ void main() {
       await prepareWorkspace(tester, zenMode: true, windowControls: true);
       await tester.pumpAndSettle();
       expect(requests, [true]);
-      expect(find.text('文件(F)'), findsNothing,
-          reason: 'a zen-mode session restores without the title bar');
+      expect(find.byType(AlulaStatusBar), findsNothing,
+          reason: 'a zen-mode session restores without the status bar');
       final gridRect = tester.getRect(find.byType(WorkbenchGrid));
       expect(gridRect.width, lessThan(2400),
           reason: 'the centered grid restores');
@@ -254,7 +256,7 @@ void main() {
       await pressEscape(tester);
       expect(requests, [true]);
       await pressEscape(tester);
-      expect(find.text('文件(F)'), findsOneWidget);
+      expect(find.byType(AlulaStatusBar), findsOneWidget);
       expect(requests, [true, false]);
     },
   );
@@ -266,7 +268,7 @@ void main() {
     installNativeFullscreen(tester, requests, isVisible: () => visible);
     await prepareWorkspace(tester, zenMode: true, windowControls: true);
     await tester.pumpAndSettle();
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
     expect(requests, isEmpty);
 
     visible = true;
@@ -274,7 +276,7 @@ void main() {
     listener.onWindowEvent('show');
     await tester.pumpAndSettle();
     expect(requests, [true]);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
   });
 
   testWidgets('zen chord timeout and invalid second key preserve editor state',
@@ -286,18 +288,18 @@ void main() {
     await execute(tester, 'workbench.action.toggleZenMode');
 
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pumpAndSettle();
     expect(editor.editingValue.selection, caret);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
 
     await pressEscape(tester);
     await tester.pump(const Duration(milliseconds: 5200));
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
     expect(editor.widget.focusNode!.hasFocus, isTrue);
     expect(editor.editingValue.selection, caret);
   });
@@ -310,12 +312,12 @@ void main() {
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
-    final stayedInZen = find.text('文件(F)').evaluate().isEmpty;
+    final stayedInZen = find.byType(AlulaStatusBar).evaluate().isEmpty;
     await tester.sendKeyRepeatEvent(LogicalKeyboardKey.escape);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
     expect(stayedInZen, isTrue);
-    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
     expect(editor.widget.focusNode!.hasFocus, isTrue);
   });
 
@@ -340,13 +342,13 @@ void main() {
       expect(tester.widget<EditableText>(input).focusNode.hasFocus, isTrue);
       await pressEscape(tester);
       expect(overlayInput, findsNothing);
-      expect(find.text('文件(F)'), findsNothing);
+      expect(find.byType(AlulaStatusBar), findsNothing);
       expect(editor.widget.focusNode!.hasFocus, isTrue);
 
       await pressEscape(tester);
-      expect(find.text('文件(F)'), findsNothing);
+      expect(find.byType(AlulaStatusBar), findsNothing);
       await pressEscape(tester);
-      expect(find.text('文件(F)'), findsOneWidget);
+      expect(find.byType(AlulaStatusBar), findsOneWidget);
       expect(editor.widget.focusNode!.hasFocus, isTrue);
     });
   }
@@ -357,19 +359,19 @@ void main() {
     await prepareWorkspace(tester);
     await execute(tester, 'workbench.action.toggleZenMode');
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
     await execute(tester, 'workbench.action.toggleZenMode');
     await execute(tester, 'workbench.action.toggleZenMode');
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
 
     final listener = tester.state(find.byType(WorkbenchPage)) as WindowListener;
     listener.onWindowBlur();
     listener.onWindowFocus();
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsNothing);
+    expect(find.byType(AlulaStatusBar), findsNothing);
     await pressEscape(tester);
-    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
   });
 
   const layoutCases = {
@@ -556,14 +558,48 @@ void main() {
     await pressEscape(tester);
   });
 
+  testWidgets('Zen keeps the default title bar and Command Center reachable',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await openEditor(tester);
+    final title = find.byType(AlulaTitleBar);
+    final commandCenter = find.byKey(const ValueKey('command-center-control'));
+    final status = find.byType(AlulaStatusBar);
+    final initialTitle = tester.getRect(title);
+    final initialCenter = tester.getRect(commandCenter);
+    expect(initialTitle.top, 0);
+    expect(initialTitle.height, 35);
+    expect(status, findsOneWidget);
+
+    await execute(tester, 'workbench.action.toggleZenMode');
+    expect(status, findsNothing);
+    expect(tester.getRect(title), initialTitle);
+    expect(tester.getRect(commandCenter), initialCenter);
+    await tester.tap(commandCenter);
+    await tester.pumpAndSettle();
+    final card = find.byKey(const ValueKey('quick-input'));
+    expect(card, findsOneWidget);
+    final field =
+        find.descendant(of: card, matching: find.byType(EditableText));
+    expect(tester.widget<EditableText>(field).focusNode.hasFocus, isTrue);
+    await pressEscape(tester);
+    expect(card, findsNothing);
+    expect(status, findsNothing);
+
+    await execute(tester, 'workbench.action.toggleZenMode');
+    expect(status, findsOneWidget);
+    expect(tester.getRect(title), initialTitle);
+    expect(tester.getRect(commandCenter), initialCenter);
+  });
+
   testWidgets(
     'the zen toggle round-trips through the registered command',
     (tester) async {
       await prepareWorkspace(tester);
       await execute(tester, 'workbench.action.toggleZenMode');
-      expect(find.text('文件(F)'), findsNothing);
+      expect(find.byType(AlulaStatusBar), findsNothing);
       await execute(tester, 'workbench.action.toggleZenMode');
-      expect(find.text('文件(F)'), findsOneWidget);
+      expect(find.byType(AlulaStatusBar), findsOneWidget);
     },
   );
 }
