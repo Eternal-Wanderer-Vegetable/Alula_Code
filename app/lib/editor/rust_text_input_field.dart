@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -21,6 +22,7 @@ import '../bridge/alula_core.dart';
 import 'editor_native_text_drag_drop.dart';
 import 'editor_folding.dart';
 import 'editor_rendering.dart';
+import 'editor_scroll_controller.dart';
 import 'multi_selection.dart';
 import 'occurrence_search.dart' show defaultMultiCursorLimit;
 import 'text_drag_drop.dart';
@@ -48,6 +50,11 @@ class _SyntaxTextEditingController extends TextEditingController {
   String _windowText = '';
   Color Function(String kind)? _colorForKind;
   List<EditorFoldRange> _foldedRanges = const [];
+  ({
+    _EditorInlineGapLayout layout,
+    InlineSpan span,
+    double? tabLetterSpacing,
+  })? inlineGap;
 
   void configureSyntax({
     required List<Map<String, Object?>> tokens,
@@ -138,7 +145,9 @@ class _SyntaxTextEditingController extends TextEditingController {
   }) {
     final visible = _visibleTokens();
     final foldedRanges = _visibleFoldedRanges();
-    if (visible.isEmpty && foldedRanges.isEmpty) {
+    final configuredGap = inlineGap;
+    final gap = configuredGap?.layout.text == text ? configuredGap : null;
+    if (visible.isEmpty && foldedRanges.isEmpty && gap == null) {
       return super.buildTextSpan(
         context: context,
         style: style,
@@ -151,6 +160,27 @@ class _SyntaxTextEditingController extends TextEditingController {
             ? value.composing
             : null;
     final boundaries = <int>{0, text.length};
+    final gapOffset = gap?.layout.spanOffset;
+    final styledSeparator = gap?.layout.separatorStyle != null;
+    final gapEnd = gapOffset == null
+        ? null
+        : styledSeparator
+            ? gap!.layout.lineBreak + 1
+            : gapOffset + 1;
+    final indentOffset = gap == null ||
+            styledSeparator ||
+            gap.layout.followingWhitespace != null
+        ? null
+        : gap.layout.lineBreak + 1;
+    final nextCharacter = indentOffset == null ? null : text[indentOffset];
+    final indent =
+        nextCharacter == ' ' || nextCharacter == '\t' ? nextCharacter : null;
+    if (gapOffset != null) {
+      boundaries
+        ..add(gapOffset)
+        ..add(gapEnd!);
+    }
+    if (indent != null) boundaries.add(indentOffset! + 1);
     for (final token in visible) {
       boundaries
         ..add(token.start)
@@ -165,6 +195,9 @@ class _SyntaxTextEditingController extends TextEditingController {
       boundaries
         ..add(composing.start)
         ..add(composing.end);
+    }
+    if (styledSeparator) {
+      boundaries.removeWhere((offset) => gapOffset! < offset && offset < gapEnd!);
     }
     final sortedBoundaries = boundaries.toList()..sort();
     final spans = <InlineSpan>[];
@@ -191,6 +224,10 @@ class _SyntaxTextEditingController extends TextEditingController {
       final isFolded = foldedIndex < foldedRanges.length &&
           foldedRanges[foldedIndex].hiddenStartUtf16 <= start &&
           foldedRanges[foldedIndex].hiddenEndUtf16 >= end;
+      if (gap != null && start == gapOffset && !isFolded && !isComposing) {
+        spans.add(gap.span);
+        continue;
+      }
       final segmentStyle = isFolded
           ? const TextStyle(
               color: Color(0x00000000),
@@ -204,14 +241,112 @@ class _SyntaxTextEditingController extends TextEditingController {
                   color: token?.color,
                   decoration: isComposing ? TextDecoration.underline : null,
                 );
-      spans.add(
-        TextSpan(
-          text: text.substring(start, end),
-          style: segmentStyle,
-        ),
-      );
+      if (indent != null && start == indentOffset) {
+        final spacing = gap?.tabLetterSpacing;
+        spans.add(_EditorInlineIndentSpan(
+          indent,
+          style: spacing == null
+              ? segmentStyle
+              : (segmentStyle ?? const TextStyle())
+                  .copyWith(letterSpacing: spacing),
+        ));
+        continue;
+      }
+      spans.add(TextSpan(text: text.substring(start, end), style: segmentStyle));
     }
     return TextSpan(style: style, children: spans);
+  }
+}
+
+typedef _EditorGapWhitespace = ({
+  int offset,
+  String character,
+  double width,
+  double ascent,
+  double height,
+});
+
+typedef _EditorInlineGapLayout = ({
+  String text,
+  int lineBreak,
+  int spanOffset,
+  Size size,
+  double scale,
+  TextStyle? tabStyle,
+  _EditorGapWhitespace? followingWhitespace,
+  TextStyle? separatorStyle,
+});
+
+/// Reserves room for the overlay while preserving the input and UTF-16
+/// indexing. An existing space or tab on the first visual line after an
+/// empty row can carry the gap while keeping the actual line break.
+class _EditorInlineGapSpan extends WidgetSpan {
+  _EditorInlineGapSpan({
+    required this.size,
+    required double scale,
+    this.sourceCharacter = '\n',
+    this.baselineOffset,
+  }) : super(
+          alignment: baselineOffset == null
+              ? PlaceholderAlignment.top
+              : PlaceholderAlignment.baseline,
+          baseline: baselineOffset == null ? null : TextBaseline.alphabetic,
+          child: SizedBox(
+            width: size.width / scale,
+            height: size.height / scale,
+          ),
+        );
+
+  final Size size;
+  final String sourceCharacter;
+  final double? baselineOffset;
+
+  @override
+  void build(
+    ui.ParagraphBuilder builder, {
+    TextScaler textScaler = TextScaler.noScaling,
+    List<PlaceholderDimensions>? dimensions,
+  }) {
+    builder.addPlaceholder(
+      size.width,
+      size.height,
+      alignment,
+      baseline: baseline,
+      baselineOffset: baselineOffset ?? 0,
+    );
+  }
+
+  @override
+  void computeToPlainText(
+    StringBuffer buffer, {
+    bool includeSemanticsLabels = true,
+    bool includePlaceholders = true,
+  }) {
+    if (includePlaceholders) buffer.write(sourceCharacter);
+  }
+
+  @override
+  void computeSemanticsInformation(
+    List<InlineSpanSemanticsInformation> collector,
+  ) {
+    collector.add(InlineSpanSemanticsInformation(sourceCharacter));
+  }
+}
+
+/// Keeps the first indentation character on the line after the placeholder.
+class _EditorInlineIndentSpan extends TextSpan {
+  const _EditorInlineIndentSpan(this.indent, {super.style})
+      : super(text: '\u00a0', semanticsLabel: indent);
+
+  final String indent;
+
+  @override
+  void computeToPlainText(
+    StringBuffer buffer, {
+    bool includeSemanticsLabels = true,
+    bool includePlaceholders = true,
+  }) {
+    buffer.write(indent);
   }
 }
 
@@ -247,7 +382,12 @@ class RustTextInputField extends StatefulWidget {
     this.wordWrap = false,
     this.horizontalScrollController,
     this.rangeDecorations = const [],
+    this.canHoverFileLink,
+    this.onOpenFileLink,
     this.caretOverlay,
+    this.caretOverlayAnchorUtf16,
+    this.reserveCaretOverlayLineSpace = false,
+    this.caretOverlayHeightInLines,
     this.syntaxTokens = const [],
     this.syntaxVersion = -1,
     this.syntaxTokenColor,
@@ -255,6 +395,7 @@ class RustTextInputField extends StatefulWidget {
     this.tabSize = 4,
     this.enableCodeFolding = false,
     this.semanticsLabel,
+    this.contextMenuBuilder,
     this.onTap,
     this.onAltClick,
     this.onColumnSelectionDrag,
@@ -285,9 +426,24 @@ class RustTextInputField extends StatefulWidget {
   final ScrollController? horizontalScrollController;
   final List<EditorRangeDecoration> rangeDecorations;
 
+  /// Enables file-link feedback for a host that also handles modifier-click.
+  final bool Function(DocumentFileLink link)? canHoverFileLink;
+  final ValueChanged<DocumentFileLink>? onOpenFileLink;
+
   /// Optional popup positioned beside the local caret and clamped to the
   /// visible editor viewport.
   final Widget? caretOverlay;
+
+  /// Absolute document offset for the overlay. The selection extent is used
+  /// when this offset is outside the current bounded input window.
+  final int? caretOverlayAnchorUtf16;
+
+  /// If the anchor has a following line, reserve space in the editor for
+  /// the overlay while keeping the underlying text selection intact.
+  final bool reserveCaretOverlayLineSpace;
+
+  /// Requested inline space in editor lines. The viewport can cap this size.
+  final int? caretOverlayHeightInLines;
   final List<Map<String, Object?>> syntaxTokens;
   final int syntaxVersion;
   final Color Function(String kind)? syntaxTokenColor;
@@ -295,6 +451,7 @@ class RustTextInputField extends StatefulWidget {
   final int tabSize;
   final bool enableCodeFolding;
   final String? semanticsLabel;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
   final ColumnSelectionDragChanged? onColumnSelectionDrag;
@@ -365,6 +522,23 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   final GlobalKey _horizontalViewportKey = GlobalKey();
   final GlobalKey _editorOverlayStackKey = GlobalKey();
   Rect? _caretRectInOverlay;
+  Rect? _inlineOverlayRect;
+  ({double height, bool beforeFinalBreak, double width})? _terminalOverlayLayout;
+  bool _terminalOverlayRevealRequested = false;
+  ({
+    ScrollController controller,
+    EditorScrollPosition position,
+    RenderEditable editable,
+  })? _terminalScrollPadding;
+  bool _inlineOverlayRevealScheduled = false;
+  ({TextStyle style, double scale, double height})? _inlineOverlayLineMetrics;
+  ({
+    TextStyle style,
+    TextScaler scaler,
+    TextDirection direction,
+    double height,
+    TextStyle? separatorStyle,
+  })? _inlineSeparatorStyle;
   bool _caretOverlayUpdateScheduled = false;
   ScrollController? _listenedCaretVerticalScrollController;
   ScrollController? _listenedCaretHorizontalScrollController;
@@ -386,7 +560,147 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _reportedFoldVersion = -1;
   List<EditorDocumentLineRange> _reportedFoldRanges = const [];
 
+  RustTextInputWindow? _symbolPreviewWindow;
+  ScrollController? _symbolPreviewScroll;
+  GlobalKey<RustTextInputFieldState>? _symbolPreviewKey;
+  EditorRangeDecoration? _symbolPreviewRange;
+
   TextEditingValue get editingValue => _controller.value;
+
+  /// The horizontal position of an attached, unwrapped editor viewport.
+  ScrollPosition? get horizontalScrollPosition {
+    if (widget.wordWrap) return null;
+    final position = _horizontalScrollController.positions.singleOrNull;
+    if (position == null ||
+        !position.hasPixels ||
+        !position.hasContentDimensions) {
+      return null;
+    }
+    return position;
+  }
+
+  /// Shows a bounded, non-interactive view without moving the editing caret.
+  void previewSymbolLines({
+    required int firstLine,
+    required int lastLine,
+    required int documentVersion,
+  }) {
+    final source = widget.inputWindow;
+    if (!mounted ||
+        firstLine < 1 ||
+        lastLine < firstLine ||
+        source.version != documentVersion ||
+        source.document.version != documentVersion) {
+      return;
+    }
+    final document = source.document;
+    try {
+      final start = document.lineOffset(firstLine - 1);
+      final end = lastLine < start.lineCount
+          ? document.lineOffset(lastLine).offsetUtf16
+          : start.totalUtf16Length;
+      if (end <= start.offsetUtf16) return;
+
+      var preview = _symbolPreviewWindow;
+      if (preview == null ||
+          !identical(preview.document, document) ||
+          preview.version != documentVersion ||
+          start.offsetUtf16 < preview.startUtf16 ||
+          start.offsetUtf16 >= preview.endUtf16) {
+        final startsInSource = start.offsetUtf16 >= source.startUtf16 &&
+            start.offsetUtf16 < source.endUtf16;
+        preview = startsInSource
+            ? RustTextInputWindow.open(
+                document,
+                startUtf16: source.startUtf16,
+                maxWindowUtf16: source.maxWindowUtf16,
+              )
+            : RustTextInputWindow.openAround(
+                document,
+                selectionUtf16: start.offsetUtf16,
+                maxWindowUtf16: source.maxWindowUtf16,
+              );
+        _symbolPreviewScroll ??= ScrollController(
+          initialScrollOffset:
+              startsInSource ? editorScrollOffset(widget.scrollController) : 0,
+        );
+      }
+      final range = EditorRangeDecoration(
+        documentVersion: documentVersion,
+        startUtf16: start.offsetUtf16,
+        endUtf16: end,
+        backgroundColor:
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.16),
+      );
+      setState(() {
+        _symbolPreviewWindow = preview;
+        _symbolPreviewKey ??= GlobalKey<RustTextInputFieldState>();
+        _symbolPreviewRange = range;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !identical(_symbolPreviewRange, range)) return;
+        final field = _symbolPreviewKey?.currentState;
+        if (field == null) return;
+        field.setState(() => field._symbolPreviewRange = range);
+        field._revealSymbolPreview(range);
+      });
+    } on AlulaException {
+      clearSymbolPreview();
+    }
+  }
+
+  void clearSymbolPreview() {
+    final scroll = _symbolPreviewScroll;
+    if (!mounted || scroll == null) return;
+    setState(() {
+      _symbolPreviewRange = null;
+      _symbolPreviewWindow = null;
+      _symbolPreviewScroll = null;
+      _symbolPreviewKey = null;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => scroll.dispose());
+  }
+
+  void _revealSymbolPreview(EditorRangeDecoration range) {
+    final position = editorPrimaryScrollPosition(widget.scrollController);
+    final editable = _findEditableRenderObject(context);
+    if (position == null ||
+        !position.haveDimensions ||
+        editable == null ||
+        !editable.hasSize ||
+        widget.inputWindow.version != range.documentVersion) {
+      return;
+    }
+    final window = widget.inputWindow;
+    Rect caretAt(int offset) => editable.getLocalRectForCaret(
+          TextPosition(
+            offset: (offset - window.startUtf16)
+                .clamp(0, window.text.length)
+                .toInt(),
+            affinity: TextAffinity.upstream,
+          ),
+        );
+    final first = caretAt(range.startUtf16);
+    final last = caretAt(range.endUtf16);
+    final height = position.viewportDimension;
+    if (first.top >= 0 && last.bottom <= height) return;
+    final center = last.bottom - first.top > height
+        ? first.center.dy
+        : (first.top + last.bottom) / 2;
+    position.jumpTo(
+      (position.pixels + center - height / 2)
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble(),
+    );
+  }
+
+  static const _fileLinkHintDelay = Duration(milliseconds: 300);
+  bool _trackingFileLinkHover = false;
+  Offset? _fileLinkHoverPosition;
+  DocumentFileLink? _hoveredFileLink;
+  DocumentFileLink? _fileLinkHint;
+  Timer? _fileLinkHintTimer;
+  OverlayEntry? _fileLinkHintEntry;
 
   @visibleForTesting
   bool get hasActiveMouseDragAutoScrollTimer =>
@@ -397,6 +711,232 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final editable = _findEditableRenderObject(context);
     if (editable == null) return null;
     return editable.getPositionForPoint(globalPosition).offset;
+  }
+
+  /// Matches an absolute document offset against the glyphs at both pointer
+  /// positions. A nearby caret position alone can also refer to blank space.
+  DocumentFileLink? fileLinkAtPointer(
+    int offset,
+    Offset position, {
+    Offset? release,
+  }) {
+    final window = widget.inputWindow;
+    if (window.version != window.document.version || window.hasComposition) {
+      return null;
+    }
+    final cached = _hoveredFileLink ?? _fileLinkHint;
+    final link =
+        cached != null &&
+            cached.version == window.version &&
+            cached.startUtf16 <= offset &&
+            offset <= cached.endUtf16
+        ? cached
+        : window.document.fileLinkAt(offset);
+    if (link == null || link.version != window.version) return null;
+    final editable = _findEditableRenderObject(context);
+    if (editable == null || !editable.attached) return null;
+    final boxes = editable.getBoxesForSelection(
+      TextSelection(
+        baseOffset: (link.startUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+        extentOffset: (link.endUtf16 - window.startUtf16).clamp(
+          0,
+          window.text.length,
+        ),
+      ),
+    );
+    bool hitsLink(Offset point) {
+      final local = editable.globalToLocal(point);
+      return boxes.any((box) => box.toRect().contains(local));
+    }
+
+    return hitsLink(position) && (release == null || hitsLink(release))
+        ? link
+        : null;
+  }
+
+  void _onFileLinkHover(Offset position) {
+    if (!_trackingFileLinkHover) {
+      _trackingFileLinkHover = true;
+      HardwareKeyboard.instance.addHandler(_onFileLinkModifier);
+      widget.scrollController?.addListener(_clearFileLinkHover);
+      _horizontalScrollController.addListener(_clearFileLinkHover);
+    }
+    _fileLinkHoverPosition = position;
+    _updateFileLinkHover();
+    if (widget.onOpenFileLink == null) return;
+    _fileLinkHintTimer?.cancel();
+    final hint = _fileLinkHint;
+    if (hint != null && identical(_fileLinkAtHoverPosition(position), hint)) {
+      return;
+    }
+    _hideFileLinkHint();
+    _fileLinkHintTimer = Timer(_fileLinkHintDelay, _showFileLinkHint);
+  }
+
+  DocumentFileLink? _fileLinkAtHoverPosition(Offset position) {
+    final window = widget.inputWindow;
+    final offset = _textOffsetAtGlobalPosition(position);
+    if (offset == null || offset < 0 || offset > window.text.length) {
+      return null;
+    }
+    return fileLinkAtPointer(window.startUtf16 + offset, position);
+  }
+
+  void _showFileLinkHint() {
+    _fileLinkHintTimer = null;
+    final position = _fileLinkHoverPosition;
+    final isAllowed = widget.canHoverFileLink;
+    if (!mounted || position == null || isAllowed == null) return;
+    final link = _fileLinkAtHoverPosition(position);
+    if (link == null || !isAllowed(link)) return;
+    final overlay = Overlay.maybeOf(context);
+    final box = overlay?.context.findRenderObject();
+    if (overlay == null || box is! RenderBox || !box.hasSize) return;
+    final target = box.globalToLocal(position);
+    final colorScheme = Theme.of(context).colorScheme;
+    final shortcut = defaultTargetPlatform == TargetPlatform.macOS
+        ? '（Cmd+单击）'
+        : '（Ctrl+单击）';
+    final entry = OverlayEntry(
+      builder: (context) => CustomSingleChildLayout(
+        delegate: _FileLinkHintPosition(target),
+        child: MouseRegion(
+          onEnter: (_) => _fileLinkHintTimer?.cancel(),
+          onExit: (_) => _scheduleFileLinkHintDismissal(),
+          child: Material(
+            color: colorScheme.surfaceContainerHigh,
+            elevation: 4,
+            borderRadius: BorderRadius.circular(4),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    key: const ValueKey('editor-file-link-hint-action'),
+                    onPressed: _followFileLinkHint,
+                    child: const Text('打开链接'),
+                  ),
+                  Text(shortcut),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    _fileLinkHint = link;
+    _fileLinkHintEntry = entry;
+    overlay.insert(entry);
+  }
+
+  void _followFileLinkHint() {
+    final link = _fileLinkHint;
+    final onOpen = widget.onOpenFileLink;
+    final window = widget.inputWindow;
+    _clearFileLinkHover();
+    if (link != null &&
+        !window.hasComposition &&
+        link.version == window.version &&
+        link.version == window.document.version) {
+      onOpen?.call(link);
+    }
+  }
+
+  void _hideFileLinkHint() {
+    _fileLinkHint = null;
+    final entry = _fileLinkHintEntry;
+    _fileLinkHintEntry = null;
+    entry?.remove();
+    entry?.dispose();
+  }
+
+  void _scheduleFileLinkHintDismissal() {
+    if (_fileLinkHintEntry == null) return;
+    _fileLinkHintTimer?.cancel();
+    _fileLinkHintTimer = Timer(_fileLinkHintDelay, _clearFileLinkHover);
+  }
+
+  void _exitFileLinkHover() {
+    if (_fileLinkHintEntry == null) {
+      _clearFileLinkHover();
+      return;
+    }
+    _fileLinkHoverPosition = null;
+    if (_hoveredFileLink != null) setState(() => _hoveredFileLink = null);
+    _scheduleFileLinkHintDismissal();
+  }
+
+  bool _onFileLinkModifier(KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape) {
+      _clearFileLinkHover();
+    } else if (event is! KeyRepeatEvent) {
+      const modifierKeys = [
+        LogicalKeyboardKey.controlLeft,
+        LogicalKeyboardKey.controlRight,
+        LogicalKeyboardKey.metaLeft,
+        LogicalKeyboardKey.metaRight,
+        LogicalKeyboardKey.shiftLeft,
+        LogicalKeyboardKey.shiftRight,
+      ];
+      if (modifierKeys.contains(event.logicalKey)) _updateFileLinkHover();
+    }
+    return false;
+  }
+
+  void _updateFileLinkHover() {
+    DocumentFileLink? link;
+    final keyboard = HardwareKeyboard.instance;
+    final modifier = defaultTargetPlatform == TargetPlatform.macOS
+        ? keyboard.isMetaPressed
+        : keyboard.isControlPressed;
+    final position = _fileLinkHoverPosition;
+    final isAllowed = widget.canHoverFileLink;
+    if (modifier &&
+        !keyboard.isShiftPressed &&
+        position != null &&
+        isAllowed != null) {
+      link = _fileLinkAtHoverPosition(position);
+      if (link != null &&
+          !identical(link, _hoveredFileLink) &&
+          !isAllowed(link)) {
+        link = null;
+      }
+    }
+    if (link != _hoveredFileLink && mounted) {
+      setState(() => _hoveredFileLink = link);
+    }
+  }
+
+  void _detachFileLinkHover(ScrollController? verticalScroll) {
+    if (!_trackingFileLinkHover) return;
+    _trackingFileLinkHover = false;
+    _fileLinkHoverPosition = null;
+    _hoveredFileLink = null;
+    _fileLinkHintTimer?.cancel();
+    _fileLinkHintTimer = null;
+    _hideFileLinkHint();
+    HardwareKeyboard.instance.removeHandler(_onFileLinkModifier);
+    verticalScroll?.removeListener(_clearFileLinkHover);
+    _horizontalScrollController.removeListener(_clearFileLinkHover);
+  }
+
+  void _clearFileLinkHover() {
+    final wasActive = _hoveredFileLink != null;
+    _detachFileLinkHover(widget.scrollController);
+    if (!wasActive || !mounted) return;
+    final scheduler = SchedulerBinding.instance;
+    if (scheduler.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      scheduler.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
   }
 
   EditorTextDragPayload? _editorTextDragPayloadAt(Offset globalPosition) {
@@ -1116,15 +1656,24 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     });
   }
 
-  RenderEditable? _findEditableRenderObject(BuildContext subtree) {
+  EditableTextState? _findEditableTextState(BuildContext subtree) {
     if (subtree is StatefulElement && subtree.state is EditableTextState) {
-      return (subtree.state as EditableTextState).renderEditable;
+      return subtree.state as EditableTextState;
     }
-    RenderEditable? found;
+    EditableTextState? found;
     subtree.visitChildElements((child) {
-      found ??= _findEditableRenderObject(child);
+      found ??= _findEditableTextState(child);
     });
     return found;
+  }
+
+  RenderEditable? _findEditableRenderObject(BuildContext subtree) =>
+      _findEditableTextState(subtree)?.renderEditable;
+
+  void revealSelection() {
+    final selection = _controller.selection;
+    if (!selection.isValid) return;
+    _findEditableTextState(context)?.bringIntoView(selection.extent);
   }
 
   /// Changes the local selection while keeping the input window's acknowledged
@@ -1174,12 +1723,23 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _setHorizontalScrollController(widget.horizontalScrollController);
     _syncCaretOverlayScrollListeners();
     _syncFoldSymbols();
+    _scheduleCaretOverlayAnchorReveal();
     _scheduleCaretOverlayUpdate();
   }
 
   @override
   void didUpdateWidget(covariant RustTextInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    final hint = _fileLinkHint;
+    if (oldWidget.inputWindow != widget.inputWindow ||
+        (hint != null && hint.version != widget.inputWindow.document.version) ||
+        (oldWidget.onOpenFileLink != null && widget.onOpenFileLink == null) ||
+        oldWidget.scrollController != widget.scrollController ||
+        oldWidget.horizontalScrollController !=
+            widget.horizontalScrollController ||
+        widget.canHoverFileLink == null) {
+      _detachFileLinkHover(oldWidget.scrollController);
+    }
     if (oldWidget.inputWindow != widget.inputWindow &&
         _columnDragPointer != null) {
       _scheduleMouseDragCaretToViewportEdge();
@@ -1205,11 +1765,21 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       _disposeOwnedHorizontalScrollController();
       _setHorizontalScrollController(widget.horizontalScrollController);
     }
-    if (oldWidget.scrollController != widget.scrollController ||
-        oldWidget.horizontalScrollController !=
-            widget.horizontalScrollController ||
-        oldWidget.caretOverlay != widget.caretOverlay) {
-      _syncCaretOverlayScrollListeners();
+    final overlaySourceChanged =
+        oldWidget.scrollController != widget.scrollController ||
+            oldWidget.horizontalScrollController !=
+                widget.horizontalScrollController ||
+            oldWidget.caretOverlay != widget.caretOverlay;
+    final anchorChanged =
+        oldWidget.caretOverlayAnchorUtf16 != widget.caretOverlayAnchorUtf16;
+    if (overlaySourceChanged) _syncCaretOverlayScrollListeners();
+    if (anchorChanged) {
+      _terminalOverlayRevealRequested = true;
+      _scheduleCaretOverlayAnchorReveal();
+    }
+    if (overlaySourceChanged ||
+        oldWidget.inputWindow != widget.inputWindow ||
+        anchorChanged) {
       _scheduleCaretOverlayUpdate();
     }
     if (widget.caretOverlay == null) _caretRectInOverlay = null;
@@ -1403,6 +1973,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required TextSpan textSpan,
     required TextDirection textDirection,
     required TextScaler textScaler,
+    required StrutStyle? strutStyle,
     required EdgeInsets padding,
     required double textWidth,
   }) {
@@ -1412,6 +1983,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (textWidth - padding.horizontal)
             .clamp(1, double.infinity)
@@ -1449,6 +2021,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     required TextSpan textSpan,
     required TextDirection textDirection,
     required TextScaler textScaler,
+    required StrutStyle? strutStyle,
     required EdgeInsets padding,
     required double textWidth,
     required double viewportHeight,
@@ -1459,6 +2032,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (textWidth - padding.horizontal)
             .clamp(1, double.infinity)
@@ -1531,12 +2105,54 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         ?.addListener(_scheduleCaretOverlayUpdate);
   }
 
+  TextPosition _caretOverlayPosition(TextSelection selection) {
+    final anchor = widget.caretOverlayAnchorUtf16;
+    final offset =
+        anchor == null ? null : anchor - widget.inputWindow.startUtf16;
+    return offset != null && offset >= 0 && offset <= _controller.text.length
+        ? TextPosition(offset: offset)
+        : selection.extent;
+  }
+
+  void _scheduleCaretOverlayAnchorReveal() {
+    if (widget.caretOverlayAnchorUtf16 == null ||
+        _inlineOverlayRevealScheduled) {
+      return;
+    }
+    _inlineOverlayRevealScheduled = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _inlineOverlayRevealScheduled = false;
+      if (!mounted ||
+          widget.caretOverlay == null ||
+          widget.caretOverlayAnchorUtf16 == null) {
+        return;
+      }
+      final selection = _controller.selection;
+      final editable = _findEditableTextState(context);
+      if (!selection.isValid || editable == null) return;
+      final gap = _controller.inlineGap?.layout;
+      if (gap != null && gap.text == _controller.text) {
+        // Reveal the following row and then the anchor. When navigating up
+        // from below the gap, revealing only the following row hides the pane.
+        editable.bringIntoView(TextPosition(offset: gap.lineBreak + 1));
+      }
+      editable.bringIntoView(_caretOverlayPosition(selection));
+    });
+  }
+
   void _scheduleCaretOverlayUpdate() {
-    if (widget.caretOverlay == null || _caretOverlayUpdateScheduled) return;
+    if (_caretOverlayUpdateScheduled ||
+        (widget.caretOverlay == null && _terminalScrollPadding == null)) {
+      return;
+    }
     _caretOverlayUpdateScheduled = true;
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _caretOverlayUpdateScheduled = false;
-      if (!mounted || widget.caretOverlay == null) return;
+      if (!mounted) return;
+      if (widget.caretOverlay == null) {
+        _releaseTerminalScrollPadding();
+        return;
+      }
       final selection = _controller.selection;
       final editable = _findEditableRenderObject(context);
       final overlayObject =
@@ -1547,18 +2163,155 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           !overlayObject.hasSize) {
         return;
       }
-      final caret = editable.getLocalRectForCaret(selection.extent);
-      final globalRect = Rect.fromPoints(
-        editable.localToGlobal(caret.topLeft),
-        editable.localToGlobal(caret.bottomRight),
-      );
-      final localRect = Rect.fromPoints(
-        overlayObject.globalToLocal(globalRect.topLeft),
-        overlayObject.globalToLocal(globalRect.bottomRight),
-      );
-      if (_caretRectInOverlay == localRect) return;
-      setState(() => _caretRectInOverlay = localRect);
+      Rect caretRect() {
+        final caret =
+            editable.getLocalRectForCaret(_caretOverlayPosition(selection));
+        return Rect.fromPoints(
+          overlayObject.globalToLocal(editable.localToGlobal(caret.topLeft)),
+          overlayObject.globalToLocal(editable.localToGlobal(caret.bottomRight)),
+        );
+      }
+
+      final gap = _controller.inlineGap?.layout;
+      final terminal = _terminalOverlayLayout;
+      final Rect? inlineRect;
+      if (terminal != null) {
+        inlineRect = _terminalInlineRect(
+          editable,
+          overlayObject,
+          caretRect(),
+          terminal.height,
+          beforeFinalBreak: terminal.beforeFinalBreak,
+        );
+      } else {
+        _releaseTerminalScrollPadding();
+        inlineRect = gap == null || gap.text != _controller.text
+            ? null
+            : _inlineGapRect(editable, overlayObject, gap);
+      }
+      final localRect = caretRect();
+      if (_caretRectInOverlay == localRect &&
+          _inlineOverlayRect == inlineRect) {
+        return;
+      }
+      setState(() {
+        _caretRectInOverlay = localRect;
+        _inlineOverlayRect = inlineRect;
+      });
     });
+  }
+
+  Rect? _inlineGapRect(
+    RenderEditable editable,
+    RenderBox overlay,
+    _EditorInlineGapLayout gap,
+  ) {
+    Offset local(Offset point) =>
+        overlay.globalToLocal(editable.localToGlobal(point));
+
+    if (gap.separatorStyle != null) {
+      final nextRow = editable.getLocalRectForCaret(
+        TextPosition(offset: gap.lineBreak + 1),
+      );
+      final bottom = local(nextRow.topLeft).dy;
+      return Rect.fromLTWH(
+        0,
+        bottom - gap.size.height,
+        overlay.size.width,
+        gap.size.height,
+      );
+    }
+
+    final slot = editable
+        .getBoxesForSelection(
+          TextSelection(
+            baseOffset: gap.spanOffset,
+            extentOffset: gap.spanOffset + 1,
+          ),
+        )
+        .firstOrNull
+        ?.toRect();
+    if (slot == null) return null;
+    final top = local(slot.topLeft);
+    return gap.followingWhitespace == null
+        ? Rect.fromPoints(top, local(slot.bottomRight))
+        : Rect.fromLTWH(0, top.dy, overlay.size.width, gap.size.height);
+  }
+
+  void _releaseTerminalScrollPadding() {
+    final previous = _terminalScrollPadding;
+    _terminalScrollPadding = null;
+    if (previous != null &&
+        previous.controller.positions.contains(previous.position) &&
+        previous.position.reserveTrailingExtent(0) &&
+        previous.editable.attached) {
+      previous.editable.markNeedsLayout();
+    }
+  }
+
+  Rect? _terminalInlineRect(
+    RenderEditable editable,
+    RenderBox overlay,
+    Rect anchor,
+    double height, {
+    required bool beforeFinalBreak,
+  }) {
+    final reveal = _terminalOverlayRevealRequested;
+    _terminalOverlayRevealRequested = false;
+    final endCaret = editable.getLocalRectForCaret(
+      TextPosition(offset: _controller.text.length),
+    );
+    final end = overlay.globalToLocal(editable.localToGlobal(endCaret.topLeft));
+    final endBottom = end.dy + endCaret.height;
+    var top = beforeFinalBreak ? end.dy : endBottom;
+    final revealBottom = endBottom + height;
+    final viewportHeight = overlay.size.height;
+    if (revealBottom - anchor.top > viewportHeight) {
+      _releaseTerminalScrollPadding();
+      return null;
+    }
+
+    final position = editable.offset;
+    final controller = widget.scrollController;
+    if (position is EditorScrollPosition &&
+        controller != null &&
+        controller.positions.contains(position) &&
+        position.hasContentDimensions) {
+      final previous = _terminalScrollPadding;
+      if (previous != null &&
+          (previous.position != position ||
+              previous.controller != controller ||
+              previous.editable != editable)) {
+        _releaseTerminalScrollPadding();
+      }
+      final destination = position.pixels + revealBottom - viewportHeight;
+      final trailingExtent =
+          (destination - position.unpaddedMaxScrollExtent)
+              .clamp(0.0, double.infinity)
+              .ceilToDouble();
+      _terminalScrollPadding = (
+        controller: controller,
+        position: position,
+        editable: editable,
+      );
+      if (position.reserveTrailingExtent(trailingExtent)) {
+        _terminalOverlayRevealRequested = reveal;
+        editable.markNeedsLayout();
+        _scheduleCaretOverlayUpdate();
+        return null;
+      }
+      final previousPixels = position.pixels;
+      if (reveal && destination > position.pixels) {
+        position.jumpTo(destination
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble());
+      }
+      top -= position.pixels - previousPixels;
+    } else {
+      _releaseTerminalScrollPadding();
+      if (revealBottom > viewportHeight) return null;
+    }
+    return Rect.fromLTWH(0, top, overlay.size.width, height);
   }
 
   void _disposeOwnedHorizontalScrollController() {
@@ -1798,6 +2551,307 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _documentLineCount = position.lineCount;
   }
 
+  bool _hasTerminalInlineAnchor(
+    TextEditingValue value,
+    EditorFoldLayout folds,
+  ) {
+    final window = widget.inputWindow;
+    final anchor = widget.caretOverlayAnchorUtf16;
+    if (!widget.reserveCaretOverlayLineSpace ||
+        widget.caretOverlay == null ||
+        anchor == null ||
+        window.endUtf16 != window.totalUtf16Length ||
+        value.text != window.text ||
+        value.composing.isValid && !value.composing.isCollapsed) {
+      return false;
+    }
+    final local = anchor - window.startUtf16;
+    if (local < 0 || local > value.text.length) return false;
+    final lineBreak = value.text.indexOf('\n', local);
+    if (lineBreak >= 0 &&
+        (lineBreak + 1 != value.text.length ||
+            value.selection ==
+                TextSelection.collapsed(offset: value.text.length))) {
+      return false;
+    }
+    final endOfLine = lineBreak < 0 ? local : lineBreak;
+    return !folds.collapsedRanges.any(
+      (range) =>
+          range.hiddenStartUtf16 <= endOfLine &&
+          local < range.hiddenEndUtf16,
+    );
+  }
+
+  _EditorInlineGapLayout? _inlineGapLayout(
+    TextEditingValue value, {
+    required EditorFoldLayout folds,
+    required double width,
+    required double viewportHeight,
+    required double scale,
+    required TextStyle textStyle,
+    required TextScaler textScaler,
+    required TextDirection textDirection,
+  }) {
+    final anchor = widget.caretOverlayAnchorUtf16;
+    if (!widget.reserveCaretOverlayLineSpace ||
+        widget.caretOverlay == null ||
+        anchor == null ||
+        value.text != widget.inputWindow.text ||
+        value.composing.isValid && !value.composing.isCollapsed) {
+      return null;
+    }
+    final localAnchor = anchor - widget.inputWindow.startUtf16;
+    final text = value.text;
+    if (localAnchor < 0 || localAnchor >= text.length) return null;
+    final lineBreak = text.indexOf('\n', localAnchor);
+    if (lineBreak < 0 ||
+        lineBreak + 1 == text.length ||
+        folds.collapsedRanges.any((range) =>
+            range.hiddenStartUtf16 <= lineBreak &&
+            lineBreak < range.hiddenEndUtf16)) {
+      return null;
+    }
+    final lineStart =
+        localAnchor == 0 ? 0 : text.lastIndexOf('\n', localAnchor - 1) + 1;
+    final height = _inlineOverlayHeight(viewportHeight, textStyle, scale);
+    if (height == null) return null;
+    final nextLine = lineBreak + 1;
+    var spanOffset = lineBreak;
+    _EditorGapWhitespace? followingWhitespace;
+    TextStyle? separatorStyle;
+    if (text.substring(lineStart, lineBreak).trim().isEmpty) {
+      final nextBreak = text.indexOf('\n', nextLine);
+      final candidate = _measureGapWhitespace(
+        text.substring(nextLine, nextBreak < 0 ? text.length : nextBreak),
+        width: width,
+        scale: scale,
+        style: textStyle,
+        textDirection: textDirection,
+      );
+      if (candidate != null) {
+        spanOffset = nextLine + candidate.offset;
+        if (folds.collapsedRanges.any((range) =>
+            range.hiddenStartUtf16 <= spanOffset &&
+            nextLine < range.hiddenEndUtf16)) {
+          return null;
+        }
+        followingWhitespace = candidate;
+      } else {
+        final separatorStart =
+            lineBreak > 0 && text.codeUnitAt(lineBreak - 1) == 0x0d
+                ? lineBreak - 1
+                : lineBreak;
+        if (lineStart != separatorStart || _controller.hasVisibleFoldedRanges) {
+          return null;
+        }
+        separatorStyle = _measureInlineSeparatorStyle(
+          textStyle,
+          textScaler,
+          textDirection,
+          height,
+        );
+        if (separatorStyle == null) return null;
+        spanOffset = separatorStart;
+      }
+    }
+    return (
+      text: text,
+      lineBreak: lineBreak,
+      spanOffset: spanOffset,
+      size: Size(width, height),
+      scale: scale,
+      tabStyle: followingWhitespace == null &&
+              separatorStyle == null &&
+              text.codeUnitAt(nextLine) == 0x09
+          ? textStyle
+          : null,
+      followingWhitespace: followingWhitespace,
+      separatorStyle: separatorStyle,
+    );
+  }
+
+  TextStyle? _measureInlineSeparatorStyle(
+    TextStyle style,
+    TextScaler scaler,
+    TextDirection direction,
+    double height,
+  ) {
+    if (_inlineSeparatorStyle case final saved?
+        when saved.style == style &&
+            saved.scaler == scaler &&
+            saved.direction == direction &&
+            saved.height == height) {
+      return saved.separatorStyle;
+    }
+    final scaledFontSize = scaler.scale(style.fontSize ?? 14);
+    if (!scaledFontSize.isFinite || scaledFontSize <= 0) return null;
+    // This font has zero ascent and adds descent on the original line break.
+    // The editor strut preserves the blank row's normal caret and line number.
+    TextStyle separator(double descent) => TextStyle(
+          fontFamily: 'AlulaEditorLineGap',
+          leadingDistribution: TextLeadingDistribution.proportional,
+          height: descent / scaledFontSize,
+        );
+    final painter = TextPainter(
+      textDirection: direction,
+      textScaler: scaler,
+      strutStyle: StrutStyle.fromTextStyle(style, forceStrutHeight: false),
+    );
+    (double, double) rowTops(TextStyle? lineBreakStyle) {
+      painter.text = TextSpan(style: style, children: [
+        const TextSpan(text: 'M\n'),
+        TextSpan(text: '\n', style: lineBreakStyle),
+        const TextSpan(text: 'M'),
+      ]);
+      painter.layout();
+      return (
+        painter.getOffsetForCaret(const TextPosition(offset: 2), Rect.zero).dy,
+        painter.getOffsetForCaret(const TextPosition(offset: 3), Rect.zero).dy,
+      );
+    }
+
+    TextStyle? measuredStyle;
+    try {
+      final (anchor, next) = rowTops(null);
+      final (probeAnchor, probeNext) = rowTops(separator(height));
+      final shift = probeNext - next;
+      final descent = height + (height - shift);
+      if ((probeAnchor - anchor).abs() <= 1 && shift > 0 && descent > 0) {
+        final candidate = separator(descent);
+        final (candidateAnchor, candidateNext) = rowTops(candidate);
+        if ((candidateAnchor - anchor).abs() <= 1 &&
+            (candidateNext - next - height).abs() <= 1) {
+          measuredStyle = candidate;
+        }
+      }
+    } finally {
+      painter.dispose();
+    }
+    _inlineSeparatorStyle = (
+      style: style,
+      scaler: scaler,
+      direction: direction,
+      height: height,
+      separatorStyle: measuredStyle,
+    );
+    return measuredStyle;
+  }
+
+  _EditorGapWhitespace? _measureGapWhitespace(
+    String line, {
+    required double width,
+    required double scale,
+    required TextStyle style,
+    required TextDirection textDirection,
+  }) {
+    final offset = line.indexOf(RegExp(r'[ \t]'));
+    if (offset < 0 || line.trim().isEmpty) return null;
+    final painter = TextPainter(
+      text: TextSpan(text: line, style: style),
+      textDirection: textDirection,
+      textScaler: TextScaler.linear(scale),
+      textWidthBasis: TextWidthBasis.parent,
+      strutStyle: StrutStyle.fromTextStyle(style, forceStrutHeight: false),
+    )..layout(maxWidth: width);
+    try {
+      final metrics = painter.computeLineMetrics().firstOrNull;
+      if (metrics == null) return null;
+      final first =
+          painter.getOffsetForCaret(const TextPosition(offset: 0), Rect.zero);
+      final start =
+          painter.getOffsetForCaret(TextPosition(offset: offset), Rect.zero);
+      final end =
+          painter.getOffsetForCaret(TextPosition(offset: offset + 1), Rect.zero);
+      final advance = end.dx - start.dx;
+      if (start.dy != first.dy || start.dy != end.dy || advance <= 0) {
+        return null;
+      }
+      return (
+        offset: offset,
+        character: line[offset],
+        width: advance,
+        ascent: metrics.ascent,
+        height: metrics.height,
+      );
+    } finally {
+      painter.dispose();
+    }
+  }
+
+  double? _inlineOverlayHeight(
+    double viewportHeight,
+    TextStyle textStyle,
+    double scale,
+  ) {
+    var availableHeight = viewportHeight - 56;
+    var requestedHeight = 132.0;
+    if (widget.caretOverlayHeightInLines case final lines?) {
+      final lineHeight = _inlineOverlayLineHeight(textStyle, scale);
+      final maximumLines =
+          (viewportHeight * 0.8 / lineHeight).clamp(12.0, 20.0);
+      requestedHeight = lines.clamp(4, maximumLines).toDouble() * lineHeight;
+      availableHeight = viewportHeight - (2 * lineHeight + 14);
+    }
+    final height = availableHeight.clamp(0.0, requestedHeight).toDouble();
+    return height < 48 ? null : height;
+  }
+
+  double _inlineOverlayLineHeight(TextStyle style, double scale) {
+    if (_inlineOverlayLineMetrics case final metrics?
+        when metrics.style == style && metrics.scale == scale) {
+      return metrics.height;
+    }
+    final painter = TextPainter(
+      text: TextSpan(text: 'M', style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.linear(scale),
+    );
+    final height = painter.preferredLineHeight.clamp(1.0, double.infinity).toDouble();
+    painter.dispose();
+    _inlineOverlayLineMetrics = (style: style, scale: scale, height: height);
+    return height;
+  }
+
+  InlineSpan _inlineGapSpan(_EditorInlineGapLayout gap) {
+    if (gap.separatorStyle case final style?) {
+      return TextSpan(
+        text: gap.text.substring(gap.spanOffset, gap.lineBreak + 1),
+        style: style,
+      );
+    }
+    final whitespace = gap.followingWhitespace;
+    return _EditorInlineGapSpan(
+      size: whitespace == null
+          ? gap.size
+          : Size(whitespace.width, whitespace.height + gap.size.height),
+      scale: gap.scale,
+      sourceCharacter: whitespace?.character ?? '\n',
+      baselineOffset: whitespace == null
+          ? null
+          : whitespace.ascent + gap.size.height,
+    );
+  }
+
+  double _inlineTabLetterSpacing(TextStyle style, double scale) {
+    final painter = TextPainter(
+      text: TextSpan(text: '\t\u00a0x', style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.linear(scale),
+    )..layout();
+    try {
+      final start =
+          painter.getOffsetForCaret(const TextPosition(offset: 0), Rect.zero).dx;
+      final tabEnd =
+          painter.getOffsetForCaret(const TextPosition(offset: 1), Rect.zero).dx;
+      final spaceEnd =
+          painter.getOffsetForCaret(const TextPosition(offset: 2), Rect.zero).dx;
+      return (style.letterSpacing ?? 0.0) +
+          (tabEnd - start) - (spaceEnd - tabEnd);
+    } finally {
+      painter.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _updateLineMetadata();
@@ -1825,41 +2879,63 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final inputBaseStyle = theme.useMaterial3
         ? theme.textTheme.bodyLarge!
         : theme.textTheme.titleMedium!;
-    final field = Listener(
-      onPointerDown: _handlePointerDown,
-      onPointerMove: _handlePointerMove,
-      onPointerUp: _handlePointerUp,
-      onPointerCancel: _handlePointerCancel,
-      child: TextField(
-        key: const ValueKey<String>('rust-bounded-text-input'),
-        controller: _controller,
-        focusNode: _focusNode,
-        scrollController: widget.scrollController,
-        inputFormatters:
-            widget.inputFormatter == null ? null : [widget.inputFormatter!],
-        autofocus: widget.autofocus,
-        onTap: widget.onTap,
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        expands: true,
-        style: editorStyle,
-        strutStyle:
-            _controller.hasVisibleFoldedRanges ? StrutStyle.disabled : null,
-        decoration: widget.decoration ??
+    // Match the decoration inset to the padding used by the gutter.
+    final decoration = (widget.decoration ??
             const InputDecoration(
               border: InputBorder.none,
               isCollapsed: true,
-            ),
-      ),
-    );
+            ))
+        .copyWith(visualDensity: VisualDensity.standard);
     final textStyle = inputBaseStyle.merge(editorStyle);
-    final editorTextSpan = _controller.buildTextSpan(
-      context: context,
-      style: textStyle,
-      withComposing: true,
-    );
+    Widget buildField(StrutStyle? inlineStrut, bool linkHovered) {
+      final hoverEnabled = widget.canHoverFileLink != null;
+      final field = Listener(
+        onPointerDown: hoverEnabled
+            ? (event) {
+                _clearFileLinkHover();
+                _handlePointerDown(event);
+              }
+            : _handlePointerDown,
+        onPointerMove: _handlePointerMove,
+        onPointerUp: _handlePointerUp,
+        onPointerCancel: _handlePointerCancel,
+        child: TextField(
+          key: const ValueKey<String>('rust-bounded-text-input'),
+          controller: _controller,
+          focusNode: _focusNode,
+          mouseCursor: linkHovered ? SystemMouseCursors.click : null,
+          scrollController: widget.scrollController,
+          inputFormatters: widget.inputFormatter == null
+              ? null
+              : [widget.inputFormatter!],
+          autofocus: widget.autofocus,
+          contextMenuBuilder:
+              widget.contextMenuBuilder ??
+              (_, state) => AdaptiveTextSelectionToolbar.editableText(
+                editableTextState: state,
+              ),
+          onTap: widget.onTap,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          expands: true,
+          textAlignVertical: TextAlignVertical.top,
+          style: editorStyle,
+          strutStyle: _controller.hasVisibleFoldedRanges
+              ? StrutStyle.disabled
+              : inlineStrut,
+          decoration: decoration,
+        ),
+      );
+      if (!hoverEnabled) return field;
+      return MouseRegion(
+        onHover: (event) => _onFileLinkHover(event.position),
+        onExit: (_) => _exitFileLinkHover(),
+        child: field,
+      );
+    }
+
     final gutterStyle = textStyle.copyWith(fontSize: 11);
-    final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
+    final padding = (decoration.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
     final textDirection = Directionality.of(context);
     final textScaler = MediaQuery.textScalerOf(context);
@@ -1875,7 +2951,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         : showGutter
             ? 18.0
             : 0.0;
-    return Column(
+    final previewWindow = _symbolPreviewWindow;
+    final previewRange = _symbolPreviewRange;
+    final currentPreview = previewRange != null &&
+        previewRange.documentVersion == widget.inputWindow.version &&
+        previewRange.documentVersion == widget.inputWindow.document.version;
+    final editor = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
@@ -1896,10 +2977,125 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           textDirection: textDirection,
                           padding: padding,
                         ).clamp(editorWidth, double.infinity).toDouble();
+                  final fontSize = textStyle.fontSize ?? 14;
+                  final gap = _inlineGapLayout(
+                    editingValue,
+                    folds: foldLayout,
+                    width: (contentWidth - padding.horizontal)
+                        .clamp(1.0, double.infinity)
+                        .toDouble(),
+                    viewportHeight: constraints.maxHeight,
+                    scale: textScaler.scale(fontSize) / fontSize,
+                    textStyle: textStyle,
+                    textScaler: textScaler,
+                    textDirection: textDirection,
+                  );
+                  if (_controller.inlineGap?.layout != gap) {
+                    _controller.inlineGap = gap == null
+                        ? null
+                        : (
+                            layout: gap,
+                            span: _inlineGapSpan(gap),
+                            tabLetterSpacing: gap.tabStyle == null
+                                ? null
+                                : _inlineTabLetterSpacing(
+                                    gap.tabStyle!,
+                                    gap.scale,
+                                  ),
+                          );
+                    _inlineOverlayRect = null;
+                    _scheduleCaretOverlayAnchorReveal();
+                    _scheduleCaretOverlayUpdate();
+                  }
+                  final terminalHeight = gap == null &&
+                          _hasTerminalInlineAnchor(editingValue, foldLayout)
+                      ? _inlineOverlayHeight(
+                          constraints.maxHeight,
+                          textStyle,
+                          textScaler.scale(fontSize) / fontSize,
+                        )
+                      : null;
+                  final terminalLayout = terminalHeight == null
+                      ? null
+                      : (
+                          height: terminalHeight,
+                          beforeFinalBreak: editingValue.text.endsWith('\n') &&
+                              widget.caretOverlayAnchorUtf16! <
+                                  widget.inputWindow.endUtf16,
+                          width: contentWidth,
+                        );
+                  if (_terminalOverlayLayout != terminalLayout) {
+                    _terminalOverlayLayout = terminalLayout;
+                    _terminalOverlayRevealRequested = terminalLayout != null;
+                    _inlineOverlayRect = null;
+                    _scheduleCaretOverlayAnchorReveal();
+                    _scheduleCaretOverlayUpdate();
+                  }
+                  final inlineStrut = gap == null ||
+                          _controller.hasVisibleFoldedRanges
+                      ? null
+                      : StrutStyle.fromTextStyle(
+                          textStyle,
+                          forceStrutHeight: false,
+                        );
+                  // EditableText forces the base strut unless an inline
+                  // overlay or folded view supplies its own line metrics.
+                  final gutterStrut = _controller.hasVisibleFoldedRanges
+                      ? StrutStyle.disabled
+                      : inlineStrut ??
+                          StrutStyle.fromTextStyle(
+                            textStyle,
+                            forceStrutHeight: true,
+                          );
+                  final editorTextSpan = _controller.buildTextSpan(
+                    context: context,
+                    style: textStyle,
+                    withComposing: true,
+                  );
+                  final window = widget.inputWindow;
+                  final hover = _hoveredFileLink;
+                  final linkHovered =
+                      hover != null &&
+                      hover.version == window.version &&
+                      hover.version == window.document.version &&
+                      !window.hasComposition;
+                  final rangeDecorations = !linkHovered
+                      ? widget.rangeDecorations
+                      : [
+                          ...widget.rangeDecorations,
+                          EditorRangeDecoration(
+                            documentVersion: hover.version,
+                            startUtf16: hover.startUtf16,
+                            endUtf16: hover.endUtf16,
+                            underlineColor: theme.colorScheme.primary,
+                          ),
+                        ];
                   final editorContent = Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (widget.rangeDecorations.any(
+                      if (currentPreview && previewWindow == null)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: EditorRangeDecorationPainter(
+                                text: editingValue.text,
+                                textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
+                                windowVersion: widget.inputWindow.version,
+                                windowStartUtf16: widget.inputWindow.startUtf16,
+                                decorations: [previewRange],
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                paintBackgrounds: true,
+                                fillBackgroundLines: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (rangeDecorations.any(
                           (decoration) => decoration.backgroundColor != null))
                         Positioned.fill(
                           child: IgnorePointer(
@@ -1907,9 +3103,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
-                                decorations: widget.rangeDecorations,
+                                decorations: rangeDecorations,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -1924,7 +3121,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         label: widget.semanticsLabel,
                         value: editingValue.text,
                         textField: true,
-                        child: field,
+                        child: buildField(inlineStrut, linkHovered),
                       ),
                       if (widget.showIndentGuides ||
                           widget.whitespaceMode != EditorWhitespaceMode.none)
@@ -1934,6 +3131,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorTextDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -1956,6 +3154,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: _AdditionalSelectionsPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 selections: widget.additionalSelections,
                                 style: textStyle,
                                 textDirection: textDirection,
@@ -1968,7 +3167,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             ),
                           ),
                         ),
-                      if (widget.rangeDecorations.any(
+                      if (rangeDecorations.any(
                         (decoration) =>
                             decoration.borderColor != null ||
                             decoration.underlineColor != null,
@@ -1979,9 +3178,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
                                 textSpan: editorTextSpan,
+                                strutStyle: inlineStrut,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
-                                decorations: widget.rangeDecorations,
+                                decorations: rangeDecorations,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -2030,6 +3230,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     final controls = _foldControlTargets(
                       layout: foldLayout,
                       textSpan: editorTextSpan,
+                      strutStyle: gutterStrut,
                       textDirection: textDirection,
                       textScaler: textScaler,
                       padding: padding,
@@ -2043,6 +3244,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           painter: EditorGutterPainter(
                             text: editingValue.text,
                             textSpan: editorTextSpan,
+                            strutStyle: gutterStrut,
                             firstLineNumber: _firstLineNumber,
                             style: textStyle,
                             textDirection: textDirection,
@@ -2058,6 +3260,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             collapsedLineIndices:
                                 foldLayout.collapsedLineIndices,
                             showLineNumbers: widget.showLineNumbers,
+                            terminalGapHeight:
+                                terminalLayout?.beforeFinalBreak == true
+                                    ? _inlineOverlayRect?.height ?? 0
+                                    : 0,
                           ),
                         ),
                         for (final control in controls)
@@ -2123,6 +3329,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                           details: details,
                                           layout: foldLayout,
                                           textSpan: editorTextSpan,
+                                          strutStyle: gutterStrut,
                                           textDirection: textDirection,
                                           textScaler: textScaler,
                                           padding: padding,
@@ -2138,7 +3345,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         ),
                       ),
                       if (widget.caretOverlay case final overlay?)
-                        if (_caretRectInOverlay case final caretRect?)
+                        if (_inlineOverlayRect case final rect?)
+                          Positioned(
+                            key: const ValueKey('rust-editor-inline-overlay'),
+                            left: gutterWidth + 8,
+                            right: 8,
+                            top: rect.top + 4,
+                            height: rect.height - 8,
+                            child: overlay,
+                          )
+                        else if (_caretRectInOverlay case final caretRect? when gap == null)
                           CustomSingleChildLayout(
                             delegate: _CaretOverlayPositionDelegate(caretRect),
                             child: overlay,
@@ -2186,10 +3402,49 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           ),
       ],
     );
+    if (previewWindow == null ||
+        !currentPreview ||
+        !identical(previewWindow.document, widget.inputWindow.document)) {
+      return editor;
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        editor,
+        Positioned.fill(
+          child: ExcludeSemantics(
+            child: ExcludeFocus(
+              child: IgnorePointer(
+                child: ColoredBox(
+                  color: theme.colorScheme.surface,
+                  child: RustTextInputField(
+                    key: _symbolPreviewKey,
+                    inputWindow: previewWindow,
+                    scrollController: _symbolPreviewScroll,
+                    style: widget.style,
+                    fontFamilyFallback: widget.fontFamilyFallback,
+                    decoration: widget.decoration,
+                    showLineNumbers: widget.showLineNumbers,
+                    showIndentGuides: widget.showIndentGuides,
+                    wordWrap: widget.wordWrap,
+                    syntaxTokens: widget.syntaxTokens,
+                    syntaxVersion: widget.syntaxVersion,
+                    syntaxTokenColor: widget.syntaxTokenColor,
+                    whitespaceMode: widget.whitespaceMode,
+                    tabSize: widget.tabSize,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   void dispose() {
+    _detachFileLinkHover(widget.scrollController);
     _stopMouseDrag();
     _stopColumnDrag();
     _listenedCaretVerticalScrollController
@@ -2205,10 +3460,34 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       ..removeListener(_handleFoldSelectionChanged)
       ..dispose();
     _foldSymbolsTimer?.cancel();
+    _symbolPreviewScroll?.dispose();
     _disposeOwnedFocusNode();
     _disposeOwnedHorizontalScrollController();
     super.dispose();
   }
+}
+
+class _FileLinkHintPosition extends SingleChildLayoutDelegate {
+  const _FileLinkHintPosition(this.target);
+
+  final Offset target;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      constraints.loosen();
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) => positionDependentBox(
+    size: size,
+    childSize: childSize,
+    target: target,
+    preferBelow: false,
+    verticalOffset: 10,
+  );
+
+  @override
+  bool shouldRelayout(covariant _FileLinkHintPosition oldDelegate) =>
+      oldDelegate.target != target;
 }
 
 class _CaretOverlayPositionDelegate extends SingleChildLayoutDelegate {
@@ -2248,6 +3527,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   _AdditionalSelectionsPainter({
     required this.text,
     required this.textSpan,
+    this.strutStyle,
     required this.selections,
     required this.style,
     required this.textDirection,
@@ -2259,6 +3539,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
 
   final String text;
   final TextSpan textSpan;
+  final StrutStyle? strutStyle;
   final List<TextSelection> selections;
   final TextStyle style;
   final TextDirection textDirection;
@@ -2274,6 +3555,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (size.width - padding.horizontal)
             .clamp(1, double.infinity)
@@ -2318,6 +3600,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   bool shouldRepaint(covariant _AdditionalSelectionsPainter oldDelegate) =>
       oldDelegate.text != text ||
       oldDelegate.textSpan != textSpan ||
+      oldDelegate.strutStyle != strutStyle ||
       !listEquals(oldDelegate.selections, selections) ||
       oldDelegate.style != style ||
       oldDelegate.textDirection != textDirection ||

@@ -1,0 +1,3510 @@
+{
+  "product": "e0374b7e4c2083342f74385c447ae1faad1a7fa0",
+  "tree": "4487d3e4bd961d248f4ee7fae2f31c268d3d1e3b",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "references": [
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsControl.ts",
+        "lines": [
+          650,
+          651,
+          652,
+          653
+        ],
+        "sha256": "960d87593723ac3c110122746f813ca20ac510f5c73d246156afce82655e053e"
+      },
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts",
+        "lines": [
+          398,
+          403,
+          407,
+          413,
+          419,
+          420,
+          422
+        ],
+        "sha256": "c866baa8040b70fe24970e10dafe12bd5cdb0a9789b06cf414bbb7c94088d2a2"
+      },
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsModel.ts",
+        "lines": [
+          120,
+          122,
+          125,
+          152
+        ],
+        "sha256": "f64818c5ecc67164b02ecea407acf2acdffe42884f719361326b65596fb5a42a"
+      },
+      {
+        "path": "src/vs/base/browser/ui/tree/abstractTree.ts",
+        "lines": [
+          2555,
+          2593,
+          3346,
+          3416
+        ],
+        "sha256": "9fc5cceb5b12520c7e8707fe39bf898858fcebc93c13e3ae14198d4095149d52"
+      },
+      {
+        "path": "src/vs/platform/list/browser/listService.ts",
+        "lines": [
+          1170,
+          1480,
+          1481
+        ],
+        "sha256": "cdc81e193589c3a98ee309a55946e11aac8db0d0cb5901929490ad6c854cbd49"
+      }
+    ],
+    "applicableSelectionTypes": [
+      "FileKind.FOLDER",
+      "FileKind.FILE"
+    ],
+    "treeImplementation": "src/vs/base/browser/ui/tree/abstractTree.ts",
+    "treePointerRange": [
+      2555,
+      2593
+    ],
+    "treeKeyboardRange": [
+      3346,
+      3416
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "4487d3e4bd961d248f4ee7fae2f31c268d3d1e3b",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "50bfdab331ba17633e3970895a1c896db843b9052a2bea0f4d9b35cd1da45ebd",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "5d0fdc743e0118d99c42fccfbca39f231feb96212684738ddced4a3eb885ebd0",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "906dd07ae8baaaac4fddb5b2f5230062669bdb57529efd23a2e3907af04a0c7a"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "bea4d0f6e7352d14269a98c3370e67454781a2ba53204bf09abaf96554c00f64",
+    "regression-fixed": "39d2a172d9a08897e2bbb4aaff047e8461c3a7cfbfbacdb52c0faee72e0c9897",
+    "workbench-picker-integration": "323e0c9def97c6e99cd6ab0b2ea0e78e9b22325250525adac81c9e72a0cd964a",
+    "focused": "c71e05b6c309ecc9b88cfaa0e0970b300db173822e989af7d9315facab5f5f67",
+    "analyze": "03da083ad8a3fee55dc96094d600bf7b73f31a79e55ae442aa8079d7b314c24b",
+    "full": "003b6220c64da78ad0f0ff9d03a26f8898689d17ea5fdec3a00a0535f0ab989a"
+  },
+  "graph": {
+    "BreadcrumbMenuEntry-build": {
+      "target": "build",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "4df4265ae5b20aa5d9993c8218f21b8afdba8e5d900c0dc7469c8dc5fec9f659"
+    },
+    "breadcrumb_keyboard_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "f853a0886b30b10f0fa979dcdcccc65f4d243a552549db2a09744cfc5690c17c"
+    },
+    "breadcrumb_navigation-BreadcrumbMenuEntry": {
+      "target": "BreadcrumbMenuEntry",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "6f9fae520ccd6042dd57c9e2e42b109b5b05d484559cd3363b78aba3578cce1d"
+    },
+    "breadcrumb_navigation-_BreadcrumbMenuEntryState": {
+      "target": "_BreadcrumbMenuEntryState",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "48e54769e3be2a9b74e1fc2e528929a2fff5221e1ac7d7ed9111d8ed4e13559e"
+    },
+    "breadcrumb_picker_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b692bdae62ceb49a4d91aa4ee7ac2c957005e8c2c6aa24ee05f8d37da985ebc5"
+    },
+    "breadcrumb_reveal_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "ae46dbde66d632c040a9e6de615d843a54b8504770e2d8d5e7cf78610ffeb19a"
+    },
+    "widget_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "86196ed64db169b0632d306b5f399ca87817d669e21c61ffdc043e8fa59177f6"
+    },
+    "workbench_page-_buildBreadcrumb": {
+      "target": "_buildBreadcrumb",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "bb0286d721307e042e64ed22a4c2b83b73afc7883f1540a5ccb02cbfd28769b6"
+    },
+    "workbench_page-_onBreadcrumbSegmentTap": {
+      "target": "_onBreadcrumbSegmentTap",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "8cae7b5407da6a026506b5553e0194f4084e6b1d1eb5a17ba79f6ee0a05d3ca0"
+    },
+    "workbench_page-_revealInExplorer": {
+      "target": "_revealInExplorer",
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "ca0ea1e5b90dc95e4c274aba2d8cf8cbe05529b6159277b63cc9e52a6a709a8e"
+    },
+    "workbench_page-_showBreadcrumbFolderPicker": {
+      "target": "_showBreadcrumbFolderPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "c6a7e4eee025dcffe01b2f79a6145cd1e4c9144b64b824be57e1bfd604bb987f"
+    },
+    "workbench_page-_showBreadcrumbMenu": {
+      "target": "_showBreadcrumbMenu",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "9c0ee34f80c5d59eed3090882446b09c7b2afa1fc3e7d96a476db3fed86e305c"
+    },
+    "all": {
+      "changed_count": 26,
+      "affected_count": 0,
+      "changed_files": 8,
+      "risk_level": "low",
+      "sha256": "2039f9ce84616569fef690b0d7ad594d994a4994f87d51487b99f57811d94826"
+    },
+    "staged": {
+      "changed_count": 26,
+      "affected_count": 0,
+      "changed_files": 8,
+      "risk_level": "low",
+      "sha256": "2039f9ce84616569fef690b0d7ad594d994a4994f87d51487b99f57811d94826"
+    }
+  },
+  "macosPhysical": "deferred",
+  "initialWindowsCheck": {
+    "reportSha256": "dfe6573e03453862ee3699e754d78722130eda9bec117d8fadc0c37c00f64bda",
+    "observations": 1,
+    "result": "editor unfocused before first fixture click"
+  },
+  "acceptanceDriverSha256": "75975543c4cb323a09383c251284d5592c9454177c7d9fd8a93d8ed2180192df",
+  "windows": {
+    "tree": "4487d3e4bd961d248f4ee7fae2f31c268d3d1e3b",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "2e08f2cf676ca86a8bd193f74fb955a72f7341baddec90b81c7ec783af5fab66",
+    "fixtureSha256": "906dd07ae8baaaac4fddb5b2f5230062669bdb57529efd23a2e3907af04a0c7a",
+    "runnerSha256": "a43f830c22c48dfd006800dcf5003eba8c4fb0c5bf36e090a8d9c1fcd3dc2952",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/branch/picked.rs": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "inlineTree": {
+      "firstRoute": 822755009,
+      "secondRoute": 1060566269,
+      "nestedFile": "src/branch/picked.rs",
+      "nestedTextSha256": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e"
+    },
+    "exit": 0,
+    "passed": true,
+    "reportSha256": "d4ff9cfe25f2af42291fceda9288b7dafb25ed9c1c208a3c8140c7b98aa8ff1c",
+    "observations": 15,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "owner-focused": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "path-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "other.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "target.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "pointer-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "space-collapsed": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "other.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "target.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "directory-control-enter": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "other.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "target.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "right-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "right-child": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "left-parent": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "left-collapsed": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "other.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "target.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 822755009,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "other.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "target.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": true
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-child": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            308.52621875,
+            107.0,
+            548.52621875,
+            155.0
+          ],
+          "picked.rs": [
+            308.52621875,
+            155.0,
+            548.52621875,
+            203.0
+          ],
+          "enum_rank.rs": [
+            308.52621875,
+            203.0,
+            548.52621875,
+            251.0
+          ],
+          "lib.rs": [
+            308.52621875,
+            251.0,
+            548.52621875,
+            299.0
+          ],
+          "other.rs": [
+            308.52621875,
+            299.0,
+            548.52621875,
+            347.0
+          ],
+          "struct_rank.rs": [
+            308.52621875,
+            347.0,
+            548.52621875,
+            395.0
+          ],
+          "struct_second.rs": [
+            308.52621875,
+            395.0,
+            548.52621875,
+            443.0
+          ],
+          "target.rs": [
+            308.52621875,
+            443.0,
+            548.52621875,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1060566269,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              66,
+              66
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "nested-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "picked.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "4487d3e4bd961d248f4ee7fae2f31c268d3d1e3b",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2683350,
+            "ppid": 2683349,
+            "private": 236744704,
+            "pss": 251294720,
+            "working_set": 328339456
+          }
+        ],
+        "root_pid": 2683350,
+        "total_private_bytes": 236744704,
+        "total_private_mib": 225.8,
+        "total_working_set_bytes": 328339456
+      },
+      "path-picker": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2683350,
+            "ppid": 2683349,
+            "private": 244359168,
+            "pss": 259150848,
+            "working_set": 337203200
+          }
+        ],
+        "root_pid": 2683350,
+        "total_private_bytes": 244359168,
+        "total_private_mib": 233.0,
+        "total_working_set_bytes": 337203200
+      },
+      "pointer-expanded": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2683350,
+            "ppid": 2683349,
+            "private": 239415296,
+            "pss": 254206976,
+            "working_set": 332259328
+          }
+        ],
+        "root_pid": 2683350,
+        "total_private_bytes": 239415296,
+        "total_private_mib": 228.3,
+        "total_working_set_bytes": 332259328
+      },
+      "nested-opened": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2683350,
+            "ppid": 2683349,
+            "private": 258052096,
+            "pss": 272854016,
+            "working_set": 351035392
+          }
+        ],
+        "root_pid": 2683350,
+        "total_private_bytes": 258052096,
+        "total_private_mib": 246.1,
+        "total_working_set_bytes": 351035392
+      }
+    },
+    "aotSha256": "1e9df2ccc9041433ceec77889c54b024aa925f0315f4d8d5e820b782758f61f1",
+    "fixtureSha256": "906dd07ae8baaaac4fddb5b2f5230062669bdb57529efd23a2e3907af04a0c7a",
+    "runnerSha256": "c052cf24e75c637e8bd4913a271161c5bf4b3ff0c68a5465d62de0f0cec7c9dd",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/branch/picked.rs": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "inlineTree": {
+      "firstRoute": 651700954,
+      "secondRoute": 1022812061,
+      "nestedFile": "src/branch/picked.rs",
+      "nestedTextSha256": "196555eacb5654fe3dcc4b293a8dcf83e73a088130f606adbfbd7fa77d58908e"
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "reportSha256": "1e1500f718870db7dd9d3b09d0d61ceec9f4ec920c07b9fdb1a52c56685b45bd",
+    "observations": 15,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "owner-focused": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "path-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "pointer-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "space-collapsed": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "directory-control-enter": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "right-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "right-child": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "left-parent": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "left-collapsed": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 651700954,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": true
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-expanded": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": true
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "reopened-child": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-1"
+        ],
+        "breadcrumbPickerRows": [
+          "branch/",
+          "picked.rs",
+          "enum_rank.rs",
+          "lib.rs",
+          "other.rs",
+          "struct_rank.rs",
+          "struct_second.rs",
+          "target.rs"
+        ],
+        "pickerRowBounds": {
+          "branch/": [
+            361.19584228515623,
+            107.0,
+            647.0471612300004,
+            155.0
+          ],
+          "picked.rs": [
+            361.19584228515623,
+            155.0,
+            647.0471612300004,
+            203.0
+          ],
+          "enum_rank.rs": [
+            361.19584228515623,
+            203.0,
+            647.0471612300004,
+            251.0
+          ],
+          "lib.rs": [
+            361.19584228515623,
+            251.0,
+            647.0471612300004,
+            299.0
+          ],
+          "other.rs": [
+            361.19584228515623,
+            299.0,
+            647.0471612300004,
+            347.0
+          ],
+          "struct_rank.rs": [
+            361.19584228515623,
+            347.0,
+            647.0471612300004,
+            395.0
+          ],
+          "struct_second.rs": [
+            361.19584228515623,
+            395.0,
+            647.0471612300004,
+            443.0
+          ],
+          "target.rs": [
+            361.19584228515623,
+            443.0,
+            647.0471612300004,
+            491.0
+          ]
+        },
+        "pickerTransitions": {
+          "branch/": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "picked.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": true
+          },
+          "enum_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "lib.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "other.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_rank.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "struct_second.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          },
+          "target.rs": {
+            "value": 1.0,
+            "status": "completed",
+            "route": 1022812061,
+            "focused": false
+          }
+        },
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              70,
+              70
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "nested-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "pickerRowBounds": {},
+        "pickerTransitions": {},
+        "editorFocus": [
+          {
+            "label": "picked.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

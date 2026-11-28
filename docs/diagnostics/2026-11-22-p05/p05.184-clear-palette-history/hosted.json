@@ -1,0 +1,190 @@
+{
+  "productCommit": "b8355eef526924f5682329504b4dc6a54e36b6f3",
+  "productTree": "432a6e71761feedda9b0b2a7c9295f7c77e1f8de",
+  "capturedUtc": "2026-11-22T05:35:28.927329+00:00",
+  "pullRequestCI": {
+    "attempt": 1,
+    "conclusion": "success",
+    "headSha": "b8355eef526924f5682329504b4dc6a54e36b6f3",
+    "id": 44989174352,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 137106249720,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989174352/job/137106249720"
+      },
+      {
+        "conclusion": "success",
+        "id": 137106249807,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Analyze",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989174352/job/137106249807"
+      },
+      {
+        "conclusion": "success",
+        "id": 137106249911,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989174352/job/137106249911"
+      },
+      {
+        "conclusion": "success",
+        "id": 137106249980,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989174352/job/137106249980"
+      }
+    ],
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989174352"
+  },
+  "platformAvailability": {
+    "attempt": 1,
+    "conclusion": "",
+    "headSha": "b8355eef526924f5682329504b4dc6a54e36b6f3",
+    "id": 44989171964,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 137106242295,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Windows Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Windows auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Windows auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Windows auxiliary focus diagnostics",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run P03.7 Windows desktop interaction suite",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989171964/job/137106242295"
+      },
+      {
+        "conclusion": "",
+        "id": 137106242507,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": "completed"
+          },
+          {
+            "conclusion": "",
+            "name": "Flutter analyze and tests",
+            "status": "in_progress"
+          },
+          {
+            "conclusion": "",
+            "name": "Build macOS Release bundle",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Package macOS app",
+            "status": "pending"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989171964/job/137106242507"
+      },
+      {
+        "conclusion": "success",
+        "id": 137106242512,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Linux Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Linux auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Linux auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Linux auxiliary focus diagnostics",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989171964/job/137106242512"
+      }
+    ],
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44989171964"
+  },
+  "previousEvidenceCI": {
+    "id": 44988207664,
+    "headSha": "91a18d8bdba687c2dfd5509659b36e3e93a66fbf",
+    "conclusion": "success"
+  },
+  "macOSPhysicalAcceptance": "deferred per user"
+}

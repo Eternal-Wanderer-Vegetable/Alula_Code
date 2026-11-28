@@ -1,0 +1,6 @@
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24915)   void disposeView() {
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24916)     if (_viewDisposed) return;
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24917)     _viewDisposed = true;
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24918)     editorScrollController.dispose();
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24919)     _shared.releaseView();
+96872ca (Vegetable 2026-10-31 02:37:54 +0800 24920)   }

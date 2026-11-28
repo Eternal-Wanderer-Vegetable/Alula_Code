@@ -242,6 +242,8 @@ class EditorRangeDecorationPainter extends CustomPainter {
     required this.scrollController,
     required this.paintBackgrounds,
     this.textSpan,
+    this.strutStyle,
+    this.fillBackgroundLines = false,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -254,7 +256,9 @@ class EditorRangeDecorationPainter extends CustomPainter {
   final EdgeInsets padding;
   final ScrollController? scrollController;
   final bool paintBackgrounds;
+  final bool fillBackgroundLines;
   final TextSpan? textSpan;
+  final StrutStyle? strutStyle;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -270,6 +274,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (size.width - padding.horizontal)
             .clamp(1, double.infinity)
@@ -288,6 +293,22 @@ class EditorRangeDecorationPainter extends CustomPainter {
         continue;
       }
       final boxes = painter.getBoxesForSelection(resolved.range);
+      final backgroundColor = decoration.backgroundColor;
+      if (paintBackgrounds &&
+          fillBackgroundLines &&
+          backgroundColor != null &&
+          boxes.isNotEmpty) {
+        canvas.drawRect(
+          Rect.fromLTRB(
+            0,
+            boxes.first.top + origin.dy,
+            size.width,
+            boxes.last.bottom + origin.dy,
+          ),
+          Paint()..color = backgroundColor,
+        );
+        continue;
+      }
       for (final box in boxes) {
         final rect = box.toRect().shift(origin);
         if (paintBackgrounds) {
@@ -340,11 +361,13 @@ class EditorRangeDecorationPainter extends CustomPainter {
       oldDelegate.decorations != decorations ||
       oldDelegate.style != style ||
       oldDelegate.textSpan != textSpan ||
+      oldDelegate.strutStyle != strutStyle ||
       oldDelegate.textDirection != textDirection ||
       oldDelegate.textScaler != textScaler ||
       oldDelegate.padding != padding ||
       oldDelegate.scrollController != scrollController ||
-      oldDelegate.paintBackgrounds != paintBackgrounds;
+      oldDelegate.paintBackgrounds != paintBackgrounds ||
+      oldDelegate.fillBackgroundLines != fillBackgroundLines;
 }
 
 double editorGutterWidth({
@@ -401,10 +424,12 @@ class EditorGutterPainter extends CustomPainter {
     required this.foregroundColor,
     required this.dividerColor,
     this.textSpan,
+    this.strutStyle,
     this.hiddenLineIndices = const {},
     this.foldableLineIndices = const {},
     this.collapsedLineIndices = const {},
     this.showLineNumbers = true,
+    this.terminalGapHeight = 0,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -419,19 +444,25 @@ class EditorGutterPainter extends CustomPainter {
   final Color foregroundColor;
   final Color dividerColor;
   final TextSpan? textSpan;
+  final StrutStyle? strutStyle;
   final Set<int> hiddenLineIndices;
   final Set<int> foldableLineIndices;
   final Set<int> collapsedLineIndices;
   final bool showLineNumbers;
+  final double terminalGapHeight;
 
   @override
   void paint(Canvas canvas, Size size) {
+    // CustomPaint can share the canvas with surrounding workbench regions.
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
     canvas.drawColor(backgroundColor, BlendMode.src);
     final textPainter = TextPainter(
       text: textSpan ?? TextSpan(text: text, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (textWidth - padding.horizontal)
             .clamp(1, double.infinity)
@@ -457,7 +488,9 @@ class EditorGutterPainter extends CustomPainter {
         textScaler: textScaler,
         textWidthBasis: TextWidthBasis.parent,
       )..layout(maxWidth: size.width);
-      final lineTop = padding.top + caret.dy - scrollY;
+      // The empty row after the last newline has no glyphs to move.
+      final gap = line.startUtf16 == text.length ? terminalGapHeight : 0;
+      final lineTop = padding.top + caret.dy - scrollY + gap;
       final numberTop = lineTop + (lineHeight - numberPainter.height) / 2;
       if (showLineNumbers &&
           numberTop + numberPainter.height >= 0 &&
@@ -495,6 +528,7 @@ class EditorGutterPainter extends CustomPainter {
         ..color = dividerColor
         ..strokeWidth = 1,
     );
+    canvas.restore();
     textPainter.dispose();
   }
 
@@ -512,10 +546,12 @@ class EditorGutterPainter extends CustomPainter {
       oldDelegate.foregroundColor != foregroundColor ||
       oldDelegate.dividerColor != dividerColor ||
       oldDelegate.textSpan != textSpan ||
+      oldDelegate.strutStyle != strutStyle ||
       !setEquals(oldDelegate.hiddenLineIndices, hiddenLineIndices) ||
       !setEquals(oldDelegate.foldableLineIndices, foldableLineIndices) ||
       !setEquals(oldDelegate.collapsedLineIndices, collapsedLineIndices) ||
-      oldDelegate.showLineNumbers != showLineNumbers;
+      oldDelegate.showLineNumbers != showLineNumbers ||
+      oldDelegate.terminalGapHeight != terminalGapHeight;
 }
 
 class EditorTextDecorationPainter extends CustomPainter {
@@ -532,6 +568,7 @@ class EditorTextDecorationPainter extends CustomPainter {
     required this.guideColor,
     required this.whitespaceColor,
     this.textSpan,
+    this.strutStyle,
     this.hiddenLineIndices = const {},
   }) : super(repaint: scrollController);
 
@@ -547,6 +584,7 @@ class EditorTextDecorationPainter extends CustomPainter {
   final Color guideColor;
   final Color whitespaceColor;
   final TextSpan? textSpan;
+  final StrutStyle? strutStyle;
   final Set<int> hiddenLineIndices;
 
   @override
@@ -559,6 +597,7 @@ class EditorTextDecorationPainter extends CustomPainter {
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
+      strutStyle: strutStyle,
     )..layout(
         maxWidth: (size.width - padding.horizontal)
             .clamp(1, double.infinity)
@@ -639,5 +678,6 @@ class EditorTextDecorationPainter extends CustomPainter {
       oldDelegate.guideColor != guideColor ||
       oldDelegate.whitespaceColor != whitespaceColor ||
       oldDelegate.textSpan != textSpan ||
+      oldDelegate.strutStyle != strutStyle ||
       !setEquals(oldDelegate.hiddenLineIndices, hiddenLineIndices);
 }

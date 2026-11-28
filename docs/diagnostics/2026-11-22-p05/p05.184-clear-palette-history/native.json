@@ -1,0 +1,686 @@
+{
+  "slice": "P05.184 / feat-236",
+  "productCommit": "b8355eef526924f5682329504b4dc6a54e36b6f3",
+  "productTree": "432a6e71761feedda9b0b2a7c9295f7c77e1f8de",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "windows": {
+    "tree": "432a6e71761feedda9b0b2a7c9295f7c77e1f8de",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "c820754622dd2444cca2a4b919173110ed2344d84b05176feec1fa472e80aaaa",
+    "fixtureSha256": "5e5a880424d6e6a979618257f5570991dc1b7a54c2de2c49b72febc35a07c982",
+    "runnerSha256": "6cc4e649c88b85c40b74c01296199f8f9d7a82049fec85542cd5a477a24babe8",
+    "steps": {
+      "clear-ready": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": false
+      },
+      "clear-dirty-before": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-cancel-palette": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": true,
+        "nativeWindowFocused": true
+      },
+      "clear-cancel-dialog": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": true,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-cancel-settled": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-confirm-palette": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": true,
+        "nativeWindowFocused": true
+      },
+      "clear-confirm-dialog": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": true,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-confirm-settled": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-empty-recent": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-editor-after-palette": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line7\n",
+          "mirror": "Compact example 😀\nSecond line7\n",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            30
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "clear-continued-input": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line9\n",
+          "mirror": "Compact example 😀\nSecond line9\n",
+          "totalUtf16": 32,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            31,
+            31
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "restart-backup-ready": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "restart-backup-empty-recent": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            30,
+            30
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      }
+    },
+    "dpi": 120,
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "clearExit": 0,
+    "restart-backupExit": 0,
+    "passed": true,
+    "platform": "Windows 11 build 26200, 125% DPI",
+    "isolatedBackupAfterRestart": []
+  },
+  "linux": {
+    "tree": "432a6e71761feedda9b0b2a7c9295f7c77e1f8de",
+    "aotSha256": "b21909cf39614b90911e6024c39e57503099b6570dcce0560bede705b1cc77df",
+    "fixtureSha256": "5e5a880424d6e6a979618257f5570991dc1b7a54c2de2c49b72febc35a07c982",
+    "runnerSha256": "0e6910f1db26195650802942247998fe40c075bfab4e4fe58b314a9cc093ad63",
+    "steps": {
+      "ready": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "original": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "cancel-palette": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": true,
+        "nativeWindowFocused": true
+      },
+      "cancel-dialog": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": true,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "cancel-settled": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "confirm-palette": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": true,
+        "nativeWindowFocused": true
+      },
+      "confirm-dialog": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": true,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "confirm-settled": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "empty-recent": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": true,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "editor-restored": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line482\n",
+          "mirror": "Compact example 😀\nSecond line482\n",
+          "totalUtf16": 34,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            33,
+            32
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      },
+      "continued-input": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line48679\n",
+          "mirror": "Compact example 😀\nSecond line48679\n",
+          "totalUtf16": 36,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            35,
+            35
+          ]
+        },
+        "paletteVisible": false,
+        "confirmationVisible": false,
+        "recentVisible": false,
+        "nativeWindowFocused": true
+      }
+    },
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "platform": "Linux WSL Xvfb xfwm4"
+  },
+  "macOSPhysicalAcceptance": "deferred per user"
+}

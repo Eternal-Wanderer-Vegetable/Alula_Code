@@ -1,0 +1,315 @@
+{
+  "product": "ba15b2941d1b1b0009f894dfaaa37128c4229d13",
+  "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+  "baselineProduct": "499ef3f0ea0d635c999c09b824c6f5f38e8726b0",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "native workspace window closes with a dirty modal editor",
+    "draftVisible": true,
+    "normalExit": true,
+    "exitCode": 0,
+    "diskBytesStable": true,
+    "ownershipChecked": true,
+    "draftInBackups": true,
+    "backupFiles": [
+      {
+        "path": "3b658c711218ad316b03b82b3ef36f76\\file\\6f3326e6",
+        "sha256": "f87681e3b4704344837d5555c7ce3e007859eb557c446b973b053b4ceb708ec1"
+      }
+    ],
+    "restartedDraftVisible": true,
+    "restartDiskBytesStable": true,
+    "restartNormalExit": true,
+    "restartExitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselines": {
+    "windows": {
+      "tree": "7054bbd89946e7c800b3a4785fca1052436749d7",
+      "build": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "fixtureSha256": "eeddd05b3359c916487dabc830f4d55ec97d2ed2aa85934d36688898603a5a48",
+        "tree": "7054bbd89946e7c800b3a4785fca1052436749d7",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "abi": 51,
+        "aotSha256": "2efc9092dc0a5da6ae31922c1dd38972dedbcce84eaefe8df5fa8f9c0142c5bb"
+      },
+      "profile": "E:\\temp\\alula-p05-next-modal-exit-readonly\\windows-baseline-1795848833271366000",
+      "testDesktop": "inactive WinSta0",
+      "osKeyboardOrPointerEventsSent": 0,
+      "states": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "exitCode": 0,
+      "draftRecoveryInSession": false,
+      "diskBytesStable": true,
+      "sessionGroupDocs": [
+        1
+      ],
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "sourceTree": "7054bbd89946e7c800b3a4785fca1052436749d7",
+      "fixtureSha256": "eeddd05b3359c916487dabc830f4d55ec97d2ed2aa85934d36688898603a5a48",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "7dc2ccf09178938c28f74a9a14f55415ed825b1b632e3e7cd863f4043c311b02",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "display": "isolated Xvfb with Xfwm4",
+      "profile": "/tmp/alula-p05-177-xvfb-_hydbtrp",
+      "states": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "exitCode": 0,
+      "draftRecoveryInSession": false,
+      "diskBytesStable": true,
+      "sessionGroupDocs": [
+        1
+      ]
+    }
+  },
+  "fixtureSha256": "012202facca79837f76fb761ed32af30382722340635a9c61831fe68d5ab98fe",
+  "cases": {
+    "windows-normal": {
+      "platform": "windows",
+      "sourceTree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "build": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "a59a658bd7ed02c111ffd756ab2d84b4f3fb35ff4028b9e74a72e646d0d1068c",
+        "fixtureSha256": "012202facca79837f76fb761ed32af30382722340635a9c61831fe68d5ab98fe",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "abi": 51
+      },
+      "mode": "normal",
+      "profile": "E:\\temp\\alula-p05-375-modal-recovery\\windows-normal-1795850885165385500",
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "before": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "firstExitCode": 0,
+      "sessionRecord": {
+        "id": 2,
+        "path": "E:\\temp\\alula-p05-375-modal-recovery\\windows-normal-1795850885165385500/workspace\\settings.json",
+        "fileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "savedFileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "text": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n"
+      },
+      "restored": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "restored": true
+      },
+      "secondExitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "windows-retry": {
+      "platform": "windows",
+      "sourceTree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "build": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "a59a658bd7ed02c111ffd756ab2d84b4f3fb35ff4028b9e74a72e646d0d1068c",
+        "fixtureSha256": "012202facca79837f76fb761ed32af30382722340635a9c61831fe68d5ab98fe",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "abi": 51
+      },
+      "mode": "retry",
+      "profile": "E:\\temp\\alula-p05-375-modal-recovery\\windows-retry-1795850890215880000",
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "before": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "afterFailure": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "modalStillShown": true
+      },
+      "firstExitCode": 0,
+      "sessionRecord": {
+        "id": 2,
+        "path": "E:\\temp\\alula-p05-375-modal-recovery\\windows-retry-1795850890215880000/workspace\\settings.json",
+        "fileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "savedFileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "text": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n"
+      },
+      "restored": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "restored": true
+      },
+      "secondExitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux-normal": {
+      "platform": "linux",
+      "sourceTree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "mode": "normal",
+      "display": "isolated Xvfb with Xfwm4",
+      "profile": "/tmp/alula-p05-177-xvfb-kz7j4zhz",
+      "fixtureSha256": "012202facca79837f76fb761ed32af30382722340635a9c61831fe68d5ab98fe",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "add94823c434de2ef04feeafca46c3ee6f600a8b8c64d1e1cdec5609eb28aa85",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "before": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "firstExitCode": 0,
+      "sessionRecord": {
+        "id": 2,
+        "path": "/tmp/alula-p05-177-xvfb-kz7j4zhz/workspace/settings.json",
+        "fileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "savedFileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "text": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n"
+      },
+      "restored": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "restored": true
+      },
+      "secondExitCode": 0,
+      "diskBytesStable": true
+    },
+    "linux-retry": {
+      "platform": "linux",
+      "sourceTree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "mode": "retry",
+      "display": "isolated Xvfb with Xfwm4",
+      "profile": "/tmp/alula-p05-177-xvfb-re8ykbmv",
+      "fixtureSha256": "012202facca79837f76fb761ed32af30382722340635a9c61831fe68d5ab98fe",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "add94823c434de2ef04feeafca46c3ee6f600a8b8c64d1e1cdec5609eb28aa85",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "before": {
+        "nativeWindowVisible": true,
+        "nativeCloseIntercepted": true,
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "initialBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "abi": 51
+      },
+      "afterFailure": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "modalStillShown": true
+      },
+      "firstExitCode": 0,
+      "sessionRecord": {
+        "id": 2,
+        "path": "/tmp/alula-p05-177-xvfb-re8ykbmv/workspace/settings.json",
+        "fileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "savedFileOptions": {
+          "encoding": "utf-8",
+          "bom": true,
+          "lineEnding": "crlf"
+        },
+        "text": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n"
+      },
+      "restored": {
+        "draft": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "rust": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "local": "{\"note\":\"😀 MODAL WINDOW QUIT\"}\n",
+        "dirty": true,
+        "abi": 51,
+        "originalBytes": "77u/eyJub3RlIjoic2VlZCJ9DQo=",
+        "nativeWindowVisible": true,
+        "restored": true
+      },
+      "secondExitCode": 0,
+      "diskBytesStable": true
+    }
+  }
+}

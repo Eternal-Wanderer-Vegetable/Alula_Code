@@ -1,0 +1,1065 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "sourceTree": "482bc59d2121c144bb1f1d0c07a75fd7cb90058b",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "3ab5da677e41c47bd464fadfc256fb7c6502fed15b9b74e0a123271a489ac39c",
+  "observations": {
+    "ready": {
+      "request": "ready",
+      "boxes": {
+        "single": [
+          337.92,
+          80.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 88069234,
+          "focusNode": 598875000,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "split-horizontal": {
+      "request": "split-horizontal",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 88069234,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "first-focused": {
+      "request": "first-focused",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 88069234,
+          "focusNode": 598875000,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "edited-both": {
+      "request": "edited-both",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "second-focused": {
+      "request": "second-focused",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "first-pointer-focused": {
+      "request": "first-pointer-focused",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 45,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "other-focused": {
+      "request": "other-focused",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 45,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "second-at-end": {
+      "request": "second-at-end",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          759.96,
+          758.0
+        ],
+        "second": [
+          779.96,
+          80.0,
+          1202.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 45,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "split-vertical": {
+      "request": "split-vertical",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          1114.0,
+          409.0
+        ],
+        "second": [
+          337.92,
+          429.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 45,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "vertical-sash-resized": {
+      "request": "vertical-sash-resized",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          1114.0,
+          468.9999999999999
+        ],
+        "second": [
+          337.92,
+          488.9999999999999,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 283315689,
+          "focusNode": 214106502,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 45,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5869565217391303
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "joined": {
+      "request": "joined",
+      "boxes": {
+        "single": [
+          337.92,
+          80.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "saved": {
+      "request": "saved",
+      "boxes": {
+        "single": [
+          337.92,
+          80.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "resplit-persisted-vertical": {
+      "request": "resplit-persisted-vertical",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          1114.0,
+          409.0
+        ],
+        "second": [
+          337.92,
+          429.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 586020781,
+          "focusNode": 278819315,
+          "focused": false,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "d fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": true,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "first-side-at-home": {
+      "request": "first-side-at-home",
+      "boxes": {
+        "first": [
+          337.92,
+          80.0,
+          1114.0,
+          409.0
+        ],
+        "second": [
+          337.92,
+          429.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 782194793,
+          "focusNode": 278819315,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 15546253,
+          "focusNode": 598875000,
+          "focused": false,
+          "scroll": 1484.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "joined-from-first": {
+      "request": "joined-from-first",
+      "boxes": {
+        "single": [
+          337.92,
+          80.0,
+          1114.0,
+          758.0
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 782194793,
+          "focusNode": 278819315,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1566528,
+          "ppid": 1566525,
+          "private": 253800448,
+          "pss": 269539328,
+          "working_set": 345686016
+        }
+      ],
+      "root_pid": 1566528,
+      "total_private_bytes": 253800448,
+      "total_private_mib": 242.0,
+      "total_working_set_bytes": 345686016
+    },
+    "split": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1566528,
+          "ppid": 1566525,
+          "private": 254787584,
+          "pss": 270540800,
+          "working_set": 346300416
+        }
+      ],
+      "root_pid": 1566528,
+      "total_private_bytes": 254787584,
+      "total_private_mib": 243.0,
+      "total_working_set_bytes": 346300416
+    },
+    "joined": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1566528,
+          "ppid": 1566525,
+          "private": 258482176,
+          "pss": 274263040,
+          "working_set": 350228480
+        }
+      ],
+      "root_pid": 1566528,
+      "total_private_bytes": 258482176,
+      "total_private_mib": 246.5,
+      "total_working_set_bytes": 350228480
+    }
+  },
+  "fixtureSha256": "ec6819b4a22e92457c16fe8ff58186a5f3879feda33d4887846de79d8a564b7b",
+  "results": {
+    "sharedDocument": 3,
+    "secondSelectionOnJoin": 8288,
+    "secondScrollOnJoin": 1484.0,
+    "firstSelectionOnJoin": 0,
+    "firstFocusRetainedOnJoin": true,
+    "savedSha256": "258d1cc19c2c361dc99c61d97f623c568644d651ce2c50a9954f50671ab33e32"
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "keyEvents": [
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "|",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F7",
+      "physical": 458816,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Home",
+      "physical": 458826,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Delete",
+      "physical": 458828,
+      "control": false,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F8",
+      "physical": 458817,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F9",
+      "physical": 458818,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "End",
+      "physical": 458829,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F10",
+      "physical": 458819,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "|",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "S",
+      "physical": 458774,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "|",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F7",
+      "physical": 458816,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Home",
+      "physical": 458826,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "|",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    }
+  ]
+}

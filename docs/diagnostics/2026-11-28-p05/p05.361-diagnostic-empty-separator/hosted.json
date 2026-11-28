@@ -1,0 +1,283 @@
+{
+  "product": "4574b0c57aa476cc733d65d4f18d564c66b05b27",
+  "tree": "d135537672a4f544466098d0639b42f8036c1882",
+  "ci": {
+    "id": 46075659983,
+    "sha": "4574b0c57aa476cc733d65d4f18d564c66b05b27",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46075659983",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140762660723,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140762661121,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140762661175,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140762661263,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46075649662,
+    "sha": "4574b0c57aa476cc733d65d4f18d564c66b05b27",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46075649662",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140762635787,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140762636240,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140762636496,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46072376334,
+    "sha": "7c688b900c48a907dcde0121b16d06b956c6642d",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46072376334",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140752098839,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140752099155,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140752099168,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140752099199,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46070711541,
+    "sha": "c368d4055087dc23df0dfc19ed2393678aaae62b",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46070711541",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140746722536,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140746722929,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140746723007,
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "previousMacQuit": {
+    "attempt": 1,
+    "job": 140746723007,
+    "ordinaryLaunch": "success",
+    "packageStep": "success",
+    "startupArtifact": 15234159931,
+    "packageArtifact": 15234149996,
+    "failedStepLogSha256": "cfb12322308c157176663fa24786533960988aa410c3c7f998d5873c59165771",
+    "failureStep": "Launch macOS native-titlebar mode and verify native Quit menu",
+    "nativeMenuAXError": -25204,
+    "systemEventsTimeoutSeconds": 20,
+    "commandQPosted": true,
+    "quitObservation": {
+      "timeoutSeconds": 20,
+      "app": "alive",
+      "openWrapper": "alive"
+    }
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 13,
+    "affected_count": 0,
+    "changed_files": 6,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "field-build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "field": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputField",
+        "name": "RustTextInputField",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 3,
+        "modules_affected": 3
+      },
+      "riskNote": null,
+      "receiptSha256": "1dfd690e392d8c17164c640aee3a4d9b475fdaf893a6e35ead17d0be2c760479"
+    },
+    "gap-layout-type": {
+      "target": {
+        "id": "TypeAlias:app/lib/editor/rust_text_input_field.dart:_EditorInlineGapLayout",
+        "name": "_EditorInlineGapLayout",
+        "type": "",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "48a46e59a270982a00108776c615abbc02620ce4e8df3bfd1c740ff2696d560a"
+    },
+    "inline-layout": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._inlineGapLayout#7",
+        "name": "_inlineGapLayout",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "543db5048431c7b6a554b0d9b1a292bb5e088cd091fb7bb66afea33a354f2fb8"
+    },
+    "inline-test": {
+      "target": {
+        "id": "Function:app/test/editor_inline_overlay_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/editor_inline_overlay_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "55d0f2bc2c1e3b8f9421d1240e680c91ce2976fd1c66b50794db9b5e030276b1"
+    },
+    "line-metrics": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._inlineOverlayLineHeight#2",
+        "name": "_inlineOverlayLineHeight",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "039de2d2ee50418b489dd201f80e4ac6d4f7dacdff463e7030443c439395d484"
+    },
+    "overlay-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._scheduleCaretOverlayUpdate#0",
+        "name": "_scheduleCaretOverlayUpdate",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 5,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "d6093ce452bb6894366653e0b4c1a6c5a356b090e68937da930d15ebb22c6cdf"
+    },
+    "span-builder": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:_SyntaxTextEditingController.buildTextSpan#3",
+        "name": "buildTextSpan",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "48c5067f7627f02e706896c456b4cefc9dc679da524dab2a0e6fbbfac1cb1a6d"
+    }
+  }
+}

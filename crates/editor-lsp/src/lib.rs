@@ -7,18 +7,36 @@
 //! - textDocument/definition / completion / semanticTokens（可取消异步请求）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::process::{ChildStdin, Command, Stdio};
-use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
 use std::sync::mpsc;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Weak};
 use std::time::{Duration, Instant};
 
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+mod diagnostic_navigation;
+mod hierarchy;
+pub use diagnostic_navigation::{
+    WorkspaceDiagnosticCandidate, WorkspaceDiagnosticCounts, WorkspaceDiagnosticCursor,
+    WorkspaceDiagnosticEntry, WorkspaceDiagnosticPage, WorkspaceDiagnosticPageRequest,
+};
+pub use hierarchy::{
+    extract_hierarchy_entries, HierarchyDirection, HierarchyEntry, HierarchyKind,
+    HierarchyPosition, HierarchyRange,
+};
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum DiagnosticCode {
+    Integer(i64),
+    Text(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Diagnostic {
     /// LSP severity：1=Error 2=Warning 3=Information 4=Hint
     pub severity: u32,
@@ -33,6 +51,8 @@ pub struct Diagnostic {
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub code: Option<DiagnosticCode>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -49,6 +69,14 @@ pub struct SemanticToken {
     pub kind: String,
 }
 
+/// Position-based navigation providers that share the definition result shape.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SymbolLocationKind {
+    Declaration,
+    Implementation,
+    TypeDefinition,
+}
+
 /// First usable LSP definition target. `line` and `character` use LSP's
 /// zero-based UTF-16 coordinates.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -58,38 +86,274 @@ pub struct DefinitionLocation {
     pub character: u64,
 }
 
-/// Read the first Location or LocationLink from a definition response.
-/// Invalid entries are ignored so one malformed link does not hide later
-/// usable results.
-pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
-    let entries = match value {
-        serde_json::Value::Array(entries) => entries.iter().collect::<Vec<_>>(),
-        serde_json::Value::Null => return None,
-        value => vec![value],
-    };
+/// A definition's identifier range in zero-based UTF-16 coordinates.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DefinitionTarget {
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+    pub end_line: u64,
+    pub end_character: u64,
+}
 
-    entries.into_iter().find_map(|entry| {
-        let uri = entry
-            .get("targetUri")
-            .or_else(|| entry.get("uri"))?
-            .as_str()?;
-        let start = entry
-            .get("targetSelectionRange")
-            .or_else(|| entry.get("range"))?
-            .get("start")?;
-        let line = start.get("line")?.as_u64()?;
-        let character = start.get("character")?.as_u64()?;
-        (!uri.is_empty()).then(|| DefinitionLocation {
-            uri: uri.to_string(),
-            line,
-            character,
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkspaceSymbolLocation {
+    pub name: String,
+    pub kind: u64,
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+    pub end_line: u64,
+    pub end_character: u64,
+    pub container_name: Option<String>,
+}
+
+/// Decode resolved SymbolInformation/WorkspaceSymbol entries. URI-only entries
+/// need workspaceSymbol/resolve and are deliberately not assigned a fake range.
+pub fn extract_workspace_symbols(
+    value: &serde_json::Value,
+) -> Result<Vec<WorkspaceSymbolLocation>, String> {
+    if value.is_null() {
+        return Ok(Vec::new());
+    }
+    let entries = value
+        .as_array()
+        .ok_or("workspace symbols must be an array")?;
+    if entries.len() > 2000 {
+        return Err("workspace symbol result exceeds 2000 entries".into());
+    }
+    let mut symbols = Vec::with_capacity(entries.len());
+    for entry in entries {
+        let Some(name) = entry
+            .get("name")
+            .and_then(|value| value.as_str())
+            .filter(|name| !name.is_empty() && name.len() <= 4096)
+        else {
+            continue;
+        };
+        let Some(kind) = entry
+            .get("kind")
+            .and_then(|value| value.as_u64())
+            .filter(|kind| (1..=26).contains(kind))
+        else {
+            continue;
+        };
+        let Some(location) = entry.get("location") else {
+            continue;
+        };
+        let Some(uri) = location
+            .get("uri")
+            .and_then(|value| value.as_str())
+            .filter(|uri| !uri.is_empty() && uri.len() <= 8192)
+        else {
+            continue;
+        };
+        let Some(range) = location.get("range") else {
+            continue;
+        };
+        let coordinates = [
+            range.pointer("/start/line"),
+            range.pointer("/start/character"),
+            range.pointer("/end/line"),
+            range.pointer("/end/character"),
+        ]
+        .into_iter()
+        .map(|value| {
+            value
+                .and_then(|value| value.as_u64())
+                .filter(|value| *value <= i32::MAX as u64)
         })
+        .collect::<Option<Vec<_>>>();
+        let Some(coordinates) = coordinates else {
+            continue;
+        };
+        if (coordinates[2], coordinates[3]) < (coordinates[0], coordinates[1]) {
+            continue;
+        }
+        symbols.push(WorkspaceSymbolLocation {
+            name: name.to_owned(),
+            kind,
+            uri: normalize_uri(uri),
+            line: coordinates[0],
+            character: coordinates[1],
+            end_line: coordinates[2],
+            end_character: coordinates[3],
+            container_name: entry
+                .get("containerName")
+                .and_then(|value| value.as_str())
+                .filter(|name| name.len() <= 4096)
+                .map(str::to_owned),
+        });
+    }
+    Ok(symbols)
+}
+
+fn definition_target(entry: &serde_json::Value) -> Option<DefinitionTarget> {
+    let uri = entry.get("targetUri").or_else(|| entry.get("uri"))?;
+    let range = entry
+        .get("targetSelectionRange")
+        .or_else(|| entry.get("range"))?;
+    location_target(uri, range)
+}
+
+fn location_target(uri: &serde_json::Value, range: &serde_json::Value) -> Option<DefinitionTarget> {
+    let uri = uri.as_str()?;
+    if uri.is_empty() || uri.len() > 8192 {
+        return None;
+    }
+    let position = |p: &serde_json::Value| {
+        let line = p.get("line")?.as_u64()?;
+        let character = p.get("character")?.as_u64()?;
+        (line <= i32::MAX as u64 && character <= i32::MAX as u64).then_some((line, character))
+    };
+    let (line, character) = position(range.get("start")?)?;
+    // A start-only position still supports navigation for older providers.
+    let (end_line, end_character) = range
+        .get("end")
+        .and_then(position)
+        .filter(|end| *end >= (line, character))
+        .unwrap_or((line, character));
+    Some(DefinitionTarget {
+        uri: uri.to_owned(),
+        line,
+        character,
+        end_line,
+        end_character,
     })
 }
 
+fn definition_entries(value: &serde_json::Value) -> &[serde_json::Value] {
+    value
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_else(|| std::slice::from_ref(value))
+}
+
+/// Read the first usable Location or LocationLink for callers that navigate
+/// to a single definition.
+pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
+    definition_entries(value)
+        .iter()
+        .find_map(definition_target)
+        .map(|target| DefinitionLocation {
+            uri: target.uri,
+            line: target.line,
+            character: target.character,
+        })
+}
+
+/// Decode all definition candidates in provider order. Invalid entries do not
+/// hide usable candidates, and oversize results fail as a whole.
+pub fn extract_definition_targets(
+    value: &serde_json::Value,
+) -> Result<Vec<DefinitionTarget>, String> {
+    let entries = definition_entries(value);
+    if entries.len() > 2000 {
+        return Err("definition result exceeds 2000 entries".into());
+    }
+    Ok(entries.iter().filter_map(definition_target).collect())
+}
+
+/// Decode the Location array returned by textDocument/references. Definition
+/// links are handled by the definition decoder, since references use Location.
+pub fn extract_reference_targets(
+    value: &serde_json::Value,
+) -> Result<Vec<DefinitionTarget>, String> {
+    if value.is_null() {
+        return Ok(Vec::new());
+    }
+    let entries = value
+        .as_array()
+        .ok_or("expected a reference location array")?;
+    if entries.len() > 2000 {
+        return Err("reference result exceeds 2000 entries".into());
+    }
+    Ok(entries
+        .iter()
+        .filter_map(|entry| location_target(entry.get("uri")?, entry.get("range")?))
+        .collect())
+}
+
+const LSP_REQUEST_CANCELLED: i64 = -32800;
+const LSP_CONTENT_MODIFIED: i64 = -32801;
+const LSP_SERVER_CANCELLED: i64 = -32802;
+
+/// Result from a request that opts in to receiving LSP error outcomes.
+pub enum LspRequestOutcome {
+    Result(serde_json::Value),
+    ContentModified,
+    Cancelled,
+}
+
+impl LspRequestOutcome {
+    fn into_value(self) -> serde_json::Value {
+        match self {
+            Self::Result(value) => value,
+            Self::ContentModified | Self::Cancelled => serde_json::Value::Null,
+        }
+    }
+}
+
+type LspResponse = Result<LspRequestOutcome, String>;
+
+struct PendingResponse {
+    sender: mpsc::SyncSender<LspResponse>,
+    report_server_errors: bool,
+}
+
+static DIAGNOSTIC_REVISIONS: AtomicU64 = AtomicU64::new(1);
+
+struct DiagnosticCache {
+    by_uri: BTreeMap<String, Vec<Diagnostic>>,
+    revision: u64,
+    listener: Option<DiagnosticListener>,
+}
+
+struct DiagnosticListener {
+    callback: extern "C" fn(),
+    pending: bool,
+}
+
+impl DiagnosticCache {
+    fn new() -> Self {
+        Self {
+            by_uri: BTreeMap::new(),
+            revision: DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed),
+            listener: None,
+        }
+    }
+
+    fn publish(&mut self, uri: String, diagnostics: Vec<Diagnostic>) {
+        if diagnostics.is_empty() {
+            self.discard(&uri);
+        } else if self.by_uri.get(&uri) != Some(&diagnostics) {
+            let is_file = uri.starts_with("file://");
+            self.by_uri.insert(uri, diagnostics);
+            if is_file {
+                self.advance_revision();
+            }
+        }
+    }
+
+    fn discard(&mut self, uri: &str) {
+        if self.by_uri.remove(uri).is_some() && uri.starts_with("file://") {
+            self.advance_revision();
+        }
+    }
+
+    fn advance_revision(&mut self) {
+        self.revision = DIAGNOSTIC_REVISIONS.fetch_add(1, Ordering::Relaxed);
+        if let Some(listener) = self.listener.as_mut().filter(|listener| !listener.pending) {
+            listener.pending = true;
+            (listener.callback)();
+        }
+    }
+}
+
 struct Shared {
-    diagnostics: Mutex<HashMap<String, Vec<Diagnostic>>>,
-    pending: Mutex<HashMap<i64, mpsc::SyncSender<serde_json::Value>>>,
+    diagnostics: Mutex<DiagnosticCache>,
+    pending: Mutex<HashMap<i64, PendingResponse>>,
     server_capabilities: Mutex<Option<serde_json::Value>>,
     /// 写端（send_message 与读线程回复服务端请求共用）
     writer: Mutex<Option<ChildStdin>>,
@@ -98,7 +362,7 @@ struct Shared {
 impl Shared {
     fn new(writer: ChildStdin) -> Self {
         Shared {
-            diagnostics: Mutex::new(HashMap::new()),
+            diagnostics: Mutex::new(DiagnosticCache::new()),
             pending: Mutex::new(HashMap::new()),
             server_capabilities: Mutex::new(None),
             writer: Mutex::new(Some(writer)),
@@ -133,12 +397,45 @@ pub struct LspServer {
     next_id: AtomicI64,
 }
 
+/// A diagnostic cache subscription that does not keep its server alive.
+pub struct DiagnosticSubscription {
+    shared: Weak<Shared>,
+}
+
+impl DiagnosticSubscription {
+    /// Accept another signal before the caller reads the diagnostic snapshot.
+    pub fn resume(&self) {
+        if let Some(shared) = self.shared.upgrade() {
+            let mut cache = shared
+                .diagnostics
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            if let Some(listener) = cache.listener.as_mut() {
+                listener.pending = false;
+            }
+        }
+    }
+}
+
+impl Drop for DiagnosticSubscription {
+    fn drop(&mut self) {
+        if let Some(shared) = self.shared.upgrade() {
+            // The callback is invoked under this same lock.
+            shared
+                .diagnostics
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner())
+                .listener = None;
+        }
+    }
+}
+
 /// 已发送的 JSON-RPC 请求。创建与轮询均不等待服务端响应；调用方应在完成、
 /// 超时或生命周期结束时显式取消，以释放 pending 项并通知语言服务器。
 pub struct LspPendingRequest {
     id: i64,
     method: String,
-    receiver: mpsc::Receiver<serde_json::Value>,
+    receiver: mpsc::Receiver<LspResponse>,
     shared: Arc<Shared>,
     completed: bool,
 }
@@ -150,10 +447,15 @@ impl LspPendingRequest {
 
     /// 立即检查响应；None 表示仍在等待。
     pub fn try_recv(&mut self) -> Result<Option<serde_json::Value>, String> {
+        self.try_recv_outcome()
+            .map(|outcome| outcome.map(LspRequestOutcome::into_value))
+    }
+
+    pub fn try_recv_outcome(&mut self) -> Result<Option<LspRequestOutcome>, String> {
         match self.receiver.try_recv() {
-            Ok(value) => {
+            Ok(response) => {
                 self.completed = true;
-                Ok(Some(value))
+                response.map(Some)
             }
             Err(mpsc::TryRecvError::Empty) => Ok(None),
             Err(mpsc::TryRecvError::Disconnected) => {
@@ -172,9 +474,9 @@ impl LspPendingRequest {
             .receiver
             .recv_timeout(Duration::from_millis(timeout_ms))
         {
-            Ok(value) => {
+            Ok(response) => {
                 self.completed = true;
-                Ok(value)
+                response.map(LspRequestOutcome::into_value)
             }
             Err(_) => {
                 let _ = self.cancel();
@@ -283,6 +585,12 @@ impl LspServer {
             "capabilities": {
                 "general": {"positionEncodings": ["utf-16"]},
                 "textDocument": {
+                    "definition": {"linkSupport": true},
+                    "declaration": {"linkSupport": true},
+                    "implementation": {"linkSupport": true},
+                    "typeDefinition": {"linkSupport": true},
+                    "callHierarchy": {"dynamicRegistration": false},
+                    "typeHierarchy": {"dynamicRegistration": false},
                     "semanticTokens": {
                         "dynamicRegistration": false,
                         "requests": {"range": false, "full": {"delta": false}},
@@ -351,6 +659,11 @@ impl LspServer {
         text: &str,
     ) -> Result<(), String> {
         let uri = &normalize_uri(uri);
+        // Reopening can reuse the previous document's version number. Discard
+        // its cached markers before accepting publications for this opening.
+        if let Ok(mut diagnostics) = self.shared.diagnostics.lock() {
+            diagnostics.discard(uri);
+        }
         self.send_message(&serde_json::json!({
             "jsonrpc": "2.0",
             "method": "textDocument/didOpen",
@@ -381,7 +694,7 @@ impl LspServer {
         self.shared
             .diagnostics
             .lock()
-            .map(|g| g.get(&key).cloned().unwrap_or_default())
+            .map(|g| g.by_uri.get(&key).cloned().unwrap_or_default())
             .unwrap_or_default()
     }
 
@@ -411,13 +724,28 @@ impl LspServer {
         method: &str,
         params: serde_json::Value,
     ) -> Result<LspPendingRequest, String> {
+        self.send_request(method, params, false)
+    }
+
+    fn send_request(
+        &self,
+        method: &str,
+        params: serde_json::Value,
+        report_server_errors: bool,
+    ) -> Result<LspPendingRequest, String> {
         let id = self.next_id.fetch_add(1, Ordering::SeqCst);
-        let (tx, rx) = mpsc::sync_channel::<serde_json::Value>(1);
+        let (sender, receiver) = mpsc::sync_channel(1);
         self.shared
             .pending
             .lock()
             .map_err(|_| "pending 锁中毒")?
-            .insert(id, tx);
+            .insert(
+                id,
+                PendingResponse {
+                    sender,
+                    report_server_errors,
+                },
+            );
         let sent = self.send_message(&serde_json::json!({
             "jsonrpc": "2.0", "id": id, "method": method, "params": params,
         }));
@@ -428,7 +756,7 @@ impl LspServer {
         Ok(LspPendingRequest {
             id,
             method: method.to_string(),
-            receiver: rx,
+            receiver,
             shared: Arc::clone(&self.shared),
             completed: false,
         })
@@ -484,6 +812,29 @@ impl LspServer {
         .map(Some)
     }
 
+    /// Query the workspace symbol provider only when advertised by the server.
+    pub fn workspace_symbols_async(
+        &self,
+        query: &str,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        if query.len() > 1024 {
+            return Err("workspace symbol query exceeds 1024 bytes".into());
+        }
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer("/capabilities/workspaceSymbolProvider"))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.request_async("workspace/symbol", serde_json::json!({"query": query}))
+            .map(Some)
+    }
+
     /// Send an asynchronous textDocument/definition request.
     pub fn definition_async(
         &self,
@@ -498,6 +849,80 @@ impl LspServer {
                 "position": {"line": line, "character": character},
             }),
         )
+    }
+
+    /// Request a semantic location only from its advertised provider.
+    pub fn symbol_location_async(
+        &self,
+        kind: SymbolLocationKind,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        let (method, capability) = match kind {
+            SymbolLocationKind::Declaration => (
+                "textDocument/declaration",
+                "/capabilities/declarationProvider",
+            ),
+            SymbolLocationKind::Implementation => (
+                "textDocument/implementation",
+                "/capabilities/implementationProvider",
+            ),
+            SymbolLocationKind::TypeDefinition => (
+                "textDocument/typeDefinition",
+                "/capabilities/typeDefinitionProvider",
+            ),
+        };
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer(capability))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.request_async(
+            method,
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+            }),
+        )
+        .map(Some)
+    }
+
+    /// Query references only when the server advertises a provider.
+    pub fn references_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+        include_declaration: bool,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer("/capabilities/referencesProvider"))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.send_request(
+            "textDocument/references",
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+                "context": {"includeDeclaration": include_declaration},
+            }),
+            true,
+        )
+        .map(Some)
     }
 
     /// 发送异步补全请求。返回值可立即轮询或取消。
@@ -541,6 +966,27 @@ impl LspServer {
             Ok(mut child) => child.try_wait().map(|s| s.is_none()).unwrap_or(false),
             Err(_) => false,
         }
+    }
+
+    /// Subscribe the workspace diagnostic consumer to cache changes.
+    ///
+    /// The callback posts an asynchronous signal and returns without calling
+    /// into the cache. It must remain valid until the subscription is dropped.
+    pub fn subscribe_diagnostics(
+        &self,
+        callback: extern "C" fn(),
+    ) -> Option<DiagnosticSubscription> {
+        let mut cache = self.shared.diagnostics.lock().ok()?;
+        if cache.listener.is_some() {
+            return None;
+        }
+        cache.listener = Some(DiagnosticListener {
+            callback,
+            pending: false,
+        });
+        Some(DiagnosticSubscription {
+            shared: Arc::downgrade(&self.shared),
+        })
     }
 
     /// shutdown + exit 握手并回收进程。
@@ -736,12 +1182,32 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                     }
                 }
                 let sender = shared.pending.lock().ok().and_then(|mut g| g.remove(&id));
-                if let Some(tx) = sender {
-                    let _ = tx.send(
-                        msg.get("result")
-                            .cloned()
-                            .unwrap_or(serde_json::Value::Null),
-                    );
+                if let Some(pending) = sender {
+                    let response = match msg.get("error").filter(|_| pending.report_server_errors) {
+                        Some(error) => {
+                            match error.get("code").and_then(serde_json::Value::as_i64) {
+                                Some(LSP_CONTENT_MODIFIED) => {
+                                    Ok(LspRequestOutcome::ContentModified)
+                                }
+                                Some(LSP_REQUEST_CANCELLED | LSP_SERVER_CANCELLED) => {
+                                    Ok(LspRequestOutcome::Cancelled)
+                                }
+                                _ => Err(error
+                                    .get("message")
+                                    .and_then(serde_json::Value::as_str)
+                                    .unwrap_or("LSP server returned an error")
+                                    .chars()
+                                    .take(512)
+                                    .collect()),
+                            }
+                        }
+                        None => Ok(LspRequestOutcome::Result(
+                            msg.get("result")
+                                .cloned()
+                                .unwrap_or(serde_json::Value::Null),
+                        )),
+                    };
+                    let _ = pending.sender.send(response);
                 }
                 continue;
             }
@@ -786,6 +1252,9 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                                     .get("source")
                                     .and_then(|v| v.as_str())
                                     .map(|s| s.to_string()),
+                                code: d
+                                    .get("code")
+                                    .and_then(|value| DiagnosticCode::deserialize(value).ok()),
                             })
                         })
                         .collect()
@@ -798,7 +1267,7 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                 );
             }
             if let Ok(mut g) = shared.diagnostics.lock() {
-                g.insert(normalize_uri(&uri), diags);
+                g.publish(normalize_uri(&uri), diags);
             }
         }
     }
@@ -880,6 +1349,33 @@ mod tests {
         assert!(
             decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 0, 0, 0]}), &legend).is_err()
         );
+    }
+
+    #[test]
+    fn definition_targets_preserve_valid_location_ranges_in_provider_order() {
+        let result = serde_json::json!([
+            {"uri": "file:///workspace/負例.rs", "range": {"start": {"line": 1, "character": -1}}},
+            {"uri": "file:///workspace/z.rs", "range": {
+                "start": {"line": 3, "character": 2}, "end": {"line": 4, "character": 6}
+            }},
+            {"uri": "file:///workspace/a.rs", "range": {"start": {"line": 0, "character": 7}}}
+        ]);
+        let locations = extract_definition_targets(&result).unwrap();
+        assert_eq!(locations.len(), 2);
+        assert_eq!(
+            serde_json::to_value(locations).unwrap(),
+            serde_json::json!([
+                {"uri": "file:///workspace/z.rs", "line": 3, "character": 2,
+                 "endLine": 4, "endCharacter": 6},
+                {"uri": "file:///workspace/a.rs", "line": 0, "character": 7,
+                 "endLine": 0, "endCharacter": 7}
+            ])
+        );
+        assert!(extract_definition_targets(&serde_json::Value::Null)
+            .unwrap()
+            .is_empty());
+        let oversized = serde_json::Value::Array(vec![serde_json::Value::Null; 2001]);
+        assert!(extract_definition_targets(&oversized).is_err());
     }
 
     #[test]

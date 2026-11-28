@@ -1,0 +1,229 @@
+{
+  "product": "0db66fd9896a03c9450c5e455ee648381500eafb",
+  "tree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+  "ci": {
+    "id": 46142329742,
+    "sha": "0db66fd9896a03c9450c5e455ee648381500eafb",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46142329742",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140970801944,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140970802130,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140970802139,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140970802234,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46142325017,
+    "sha": "0db66fd9896a03c9450c5e455ee648381500eafb",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46142325017",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140970786347,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140970786528,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140970786538,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46140729774,
+    "sha": "9119d6730f9150ea55d8b6795923ba98fdd749e2",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46140729774",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140965832754,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140965832967,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140965832990,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140965833002,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 5,
+    "affected_count": 0,
+    "changed_files": 6,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "tab-strip": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_buildEditorArea"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "split": {
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 5,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_registerCommands",
+        "_showBreadcrumbFolderPicker",
+        "_showBreadcrumbSymbolPicker",
+        "_showDocumentSymbols",
+        "_showGotoPosition"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "state": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart",
+        "editor_tab_cross_group_move_test.dart",
+        "editor_tab_overflow_test.dart",
+        "editor_tab_preview_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "explorer_type_ahead_test.dart",
+        "file_link_command_test.dart",
+        "file_link_hint_test.dart",
+        "file_link_hover_test.dart",
+        "file_link_location_integration_test.dart",
+        "file_link_pointer_test.dart",
+        "locked_scrolling_test.dart",
+        "modal_editor_test.dart",
+        "open_editors_close_group_test.dart",
+        "open_editors_group_close_test.dart",
+        "open_editors_view_test.dart",
+        "relative_file_link_integration_test.dart",
+        "walkthrough_test.dart",
+        "widget_test.dart",
+        "workbench_bulk_edit_review_test.dart",
+        "workbench_clear_command_history_test.dart"
+      ],
+      "processes": []
+    },
+    "zen-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "main-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "multi-view-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "wrap-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    }
+  }
+}

@@ -1,0 +1,466 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/workbench/keybindings.dart';
+import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/modal_editor.dart';
+import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/title_bar.dart';
+import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  late Directory temp;
+  late Directory workspace;
+  late LayoutStore layoutStore;
+  late SessionStore sessionStore;
+
+  String baseOf() => temp.path.replaceAll(r'\', '/');
+
+  Future<void> mountPage(WidgetTester tester) async {
+    tester.view.physicalSize = const Size(2400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: workspace.path,
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+  }
+
+  Future<void> prepareWorkspace(
+    WidgetTester tester, {
+    ModalEditorUseMode useModal = ModalEditorUseMode.some,
+  }) async {
+    temp = Directory.systemTemp.createTempSync('alula-modal-editor');
+    workspace = Directory('${temp.path}/workspace')..createSync();
+    final base = temp.path.replaceAll(r'\', '/');
+    layoutStore = LayoutStore(path: '$base/layout.json');
+    sessionStore = SessionStore(path: '$base/session.json');
+    // useModal 偏好经会话 journal 承载（P07 settings UI 接管前）。
+    File('${baseOf()}/session.json').writeAsStringSync(jsonEncode({
+      'v': 1,
+      'editorTabMode': 'multiple',
+      'workbench.editor.useModal': useModal.value,
+      'groups': <Object?>[],
+    }));
+    File('${workspace.path}/settings.json')
+        .writeAsStringSync('{"editor.fontSize": 14}\n');
+    File('${workspace.path}/main.rs').writeAsStringSync('fn main() {}\n');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      for (var attempt = 0; attempt < 50; attempt++) {
+        if (!temp.existsSync()) return;
+        try {
+          await temp.delete(recursive: true);
+          return;
+        } on FileSystemException {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+        }
+      }
+    });
+    await mountPage(tester);
+  }
+
+  /// 打开 settings.json：Explorer 双击（预览 + 固定）。节点键保留原生
+  /// 分隔符（P05.48 已知），用后缀匹配。
+  Future<void> openSettingsByExplorer(WidgetTester tester) async {
+    Finder explorerNode() => find.byWidgetPredicate((widget) {
+          final key = widget.key;
+          return key is ValueKey<String> &&
+              key.value.startsWith('explorer-node:') &&
+              key.value.endsWith('settings.json');
+        });
+    // useModal=some 下单击即以模态打开（第二次点击会落在模态屏障外）。
+    await tester.tap(explorerNode());
+    await tester.pump();
+    await tester.pumpAndSettle();
+  }
+
+  final modal = find.byKey(const ValueKey('modal-editor-dialog'));
+  final confirmation = find.byKey(const ValueKey('editor-close-dirty-dialog'));
+  for (final route in ['Escape', 'outside click', 'close button']) {
+    testWidgets('dirty modal confirmation from $route', (tester) async {
+      await prepareWorkspace(tester);
+      final file = File('${workspace.path}/settings.json');
+      final original = file.readAsBytesSync();
+      await openSettingsByExplorer(tester);
+      final input = find.descendant(
+        of: modal,
+        matching: find.byType(EditableText),
+      );
+      const draft = '{"editor.fontSize": 14, "note": "🔧"}\n';
+      await tester.enterText(input, draft);
+      await tester.pumpAndSettle();
+      final core = tester
+          .widget<RustTextInputField>(find.descendant(
+            of: modal,
+            matching: find.byType(RustTextInputField),
+          ))
+          .inputWindow
+          .document;
+      expect(core.resync().content, draft);
+      expect(core.isDirty, isTrue);
+      final selection = tester.widget<EditableText>(input).controller.selection;
+      switch (route) {
+        case 'Escape':
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        case 'outside click':
+          await tester.tapAt(const Offset(10, 100));
+        case 'close button':
+          await tester.tap(find.byKey(const ValueKey('modal-editor-close')));
+      }
+      await tester.pumpAndSettle();
+      expect(confirmation, findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+      await tester.pumpAndSettle();
+      expect(modal, findsOneWidget);
+      expect(core.resync().content, draft);
+      expect(
+          tester.widget<EditableText>(input).controller.selection, selection);
+      expect(tester.widget<EditableText>(input).focusNode.hasFocus, isTrue);
+      expect(file.readAsBytesSync(), original);
+
+      await tester.tap(find.byKey(const ValueKey('modal-editor-close')));
+      await tester.pumpAndSettle();
+      final choice = route == 'outside click' ? 'save' : 'discard';
+      await tester.tap(find.byKey(ValueKey('editor-close-$choice')));
+      await tester.pumpAndSettle();
+      expect(modal, findsNothing);
+      expect(file.readAsBytesSync(),
+          choice == 'save' ? utf8.encode(draft) : original);
+    });
+  }
+
+  testWidgets('a failed modal save preserves the draft for retry',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final original = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    final input =
+        find.descendant(of: modal, matching: find.byType(EditableText));
+    const draft = '{"note":"保留😀"}\n';
+    await tester.enterText(input, draft);
+    await tester.pumpAndSettle();
+
+    final backup = file.renameSync('${baseOf()}/settings-backup.json');
+    final obstructed = Directory(file.path)..createSync();
+    final close = find.byKey(const ValueKey('modal-editor-close'));
+    final save = find.byKey(const ValueKey('editor-close-save'));
+    await tester.tap(close);
+    await tester.pumpAndSettle();
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(modal, findsOneWidget);
+    expect(confirmation, findsNothing);
+    expect(tester.widget<EditableText>(input).controller.text, draft);
+    expect(backup.readAsBytesSync(), original);
+
+    obstructed.deleteSync();
+    backup.renameSync(file.path);
+    await tester.tap(close);
+    await tester.pumpAndSettle();
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(modal, findsNothing);
+    expect(file.readAsBytesSync(), utf8.encode(draft));
+  });
+
+  List<Map<String, Object?>> journalEntriesFor(File file) {
+    final groups = (sessionStore.tryLoad()!['groups'] as List)
+        .cast<Map<String, Object?>>();
+    return groups
+        .expand((group) => (group['docs'] as List).cast<Map<String, Object?>>())
+        .where((entry) =>
+            entry['path'] is String &&
+            File(entry['path'] as String).absolute.path == file.absolute.path)
+        .toList();
+  }
+
+  testWidgets('owner close preserves a dirty modal document across restart',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final source = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    const draft = '{"note":"重启后恢复🦉"}\n';
+    await tester.enterText(
+      find.descendant(of: modal, matching: find.byType(EditableText)),
+      draft,
+    );
+    await tester.pumpAndSettle();
+    final doc = tester
+        .widget<RustTextInputField>(
+          find.descendant(of: modal, matching: find.byType(RustTextInputField)),
+        )
+        .inputWindow
+        .document;
+    expect(doc.resync().content, draft);
+    expect(doc.isDirty, isTrue);
+    final title = tester.widget<AlulaTitleBar>(
+      find.byType(AlulaTitleBar, skipOffstage: false),
+    );
+    var nativeCloseCalled = false;
+    final closed = title.closeWindow!(() async {
+      nativeCloseCalled = true;
+    });
+    await tester.pumpAndSettle();
+    await closed;
+    expect(nativeCloseCalled, isTrue);
+
+    void expectDurableDraft() {
+      final recovered = journalEntriesFor(file);
+      expect(recovered, hasLength(1));
+      expect(recovered.single['text'], draft);
+      expect(file.readAsBytesSync(), source);
+    }
+
+    expectDurableDraft();
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    expectDurableDraft();
+
+    await mountPage(tester);
+    final resumed = tester
+        .widget<RustTextInputField>(
+          find.byWidgetPredicate((widget) =>
+              widget is RustTextInputField && widget.inputWindow.text == draft),
+        )
+        .inputWindow
+        .document;
+    expect(resumed.resync().content, draft);
+    expect(resumed.isDirty, isTrue);
+    expect(file.readAsBytesSync(), source);
+  });
+
+  testWidgets('owner close keeps the modal draft when journal writing fails',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final source = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    const draft = '{"note":"保留草稿🦉"}\n';
+    final input =
+        find.descendant(of: modal, matching: find.byType(EditableText));
+    await tester.enterText(input, draft);
+    await tester.pumpAndSettle();
+
+    final journal = File('${baseOf()}/session.json');
+    final previous = journal.renameSync('${baseOf()}/session-held.json');
+    final obstruction = Directory(journal.path)..createSync();
+    final title = tester.widget<AlulaTitleBar>(
+      find.byType(AlulaTitleBar, skipOffstage: false),
+    );
+    var nativeCloseCalls = 0;
+    Future<void> nativeClose() async {
+      nativeCloseCalls++;
+    }
+
+    await title.closeWindow!(nativeClose);
+    await tester.pumpAndSettle();
+    expect(nativeCloseCalls, 0);
+    expect(modal, findsOneWidget);
+    expect(tester.widget<EditableText>(input).controller.text, draft);
+    expect(file.readAsBytesSync(), source);
+
+    obstruction.deleteSync();
+    previous.renameSync(journal.path);
+    await title.closeWindow!(nativeClose);
+    await tester.pumpAndSettle();
+    expect(nativeCloseCalls, 1);
+    expect(journalEntriesFor(file).single['text'], draft);
+    expect(file.readAsBytesSync(), source);
+  });
+
+  group('ModalEditorPreferences', () {
+    test('json round-trips and defaults to some', () {
+      expect(
+        ModalEditorPreferences.fromJson(
+          jsonDecode(jsonEncode(const ModalEditorPreferences().toJson())),
+        ).useModal,
+        ModalEditorUseMode.some,
+      );
+      final all = const ModalEditorPreferences()
+          .withUseModal(ModalEditorUseMode.all);
+      final parsed = ModalEditorPreferences.fromJson(
+        jsonDecode(jsonEncode(all.toJson())),
+      );
+      expect(parsed.useModal, ModalEditorUseMode.all);
+      expect(parsed.opensAutomatically('anything.txt'), isTrue);
+    });
+
+    test('configuration path detection is case-insensitive', () {
+      expect(
+        isConfigurationEditorPath('C:/ws/Settings.JSON'),
+        isTrue,
+      );
+      expect(isConfigurationEditorPath('C:/ws/keybindings.json'), isTrue);
+      expect(isConfigurationEditorPath('C:/ws/main.rs'), isFalse);
+      expect(isConfigurationEditorPath(null), isFalse);
+    });
+
+    test('store saves and loads atomically', () {
+      final store = ModalEditorStore(
+        path: '${Directory.systemTemp
+                .createTempSync('alula-modal-store')
+                .path}/modal_editor.json',
+      );
+      store.save(
+        const ModalEditorPreferences(useModal: ModalEditorUseMode.off),
+      );
+      expect(store.load().useModal, ModalEditorUseMode.off);
+      store.save(
+        const ModalEditorPreferences(useModal: ModalEditorUseMode.all),
+      );
+      expect(store.load().useModal, ModalEditorUseMode.all);
+    });
+  });
+
+  testWidgets(
+    'useModal=some opens settings.json as a modal dialog instead of a tab',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await openSettingsByExplorer(tester);
+      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsOneWidget,
+          reason: 'the configuration editor opens as a modal dialog');
+      expect(find.byKey(const ValueKey('modal-editor-titlebar')),
+          findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+          matching: find.text('settings.json'),
+        ),
+        findsNothing,
+        reason: 'no tab is created for the modal editor',
+      );
+      expect(find.text('settings.json'), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'move-back-to-tab closes the dialog and opens the document as a tab',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await openSettingsByExplorer(tester);
+      expect(modal, findsOneWidget);
+      final input =
+          find.descendant(of: modal, matching: find.byType(EditableText));
+      final before = tester
+          .widget<RustTextInputField>(
+            find.descendant(
+                of: modal, matching: find.byType(RustTextInputField)),
+          )
+          .inputWindow
+          .document;
+      const draft = '{"note":"移回🐙"}\n';
+      await tester.enterText(input, draft);
+      await tester.pumpAndSettle();
+      expect(before.resync().content, draft);
+
+      await tester.tap(find.byKey(const ValueKey('modal-editor-move-to-tab')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsNothing);
+      expect(find.byKey(const ValueKey('tab-1')), findsOneWidget,
+          reason: 'the document opens as a regular tab after move-back');
+      expect(find.text('settings.json'), findsWidgets);
+      expect(confirmation, findsNothing);
+      final after = tester
+          .widget<RustTextInputField>(
+            find.byType(RustTextInputField),
+          )
+          .inputWindow
+          .document;
+      expect(after, same(before));
+      expect(after.resync().content, draft);
+      expect(after.isDirty, isTrue);
+      expect(File('${workspace.path}/settings.json').readAsStringSync(),
+          '{"editor.fontSize": 14}\n');
+    },
+  );
+
+  testWidgets(
+    'escape closes the modal and the document is discarded',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await openSettingsByExplorer(tester);
+      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+          matching: find.text('settings.json'),
+        ),
+        findsNothing,
+        reason: 'the detached modal document is discarded on close',
+      );
+    },
+  );
+
+  testWidgets(
+    'the maximize toggle expands the dialog to the full workbench',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await openSettingsByExplorer(tester);
+      final titleBar = find.byKey(const ValueKey('modal-editor-titlebar'));
+      final before = tester.getSize(titleBar).width;
+      await tester.tap(find.byKey(const ValueKey('modal-editor-maximize')));
+      await tester.pumpAndSettle();
+      final after = tester.getSize(titleBar).width;
+      expect(after, greaterThan(before),
+          reason: 'maximize expands the dialog content width');
+    },
+  );
+
+  testWidgets(
+    'useModal=off opens settings.json as a regular tab',
+    (tester) async {
+      await prepareWorkspace(
+        tester,
+        useModal: ModalEditorUseMode.off,
+      );
+      await openSettingsByExplorer(tester);
+      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsNothing,
+          reason: 'useModal=off never opens modals');
+      expect(find.byKey(const ValueKey('tab-1')), findsOneWidget,
+          reason: 'the document opens as a regular tab');
+    },
+  );
+
+  testWidgets(
+    'the focus trap keeps Tab traversal inside the dialog',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await openSettingsByExplorer(tester);
+      // 焦点陷阱：对话框内 Tab 循环，焦点不落到对话框外的编辑器。
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      var insideDialog = false;
+      final focusContext = FocusManager.instance.primaryFocus!.context;
+      focusContext!.visitAncestorElements((element) {
+        if (element.widget.key == const ValueKey('modal-editor-dialog')) {
+          insideDialog = true;
+          return false;
+        }
+        return true;
+      });
+      expect(insideDialog, isTrue,
+          reason: 'focus stays inside the modal dialog');
+    },
+  );
+}

@@ -1,0 +1,362 @@
+{
+  "source": {
+    "binaries": [
+      {
+        "file": "alula_app.exe",
+        "sha256": "8414be791982bfe5237d166c4cb3812e4fd8107ac81d8286251f54e4e7cabac6"
+      },
+      {
+        "file": "flutter_windows.dll",
+        "sha256": "eca1f8c9b1537bd585bbbcc62362df9ca7e69faa7d4e895688108af63ccea157"
+      },
+      {
+        "file": "app.so",
+        "sha256": "48cd21d68b049d1fc2d06e9daae13540e30e3c3406c00016be037146efca5f27"
+      },
+      {
+        "file": "alula_core.dll",
+        "sha256": "939b82185276169755fe4abb732dd2e60b0689527bc80ff1f5c5f1be6b6c3f4c"
+      }
+    ],
+    "revision": "e6f81ad705d3770cd871bf0e5105d0edb2bc26a7",
+    "narratorVersion": "10.0.26100.9949 (WinBuild.160101.0800)",
+    "remainingNarratorPids": [],
+    "framework": "737ba8f885dc774b53b442759999a312c9461e4e",
+    "build": "26200.9974",
+    "architecture": "x64",
+    "edition": "Windows 11 Pro for Workstations",
+    "dpi": 120,
+    "renderEndpoint": "耳机 (Realtek USB Audio)"
+  },
+  "fixture": "Windows Release build with alternative Dart entrypoint that seeds NotificationCenter and records model state",
+  "modeOffNarratorConfirmedAbsentBefore": true,
+  "narratorSpeechRecapWindow": "NarratorSpeechRecapDialog",
+  "modelInitialItemCount": 5,
+  "remainingItemsInBothRuns": [
+    {
+      "label": "活动进度样本",
+      "activeProgress": true
+    }
+  ],
+  "ownedAlulaExitCodes": {
+    "on": 0,
+    "off": 0
+  },
+  "audioMethod": {
+    "capture": "WASAPI output endpoint loopback",
+    "template": "Windows Background.wav",
+    "sampleRate": 48000,
+    "templateCropSeconds": [
+      0.05,
+      0.45
+    ],
+    "matchThreshold": 0.6,
+    "idle": {
+      "peakCorrelation": 0.0519,
+      "matches": []
+    },
+    "explicitMessageBeepReference": {
+      "peakCorrelation": 0.95,
+      "matches": [
+        {
+          "startSecondsFromCapture": 0.8113,
+          "score": 0.95
+        }
+      ]
+    }
+  },
+  "operations": [
+    {
+      "action": "single-keyboard",
+      "removed": 1,
+      "narratorRecapNewLines": [
+        "警报 通知已清除,",
+        "警报 通知已清除,"
+      ],
+      "off": {
+        "narratorObservedPids": [],
+        "beforeInputUtc": "2026-11-20T03:12:43.499041+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:12:43.502084Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "鼠标单条样本",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本乙",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本甲",
+              "activeProgress": false
+            },
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:12:43.530006+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "43257169dfdd5a0de7ad12bca0e41d767502b85fcb629e76143259f7546e5ff0",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 0.8213,
+          "score": 0.9193
+        }
+      },
+      "on": {
+        "narratorObservedPids": [
+          30936
+        ],
+        "beforeInputUtc": "2026-11-20T03:14:45.262134+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:14:45.264741Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "鼠标单条样本",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本乙",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本甲",
+              "activeProgress": false
+            },
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:14:45.294347+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "55f3dee1205b7ea7dd7e2d066fd77ed090437444ae04c616cb8b4347e7a9c4db",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 0.8113,
+          "score": 0.8962
+        }
+      }
+    },
+    {
+      "action": "single-button",
+      "removed": 1,
+      "narratorRecapNewLines": [
+        "警报 通知已清除,",
+        "警报 通知已清除,"
+      ],
+      "off": {
+        "narratorObservedPids": [],
+        "beforeInputUtc": "2026-11-20T03:12:48.047241+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:12:48.223192Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "批量样本乙",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本甲",
+              "activeProgress": false
+            },
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:12:48.252633+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "d118b157411225c1034e665055cd0401c33a6da359d7240e3a7e2107ae77fcd7",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 0.9913,
+          "score": 0.9299
+        }
+      },
+      "on": {
+        "narratorObservedPids": [
+          30936
+        ],
+        "beforeInputUtc": "2026-11-20T03:14:53.627743+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:14:53.806008Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "批量样本乙",
+              "activeProgress": false
+            },
+            {
+              "label": "批量样本甲",
+              "activeProgress": false
+            },
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:14:53.835609+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "046938ec1c9018fb0ef5e81e6ab0885398b32e721faad9d33d9481fbaf0f2f01",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 1.0013,
+          "score": 0.8351
+        }
+      }
+    },
+    {
+      "action": "clear-all",
+      "removed": 2,
+      "narratorRecapNewLines": [
+        "警报 已清除 2 条通知,",
+        "警报 已清除 2 条通知,"
+      ],
+      "off": {
+        "narratorObservedPids": [],
+        "beforeInputUtc": "2026-11-20T03:12:52.600573+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:12:52.773785Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:12:52.803838+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "24331f249448c782622491e9ca22fc08703aac2c24df43e6aff40bca1cf67035",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 0.9913,
+          "score": 0.9546
+        }
+      },
+      "on": {
+        "narratorObservedPids": [
+          30936
+        ],
+        "beforeInputUtc": "2026-11-20T03:15:00.579479+00:00",
+        "foregroundModelAfter": {
+          "kind": "center",
+          "utc": "2026-11-20T03:15:00.755465Z",
+          "semanticsEnabled": true,
+          "supportsAnnounce": true,
+          "items": [
+            {
+              "label": "活动进度样本",
+              "activeProgress": true
+            }
+          ]
+        },
+        "winEventSystemAlert": {
+          "event": "0x2",
+          "utc": "2026-11-20T03:15:00.765482+00:00",
+          "objectId": -4,
+          "childId": -52
+        },
+        "wavSha256": "d55d51b2c1b3fb7fd6d405e4d83fdaeb446a7029821912a659758ab848214f7d",
+        "wasapiWaveMatch": {
+          "startSecondsFromCapture": 0.9914,
+          "score": 0.8423
+        }
+      }
+    }
+  ],
+  "earlierDeleteReproduction": {
+    "nativeAlertCount": 1,
+    "narratorRecapNewLines": [
+      "警报 通知已清除,",
+      "警报 通知已清除,"
+    ],
+    "clearState": {
+      "kind": "center",
+      "utc": "2026-11-20T03:10:22.690052Z",
+      "semanticsEnabled": true,
+      "supportsAnnounce": true,
+      "items": [
+        {
+          "label": "鼠标单条样本",
+          "activeProgress": false
+        },
+        {
+          "label": "批量样本乙",
+          "activeProgress": false
+        },
+        {
+          "label": "批量样本甲",
+          "activeProgress": false
+        },
+        {
+          "label": "活动进度样本",
+          "activeProgress": true
+        }
+      ]
+    }
+  },
+  "recapCropSha256": "170c10ad28224dfea623fc97947cc217d3e1c6b7e08dc21ee21b2447d36c60a6",
+  "offModelAtFirstFrame": {
+    "kind": "ready",
+    "utc": "2026-11-20T03:12:33.929453Z",
+    "semanticsEnabled": true,
+    "supportsAnnounce": true,
+    "items": [
+      {
+        "label": "键盘单条样本",
+        "activeProgress": false
+      },
+      {
+        "label": "鼠标单条样本",
+        "activeProgress": false
+      },
+      {
+        "label": "批量样本乙",
+        "activeProgress": false
+      },
+      {
+        "label": "批量样本甲",
+        "activeProgress": false
+      },
+      {
+        "label": "活动进度样本",
+        "activeProgress": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "total_count": 7,
+  "artifacts": [
+    {
+      "id": 14397696025,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NzY5NjAyNQ==",
+      "name": "alula-macos-startup-diagnostics-44233632031-1",
+      "size_in_bytes": 782,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397696025",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397696025/zip",
+      "expired": false,
+      "digest": "sha256:15fc9d8372b25d6321647d4993005cb793c82b352b3c0ffa790b7ec015b3dcbc",
+      "created_at": "2026-11-18T04:17:36Z",
+      "updated_at": "2026-11-18T04:17:36Z",
+      "expires_at": "2026-11-25T04:17:35Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14397601103,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NzYwMTEwMw==",
+      "name": "alula-macos-native-dnd-44233632031-1",
+      "size_in_bytes": 2803,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397601103",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397601103/zip",
+      "expired": false,
+      "digest": "sha256:77111e455a1f1d86a5d50160144390d913514b1bd018b573095eb59b05f42c81",
+      "created_at": "2026-11-18T04:15:47Z",
+      "updated_at": "2026-11-18T04:15:47Z",
+      "expires_at": "2026-11-25T04:15:46Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14397173049,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NzE3MzA0OQ==",
+      "name": "alula-macos-X64-4c6f6deafd5defd76560b81f606a57c4f08cb41f",
+      "size_in_bytes": 23252888,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397173049",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14397173049/zip",
+      "expired": false,
+      "digest": "sha256:ac1d0b82ba244fc7410b35a478b19ced650d5bdb9d5cfbe4cb272433ca007d1d",
+      "created_at": "2026-11-18T04:17:42Z",
+      "updated_at": "2026-11-18T04:17:42Z",
+      "expires_at": "2027-02-16T03:54:24Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14396372829,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NjM3MjgyOQ==",
+      "name": "alula-windows-x64-4c6f6deafd5defd76560b81f606a57c4f08cb41f",
+      "size_in_bytes": 15666575,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14396372829",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14396372829/zip",
+      "expired": false,
+      "digest": "sha256:cc5df96e75334684deacd52cb57ef78fc5f62b9f5ba2d740617317041f084d54",
+      "created_at": "2026-11-18T04:05:36Z",
+      "updated_at": "2026-11-18T04:05:36Z",
+      "expires_at": "2027-02-16T03:54:24Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14395884082,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NTg4NDA4Mg==",
+      "name": "alula-linux-native-dnd-44233632031-1",
+      "size_in_bytes": 3290,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395884082",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395884082/zip",
+      "expired": false,
+      "digest": "sha256:fe741cf1264b82eba9e6a64eb49a9d446fb48f0689b0e581bcaa2696c94c068b",
+      "created_at": "2026-11-18T03:58:04Z",
+      "updated_at": "2026-11-18T03:58:04Z",
+      "expires_at": "2026-11-25T03:58:04Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14395749487,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NTc0OTQ4Nw==",
+      "name": "alula-linux-x64-4c6f6deafd5defd76560b81f606a57c4f08cb41f",
+      "size_in_bytes": 14059847,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395749487",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395749487/zip",
+      "expired": false,
+      "digest": "sha256:0b30dffb9236a5e46173fb82e286d3a56ec9c280c62b740444332756c0bc8a52",
+      "created_at": "2026-11-18T03:58:30Z",
+      "updated_at": "2026-11-18T03:58:30Z",
+      "expires_at": "2027-02-16T03:54:24Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    },
+    {
+      "id": 14395724944,
+      "node_id": "MDg6QXJ0aWZhY3QxNDM5NTcyNDk0NA==",
+      "name": "alula-windows-native-dnd-44233632031-1",
+      "size_in_bytes": 3850,
+      "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395724944",
+      "archive_download_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/artifacts/14395724944/zip",
+      "expired": false,
+      "digest": "sha256:1aaac078b7801c80e1ebb83472122a748c55e8470505f5c626abe695a401f218",
+      "created_at": "2026-11-18T04:05:07Z",
+      "updated_at": "2026-11-18T04:05:07Z",
+      "expires_at": "2026-11-25T04:05:06Z",
+      "workflow_run": {
+        "id": 44233632031,
+        "repository_id": 1434279523,
+        "head_repository_id": 1434279523,
+        "head_branch": "codex/vscode-parity-p05",
+        "head_sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f"
+      }
+    }
+  ]
+}

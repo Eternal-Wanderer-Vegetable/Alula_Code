@@ -10,29 +10,54 @@ library;
 
 import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'bridge/alula_core.dart';
+import 'workbench/auxiliary_window.dart';
 import 'editor/find_replace_history.dart';
 import 'editor/paste_as.dart';
+import 'workbench/command_history_store.dart';
 import 'workbench/find_history_store.dart';
+import 'workbench/notifications.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
+import 'workbench/window_chrome_configuration.dart';
 import 'workbench/workbench_page.dart';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 无边框窗口（W1-3）：原生标题栏隐藏，自绘标题栏接管拖拽与窗口控制。
-  // 仅真实入口执行；widget 测试直接 pump AlulaApp，不触碰插件。
+  // desktop_multi_window 新引擎重跑 main：按载荷分流到辅助编辑器窗口
+  // （LAY-12a）。主引擎定义不可用时按主窗继续。
+  try {
+    final controller = await WindowController.fromCurrentEngine();
+    final payload =
+        AuxiliaryWindowPayload.fromArguments(controller.arguments);
+    if (payload.isAuxiliary) {
+      await runAlulaAuxiliaryEngine(payload.toArguments());
+      return;
+    }
+  } on Object {
+    // 主窗/测试环境：继续常规入口。
+  }
+  // 真实入口读取 native/custom chrome，再初始化原生窗口样式。
+  // widget 测试直接 pump AlulaApp，不触碰窗口插件通道。
   await windowManager.ensureInitialized();
+  final windowChrome = WindowChromeConfiguration.fromArguments(
+    args,
+    targetPlatform: defaultTargetPlatform,
+  );
   // 拦截系统关闭请求，让工作台先完成 LSP shutdown/exit，再销毁窗口。
   await windowManager.setPreventClose(true);
-  const options = WindowOptions(
+  final options = WindowOptions(
     title: 'Alula Code',
-    minimumSize: Size(640, 400),
-    titleBarStyle: TitleBarStyle.hidden,
+    minimumSize: const Size(640, 400),
+    titleBarStyle:
+        windowChrome.isCustom ? TitleBarStyle.hidden : TitleBarStyle.normal,
+    windowButtonVisibility: true,
   );
   await windowManager.waitUntilReadyToShow(options, () async {
     await windowManager.show();
@@ -41,13 +66,15 @@ Future<void> main(List<String> args) async {
   runApp(AlulaApp(
     autoLsp: args.contains('--lsp-auto'),
     autoFolder: args.contains('--lsp-auto') ? _demoFolder() : null,
+    windowChromeConfiguration: windowChrome,
     windowControls: true,
   ));
 }
 
 /// 演示模式（--lsp-auto）自动打开的 fixture 工程（跨平台探测）。
 String? _demoFolder() {
-  final rel = Directory('${Directory.current.path}/../tests/fixtures/rust-mini');
+  final rel =
+      Directory('${Directory.current.path}/../tests/fixtures/rust-mini');
   if (rel.existsSync()) return rel.path;
   return null;
 }
@@ -60,13 +87,17 @@ class AlulaApp extends StatelessWidget {
     this.layoutStore,
     this.sessionStore,
     this.keybindingsStore,
+    this.windowChromeConfiguration,
     this.windowControls = false,
     this.definitionRequest,
+    this.referencesRequest,
     this.savedCompareFileStat,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
     this.findReplaceHistoryConfiguration =
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
+    this.commandHistoryStore,
+    this.notificationCenter,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -84,9 +115,11 @@ class AlulaApp extends StatelessWidget {
   /// 键位覆盖文件注入点（测试用临时路径；默认真实用户目录）。
   final KeybindingsStore? keybindingsStore;
 
-  /// 自绘窗口控制按钮（- □ ×）与拖拽移动区。
-  /// 默认关闭：widget 测试环境没有 window_manager 插件通道；
-  /// 真实入口 main() 显式开启。
+  /// Launch-time native/custom title bar selection; injectable by tests.
+  final WindowChromeConfiguration? windowChromeConfiguration;
+
+  /// 启用窗口状态监听、拖动区域与适用平台的窗口控制。
+  /// 默认关闭：widget 测试环境没有原生窗口通道；真实入口显式开启。
   final bool windowControls;
 
   /// Optional provider override used by deterministic navigation fixtures.
@@ -95,6 +128,7 @@ class AlulaApp extends StatelessWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+  final ReferencesRequest? referencesRequest;
 
   /// Optional file-stat provider for deterministic saved-compare fixtures.
   final Future<FileStat> Function(String path)? savedCompareFileStat;
@@ -108,8 +142,16 @@ class AlulaApp extends StatelessWidget {
   /// Optional per-workspace history store (tests can use a temporary folder).
   final FindReplaceHistoryStore? findReplaceHistoryStore;
 
+  /// Optional command-palette MRU journal (tests can use a temporary path).
+  final CommandHistoryStore? commandHistoryStore;
+
+  /// Optional notification center injection (tests seed notifications).
+  final NotificationCenter? notificationCenter;
+
   @override
   Widget build(BuildContext context) {
+    final windowChrome = windowChromeConfiguration ??
+        WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
     return MaterialApp(
       title: 'Alula Code',
       theme: ThemeData(
@@ -117,18 +159,24 @@ class AlulaApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF14161A),
       ),
-      home: WorkbenchPage(
-        autoLsp: autoLsp,
-        autoFolder: autoFolder,
-        layoutStore: layoutStore,
-        sessionStore: sessionStore,
-        keybindingsStore: keybindingsStore,
-        windowControls: windowControls,
-        definitionRequest: definitionRequest,
-        savedCompareFileStat: savedCompareFileStat,
-        pasteAsConfiguration: pasteAsConfiguration,
-        findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
-        findReplaceHistoryStore: findReplaceHistoryStore,
+      home: WindowChromeConfigurationScope(
+        configuration: windowChrome,
+        child: WorkbenchPage(
+          autoLsp: autoLsp,
+          autoFolder: autoFolder,
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: keybindingsStore,
+          windowControls: windowControls,
+          definitionRequest: definitionRequest,
+          referencesRequest: referencesRequest,
+          savedCompareFileStat: savedCompareFileStat,
+          pasteAsConfiguration: pasteAsConfiguration,
+          findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
+          findReplaceHistoryStore: findReplaceHistoryStore,
+          commandHistoryStore: commandHistoryStore,
+          notifications: notificationCenter,
+        ),
       ),
     );
   }

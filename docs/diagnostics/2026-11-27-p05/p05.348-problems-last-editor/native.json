@@ -1,0 +1,398 @@
+{
+  "product": "0ac80899d1c05dd526e4cfdc107199afaab15d16",
+  "tree": "c7e191217faa7d5567cb2d5169f058028b8f32af",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "c7e191217faa7d5567cb2d5169f058028b8f32af",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "598fe390eab2c03ade08938e48e980466a11662167b4d481f1b6bc030c4a6106",
+      "app/lib/bridge/alula_ffi.dart": "a219f4e6c365a533d9edb1cc292321c0836293773b9c701bac7b9452cc4cbccc",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/editor_scroll_controller.dart": "985f5f45d887c0bf70dcf0be693aef548c0ca717cae53442f671f7763261344a",
+      "app/lib/editor/rust_text_input_field.dart": "d95fd38ea4d624a9b6a5541beca8fe4522a11510e2a93da7c6860abf2f7d3a2f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "92bd25875f32eb7bd9e1d7bc1f1a9dbe06638ee0a1fbf0512483809e60159007",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "50054d87222892ab067b84997dc784b0476ece0192ddbe16678cac10e2fc2557",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "638b2365d4e0c12a1a951c0578b644085ea0122119244317dc37c1eda5751efc",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "ab04d8f76da040b85e1240f4723b61bb8b3f40fce4d9b13daf39757409fc65a6",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 49,
+    "fixtureSha256": "1ac8daad984ef563a92b93ee8cb11631f6ff9c04759c0852a5f1d036e872faf3"
+  },
+  "fixtureSha256": "1ac8daad984ef563a92b93ee8cb11631f6ff9c04759c0852a5f1d036e872faf3",
+  "localLogsSha256": {
+    "p05-348-targeted.log": "d4d96b895755bb3043d69bb472c5fa1430c4354a75b62baceeb066012dde5a2a",
+    "p05-348-focused.log": "ff822242f85714838c52b3075ac25698b5de92a7d2b0ebe100dac3ce36e88770",
+    "p05-348-analyze.log": "37ee7de24bc5f0f1770662a08ad1f5a97c5f62c132aaeac94866dc012b2e8a3a",
+    "p05-348-full.log": "a495197225d03d718d82f8b1a9a45703765a88c557380a471ca2c0050927d4fe",
+    "p05-348-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-348-red.log": "795f637d5919f504592829ea5d0224d20863d78d415d0829895a53eb080c7c4e"
+  },
+  "oldLinuxReproduction": {
+    "product": "209f689ae0a0ca3d01813ad8a8968f6b3cbb7a08",
+    "tree": "258cd0bbf1f5e2fe4c643d96a3eb1ea3f9e6ab2f",
+    "checks": [
+      "owned-only-editor-ready",
+      "current-diagnostic-while-only-editor-is-attached",
+      "live-problem-row-is-visible",
+      "last-editor-closes-with-workspace-still-visible",
+      "old-problem-row-does-not-reopen-last-file",
+      "preserved-source-bytes-bom-crlf-emoji"
+    ],
+    "rawReportSha256": "83ca00e9ea4c8368441bbc6a580d5938aa1313b2e36e57373046a918468f1f3a",
+    "countWithoutAttachedEditors": [
+      1,
+      0,
+      0
+    ],
+    "rowVisibleAfterFailedReopen": true
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "65a97d304bd927bbd56e8a07d4700a4b3627b74f0a4c260ae121a1fb7a76e382"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 7,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "65a97d304bd927bbd56e8a07d4700a4b3627b74f0a4c260ae121a1fb7a76e382"
+    }
+  },
+  "preedit": {
+    "dispose": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.dispose#0",
+        "name": "dispose",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    },
+    "init": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.initState#0",
+        "name": "initState",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "4f1868788453aeb0ef7f02f95b2f64bc45fa7e8938d2b02e360be78d977894a3"
+    },
+    "panel-tab": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onPanelTabChanged#0",
+        "name": "_onPanelTabChanged",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "6d48f98e6e425b1bceb6c7b653705a685feb0d7caadfc3f91e4dd446e2234fea"
+    },
+    "poll": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._pollLanguageServices#0",
+        "name": "_pollLanguageServices",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "7402554171472ffb64563aa0a069dc84f5f7c5948c8443d5eff22ef56246bf84"
+    },
+    "update": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._updateLanguageServicePolling#0",
+        "name": "_updateLanguageServicePolling",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "sha256": "2e02c2b43399a8801cb0afd25bb28600e992b9740b08a3eb45986d4aaea1766d"
+    },
+    "workbench-test": {
+      "target": {
+        "id": "Function:app/test/workbench_unopened_diagnostics_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/workbench_unopened_diagnostics_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "cf9dd95d422a9708c8dbde8b50d0648e317b5df1115f989251278fb890c6689a"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "rawReportSha256": "5bb49c9bbf7963ba4b6a9c245fb7ac5ec751e7b00087a301e8b912824621aa54",
+    "fixtureSha256": "1ac8daad984ef563a92b93ee8cb11631f6ff9c04759c0852a5f1d036e872faf3",
+    "runnerSha256": "891832bf92d2ef2c80729ba8752836536524b60153e01294c37624e91e437a72",
+    "aotSha256": "9143ebaf9b8c1407a486c5a54b5b49e0ad6d1da06764d8d9d42f471218a90551",
+    "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeLibrarySha256": "56fd375e714b0bd89e61ea3328a593b35407b927f6356848908ae1bec077ec01",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "sourceSha256": {
+      "src/lib.rs": "a26b83f959cc9cb9371dc12fb4d394f52ab938ca8de9b9e14ec40fbf4e256e01"
+    },
+    "nativeChecks": [
+      "owned-only-editor-ready",
+      "current-diagnostic-while-only-editor-is-attached",
+      "live-problem-row-is-visible",
+      "last-editor-closes-with-workspace-still-visible",
+      "reopens-last-file-with-current-diagnostic-range",
+      "hides-problems-while-file-is-attached",
+      "closes-last-editor-with-panel-hidden",
+      "status-entry-loads-closed-file-without-an-attached-editor",
+      "reopens-after-hidden-close-in-another-fresh-document",
+      "preserved-source-bytes-bom-crlf-emoji"
+    ],
+    "cleanExit": true,
+    "documentIds": [
+      3,
+      5,
+      6
+    ],
+    "groupKeySuffix": "/src/lib.rs",
+    "selectedUtf16": [
+      34,
+      35
+    ],
+    "providerVersionForSelection": 1,
+    "globalCounts": [
+      1,
+      0,
+      0
+    ],
+    "problemsFocusRetainedOnReopen": true
+  },
+  "linux": {
+    "rawReportSha256": "b25e2f6c7e61e9b01331dafd3575b5d4962a270def9add113acb8815f1f06d71",
+    "fixtureSha256": "1ac8daad984ef563a92b93ee8cb11631f6ff9c04759c0852a5f1d036e872faf3",
+    "runnerSha256": "6b895d5aed04af6a2f6eff5bdb8bc8c3759211e74591dac6fc8bb959e01e55f4",
+    "aotSha256": "4947f6c9cb6e099cef0a8d172ce9af71cb3c616eb08d9a771bba8478e65effea",
+    "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "nativeLibrarySha256": "665778c34653362fba12c70a3142ef49daa80ce8652f1023d638126c235167e5",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "sourceSha256": {
+      "src/lib.rs": "a26b83f959cc9cb9371dc12fb4d394f52ab938ca8de9b9e14ec40fbf4e256e01"
+    },
+    "nativeChecks": [
+      "owned-only-editor-ready",
+      "current-diagnostic-while-only-editor-is-attached",
+      "live-problem-row-is-visible",
+      "last-editor-closes-with-workspace-still-visible",
+      "reopens-last-file-with-current-diagnostic-range",
+      "hides-problems-while-file-is-attached",
+      "closes-last-editor-with-panel-hidden",
+      "status-entry-loads-closed-file-without-an-attached-editor",
+      "reopens-after-hidden-close-in-another-fresh-document",
+      "preserved-source-bytes-bom-crlf-emoji"
+    ],
+    "cleanExit": true,
+    "documentIds": [
+      3,
+      5,
+      6
+    ],
+    "groupKeySuffix": "/src/lib.rs",
+    "selectedUtf16": [
+      34,
+      35
+    ],
+    "providerVersionForSelection": 1,
+    "globalCounts": [
+      1,
+      0,
+      0
+    ],
+    "problemsFocusRetainedOnReopen": true,
+    "languageServiceChildrenExited": true,
+    "processTreeSamples": {
+      "current-diagnostic-while-only-editor-is-attached": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 61753,
+            "ppid": 61752,
+            "private": 252321792,
+            "pss": 279179264,
+            "working_set": 331632640
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 61906,
+            "ppid": 61753,
+            "private": 578678784,
+            "pss": 585507840,
+            "working_set": 601632768
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 62066,
+            "ppid": 61906,
+            "private": 4878336,
+            "pss": 12065792,
+            "working_set": 28094464
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 62065,
+            "ppid": 61906,
+            "private": 4763648,
+            "pss": 11951104,
+            "working_set": 27979776
+          }
+        ],
+        "root_pid": 61753,
+        "total_private_bytes": 840642560,
+        "total_private_mib": 801.7,
+        "total_working_set_bytes": 989339648
+      },
+      "last-editor-closes-with-workspace-still-visible": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 61753,
+            "ppid": 61752,
+            "private": 268374016,
+            "pss": 295575552,
+            "working_set": 349175808
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 61906,
+            "ppid": 61753,
+            "private": 579031040,
+            "pss": 585861120,
+            "working_set": 601985024
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 62066,
+            "ppid": 61906,
+            "private": 4878336,
+            "pss": 12065792,
+            "working_set": 28094464
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 62065,
+            "ppid": 61906,
+            "private": 4763648,
+            "pss": 11951104,
+            "working_set": 27979776
+          }
+        ],
+        "root_pid": 61753,
+        "total_private_bytes": 857047040,
+        "total_private_mib": 817.3,
+        "total_working_set_bytes": 1007235072
+      }
+    }
+  }
+}

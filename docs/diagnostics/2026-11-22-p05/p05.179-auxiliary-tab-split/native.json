@@ -1,0 +1,1007 @@
+{
+  "slice": "P05.179 / feat-231",
+  "productTree": "da4faa7f78c5439cf99ae5d0f6cfdbcb0831cdd5",
+  "unchangedOriginalDiskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+  "windows": {
+    "platform": "Windows 11 build 26200",
+    "sourceDpi": 120,
+    "targetDpi": 120,
+    "aotSha256": "dced3eb4f1859376a716714feb56c27d41c9509e8bf6ef93f3b47f2ae07e1cc2",
+    "fixtureSha256": "d6f4cf3d5739ff180dbce071c72f44fc38c5fe4432f13175fe78a6f9b236a00b",
+    "mouseFixtureSha256": "11bec0ceb70d649b5941c60148fec7ee496d4fd9115ef9da0541f2aaf40dd66f",
+    "releaseExitCode": 0,
+    "windowsRemaining": 0,
+    "input": "guarded native Windows mouse drag in the two isolated Alula windows; keyboard and UIA via computer use",
+    "routes": {
+      "right": {
+        "fromEditor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            19,
+            18
+          ],
+          "totalUtf16": 32,
+          "rust": "Compact example 😀7\nSecond line\n",
+          "mirror": "Compact example 😀7\nSecond line\n"
+        },
+        "toEditor": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            19,
+            18
+          ],
+          "totalUtf16": 32,
+          "rust": "Compact example 😀7\nSecond line\n",
+          "mirror": "Compact example 😀7\nSecond line\n"
+        },
+        "windowCountBefore": 2,
+        "windowCountAfter": 1,
+        "origin": [
+          152,
+          301
+        ],
+        "destination": [
+          2169,
+          596
+        ],
+        "overlay": "auxiliary-return-body-editor-2-overlay-splitRight",
+        "originalGroup": {
+          "region": "editor-2",
+          "active": 3,
+          "docs": [
+            {
+              "name": "destination.txt",
+              "id": 3,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "newGroup": {
+          "region": "editor-3",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "bodyBounds": {
+          "original": [
+            532.8000000000001,
+            94.0,
+            752.8000000000001,
+            558.4
+          ],
+          "new": [
+            756.8000000000001,
+            94.0,
+            976.8000000000001,
+            558.4
+          ]
+        }
+      },
+      "down": {
+        "fromEditor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 6,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            20,
+            19
+          ],
+          "totalUtf16": 33,
+          "rust": "Compact example 😀78\nSecond line\n",
+          "mirror": "Compact example 😀78\nSecond line\n"
+        },
+        "toEditor": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 7,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            20,
+            19
+          ],
+          "totalUtf16": 33,
+          "rust": "Compact example 😀78\nSecond line\n",
+          "mirror": "Compact example 😀78\nSecond line\n"
+        },
+        "windowCountBefore": 2,
+        "windowCountAfter": 1,
+        "origin": [
+          152,
+          301
+        ],
+        "destination": [
+          1973,
+          857
+        ],
+        "overlay": "auxiliary-return-body-editor-2-overlay-splitDown",
+        "originalGroup": {
+          "region": "editor-2",
+          "active": 3,
+          "docs": [
+            {
+              "name": "destination.txt",
+              "id": 3,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "newGroup": {
+          "region": "editor-3",
+          "active": 7,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 7,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "bodyBounds": {
+          "original": [
+            627.376,
+            94.0,
+            976.8,
+            294.7
+          ],
+          "new": [
+            627.376,
+            357.7,
+            976.8,
+            558.4
+          ]
+        }
+      }
+    },
+    "continuedEdit": {
+      "label": "compact-sample.txt 编辑器 3",
+      "documentId": 7,
+      "stateVersion": 2,
+      "dirty": true,
+      "editorFocused": true,
+      "selection": [
+        21,
+        21
+      ],
+      "totalUtf16": 34,
+      "rust": "Compact example 😀789\nSecond line\n",
+      "mirror": "Compact example 😀789\nSecond line\n"
+    }
+  },
+  "linux": {
+    "platform": "WSL Ubuntu Xvfb X11, xfwm4 4.18.0, GTK 3.24.41",
+    "renderer": "GDK_GL=gles",
+    "aotSha256": "86fe9ba1ee8f7055a00042059f7eeeef44a4474c2e0a72b40a79fecd94fcd9ac",
+    "fixtureSha256": "8cf13c878c754221541f17f9c5d8b9346b5bbabe11ce600ace61803c7f3d49bf",
+    "mouseFixtureSha256": "1418dc965dea9c639cfab84af92d43e778765f38e823d52eab454e96ef0e1df0",
+    "input": "xdotool keyboard and pointer in isolated test display",
+    "routes": {
+      "left": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitLeft"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            570,
+            489
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 312108,
+        "after": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-3",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 296400,
+        "bodyBounds": {
+          "old": [
+            623.6285729826757,
+            94.0,
+            828.0,
+            788.0000000000001
+          ],
+          "new": [
+            415.25714596535124,
+            94.0,
+            619.6285729826757,
+            788.0000000000001
+          ]
+        }
+      },
+      "right": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitRight"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            833,
+            489
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 307728,
+        "after": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-3",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 288744,
+        "bodyBounds": {
+          "old": [
+            415.25714596535124,
+            94.0,
+            619.6285729826757,
+            788.0000000000001
+          ],
+          "new": [
+            623.6285729826757,
+            94.0,
+            828.0,
+            788.0000000000001
+          ]
+        }
+      },
+      "up": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitUp"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            702,
+            177
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 311440,
+        "after": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-3",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 293352,
+        "bodyBounds": {
+          "old": [
+            535.12,
+            472.50000000000006,
+            828.0,
+            788.0000000000001
+          ],
+          "new": [
+            535.12,
+            94.0,
+            828.0,
+            409.50000000000006
+          ]
+        }
+      },
+      "down": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitDown"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            702,
+            801
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 312064,
+        "after": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-3",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 3",
+          "documentId": 5,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 299844,
+        "bodyBounds": {
+          "old": [
+            535.12,
+            94.0,
+            828.0,
+            409.50000000000006
+          ],
+          "new": [
+            535.12,
+            472.50000000000006,
+            828.0,
+            788.0000000000001
+          ]
+        }
+      },
+      "alt": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitRight"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            833,
+            489
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 309980,
+        "previewWhileAlt": [
+          "auxiliary-return-body-editor-2-overlay-center"
+        ],
+        "nativeFocusSynchronization": [
+          {
+            "event": "KeyDownEvent",
+            "synthesized": true
+          },
+          {
+            "event": "KeyUpEvent",
+            "synthesized": false
+          }
+        ],
+        "after": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-2",
+          "active": 5,
+          "docs": [
+            {
+              "name": "destination.txt",
+              "id": 3,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            },
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 292944
+      },
+      "conflict": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-splitRight"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            833,
+            489
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 307756,
+        "afterRejection": {
+          "main": {
+            "label": "compact-sample.txt 编辑器 2",
+            "documentId": 2,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "selection": [
+              0,
+              0
+            ],
+            "totalUtf16": 31,
+            "rust": "Compact example 😀\nSecond line\n",
+            "mirror": "Compact example 😀\nSecond line\n"
+          },
+          "auxiliary": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "stateVersion": 6,
+            "dirty": true,
+            "editorFocused": false,
+            "selection": [
+              28,
+              27
+            ],
+            "totalUtf16": 41,
+            "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+            "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+          },
+          "windowsRemaining": 2,
+          "continuedEdit": {
+            "label": "compact-sample.txt 辅助窗口编辑器",
+            "documentId": 4,
+            "stateVersion": 13,
+            "dirty": true,
+            "editorFocused": true,
+            "selection": [
+              42,
+              42
+            ],
+            "totalUtf16": 55,
+            "rust": "Compact example 😀AUX-RETURNCAN-STILL-EDIT\nSecond line\n",
+            "mirror": "Compact example 😀AUX-RETURNCAN-STILL-EDIT\nSecond line\n"
+          }
+        }
+      },
+      "body": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-body-editor-2-overlay-center"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            702,
+            489
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 306904,
+        "canceled": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": false,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "after": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-2",
+          "active": 5,
+          "docs": [
+            {
+              "name": "destination.txt",
+              "id": 3,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            },
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 326376
+      },
+      "tab": {
+        "before": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "stateVersion": 6,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "preview": [
+          "auxiliary-return-tab-editor-2-3-overlay-tab"
+        ],
+        "pointerPath": [
+          [
+            974,
+            159
+          ],
+          [
+            583,
+            101
+          ]
+        ],
+        "cleanup": {
+          "exitCode": -15,
+          "driverSentSigterm": true
+        },
+        "twoWindowsPrivateKiB": 314732,
+        "after": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            28,
+            27
+          ],
+          "totalUtf16": 41,
+          "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+        },
+        "group": {
+          "region": "editor-2",
+          "active": 5,
+          "docs": [
+            {
+              "name": "compact-sample.txt",
+              "id": 5,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            },
+            {
+              "name": "destination.txt",
+              "id": 3,
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": true,
+                "lineEnding": "crlf"
+              }
+            }
+          ]
+        },
+        "foregroundIsMain": true,
+        "windowCountAfter": 1,
+        "continuedEdit": {
+          "label": "compact-sample.txt 编辑器 2",
+          "documentId": 5,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "selection": [
+            39,
+            39
+          ],
+          "totalUtf16": 52,
+          "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+          "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+        },
+        "oneWindowPrivateKiB": 295196
+      }
+    },
+    "defaultGlxAltRepeat": {
+      "fixtureSha256": "29110fdb063ddacc8ab416fca7de70dc53fb69b6aa8539d30a26f407d5854def",
+      "previewWhileAlt": "auxiliary-return-body-editor-2-overlay-center",
+      "targetGroup": "editor-2",
+      "foregroundIsMain": true,
+      "windowCountAfter": 1,
+      "editor": {
+        "label": "compact-sample.txt 编辑器 2",
+        "documentId": 5,
+        "stateVersion": 1,
+        "dirty": true,
+        "editorFocused": true,
+        "selection": [
+          28,
+          27
+        ],
+        "totalUtf16": 41,
+        "rust": "Compact example 😀AUX-RETURN\nSecond line\n",
+        "mirror": "Compact example 😀AUX-RETURN\nSecond line\n"
+      },
+      "continuedEdit": {
+        "label": "compact-sample.txt 编辑器 2",
+        "documentId": 5,
+        "stateVersion": 5,
+        "dirty": true,
+        "editorFocused": true,
+        "selection": [
+          39,
+          39
+        ],
+        "totalUtf16": 52,
+        "rust": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n",
+        "mirror": "Compact example 😀AUX-RETURNPOST-RETURN\nSecond line\n"
+      },
+      "cleanup": {
+        "exitCode": -15,
+        "driverSentSigterm": true
+      }
+    }
+  },
+  "beforeTitleBarFix": {
+    "nativeBuildSourceTree": "ec8a69fc6bb7d96a65b71a5bd10bdcafd8f198dc",
+    "aotSha256": "4798c91bea498e04e40279e0365d6bbfacebb8914f20a6a6552ad88c42bf705a",
+    "landedInExistingGroup": true,
+    "editorFocused": false,
+    "keyTraceSource": "Linux X11 Flutter platform input"
+  }
+}

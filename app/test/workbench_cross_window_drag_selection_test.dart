@@ -489,9 +489,13 @@ Future<void> _sendCommandKey(
 }
 
 Future<void> _save(WidgetTester tester) async {
-  await tester.tap(find.byTooltip('文件').first);
-  await tester.pumpAndSettle();
-  await tester.tap(find.textContaining('保存').first);
+  tester
+      .widget<TextField>(find.byType(TextField).first)
+      .focusNode!
+      .requestFocus();
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 100));
 }

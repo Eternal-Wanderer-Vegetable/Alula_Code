@@ -1,0 +1,223 @@
+{
+  "product": "b9cfbdb39ee11e99ba02171d86150db589d4251f",
+  "tree": "ad7db9f255d1d51b9f334e21b62d305fb1f0da39",
+  "ci": {
+    "run": 46058776187,
+    "sha": "b9cfbdb39ee11e99ba02171d86150db589d4251f",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46058776187",
+    "jobs": [
+      {
+        "id": 140707667342,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140707667686,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140707667721,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": [
+          {
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "status": "completed",
+            "conclusion": "skipped"
+          }
+        ]
+      },
+      {
+        "id": 140707667749,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      }
+    ]
+  },
+  "platformAvailability": {
+    "run": 46058770298,
+    "sha": "b9cfbdb39ee11e99ba02171d86150db589d4251f",
+    "attempt": 1,
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46058770298",
+    "jobs": [
+      {
+        "id": 140707648009,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140707648247,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "conclusion": null,
+        "observedSteps": [
+          {
+            "name": "Flutter analyze and tests",
+            "status": "in_progress",
+            "conclusion": null
+          }
+        ]
+      },
+      {
+        "id": 140707648380,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "run": 46056553178,
+    "sha": "96a1dec3c722ec2c7cfde675b668abd0af79fa9c",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46056553178",
+    "jobs": [
+      {
+        "id": 140700331799,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140700332125,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": [
+          {
+            "name": "Repeat async LSP workspace shutdown fixture on Windows",
+            "status": "completed",
+            "conclusion": "skipped"
+          }
+        ]
+      },
+      {
+        "id": 140700332318,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140700332526,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "run": 46054687988,
+    "sha": "e8dad3140ce6a77a630efcca6fab2aafa86b5afe",
+    "attempt": 1,
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46054687988",
+    "jobs": [
+      {
+        "id": 140694205893,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140694206290,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140694206368,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "conclusion": null,
+        "observedSteps": [
+          {
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": "in_progress",
+            "conclusion": null
+          }
+        ]
+      }
+    ]
+  },
+  "p05.355PlatformRetry": {
+    "run": 46048236828,
+    "sha": "c5c9458114a735c0282806372bd5fe4070a8f6e9",
+    "attempt": 2,
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46048236828",
+    "jobs": [
+      {
+        "id": 140692781893,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "completed",
+        "conclusion": "failure",
+        "observedSteps": [
+          {
+            "name": "Launch macOS app",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "skipped"
+          }
+        ]
+      },
+      {
+        "id": 140692784262,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      },
+      {
+        "id": 140692837285,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "observedSteps": []
+      }
+    ]
+  },
+  "p05.355MacOSStartupDiagnostics": {
+    "startupArchive": 15227104200,
+    "passingControlArchive": 15225851427,
+    "startupLogSha256": "01a86768fda0d22be264a34d4110a9c4dae0010933a8efeff6002e2683c78365",
+    "nativeTitlebarLogSha256": "b64e5b805bc82eb5e0d9c0bf35e4625c8b47ebcbe4dfaad72e55f1cbf6942487",
+    "quitHelperTimedOut": true,
+    "ownedMainWindowObserved": true,
+    "invalidEngineWarningAlsoPresentInPassingControl": true
+  },
+  "macOSDevice": "deferred"
+}

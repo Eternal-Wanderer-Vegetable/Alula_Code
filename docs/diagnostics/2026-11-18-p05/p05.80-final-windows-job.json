@@ -1,0 +1,196 @@
+{
+  "id": 134529125714,
+  "run_id": 44222968734,
+  "workflow_name": "Platform Availability",
+  "head_branch": "codex/vscode-parity-p05",
+  "run_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44222968734",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOVX1eY88AAAAfUo-NUg",
+  "head_sha": "6e529d438b8de722fb93b0d56aab77909e3aa567",
+  "url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/actions/jobs/134529125714",
+  "html_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44222968734/job/134529125714",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-11-18T02:24:05Z",
+  "started_at": "2026-11-18T02:24:07Z",
+  "completed_at": "2026-11-18T02:33:44Z",
+  "name": "Windows x64 build and launch smoke",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-18T02:24:09Z",
+      "completed_at": "2026-11-18T02:24:13Z"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-18T02:24:13Z",
+      "completed_at": "2026-11-18T02:24:20Z"
+    },
+    {
+      "name": "Run dtolnay/rust-toolchain@stable",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-18T02:24:20Z",
+      "completed_at": "2026-11-18T02:24:41Z"
+    },
+    {
+      "name": "Run Swatinem/rust-cache@v2",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-11-18T02:24:41Z",
+      "completed_at": "2026-11-18T02:24:48Z"
+    },
+    {
+      "name": "Run subosito/flutter-action@v2",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-18T02:24:48Z",
+      "completed_at": "2026-11-18T02:26:09Z"
+    },
+    {
+      "name": "Build Rust core",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-11-18T02:26:09Z",
+      "completed_at": "2026-11-18T02:26:37Z"
+    },
+    {
+      "name": "Resolve Flutter dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-11-18T02:26:37Z",
+      "completed_at": "2026-11-18T02:26:40Z"
+    },
+    {
+      "name": "Build Windows Release bundle",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-11-18T02:26:40Z",
+      "completed_at": "2026-11-18T02:29:30Z"
+    },
+    {
+      "name": "Add Rust core DLL",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-11-18T02:29:30Z",
+      "completed_at": "2026-11-18T02:29:31Z"
+    },
+    {
+      "name": "Launch Windows app and capture visible client area",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-11-18T02:29:31Z",
+      "completed_at": "2026-11-18T02:29:40Z"
+    },
+    {
+      "name": "Run P03.7 Windows desktop interaction suite",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-11-18T02:29:40Z",
+      "completed_at": "2026-11-18T02:32:31Z"
+    },
+    {
+      "name": "Verify native Windows move, copy, and external text drag/drop",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2026-11-18T02:32:31Z",
+      "completed_at": "2026-11-18T02:33:05Z"
+    },
+    {
+      "name": "Upload Windows native drag/drop diagnostics",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13,
+      "started_at": "2026-11-18T02:33:05Z",
+      "completed_at": "2026-11-18T02:33:07Z"
+    },
+    {
+      "name": "Verify native Windows clipboard formats",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 14,
+      "started_at": "2026-11-18T02:33:07Z",
+      "completed_at": "2026-11-18T02:33:31Z"
+    },
+    {
+      "name": "Verify Windows accessibility tree and smoke lifecycle",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 15,
+      "started_at": "2026-11-18T02:33:31Z",
+      "completed_at": "2026-11-18T02:33:32Z"
+    },
+    {
+      "name": "Launch Windows native-titlebar mode and close gracefully",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 16,
+      "started_at": "2026-11-18T02:33:32Z",
+      "completed_at": "2026-11-18T02:33:34Z"
+    },
+    {
+      "name": "Run actions/upload-artifact@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 17,
+      "started_at": "2026-11-18T02:33:34Z",
+      "completed_at": "2026-11-18T02:33:38Z"
+    },
+    {
+      "name": "Post Run subosito/flutter-action@v2",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 32,
+      "started_at": "2026-11-18T02:33:38Z",
+      "completed_at": "2026-11-18T02:33:40Z"
+    },
+    {
+      "name": "Post Run Swatinem/rust-cache@v2",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 33,
+      "started_at": "2026-11-18T02:33:40Z",
+      "completed_at": "2026-11-18T02:33:40Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 34,
+      "started_at": "2026-11-18T02:33:40Z",
+      "completed_at": "2026-11-18T02:33:43Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 35,
+      "started_at": "2026-11-18T02:33:43Z",
+      "completed_at": "2026-11-18T02:33:43Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/Eternal-Wanderer-Vegetable/Alula_Code/check-runs/134529125714",
+  "labels": [
+    "windows-latest"
+  ],
+  "runner_id": 1000011348,
+  "runner_name": "GitHub Actions 1000011348",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

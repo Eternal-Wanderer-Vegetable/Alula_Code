@@ -1,0 +1,1668 @@
+{
+  "product": "1ee668d8e2698e026433878e0b67f612a7b7b603",
+  "tree": "9b562d38d38a14bcbd5b500c5d3377b01c31e340",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sourceSha256": {
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchy.contribution.ts": "124c55ac99e12112a403c051622d3402c9f9e889d0d9f7e3bdc8af069abd4cde",
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchyPeek.ts": "13d2e7806f0103967f412a5e6cbf15402dfc2c33ab2cd5d90ad4f25e9dce1158",
+      "src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchyTree.ts": "72b55403a0d582730fff28990cfa086854becf8a1f82c63328be2b3a8f8d1e71"
+    }
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9b562d38d38a14bcbd5b500c5d3377b01c31e340",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ddfb73838aa1a8a50e08031c26fdb23b4c572f11b14667f9f887b1c259fda846",
+      "app/lib/bridge/alula_ffi.dart": "11481f011ae4791206583c6f9a540855d678ee8339da86dafdf09f4d100b3569",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "58725ebc65c675f0391884caba9922d5e1736796cf09f87376602ea847079ada",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "947a21adcff5e15dde0f81fc45fd93f859f7b0319ae9117ce7e0f38617c8eb69",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "ba21600f12c91e4c0d910c7477f36c0c46205ec5b493075f4a9d1019455025f7",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "6a1e9b22afc09f1a2381f2c4de727f00fd52ced6af486dea895dec9da28d41ce",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "9158f32dbe148411d349ecd299c833a64e13cdc3ecb782d0698b45934180242b",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "2b7a063aeca03c20bcab29c54cb18ddc25b817f4cca7763717cbcabf89847f1f",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "3ee9d13c80df60dab1269e4889e2da53e0523ab4571c4e56765eeaffb01f8579",
+    "nativeCoreSha256": "80f8fb6596a32e666e3ca7599ea19f4ab7cfb4b08df378a370f737158160ff90",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed"
+  },
+  "fixtureSha256": "3ee9d13c80df60dab1269e4889e2da53e0523ab4571c4e56765eeaffb01f8579",
+  "acceptanceDriverSha256": "4209b3bae82b854859a131924454f9246177c2140dbbecfa6c27a972215f8661",
+  "providerRelease": {
+    "version": "20.1.8",
+    "llvmCommit": "87f0227cb60147a26a1eeb4fb06e3b505e9c7261",
+    "url": "https://github.com/clangd/clangd/releases/tag/20.1.8"
+  },
+  "cursors": {
+    "source": 37,
+    "last": 53
+  },
+  "sourceSha256": {
+    "derived.hpp": "b74a5cec6e7e48d91490357a6fdd85bf870ae10d7f177846e2fb3d2c71ac59c8",
+    "translation.cpp": "aacf967b15f672c9d56a558dd37b1afebf3d828423f8f7d8b809c3a45c19371c",
+    "base.hpp": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+    "grand.hpp": "2847a69705f5265af7273aeeec27d3227c63257620e84c3347ac4512bbc45942"
+  },
+  "localLogsSha256": {
+    "p05-269-core.log": "1a381ecd9af0b754899ebb0cc7d331139637cfb32fba74ae6c8c5bbccea50679",
+    "p05-269-targeted.log": "65fc1f3cd598feeda690f5ff7e16abf11fa6c354503c3b364c3e26ab5c847170",
+    "p05-269-targeted-first.log": "9a2a87799cb2ad06e4dee56d922538f7ca9a8192ec4e891dcc0828d77c26079f",
+    "p05-269-analyze.log": "16dd816316ca7082547dfd208a4067ab2eef119dc76bb4c73bf6a456a2cb7457",
+    "p05-269-focused.log": "b514c0eb6cfd7d93be6eb61388723b76ee907fc3e32de0e035876c9e5f558bf9",
+    "p05-269-full.log": "912ed8e53d140cbd9170e596c7f3f2b5d3b008a2b8cbe83cec8b11ba0b726b07",
+    "p05-269-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-269-linux-native.log": "87aed8703ce48bf1e7f041e2faad828c15d18523d50a873aca9c4f9d2b5da1fd",
+    "windows-core.log": "fcdbb3b627002d27c2e69ee03e051ca3f338596c0a958a80a881bcc6ba902c80",
+    "windows-build.log": "7abe90450cb7d8c78a0f558a141adfd01bad8bd28346fe65d1ff4638b81ac1a9"
+  },
+  "initialFixtureBuild": {
+    "fixtureSha256": "39f63553ee090c743e7ba556d6d94db666bb1ddcf3080c1183279ff5552681bf",
+    "windowsBuildLogSha256": "2b119503d573e06da4e0db910177ad8af41f690dc14eee9468a6b2c6d45b9053",
+    "linuxBuildLogSha256": "f83273846e523faa77b00ef402673f6f5042ab0ec94868e5308033cfe2826cf1"
+  },
+  "fixtureBeforeUri": {
+    "linuxReportSha256": "0463f4f4d2bad390022177c4025637646e067c625088741b2d97273a8d1b5008",
+    "linuxNativeLogSha256": "702bcc7751422e5a63cf79e98da4c8b33cd77d339a5038d604d325d38b0b7dce"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 17,
+        "affected_count": 0,
+        "changed_files": 7,
+        "risk_level": "low"
+      },
+      "sha256": "9f44f11403be778f00b0750b6d5e3c94b986936ba377eccb483b54febc330588",
+      "processes": []
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 17,
+        "affected_count": 0,
+        "changed_files": 7,
+        "risk_level": "low"
+      },
+      "sha256": "9f44f11403be778f00b0750b6d5e3c94b986936ba377eccb483b54febc330588",
+      "processes": []
+    }
+  },
+  "preedit": {
+    "_syncCommandContext": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 103,
+        "processes_affected": 6,
+        "modules_affected": 4
+      },
+      "sha256": "dfe26c2f92f2de2bc4fddeb7b4dad90017f142ecf62beee9f3eea2bca5bd4df6"
+    }
+  },
+  "memoryComparison": {
+    "historicalWindowsEmptyPrivateMiB": 189.9,
+    "historicalBaseline": "docs/baselines/2026-10-26/alula-w2-empty.md",
+    "previousLinuxReportSha256": "9b537a09686ec163f25d402d5af5409f22ec8b7e1467ef6a4e61319adcfbe2f0",
+    "previousLinuxPrivateMiB": {
+      "ready": 248.8,
+      "incoming-nested": 845.2,
+      "page-two": 866.1,
+      "outgoing-nested": 873.3
+    },
+    "currentLinuxPrivateMiB": {
+      "ready": 247.5,
+      "subtypes": 423.3,
+      "nested": 432.3,
+      "supertypes": 433.5
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "aotSha256": "24fd10478e3ecf1a5134c51bf00dd4021ba25d64b91845fe139b3bcbfb2785c6",
+    "reportSha256": "3e49f415537be4ec33311e54ed25d7fb89f5aee42153749bcb3f7c92f2fcf48c",
+    "rawRunnerSha256": "3f3d7362b7b07cb2c453634c786031a16232cb71209a7f6f48cb8a7d529bb1be",
+    "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: windows+grpc\nPlatform: x86_64-pc-windows-msvc",
+    "providerSha256": "695b84de39702b15f1ba10ae2db7ed67d287d235c78796ed22e8d5c4af4e6edb",
+    "exit": 0,
+    "diskSha256": {
+      "base.hpp": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "grand.hpp": "2847a69705f5265af7273aeeec27d3227c63257620e84c3347ac4512bbc45942",
+      "derived.hpp": "b74a5cec6e7e48d91490357a6fdd85bf870ae10d7f177846e2fb3d2c71ac59c8",
+      "translation.cpp": "aacf967b15f672c9d56a558dd37b1afebf3d828423f8f7d8b809c3a45c19371c",
+      "compile_commands.json": "7e4e87c569890fbf863bd81ac1ffd0ed3b71329c32eb6cd6a75b55e9952a4e31"
+    },
+    "steps": {
+      "ready": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "source-position": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "type-unavailable": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": "没有可用的类型层级提供程序",
+          "rows": [],
+          "selected": null,
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": false,
+          "previewLines": [],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "empty-closed": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "provider-root": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": {
+          "root": "Base",
+          "subtypes": [
+            "Derived"
+          ],
+          "supertypes": [
+            "Grand"
+          ]
+        },
+        "typeHierarchy": null
+      },
+      "subtypes": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "child-expanded": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "nested": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Last",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "supertypes": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "subtypes-toolbar": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "supertypes-key": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "closed-restored": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "reopened": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "subtypes-reopened": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "child-reexpanded": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "last-focused": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Last",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            880.8000000000001,
+            110.0,
+            920.8000000000001,
+            144.0
+          ],
+          "closeBounds": [
+            920.8000000000001,
+            110.0,
+            960.8000000000001,
+            144.0
+          ]
+        }
+      },
+      "last-open": {
+        "editor": "derived.hpp 主编辑器",
+        "selection": [
+          53,
+          53
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "back-to-source": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      }
+    },
+    "dpi": 120,
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1887,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1887,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          2231,
+          347
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2231,
+          347
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          2281,
+          347
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2281,
+          347
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ]
+  },
+  "linux": {
+    "aotSha256": "d4d05416754736316c19315d734bb3f93de1047b9cea240d702b58939198ec6c",
+    "reportSha256": "93cf8be228df7b4957cd3e614d2c8d8910361f6ed96a9362e34fa0d62e1b7afd",
+    "rawRunnerSha256": "bae4328581fd51c0dfbea3aa66b490185421ee67129609c92769536e25af8821",
+    "providerVersion": "clangd version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)\nFeatures: linux+grpc\nPlatform: x86_64-unknown-linux-gnu",
+    "providerSha256": "8a630b1bf56ed468205ea6f59264063f5830c6cff53fe28b2157f7f321ac71c3",
+    "exit": 0,
+    "diskSha256": {
+      "base.hpp": "d525bbaf8770699976027829109bcfb0e5240d27eac237f2d1903284c1036571",
+      "grand.hpp": "2847a69705f5265af7273aeeec27d3227c63257620e84c3347ac4512bbc45942",
+      "derived.hpp": "b74a5cec6e7e48d91490357a6fdd85bf870ae10d7f177846e2fb3d2c71ac59c8",
+      "translation.cpp": "aacf967b15f672c9d56a558dd37b1afebf3d828423f8f7d8b809c3a45c19371c",
+      "compile_commands.json": "290d3531a27b8d3da434135980c55090f64e2c002facae59a879473839c89d4d"
+    },
+    "steps": {
+      "ready": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "source-position": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "type-unavailable": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": "没有可用的类型层级提供程序",
+          "rows": [],
+          "selected": null,
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": false,
+          "previewLines": [],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "empty-closed": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": false,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "provider-root": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": {
+          "root": "Base",
+          "subtypes": [
+            "Derived"
+          ],
+          "supertypes": [
+            "Grand"
+          ]
+        },
+        "typeHierarchy": null
+      },
+      "subtypes": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "child-expanded": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "nested": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Last",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "supertypes": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "subtypes-toolbar": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "supertypes-key": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "closed-restored": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "reopened": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "supertypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Grand",
+              1,
+              false
+            ]
+          ],
+          "selected": "Grand",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  struct Grand {};",
+            "   2  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "subtypes-reopened": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "child-reexpanded": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Derived",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "last-focused": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": {
+          "direction": "subtypes",
+          "loading": false,
+          "message": null,
+          "rows": [
+            [
+              "Base",
+              0,
+              true
+            ],
+            [
+              "Derived",
+              1,
+              true
+            ],
+            [
+              "Last",
+              2,
+              false
+            ]
+          ],
+          "selected": "Last",
+          "focused": true,
+          "focusNodes": 1,
+          "previewReady": true,
+          "previewLines": [
+            "   1  #include \"base.hpp\"",
+            "   2  struct Derived : Base {};",
+            "   3  struct Last : Derived {};",
+            "   4  "
+          ],
+          "directionBounds": [
+            1015.9999999999999,
+            456.0,
+            1056.0,
+            490.0
+          ],
+          "closeBounds": [
+            1056.0,
+            456.0,
+            1096.0,
+            490.0
+          ]
+        }
+      },
+      "last-open": {
+        "editor": "derived.hpp 主编辑器",
+        "selection": [
+          53,
+          53
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      },
+      "back-to-source": {
+        "editor": "base.hpp 主编辑器",
+        "selection": [
+          37,
+          37
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "attached": true,
+        "provider": null,
+        "typeHierarchy": null
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 4442,
+            "ppid": 4441,
+            "private": 259477504,
+            "pss": 286180352,
+            "working_set": 338300928
+          }
+        ],
+        "root_pid": 4442,
+        "total_private_bytes": 259477504,
+        "total_private_mib": 247.5,
+        "total_working_set_bytes": 338300928
+      },
+      "subtypes": {
+        "n_processes": 2,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 4442,
+            "ppid": 4441,
+            "private": 256237568,
+            "pss": 282983424,
+            "working_set": 335282176
+          },
+          {
+            "name": "clangd.main",
+            "peak_private": 0,
+            "pid": 4682,
+            "ppid": 4442,
+            "private": 187641856,
+            "pss": 187687936,
+            "working_set": 189964288
+          }
+        ],
+        "root_pid": 4442,
+        "total_private_bytes": 443879424,
+        "total_private_mib": 423.3,
+        "total_working_set_bytes": 525246464
+      },
+      "nested": {
+        "n_processes": 2,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 4442,
+            "ppid": 4441,
+            "private": 265650176,
+            "pss": 292397056,
+            "working_set": 344694784
+          },
+          {
+            "name": "clangd.main",
+            "peak_private": 0,
+            "pid": 4682,
+            "ppid": 4442,
+            "private": 187641856,
+            "pss": 187685888,
+            "working_set": 189964288
+          }
+        ],
+        "root_pid": 4442,
+        "total_private_bytes": 453292032,
+        "total_private_mib": 432.3,
+        "total_working_set_bytes": 534659072
+      },
+      "supertypes": {
+        "n_processes": 2,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 4442,
+            "ppid": 4441,
+            "private": 266919936,
+            "pss": 293661696,
+            "working_set": 345964544
+          },
+          {
+            "name": "clangd.main",
+            "peak_private": 0,
+            "pid": 4682,
+            "ppid": 4442,
+            "private": 187641856,
+            "pss": 187685888,
+            "working_set": 189964288
+          }
+        ],
+        "root_pid": 4442,
+        "total_private_bytes": 454561792,
+        "total_private_mib": 433.5,
+        "total_working_set_bytes": 535928832
+      }
+    },
+    "bundleCoreSha256": "ba5bc9bf74c6cdb01ecaf4d99ceb94702f3f1b63d6318d83db1850a9983d3bd3"
+  }
+}

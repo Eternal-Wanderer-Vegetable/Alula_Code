@@ -1,0 +1,78 @@
+{
+  "feature": "feat-133",
+  "slice": "P05.81 / LAY-16e",
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "productCommit": "4c6f6deafd5defd76560b81f606a57c4f08cb41f",
+  "scope": "Multiselection on the existing flat SCM resource rows; group/header/mixed-side business parity excluded",
+  "cases": [
+    {
+      "contract": "Ctrl Windows/Linux or Cmd macOS toggles a resource while retaining other selected resources; pointer selection does not open",
+      "tests": ["Control-click toggles resources on TargetPlatform.windows", "Control-click toggles resources on TargetPlatform.linux", "Command-click toggles resources on macOS"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass",
+      "boundary": "Windows/Linux tests exercise toggle removal from a multiselection; macOS tests exercise addition. Complete native modifier/configuration behavior remains unverified"
+    },
+    {
+      "contract": "Shift-click replaces the selected contiguous run at its pointer anchor while retaining disjoint islands; platform toggle+Shift prioritizes range",
+      "tests": ["Shift-click replaces only the anchor run and preserves islands", "toggle plus Shift uses range selection on TargetPlatform.windows", "toggle plus Shift uses range selection on TargetPlatform.linux", "toggle plus Shift uses range selection on TargetPlatform.macOS"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Unsupported foreign-platform pointer modifier, including Shift combination, does not alter selection or open",
+      "tests": ["foreign modifier click does not open or select on TargetPlatform.windows", "foreign modifier click does not open or select on TargetPlatform.linux", "foreign modifier click does not open or select on TargetPlatform.macOS"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Windows Ctrl-click acquires SCM keyboard focus when an outside control owned it; subsequent Space calls onOpen for the focused resource with preserveFocus=true",
+      "tests": ["modifier selection moves keyboard focus from an outside control"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Shift arrows add destinations or remove previous focused resources when destination is selected; first-row boundary leaves selection unchanged; singleton selection previews with preserveFocus=true",
+      "tests": ["Shift arrows grow, shrink, remove, and stop at boundaries", "Shift navigation previews a singleton without taking focus"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass",
+      "boundary": "Complete tree/group traversal and every navigation modifier are outside these flat-row tests"
+    },
+    {
+      "contract": "Local Ctrl+A is scoped to SCM focus, selects offscreen flat resources, leaves focus identity unchanged for singleton, and Enter collapses to the focused resource",
+      "tests": ["select all previews a singleton and keeps focus and anchor", "select all is scoped to list focus and Enter collapses selection"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass",
+      "boundary": "Hierarchical repeated-select-all and group selection are excluded; anchor storage is source-reviewed, not directly exposed by these tests"
+    },
+    {
+      "contract": "Refresh prunes removed selected resources, remaps retained staged resources and clears empty-list identities; explicit stage/unstage actions stay single-target under multiselection",
+      "tests": ["refresh prunes multiselection and remaps staged resources", "multiselection never batches an explicit row action"],
+      "testFile": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Real-workbench modifier selection keeps Git index tree and file bytes unchanged, does not replace the displayed diff, and Space collapses selection before explicit single-file stage",
+      "tests": ["Git changes list opens resources without staging on Space"],
+      "testFile": "app/test/widget_test.dart",
+      "status": "automated-pass"
+    }
+  ],
+  "resources": {
+    "owner": "GitChangesListState",
+    "selectionBound": "Current resource count; pruned/remapped on update",
+    "rangeRemoval": "Linear row-run removal, source-reviewed; no timing benchmark claimed",
+    "persistentRowMapAdded": false,
+    "pollingAdded": false,
+    "workspaceReset": "Existing workspace-key remount, source-review evidence; no new delayed real-process cancellation test claimed"
+  },
+  "validation": {
+    "componentTests": 27,
+    "realRepositoryTests": 1,
+    "fullFlutterTests": 1462,
+    "analyzeIssues": 0,
+    "ciRun": 44233637698,
+    "platformRun": 44233632031,
+    "hostedStatus": "CI success; Linux and Windows success; macOS tests/Release/clipboard/launch/package success, native Quit failed, native DnD explicitly skipped",
+    "parentComplete": false
+  }
+}

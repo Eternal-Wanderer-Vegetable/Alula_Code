@@ -1,0 +1,3521 @@
+{
+  "product": "48957e8d6d0897afe32092d93a24083d0347c288",
+  "tree": "a4470d68e0186d4698e0d898ad8c610e4f8d8da9",
+  "fixtureSha256": "e5b4e36385d3d15cd8bf87411c737b6e15b3085646193e3c8b255e1aa17fd5d9",
+  "reference": {
+    "": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "Non-AI Command Center width and placement across window sizes",
+      "referenceSettings": {
+        "chat.agentsControl.enabled": "hidden",
+        "chat.disableAIFeatures": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "narrow": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "medium": {
+        "viewport": [
+          1206,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1206,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "center": [
+          340.9875183105469,
+          0,
+          524.0250244140625,
+          35
+        ],
+        "right": [
+          875.0125122070312,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "commandCenter": [
+          340.9875183105469,
+          5.700000286102295,
+          524.0250244140625,
+          23.600000381469727
+        ],
+        "centralAction": [
+          398.9875183105469,
+          5.700000286102295,
+          460.0249938964844,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              398.9875183105469,
+              5.700000286102295,
+              460.0249938964844,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              590.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          590.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "458.425px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1244,
+          836
+        ]
+      },
+      "wide": {
+        "viewport": [
+          1766,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1766,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "center": [
+          550.2000122070312,
+          0,
+          665.6000366210938,
+          35
+        ],
+        "right": [
+          1225.800048828125,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "commandCenter": [
+          550.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ],
+        "centralAction": [
+          608.2000122070312,
+          5.700000286102295,
+          601.6000366210938,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              608.2000122070312,
+              5.700000286102295,
+              601.6000366210938,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              870.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          870.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "600px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "initial": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "jump": {
+        "caret": "Ln 18, Col 6",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "back": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "forward": {
+        "caret": "Ln 18, Col 6",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "beforeReplacingForward": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "newBranch": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zen": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenBack": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenForward": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "normalRestored": [
+        24,
+        36,
+        674,
+        836
+      ],
+      "afterZen": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "diskBytesStable": true,
+      "sourceSha256": "affeaae1d4778858f015b874a77e0b751efc889f457448284f9878e9ccc659c9",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "-empty": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "Non-AI Command Center width and placement across window sizes",
+      "referenceSettings": {
+        "chat.agentsControl.enabled": "hidden",
+        "chat.disableAIFeatures": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "narrow": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "medium": {
+        "viewport": [
+          1206,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1206,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "center": [
+          340.9875183105469,
+          0,
+          524.0250244140625,
+          35
+        ],
+        "right": [
+          875.0125122070312,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "commandCenter": [
+          340.9875183105469,
+          5.700000286102295,
+          524.0250244140625,
+          23.600000381469727
+        ],
+        "centralAction": [
+          398.9875183105469,
+          5.700000286102295,
+          460.0249938964844,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              398.9875183105469,
+              5.700000286102295,
+              460.0249938964844,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              590.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          590.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "458.425px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1244,
+          836
+        ]
+      },
+      "wide": {
+        "viewport": [
+          1766,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1766,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "center": [
+          550.2000122070312,
+          0,
+          665.6000366210938,
+          35
+        ],
+        "right": [
+          1225.800048828125,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "commandCenter": [
+          550.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ],
+        "centralAction": [
+          608.2000122070312,
+          5.700000286102295,
+          601.6000366210938,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              608.2000122070312,
+              5.700000286102295,
+              601.6000366210938,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              870.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          870.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "600px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "initial": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "jump": {
+        "caret": "Ln 18, Col 6",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "back": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "forward": {
+        "caret": "Ln 18, Col 6",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "beforeReplacingForward": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "newBranch": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 550.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 576.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 870.0375366210938,
+          "y": 6.5,
+          "width": 77.9124755859375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zen": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenBack": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenForward": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 691.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 717.2000122070312,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 1011.0375366210938,
+          "y": 6.5,
+          "width": 77.91253662109375,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "normalRestored": [
+        24,
+        36,
+        674,
+        836
+      ],
+      "afterZen": {
+        "caret": "Ln 27, Col 3",
+        "editorFocus": true,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "emptyWorkbench": {
+        "caret": "",
+        "editorFocus": false,
+        "back": true,
+        "forward": false,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "backFromEmpty": {
+        "caret": "Ln 1, Col 1",
+        "editorFocus": true,
+        "back": false,
+        "forward": true,
+        "backTitle": null,
+        "forwardTitle": null,
+        "backBounds": {
+          "x": 103.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "forwardBounds": {
+          "x": 129.5,
+          "y": 6.5,
+          "width": 22,
+          "height": 22
+        },
+        "searchBounds": {
+          "x": 230.78750610351562,
+          "y": 6.5,
+          "width": 77.91250610351562,
+          "height": 22
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "diskBytesStable": true,
+      "sourceSha256": "affeaae1d4778858f015b874a77e0b751efc889f457448284f9878e9ccc659c9",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "a4470d68e0186d4698e0d898ad8c610e4f8d8da9",
+      "build": {
+        "abi": 51,
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "tree": "a4470d68e0186d4698e0d898ad8c610e4f8d8da9",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "fixtureSha256": "e5b4e36385d3d15cd8bf87411c737b6e15b3085646193e3c8b255e1aa17fd5d9",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "aotSha256": "900561cd99e417faea8c6fbc6e0266c8b946c59cc0057186a1dd705e88559226"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "rendered titlebar activation and picker input, owned Win32 Escape and fullscreen/close",
+      "initial": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "jumpPreview": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": ":18:6",
+        "picker": true,
+        "surface": [
+          302.0,
+          6.0,
+          600.0,
+          36.0
+        ],
+        "field": [
+          314.0,
+          14.0,
+          576.0,
+          20.0
+        ],
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "jump": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "back": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "forward": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "beforeBranch": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "newBranchPreview": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": ":27:3",
+        "picker": true,
+        "surface": [
+          302.0,
+          6.0,
+          600.0,
+          36.0
+        ],
+        "field": [
+          314.0,
+          14.0,
+          576.0,
+          20.0
+        ],
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "newBranch": {
+        "history": {
+          "back": {
+            "bounds": [
+              343.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              369.24,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          401.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "narrow": {
+        "history": {
+          "back": {
+            "bounds": [
+              285.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              311.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          636.8,
+          35.0
+        ],
+        "center": [
+          343.87109375,
+          5.5,
+          243.98399999999998,
+          24.0
+        ],
+        "viewportWidth": 636.8,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          659.2,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zen": {
+        "history": {
+          "back": {
+            "bounds": [
+              694.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              720.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          752.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "nativeFullscreen": {
+        "hwndBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenBack": {
+        "history": {
+          "back": {
+            "bounds": [
+              694.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              720.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          752.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zenForward": {
+        "history": {
+          "back": {
+            "bounds": [
+              694.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              720.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          752.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "restored": {
+        "history": {
+          "back": {
+            "bounds": [
+              285.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              311.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          636.8,
+          35.0
+        ],
+        "center": [
+          343.87109375,
+          5.5,
+          243.98399999999998,
+          24.0
+        ],
+        "viewportWidth": 636.8,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          659.2,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "emptyWorkbench": {
+        "history": {
+          "back": {
+            "bounds": [
+              285.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              311.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "titlebar": [
+          0.0,
+          0.0,
+          636.8,
+          35.0
+        ],
+        "center": [
+          343.87109375,
+          5.5,
+          243.98399999999998,
+          24.0
+        ],
+        "viewportWidth": 636.8,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          659.2,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": false,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "backFromEmpty": {
+        "history": {
+          "back": {
+            "bounds": [
+              285.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              311.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          636.8,
+          35.0
+        ],
+        "center": [
+          343.87109375,
+          5.5,
+          243.98399999999998,
+          24.0
+        ],
+        "viewportWidth": 636.8,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          659.2,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "forwardFromReopened": {
+        "history": {
+          "back": {
+            "bounds": [
+              285.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              311.87109375,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          636.8,
+          35.0
+        ],
+        "center": [
+          343.87109375,
+          5.5,
+          243.98399999999998,
+          24.0
+        ],
+        "viewportWidth": 636.8,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          659.2,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "sourceSha256": "affeaae1d4778858f015b874a77e0b751efc889f457448284f9878e9ccc659c9",
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "a4470d68e0186d4698e0d898ad8c610e4f8d8da9",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 pointer, text, Escape and native fullscreen/close",
+      "fixtureSha256": "e5b4e36385d3d15cd8bf87411c737b6e15b3085646193e3c8b255e1aa17fd5d9",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "eb5b37d9cd53413ed169441de7a043c79eff8339f6bd5d83b5bb699947d204d8",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "initial": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "jumpPreview": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": ":18:6",
+        "picker": true,
+        "surface": [
+          308.5,
+          6.0,
+          600.0,
+          36.0
+        ],
+        "field": [
+          320.5,
+          14.223234176635742,
+          576.0,
+          20.0
+        ],
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "jump": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "back": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "forward": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          18,
+          6,
+          379
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "beforeBranch": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "newBranchPreview": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": ":27:3",
+        "picker": true,
+        "surface": [
+          308.5,
+          6.0,
+          600.0,
+          36.0
+        ],
+        "field": [
+          320.5,
+          14.223234176635742,
+          576.0,
+          20.0
+        ],
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "newBranch": {
+        "history": {
+          "back": {
+            "bounds": [
+              347.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              373.27,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          405.27,
+          5.5,
+          464.46000000000004,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "narrow": {
+        "history": {
+          "back": {
+            "bounds": [
+              288.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              314.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          650.0,
+          35.0
+        ],
+        "center": [
+          346.50843811035156,
+          5.5,
+          148.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 650.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          650.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zen": {
+        "history": {
+          "back": {
+            "bounds": [
+              630.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              656.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          688.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "nativeFullscreen": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "zenBack": {
+        "history": {
+          "back": {
+            "bounds": [
+              630.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              656.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          688.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zenForward": {
+        "history": {
+          "back": {
+            "bounds": [
+              630.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              656.0,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          688.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "restored": {
+        "history": {
+          "back": {
+            "bounds": [
+              288.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              314.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          650.0,
+          35.0
+        ],
+        "center": [
+          346.50843811035156,
+          5.5,
+          148.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 650.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          650.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "emptyWorkbench": {
+        "history": {
+          "back": {
+            "bounds": [
+              288.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              314.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "titlebar": [
+          0.0,
+          0.0,
+          650.0,
+          35.0
+        ],
+        "center": [
+          346.50843811035156,
+          5.5,
+          148.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 650.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          650.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false"
+        ],
+        "pickerFocused": false,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "backFromEmpty": {
+        "history": {
+          "back": {
+            "bounds": [
+              288.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          },
+          "forward": {
+            "bounds": [
+              314.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          }
+        },
+        "caret": [
+          1,
+          1,
+          0
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          650.0,
+          35.0
+        ],
+        "center": [
+          346.50843811035156,
+          5.5,
+          148.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 650.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          650.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "forwardFromReopened": {
+        "history": {
+          "back": {
+            "bounds": [
+              288.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": true
+          },
+          "forward": {
+            "bounds": [
+              314.50843811035156,
+              6.5,
+              22.0,
+              22.0
+            ],
+            "enabled": false
+          }
+        },
+        "caret": [
+          27,
+          3,
+          574
+        ],
+        "titlebar": [
+          0.0,
+          0.0,
+          650.0,
+          35.0
+        ],
+        "center": [
+          346.50843811035156,
+          5.5,
+          148.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 650.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          650.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "sourceSha256": "affeaae1d4778858f015b874a77e0b751efc889f457448284f9878e9ccc659c9",
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "a4470d68e0186d4698e0d898ad8c610e4f8d8da9",
+    "exactTrackedRuntimeFiles": 274,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "app/lib/editor/navigation_history.dart",
+      "app/lib/workbench/commands.dart",
+      "app/lib/workbench/title_bar.dart",
+      "app/lib/workbench/workbench_page.dart"
+    ]
+  }
+}

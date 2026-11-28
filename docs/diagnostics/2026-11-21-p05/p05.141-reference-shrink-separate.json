@@ -1,0 +1,165 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "pinnedTabSizing": "shrink",
+  "separatePinnedRows": true,
+  "driver": "Owned Code-OSS CDP renderer pointer input",
+  "trace": {
+    "ready": [
+      {
+        "title": "alpha.txt, pinned",
+        "text": "alpha.txt",
+        "width": 80,
+        "x": 54.79999923706055,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "bravo.txt, pinned",
+        "text": "bravo.txt",
+        "width": 80,
+        "x": 134.8000030517578,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "charlie.txt, pinned",
+        "text": "charlie.txt",
+        "width": 113.6875,
+        "x": 52.79999923706055,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "echo.txt, pinned",
+        "text": "echo.txt",
+        "width": 103.875,
+        "x": 166.4875030517578,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "foxtrot.txt",
+        "text": "foxtrot.txt",
+        "width": 114.70000457763672,
+        "x": 270.3625183105469,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": true,
+        "actionsVisible": true
+      }
+    ],
+    "hit-left-edge": [
+      {
+        "title": "alpha.txt, pinned",
+        "text": "alpha.txt",
+        "width": 80,
+        "x": 54.79999923706055,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": true,
+        "actionsVisible": true
+      },
+      {
+        "title": "bravo.txt, pinned",
+        "text": "bravo.txt",
+        "width": 80,
+        "x": 134.8000030517578,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "charlie.txt, pinned",
+        "text": "charlie.txt",
+        "width": 113.6875,
+        "x": 52.79999923706055,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "echo.txt, pinned",
+        "text": "echo.txt",
+        "width": 103.875,
+        "x": 166.4875030517578,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "foxtrot.txt",
+        "text": "foxtrot.txt",
+        "width": 114.70000457763672,
+        "x": 270.3625183105469,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      }
+    ],
+    "hit-right-edge": [
+      {
+        "title": "alpha.txt, pinned",
+        "text": "alpha.txt",
+        "width": 80,
+        "x": 54.79999923706055,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "bravo.txt, pinned",
+        "text": "bravo.txt",
+        "width": 80,
+        "x": 134.8000030517578,
+        "y": 37.79999923706055,
+        "sticky": true,
+        "active": true,
+        "actionsVisible": true
+      },
+      {
+        "title": "charlie.txt, pinned",
+        "text": "charlie.txt",
+        "width": 113.6875,
+        "x": 52.79999923706055,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "echo.txt, pinned",
+        "text": "echo.txt",
+        "width": 103.875,
+        "x": 166.4875030517578,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      },
+      {
+        "title": "foxtrot.txt",
+        "text": "foxtrot.txt",
+        "width": 114.70000457763672,
+        "x": 270.3625183105469,
+        "y": 65.80000305175781,
+        "sticky": false,
+        "active": false,
+        "actionsVisible": true
+      }
+    ]
+  },
+  "exitCode": 0
+}

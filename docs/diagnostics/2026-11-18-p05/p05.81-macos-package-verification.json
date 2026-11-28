@@ -1,0 +1,33 @@
+{
+  "artifact_id": 14397173049,
+  "verified_at": "2026-11-18T04:23:33.196845+00:00",
+  "archive": "E:\\temp\\alula-p0581-hosted-20261118\\44233632031\\downloads\\macos-app-artifact-14397173049\\artifact.zip",
+  "archive_size": 23252888,
+  "archive_sha256": "ac1d0b82ba244fc7410b35a478b19ced650d5bdb9d5cfbe4cb272433ca007d1d",
+  "outer_zip_bad_member": null,
+  "outer_members": [
+    "alula-code-macos-X64-4c6f6deafd5defd76560b81f606a57c4f08cb41f.zip",
+    "alula-code-macos-X64-4c6f6deafd5defd76560b81f606a57c4f08cb41f.zip.sha256"
+  ],
+  "package_member": "alula-code-macos-X64-4c6f6deafd5defd76560b81f606a57c4f08cb41f.zip",
+  "package_size": 23307084,
+  "package_sha256": "65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1",
+  "sidecar": "65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1  /Users/runner/work/_temp/alula-code-macos-X64-4c6f6deafd5defd76560b81f606a57c4f08cb41f.zip",
+  "sidecar_sha256": "65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1",
+  "sidecar_filename_matches": true,
+  "sidecar_hash_matches": true,
+  "inner_zip_bad_member": null,
+  "inner_entry_count": 81,
+  "native_core_members": [
+    "alula_app.app/Contents/MacOS/libalula_core.dylib"
+  ],
+  "app_executable_members": [
+    "alula_app.app/Contents/MacOS/alula_app"
+  ],
+  "info_plist_members": [
+    "alula_app.app/Contents/Resources/device_info_plus_device_info_plus.bundle/Contents/Info.plist",
+    "alula_app.app/Contents/Info.plist"
+  ],
+  "inner_uncompressed_bytes": 57753619,
+  "verified": true
+}

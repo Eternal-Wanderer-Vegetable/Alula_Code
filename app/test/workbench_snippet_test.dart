@@ -51,11 +51,7 @@ Future<void> _insertSnippetFromPalette(
   WidgetTester tester, {
   required String template,
 }) async {
-  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
-  await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
-  await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
-  await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
-  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.f1);
   await tester.pump(const Duration(milliseconds: 100));
   await tester.enterText(find.byType(TextField).last, '插入片段');
   await tester.pump(const Duration(milliseconds: 100));

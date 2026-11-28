@@ -1,0 +1,12 @@
+Changes: 2 files, 7 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section P05.12 / feat-064 — Activity Bar Top/Bottom 位置 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 实施与验证记录 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section impact 证据修正文档提交前 GitNexus change analysis → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section Hosted macOS native-titlebar 检查失败与自动化修复（2026-11-06） → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section macOS helper 修复提交前 GitNexus change analysis → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Function quitThroughNativeMenu → tools/vscode-parity/macos-native-dnd-input.swift
+  Property script → tools/vscode-parity/macos-native-dnd-input.swift

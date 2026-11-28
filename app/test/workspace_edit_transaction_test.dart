@@ -10,12 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+import 'helpers/file_paths.dart';
+
 final String _fixtureRoot =
     '${Directory.current.parent.path}/tests/fixtures/rust-mini';
 
-String _uriFor(String path) => 'file:///${path.replaceAll(r'\', '/')}';
-
-String _uri(String fileName) => _uriFor('$_fixtureRoot/$fileName');
+String _uri(String fileName) => workbenchFileUri('$_fixtureRoot/$fileName');
 
 void main() {
   late Directory temp;
@@ -46,11 +47,11 @@ void main() {
       keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.text('Cargo.toml').first);
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml').first);
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('src').first);
     await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('main.rs').first);
+    await openPinnedExplorerFile(tester, find.text('main.rs').first);
     await tester.pump(const Duration(milliseconds: 200));
   }
 
@@ -66,8 +67,12 @@ void main() {
       'cross-document edit validates, commits, and keeps per-document undo',
       (tester) async {
     await startWorkbench(tester);
-    final cargoBefore = File('$_fixtureRoot/Cargo.toml').readAsStringSync();
-    final rustBefore = File('$_fixtureRoot/src/main.rs').readAsStringSync();
+    final cargoBefore = File('$_fixtureRoot/Cargo.toml')
+        .readAsStringSync()
+        .replaceAll('\r\n', '\n');
+    final rustBefore = File('$_fixtureRoot/src/main.rs')
+        .readAsStringSync()
+        .replaceAll('\r\n', '\n');
     expect(editorText(tester), rustBefore);
 
     final dynamic state = tester.state(find.byType(WorkbenchPage));
@@ -101,7 +106,7 @@ void main() {
     expect(rejected, isFalse);
     await tester.pump();
     expect(editorText(tester), rustBefore);
-    await tester.tap(find.byKey(const ValueKey('tab-2')));
+    await tester.tap(find.text('Cargo.toml').last);
     await tester.pump(const Duration(milliseconds: 100));
     expect(editorText(tester), cargoBefore);
 
@@ -138,7 +143,7 @@ void main() {
     await undo(tester);
     expect(editorText(tester), cargoBefore);
 
-    await tester.tap(find.byKey(const ValueKey('tab-3')));
+    await tester.tap(find.text('main.rs').last);
     await tester.pump(const Duration(milliseconds: 100));
     expect(editorText(tester), '// workspace B\n$rustBefore');
     await undo(tester);

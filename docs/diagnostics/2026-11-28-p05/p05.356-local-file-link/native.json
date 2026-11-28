@@ -1,0 +1,269 @@
+{
+  "product": "e8dad3140ce6a77a630efcca6fab2aafa86b5afe",
+  "tree": "f8c6d562aa1e887ac3ad7921aeec20076601c533",
+  "abi": 51,
+  "pinnedReference": [
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/contrib/links/browser/links.ts",
+      "line": 402,
+      "sha256": "c0bf8ab8b78eb731a82c85afcd179a4a47681ed0e6ea5735876373636d196426"
+    },
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/common/languages/linkComputer.ts",
+      "line": 103,
+      "sha256": "fb23dd68c2cf8ef8474cc7b896ba9599b1212b0e4d3e27db7f0d43a825af0085"
+    }
+  ],
+  "windows": {
+    "reportSha256": "a12d8dd7468119ddeca5b4fef98bb0a6d0e8405aa2c6d0d4e06d55bca0f63424",
+    "fixtureSha256": "553461b225e39fbbcb72c29beb3eb7f92332d49efb0cf19ddb50179fac94874c",
+    "runnerSha256": "2869e122b2bb016995e3799f609a59cde0d13e12c436bc0aa80941174c00e639",
+    "aotSha256": "48e95426002144db3724be7ed23aed9547a10cec3c45adb4bcd9eae5be32d881",
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "sourceSha256": "7451af3747b7b4f273c91e1a2082efdc4261a7eadb6ae6c5faf43933f98e1b2d",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-and-escaped-target-uri",
+      "native-click-places-caret-outside-link",
+      "open-link-outside-link-preserves-source-and-caret",
+      "native-click-places-caret-inside-file-uri",
+      "keybinding-opens-target-in-same-focused-window",
+      "close-target-restores-source-and-its-link-caret",
+      "keybinding-reopens-target-after-return-to-source",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "nativeEntry": "isolated F7 user keybinding to editor.action.openLink",
+    "cleanExit": true,
+    "windowEnvironment": 120,
+    "reopenedFromCaretUtf16": 25,
+    "focusControl": {
+      "beforeTree": "ea7eb1b4b0761a8f1533150c6024754b87c886f1",
+      "beforeReportSha256": "cbb8734d25f55f87f8d0f867e2b9b995b7f71dfbbd706348acfe75026a78aaad",
+      "targetFocusedBefore": false,
+      "targetFocusedAfter": true
+    }
+  },
+  "linux": {
+    "reportSha256": "9a4e3e48571010bef0bf5a223deab68a6cd0248879825f2a4e7c6fc9241c0956",
+    "fixtureSha256": "553461b225e39fbbcb72c29beb3eb7f92332d49efb0cf19ddb50179fac94874c",
+    "runnerSha256": "57717f95261cbe6b12c1f83410f142cba65cfd0ef9c6936f55ac72695b286208",
+    "aotSha256": "07b243952c4f09825f36629bb9621416cf86998e8ff778d6302b74ca756f4f00",
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "sourceSha256": "cbb09cd1db1441eafb4cc05571f5a91271c839fdc1706528912b58162490eb10",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-and-escaped-target-uri",
+      "native-click-places-caret-outside-link",
+      "open-link-outside-link-preserves-source-and-caret",
+      "native-click-places-caret-inside-file-uri",
+      "keybinding-opens-target-in-same-focused-window",
+      "close-target-restores-source-and-its-link-caret",
+      "keybinding-reopens-target-after-return-to-source",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "nativeEntry": "isolated F7 user keybinding to editor.action.openLink",
+    "cleanExit": true,
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "reopenedFromCaretUtf16": 25,
+    "focusControl": {
+      "beforeTree": "ea7eb1b4b0761a8f1533150c6024754b87c886f1",
+      "beforeReportSha256": "c513e03aed6297c135c7841d5b1236c47e2dcd2b981c821c302c849559ca5917",
+      "targetFocusedBefore": false,
+      "targetFocusedAfter": true
+    }
+  },
+  "localChecks": {
+    "p05-356-targeted.log": "eaf58b9bb94449baa9680f9439d29bdd0ba7e9754822c961d81d2418c72d000b",
+    "p05-356-focused.log": "8a55d86ae4701df7d95cf61904393359167e774b64666b3f0d8892bd9b36a5a5",
+    "p05-356-analyze.log": "a8908cca5ab85b348ba0f2b204b039378b44ff390bc0c44dce44a9c9b00c1af2",
+    "p05-356-full.log": "4adfbd1d18458073e585f43ddecfa9d52a5c5bcea1b173f4e0757e2b48015d5a",
+    "p05-356-rust-ffi.log": "ff0f0275f32d37e8f27d5df75415bc1496f5105909378422b8aafb40a6903f7a",
+    "p05-356-open-link-repro.log": "c6a7810048b53512c8bd5234ae39c398fffa46379d38cc2025a255edc23ed8ce",
+    "p05-356-rust-first.log": "4fcef37fcf0a31bd3e8f3c33729a3572129ea36caa2cc04af2856f983a6f49bb",
+    "p05-356-before-clippy-full.log": "d56d306d9ff4315c36e124c32aa20b1a6895adba47289cfe8c40c5e0b2fc66ad",
+    "p05-356-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe",
+    "p05-356-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitNexus": {
+    "all": {
+      "summary": {
+        "changed_count": 35,
+        "affected_count": 1,
+        "changed_files": 9,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_435_filelinkat",
+          "name": "FileLinkAt → _takeJson",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "fileLinkAt",
+              "step": 1
+            },
+            {
+              "symbol": "docFileLinkAtJson",
+              "step": 2
+            }
+          ]
+        }
+      ],
+      "sha256": "5baaf17b4c43d2c90a1619adf44de46bfea5bc0592174c920acd0fd81ade13b2"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 35,
+        "affected_count": 1,
+        "changed_files": 9,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_435_filelinkat",
+          "name": "FileLinkAt → _takeJson",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "fileLinkAt",
+              "step": 1
+            },
+            {
+              "symbol": "docFileLinkAtJson",
+              "step": 2
+            }
+          ]
+        }
+      ],
+      "sha256": "5baaf17b4c43d2c90a1619adf44de46bfea5bc0592174c920acd0fd81ade13b2"
+    }
+  },
+  "preeditImpact": {
+    "dart-abi": {
+      "target": {
+        "id": "Variable:app/lib/bridge/alula_core.dart:expectedAbiVersion",
+        "name": "expectedAbiVersion",
+        "type": "Variable",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "5febd6e921aa6200d1160e71a2c0812f337e8776e953c8a99e307964e7851787"
+    },
+    "document": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_core.dart:AlulaDoc",
+        "name": "AlulaDoc",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 28,
+        "processes_affected": 1,
+        "modules_affected": 3
+      },
+      "sha256": "99b34fb4f3203011c6e3b40a5bf08887893504739a2e22264c8705c886970348"
+    },
+    "ffi-binding": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_ffi.dart:AlulaFfi",
+        "name": "AlulaFfi",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_ffi.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 56,
+        "processes_affected": 29,
+        "modules_affected": 5
+      },
+      "sha256": "8449c287d064c173c18a18ea097fa24daced01d73029f437ada5136d13d3ca0e"
+    },
+    "link_token_end": {
+      "target": {
+        "id": "Function:crates/editor-core/src/file_links.rs:link_token_end",
+        "name": "link_token_end",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/file_links.rs"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 2
+      },
+      "sha256": "641cc0be176b77aa187c8acf3358f2e9e0d3098b47841fce4c7a66794b9c796d"
+    },
+    "native-abi-test": {
+      "target": {
+        "id": "Function:crates/editor-core/src/ffi.rs:tests.abi_version_is_exposed",
+        "name": "abi_version_is_exposed",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "219fd2ae84d7b3bdfcc0b08887db62f1da61c5e437f0f0f7918206cf1c193f6a"
+    },
+    "native-abi": {
+      "target": {
+        "id": "Const:crates/editor-core/src/ffi.rs:ALULA_ABI_VERSION",
+        "name": "ALULA_ABI_VERSION",
+        "type": "Const",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3587e08ce9bbc44a3ae640fff416ef66ada4ea554740a4f192b5ea2890d0578"
+    },
+    "register": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._registerCommands#0",
+        "name": "_registerCommands",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "e7a3274a690d58f81b14585731dccbf227f1b310e84729ea201811fbc8554603"
+    },
+    "scan_file_link": {
+      "target": {
+        "id": "Function:crates/editor-core/src/file_links.rs:scan_file_link",
+        "name": "scan_file_link",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/file_links.rs"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 2
+      },
+      "sha256": "1339237f45200d2d02c0f48778e7d4f833edd24bb4fee231291e3af100f75f4d"
+    }
+  }
+}

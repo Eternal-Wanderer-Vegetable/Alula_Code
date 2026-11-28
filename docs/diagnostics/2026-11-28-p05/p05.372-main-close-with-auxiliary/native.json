@@ -1,0 +1,269 @@
+{
+  "product": "5026e004fa3eee2b1a9f1f8cbf5b0f64393b8ea9",
+  "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+  "abi": 51,
+  "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+  "windowsSourceFiles": 71,
+  "windowsInputDesktop": "inactive WinSta0, no keyboard or pointer",
+  "linuxSource": "Xvfb and Xfwm4, standard Alt+F4",
+  "baseline": {
+    "windows": {
+      "clean": {
+        "tree": "5172e8c2f14cc8b8c8fdba6f1d676f592a36f6e9",
+        "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+        "rawReportSha256": "243aad2d95e2e8a860b529ed12b0b707057b71d73fa6223379e1d4def3c7fdf6",
+        "status": -1073740771,
+        "windowsAfter": [],
+        "dirtyTextJournaled": false,
+        "diskSha256": {
+          "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+          "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+        },
+        "mainCloseIntercepted": true,
+        "auxiliarySelection": [
+          0,
+          0
+        ],
+        "caseCleanup": false,
+        "nativeConflictPreserved": false,
+        "buildHashes": {
+          "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+          "aotSha256": "c042be1c0d0735c5b5e07c32813025f5f806925da5196aa187a4068670c692ce",
+          "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127"
+        }
+      },
+      "dirty": {
+        "tree": "5172e8c2f14cc8b8c8fdba6f1d676f592a36f6e9",
+        "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+        "rawReportSha256": "f6b7b7119bc15e82c5d9e94c39af6ec91f8f4b34d671799c09353b05b3a3f42d",
+        "status": -1073740771,
+        "windowsAfter": [],
+        "dirtyTextJournaled": false,
+        "diskSha256": {
+          "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+          "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+        },
+        "mainCloseIntercepted": true,
+        "auxiliarySelection": [
+          28,
+          26
+        ],
+        "caseCleanup": false,
+        "nativeConflictPreserved": false,
+        "buildHashes": {
+          "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+          "aotSha256": "c042be1c0d0735c5b5e07c32813025f5f806925da5196aa187a4068670c692ce",
+          "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127"
+        }
+      }
+    },
+    "linux": {
+      "clean": {
+        "tree": "5172e8c2f14cc8b8c8fdba6f1d676f592a36f6e9",
+        "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+        "rawReportSha256": "be2d8a2efc10203044b0140301efe2a01d5339ab0b661546f67c79768ddf6a0f",
+        "status": null,
+        "windowsAfter": [
+          "child-compact-sample.txt"
+        ],
+        "dirtyTextJournaled": false,
+        "diskSha256": {
+          "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+          "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+        },
+        "mainCloseIntercepted": true,
+        "auxiliarySelection": [
+          0,
+          0
+        ],
+        "caseCleanup": true,
+        "nativeConflictPreserved": false,
+        "buildHashes": {
+          "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+          "aotSha256": "200b68bd3a20a3ce22095abf40b1296cb580376bae8514847efce726cca5ffd8",
+          "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0"
+        }
+      },
+      "dirty": {
+        "tree": "5172e8c2f14cc8b8c8fdba6f1d676f592a36f6e9",
+        "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+        "rawReportSha256": "2467f2d049b7fca4a207a26dd32ed4d3f72ec9357f50798fa9f323495472a0b6",
+        "status": null,
+        "windowsAfter": [
+          "child-compact-sample.txt"
+        ],
+        "dirtyTextJournaled": false,
+        "diskSha256": {
+          "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+          "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+        },
+        "mainCloseIntercepted": true,
+        "auxiliarySelection": [
+          28,
+          26
+        ],
+        "caseCleanup": true,
+        "nativeConflictPreserved": false,
+        "buildHashes": {
+          "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+          "aotSha256": "200b68bd3a20a3ce22095abf40b1296cb580376bae8514847efce726cca5ffd8",
+          "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0"
+        }
+      }
+    }
+  },
+  "windows": {
+    "clean": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "716b043d6a1d916ea9b14386dbb2d618b1d24501beec6be6b164dbe09719a1a1",
+      "status": 0,
+      "windowsAfter": [],
+      "dirtyTextJournaled": false,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        0,
+        0
+      ],
+      "caseCleanup": false,
+      "nativeConflictPreserved": false,
+      "buildHashes": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "07a8c397e9fb4a4a9a812b18ad085378f266ad709f9559c1cb87176b51de95f9",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127"
+      }
+    },
+    "dirty": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "453519a3c6b57c7eae18666d7f4d112b2cd84286fb98b71077e4626fb26753dc",
+      "status": 0,
+      "windowsAfter": [],
+      "dirtyTextJournaled": true,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        28,
+        26
+      ],
+      "caseCleanup": false,
+      "nativeConflictPreserved": false,
+      "buildHashes": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "07a8c397e9fb4a4a9a812b18ad085378f266ad709f9559c1cb87176b51de95f9",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127"
+      }
+    },
+    "conflict": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "5258bfbb7fc0b37adafba5778fa35c9ee6676de05c8e3e9d0b162ea88943a771",
+      "status": null,
+      "windowsAfter": [
+        "FLUTTER_MULTI_WINDOW_WIN32_WINDOW",
+        "FLUTTER_RUNNER_WIN32_WINDOW"
+      ],
+      "dirtyTextJournaled": false,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        28,
+        26
+      ],
+      "caseCleanup": true,
+      "nativeConflictPreserved": true,
+      "buildHashes": {
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "07a8c397e9fb4a4a9a812b18ad085378f266ad709f9559c1cb87176b51de95f9",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127"
+      }
+    }
+  },
+  "linux": {
+    "clean": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "34b3f0ba4fc3f1860aea9608d69fbb614e938cc868e6484de20a28eec9014975",
+      "status": 0,
+      "windowsAfter": [],
+      "dirtyTextJournaled": false,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        0,
+        0
+      ],
+      "caseCleanup": false,
+      "nativeConflictPreserved": false,
+      "buildHashes": {
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "2f7e5e089b299f669204869f0d2388d2b9ae1de826ccf7e6df06a171c21b073d",
+        "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0"
+      }
+    },
+    "dirty": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "e03a5fec9891b379acfc446e31ba9a757113d50d2d56fcef4950dcb10cb11a3e",
+      "status": 0,
+      "windowsAfter": [],
+      "dirtyTextJournaled": true,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        28,
+        26
+      ],
+      "caseCleanup": false,
+      "nativeConflictPreserved": false,
+      "buildHashes": {
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "2f7e5e089b299f669204869f0d2388d2b9ae1de826ccf7e6df06a171c21b073d",
+        "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0"
+      }
+    },
+    "conflict": {
+      "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+      "fixtureSha256": "2f8a046b78662649ee700f6f56e576cd17beff3b1f38f9319f6820ff5c347741",
+      "rawReportSha256": "1c07cdbeb067cefd7a8f47d9db00dd542c0a0b424775886d462513edf0c96918",
+      "status": null,
+      "windowsAfter": [
+        "main",
+        "child-compact-sample.txt"
+      ],
+      "dirtyTextJournaled": false,
+      "diskSha256": {
+        "compact-sample.txt": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+        "destination.txt": "8daf6f743f662341f45b47eeacd9a47da2bb7992f50bb700eff67337479c31c8"
+      },
+      "mainCloseIntercepted": true,
+      "auxiliarySelection": [
+        28,
+        26
+      ],
+      "caseCleanup": true,
+      "nativeConflictPreserved": true,
+      "buildHashes": {
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "2f7e5e089b299f669204869f0d2388d2b9ae1de826ccf7e6df06a171c21b073d",
+        "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0"
+      }
+    }
+  }
+}

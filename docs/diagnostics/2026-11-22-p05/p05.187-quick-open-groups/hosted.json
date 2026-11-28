@@ -1,0 +1,134 @@
+{
+  "capturedAt": "2026-11-22T08:15:37.686834+00:00",
+  "product": "1b9a4f04e39b074db6f3f04a5f1a6743b797c45e",
+  "tree": "29c721fc4ccade8d857d8839f355546b086bc2bb",
+  "ci": {
+    "conclusion": "success",
+    "databaseId": 45000995564,
+    "headSha": "1b9a4f04e39b074db6f3f04a5f1a6743b797c45e",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45000995564",
+    "jobs": [
+      {
+        "databaseId": 137142259091,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:16Z",
+        "completedAt": "2026-11-22T08:14:05Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137142259130,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:16Z",
+        "completedAt": "2026-11-22T08:03:24Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137142259152,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:16Z",
+        "completedAt": "2026-11-22T08:03:53Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137142259224,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:16Z",
+        "completedAt": "2026-11-22T08:05:08Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "platform": {
+    "conclusion": "",
+    "databaseId": 45000992796,
+    "headSha": "1b9a4f04e39b074db6f3f04a5f1a6743b797c45e",
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45000992796",
+    "jobs": [
+      {
+        "databaseId": 137142250491,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "conclusion": "",
+        "startedAt": "2026-11-22T08:03:14Z",
+        "completedAt": "0001-01-01T00:00:00Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137142250707,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:14Z",
+        "completedAt": "2026-11-22T08:07:37Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137142250804,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T08:03:14Z",
+        "completedAt": "2026-11-22T08:15:03Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "p05.186Evidence": {
+    "conclusion": "success",
+    "databaseId": 44999213073,
+    "headSha": "e7f8fdb6a31fc2094fc2414358d6dd2daae30568",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44999213073",
+    "jobs": [
+      {
+        "databaseId": 137136816625,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T07:39:24Z",
+        "completedAt": "2026-11-22T07:39:31Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137136816809,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T07:39:24Z",
+        "completedAt": "2026-11-22T07:40:01Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137136816845,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T07:39:25Z",
+        "completedAt": "2026-11-22T07:51:16Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137136816854,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T07:39:24Z",
+        "completedAt": "2026-11-22T07:41:14Z",
+        "failedSteps": []
+      }
+    ]
+  }
+}

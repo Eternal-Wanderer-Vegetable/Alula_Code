@@ -1,0 +1,1647 @@
+{
+  "product": "0db66fd9896a03c9450c5e455ee648381500eafb",
+  "tree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+  "fixtureSha256": "49129d3c27b6e40c50a0f9659f1ffe52a603a93b4d076c0651b02ab6391bb113",
+  "reference": {
+    "normal": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "default editor group split toolbar and Alt alternative",
+      "normalBounds": [
+        417,
+        176,
+        1635,
+        986
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "initial": [
+        {
+          "bounds": [
+            52.79999923706055,
+            35.79999923706055,
+            850.4000244140625,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "normalSplit": [
+        {
+          "bounds": [
+            52.79999923706055,
+            35.79999923706055,
+            425,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            477.8000183105469,
+            35.79999923706055,
+            425.3999938964844,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "focusedAfterRightTabClick": 477.8000183105469,
+      "altSplitActiveGroup": [
+        {
+          "bounds": [
+            52.79999923706055,
+            35.79999923706055,
+            425,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            477.8000183105469,
+            35.79999923706055,
+            425.3999938964844,
+            367
+          ],
+          "classes": "editor-group-container max-height-478px inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            477.8000183105469,
+            402.8000183105469,
+            425.3999938964844,
+            368.3999938964844
+          ],
+          "classes": "editor-group-container max-height-478px active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "zen": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "default editor group split toolbar and Alt alternative",
+      "normalBounds": [
+        417,
+        176,
+        1635,
+        986
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "initial": [
+        {
+          "bounds": [
+            52.79999923706055,
+            35.79999923706055,
+            850.4000244140625,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "normalSplit": [
+        {
+          "bounds": [
+            52.79999923706055,
+            35.79999923706055,
+            425,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            477.8000183105469,
+            35.79999923706055,
+            425.3999938964844,
+            735.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "focusedAfterRightTabClick": 477.8000183105469,
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zenBeforeAltSplit": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            1019,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            1023.7999877929688,
+            35.79999923706055,
+            1019.4000244140625,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "altSplitActiveGroup": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            1019,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            1023.7999877929688,
+            35.79999923706055,
+            1019.4000244140625,
+            555
+          ],
+          "classes": "editor-group-container inactive",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "More Actions..."
+          ]
+        },
+        {
+          "bounds": [
+            1023.7999877929688,
+            590.7999877929688,
+            1019.4000244140625,
+            556.4000244140625
+          ],
+          "classes": "editor-group-container active",
+          "documentTab": "status-sample.txt",
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        }
+      ],
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "baselineProduct": "7c90d0b718d8ac4a25dc3aa2f18b6591a384d73c",
+  "baseline": {
+    "sourceTree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+    "build": {
+      "abi": 51,
+      "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+      "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+      "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+      "tree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+      "fixtureSha256": "37a4ec7f3bbc7cf5bbc3e03de3d0c30edc42fa297db3a7e7a4ef40c198c069ca",
+      "aotSha256": "9720a2153a2d07d806393a19817272fdbfdad45a2e9cb954e938064db846de09"
+    },
+    "cases": {
+      "one": {
+        "case": "one",
+        "normal": {
+          "fullscreen": false,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            328.48,
+            35.0,
+            875.5200000000001,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1102.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1134.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "校验一致性",
+              "enabled": true,
+              "bounds": [
+                1166.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": []
+        },
+        "zen": {
+          "fullscreen": true,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            474.0,
+            35.0,
+            1100.0,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1440.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1472.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1504.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "校验一致性",
+              "enabled": true,
+              "bounds": [
+                1536.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": []
+        },
+        "exit": {
+          "fullscreen": false,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            328.48,
+            35.0,
+            875.5200000000001,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1102.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1134.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "校验一致性",
+              "enabled": true,
+              "bounds": [
+                1166.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": []
+        },
+        "exitCode": 0,
+        "diskBytesStable": true
+      },
+      "two": {
+        "case": "two",
+        "normal": {
+          "fullscreen": false,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            328.48,
+            35.0,
+            875.5200000000001,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1102.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1134.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "显示编辑器（最近使用）与校验一致性",
+              "enabled": true,
+              "bounds": [
+                1166.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": [
+            "two.txt",
+            "one.txt",
+            "校验一致性"
+          ]
+        },
+        "zen": {
+          "fullscreen": true,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            474.0,
+            35.0,
+            1100.0,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1440.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1472.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1504.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "显示编辑器（最近使用）与校验一致性",
+              "enabled": true,
+              "bounds": [
+                1536.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": [
+            "two.txt",
+            "one.txt",
+            "校验一致性"
+          ]
+        },
+        "exit": {
+          "fullscreen": false,
+          "devicePixelRatio": 1.25,
+          "strip": [
+            328.48,
+            35.0,
+            875.5200000000001,
+            36.0
+          ],
+          "actions": [
+            {
+              "label": "拆分编辑器",
+              "enabled": true,
+              "bounds": [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "启动 LSP",
+              "enabled": true,
+              "bounds": [
+                1102.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "补全    Ctrl+Space",
+              "enabled": false,
+              "bounds": [
+                1134.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            },
+            {
+              "label": "显示编辑器（最近使用）与校验一致性",
+              "enabled": true,
+              "bounds": [
+                1166.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            }
+          ],
+          "menu": [
+            "two.txt",
+            "one.txt",
+            "校验一致性"
+          ]
+        },
+        "exitCode": 0,
+        "diskBytesStable": true
+      }
+    },
+    "testDesktop": "inactive WinSta0",
+    "noOsKeyboardOrPointerEvents": true,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+      "build": {
+        "tree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "aotSha256": "3c11f4dfeae541cff5a37ac6c629285e567babd1b95a370463f9f4259a068e81",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "fixtureSha256": "49129d3c27b6e40c50a0f9659f1ffe52a603a93b4d076c0651b02ab6391bb113",
+        "abi": 51
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "owned Win32 keyboard messages and rendered button callback",
+      "before": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              328.48,
+              35.0,
+              875.5200000000001,
+              36.0
+            ],
+            "buttons": [
+              [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ]
+      },
+      "normalSplit": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "buttons": [
+              [
+                1070.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ]
+      },
+      "zenBeforeAlt": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              474.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              1026.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1440.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ]
+      },
+      "nativeFullscreen": {
+        "hwndBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "alternateHeld": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              474.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              1026.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1440.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": true,
+        "pointers": [],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ]
+      },
+      "altZenSplit": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              474.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              1026.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              1026.0,
+              595.5,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1440.0,
+                595.5,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": true,
+        "pointers": [],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ]
+      },
+      "altReleased": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              474.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              1026.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              1026.0,
+              595.5,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1440.0,
+                595.5,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ]
+      },
+      "restored": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              768.24,
+              405.9,
+              435.76000000000005,
+              36.0
+            ],
+            "buttons": [
+              [
+                1070.0,
+                405.9,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.25
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+      "display": "isolated Xvfb with Xfwm4",
+      "windowManagerAltPointerMove": "None",
+      "transport": "X11 Alt key and pointer events",
+      "fixtureSha256": "49129d3c27b6e40c50a0f9659f1ffe52a603a93b4d076c0651b02ab6391bb113",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "39fae38b7446865e3355e38870868f6622709cd3e1d7469736ab90c1c564b16f",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "before": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              885.4,
+              36.0
+            ],
+            "buttons": [
+              [
+                1083.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": false,
+        "pointers": [],
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ]
+      },
+      "normalSplit": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "buttons": [
+              [
+                1083.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": false,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ]
+      },
+      "zenBeforeAlt": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              410.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              962.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1376.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": false,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ]
+      },
+      "nativeFullscreen": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "alternateHeld": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              410.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              962.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1376.0,
+                35.0,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": true,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ]
+      },
+      "altZenSplit": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              410.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              962.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              962.0,
+              499.50000000000006,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1376.0,
+                499.50000000000006,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": true,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ]
+      },
+      "altReleased": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              410.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              962.0,
+              35.0,
+              548.0,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              962.0,
+              499.50000000000006,
+              548.0,
+              36.0
+            ],
+            "buttons": [
+              [
+                1376.0,
+                499.50000000000006,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": false,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ]
+      },
+      "restored": {
+        "groups": [
+          {
+            "id": "editor-tab-strip-editor",
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-2",
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "buttons": [],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          },
+          {
+            "id": "editor-tab-strip-editor-3",
+            "bounds": [
+              776.3,
+              409.5,
+              440.7,
+              36.0
+            ],
+            "buttons": [
+              [
+                1083.0,
+                409.5,
+                32.0,
+                32.0
+              ]
+            ],
+            "labels": [
+              "one.txt"
+            ],
+            "dpr": 1.0
+          }
+        ],
+        "altPressed": false,
+        "pointers": [
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1099.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerHoverEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          },
+          {
+            "type": "_TransformedPointerDownEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 1
+          },
+          {
+            "type": "_TransformedPointerUpEvent",
+            "position": [
+              1392.0,
+              51.0
+            ],
+            "buttons": 0
+          }
+        ],
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "5d0ff0783a0cf5467c58ebb114c8d29babafc50e",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "app/lib/workbench/workbench_page.dart"
+    ]
+  },
+  "windowsInactivePointerAttempt": {
+    "deliveredFlutterPointerEvents": 0,
+    "observedSplit": false
+  },
+  "windowsPhysicalPointer": "unverified"
+}

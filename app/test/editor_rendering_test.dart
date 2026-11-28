@@ -76,6 +76,48 @@ void main() {
         resolved[1].range, const TextSelection(baseOffset: 5, extentOffset: 8));
   });
 
+  test('gutter painting stays inside its viewport and restores canvas state',
+      () async {
+    const shell = Color(0xFF1B1E24);
+    const gutter = Color(0xFF191B20);
+    const marker = Color(0xFFFFC107);
+    const width = 80;
+    const height = 64;
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.drawColor(shell, BlendMode.src);
+    canvas.save();
+    canvas.translate(20, 16);
+    EditorGutterPainter(
+      text: 'first line',
+      firstLineNumber: 0,
+      style: const TextStyle(fontSize: 14),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
+      padding: EdgeInsets.zero,
+      textWidth: 200,
+      scrollController: null,
+      backgroundColor: gutter,
+      foregroundColor: Colors.white,
+      dividerColor: Colors.grey,
+    ).paint(canvas, const Size(28, 32));
+    canvas.drawRect(const Rect.fromLTWH(36, 4, 3, 3), Paint()..color = marker);
+    canvas.restore();
+
+    final picture = recorder.endRecording();
+    addTearDown(picture.dispose);
+    final image = await picture.toImage(width, height);
+    addTearDown(image.dispose);
+    final bytes =
+        (await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba))!;
+    int pixel(int x, int y) => bytes.getUint32((y * width + x) * 4);
+
+    expect(pixel(5, 5), 0x1B1E24FF);
+    expect(pixel(24, 40), 0x191B20FF);
+    expect(pixel(53, 40), 0x1B1E24FF);
+    expect(pixel(57, 21), 0xFFC107FF);
+  });
+
   test('range decoration painter draws background and underline at text bounds',
       () async {
     const text = 'abcdef';
@@ -335,6 +377,129 @@ void main() {
         isTrue,
       );
       expect(tester.takeException(), isNull);
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+  testWidgets(
+    'outlined editor text starts at the gutter top inset at any viewport height',
+    (tester) async {
+      final document = _bootstrap.core!.openDoc(
+        9790,
+        'fn main() {\n  // 中文 🦊\n  let value = 7;\n}\n',
+      );
+      final window = RustTextInputWindow.open(
+        document,
+        startUtf16: 0,
+        maxWindowUtf16: 128,
+      );
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        document.close();
+      });
+
+      for (final height in [180.0, 300.0, 520.0]) {
+        await tester.pumpWidget(MaterialApp(
+          theme: ThemeData(visualDensity: VisualDensity.compact),
+          home: Scaffold(
+            body: SizedBox(
+              width: 500,
+              height: height,
+              child: RustTextInputField(
+                inputWindow: window,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(12),
+                ),
+              ),
+            ),
+          ),
+        ));
+        final edit = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        ).renderEditable;
+        final gutter = find.byKey(const ValueKey('rust-editor-gutter'));
+        expect(
+          edit.localToGlobal(Offset.zero).dy - tester.getTopLeft(gutter).dy,
+          closeTo(12, 0.01),
+          reason: 'viewport height $height',
+        );
+      }
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+
+  testWidgets(
+    'gutter shares the editable row layout in a deeply scrolled CRLF file',
+    (tester) async {
+      final rows = List.generate(12500, (index) {
+        final line = index + 1;
+        final label = line.toString().padLeft(5, '0');
+        return '$label row text${line % 4 == 0 ? ' 中文 😀' : ''}';
+      });
+      final source = '\ufeff${rows.join('\r\n')}\r\n';
+      final doc = _bootstrap.core!.openDoc(9791, source);
+      final absoluteStart = doc.lineOffset(6599).offsetUtf16;
+      final window = RustTextInputWindow.openAround(
+        doc,
+        selectionUtf16: absoluteStart + 3,
+      );
+      final scroll = ScrollController();
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        scroll.dispose();
+        doc.close();
+      });
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 500,
+            height: 340,
+            child: RustTextInputField(
+              inputWindow: window,
+              scrollController: scroll,
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 15,
+                height: 1.4,
+              ),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.all(12),
+              ),
+            ),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+      expect(window.startUtf16, greaterThan(0));
+      final localStart = absoluteStart - window.startUtf16;
+      expect(window.text.startsWith('06600 row text', localStart), isTrue);
+      final localRow = editorLogicalLines(window.text)
+          .indexWhere((line) => line.startUtf16 == localStart);
+      expect(localRow, greaterThan(0));
+      scroll.jumpTo(scroll.position.maxScrollExtent * 0.5);
+      await tester.pumpAndSettle();
+
+      final gutter = tester
+          .widget<CustomPaint>(find.byWidgetPredicate(
+            (widget) =>
+                widget is CustomPaint && widget.painter is EditorGutterPainter,
+          ))
+          .painter! as EditorGutterPainter;
+      final editable = tester
+          .state<EditableTextState>(find.byType(EditableText))
+          .renderEditable;
+      expect(gutter.firstLineNumber + localRow + 1, 6600);
+      expect(gutter.strutStyle, editable.strutStyle);
+      expect(gutter.strutStyle?.forceStrutHeight, isTrue);
+      expect(doc.resync().content, source);
     },
     skip: _bootstrap.skip != null,
   );

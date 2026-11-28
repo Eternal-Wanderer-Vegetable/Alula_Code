@@ -1,0 +1,761 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "mode": "compact",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "bd76ac30358581aff175283b66353be4d41a986a",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "c426d0f94421ad3a67683784ab6aa721b98247e125c3c9e30c218b92e8bc4d8f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "5236d6268c12b361e0b963258bf7808fe49bbb7871ebcabe1622e6cff363a62f",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "30bc2fe937ed9c140cdd8fd8957180a471c30e2689f688c228f8d7188de3c6f4",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "138aa816c1a1469e474a6f5040f7a1b8b5e562f0ac120942246c90e6cc749177",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "d82112ff104e530bf107f491e2ec87f8770b3b81c500602cb5a3b3579c1709ec"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "9cfa6e321eacac2d577833e98d8398765117c5eb48a728b9b18674e1bba72a37",
+  "fixtureSha256": "d82112ff104e530bf107f491e2ec87f8770b3b81c500602cb5a3b3579c1709ec",
+  "trace": {
+    "wide-left": {
+      "request": "wide-left",
+      "boxes": {
+        "dock": [
+          48.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "tab-10": [
+          48.0,
+          40.0,
+          76.0,
+          66.0
+        ],
+        "tab-11": [
+          76.0,
+          40.0,
+          104.0,
+          66.0
+        ],
+        "tab-12": [
+          104.0,
+          40.0,
+          132.0,
+          66.0
+        ],
+        "tab-13": [
+          132.0,
+          40.0,
+          160.0,
+          66.0
+        ],
+        "tab-14": [
+          160.0,
+          40.0,
+          188.0,
+          66.0
+        ],
+        "tab-15": [
+          188.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "viewport": [
+          216.0,
+          42.0,
+          989.2,
+          64.0
+        ],
+        "tab-16": [
+          216.0,
+          42.0,
+          394.265625,
+          64.0
+        ],
+        "16": [
+          250.0,
+          45.5,
+          355.515625,
+          62.5
+        ],
+        "tab-17": [
+          394.265625,
+          42.0,
+          572.53125,
+          64.0
+        ],
+        "17": [
+          428.265625,
+          45.5,
+          533.78125,
+          62.5
+        ],
+        "tab-18": [
+          572.53125,
+          42.0,
+          750.796875,
+          64.0
+        ],
+        "18": [
+          606.53125,
+          45.5,
+          712.046875,
+          62.5
+        ],
+        "tab-19": [
+          750.796875,
+          42.0,
+          929.0625,
+          64.0
+        ],
+        "19": [
+          784.796875,
+          45.5,
+          890.3125,
+          62.5
+        ],
+        "tab-20": [
+          929.0625,
+          42.0,
+          1107.328125,
+          64.0
+        ],
+        "20": [
+          963.0625,
+          45.5,
+          1068.578125,
+          62.5
+        ],
+        "tab-21": [
+          1107.328125,
+          42.0,
+          1285.59375,
+          64.0
+        ],
+        "21": [
+          1141.328125,
+          45.5,
+          1246.84375,
+          62.5
+        ],
+        "tab-22": [
+          1285.59375,
+          42.0,
+          1463.859375,
+          64.0
+        ],
+        "22": [
+          1319.59375,
+          45.5,
+          1425.109375,
+          62.5
+        ],
+        "tab-23": [
+          1463.859375,
+          42.0,
+          1642.125,
+          64.0
+        ],
+        "23": [
+          1497.859375,
+          45.5,
+          1603.375,
+          62.5
+        ]
+      },
+      "selected": [
+        15
+      ],
+      "labels": {
+        "16": "scroll_fixture_07.txt",
+        "17": "scroll_fixture_08.txt",
+        "18": "scroll_fixture_09.txt",
+        "19": "scroll_fixture_10.txt",
+        "20": "scroll_fixture_11.txt",
+        "21": "scroll_fixture_12.txt",
+        "22": "scroll_fixture_13.txt",
+        "23": "scroll_fixture_14.txt"
+      },
+      "wrap": false,
+      "pinnedSizing": "compact",
+      "separateRows": false,
+      "actions": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "semantics": {
+        "10": "scroll_fixture_01.txt\uff0c\u5df2\u56fa\u5b9a",
+        "11": "scroll_fixture_02.txt\uff0c\u5df2\u56fa\u5b9a",
+        "12": "scroll_fixture_03.txt\uff0c\u5df2\u56fa\u5b9a",
+        "13": "scroll_fixture_04.txt\uff0c\u5df2\u56fa\u5b9a",
+        "14": "scroll_fixture_05.txt\uff0c\u5df2\u56fa\u5b9a",
+        "15": "scroll_fixture_06.txt\uff0c\u5df2\u56fa\u5b9a",
+        "16": null,
+        "17": null,
+        "18": null,
+        "19": null,
+        "20": null,
+        "21": null,
+        "22": null,
+        "23": null
+      },
+      "active": 15,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "sticky": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "view": {
+        "id": 15,
+        "focusNode": 170510821,
+        "inputWindow": 452479313,
+        "focused": false
+      }
+    },
+    "wide-scroll": {
+      "request": "wide-scroll",
+      "boxes": {
+        "dock": [
+          48.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "tab-10": [
+          48.0,
+          40.0,
+          76.0,
+          66.0
+        ],
+        "tab-11": [
+          76.0,
+          40.0,
+          104.0,
+          66.0
+        ],
+        "tab-12": [
+          104.0,
+          40.0,
+          132.0,
+          66.0
+        ],
+        "tab-13": [
+          132.0,
+          40.0,
+          160.0,
+          66.0
+        ],
+        "tab-14": [
+          160.0,
+          40.0,
+          188.0,
+          66.0
+        ],
+        "tab-15": [
+          188.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "viewport": [
+          216.0,
+          42.0,
+          989.2,
+          64.0
+        ],
+        "tab-16": [
+          -104.0,
+          42.0,
+          74.265625,
+          64.0
+        ],
+        "16": [
+          -70.0,
+          45.5,
+          35.515625,
+          62.5
+        ],
+        "tab-17": [
+          74.265625,
+          42.0,
+          252.53125,
+          64.0
+        ],
+        "17": [
+          108.265625,
+          45.5,
+          213.78125,
+          62.5
+        ],
+        "tab-18": [
+          252.53125,
+          42.0,
+          430.796875,
+          64.0
+        ],
+        "18": [
+          286.53125,
+          45.5,
+          392.046875,
+          62.5
+        ],
+        "tab-19": [
+          430.796875,
+          42.0,
+          609.0625,
+          64.0
+        ],
+        "19": [
+          464.796875,
+          45.5,
+          570.3125,
+          62.5
+        ],
+        "tab-20": [
+          609.0625,
+          42.0,
+          787.328125,
+          64.0
+        ],
+        "20": [
+          643.0625,
+          45.5,
+          748.578125,
+          62.5
+        ],
+        "tab-21": [
+          787.328125,
+          42.0,
+          965.59375,
+          64.0
+        ],
+        "21": [
+          821.328125,
+          45.5,
+          926.84375,
+          62.5
+        ],
+        "tab-22": [
+          965.59375,
+          42.0,
+          1143.859375,
+          64.0
+        ],
+        "22": [
+          999.59375,
+          45.5,
+          1105.109375,
+          62.5
+        ],
+        "tab-23": [
+          1143.859375,
+          42.0,
+          1322.125,
+          64.0
+        ],
+        "23": [
+          1177.859375,
+          45.5,
+          1283.375,
+          62.5
+        ]
+      },
+      "selected": [
+        15
+      ],
+      "labels": {
+        "16": "scroll_fixture_07.txt",
+        "17": "scroll_fixture_08.txt",
+        "18": "scroll_fixture_09.txt",
+        "19": "scroll_fixture_10.txt",
+        "20": "scroll_fixture_11.txt",
+        "21": "scroll_fixture_12.txt",
+        "22": "scroll_fixture_13.txt",
+        "23": "scroll_fixture_14.txt"
+      },
+      "wrap": false,
+      "pinnedSizing": "compact",
+      "separateRows": false,
+      "actions": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "semantics": {
+        "10": "scroll_fixture_01.txt\uff0c\u5df2\u56fa\u5b9a",
+        "11": "scroll_fixture_02.txt\uff0c\u5df2\u56fa\u5b9a",
+        "12": "scroll_fixture_03.txt\uff0c\u5df2\u56fa\u5b9a",
+        "13": "scroll_fixture_04.txt\uff0c\u5df2\u56fa\u5b9a",
+        "14": "scroll_fixture_05.txt\uff0c\u5df2\u56fa\u5b9a",
+        "15": "scroll_fixture_06.txt\uff0c\u5df2\u56fa\u5b9a",
+        "16": null,
+        "17": null,
+        "18": null,
+        "19": null,
+        "20": null,
+        "21": null,
+        "22": null,
+        "23": null
+      },
+      "active": 15,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "sticky": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "view": {
+        "id": 15,
+        "focusNode": 170510821,
+        "inputWindow": 452479313,
+        "focused": false
+      }
+    },
+    "dock-hit": {
+      "request": "dock-hit",
+      "boxes": {
+        "dock": [
+          48.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "tab-10": [
+          48.0,
+          40.0,
+          76.0,
+          66.0
+        ],
+        "tab-11": [
+          76.0,
+          40.0,
+          104.0,
+          66.0
+        ],
+        "tab-12": [
+          104.0,
+          40.0,
+          132.0,
+          66.0
+        ],
+        "tab-13": [
+          132.0,
+          40.0,
+          160.0,
+          66.0
+        ],
+        "tab-14": [
+          160.0,
+          40.0,
+          188.0,
+          66.0
+        ],
+        "tab-15": [
+          188.0,
+          40.0,
+          216.0,
+          66.0
+        ],
+        "viewport": [
+          216.0,
+          42.0,
+          989.2,
+          64.0
+        ],
+        "tab-16": [
+          -104.0,
+          42.0,
+          74.265625,
+          64.0
+        ],
+        "16": [
+          -70.0,
+          45.5,
+          35.515625,
+          62.5
+        ],
+        "tab-17": [
+          74.265625,
+          42.0,
+          252.53125,
+          64.0
+        ],
+        "17": [
+          108.265625,
+          45.5,
+          213.78125,
+          62.5
+        ],
+        "tab-18": [
+          252.53125,
+          42.0,
+          430.796875,
+          64.0
+        ],
+        "18": [
+          286.53125,
+          45.5,
+          392.046875,
+          62.5
+        ],
+        "tab-19": [
+          430.796875,
+          42.0,
+          609.0625,
+          64.0
+        ],
+        "19": [
+          464.796875,
+          45.5,
+          570.3125,
+          62.5
+        ],
+        "tab-20": [
+          609.0625,
+          42.0,
+          787.328125,
+          64.0
+        ],
+        "20": [
+          643.0625,
+          45.5,
+          748.578125,
+          62.5
+        ],
+        "tab-21": [
+          787.328125,
+          42.0,
+          965.59375,
+          64.0
+        ],
+        "21": [
+          821.328125,
+          45.5,
+          926.84375,
+          62.5
+        ],
+        "tab-22": [
+          965.59375,
+          42.0,
+          1143.859375,
+          64.0
+        ],
+        "22": [
+          999.59375,
+          45.5,
+          1105.109375,
+          62.5
+        ],
+        "tab-23": [
+          1143.859375,
+          42.0,
+          1322.125,
+          64.0
+        ],
+        "23": [
+          1177.859375,
+          45.5,
+          1283.375,
+          62.5
+        ]
+      },
+      "selected": [
+        11
+      ],
+      "labels": {
+        "16": "scroll_fixture_07.txt",
+        "17": "scroll_fixture_08.txt",
+        "18": "scroll_fixture_09.txt",
+        "19": "scroll_fixture_10.txt",
+        "20": "scroll_fixture_11.txt",
+        "21": "scroll_fixture_12.txt",
+        "22": "scroll_fixture_13.txt",
+        "23": "scroll_fixture_14.txt"
+      },
+      "wrap": false,
+      "pinnedSizing": "compact",
+      "separateRows": false,
+      "actions": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "semantics": {
+        "10": "scroll_fixture_01.txt\uff0c\u5df2\u56fa\u5b9a",
+        "11": "scroll_fixture_02.txt\uff0c\u5df2\u56fa\u5b9a",
+        "12": "scroll_fixture_03.txt\uff0c\u5df2\u56fa\u5b9a",
+        "13": "scroll_fixture_04.txt\uff0c\u5df2\u56fa\u5b9a",
+        "14": "scroll_fixture_05.txt\uff0c\u5df2\u56fa\u5b9a",
+        "15": "scroll_fixture_06.txt\uff0c\u5df2\u56fa\u5b9a",
+        "16": null,
+        "17": null,
+        "18": null,
+        "19": null,
+        "20": null,
+        "21": null,
+        "22": null,
+        "23": null
+      },
+      "active": 11,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "sticky": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "view": {
+        "id": 11,
+        "focusNode": 673516233,
+        "inputWindow": 590480988,
+        "focused": true
+      }
+    }
+  },
+  "screenshots": {
+    "wide": {
+      "name": "windows-pinned-tab-scroll-compact-wide.png",
+      "sha256": "2927ee3e765372d6dfc8de6af6378407661391be54f06de663962555f449f31f"
+    }
+  },
+  "memorySamples": {
+    "wide-left": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 296165376,
+          "pid": 49044,
+          "ppid": 60736,
+          "private": 294178816,
+          "pss": 294178816,
+          "working_set": 156717056
+        }
+      ],
+      "root_pid": 49044,
+      "total_private_bytes": 294178816,
+      "total_private_mib": 280.6,
+      "total_working_set_bytes": 156717056
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 304590848,
+          "pid": 49044,
+          "ppid": 60736,
+          "private": 233369600,
+          "pss": 233369600,
+          "working_set": 155631616
+        }
+      ],
+      "root_pid": 49044,
+      "total_private_bytes": 233369600,
+      "total_private_mib": 222.6,
+      "total_working_set_bytes": 155631616
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    1155.2,
+    672.8
+  ],
+  "results": {
+    "mode": "compact",
+    "checks": [
+      "wide-pinned-stationary",
+      "docked-tab-hits-with-scroll"
+    ],
+    "pinnedWidth": 28,
+    "activeTabAfterClick": 11
+  },
+  "checksPassed": true,
+  "exitCode": 0
+}

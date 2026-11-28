@@ -1,0 +1,41 @@
+{
+  "run_id": 44247766537,
+  "attempt": 1,
+  "sha": "d5c11f2637135425c0e30178ad4ce268e7554f74",
+  "workflow": "Platform Availability",
+  "status": "completed",
+  "conclusion": "success",
+  "observed_at": "20261118T062827Z",
+  "jobs": [
+    {
+      "id": 134610765349,
+      "name": "macOS build, launch smoke, and app package",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:03Z",
+      "completed_at": "2026-11-18T06:27:14Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134610765710,
+      "name": "Windows x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:03Z",
+      "completed_at": "2026-11-18T06:05:45Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134610765756,
+      "name": "Linux x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:03Z",
+      "completed_at": "2026-11-18T06:08:33Z",
+      "active_steps": [],
+      "failed_steps": []
+    }
+  ]
+}

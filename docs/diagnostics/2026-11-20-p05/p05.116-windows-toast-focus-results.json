@@ -1,0 +1,845 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "90a0059f1a02b7eb24ba200b723dfc5981d51189ed49ae428372101846c0f783",
+  "fixtureSha256": "ad6c7aa42dc0f870379396374eeee8134a50b86902cf3d65749410c48ee30fcf",
+  "observations": {
+    "before": {
+      "request": "before",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "command-focus-3": {
+      "request": "command-focus-3",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "top-boundary-3": {
+      "request": "top-boundary-3",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "down-middle-2": {
+      "request": "down-middle-2",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "down-oldest-1": {
+      "request": "down-oldest-1",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 1,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "bottom-boundary-1": {
+      "request": "bottom-boundary-1",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 1,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "home-newest-3": {
+      "request": "home-newest-3",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "end-oldest-1": {
+      "request": "end-oldest-1",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 1,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "pageup-newest-3": {
+      "request": "pageup-newest-3",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "pagedown-oldest-1": {
+      "request": "pagedown-oldest-1",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 1,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "up-middle-2": {
+      "request": "up-middle-2",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          512.8,
+          979.2,
+          548.8
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 3,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "delete-middle-to-oldest-1": {
+      "request": "delete-middle-to-oldest-1",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 1,
+      "toastIds": [
+        1,
+        3
+      ],
+      "items": [
+        3,
+        1
+      ]
+    },
+    "delete-oldest-to-newest-3": {
+      "request": "delete-oldest-to-newest-3",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [
+        3
+      ],
+      "items": [
+        3
+      ]
+    },
+    "after-last": {
+      "request": "after-last",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": []
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "focusedOutlinePixelComparison": {
+    "before": {
+      "logicalBounds": [
+        527.2,
+        512.8,
+        979.2,
+        548.8
+      ],
+      "topPhysicalScanRows": [
+        640,
+        641,
+        642,
+        643
+      ],
+      "dominantRgbAndCountByRow": [
+        [
+          [
+            15,
+            16,
+            19
+          ],
+          525
+        ],
+        [
+          [
+            58,
+            65,
+            80
+          ],
+          525
+        ],
+        [
+          [
+            40,
+            44,
+            55
+          ],
+          525
+        ],
+        [
+          [
+            37,
+            41,
+            50
+          ],
+          525
+        ]
+      ],
+      "captureSha256": "106471ce5f18e1a07d3293a128f55cf3e44244ec132a67482b2d13b173e2991c",
+      "aotSha256": "07922301328832ba7e0207e4351249166c8a4fdb9b10ef3c1c62d8f14ffb09a1"
+    },
+    "after": {
+      "logicalBounds": [
+        527.2,
+        512.8,
+        979.2,
+        548.8
+      ],
+      "topPhysicalScanRows": [
+        640,
+        641,
+        642,
+        643
+      ],
+      "dominantRgbAndCountByRow": [
+        [
+          [
+            15,
+            16,
+            19
+          ],
+          525
+        ],
+        [
+          [
+            208,
+            188,
+            255
+          ],
+          525
+        ],
+        [
+          [
+            92,
+            89,
+            117
+          ],
+          525
+        ],
+        [
+          [
+            37,
+            41,
+            50
+          ],
+          525
+        ]
+      ],
+      "captureSha256": "791ed32a6da6abf85186d155bc1b81c3e8d7c9b2655161229b9fe1064c0051e6",
+      "aotSha256": "90a0059f1a02b7eb24ba200b723dfc5981d51189ed49ae428372101846c0f783"
+    }
+  },
+  "productCommit": "bcb3dfb57f41d0f0f4ac22223a2d8827f4e3dbe4",
+  "fixtureBuildMethod": "Prior release scratch, with changed tracked product source files mirrored byte-for-byte after the scratch base.",
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/keybindings.dart": "e7eb6600eb1a1c54498a97df2c103de2ee77708b604974f4c59ac37a862cf0b4",
+    "app/lib/workbench/notification_widgets.dart": "75c036903a0d92d91471aefde6101a32c644ac33f8b8309910973eb44f5916a4",
+    "app/lib/workbench/notifications.dart": "f4b56f377b6c5f22ea6fde3fe0a6997b325aaf9acde64ce7099a6b5923133166",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "18cd1a291353557ad7d5874a5e97bdaa4128b3d84b10d928c323727128fd8162",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}

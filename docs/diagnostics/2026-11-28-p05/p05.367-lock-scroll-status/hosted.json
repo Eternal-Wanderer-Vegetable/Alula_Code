@@ -1,0 +1,185 @@
+{
+  "product": "2b22642ca802747f62a318850b0afd3869068abd",
+  "tree": "a036e95cd9133286457bc00415c85c32c24f0be8",
+  "ci": {
+    "id": 46094325305,
+    "sha": "2b22642ca802747f62a318850b0afd3869068abd",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46094325305",
+    "jobs": [
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140822103406,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140822103714,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140822103786,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140822103794,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46094322690,
+    "sha": "2b22642ca802747f62a318850b0afd3869068abd",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46094322690",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140822094785,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140822094953,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140822094955,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46092979179,
+    "sha": "97f7d5c100d6af504c5534b93a3d35868cb5fdc8",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46092979179",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140817906759,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140817906981,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140817907020,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140817907029,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46091525632,
+    "sha": "9ad4d7f01cc6557c0bf8dfdd0d7dae63272687ee",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46091525632",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140813303111,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140813303307,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140813303371,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 5,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "AlulaStatusBar": {
+      "target": {
+        "id": "Class:app/lib/workbench/status_bar.dart:AlulaStatusBar",
+        "name": "AlulaStatusBar",
+        "type": "Class",
+        "filePath": "app/lib/workbench/status_bar.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "0a86bcc00b7c73030189b050e9b61771c38af3d97af9816d364f3eed8e718686"
+    },
+    "build": {
+      "target": {
+        "id": "Method:app/lib/workbench/status_bar.dart:AlulaStatusBar.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/status_bar.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "a664c7664987d835a65c22adecc15f0ddf8d841210b62c87a1683258f27f8aec"
+    },
+    "main": {
+      "target": {
+        "id": "Function:app/test/locked_scrolling_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/locked_scrolling_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "4799a61128f7c289a3507f7ffd26f84af135e1406a216683d6534065eda35419"
+    }
+  }
+}

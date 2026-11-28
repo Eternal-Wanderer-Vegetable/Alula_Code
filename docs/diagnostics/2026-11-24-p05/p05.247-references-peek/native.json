@@ -1,0 +1,615 @@
+{
+  "product": "2844fde242e3e8cce1b4bbb577f67bc52526180c",
+  "tree": "43a10ad33e146e7c164b52c03095ed8127b02f58",
+  "abi": 43,
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "43a10ad33e146e7c164b52c03095ed8127b02f58",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "157a91690bef4b656b547128419649ee42ff7cea1968e1d878ff1aa4e0b482f0",
+      "app/lib/bridge/alula_ffi.dart": "d6cb93b858a9c3c4d605a38133a17f80fc4024925c094922ea82915b05b9fcc6",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/definition_peek.dart": "d2accbb34ac6747342a60a29f748896eacc8841637d228689f2f039f260130a5",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "0f7bda34c2e16f3019d9036e07bdc7d798f84234418e6725d46269ad09d04e6e",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "3ac5d3503b95b255131cbd71e13baae23b92c8114a0eaacae97598ee2381daa0",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "2d4a8abfa3753fccb1473776216532e37e96f44b326bf5f4e3e8437475fa1d29",
+      "crates/editor-core/src/ffi.rs": "62960b20395ea8d0d4f90019dfca337be3a6aa410421ebdf3b22f6b59ce09ac6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "113e72e8ac6328c64335411b5f438e8d76708c770f13de17cae9769c6b929512",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "acf446bd1cf10d8c7c57ce529798b49d939f0053c708ec186952b41505f344fd"
+    },
+    "rustProduct": "74fbfad8515dccb473ff15998c52113a5405af1f",
+    "nativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "fixtureSha256": "67a66fea060df3a67c9c6bdbb4425c83094b2fff153761ef5b2f7a828216c3d3"
+  },
+  "fixtureSha256": "67a66fea060df3a67c9c6bdbb4425c83094b2fff153761ef5b2f7a828216c3d3",
+  "acceptanceDriverSha256": "dbdf66ae0de6186860cda8dc6dc98420f006b09e3685e92b2cc2cfce413a5b6d",
+  "diskSha256": {
+    "src/lib.rs": "8f973fddfa06f18d33a823d20fd5b3ee106212bcc24c551582cfccba8088c3bd",
+    "src/consumer.rs": "3f69a9007587927b47fe8fce7b55b2f35dec98c2532de0e612fd212a75935f31",
+    "Cargo.toml": "44bfa5c59121a147a06e817efe9867c623d009bf5566452e5e7a7ac9ed85a880"
+  },
+  "localLogsSha256": {
+    "p05-247-workbench-bom-red.log": "ddd7c8db20ceaf67eb2feb810233a52fdf3012da978f3016775cb17485b3a3de",
+    "p05-247-linux-bom-red.log": "92daa30ba166aa41e43cc7ae0d5c82d34d511eb81c5140991c22e23b9910c9ab",
+    "p05-247-core.log": "b4b26eac2d789903fa4f5dfc7ac8ee2621a8793769176de12d4d483c20c6c75d",
+    "p05-247-analyze.log": "6acd4481ca75aa7bc39ff034d645d680d14b701b0081ff9b8e76bf5b8e9a0206",
+    "p05-247-workbench-nav.log": "ba5238f351c87110b19c47c893b35964960ce1176f7750569f339e9376c04ebc",
+    "p05-247-focused.log": "f162ecdbc4925d2c996a3fe845b963fe511d33fc9af1c84a56f40687793afcc7",
+    "p05-247-full.log": "c1aa5c603103db05b62f931f2202f91908e872a0773dbef72353c8fa5fa61bfb",
+    "p05-247-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-247-linux-native.log": "69d0564c86d0348bd7d890619066a520b802f76da81ed592244eb277472e4c4b",
+    "windows-build.log": "2ad0a795721b142e70f4f447b81e7dc67dc8f6ddeff6297fe1eb6259c1933202"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 29,
+      "affected_count": 1,
+      "changed_files": 7,
+      "risk_level": "medium",
+      "sha256": "efcf201cb99c9e9fdb843bdb9e030042fcd864c7783e276e124d626b5e312fa1"
+    },
+    "staged": {
+      "changed_count": 29,
+      "affected_count": 1,
+      "changed_files": 7,
+      "risk_level": "medium",
+      "sha256": "efcf201cb99c9e9fdb843bdb9e030042fcd864c7783e276e124d626b5e312fa1"
+    }
+  },
+  "linuxMemory": {
+    "ready": {
+      "mainPrivateMiB": 240.0,
+      "treePrivateMiB": 240.0,
+      "processCount": 1
+    },
+    "many-peek": {
+      "mainPrivateMiB": 250.4,
+      "treePrivateMiB": 831.2,
+      "processCount": 4
+    },
+    "many-target-selection": {
+      "mainPrivateMiB": 253.0,
+      "treePrivateMiB": 833.8,
+      "processCount": 4
+    },
+    "many-opened": {
+      "mainPrivateMiB": 249.6,
+      "treePrivateMiB": 830.4,
+      "processCount": 4
+    },
+    "single-go": {
+      "mainPrivateMiB": 245.7,
+      "treePrivateMiB": 826.6,
+      "processCount": 4
+    }
+  },
+  "linuxBomReproduction": {
+    "tree": "5829d6d2cfa8b35616b38e1550f6c0d488ccb912",
+    "reportSha256": "69b8ca474d0be4e679cf681ae6170f7a018904df8fa84be77940de7f8d8ba2ce",
+    "rawColumn": 47,
+    "oldHighlight": "ef_many(",
+    "normalizedColumn": 46,
+    "repairedHighlight": "ref_many"
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "reportSha256": "08ca9650216f36c56e72d7b5577dd5e94229daec020d969f49c5c6cdbf251d2d",
+    "observations": 15,
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "aotSha256": "50faa499cff0c6c423118b7074eedf3d1797748654751f39f2a32383b64916b4",
+    "runnerSha256": "f9592d960cde6cf0caf09733044fba2ba4cde1e7898305868a24b8785d58f699",
+    "explicitCommand": {
+      "id": "editor.action.referenceSearch.trigger",
+      "fixtureShortcut": "ctrl+shift+F12"
+    },
+    "referenceNavigation": {
+      "provider-many": [
+        [
+          "consumer.rs",
+          0,
+          47
+        ],
+        [
+          "lib.rs",
+          3,
+          43
+        ],
+        [
+          "lib.rs",
+          1,
+          7
+        ]
+      ],
+      "provider-single": [
+        [
+          "consumer.rs",
+          1,
+          37
+        ],
+        [
+          "lib.rs",
+          2,
+          7
+        ]
+      ],
+      "many-peek": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-escape": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "many-reopen": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-target-selection": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-opened": {
+        "selection": [
+          46,
+          46
+        ],
+        "editorFocused": true,
+        "shortcut": "Return"
+      },
+      "many-back": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "explicit-peek": {
+        "title": "引用 (2)",
+        "rows": [
+          "consumer.rs:2",
+          "lib.rs:3"
+        ],
+        "selected": "consumer.rs:2",
+        "highlighted": [
+          "ref_once"
+        ]
+      },
+      "explicit-escape": {
+        "selection": [
+          54,
+          54
+        ],
+        "editorFocused": true
+      },
+      "single-go": {
+        "selection": [
+          96,
+          96
+        ],
+        "editorFocused": true,
+        "shortcut": "shift+F12"
+      },
+      "single-back": {
+        "selection": [
+          54,
+          54
+        ],
+        "editorFocused": true
+      }
+    },
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      }
+    ]
+  },
+  "linux": {
+    "reportSha256": "b4c6394fd6ac9a9cf49cb1b8ca944be3d9d57289060cf3dfedee91682b9a72de",
+    "observations": 15,
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "aotSha256": "2242f2319395227f45d25f1529cc47e1045ac66959f636b5abe5d16716e688eb",
+    "runnerSha256": "4007c6b1191a1e64acb9de9891e69f4bfd27f734015df894a49f2580d10c01f0",
+    "explicitCommand": {
+      "id": "editor.action.referenceSearch.trigger",
+      "fixtureShortcut": "ctrl+shift+F12"
+    },
+    "referenceNavigation": {
+      "provider-many": [
+        [
+          "consumer.rs",
+          0,
+          47
+        ],
+        [
+          "lib.rs",
+          3,
+          43
+        ],
+        [
+          "lib.rs",
+          1,
+          7
+        ]
+      ],
+      "provider-single": [
+        [
+          "consumer.rs",
+          1,
+          37
+        ],
+        [
+          "lib.rs",
+          2,
+          7
+        ]
+      ],
+      "many-peek": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-escape": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "many-reopen": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-target-selection": {
+        "title": "引用 (3)",
+        "rows": [
+          "consumer.rs:1",
+          "lib.rs:4",
+          "lib.rs:2"
+        ],
+        "selected": "consumer.rs:1",
+        "highlighted": [
+          "ref_many"
+        ]
+      },
+      "many-opened": {
+        "selection": [
+          46,
+          46
+        ],
+        "editorFocused": true,
+        "shortcut": "Return"
+      },
+      "many-back": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "explicit-peek": {
+        "title": "引用 (2)",
+        "rows": [
+          "consumer.rs:2",
+          "lib.rs:3"
+        ],
+        "selected": "consumer.rs:2",
+        "highlighted": [
+          "ref_once"
+        ]
+      },
+      "explicit-escape": {
+        "selection": [
+          54,
+          54
+        ],
+        "editorFocused": true
+      },
+      "single-go": {
+        "selection": [
+          96,
+          96
+        ],
+        "editorFocused": true,
+        "shortcut": "shift+F12"
+      },
+      "single-back": {
+        "selection": [
+          54,
+          54
+        ],
+        "editorFocused": true
+      }
+    },
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1383,
+            "ppid": 1382,
+            "private": 251699200,
+            "pss": 278566912,
+            "working_set": 330833920
+          }
+        ],
+        "root_pid": 1383,
+        "total_private_bytes": 251699200,
+        "total_private_mib": 240.0,
+        "total_working_set_bytes": 330833920
+      },
+      "many-peek": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1383,
+            "ppid": 1382,
+            "private": 262586368,
+            "pss": 289513472,
+            "working_set": 341970944
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1534,
+            "ppid": 1383,
+            "private": 599351296,
+            "pss": 606160896,
+            "working_set": 622211072
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1710,
+            "ppid": 1534,
+            "private": 4812800,
+            "pss": 12026880,
+            "working_set": 28053504
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1709,
+            "ppid": 1534,
+            "private": 4825088,
+            "pss": 12037120,
+            "working_set": 28028928
+          }
+        ],
+        "root_pid": 1383,
+        "total_private_bytes": 871575552,
+        "total_private_mib": 831.2,
+        "total_working_set_bytes": 1020264448
+      },
+      "many-target-selection": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1383,
+            "ppid": 1382,
+            "private": 265338880,
+            "pss": 292264960,
+            "working_set": 344723456
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1534,
+            "ppid": 1383,
+            "private": 599355392,
+            "pss": 606162944,
+            "working_set": 622215168
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1710,
+            "ppid": 1534,
+            "private": 4812800,
+            "pss": 12026880,
+            "working_set": 28053504
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1709,
+            "ppid": 1534,
+            "private": 4825088,
+            "pss": 12037120,
+            "working_set": 28028928
+          }
+        ],
+        "root_pid": 1383,
+        "total_private_bytes": 874332160,
+        "total_private_mib": 833.8,
+        "total_working_set_bytes": 1023021056
+      },
+      "many-opened": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1383,
+            "ppid": 1382,
+            "private": 261697536,
+            "pss": 288623616,
+            "working_set": 341082112
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1534,
+            "ppid": 1383,
+            "private": 599420928,
+            "pss": 606228480,
+            "working_set": 622280704
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1710,
+            "ppid": 1534,
+            "private": 4812800,
+            "pss": 12026880,
+            "working_set": 28053504
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1709,
+            "ppid": 1534,
+            "private": 4825088,
+            "pss": 12037120,
+            "working_set": 28028928
+          }
+        ],
+        "root_pid": 1383,
+        "total_private_bytes": 870756352,
+        "total_private_mib": 830.4,
+        "total_working_set_bytes": 1019445248
+      },
+      "single-go": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1383,
+            "ppid": 1382,
+            "private": 257679360,
+            "pss": 284605440,
+            "working_set": 337063936
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1534,
+            "ppid": 1383,
+            "private": 599445504,
+            "pss": 606254080,
+            "working_set": 622305280
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1710,
+            "ppid": 1534,
+            "private": 4812800,
+            "pss": 12026880,
+            "working_set": 28053504
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1709,
+            "ppid": 1534,
+            "private": 4825088,
+            "pss": 12037120,
+            "working_set": 28028928
+          }
+        ],
+        "root_pid": 1383,
+        "total_private_bytes": 866762752,
+        "total_private_mib": 826.6,
+        "total_working_set_bytes": 1015451648
+      }
+    }
+  }
+}

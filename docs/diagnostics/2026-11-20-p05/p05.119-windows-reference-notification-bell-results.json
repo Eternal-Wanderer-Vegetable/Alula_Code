@@ -1,0 +1,72 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "results": {
+    "empty": {
+      "tooltip": "No Notifications",
+      "icons": [
+        "codicon-bell"
+      ],
+      "beak": false
+    },
+    "unread": {
+      "tooltip": "2 New Notifications",
+      "icons": [
+        "codicon-bell-dot"
+      ],
+      "beak": false
+    },
+    "open": {
+      "tooltip": "Hide Notifications",
+      "icons": [
+        "codicon-bell"
+      ],
+      "beak": true
+    },
+    "read": {
+      "tooltip": "No New Notifications",
+      "icons": [
+        "codicon-bell"
+      ],
+      "beak": false
+    },
+    "visibleProgress": {
+      "tooltip": "1 New Notification",
+      "icons": [
+        "codicon-bell-dot"
+      ],
+      "beak": false
+    },
+    "backgroundProgress": {
+      "tooltip": "No New Notifications (1 in progress)",
+      "icons": [
+        "codicon-bell-dot"
+      ],
+      "beak": false
+    },
+    "completed": {
+      "tooltip": "No New Notifications",
+      "icons": [
+        "codicon-bell"
+      ],
+      "beak": false
+    },
+    "quiet": {
+      "tooltip": "Do Not Disturb Mode is Enabled",
+      "icons": [
+        "codicon-bell-slash"
+      ],
+      "beak": false
+    },
+    "title": {
+      "tooltip": "Toggle Notifications",
+      "icon": "codicon-bell",
+      "statusHidden": true
+    }
+  },
+  "exitCode": 0
+}

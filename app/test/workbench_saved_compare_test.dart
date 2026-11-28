@@ -540,6 +540,14 @@ void main() {
       expect(find.byKey(const ValueKey('saved-compare-preview')), findsNothing);
       expect(find.byKey(const ValueKey('saved-compare-modified-editor')),
           findsNothing);
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget,
+        reason:
+            'closing the compared dirty document still uses dirty protection',
+      );
+      await tester.tap(find.byKey(const ValueKey('editor-close-discard')));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('other.rs').first);
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -785,6 +793,12 @@ void main() {
       await _pressSavedChord(tester);
       await tester.tap(find.byKey(ValueKey('close-tab-editor-$documentId')));
       await tester.pump(const Duration(milliseconds: 100));
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('editor-close-discard')));
+      await tester.pumpAndSettle();
       await tester.runAsync(() async {
         statResult.complete(await file.stat());
       });

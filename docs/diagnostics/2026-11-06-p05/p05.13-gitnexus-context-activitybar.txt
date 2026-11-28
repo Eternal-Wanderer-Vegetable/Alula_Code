@@ -1,0 +1,65 @@
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Class:app/lib/workbench/activity_bar.dart:ActivityBar",
+    "name": "ActivityBar",
+    "kind": "Class",
+    "filePath": "app/lib/workbench/activity_bar.dart",
+    "startLine": 9,
+    "endLine": 28
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:app/test/activity_bar_test.dart:_activityBarApp",
+        "name": "_activityBarApp",
+        "filePath": "app/test/activity_bar_test.dart"
+      }
+    ],
+    "imports": [
+      {
+        "uid": "File:app/test/activity_bar_position_integration_test.dart",
+        "name": "activity_bar_position_integration_test.dart",
+        "filePath": "app/test/activity_bar_position_integration_test.dart"
+      },
+      {
+        "uid": "File:app/test/activity_bar_test.dart",
+        "name": "activity_bar_test.dart",
+        "filePath": "app/test/activity_bar_test.dart"
+      }
+    ]
+  },
+  "outgoing": {
+    "has_property": [
+      {
+        "uid": "/title_bar.dart:_WindowButton.tooltipProperty:app/lib/workbench/title_bar.dart:_Win",
+        "name": "onSelectView",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "pp/lib/workbench/title_bar.dart:_AlulaTitleBarState._layoutControlsFocusNodePrope",
+        "name": "activeView",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "rty:app/lib/workbench/title_bar.dart:_AlulaTitleBarState._layoutControlFocusNodesPrope",
+        "name": "sidebarCollapsed",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "rty:app/lib/workbench/title_bar.dart:_WindowButton.iconProperty:app/lib/workbench",
+        "name": "axis",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      }
+    ],
+    "has_method": [
+      {
+        "uid": "Method:app/lib/workbench/activity_bar.dart:ActivityBar.createState#0",
+        "name": "createState",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      }
+    ]
+  },
+  "processes": []
+}

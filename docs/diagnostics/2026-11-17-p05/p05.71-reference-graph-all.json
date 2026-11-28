@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "changed_count": 9,
+    "affected_count": 0,
+    "changed_files": 8,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:app/lib/workbench/tree_find.dart:TreeFindController",
+      "name": "TreeFindController",
+      "type": "Class",
+      "filePath": "app/lib/workbench/tree_find.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/tree_find.dart:TreeFindBar",
+      "name": "TreeFindBar",
+      "type": "Class",
+      "filePath": "app/lib/workbench/tree_find.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/tree_fuzzy_score.dart:TreeFuzzyScore",
+      "name": "TreeFuzzyScore",
+      "type": "Class",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/lib/workbench/tree_fuzzy_score.dart:_maxLen",
+      "name": "_maxLen",
+      "type": "Variable",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/lib/workbench/tree_fuzzy_score.dart:_diagArrow",
+      "name": "_diagArrow",
+      "type": "Variable",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/lib/workbench/tree_fuzzy_score.dart:_leftArrow",
+      "name": "_leftArrow",
+      "type": "Variable",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/lib/workbench/tree_fuzzy_score.dart:_leftLeftArrow",
+      "name": "_leftLeftArrow",
+      "type": "Variable",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/lib/workbench/tree_fuzzy_score.dart:_noScore",
+      "name": "_noScore",
+      "type": "Variable",
+      "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+      "name": "_WorkbenchPageState",
+      "type": "Class",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": []
+}

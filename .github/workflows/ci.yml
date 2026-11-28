@@ -46,11 +46,17 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: .
+      - name: Build fake LSP fixture for real-FFI tests
+        run: cargo build -p editor-core --bin async_completion_fake_lsp
       # core_sync_test 走真实 FFI：先构建核心动态库到 app/native/
       - name: Build Rust core (libalula_core.so)
         run: bash scripts/build_core.sh
       - uses: subosito/flutter-action@v2
         with:
+          # 固定到与其他 workflow 一致的 3.47.8：Flutter 3.50 起
+          # package:flutter/material.dart 触发 deprecated_member_use，
+          # 迁移 material_ui 属独立工作项，未完成前不跟随最新 stable。
+          flutter-version: 3.47.8
           channel: stable
           cache: true
       - run: flutter pub get
@@ -60,6 +66,9 @@ jobs:
         working-directory: app
       - name: Tests
         run: flutter test
+        working-directory: app
+      - name: Verify native locale-aware Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
         working-directory: app
 
   harness:

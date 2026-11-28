@@ -1,0 +1,1686 @@
+{
+  "product": "2cee5f0e55b7a1b4533d7add68372f0c4d6ebd6e",
+  "tree": "bdbfb9ff605818610a1269a576e78d1066c5ed08",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "bdbfb9ff605818610a1269a576e78d1066c5ed08",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/editor_scroll_controller.dart": "985f5f45d887c0bf70dcf0be693aef548c0ca717cae53442f671f7763261344a",
+      "app/lib/editor/rust_text_input_field.dart": "d95fd38ea4d624a9b6a5541beca8fe4522a11510e2a93da7c6860abf2f7d3a2f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "6825118260ea97b01e4c2693a0d7625b62211307e6e223b29aa50ddb7c936cfe",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "96dd0ed08a51fe000d82a262f93dde568fe81f0d41734c0c5a0952381e295531",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "96dd0ed08a51fe000d82a262f93dde568fe81f0d41734c0c5a0952381e295531",
+  "acceptanceDriverSha256": "ed1eda3e8032ad4eb9b971bd71fdbfb92e1bdf2e005724f139d1775938f459ec",
+  "localLogsSha256": {
+    "p05-338-regression.log": "d9092796fb47aaab78656c6a39f32ee74d45a39d6a7dc6bc85815823735d85dc",
+    "p05-338-full.log": "628ce9b9dbe1f2f37f3ce72d0318f40d932066affad8499c68efcb64405dd97b",
+    "p05-338-focused.log": "54e1a21ecff22f89805a0c1ab6f4d76d1b3feb282483229108b8c684275e5104",
+    "p05-338-targeted.log": "e56ff2de7c1cba3e8ca4ab8415758e98564eb6f3e1428507ee0b1c3dbd1235d6",
+    "p05-338-analyze.log": "72c4d2916f739816af51bf949906bbd474db5032ee05fb66cb256f489a99a285",
+    "p05-338-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 15,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "9ab283a4758539d3d28afa3756cdc207c0a64ef75c86b10be530b8b941a6b1ac"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 15,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "9ab283a4758539d3d28afa3756cdc207c0a64ef75c86b10be530b8b941a6b1ac"
+    }
+  },
+  "preedit": {
+    "diagnostic-snapshot": {
+      "target": {
+        "id": "Class:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationSnapshot",
+        "name": "DiagnosticNavigationSnapshot",
+        "type": "Class",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "3d4221f8c9769280d25a26f221850e174874ca41344b13f952ab35d3b39f1e56"
+    },
+    "identity-fields": {
+      "target": {
+        "id": "Property:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationSnapshot._identityFields",
+        "name": "_identityFields",
+        "type": "",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "f8929b7ba8f17b60efdf821ed0521de8eb01ae9c4db4a242c4b6ce4b3eb1852c"
+    },
+    "navigator": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._navigateDiagnostics#2",
+        "name": "_navigateDiagnostics",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "d90a4bbf96a9ff7a162f15814cfa79f31a1763ca89675d4a14d764fca2f39e44"
+    },
+    "reconcile": {
+      "target": {
+        "id": "Method:app/lib/workbench/diagnostic_navigation_peek.dart:DiagnosticNavigationSnapshot.reconcile#1",
+        "name": "reconcile",
+        "type": "Method",
+        "filePath": "app/lib/workbench/diagnostic_navigation_peek.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "411431c4665c847c7b3aa01b84bd02b1ed8fb38560a5dcb478591b08448e731b"
+    }
+  },
+  "macosPhysical": "deferred",
+  "nativeCheckCountPerPlatform": 10,
+  "priorProductControl": {
+    "tree": "eae54b3590f8dcff0ea19c5497cfcf3eb8706067",
+    "sha256": "784aa6fedfcf7590b8afb9caf24f1c49560006033b152773dee9346486bb2f5c",
+    "rangeSequence": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 114,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i32`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 59,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 85,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i64`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 87,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 113,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `String`",
+        "severity": 1,
+        "source": "rustc"
+      }
+    ],
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "staleWhileInside": true
+  },
+  "fixedReference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "browser": "Chrome/150.0.7871.250",
+    "checks": {
+      "original": {
+        "text": "original diagnostic covers anchorrustc(E0308)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 203.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 222.8000030517578
+          }
+        ],
+        "editorFocused": true
+      },
+      "republished": {
+        "text": "narrowed diagnostic contains anchorrustc(E0308)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 203.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 222.8000030517578
+          }
+        ],
+        "editorFocused": true
+      },
+      "out-of-range-stays-stale": {
+        "text": "narrowed diagnostic contains anchorrustc(E0308)",
+        "stale": true,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 203.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 222.8000030517578
+          }
+        ],
+        "editorFocused": true
+      },
+      "republished-at-anchor": {
+        "text": "restored diagnostic contains anchorrustc(E0308)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 203.8000030517578
+          },
+          {
+            "n": 3,
+            "bottom": 222.8000030517578
+          }
+        ],
+        "editorFocused": true
+      }
+    },
+    "profile": "E:\\temp\\alula-p05-338-diagnostic-anchor-refresh\\reference-1795764494067412700",
+    "inputKind": "controlled changing-range marker publications with Code OSS workbench visible",
+    "seedReceipt": {
+      "line": 0,
+      "column": 67,
+      "markerCount": 1
+    },
+    "rawReportSha256": "216b4e7dd386855c91acca2382f17f52a87dfcc44feb016f35b3fd172503d9ec",
+    "probeSha256": "e943a741c1f229369efbe0491502f058feeff9361aab9b66af0f3467d70a8c69",
+    "extensionSha256": "5f8c992378db410db3b99b6e63da99ea4b9fc9b988490e5af73c127853a5c978"
+  },
+  "windows": {
+    "tree": "bdbfb9ff605818610a1269a576e78d1066c5ed08",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "102fd5dd6d2d15c13518c5dd08cb6ab508a884083ffdd069f47cb1e01e851b97",
+    "fixtureSha256": "96dd0ed08a51fe000d82a262f93dde568fe81f0d41734c0c5a0952381e295531",
+    "runnerSha256": "0ba5879317e3d4efd8081d149d23002fe4afdd93d3da1c9279d8a59004540c37",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "owned-editor-ready": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "caret-inside-initial-and-narrower-marker": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-publishes-outer-range": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "f8-shows-outer-range-at-interior-caret": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i32`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          896.8000000000002,
+          115.2,
+          898.8000000000002,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-narrows-range-and-refreshes-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          896.8000000000002,
+          115.2,
+          898.8000000000002,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-publishes-range-off-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i64`",
+          "isStale": true,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          896.8000000000002,
+          115.2,
+          898.8000000000002,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-restores-marker-at-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `u64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          896.8000000000002,
+          115.2,
+          898.8000000000002,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "escape-preserves-original-selection": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "move-caret-to-original-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "explicit-navigation-uses-refreshed-range": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          59,
+          85
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `u64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            319.952,
+            139.7578125,
+            960.8000000000001,
+            241.123046875
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          897.6,
+          115.2,
+          899.6,
+          136.2
+        ],
+        "diagnosticInlineBounds": [
+          319.952,
+          139.7578125,
+          960.8000000000001,
+          241.123046875
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "escape-keeps-narrower-selection": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          59,
+          85
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          281.952,
+          102.0,
+          968.8000000000001,
+          720.8
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "clientRectPhysical": [
+      0,
+      0,
+      1221,
+      941
+    ],
+    "nativeFocus": {
+      "owned-editor-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "caret-inside-initial-and-narrower-marker": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-publishes-outer-range": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "f8-shows-outer-range-at-interior-caret": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-narrows-range-and-refreshes-anchor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-publishes-range-off-anchor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-restores-marker-at-anchor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "escape-preserves-original-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "move-caret-to-original-anchor": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "explicit-navigation-uses-refreshed-range": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "escape-keeps-narrower-selection": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "alt+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+s",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "alt+F8",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Escape",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "profile": "E:\\temp\\alula-p05-338-diagnostic-anchor-refresh\\probe-1795765502078375900",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          702
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          702
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "shift": false,
+        "double": false,
+        "secondary": false
+      }
+    ],
+    "fixturePositions": [
+      "1:68",
+      "rust-analyzer",
+      "1:68"
+    ],
+    "kind": "diagnosticChangedRange",
+    "anchor": 67,
+    "rangeSequence": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 114,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i32`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 59,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 85,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i64`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 87,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 113,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `String`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 59,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 85,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `u64`",
+        "severity": 1,
+        "source": "rustc"
+      }
+    ],
+    "activeDiskSha256": "9f9f1603c4a6360110d5501c24e81b90921e4398c32a820ca67898dae5cc54fb",
+    "checked": [
+      "actual provider publishes same-version overlapping narrower range",
+      "in-range reissue updates message and stays live",
+      "focus, selection, anchor and occupied coordinates retained",
+      "out-of-range marker does not replace anchored detail",
+      "last live message retained in stale state",
+      "restored marker clears stale and refreshes message",
+      "Escape retains the original selection",
+      "explicit navigation uses the new narrower range",
+      "Escape retains the narrower selection",
+      "disk source and document version unchanged"
+    ],
+    "savedProblemsViewMode": "tree",
+    "savedDefaultSingleLine": false,
+    "initialStoredBadgeHidden": false,
+    "savedProblemsBadgeHidden": false,
+    "savedBadgeFieldPresent": false,
+    "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "4c970a0d94513a1da549ad7a5e6d6b47204c684299db93a9b977ad6916a4717a"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "bdbfb9ff605818610a1269a576e78d1066c5ed08",
+    "processTreeSamples": {},
+    "aotSha256": "dcd3ff9bb51d4d31de8435f47762895a7bf2cc4745c53f47172a52216e0ed633",
+    "fixtureSha256": "96dd0ed08a51fe000d82a262f93dde568fe81f0d41734c0c5a0952381e295531",
+    "runnerSha256": "7351be0289a44729465ef6a5bff6f668447f308dc0e18383cdc39557d213af34",
+    "steps": {
+      "owned-editor-ready": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "caret-inside-initial-and-narrower-marker": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-publishes-outer-range": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "f8-shows-outer-range-at-interior-caret": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i32`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          955.0,
+          114.0,
+          957.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-narrows-range-and-refreshes-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          955.0,
+          114.0,
+          957.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-publishes-range-off-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `i64`",
+          "isStale": true,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          955.0,
+          114.0,
+          957.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "provider-restores-marker-at-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `u64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          955.0,
+          114.0,
+          957.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "escape-preserves-original-selection": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          35,
+          114
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "move-caret-to-original-anchor": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          67,
+          67
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "explicit-navigation-uses-refreshed-range": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          59,
+          85
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": {
+          "fileName": "other.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found `u64`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            373.52,
+            139.82421875,
+            1096.0,
+            244.17578125
+          ]
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": 67,
+        "diagnosticAnchorRect": [
+          955.0,
+          114.0,
+          957.0,
+          135.0
+        ],
+        "diagnosticInlineBounds": [
+          373.52,
+          139.82421875,
+          1096.0,
+          244.17578125
+        ],
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      },
+      "escape-keeps-narrower-selection": {
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          59,
+          85
+        ],
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "panelCollapsed": true,
+        "editorBounds": [
+          335.52,
+          102.0,
+          1104.0,
+          780.0
+        ],
+        "diagnosticNavigation": null,
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchor": null,
+        "diagnosticAnchorRect": null,
+        "diagnosticInlineBounds": null,
+        "abi": 46,
+        "matchedTextSha256": "e8ba8ebb9a5c6634b7f0ae6171712d6a5d76cdd2f1d760dc5d4bd17d4cc9ead3"
+      }
+    },
+    "profile": "/tmp/alula-p05-177-xvfb-7400s_cp",
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "requestedWindowWidth": 1200,
+    "characterDelayMs": 12,
+    "nativeClicks": [
+      {
+        "screen": [
+          740,
+          489
+        ],
+        "actual": [
+          740,
+          489
+        ],
+        "logical": [
+          719.76,
+          441.0
+        ],
+        "control": false,
+        "shift": false,
+        "secondary": false
+      }
+    ],
+    "kind": "diagnosticChangedRange",
+    "anchor": 67,
+    "rangeSequence": [
+      {
+        "character": 35,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 114,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i32`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 59,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 85,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `i64`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 87,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 113,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `String`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 59,
+        "code": "E0308",
+        "documentVersion": 1,
+        "endCharacter": 85,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `bool`, found `u64`",
+        "severity": 1,
+        "source": "rustc"
+      }
+    ],
+    "activeDiskSha256": "9f9f1603c4a6360110d5501c24e81b90921e4398c32a820ca67898dae5cc54fb",
+    "checked": [
+      "actual provider publishes same-version overlapping narrower range",
+      "in-range reissue updates message and stays live",
+      "focus, selection, anchor and occupied coordinates retained",
+      "out-of-range marker does not replace anchored detail",
+      "last live message retained in stale state",
+      "restored marker clears stale and refreshes message",
+      "Escape retains the original selection",
+      "explicit navigation uses the new narrower range",
+      "Escape retains the narrower selection",
+      "disk source and document version unchanged"
+    ],
+    "savedProblemsViewMode": "tree",
+    "savedDefaultSingleLine": false,
+    "initialStoredBadgeHidden": false,
+    "savedProblemsBadgeHidden": false,
+    "savedBadgeFieldPresent": false,
+    "savedLayoutSha256": "3dedf060c4e2987a021bd438b95ef91f9dff00ce080d68887684f3614bde3ffa",
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "sampledPidFinalLiveness": {},
+    "rawReportSha256": "e9ddbd26e5c4ba93645a3d8d76ee01751b380b7bd800e6ec0b2926d7551ffd97"
+  }
+}

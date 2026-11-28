@@ -1,0 +1,24 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: Enter and Space select focused row and pass preserveFocus
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: pending Space never reclaims deliberate external focus
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: hover leaves focus, selection and keyboard target unchanged
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: modified navigation and activation are ignored
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: focused action activates once; navigation transfers focus to list
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: arrows, Home and End reveal focus across section headers
+00:01 +6: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: focus and selection independently survive updates and clear on removal
+00:01 +7: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: mixed changes keep the existing staged group identity
+00:01 +8: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: pending Space completion after disposal does not restore focus
+00:01 +9: loading E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart
+00:01 +9: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: porcelain -z 解析：修改/未跟踪/重命名/中文路径
+00:01 +10: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: status 命令参数：--porcelain -z
+00:01 +11: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: stage/unstage/commit 的参数构造
+00:01 +12: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: commit 空信息与 git 失败：抛 GitError
+00:01 +13: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: isRepo：true / false（rev-parse 失败）
+00:01 +14: E:/temp/alula-pr3-20261117/app/test/git_cli_test.dart: diff/log 转发
+00:01 +15: loading E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart
+00:02 +15: E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:02 +16: E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart: 默认 Git runner 登记 PID 且命令完成后注销
+00:02 +17: E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart: unstage：暂存后可退回
+00:03 +18: E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart: 修改已跟踪文件：unstaged diff
+00:03 +19: E:/temp/alula-pr3-20261117/app/test/git_integration_test.dart: 非仓库：isRepo false
+00:03 +20: All tests passed!

@@ -1,0 +1,185 @@
+{
+  "productCommit": "f6b8e41692d456015e75395736dcd9c1f5cfa7ba",
+  "productTree": "dc7f5ba2e701a96094560d4231d487eabfd612be",
+  "capturedUtc": "2026-11-22T05:09:10.604787+00:00",
+  "pullRequestCI": {
+    "attempt": 1,
+    "conclusion": "success",
+    "headSha": "f6b8e41692d456015e75395736dcd9c1f5cfa7ba",
+    "id": 44987263595,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 137100453687,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987263595/job/137100453687"
+      },
+      {
+        "conclusion": "success",
+        "id": 137100453838,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Analyze",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987263595/job/137100453838"
+      },
+      {
+        "conclusion": "success",
+        "id": 137100453853,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987263595/job/137100453853"
+      },
+      {
+        "conclusion": "success",
+        "id": 137100453907,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Tests",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987263595/job/137100453907"
+      }
+    ],
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987263595"
+  },
+  "platformAvailability": {
+    "attempt": 1,
+    "conclusion": "",
+    "headSha": "f6b8e41692d456015e75395736dcd9c1f5cfa7ba",
+    "id": 44987261037,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 137100445965,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Windows Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Windows auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Windows auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Windows auxiliary focus diagnostics",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Run P03.7 Windows desktop interaction suite",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987261037/job/137100445965"
+      },
+      {
+        "conclusion": "",
+        "id": 137100446164,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": "completed"
+          },
+          {
+            "conclusion": "",
+            "name": "Flutter analyze and tests",
+            "status": "in_progress"
+          },
+          {
+            "conclusion": "",
+            "name": "Build macOS Release bundle",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Package macOS app",
+            "status": "pending"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987261037/job/137100446164"
+      },
+      {
+        "conclusion": "success",
+        "id": 137100446172,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Linux Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Linux auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Linux auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Linux auxiliary focus diagnostics",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987261037/job/137100446172"
+      }
+    ],
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44987261037"
+  },
+  "macOSPhysicalAcceptance": "deferred per user"
+}

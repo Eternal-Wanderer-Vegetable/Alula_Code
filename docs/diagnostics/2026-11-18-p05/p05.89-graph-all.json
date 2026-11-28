@@ -1,0 +1,207 @@
+{
+  "provenance": {
+    "method": "original-handler-pre-listing-debugger-capture",
+    "installedVersion": "1.6.12",
+    "backendFile": "C:\\Users\\Vegetable\\AppData\\Roaming\\npm\\node_modules\\gitnexus\\dist\\mcp\\local\\local-backend.js",
+    "backendSha256": "c421d9cfd6af419ee3ad210a27f1158385a35f73f22cd2aeafc49ca3cd3ec506",
+    "breakpointLine": 4794,
+    "snapshotBefore": {
+      "head": "76c2cf8fd05da471c8239ceaeb34fb85c18c230f",
+      "base": "46084e95ea0bfd72cf86873339db9670d0ba0b67",
+      "gitIndexSha256": "daeb826b97a62158a8113cd9326a9cba19543735b98e468a5829f8625a65d040",
+      "graphMetaSha256": "45c180348d18a842408ac54baf33cbf45c859fff4292038c99525381e7a72c2b",
+      "graphFiles": [
+        {
+          "name": ".gitignore",
+          "bytes": 2,
+          "sha256": "cdbcae15105d6b781e620813c79c7e868740d4e9cc53ce6f5fcbbc12387adf4b"
+        },
+        {
+          "name": "gitnexus.json",
+          "bytes": 290742,
+          "sha256": "45c180348d18a842408ac54baf33cbf45c859fff4292038c99525381e7a72c2b"
+        },
+        {
+          "name": "lbug",
+          "bytes": 298348544,
+          "sha256": "0cc5cc157f4eb319f61805da0ab6555048a52cd705dbb3daba759ece83fa09a5"
+        },
+        {
+          "name": "meta.json",
+          "bytes": 290742,
+          "sha256": "45c180348d18a842408ac54baf33cbf45c859fff4292038c99525381e7a72c2b"
+        },
+        {
+          "name": "run.cjs",
+          "bytes": 19564,
+          "sha256": "c53de9bb30f405804b439b9623d3c5bb11b54fd92bee21e9b52e35b03b159aa7"
+        }
+      ],
+      "trackedDiffSha256": "1c16aea3da56769fdf167da466ee7be266773280afb0dc91d1901107ffb443e2",
+      "compareDiffSha256": "10968825237ba64a7f90fc261ff2e4c58b3dc44f031308e6c10b0ef117976f3e",
+      "allDiffSha256": "2e2ec734b7da6c5345da4f34827e91bcc4bd669fc8e1cc365844667e91006f42",
+      "statusSha256": "14fa8e33fcfebdf0255bcac72004aab2992425084e08bd03ccd901b282c7dbca",
+      "untracked": [
+        {
+          "file": "docs/diagnostics/2026-11-18-p05/p05.89-review.md",
+          "sha256": "8e041b837fd9ffce161db283f4d4907a9d288c083189290e05b376e809a0aecf"
+        }
+      ]
+    },
+    "args": {
+      "scope": "all",
+      "repo": "E:\\temp\\alula-pr3-20261117",
+      "worktree": "E:\\temp\\alula-pr3-20261117"
+    },
+    "diffArgs": [
+      "-c",
+      "core.quotePath=false",
+      "diff",
+      "--ignore-cr-at-eol",
+      "--no-ext-diff",
+      "--color=never",
+      "--src-prefix=a/",
+      "--dst-prefix=b/",
+      "HEAD",
+      "-U0"
+    ],
+    "originalResponseFile": "E:\\Temp\\alula-p0589-graph-full-all-original-response.json",
+    "originalResponseSha256": "ec5b25b6930b9b34aecd9939404841d0a97bb26a69c4422dbead1362766f8557",
+    "originalResponseTruncated": false,
+    "cap": 1000,
+    "note": "The native API response remains unchanged in originalResponseFile. This full export uses the actual complete pre-cap maps from that same invocation. Its truncated:false describes these exported full arrays; it does not claim the native response was untruncated."
+  },
+  "summary": {
+    "changed_count": 15,
+    "affected_count": 0,
+    "changed_files": 8,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+      "name": "_WorkbenchPageState",
+      "type": "Class",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/lib/workbench/workbench_page.dart:OpenDoc",
+      "name": "OpenDoc",
+      "type": "Class",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/lib/workbench/workbench_page.dart:OpenDoc.disposeView#1",
+      "name": "disposeView",
+      "type": "Method",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/editor_group_close_lifetime_test.dart:_field",
+      "name": "_field",
+      "type": "Function",
+      "filePath": "app/test/editor_group_close_lifetime_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/editor_group_close_lifetime_test.dart:main",
+      "name": "main",
+      "type": "Function",
+      "filePath": "app/test/editor_group_close_lifetime_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L1:03 · 里程碑计划与验收标准",
+      "name": "03 · 里程碑计划与验收标准",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L3:当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+      "name": "当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L12:N.1 当前状态与依赖",
+      "name": "N.1 当前状态与依赖",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L29:P01 受控切片（当前调度依据）",
+      "name": "P01 受控切片（当前调度依据）",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.89-editor-close-lifetime.md:L1:P05.89 / feat-141 — 编辑器关闭时滚动控制器释放时序",
+      "name": "P05.89 / feat-141 — 编辑器关闭时滚动控制器释放时序",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.89-editor-close-lifetime.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:progress.md:L1:progress.md — 项目进度跟踪",
+      "name": "progress.md — 项目进度跟踪",
+      "type": "Section",
+      "filePath": "progress.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:progress.md:L6:Current State（当前状态，2026-11-18 更新）",
+      "name": "Current State（当前状态，2026-11-18 更新）",
+      "type": "Section",
+      "filePath": "progress.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:progress.md:L8:P05 / feat-027 持续推进；P05.88已收尾，当前P05.89关闭视图生命周期",
+      "name": "P05 / feat-027 持续推进；P05.88已收尾，当前P05.89关闭视图生命周期",
+      "type": "Section",
+      "filePath": "progress.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:session-handoff.md:L1:Session Handoff",
+      "name": "Session Handoff",
+      "type": "Section",
+      "filePath": "session-handoff.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:session-handoff.md:L9:Current State",
+      "name": "Current State",
+      "type": "Section",
+      "filePath": "session-handoff.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [],
+  "partial": false,
+  "truncated": false,
+  "completeness": {
+    "countsMatch": true,
+    "originalPrefixMatches": true,
+    "affectedProcessesMatch": true,
+    "changedFilesMatch": true,
+    "riskMatches": true,
+    "uniqueIds": true,
+    "queryDegraded": false,
+    "observedSymbolCount": 15,
+    "observedProcessCount": 0
+  },
+  "arrayDigests": {
+    "changedSymbolsSha256": "2e585bfa828cb844f4b61a78a6da743bcc3da85df1e6fd1002b106918f48557b",
+    "affectedProcessesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "changedSymbolIdsSortedSha256": "b8d43508a0662e67948597f9831971bfcbe2a40428181d958f33936cc2d6cfe4",
+    "affectedProcessIdsSortedSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

@@ -1,0 +1,734 @@
+{
+  "product": "092d8a45b40b0b40788d44c66780a0ac74f0d41c",
+  "tree": "4785ac075cbe38d8c50822762ecdca2dee7c3d20",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "4785ac075cbe38d8c50822762ecdca2dee7c3d20",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "4a4e03bcd3fe7dee3e2c4ce6c9a637c02e9eb52dded24c7c1ece727a6700c9df",
+      "app/lib/workbench/quick_open_query.dart": "2cedc7cb4e1097195c420a92a884e0240dd258634c6073fa520f423b98c05c92",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/workbench_page.dart": "7f4e8d05367676c98cc4d1d9a3d4ec9384cbc511dbefb3faa813322ec5959dc9",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "8280a216a431fd0667102921b69860f07096e49611689dbeeb5d60d676ad487e"
+  },
+  "sharedDriverSha256": "d64d424b5f9b57fca38285e201230d25b64eac955205fb59d3f8801245ab9e61",
+  "isolatedX11Sha256": "9cbafdf42ae7cbac291001b33e334f8bca09ecd914a189f9e09a20eb43de7a8c",
+  "windowsInitialFixtureAttempts": [
+    {
+      "rawReportSha256": "7599f16f7792f1c763fd395faf12cbbfd7c4330932aef24b75fb4d8fd9b6f9f7",
+      "step": "close-leaves-workbench-without-text-editor"
+    },
+    {
+      "rawReportSha256": "e24adec65bd3f41bee58d04f9c4ae646b67647e265b1b3f809a03a71a39c663f",
+      "step": "file-picker-reopens-the-text-editor"
+    }
+  ],
+  "windows": {
+    "tree": "4785ac075cbe38d8c50822762ecdca2dee7c3d20",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "be88b0fb4abf6e9178ce301963a299e43c81047755311a9d36d4a30fa92b694a",
+    "fixtureSha256": "8280a216a431fd0667102921b69860f07096e49611689dbeeb5d60d676ad487e",
+    "runnerSha256": "fa358142fd74d4258e81f3c2e340cda68056194046bb4278439e3381d11978f2",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "dpi": 120,
+    "sourceSha256": "6297eda0432f861b20ab8ae500b1f6a15adb4686e022e31c981227871369e20f",
+    "reopenedUtf16Offset": 14,
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "cd4de48e3ed37088e8c5218ddacb46797fbede0cd68a284a1a4459d3f8ad69fa",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "close-leaves-workbench-without-text-editor": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "line-shortcut-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 1065518840,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "line-enter-keeps-guidance-without-opening-editor": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":20",
+            "controllerIdentity": 1065518840,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "line-escape-restores-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "offset-command-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 560185292,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "offset-enter-does-not-create-editor": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::10",
+            "controllerIdentity": 560185292,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "offset-escape-restores-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "help-offers-both-position-entries": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "controllerIdentity": 503926415,
+            "focused": true
+          }
+        ],
+        "quickFileText": {
+          "qi-…": [
+            "…",
+            "转到文件",
+            "Ctrl+P"
+          ],
+          "qi-:": [
+            ":",
+            "转到行/列",
+            "Ctrl+G"
+          ],
+          "qi-::": [
+            "::",
+            "转到字符偏移",
+            "F8"
+          ],
+          "qi->": [
+            ">",
+            "显示并运行命令",
+            "Ctrl+Shift+P"
+          ],
+          "qi-#": [
+            "#",
+            "转到工作区中的符号",
+            "Ctrl+T"
+          ]
+        },
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "help-offset-entry-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 167420426,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "help-route-cancels-to-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "file-picker-reopens-the-text-editor": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "offset-command-returns-to-normal-mode": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 707195980,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": {
+          "zeroBased": false
+        }
+      },
+      "valid-offset-accepts-after-reopening": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              14,
+              14
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "4785ac075cbe38d8c50822762ecdca2dee7c3d20",
+    "aotSha256": "9b87e8b03407d7035c0189cf462963ed94a9181a959704311a7e6c6ba7c78e79",
+    "fixtureSha256": "8280a216a431fd0667102921b69860f07096e49611689dbeeb5d60d676ad487e",
+    "runnerSha256": "2603670265be9aff6b7e29c19241919db0a231e181b03b9479c36034ebd07e50",
+    "sourceSha256": "6297eda0432f861b20ab8ae500b1f6a15adb4686e022e31c981227871369e20f",
+    "reopenedUtf16Offset": 14,
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "rawReportSha256": "1573101ef8dd8ed67f714b15fcca17b440874dd6e2887bdd9be3c5194da25fff",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "close-leaves-workbench-without-text-editor": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "line-shortcut-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "controllerIdentity": 481747937,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "line-enter-keeps-guidance-without-opening-editor": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":20",
+            "controllerIdentity": 481747937,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "line-escape-restores-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "offset-command-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 628156758,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "offset-enter-does-not-create-editor": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::10",
+            "controllerIdentity": 628156758,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "offset-escape-restores-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "help-offers-both-position-entries": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "controllerIdentity": 1030502624,
+            "focused": true
+          }
+        ],
+        "quickFileText": {
+          "qi-…": [
+            "…",
+            "转到文件",
+            "Ctrl+P"
+          ],
+          "qi-:": [
+            ":",
+            "转到行/列",
+            "Ctrl+G"
+          ],
+          "qi-::": [
+            "::",
+            "转到字符偏移",
+            "F8"
+          ],
+          "qi->": [
+            ">",
+            "显示并运行命令",
+            "Ctrl+Shift+P"
+          ],
+          "qi-#": [
+            "#",
+            "转到工作区中的符号",
+            "Ctrl+T"
+          ]
+        },
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "help-offset-entry-shows-guidance": {
+        "editors": [],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 826618666,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": true,
+        "offsetToggle": null
+      },
+      "help-route-cancels-to-empty-workbench": {
+        "editors": [],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "file-picker-reopens-the-text-editor": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      },
+      "offset-command-returns-to-normal-mode": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": "::",
+            "controllerIdentity": 627386168,
+            "focused": true
+          }
+        ],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": {
+          "zeroBased": false
+        }
+      },
+      "valid-offset-accepts-after-reopening": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              14,
+              14
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickFileText": {},
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "positionGuidance": false,
+        "offsetToggle": null
+      }
+    }
+  }
+}

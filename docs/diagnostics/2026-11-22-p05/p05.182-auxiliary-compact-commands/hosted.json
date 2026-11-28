@@ -1,0 +1,205 @@
+{
+  "productCommit": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+  "productTree": "8c76080121e2bd1dc51827abfd5a16700ac6932f",
+  "capturedUtc": "2026-11-22T05:03:33.305960+00:00",
+  "pullRequestCI": {
+    "attempt": 1,
+    "conclusion": "success",
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "id": 44984802808,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 137092918960,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-22T04:23:03Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984802808/job/137092918960"
+      },
+      {
+        "conclusion": "success",
+        "id": 137092919150,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-22T04:23:02Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984802808/job/137092919150"
+      },
+      {
+        "conclusion": "success",
+        "id": 137092919226,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-22T04:23:02Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984802808/job/137092919226"
+      },
+      {
+        "conclusion": "success",
+        "id": 137092919243,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-22T04:23:02Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984802808/job/137092919243"
+      }
+    ],
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984802808"
+  },
+  "platformAvailability": {
+    "attempt": 1,
+    "conclusion": "",
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "id": 44984800385,
+    "jobs": [
+      {
+        "conclusion": "",
+        "id": 137092911269,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": "completed"
+          },
+          {
+            "conclusion": "",
+            "name": "Flutter analyze and tests",
+            "status": "in_progress"
+          },
+          {
+            "conclusion": "",
+            "name": "Build macOS Release bundle",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": "pending"
+          },
+          {
+            "conclusion": "",
+            "name": "Package macOS app",
+            "status": "pending"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911269"
+      },
+      {
+        "conclusion": "success",
+        "id": 137092911451,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Linux Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Linux auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Linux auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Linux auxiliary focus diagnostics",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911451"
+      },
+      {
+        "conclusion": "success",
+        "id": 137092911474,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "steps": [
+          {
+            "conclusion": "success",
+            "name": "Build Windows Release bundle",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Build Windows auxiliary focus smoke app",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Verify native Windows auxiliary-window focus handoff",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "Upload Windows auxiliary focus diagnostics",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911474"
+      }
+    ],
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385"
+  },
+  "macOSPhysicalAcceptance": "deferred per user",
+  "platformAvailabilityFirstAttempt": {
+    "attempt": 1,
+    "conclusion": "failure",
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "id": 44984800385,
+    "jobs": [
+      {
+        "conclusion": "failure",
+        "failedSteps": [
+          "Launch macOS native-titlebar mode and verify native Quit menu"
+        ],
+        "id": 137092911269,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911269"
+      },
+      {
+        "conclusion": "success",
+        "failedSteps": [],
+        "id": 137092911451,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911451"
+      },
+      {
+        "conclusion": "success",
+        "failedSteps": [],
+        "id": 137092911474,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385/job/137092911474"
+      }
+    ],
+    "name": "Platform Availability",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44984800385"
+  },
+  "macOSFirstFailure": {
+    "jobId": 137092911269,
+    "step": "Launch macOS native-titlebar mode and verify native Quit menu",
+    "observation": "observe-native-app timed out; cleanup encountered PermissionError [Errno 1]; native Quit probe reported app=alive, open=alive at its 20-second limit",
+    "qualification": "The hosted observation did not complete; the result does not establish a product cause."
+  },
+  "platformAvailabilityRerun": {
+    "id": 44984800385,
+    "headSha": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+    "attempt": 2,
+    "status": "in_progress"
+  }
+}

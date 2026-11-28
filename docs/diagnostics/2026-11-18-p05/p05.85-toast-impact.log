@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'WorkbenchNotificationToasts' not found",
+  "target": {
+    "name": "WorkbenchNotificationToasts"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

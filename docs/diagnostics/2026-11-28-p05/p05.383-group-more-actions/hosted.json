@@ -1,0 +1,257 @@
+{
+  "product": "58b6e9b5247d710ffa6efd137beb3278e28d5e2a",
+  "tree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+  "ci": {
+    "id": 46145963791,
+    "sha": "58b6e9b5247d710ffa6efd137beb3278e28d5e2a",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46145963791",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140981983188,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140981983357,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140981983406,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140981983479,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46145959371,
+    "sha": "58b6e9b5247d710ffa6efd137beb3278e28d5e2a",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46145959371",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140981969794,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140981970035,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140981970055,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46143316326,
+    "sha": "3495314c720e94a7c945c5f7da78423177af09f6",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46143316326",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140973842407,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140973842541,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140973842601,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140973842627,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 9,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "tab-strip": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_buildEditorArea"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "picker": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_registerCommands"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "close-tabs": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_closeFromActiveEditor",
+        "_showEditorTabContextMenu",
+        "_showOpenEditorsGroupContextMenu"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "focused-close-all": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_registerCommands"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "open-editors-menu": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_buildOpenEditorsSection"
+      ],
+      "processes": []
+    },
+    "close-views": {
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_closeAllEditorGroups",
+        "_closeAllEditorsInFocusedGroup",
+        "_closeDoc",
+        "_closeEditorTabSelection",
+        "_closeOpenEditorsGroup",
+        "_closeTabsForAction",
+        "_showOpenEditorsGroupContextMenu"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "state": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart",
+        "editor_tab_cross_group_move_test.dart",
+        "editor_tab_overflow_test.dart",
+        "editor_tab_preview_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "explorer_type_ahead_test.dart",
+        "file_link_command_test.dart",
+        "file_link_hint_test.dart",
+        "file_link_hover_test.dart",
+        "file_link_location_integration_test.dart",
+        "file_link_pointer_test.dart",
+        "locked_scrolling_test.dart",
+        "modal_editor_test.dart",
+        "open_editors_close_group_test.dart",
+        "open_editors_group_close_test.dart",
+        "open_editors_view_test.dart",
+        "relative_file_link_integration_test.dart",
+        "walkthrough_test.dart",
+        "widget_test.dart",
+        "workbench_bulk_edit_review_test.dart",
+        "workbench_clear_command_history_test.dart"
+      ],
+      "processes": []
+    },
+    "tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    }
+  }
+}

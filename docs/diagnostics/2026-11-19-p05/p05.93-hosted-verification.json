@@ -1,0 +1,58 @@
+{
+  "task": "P05.93 exact hosted verification",
+  "repository": "github.com/Eternal-Wanderer-Vegetable/Alula_Code",
+  "head_sha": "88319f98c84f2ae604203cef15a8c8dd42a2686a",
+  "captured_at_utc": "2026-11-19T04:37:25Z",
+  "runs": {
+    "ci": {
+      "id": 44458105550,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44458105550",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Rust (ubuntu-latest)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Flutter (analyze + test)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Harness 文档结构校验",
+          "conclusion": "success"
+        },
+        {
+          "name": "Rust (windows-latest)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "platform": {
+      "id": 44458098337,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44458098337",
+      "status_at_capture": "in_progress",
+      "head_sha": "88319f98c84f2ae604203cef15a8c8dd42a2686a",
+      "jobs": {
+        "linux": {
+          "conclusion": "success",
+          "app_artifact_id": 14499066375,
+          "app_artifact_sha256": "893f9b7d000733433954e5b4809a19fd8cad0c00e22d0d7e41611f901333fa58",
+          "native_dnd_artifact_id": 14498902887
+        },
+        "windows": {
+          "conclusion": "success",
+          "app_artifact_id": 14499032569,
+          "app_artifact_sha256": "ea02e2b3108eeaf4c75997a8d60178bb606c2b66283aa2563e2678405f207f9d",
+          "native_dnd_artifact_id": 14498649717
+        },
+        "macOS": {
+          "status_at_capture": "in_progress",
+          "deferred_from_acceptance": true
+        }
+      }
+    }
+  },
+  "macOS_device_validation_deferred": true,
+  "overall_three_platform_success_claimed": false
+}

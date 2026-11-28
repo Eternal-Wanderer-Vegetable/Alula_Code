@@ -1,0 +1,1923 @@
+{
+  "product": "ff7457f0967cd165887331e9e5928e7392ad3624",
+  "tree": "461dfef2d95cef447edfd5908cf896aecb4cb564",
+  "fixtureSha256": "d16be915fa59eadcd9655a18e2e1b1b7e01d8211522032a93a71446ba244ebcc",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "inactive group More Actions, Lock and Maximize with Restore",
+    "normalBounds": [
+      417,
+      176,
+      1635,
+      986
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "absoluteOpenSuggestions": [
+      "right-group-only.txt"
+    ],
+    "before": [
+      {
+        "bounds": [
+          52.79999923706055,
+          35.79999923706055,
+          425,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container inactive",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "More Actions..."
+        ]
+      },
+      {
+        "bounds": [
+          477.8000183105469,
+          35.79999923706055,
+          425.3999938964844,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      }
+    ],
+    "unlockedMenu": [
+      {
+        "label": "Show Opened Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close All",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close Saved",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Enable Preview Editors",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Maximize Group",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Lock Group",
+        "checked": "false",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Configure Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      }
+    ],
+    "locked": [
+      {
+        "bounds": [
+          52.79999923706055,
+          35.79999923706055,
+          425,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container inactive locked",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "Unlock Group",
+          "More Actions..."
+        ]
+      },
+      {
+        "bounds": [
+          477.8000183105469,
+          35.79999923706055,
+          425.3999938964844,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      }
+    ],
+    "lockedMenu": [
+      {
+        "label": "Show Opened Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close All",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close Saved",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Enable Preview Editors",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Maximize Group",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Lock Group",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Configure Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      }
+    ],
+    "maximized": [
+      {
+        "bounds": [
+          52.79999923706055,
+          35.79999923706055,
+          850.4000244140625,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container locked active",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "Unmaximize Group (Ctrl+K Ctrl+M)",
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "Unlock Group",
+          "More Actions..."
+        ]
+      }
+    ],
+    "maximizedMenu": [
+      {
+        "label": "Show Opened Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close All",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close Saved",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Enable Preview Editors",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Unmaximize Group",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Lock Group",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Configure Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      }
+    ],
+    "restored": [
+      {
+        "bounds": [
+          52.79999923706055,
+          35.79999923706055,
+          425,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container locked active",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "Unlock Group",
+          "More Actions..."
+        ]
+      },
+      {
+        "bounds": [
+          477.8000183105469,
+          35.79999923706055,
+          425.3999938964844,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container inactive",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "More Actions..."
+        ]
+      }
+    ],
+    "restoredMenu": [
+      {
+        "label": "Show Opened Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close All",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close Saved",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Enable Preview Editors",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Maximize Group",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Lock Group",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Configure Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      }
+    ],
+    "unlocked": [
+      {
+        "bounds": [
+          52.79999923706055,
+          35.79999923706055,
+          425,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      },
+      {
+        "bounds": [
+          477.8000183105469,
+          35.79999923706055,
+          425.3999938964844,
+          735.4000244140625
+        ],
+        "classes": "editor-group-container inactive",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "More Actions..."
+        ]
+      }
+    ],
+    "unlockedAgainMenu": [
+      {
+        "label": "Show Opened Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close All",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Close Saved",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Enable Preview Editors",
+        "checked": "true",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item checked"
+      },
+      {
+        "label": "Maximize Group",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Lock Group",
+        "checked": "false",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      },
+      {
+        "label": "Configure Editors",
+        "checked": "",
+        "labelClass": "action-label",
+        "itemClass": "action-menu-item"
+      }
+    ],
+    "sourceBytesStable": true,
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselineProduct": "58b6e9b5247d710ffa6efd137beb3278e28d5e2a",
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "461dfef2d95cef447edfd5908cf896aecb4cb564",
+      "build": {
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "aotSha256": "4773306ec45351a93c4380bb741a20e2f8901ab5aecdd12930b95d89b1e05680",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "fixtureSha256": "d16be915fa59eadcd9655a18e2e1b1b7e01d8211522032a93a71446ba244ebcc",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "abi": 51,
+        "tree": "461dfef2d95cef447edfd5908cf896aecb4cb564"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "owned Win32 Escape and rendered PopupMenu routes",
+      "before": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "unlockedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            590.24,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": false
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "locked": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "lockedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            590.24,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "maximized": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": true,
+            "bounds": [
+              328.48,
+              35.0,
+              875.5200000000001,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "maximizedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": true,
+            "bounds": [
+              328.48,
+              35.0,
+              875.5200000000001,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            1028.0,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            1028.0,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            1028.0,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            1028.0,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            1028.0,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            1028.0,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "还原编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "restored": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "restoredMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            590.24,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "unlocked": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "unlockedAgainMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              328.48,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              768.24,
+              35.0,
+              435.76000000000005,
+              36.0
+            ],
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            590.24,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": false
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "sourceHashes": {
+        "shared.txt": "670a1f10b1da9832a13997c4fc7c2399c07ba498945a5f4d725322ea961581cf",
+        "right.txt": "efb459c119599384c90ed9a66cb483a47c06f3bd2e072caea449586ff3e2bb8a"
+      },
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "461dfef2d95cef447edfd5908cf896aecb4cb564",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 pointer and Escape key",
+      "fixtureSha256": "d16be915fa59eadcd9655a18e2e1b1b7e01d8211522032a93a71446ba244ebcc",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "c081c0f213c4e98560a9ac38455c0196c42c53b2540f948a2e731ea7d40f6959",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "before": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "unlockedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            598.3,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": false
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 1
+      },
+      "locked": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 2
+      },
+      "lockedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            598.3,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 3
+      },
+      "maximized": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": true,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              885.4,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 4
+      },
+      "maximizedMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": true,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              885.4,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            1041.0,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            1041.0,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            1041.0,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            1041.0,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            1041.0,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            1041.0,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "还原编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 5
+      },
+      "restored": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 6
+      },
+      "restoredMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": true,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            598.3,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": true
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 7
+      },
+      "unlocked": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "menuChecks": {},
+        "menuLabels": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 8
+      },
+      "unlockedAgainMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              331.59999999999997,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "locked": false,
+            "maximized": false,
+            "bounds": [
+              776.3,
+              35.0,
+              440.7,
+              36.0
+            ],
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "maximize-group": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ],
+          "lock-group": [
+            598.3,
+            267.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            331.0,
+            168.0,
+            48.0
+          ]
+        },
+        "menuChecks": {
+          "lock-group": false
+        },
+        "menuLabels": {
+          "show-opened": "显示已打开的编辑器",
+          "close-all": "全部关闭",
+          "close-saved": "关闭已保存",
+          "maximize-group": "最大化编辑器组",
+          "lock-group": "锁定编辑器组",
+          "start-lsp": "启动 LSP"
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 9
+      },
+      "sourceHashes": {
+        "shared.txt": "670a1f10b1da9832a13997c4fc7c2399c07ba498945a5f4d725322ea961581cf",
+        "right.txt": "efb459c119599384c90ed9a66cb483a47c06f3bd2e072caea449586ff3e2bb8a"
+      },
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "461dfef2d95cef447edfd5908cf896aecb4cb564",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "app/lib/workbench/workbench_page.dart"
+    ]
+  }
+}

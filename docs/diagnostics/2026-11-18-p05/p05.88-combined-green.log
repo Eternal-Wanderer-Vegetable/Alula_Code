@@ -1,0 +1,56 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +6: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +7: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +8: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +9: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +10: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +11: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +12: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +13: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +14: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +15: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +16: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +17: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +18: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +19: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +20: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +21: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +22: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +23: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +24: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +25: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +26: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +27: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +28: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +29: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +30: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +31: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:00 +32: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:01 +33: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the folder breadcrumb segment opens a picker of tree children
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker2ad3f538/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker2ad3f538/workspace\src)
+PICKERDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), 查看(V), ..., lib.rs, main.rs)
+00:01 +34: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends
+00:02 +34: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the file breadcrumb segment opens the symbol picker with keyboard support
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker1d9d7af4/workspace\src)
+SYMDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), ..., fn main, fn helper_fn)
+00:02 +35: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends
+00:02 +36: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: a folder without children shows an empty state and reveal still works
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-pickerab1b0d3e/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-pickerab1b0d3e/workspace\src)
+00:02 +37: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard6e10dab3/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard6e10dab3/workspace\other.rs)
+00:02 +38: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard97ca6518/workspace\other.rs)
+00:03 +39: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard17f550b6/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard17f550b6/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard17f550b6/workspace\other.rs)
+00:03 +40: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard67954a25/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard67954a25/workspace\other.rs)
+00:04 +41: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardcadbb72c/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardcadbb72c/workspace\other.rs)
+00:04 +42: All tests passed!

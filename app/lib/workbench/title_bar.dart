@@ -1,24 +1,92 @@
 /// 自定义标题栏（docs/09 W1-3）。
 ///
-/// 应用名 + 三组功能菜单 + （windowControls 开启时）拖拽移动区与窗口控制按钮。
+/// 应用名 + 主菜单 + （windowControls 开启时）拖拽移动区与窗口控制按钮。
 /// 无边框窗口由 main() 的 `TitleBarStyle.hidden` 开启；
 /// widget 测试默认 windowControls=false，不触碰 window_manager 插件通道。
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'commands.dart';
+import 'keybindings.dart';
+import 'layout_controller.dart';
+import 'layout_model.dart' show SideBarPosition;
+import 'sidebar_position.dart';
+import 'window_chrome_configuration.dart';
+import 'window_chrome_driver.dart';
 
-/// 标题栏菜单项。
+enum TitleMenuItemKind { command, submenu, separator }
+
+typedef _IndexedTitleMenuItem = ({int sourceIndex, TitleMenuItem item});
+
+/// 标题栏命令、子菜单或分隔线。
 class TitleMenuItem {
-  const TitleMenuItem(this.label, {required this.commandId, this.arguments});
+  const TitleMenuItem(this.label,
+      {required this.commandId,
+      this.arguments,
+      this.restorePreviousFocus = true,
+      this.enabled = true,
+      this.checked,
+      this.checkedBuilder,
+      this.checkedListenable})
+      : assert(commandId != null),
+        children = const [],
+        kind = TitleMenuItemKind.command;
+
+  const TitleMenuItem.submenu(this.label, {required this.children})
+      : commandId = null,
+        arguments = null,
+        restorePreviousFocus = true,
+        enabled = true,
+        checked = null,
+        checkedBuilder = null,
+        checkedListenable = null,
+        kind = TitleMenuItemKind.submenu;
+
+  const TitleMenuItem.separator()
+      : label = '',
+        commandId = null,
+        arguments = null,
+        restorePreviousFocus = true,
+        enabled = true,
+        checked = null,
+        checkedBuilder = null,
+        checkedListenable = null,
+        children = const [],
+        kind = TitleMenuItemKind.separator;
 
   final String label;
-  final String commandId;
+  final String? commandId;
   final Object? arguments;
+  final bool restorePreviousFocus;
+
+  /// Keeps an informational menu entry visible while preventing invocation.
+  final bool enabled;
+
+  /// Optional fixed checked state for a toggle entry.
+  final bool? checked;
+
+  /// Optional live state used when the workbench changes while this menu item
+  /// remains mounted.
+  final bool? Function()? checkedBuilder;
+
+  /// Rebuilds the checkmark and semantics when the checked state changes.
+  final Listenable? checkedListenable;
+
+  bool? get currentChecked => checkedBuilder?.call() ?? checked;
+
+  final List<TitleMenuItem> children;
+  final TitleMenuItemKind kind;
+
+  bool get isSubmenu => kind == TitleMenuItemKind.submenu;
+  bool get isSeparator => kind == TitleMenuItemKind.separator;
 }
 
 class AlulaTitleBar extends StatefulWidget {
@@ -26,8 +94,16 @@ class AlulaTitleBar extends StatefulWidget {
     super.key,
     required this.menus,
     required this.commands,
+    this.layoutControlsBuilder,
+    this.workbenchLayout,
+    this.notificationButton,
     this.windowControls = false,
+    this.windowChromeDriver,
     this.onCloseRequested,
+    this.closeWindow,
+    this.enableMenuBarMnemonics = true,
+    this.customMenuBarAltFocus = true,
+    this.windowTitle = 'Alula Code',
   });
 
   /// 菜单组（标题 → 菜单项列表）。
@@ -35,36 +111,367 @@ class AlulaTitleBar extends StatefulWidget {
 
   final CommandService commands;
 
+  /// Current layout toggle items, read when the custom title-bar menu opens.
+  final List<TitleMenuItem> Function()? layoutControlsBuilder;
+
+  /// Live layout behind the main workbench's direct title-bar toggles.
+  final WorkbenchLayout? workbenchLayout;
+  final Widget? notificationButton;
+
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
   final bool windowControls;
 
+  /// Optional desktop adapter for deterministic window-control tests.
+  final WindowChromeDriver? windowChromeDriver;
+
   /// 处理系统关闭事件；回调完成后由标题栏销毁窗口。
   final VoidCallback? onCloseRequested;
+  final Future<void> Function(Future<void> Function() nativeClose)? closeWindow;
+
+  /// 与 window.enableMenuBarMnemonics 的默认值一致；设置接入留 P07。
+  final bool enableMenuBarMnemonics;
+
+  /// 与 window.customMenuBarAltFocus 的默认值一致；设置接入留 P07。
+  final bool customMenuBarAltFocus;
+
+  /// Current workbench title, including the active editor/workspace context.
+  final String windowTitle;
 
   @override
   State<AlulaTitleBar> createState() => _AlulaTitleBarState();
 }
 
 class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
+  late WindowChromeDriver _windowChrome;
+  late TargetPlatform _menuPlatform;
+  late FocusNode _menuBarFocusNode;
+  late FocusNode _commandCenterFocusNode;
+  late List<MenuController> _menuControllers;
+  final Map<String, MenuController> _submenuControllers = {};
   bool _maximized = false;
   bool _closeInProgress = false;
+  bool _mnemonicsVisible = false;
+  bool _altKeyDown = false;
+  bool _altChordHasKey = false;
+  bool _altPointerActivity = false;
+  FocusNode? _focusToReturn;
+  FocusNode? _lastPrimaryFocus;
+  FocusNode? _commandCenterFocusToReturn;
+  final MenuController _layoutControlsMenuController = MenuController();
+  final FocusNode _layoutControlsFocusNode =
+      FocusNode(debugLabel: 'Alula layout controls');
+  final Map<String, FocusNode> _layoutControlFocusNodes = {
+    'view.toggleSidebar': FocusNode(debugLabel: 'Alula toggle sidebar'),
+    'view.togglePanel': FocusNode(debugLabel: 'Alula toggle panel'),
+  };
 
   @override
   void initState() {
     super.initState();
-    windowManager.addListener(this);
+    _windowChrome =
+        widget.windowChromeDriver ?? const PluginWindowChromeDriver();
+    _windowChrome.addListener(this);
+    _menuBarFocusNode = FocusNode(debugLabel: 'Alula menu bar focus');
+    _commandCenterFocusNode = FocusNode(debugLabel: 'Alula command center');
+    _lastPrimaryFocus = FocusManager.instance.primaryFocus;
+    FocusManager.instance.addListener(_handlePrimaryFocusChanged);
+    _createMenuControls();
+    HardwareKeyboard.instance.addHandler(_handleHardwareKey);
+    GestureBinding.instance.pointerRouter.addGlobalRoute(_handlePointerEvent);
     if (widget.windowControls) {
-      // 当前最大化态探测：测试环境无插件通道，异常静默（保持默认 false）
-      windowManager.isMaximized().then((v) {
-        if (mounted) setState(() => _maximized = v);
-      }).catchError((_) {});
+      unawaited(_refreshMaximized());
+      unawaited(_setWindowTitle(widget.windowTitle));
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final chrome = WindowChromeConfigurationScope.maybeOf(context) ??
+        WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
+    _menuPlatform = chrome.targetPlatform;
+  }
+
+  @override
+  void didUpdateWidget(AlulaTitleBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.menus.length != oldWidget.menus.length) {
+      _createMenuControls();
+    }
+    final nextWindowChrome =
+        widget.windowChromeDriver ?? const PluginWindowChromeDriver();
+    final windowChromeChanged = !identical(_windowChrome, nextWindowChrome);
+    if (windowChromeChanged) {
+      _windowChrome.removeListener(this);
+      _windowChrome = nextWindowChrome;
+      _windowChrome.addListener(this);
+      if (widget.windowControls) unawaited(_refreshMaximized());
+    }
+    if (widget.windowControls &&
+        (windowChromeChanged ||
+            !oldWidget.windowControls ||
+            widget.windowTitle != oldWidget.windowTitle)) {
+      unawaited(_setWindowTitle(widget.windowTitle));
+    }
+  }
+
+  Future<void> _refreshMaximized() async {
+    try {
+      final maximized = await _windowChrome.isMaximized();
+      if (mounted) setState(() => _maximized = maximized);
+    } catch (_) {
+      // Widget tests and unsupported platform channels keep the default state.
     }
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
+    HardwareKeyboard.instance.removeHandler(_handleHardwareKey);
+    GestureBinding.instance.pointerRouter
+        .removeGlobalRoute(_handlePointerEvent);
+    _menuBarFocusNode.dispose();
+    _commandCenterFocusNode.dispose();
+    _layoutControlsFocusNode.dispose();
+    for (final focusNode in _layoutControlFocusNodes.values) {
+      focusNode.dispose();
+    }
+    FocusManager.instance.removeListener(_handlePrimaryFocusChanged);
+    _windowChrome.removeListener(this);
     super.dispose();
+  }
+
+  void _createMenuControls() {
+    _menuControllers = List<MenuController>.generate(
+        widget.menus.length, (_) => MenuController());
+    _submenuControllers.clear();
+  }
+
+  bool _handleHardwareKey(KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape &&
+        _layoutControlsMenuController.isOpen) {
+      _layoutControlsMenuController.close();
+      _layoutControlsFocusNode.requestFocus();
+      return true;
+    }
+
+    if (_menuPlatform == TargetPlatform.macOS ||
+        (!widget.customMenuBarAltFocus && !widget.enableMenuBarMnemonics)) {
+      return false;
+    }
+
+    final isAlt = event.logicalKey == LogicalKeyboardKey.alt ||
+        event.logicalKey == LogicalKeyboardKey.altLeft ||
+        event.logicalKey == LogicalKeyboardKey.altRight;
+    if (event is KeyDownEvent && isAlt) {
+      // A window can gain focus while Alt is already held for a native drag.
+      if (!_altKeyDown && !event.synthesized) {
+        _altKeyDown = true;
+        _altChordHasKey = false;
+        _altPointerActivity = false;
+        if (!_mnemonicsVisible &&
+            !_menuControllers.any((controller) => controller.isOpen)) {
+          _focusToReturn = FocusManager.instance.primaryFocus;
+        }
+      }
+    } else if (event is KeyDownEvent && _altKeyDown) {
+      _altChordHasKey = true;
+      if (widget.enableMenuBarMnemonics && !_isModifierKey(event.logicalKey)) {
+        final pressedKey = event.logicalKey.keyLabel.toLowerCase();
+        if (_activateMenuMnemonic(pressedKey)) return true;
+      }
+    } else if (event is KeyUpEvent && isAlt) {
+      final bareAlt = _altKeyDown && !_altChordHasKey && !_altPointerActivity;
+      _altKeyDown = false;
+      _altChordHasKey = false;
+      _altPointerActivity = false;
+      if (bareAlt && widget.customMenuBarAltFocus) {
+        _mnemonicsVisible = true;
+        _menuBarFocusNode.requestFocus();
+        if (mounted) setState(() {});
+      }
+    }
+    return false;
+  }
+
+  void _handlePointerEvent(PointerEvent event) {
+    if (_altKeyDown) _altPointerActivity = true;
+  }
+
+  void _handlePrimaryFocusChanged() {
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    if (identical(primaryFocus, _commandCenterFocusNode)) {
+      final previousFocus = _lastPrimaryFocus;
+      if (previousFocus?.context != null) {
+        _commandCenterFocusToReturn = previousFocus;
+      }
+    }
+    _lastPrimaryFocus = primaryFocus;
+  }
+
+  static bool _isModifierKey(LogicalKeyboardKey key) =>
+      key == LogicalKeyboardKey.alt ||
+      key == LogicalKeyboardKey.altLeft ||
+      key == LogicalKeyboardKey.altRight ||
+      key == LogicalKeyboardKey.control ||
+      key == LogicalKeyboardKey.controlLeft ||
+      key == LogicalKeyboardKey.controlRight ||
+      key == LogicalKeyboardKey.shift ||
+      key == LogicalKeyboardKey.shiftLeft ||
+      key == LogicalKeyboardKey.shiftRight ||
+      key == LogicalKeyboardKey.meta ||
+      key == LogicalKeyboardKey.metaLeft ||
+      key == LogicalKeyboardKey.metaRight;
+
+  KeyEventResult _handleMenuKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+
+    if (event.logicalKey == LogicalKeyboardKey.escape &&
+        _mnemonicsVisible &&
+        !_menuControllers.any((controller) => controller.isOpen)) {
+      _restoreWorkbenchFocus();
+      return KeyEventResult.handled;
+    }
+
+    if (!_mnemonicsVisible ||
+        !widget.enableMenuBarMnemonics ||
+        _menuPlatform == TargetPlatform.macOS ||
+        HardwareKeyboard.instance.isAltPressed ||
+        HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isShiftPressed ||
+        HardwareKeyboard.instance.isMetaPressed) {
+      return KeyEventResult.ignored;
+    }
+
+    return _activateMenuMnemonic(event.logicalKey.keyLabel.toLowerCase())
+        ? KeyEventResult.handled
+        : KeyEventResult.ignored;
+  }
+
+  bool _activateMenuMnemonic(String pressedKey) {
+    int? matchingTopMenu;
+    for (var index = 0; index < widget.menus.length; index++) {
+      if (_codeOssMnemonicKey(widget.menus[index].$1) == pressedKey &&
+          _visibleTitleMenuItems(widget.menus[index].$2, widget.commands)
+              .isNotEmpty) {
+        matchingTopMenu = index;
+      }
+    }
+
+    final openTopMenu = _menuControllers.indexWhere((menu) => menu.isOpen);
+    if (matchingTopMenu != null) {
+      if (matchingTopMenu == openTopMenu) {
+        _menuControllers[matchingTopMenu].close();
+      } else {
+        for (final menu in _menuControllers) {
+          if (menu.isOpen) menu.close();
+        }
+        _menuBarFocusNode.requestFocus();
+        _menuControllers[matchingTopMenu].open();
+      }
+      if (mounted) setState(() => _mnemonicsVisible = true);
+      return true;
+    }
+    if (openTopMenu < 0) return false;
+
+    final submenuPath = _deepestOpenSubmenuPath(
+      openTopMenu,
+      widget.menus[openTopMenu].$2,
+      const [],
+    );
+    final currentItems = _itemsAtPath(
+      widget.menus[openTopMenu].$2,
+      submenuPath,
+    );
+    _IndexedTitleMenuItem? matchingItem;
+    for (final candidate
+        in _visibleTitleMenuItems(currentItems, widget.commands)) {
+      final item = candidate.item;
+      if (!item.isSeparator &&
+          _codeOssMnemonicKey(item.label) == pressedKey &&
+          (item.isSubmenu ||
+              (item.enabled && widget.commands.isEnabled(item.commandId!)))) {
+        matchingItem = candidate;
+      }
+    }
+    if (matchingItem == null) return false;
+
+    final item = matchingItem.item;
+    final itemPath = [...submenuPath, matchingItem.sourceIndex];
+    if (item.isSubmenu) {
+      _submenuControllers
+          .putIfAbsent(
+            _menuControllerKey(openTopMenu, itemPath),
+            MenuController.new,
+          )
+          .open();
+    } else {
+      unawaited(_executeMnemonic(item));
+    }
+    return true;
+  }
+
+  List<int> _deepestOpenSubmenuPath(
+    int rootIndex,
+    List<TitleMenuItem> items,
+    List<int> parentPath,
+  ) {
+    for (var index = 0; index < items.length; index++) {
+      final item = items[index];
+      if (!item.isSubmenu) continue;
+      final path = [...parentPath, index];
+      final controller =
+          _submenuControllers[_menuControllerKey(rootIndex, path)];
+      if (controller?.isOpen ?? false) {
+        return _deepestOpenSubmenuPath(rootIndex, item.children, path);
+      }
+    }
+    return parentPath;
+  }
+
+  List<TitleMenuItem> _itemsAtPath(
+    List<TitleMenuItem> rootItems,
+    List<int> path,
+  ) {
+    var items = rootItems;
+    for (final index in path) {
+      if (index < 0 || index >= items.length) return const [];
+      final item = items[index];
+      if (!item.isSubmenu) return const [];
+      items = item.children;
+    }
+    return items;
+  }
+
+  Future<void> _executeMnemonic(TitleMenuItem item) async {
+    await widget.commands.execute(
+      item.commandId!,
+      arguments: item.arguments,
+    );
+    _restoreWorkbenchFocus(item.restorePreviousFocus);
+  }
+
+  void _restoreWorkbenchFocus([bool restorePreviousFocus = true]) {
+    final focusToReturn = _focusToReturn;
+    _focusToReturn = null;
+    for (final controller in _submenuControllers.values) {
+      if (controller.isOpen) controller.close();
+    }
+    for (final controller in _menuControllers) {
+      if (controller.isOpen) controller.close();
+    }
+    if (mounted) setState(() => _mnemonicsVisible = false);
+    if (restorePreviousFocus &&
+        focusToReturn != null &&
+        focusToReturn.context != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && focusToReturn.context != null) {
+          focusToReturn.requestFocus();
+        }
+      });
+    } else if (_menuBarFocusNode.hasFocus) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
   }
 
   @override
@@ -85,51 +492,713 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   }
 
   Future<void> _closeWindow() async {
-    try {
+    var requested = false;
+
+    Future<void> nativeClose() async {
       widget.onCloseRequested?.call();
-      await windowManager.setPreventClose(false);
-      await windowManager.close();
+      await _windowChrome.setPreventClose(false);
+      try {
+        await _windowChrome.close();
+        requested = true;
+      } catch (_) {
+        await _windowChrome.setPreventClose(true);
+        rethrow;
+      }
+    }
+
+    try {
+      final closeWindow = widget.closeWindow;
+      if (closeWindow == null) {
+        await nativeClose();
+      } else {
+        await closeWindow(nativeClose);
+      }
     } catch (error) {
-      _closeInProgress = false;
       debugPrint('关闭窗口失败：$error');
+    } finally {
+      if (!requested) _closeInProgress = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final content = Row(
-      children: [
-        const SizedBox(width: 10),
-        const Text('Alula Code',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-        const SizedBox(width: 10),
-        // 菜单按钮要在拖拽区之上，点击不被拖拽手势吃掉
-        for (final (title, items) in widget.menus)
-          _MenuButton(title: title, items: items, commands: widget.commands),
-        const Spacer(),
-        if (widget.windowControls) ..._buildWindowButtons(),
-      ],
-    );
-
-    if (!widget.windowControls) {
-      return Container(
-        height: 36,
-        decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
-        child: content,
+    final chrome = WindowChromeConfigurationScope.maybeOf(context) ??
+        WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
+    if (chrome.targetPlatform == TargetPlatform.macOS) {
+      return ListenableBuilder(
+        listenable: _macMenuListenable(),
+        builder: (context, _) => PlatformMenuBar(
+          menus: _buildMacPlatformMenus(),
+          child: _buildTitleBarContents(
+            context,
+            chrome,
+            showFlutterMenuBar: false,
+          ),
+        ),
       );
     }
 
-    return DragToMoveArea(
-      // 双击标题栏切换最大化（对标原生窗口行为）
-      child: GestureDetector(
-        onDoubleTapDown: (_) => windowManager.isMaximized().then((v) {
-          v ? windowManager.unmaximize() : windowManager.maximize();
-        }),
-        onDoubleTap: () {},
-        child: Container(
-          height: 36,
-          decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
-          child: content,
+    return _buildTitleBarContents(
+      context,
+      chrome,
+      showFlutterMenuBar: true,
+    );
+  }
+
+  Listenable _macMenuListenable() {
+    final listenables = <Listenable>{widget.commands};
+
+    void collect(List<TitleMenuItem> items) {
+      for (final item in items) {
+        final checkedListenable = item.checkedListenable;
+        if (checkedListenable != null) listenables.add(checkedListenable);
+        if (item.isSubmenu) collect(item.children);
+      }
+    }
+
+    for (final (_, items) in widget.menus) {
+      collect(items);
+    }
+    return Listenable.merge(listenables);
+  }
+
+  Widget _buildTitleBarContents(
+    BuildContext context,
+    WindowChromeConfiguration chrome, {
+    required bool showFlutterMenuBar,
+  }) {
+    if (!chrome.isCustom && (widget.menus.isEmpty || !showFlutterMenuBar)) {
+      return const SizedBox.shrink();
+    }
+
+    final showCustomControls =
+        widget.windowControls && chrome.usesCustomWindowControls;
+    final showNavigationControls = chrome.isCustom &&
+        widget.commands.byId(navigateBackCommandId) != null &&
+        widget.commands.byId(navigateForwardCommandId) != null;
+    return Container(
+      // Non-macOS native mode keeps the existing menu row below the OS title bar.
+      height: chrome.isCustom
+          ? chrome.titleBarHeight
+          : WindowChromeConfiguration.customTitleBarHeight,
+      decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
+      child: CustomMultiChildLayout(
+        delegate: _TitleBarLayout(
+          Directionality.of(context),
+          showNavigationControls: showNavigationControls,
+        ),
+        children: [
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.commandCenter,
+              child: ListenableBuilder(
+                listenable: widget.commands,
+                builder: (context, _) {
+                  final enabled =
+                      widget.commands.isEnabled(_commandCenterActionId);
+                  final shortcut =
+                      widget.commands.byId(quickOpenCommandId)?.shortcut;
+                  final hint = shortcut == null
+                      ? '打开快速访问'
+                      : '打开快速访问，$shortcut';
+                  final search = Tooltip(
+                    message: widget.windowTitle,
+                    child: Semantics(
+                      key: const ValueKey('command-center'),
+                      button: true,
+                      enabled: enabled,
+                      label: '命令中心，当前窗口：${widget.windowTitle}',
+                      hint: hint,
+                      onTap: enabled ? _openCommandCenter : null,
+                      child: SizedBox(
+                        height: 24,
+                        child: Listener(
+                          onPointerDown: enabled
+                              ? (_) => _rememberCommandCenterFocus()
+                              : null,
+                          child: Material(
+                            color: const Color(0xFF20242B),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              side: BorderSide(color: Color(0xFF414752)),
+                            ),
+                            child: InkWell(
+                              key: const ValueKey('command-center-control'),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              focusNode: _commandCenterFocusNode,
+                              canRequestFocus: enabled,
+                              onTap: enabled ? _openCommandCenter : null,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    widget.windowTitle,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                  final back = widget.commands.byId(navigateBackCommandId);
+                  final forward =
+                      widget.commands.byId(navigateForwardCommandId);
+                  if (back == null || forward == null) return search;
+                  return LayoutBuilder(
+                    builder: (context, constraints) => Row(
+                      children: [
+                        if (constraints.maxWidth >=
+                            _navigationControlsWidth + 24) ...[
+                            _buildHistoryButton(
+                              command: back,
+                              availability: 'canNavigateBack',
+                              key: const ValueKey('command-center-back'),
+                              icon: Icons.arrow_back,
+                            ),
+                            const SizedBox(width: _navigationControlGap),
+                            _buildHistoryButton(
+                              command: forward,
+                              availability: 'canNavigateForward',
+                              key: const ValueKey('command-center-forward'),
+                              icon: Icons.arrow_forward,
+                            ),
+                            const SizedBox(width: _navigationSearchGap),
+                          ],
+                        Expanded(
+                          key: const ValueKey('command-center-search-slot'),
+                          child: search,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          LayoutId(
+            id: _TitleBarPart.menus,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (showFlutterMenuBar)
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(platform: chrome.targetPlatform),
+                    child: Focus(
+                      focusNode: _menuBarFocusNode,
+                      onKeyEvent: _handleMenuKeyEvent,
+                      child: ListenableBuilder(
+                        listenable: widget.commands,
+                        builder: (context, _) => MenuBar(
+                          style: _menuBarStyle,
+                          children: [
+                            for (var index = 0;
+                                index < widget.menus.length;
+                                index++)
+                              _MenuButton(
+                                title: widget.menus[index].$1,
+                                items: widget.menus[index].$2,
+                                commands: widget.commands,
+                                controller: _menuControllers[index],
+                                submenuControllerForPath: (path) =>
+                                    _submenuControllers.putIfAbsent(
+                                  _menuControllerKey(index, path),
+                                  MenuController.new,
+                                ),
+                                enableMnemonics: widget.enableMenuBarMnemonics,
+                                persistentMnemonics: _mnemonicsVisible,
+                                onCommandExecuted: _restoreWorkbenchFocus,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.leadingDragArea,
+              child: _dragArea(
+                const SizedBox.expand(),
+                key: const ValueKey('titlebar-leading-drag-region'),
+              ),
+            ),
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.dragArea,
+              child: _dragArea(
+                const SizedBox.expand(),
+                key: const ValueKey('titlebar-drag-region'),
+              ),
+            ),
+          LayoutId(
+            id: _TitleBarPart.trailing,
+            child: LayoutBuilder(
+              builder: (context, constraints) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (chrome.isCustom && widget.layoutControlsBuilder != null)
+                    _buildLayoutControls(
+                      context,
+                      showDirectToggles: constraints.maxWidth >= 600,
+                    ),
+                  if (widget.notificationButton != null) ...[
+                    widget.notificationButton!,
+                    const SizedBox(width: 8),
+                  ],
+                  if (showCustomControls) ..._buildWindowButtons(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLayoutControls(
+    BuildContext context, {
+    required bool showDirectToggles,
+  }) {
+    final builder = widget.layoutControlsBuilder!;
+    final layout = widget.workbenchLayout;
+    return ListenableBuilder(
+      listenable: Listenable.merge([widget.commands, layout]),
+      builder: (context, _) {
+        final items = _visibleTitleMenuItems(builder(), widget.commands);
+        if (items.isEmpty) return const SizedBox.shrink();
+
+        final menu = MenuAnchor(
+          controller: _layoutControlsMenuController,
+          childFocusNode: _layoutControlsFocusNode,
+          style: _layoutControlsMenuStyle,
+          onOpen: () => _focusFirstLayoutControlItem(items),
+          menuChildren: [
+            for (final entry in items)
+              if (entry.item.isSeparator)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  child: Divider(height: 1, thickness: 1),
+                )
+              else
+                MenuItemButton(
+                  key: ValueKey('layout-control-${entry.item.commandId}'),
+                  focusNode: _layoutControlFocusNodes[entry.item.commandId],
+                  style: _layoutControlsMenuItemStyle,
+                  leadingIcon: entry.item.currentChecked == true
+                      ? const Icon(Icons.check, size: 16)
+                      : const SizedBox(width: 16),
+                  onPressed: entry.item.enabled &&
+                          widget.commands.isEnabled(entry.item.commandId!)
+                      ? () => unawaited(_executeLayoutControl(entry.item))
+                      : null,
+                  child: Semantics(
+                    checked: entry.item.currentChecked,
+                    child: Text(_plainTitleMenuLabel(entry.item.label)),
+                  ),
+                ),
+          ],
+          builder: (context, controller, child) => Semantics(
+            key: const ValueKey('layout-controls'),
+            button: true,
+            label: '布局控制',
+            hint: '打开侧栏与面板布局菜单',
+            onTap: () => _refreshAndOpenLayoutControls(controller),
+            child: ExcludeSemantics(
+              child: IconButton(
+                key: const ValueKey('layout-controls-control'),
+                focusNode: _layoutControlsFocusNode,
+                tooltip: '布局控制',
+                color: const Color(0xFFE0E0E0),
+                iconSize: 17,
+                visualDensity: VisualDensity.compact,
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    _refreshAndOpenLayoutControls(controller);
+                  }
+                },
+                icon: const Icon(Icons.view_quilt_outlined),
+              ),
+            ),
+          ),
+        );
+        if (!showDirectToggles || layout == null) return menu;
+
+        const primary = 'view.toggleSidebar';
+        const secondary = 'workbench.action.toggleAuxiliaryBar';
+        final primaryOnLeft = layout.sideBarPosition == SideBarPosition.left;
+        final byId = {
+          for (final entry in items)
+            if (entry.item.commandId case final String id) id: entry.item,
+        };
+        return TextFieldTapRegion(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              menu,
+              for (final (id, alignment) in [
+                (primaryOnLeft ? primary : secondary, Alignment.centerLeft),
+                ('view.togglePanel', Alignment.bottomCenter),
+                (primaryOnLeft ? secondary : primary, Alignment.centerRight),
+              ])
+                if (byId[id] case final item?) ...[
+                  const SizedBox(width: 4),
+                  _buildLayoutVisibilityToggle(context, item, alignment),
+                ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLayoutVisibilityToggle(
+    BuildContext context,
+    TitleMenuItem item,
+    Alignment alignment,
+  ) {
+    final id = item.commandId!;
+    final enabled = item.enabled && widget.commands.isEnabled(id);
+    final active = item.currentChecked == true;
+    final onTap = enabled ? () => unawaited(_executeLayoutControl(item)) : null;
+    final shortcut = widget.commands.byId(id)?.shortcut;
+    final label = '切换${_plainTitleMenuLabel(item.label)}';
+    final color =
+        enabled ? const Color(0xFFE0E0E0) : Theme.of(context).disabledColor;
+    final panel = alignment == Alignment.bottomCenter;
+    final edge = BorderSide(color: color);
+    return Tooltip(
+      message: shortcut == null ? label : '$label ($shortcut)',
+      excludeFromSemantics: true,
+      child: Semantics(
+        key: ValueKey('title-layout-state-$id'),
+        button: true,
+        toggled: active,
+        enabled: enabled,
+        label: label,
+        hint: shortcut,
+        onTap: onTap,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: ValueKey('title-layout-toggle-$id'),
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            canRequestFocus: enabled,
+            excludeFromSemantics: true,
+            onTap: onTap,
+            child: SizedBox.square(
+              dimension: 22,
+              child: Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 14,
+                  child: DecoratedBox(
+                    position: DecorationPosition.foreground,
+                    decoration: BoxDecoration(
+                      border: Border.fromBorderSide(edge),
+                      borderRadius: const BorderRadius.all(Radius.circular(2)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(1),
+                      child: FractionallySizedBox(
+                        alignment: alignment,
+                        widthFactor: panel ? 1 : 0.34,
+                        heightFactor: panel ? 0.34 : 1,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: active ? color : null,
+                            border: switch (alignment) {
+                              Alignment.centerLeft => Border(right: edge),
+                              Alignment.centerRight => Border(left: edge),
+                              _ => Border(top: edge),
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _refreshAndOpenLayoutControls(MenuController controller) {
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) controller.open();
+    });
+  }
+
+  void _focusFirstLayoutControlItem(List<_IndexedTitleMenuItem> items) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_layoutControlsMenuController.isOpen) return;
+      for (final entry in items) {
+        if (!entry.item.isSeparator &&
+            entry.item.enabled &&
+            widget.commands.isEnabled(entry.item.commandId!)) {
+          _layoutControlFocusNodes[entry.item.commandId]?.requestFocus();
+          return;
+        }
+      }
+    });
+  }
+
+  Future<void> _executeLayoutControl(TitleMenuItem item) async {
+    await widget.commands.execute(item.commandId!, arguments: item.arguments);
+  }
+
+  List<PlatformMenuItem> _buildMacPlatformMenus() {
+    final menus = <PlatformMenuItem>[_buildMacApplicationMenu()];
+    for (final (label, source) in widget.menus) {
+      final title = _plainTitleMenuLabel(label);
+      final isHelpMenu = title == '帮助' || title.toLowerCase() == 'help';
+      final items = _buildMacPlatformMenuItems(
+        isHelpMenu
+            ? source.where((item) => item.commandId != 'help.about').toList()
+            : source,
+      );
+      if (items.isNotEmpty) {
+        menus.add(PlatformMenu(label: title, menus: items));
+      }
+    }
+    return menus;
+  }
+
+  PlatformMenu _buildMacApplicationMenu() {
+    final items = <PlatformMenuItem>[];
+    if (widget.commands.isVisible('help.about')) {
+      items.add(
+        PlatformMenuItem(
+          label: '关于 Alula Code',
+          onSelected: widget.commands.isEnabled('help.about')
+              ? () => unawaited(_executeMacCommand('help.about'))
+              : null,
+        ),
+      );
+    }
+
+    void addPlatformGroup(List<PlatformProvidedMenuItemType> types) {
+      items.add(
+        PlatformMenuItemGroup(
+          members: types
+              .map((type) => PlatformProvidedMenuItem(type: type))
+              .toList(),
+        ),
+      );
+    }
+
+    addPlatformGroup([PlatformProvidedMenuItemType.servicesSubmenu]);
+    addPlatformGroup([
+      PlatformProvidedMenuItemType.hide,
+      PlatformProvidedMenuItemType.hideOtherApplications,
+      PlatformProvidedMenuItemType.showAllApplications,
+    ]);
+    items.add(
+      PlatformMenuItemGroup(
+        members: [
+          PlatformMenuItem(
+            label: 'Quit Alula Code',
+            shortcut: const SingleActivator(
+              LogicalKeyboardKey.keyQ,
+              meta: true,
+            ),
+            onSelected: _requestCloseFromMenu,
+          ),
+        ],
+      ),
+    );
+    return PlatformMenu(label: 'Alula Code', menus: items);
+  }
+
+  List<PlatformMenuItem> _buildMacPlatformMenuItems(
+    List<TitleMenuItem> source,
+  ) {
+    final result = <PlatformMenuItem>[];
+    var group = <PlatformMenuItem>[];
+
+    void flushGroup() {
+      if (group.isEmpty) return;
+      if (result.isEmpty) {
+        result.addAll(group);
+      } else {
+        result.add(PlatformMenuItemGroup(members: group));
+      }
+      group = <PlatformMenuItem>[];
+    }
+
+    for (final candidate in _visibleTitleMenuItems(source, widget.commands)) {
+      final item = candidate.item;
+      if (item.isSeparator) {
+        flushGroup();
+        continue;
+      }
+
+      if (item.isSubmenu) {
+        final children = _buildMacPlatformMenuItems(item.children);
+        if (children.isNotEmpty) {
+          group.add(
+            PlatformMenu(
+              label: _plainTitleMenuLabel(item.label),
+              menus: children,
+            ),
+          );
+        }
+        continue;
+      }
+
+      final commandId = item.commandId!;
+      final command = widget.commands.byId(commandId);
+      group.add(
+        PlatformMenuItem(
+          label: _macPlatformMenuLabel(
+            item.label,
+            command?.shortcut,
+            checked: item.currentChecked == true,
+          ),
+          shortcut: _macPlatformMenuShortcut(command?.shortcut),
+          onSelected: item.enabled && widget.commands.isEnabled(commandId)
+              ? () => unawaited(
+                    _executeMacCommand(
+                      commandId,
+                      arguments: item.arguments,
+                      restorePreviousFocus: item.restorePreviousFocus,
+                    ),
+                  )
+              : null,
+        ),
+      );
+    }
+    flushGroup();
+    return result;
+  }
+
+  Future<void> _executeMacCommand(
+    String commandId, {
+    Object? arguments,
+    bool restorePreviousFocus = true,
+  }) async {
+    await widget.commands.execute(commandId, arguments: arguments);
+    _restoreWorkbenchFocus(restorePreviousFocus);
+  }
+
+  void _requestCloseFromMenu() {
+    if (_closeInProgress) return;
+    _closeInProgress = true;
+    unawaited(_closeWindow());
+  }
+
+  Widget _dragArea(Widget child, {Key? key}) {
+    if (!widget.windowControls) return child;
+    return GestureDetector(
+      key: key,
+      behavior: HitTestBehavior.opaque,
+      onPanStart: (_) => unawaited(_windowChrome.startDragging()),
+      onDoubleTap: () => unawaited(_toggleMaximize()),
+      child: child,
+    );
+  }
+
+  Future<void> _toggleMaximize() async {
+    try {
+      if (await _windowChrome.isMaximized()) {
+        await _windowChrome.unmaximize();
+      } else {
+        await _windowChrome.maximize();
+      }
+    } catch (error) {
+      debugPrint('切换窗口最大化状态失败：$error');
+    }
+  }
+
+  Future<void> _setWindowTitle(String title) async {
+    try {
+      await _windowChrome.setTitle(title);
+    } catch (error) {
+      debugPrint('更新窗口标题失败：$error');
+    }
+  }
+
+  void _rememberCommandCenterFocus() {
+    final focus = FocusManager.instance.primaryFocus;
+    final focusContext = focus?.context;
+    if (focusContext != null &&
+        focusContext.mounted &&
+        focus is! FocusScopeNode &&
+        !identical(
+          focusContext.findAncestorWidgetOfExactType<AlulaTitleBar>(),
+          widget,
+        )) {
+      _commandCenterFocusToReturn = focus;
+    }
+  }
+
+  String get _commandCenterActionId =>
+      widget.commands.byId(commandCenterQuickOpenCommandId) != null
+          ? commandCenterQuickOpenCommandId
+          : quickOpenCommandId;
+
+  void _openCommandCenter() {
+    _rememberCommandCenterFocus();
+    final focusToReturn = _commandCenterFocusToReturn;
+    _commandCenterFocusToReturn = null;
+    if (focusToReturn?.context?.mounted == true) {
+      focusToReturn!.requestFocus();
+      // Quick Access captures the restored focus when it opens.
+      FocusManager.instance.applyFocusChangesIfNeeded();
+    }
+    unawaited(widget.commands.execute(_commandCenterActionId));
+  }
+
+  Widget _buildHistoryButton({
+    required Command command,
+    required String availability,
+    required Key key,
+    required IconData icon,
+  }) {
+    final enabled = widget.commands.isEnabled(command.id) &&
+        widget.commands.context[availability] == true;
+    final shortcut = command.shortcut;
+    final tooltip =
+        shortcut == null ? command.title : '${command.title} ($shortcut)';
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: enabled,
+        label: command.title,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: key,
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            canRequestFocus: enabled,
+            onTap: enabled
+                ? () => unawaited(widget.commands.execute(command.id))
+                : null,
+            child: SizedBox.square(
+              dimension: _navigationControlExtent,
+              child: Icon(
+                icon,
+                size: 16,
+                color: enabled ? null : Theme.of(context).disabledColor,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -140,23 +1209,110 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       _WindowButton(
         icon: Icons.horizontal_rule,
         tooltip: '最小化',
-        onPressed: windowManager.minimize,
+        onPressed: _windowChrome.minimize,
       ),
       _WindowButton(
         icon: _maximized ? Icons.filter_none : Icons.crop_square_outlined,
         tooltip: _maximized ? '向下还原' : '最大化',
-        onPressed: () => windowManager.isMaximized().then((v) {
-          v ? windowManager.unmaximize() : windowManager.maximize();
-        }),
+        onPressed: _toggleMaximize,
       ),
       _WindowButton(
         icon: Icons.close,
         tooltip: '关闭',
         hoverColor: const Color(0xFFC42B1C),
-        onPressed: windowManager.close,
+        onPressed: _windowChrome.close,
       ),
     ];
   }
+}
+
+enum _TitleBarPart { commandCenter, menus, leadingDragArea, dragArea, trailing }
+
+const _navigationControlExtent = 22.0;
+const _navigationControlGap = 4.0;
+const _navigationSearchGap = 10.0;
+const _navigationControlsWidth =
+    2 * _navigationControlExtent + _navigationControlGap + _navigationSearchGap;
+
+class _TitleBarLayout extends MultiChildLayoutDelegate {
+  _TitleBarLayout(this.direction, {required this.showNavigationControls});
+
+  final TextDirection direction;
+  final bool showNavigationControls;
+
+  @override
+  void performLayout(Size size) {
+    final trailing =
+        layoutChild(_TitleBarPart.trailing, BoxConstraints.loose(size));
+    final trailingStart = size.width - trailing.width;
+    final leadingInset = math.min(10.0, trailingStart);
+    final menu = layoutChild(
+      _TitleBarPart.menus,
+      BoxConstraints.loose(Size(trailingStart - leadingInset, size.height)),
+    );
+
+    void place(_TitleBarPart part, Size child, double start) {
+      final left = direction == TextDirection.ltr
+          ? start
+          : size.width - start - child.width;
+      positionChild(part, Offset(left, (size.height - child.height) / 2));
+    }
+
+    place(_TitleBarPart.menus, menu, leadingInset);
+    final leadingEnd = leadingInset + menu.width;
+    var dragStart = leadingEnd;
+    if (hasChild(_TitleBarPart.commandCenter)) {
+      final remaining = math.max(0.0, trailingStart - leadingEnd);
+      final spacing = math.min(10.0, remaining);
+      final available = remaining - spacing;
+      final reservedDragWidth = math.min(
+        size.height,
+        math.max(0.0, available - size.height),
+      );
+      final preferredWidth = math.min(600.0, size.width * 0.38) +
+          2 + (showNavigationControls ? _navigationControlsWidth : 0);
+      final command = layoutChild(
+        _TitleBarPart.commandCenter,
+        BoxConstraints.tightFor(
+          width: math.min(preferredWidth, available - reservedDragWidth),
+        ),
+      );
+      final minimumStart = leadingEnd + spacing;
+      final maximumStart = math.max(
+        minimumStart,
+        trailingStart - reservedDragWidth - command.width,
+      );
+      final commandStart = ((size.width - command.width) / 2)
+          .clamp(minimumStart, maximumStart)
+          .toDouble();
+      final leadingDrag = layoutChild(
+        _TitleBarPart.leadingDragArea,
+        BoxConstraints.tightFor(
+          width: commandStart - leadingEnd,
+          height: size.height,
+        ),
+      );
+      place(_TitleBarPart.leadingDragArea, leadingDrag, leadingEnd);
+      place(_TitleBarPart.commandCenter, command, commandStart);
+      dragStart = commandStart + command.width;
+    }
+    if (hasChild(_TitleBarPart.dragArea)) {
+      final drag = layoutChild(
+        _TitleBarPart.dragArea,
+        BoxConstraints.tightFor(
+          width: math.max(0.0, trailingStart - dragStart),
+          height: size.height,
+        ),
+      );
+      place(_TitleBarPart.dragArea, drag, dragStart);
+    }
+    place(_TitleBarPart.trailing, trailing, trailingStart);
+  }
+
+  @override
+  bool shouldRelayout(_TitleBarLayout oldDelegate) =>
+      direction != oldDelegate.direction ||
+      showNavigationControls != oldDelegate.showNavigationControls;
 }
 
 class _WindowButton extends StatelessWidget {
@@ -195,40 +1351,292 @@ class _MenuButton extends StatelessWidget {
     required this.title,
     required this.items,
     required this.commands,
+    required this.controller,
+    required this.submenuControllerForPath,
+    required this.enableMnemonics,
+    required this.persistentMnemonics,
+    required this.onCommandExecuted,
   });
 
   final String title;
   final List<TitleMenuItem> items;
   final CommandService commands;
+  final MenuController controller;
+  final MenuController Function(List<int> path) submenuControllerForPath;
+  final bool enableMnemonics;
+  final bool persistentMnemonics;
+  final ValueChanged<bool> onCommandExecuted;
+
+  static const ButtonStyle _barButtonStyle = ButtonStyle(
+    foregroundColor: WidgetStatePropertyAll(Color(0xFFE0E0E0)),
+    overlayColor: WidgetStatePropertyAll(Color(0xFF343943)),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 10)),
+    minimumSize: WidgetStatePropertyAll(Size(0, 35)),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
+    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+  );
+
+  static const MenuStyle _popupMenuStyle = MenuStyle(
+    backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
+    surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+    minimumSize: WidgetStatePropertyAll(Size(180, 0)),
+  );
+
+  static const ButtonStyle _popupMenuItemStyle = ButtonStyle(
+    minimumSize: WidgetStatePropertyAll(Size(180, 34)),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+    visualDensity: VisualDensity.compact,
+    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: commands,
-      builder: (context, _) => PopupMenuButton<String>(
-        tooltip: title,
-        position: PopupMenuPosition.under,
-        color: const Color(0xFF252932),
-        onSelected: (commandId) {
-          final item =
-              items.firstWhere((entry) => entry.commandId == commandId);
-          unawaited(commands.execute(commandId, arguments: item.arguments));
-        },
-        itemBuilder: (context) => [
-          for (final item
-              in items.where((entry) => commands.isVisible(entry.commandId)))
-            PopupMenuItem<String>(
-              value: item.commandId,
-              enabled: commands.isEnabled(item.commandId),
-              height: 34,
-              child: Text(item.label, style: const TextStyle(fontSize: 12)),
-            ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Text(title, style: const TextStyle(fontSize: 12)),
+    return Tooltip(
+      message: _plainTitleMenuLabel(title),
+      child: SubmenuButton(
+        controller: controller,
+        style: _barButtonStyle,
+        menuStyle: _popupMenuStyle,
+        menuChildren: _buildMenuChildren(
+          context,
+          _visibleTitleMenuItems(items, commands),
+          const [],
         ),
+        child: _titleMenuLabel(context, title),
       ),
     );
   }
+
+  Widget _titleMenuLabel(BuildContext context, String label) =>
+      _buildTitleMenuLabel(
+        context,
+        label,
+        enabled: enableMnemonics,
+        persistent: persistentMnemonics,
+      );
+
+  List<Widget> _buildMenuChildren(
+    BuildContext context,
+    List<_IndexedTitleMenuItem> menuItems,
+    List<int> parentPath,
+  ) =>
+      [
+        for (final entry in menuItems)
+          if (entry.item.isSeparator)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: Divider(height: 1, thickness: 1),
+            )
+          else if (entry.item.isSubmenu)
+            SubmenuButton(
+              controller: submenuControllerForPath(
+                [...parentPath, entry.sourceIndex],
+              ),
+              style: _popupMenuItemStyle,
+              menuStyle: _popupMenuStyle,
+              menuChildren: _buildMenuChildren(
+                context,
+                _visibleTitleMenuItems(entry.item.children, commands),
+                [...parentPath, entry.sourceIndex],
+              ),
+              child: _titleMenuLabel(context, entry.item.label),
+            )
+          else
+            _buildCommandMenuItem(context, entry.item),
+      ];
+
+  Widget _buildCommandMenuItem(BuildContext context, TitleMenuItem item) {
+    Widget buildButton() => MenuItemButton(
+          style: _popupMenuItemStyle,
+          onPressed: item.enabled && commands.isEnabled(item.commandId!)
+              ? () => unawaited(_execute(item))
+              : null,
+          leadingIcon: item.currentChecked == true
+              ? const Icon(Icons.check, size: 16)
+              : const SizedBox(width: 16),
+          child: Semantics(
+            checked: item.currentChecked,
+            child: _titleMenuLabel(context, item.label),
+          ),
+        );
+
+    final listenable = item.checkedListenable;
+    if (listenable == null) return buildButton();
+    return ListenableBuilder(
+      listenable: listenable,
+      builder: (context, _) => buildButton(),
+    );
+  }
+
+  Future<void> _execute(TitleMenuItem item) async {
+    await commands.execute(
+      item.commandId!,
+      arguments: item.arguments,
+    );
+    onCommandExecuted(item.restorePreviousFocus);
+  }
 }
+
+List<_IndexedTitleMenuItem> _visibleTitleMenuItems(
+  List<TitleMenuItem> source,
+  CommandService commands,
+) {
+  final visible = <_IndexedTitleMenuItem>[];
+  var separatorPending = false;
+  for (var sourceIndex = 0; sourceIndex < source.length; sourceIndex++) {
+    final item = source[sourceIndex];
+    if (item.isSeparator) {
+      separatorPending = visible.isNotEmpty;
+      continue;
+    }
+
+    final itemIsVisible = item.isSubmenu
+        ? _visibleTitleMenuItems(item.children, commands).isNotEmpty
+        : commands.isVisible(item.commandId!);
+    if (!itemIsVisible) continue;
+
+    if (separatorPending) {
+      visible.add((sourceIndex: -1, item: const TitleMenuItem.separator()));
+    }
+    visible.add((sourceIndex: sourceIndex, item: item));
+    separatorPending = false;
+  }
+  return visible;
+}
+
+String _menuControllerKey(int rootIndex, List<int> path) =>
+    '$rootIndex:${path.join("/")}';
+
+Widget _buildTitleMenuLabel(
+  BuildContext context,
+  String label, {
+  required bool enabled,
+  required bool persistent,
+}) {
+  final flutterLabel = _codeOssMenuLabelToFlutter(label);
+  var mnemonicIndex = -1;
+  final plainLabel = MenuAcceleratorLabel.stripAcceleratorMarkers(
+    flutterLabel,
+    setIndex: (index) => mnemonicIndex = index,
+  );
+  if (!enabled ||
+      !persistent ||
+      mnemonicIndex < 0 ||
+      mnemonicIndex >= plainLabel.characters.length) {
+    return Text(plainLabel);
+  }
+
+  final characters = plainLabel.characters;
+  final style = DefaultTextStyle.of(context).style;
+  return RichText(
+    text: TextSpan(
+      children: [
+        if (mnemonicIndex > 0)
+          TextSpan(
+            text: characters.getRange(0, mnemonicIndex).toString(),
+            style: style,
+          ),
+        TextSpan(
+          text: characters.characterAt(mnemonicIndex).toString(),
+          style: style.copyWith(decoration: TextDecoration.underline),
+        ),
+        if (mnemonicIndex + 1 < characters.length)
+          TextSpan(
+            text: characters.getRange(mnemonicIndex + 1).toString(),
+            style: style,
+          ),
+      ],
+    ),
+  );
+}
+
+String _codeOssMenuLabelToFlutter(String label) {
+  final characters = label.characters.toList();
+  final result = StringBuffer();
+  for (var index = 0; index < characters.length; index++) {
+    if (characters[index] != '&') {
+      result.write(characters[index]);
+      continue;
+    }
+
+    if (index + 1 < characters.length && characters[index + 1] == '&') {
+      if (index + 2 < characters.length &&
+          characters[index + 2] != '&' &&
+          characters[index + 2].trim().isNotEmpty) {
+        result
+          ..write('&')
+          ..write(characters[index + 2]);
+        index += 2;
+      } else {
+        result.write('&&');
+        index += 1;
+      }
+    } else {
+      result.write('&&');
+    }
+  }
+  return result.toString();
+}
+
+String? _codeOssMnemonicKey(String label) {
+  final characters = label.characters.toList();
+  for (var index = 0; index + 2 < characters.length; index++) {
+    if (characters[index] == '&' &&
+        characters[index + 1] == '&' &&
+        characters[index + 2] != '&' &&
+        characters[index + 2].trim().isNotEmpty) {
+      return characters[index + 2].toLowerCase();
+    }
+  }
+  return null;
+}
+
+String _plainTitleMenuLabel(String label) =>
+    MenuAcceleratorLabel.stripAcceleratorMarkers(
+      _codeOssMenuLabelToFlutter(
+        label.replaceAll(RegExp(r'\(&&[^&\s]\)'), ''),
+      ),
+    );
+
+String _macPlatformMenuLabel(String label, String? shortcut,
+    {bool checked = false}) {
+  var plain = label;
+  if (shortcut != null) {
+    plain = plain.replaceFirst(
+      RegExp(r'\s{2,}' + RegExp.escape(shortcut) + r'$'),
+      '',
+    );
+  }
+  final menuLabel = _plainTitleMenuLabel(plain.trimRight());
+  // Flutter's PlatformMenuItem has no checked property; expose the state in
+  // the native label until the framework provides a checkmark API.
+  return checked ? '✓ $menuLabel' : menuLabel;
+}
+
+MenuSerializableShortcut? _macPlatformMenuShortcut(String? shortcut) {
+  if (shortcut == null) return null;
+  final normalized = shortcut.replaceAll('Meta+', 'Cmd+');
+  return parseChord(normalized)?.toActivator();
+}
+
+const MenuStyle _menuBarStyle = MenuStyle(
+  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+  padding: WidgetStatePropertyAll(EdgeInsets.zero),
+  minimumSize: WidgetStatePropertyAll(Size(0, 35)),
+);
+
+const MenuStyle _layoutControlsMenuStyle = MenuStyle(
+  backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
+  surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+  minimumSize: WidgetStatePropertyAll(Size(180, 0)),
+);
+
+const ButtonStyle _layoutControlsMenuItemStyle = ButtonStyle(
+  minimumSize: WidgetStatePropertyAll(Size(180, 34)),
+  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+  visualDensity: VisualDensity.compact,
+  textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+);

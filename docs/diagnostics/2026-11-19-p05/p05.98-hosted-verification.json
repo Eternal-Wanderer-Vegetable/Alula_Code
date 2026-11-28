@@ -1,0 +1,97 @@
+{
+  "captured_at": "2026-11-19T11:25:45Z",
+  "feature": "P05.98 / feat-150 Open Editors dirty-count shortcut",
+  "product_commit": "970ea5c6ee7ed7dbf8f99eb569265fcfd62df848",
+  "pull_request": {
+    "number": 3,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3",
+    "state": "open",
+    "merged": false,
+    "draft": true,
+    "head_branch": "codex/vscode-parity-p05",
+    "head_sha": "970ea5c6ee7ed7dbf8f99eb569265fcfd62df848"
+  },
+  "pr_ci": {
+    "run_id": 44512676524,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44512676524",
+    "event": "pull_request",
+    "head_sha": "970ea5c6ee7ed7dbf8f99eb569265fcfd62df848",
+    "conclusion": "success",
+    "jobs": {
+      "Rust (ubuntu-latest)": "success",
+      "Harness 文档结构校验": "success",
+      "Rust (windows-latest)": "success",
+      "Flutter (analyze + test)": "success"
+    },
+    "flutter_analyze": "No issues found",
+    "flutter_tests": 1563,
+    "flutter_tests_skipped": 2,
+    "native_icu4x_collation_smoke": "success; 17 tests passed"
+  },
+  "platform_availability": {
+    "run_id": 44512666184,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44512666184",
+    "event": "push",
+    "head_sha": "970ea5c6ee7ed7dbf8f99eb569265fcfd62df848",
+    "overall_run_status_at_capture": "in_progress because macOS job was not awaited",
+    "linux_x64": {
+      "conclusion": "success",
+      "checks": [
+        "Release build",
+        "native ICU4X Open Editors collation",
+        "native clipboard formats",
+        "native move/copy/external text drag and drop",
+        "bundle integrity",
+        "Xvfb launch",
+        "native-titlebar launch"
+      ]
+    },
+    "windows_x64": {
+      "conclusion": "success",
+      "checks": [
+        "Release build and Rust DLL bundling",
+        "native ICU4X Open Editors collation",
+        "visible app launch",
+        "P03.7 desktop interaction suite",
+        "native move/copy/external text drag and drop",
+        "native clipboard formats",
+        "accessibility tree and smoke lifecycle",
+        "native-titlebar launch and graceful close"
+      ]
+    },
+    "macos": {
+      "status_at_capture": "in_progress",
+      "current_step": "Flutter analyze and tests",
+      "awaited": false,
+      "claim": "not verified"
+    }
+  },
+  "artifacts": [
+    {
+      "id": 14524690067,
+      "name": "alula-linux-x64-970ea5c6ee7ed7dbf8f99eb569265fcfd62df848",
+      "size_bytes": 14788953,
+      "digest": "sha256:3ed7758963c593d2cc5748c58f2c3a9ff48f952315fd0ba906eaf115a6b046f1"
+    },
+    {
+      "id": 14522594868,
+      "name": "alula-linux-native-dnd-44512666184-1",
+      "size_bytes": 3314,
+      "digest": "sha256:da042640bc1fef456300e2f49dab7eb0c4e373248e11ef69ed968dcad40c630a"
+    },
+    {
+      "id": 14524975968,
+      "name": "alula-windows-x64-970ea5c6ee7ed7dbf8f99eb569265fcfd62df848",
+      "size_bytes": 16269849,
+      "digest": "sha256:7a462bd96a41152fc8170c1682b1cb7164f1f8fe73cca9a2e95a789645fff172"
+    },
+    {
+      "id": 14524711143,
+      "name": "alula-windows-native-dnd-44512666184-1",
+      "size_bytes": 3843,
+      "digest": "sha256:c488a45b27990b6fed9fcdfe07b46a6c1d836b2e629dc6a876ed733b8b880544"
+    }
+  ],
+  "macos_device_validation": "deferred; there is currently no macOS device, and no macOS result is claimed",
+  "scope_note": "The exact-SHA Flutter suite includes the P05.98 widget tests. Platform Availability checks are broad platform build and interaction smoke coverage; they do not replace the focused P05.98 widget assertions."
+}

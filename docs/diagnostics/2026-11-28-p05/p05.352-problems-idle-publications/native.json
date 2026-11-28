@@ -1,0 +1,778 @@
+{
+  "product": "758e7eb791df02b6a57407c6f12967dc9892e94a",
+  "tree": "93c0324ead1ee9a023b5dd9c92e144d645f7f62e",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "93c0324ead1ee9a023b5dd9c92e144d645f7f62e",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ed0d1b67e22839d3651caf37134df3bb3fbf7c210468601ffb8012b30fa75bdd",
+      "app/lib/bridge/alula_ffi.dart": "27ca44d52361c42c3c1a47413da0dcb56196e31d50e003d612c68847259bb33a",
+      "app/lib/editor/editor_rendering.dart": "7bcb8d538dba1942a60258d83a7dd564915f30f73ae49c221123501c2c951277",
+      "app/lib/editor/editor_scroll_controller.dart": "554f62726d964ad0193c2acdb185089bdddbefab09e91d7f3d0b5379caff5903",
+      "app/lib/editor/rust_text_input_field.dart": "b9fa4f9781b8d0d8d2c339258fd8be57fb9dfb0e8cb50918283b3c4bf210e3f7",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "92bd25875f32eb7bd9e1d7bc1f1a9dbe06638ee0a1fbf0512483809e60159007",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "0a38c042a18e1396242f24627931089297f70b8cbf748ebc642c1e97cec5e9d6",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "f2a097bf9663678860621f5d8b04d26cac4c07f48c100fd754bb0b182ef32c9a",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "28dc2d1476b35c0d4eda2d65b9fc290a148db88aa11a737dc1b0b9765cd83f78",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 50,
+    "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5"
+  },
+  "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+  "sharedAcceptanceFixtureSha256": "22c27838f333171d268c1d7c648b8d8c9e4413f0e8d3d3c5fc4523c4d3885ad6",
+  "localLogsSha256": {
+    "p05-352-targeted.log": "78dadfa2dce93cde1058c14fb973819750f8e9272c29f151d0fc4e127cdc28b3",
+    "p05-352-focused.log": "92006dc0394c7a106f3b56117876c04f8249c75a93af9e58ea6b358ebe758ad9",
+    "p05-352-first-rust.log": "18134bb6e7280103b24973d3de9fde78af02cad1240ddd8ec276770b2aa0360a",
+    "p05-352-analyze.log": "6acd4481ca75aa7bc39ff034d645d680d14b701b0081ff9b8e76bf5b8e9a0206",
+    "p05-352-full.log": "1717e55a4edeb92c04cdd1acc0b33d44cdeffeb9882d4e04131a0317f49ea403",
+    "p05-352-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "oldLinuxReproduction": {
+    "product": "b899d75449ca3934c22b730e84beea0c7e2f24e8",
+    "tree": "ff7e5af2f611c33cd3deefcfd252e8b3d8a6aed0",
+    "checks": [
+      "owned-unique-attached-file-ready",
+      "first-publication-reaches-workbench",
+      "problems-displays-the-initial-error",
+      "last-editor-closes-with-workspace-still-visible",
+      "late-warning-arrives-after-the-last-editor-closed",
+      "unchanged-problems-while-idle-after-late-publication",
+      "visibility-change-synchronizes-the-already-cached-warning",
+      "reopening-problems-now-shows-both-cached-resources"
+    ],
+    "rawReportSha256": "d0b8b5c2e8d1b263eba0eddf384d9928ae8d19d3799ecffb79fedbcbf4b9aae0",
+    "measured": {
+      "idleCounts": [
+        1,
+        0,
+        0
+      ],
+      "afterVisibility": [
+        1,
+        1,
+        0
+      ]
+    },
+    "providerKind": "controlled LSP",
+    "idleMemorySample": {
+      "n_processes": 2,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 28371,
+          "ppid": 28370,
+          "private": 261070848,
+          "pss": 288185344,
+          "working_set": 341594112
+        },
+        {
+          "name": "python3",
+          "peak_private": 0,
+          "pid": 28525,
+          "ppid": 28371,
+          "private": 5423104,
+          "pss": 5850112,
+          "working_set": 12664832
+        }
+      ],
+      "root_pid": 28371,
+      "total_private_bytes": 266493952,
+      "total_private_mib": 254.1,
+      "total_working_set_bytes": 354258944
+    },
+    "sampledProcessesExited": true
+  },
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "kind": "pinned source",
+    "files": {
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": {
+        "line": 595,
+        "sha256": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b"
+      },
+      "src/vs/workbench/contrib/markers/browser/markersView.ts": {
+        "line": 551,
+        "sha256": "f7db413f12fcde3f895b630ac79f93b9c8d975ce05f66b7e842a905113713f1f"
+      }
+    }
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 42,
+        "affected_count": 1,
+        "changed_files": 8,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_173_spawn",
+          "name": "Spawn → New",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "new",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "e020be600d1308efd78ca9f6cb76faad60ce469354f31d764f7c3630686acb7c"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 42,
+        "affected_count": 1,
+        "changed_files": 8,
+        "risk_level": "medium"
+      },
+      "affectedProcesses": [
+        {
+          "id": "proc_173_spawn",
+          "name": "Spawn → New",
+          "process_type": "intra_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "new",
+              "step": 3
+            }
+          ]
+        }
+      ],
+      "sha256": "e020be600d1308efd78ca9f6cb76faad60ce469354f31d764f7c3630686acb7c"
+    }
+  },
+  "preedit": {
+    "dart-abi": {
+      "target": {
+        "id": "Variable:app/lib/bridge/alula_core.dart:expectedAbiVersion",
+        "name": "expectedAbiVersion",
+        "type": "Variable",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "5febd6e921aa6200d1160e71a2c0812f337e8776e953c8a99e307964e7851787"
+    },
+    "diagnostic-advance": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:DiagnosticCache.advance_revision#0",
+        "name": "advance_revision",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "004e173f3ebd993a94b24c1d34d41af4ec42ae0ea07288ad16f2beaea53d8a3b"
+    },
+    "diagnostic-cache-new": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:DiagnosticCache.new#0",
+        "name": "new",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 2,
+        "modules_affected": 5
+      },
+      "sha256": "9f2865d348c6bef0ecfcc3d7807b06ca1aa37e5a17caad787afc8870ba40f7ae"
+    },
+    "diagnostic-cache": {
+      "target": {
+        "id": "Struct:crates/editor-lsp/src/lib.rs:DiagnosticCache",
+        "name": "DiagnosticCache",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c973dec2968f90bf0e44fc18ee94d6a95bc8638abb712b14695b877d54d6b3b9"
+    },
+    "diagnostic-ffi-test": {
+      "target": {
+        "id": "Function:app/test/unopened_diagnostics_ffi_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/unopened_diagnostics_ffi_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "fc1ed8a38c5077f3ad3ae361181a6d8668df72bc8ac523cb9127d85da4ff8c48"
+    },
+    "ffi-binding": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_ffi.dart:AlulaFfi",
+        "name": "AlulaFfi",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_ffi.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 55,
+        "processes_affected": 29,
+        "modules_affected": 5
+      },
+      "sha256": "be74756915f76306c3355540d5501588447a5badf4450f6facad1f99b43abaac"
+    },
+    "lsp-binding": {
+      "target": {
+        "id": "Class:app/lib/bridge/alula_core.dart:AlulaLsp",
+        "name": "AlulaLsp",
+        "type": "Class",
+        "filePath": "app/lib/bridge/alula_core.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 25,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "abaa2bcf418caaabb748d9d9a9f15bf5b63db4808cc2bd7fae9831a65879d9de"
+    },
+    "lsp-impl": {
+      "target": {
+        "id": "Impl:crates/editor-lsp/src/lib.rs:LspServer",
+        "name": "LspServer",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05389a85fbe26d6c3aedf33d1285790d0f734426082b71ec67d612ebba924e81"
+    },
+    "lsp-server": {
+      "target": {
+        "id": "Struct:crates/editor-lsp/src/lib.rs:LspServer",
+        "name": "LspServer",
+        "type": "",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 3
+      },
+      "sha256": "5edfb0e404040b12af7e04c16e4d3a22921336177d1dfa2d606753190c325f18"
+    },
+    "lsp-shutdown": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._shutdownLspWorkspace#0",
+        "name": "_shutdownLspWorkspace",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "sha256": "dc2418825ba2a29c254df0806bb60bd45d717f87952c466a7ab5b03e201a8798"
+    },
+    "native-abi-test": {
+      "target": {
+        "id": "Function:crates/editor-core/src/ffi.rs:tests.abi_version_is_exposed",
+        "name": "abi_version_is_exposed",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "219fd2ae84d7b3bdfcc0b08887db62f1da61c5e437f0f0f7918206cf1c193f6a"
+    },
+    "native-abi": {
+      "target": {
+        "id": "Const:crates/editor-core/src/ffi.rs:ALULA_ABI_VERSION",
+        "name": "ALULA_ABI_VERSION",
+        "type": "Const",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3587e08ce9bbc44a3ae640fff416ef66ada4ea554740a4f192b5ea2890d0578"
+    },
+    "poll-update": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._updateLanguageServicePolling#0",
+        "name": "_updateLanguageServicePolling",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "sha256": "8de8dc2a89715bf08e17cbf6a3029e1c6cebe33486ac4aa26f4a7d076db6a018"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "visible": {
+      "rawReportSha256": "34b0c5fd2abb5dfe045e294b0fff8fb61aaf532aee401f3dbefd5af520f2dd92",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "d3a4aa119cce6a87e9742aba81bb19167fd10dddc9c24e40206ee67dac6863b0",
+      "aotSha256": "aa1f8b65831e34f8b9a1ff3c2e6deb94797c3a023fdcf2ae0a8d0b0839406edf",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "5d672bb2d225b0645fffcd74ac7bfc0904fcb931818c45fc6233fb41c0064b88",
+      "providerVersion": "Alula local late workspace diagnostics fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "providerScriptSha256": "b4b39cef7e05ccf41907c94b86475531ce6b7669960ff73ed11d6997b29990e2",
+      "sourceSha256": {
+        "lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+        "extra.rs": "f70d3ed93649e7ee0271d38008eb4427cc0f3006fc1770462aafec2ee834bfcf"
+      },
+      "nativeChecks": [
+        "owned-unique-attached-file-ready",
+        "first-publication-reaches-workbench",
+        "problems-displays-the-initial-error",
+        "last-editor-closes-with-cached-error",
+        "late-warning-refreshes-idle-workspace-without-input",
+        "late-warning-is-a-real-received-provider-publication",
+        "hiding-problems-preserves-idle-counts",
+        "clicking-status-shows-both-resources-and-the-same-counts",
+        "preserved-original-and-unopened-file-bytes"
+      ],
+      "cleanExit": true,
+      "measured": {
+        "countsWhileIdle": [
+          1,
+          1,
+          0
+        ],
+        "closedResourceUris": [
+          "problems-file-group-file:///e:/temp/alula-p05-352-problems-idle-publications/probe-1795796080389342900/workspace/src/extra.rs",
+          "problems-file-group-file:///e:/temp/alula-p05-352-problems-idle-publications/probe-1795796080389342900/workspace/src/lib.rs"
+        ]
+      },
+      "idlePanelCollapsed": false,
+      "idlePanelRows": 2,
+      "beforeCounts": [
+        1,
+        0,
+        0
+      ],
+      "afterCounts": [
+        1,
+        1,
+        0
+      ],
+      "dpi": 120
+    },
+    "hidden": {
+      "rawReportSha256": "e8604e04f4811676513c3ce193ff12937bd2751fa89c1b14f590401203e6a2be",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "d3a4aa119cce6a87e9742aba81bb19167fd10dddc9c24e40206ee67dac6863b0",
+      "aotSha256": "aa1f8b65831e34f8b9a1ff3c2e6deb94797c3a023fdcf2ae0a8d0b0839406edf",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "5d672bb2d225b0645fffcd74ac7bfc0904fcb931818c45fc6233fb41c0064b88",
+      "providerVersion": "Alula local late workspace diagnostics fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "providerScriptSha256": "b4b39cef7e05ccf41907c94b86475531ce6b7669960ff73ed11d6997b29990e2",
+      "sourceSha256": {
+        "lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+        "extra.rs": "f70d3ed93649e7ee0271d38008eb4427cc0f3006fc1770462aafec2ee834bfcf"
+      },
+      "nativeChecks": [
+        "owned-unique-attached-file-ready",
+        "first-publication-reaches-workbench",
+        "problems-displays-the-initial-error",
+        "hide-panel-with-an-attached-editor",
+        "last-editor-closes-with-cached-error",
+        "late-warning-refreshes-idle-workspace-without-input",
+        "late-warning-is-a-real-received-provider-publication",
+        "clicking-status-shows-both-resources-and-the-same-counts",
+        "preserved-original-and-unopened-file-bytes"
+      ],
+      "cleanExit": true,
+      "measured": {
+        "countsWhileIdle": [
+          1,
+          1,
+          0
+        ],
+        "closedResourceUris": [
+          "problems-file-group-file:///e:/temp/alula-p05-352-problems-idle-publications/probe-1795796108088632200/workspace/src/extra.rs",
+          "problems-file-group-file:///e:/temp/alula-p05-352-problems-idle-publications/probe-1795796108088632200/workspace/src/lib.rs"
+        ]
+      },
+      "idlePanelCollapsed": true,
+      "idlePanelRows": 0,
+      "beforeCounts": [
+        1,
+        0,
+        0
+      ],
+      "afterCounts": [
+        1,
+        1,
+        0
+      ],
+      "dpi": 120
+    }
+  },
+  "linux": {
+    "visible": {
+      "rawReportSha256": "b8edfe42d40cc798bbdbf5a9f094af5c637d18bcb7d2643287d552f0112b49bb",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "c36115373f67d83a9b3bf1efe9fcfcebd34a3295f22fa32d83f0fd11cb66163c",
+      "aotSha256": "443bd06490735dc0ff6e901ed2af7e7c676a8ae97ae2738bdb971e63e1a66582",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "53ac62e3815af2bf1d59694b28f6e8a8447d53d5fac7420e29e9f348db71517f",
+      "providerVersion": "Alula local late workspace diagnostics fixture 1.0",
+      "providerSha256": "0fcc35a3c68ecf3e92584574a3defb09822a2bfd57b3852e1aadcd17031e4b21",
+      "providerScriptSha256": "0fcc35a3c68ecf3e92584574a3defb09822a2bfd57b3852e1aadcd17031e4b21",
+      "sourceSha256": {
+        "lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+        "extra.rs": "f70d3ed93649e7ee0271d38008eb4427cc0f3006fc1770462aafec2ee834bfcf"
+      },
+      "nativeChecks": [
+        "owned-unique-attached-file-ready",
+        "first-publication-reaches-workbench",
+        "problems-displays-the-initial-error",
+        "last-editor-closes-with-cached-error",
+        "late-warning-refreshes-idle-workspace-without-input",
+        "late-warning-is-a-real-received-provider-publication",
+        "hiding-problems-preserves-idle-counts",
+        "clicking-status-shows-both-resources-and-the-same-counts",
+        "preserved-original-and-unopened-file-bytes"
+      ],
+      "cleanExit": true,
+      "measured": {
+        "countsWhileIdle": [
+          1,
+          1,
+          0
+        ],
+        "closedResourceUris": [
+          "problems-file-group-file:///tmp/alula-p05-177-xvfb-j_n_hk4i/workspace/src/extra.rs",
+          "problems-file-group-file:///tmp/alula-p05-177-xvfb-j_n_hk4i/workspace/src/lib.rs"
+        ]
+      },
+      "idlePanelCollapsed": false,
+      "idlePanelRows": 2,
+      "beforeCounts": [
+        1,
+        0,
+        0
+      ],
+      "afterCounts": [
+        1,
+        1,
+        0
+      ],
+      "sampledProcessesExited": true,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "processTreeSamples": {
+        "first-publication-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1538,
+              "ppid": 1537,
+              "private": 259809280,
+              "pss": 286932992,
+              "working_set": 339365888
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1689,
+              "ppid": 1538,
+              "private": 5402624,
+              "pss": 6116352,
+              "working_set": 12468224
+            }
+          ],
+          "root_pid": 1538,
+          "total_private_bytes": 265211904,
+          "total_private_mib": 252.9,
+          "total_working_set_bytes": 351834112
+        },
+        "last-editor-closes-with-cached-error": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1538,
+              "ppid": 1537,
+              "private": 257953792,
+              "pss": 285428736,
+              "working_set": 339058688
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1689,
+              "ppid": 1538,
+              "private": 5423104,
+              "pss": 6137856,
+              "working_set": 12488704
+            }
+          ],
+          "root_pid": 1538,
+          "total_private_bytes": 263376896,
+          "total_private_mib": 251.2,
+          "total_working_set_bytes": 351547392
+        },
+        "late-warning-refreshes-idle-workspace-without-input": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1538,
+              "ppid": 1537,
+              "private": 271368192,
+              "pss": 298845184,
+              "working_set": 352538624
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1689,
+              "ppid": 1538,
+              "private": 5427200,
+              "pss": 6148096,
+              "working_set": 12623872
+            }
+          ],
+          "root_pid": 1538,
+          "total_private_bytes": 276795392,
+          "total_private_mib": 264.0,
+          "total_working_set_bytes": 365162496
+        }
+      }
+    },
+    "hidden": {
+      "rawReportSha256": "356c70049f3acaa5639d4992f284b6cb7918cbf613f563fd564b96c821004470",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "c36115373f67d83a9b3bf1efe9fcfcebd34a3295f22fa32d83f0fd11cb66163c",
+      "aotSha256": "443bd06490735dc0ff6e901ed2af7e7c676a8ae97ae2738bdb971e63e1a66582",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "53ac62e3815af2bf1d59694b28f6e8a8447d53d5fac7420e29e9f348db71517f",
+      "providerVersion": "Alula local late workspace diagnostics fixture 1.0",
+      "providerSha256": "0fcc35a3c68ecf3e92584574a3defb09822a2bfd57b3852e1aadcd17031e4b21",
+      "providerScriptSha256": "0fcc35a3c68ecf3e92584574a3defb09822a2bfd57b3852e1aadcd17031e4b21",
+      "sourceSha256": {
+        "lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+        "extra.rs": "f70d3ed93649e7ee0271d38008eb4427cc0f3006fc1770462aafec2ee834bfcf"
+      },
+      "nativeChecks": [
+        "owned-unique-attached-file-ready",
+        "first-publication-reaches-workbench",
+        "problems-displays-the-initial-error",
+        "hide-panel-with-an-attached-editor",
+        "last-editor-closes-with-cached-error",
+        "late-warning-refreshes-idle-workspace-without-input",
+        "late-warning-is-a-real-received-provider-publication",
+        "clicking-status-shows-both-resources-and-the-same-counts",
+        "preserved-original-and-unopened-file-bytes"
+      ],
+      "cleanExit": true,
+      "measured": {
+        "countsWhileIdle": [
+          1,
+          1,
+          0
+        ],
+        "closedResourceUris": [
+          "problems-file-group-file:///tmp/alula-p05-177-xvfb-oky8x8s4/workspace/src/extra.rs",
+          "problems-file-group-file:///tmp/alula-p05-177-xvfb-oky8x8s4/workspace/src/lib.rs"
+        ]
+      },
+      "idlePanelCollapsed": true,
+      "idlePanelRows": 0,
+      "beforeCounts": [
+        1,
+        0,
+        0
+      ],
+      "afterCounts": [
+        1,
+        1,
+        0
+      ],
+      "sampledProcessesExited": true,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "processTreeSamples": {
+        "first-publication-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1814,
+              "ppid": 1813,
+              "private": 257163264,
+              "pss": 284278784,
+              "working_set": 336830464
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1960,
+              "ppid": 1814,
+              "private": 5402624,
+              "pss": 6131712,
+              "working_set": 12476416
+            }
+          ],
+          "root_pid": 1814,
+          "total_private_bytes": 262565888,
+          "total_private_mib": 250.4,
+          "total_working_set_bytes": 349306880
+        },
+        "last-editor-closes-with-cached-error": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1814,
+              "ppid": 1813,
+              "private": 253943808,
+              "pss": 281319424,
+              "working_set": 335011840
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1960,
+              "ppid": 1814,
+              "private": 5423104,
+              "pss": 6147072,
+              "working_set": 12496896
+            }
+          ],
+          "root_pid": 1814,
+          "total_private_bytes": 259366912,
+          "total_private_mib": 247.4,
+          "total_working_set_bytes": 347508736
+        },
+        "late-warning-refreshes-idle-workspace-without-input": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 1814,
+              "ppid": 1813,
+              "private": 260489216,
+              "pss": 287868928,
+              "working_set": 341622784
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 1960,
+              "ppid": 1814,
+              "private": 5427200,
+              "pss": 6159360,
+              "working_set": 12632064
+            }
+          ],
+          "root_pid": 1814,
+          "total_private_bytes": 265916416,
+          "total_private_mib": 253.6,
+          "total_working_set_bytes": 354254848
+        }
+      }
+    }
+  }
+}

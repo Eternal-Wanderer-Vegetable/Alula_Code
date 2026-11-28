@@ -1,0 +1,299 @@
+{
+  "product": "d7c8dfe290f7d0994642fd25a54ec4a0bd4eacee",
+  "tree": "f78be689ad6a7cc636e7b5d5e9b4ea19470d88db",
+  "ci": {
+    "id": 46085021722,
+    "sha": "d7c8dfe290f7d0994642fd25a54ec4a0bd4eacee",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46085021722",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140792462116,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140792462394,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140792462412,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140792462512,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46085017863,
+    "sha": "d7c8dfe290f7d0994642fd25a54ec4a0bd4eacee",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46085017863",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140792449915,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140792450333,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140792450375,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46083080563,
+    "sha": "39b6cc97ef0880752dab7a3d71e856144b007a44",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46083080563",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140786325525,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140786325723,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140786325741,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140786325791,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46081976626,
+    "sha": "ea4aa75f2bb0e111f102b8c169f0e8c570a892a3",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46081976626",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140782784967,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140782785037,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140782785141,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 16,
+    "affected_count": 0,
+    "changed_files": 5,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "RustTextInputFieldState": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState",
+        "name": "RustTextInputFieldState",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 106,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "ebf82e9c18c733b453295867df23da90fe28b2418db8e043f49fbc29c5d179f2"
+    },
+    "_applyLockedScrollDisplacement": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._applyLockedScrollDisplacement#1",
+        "name": "_applyLockedScrollDisplacement",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "8e657ea21b25a8a0401726f98ef7bd310964fe7723bf6adf60908e163330f0c8"
+    },
+    "_hasLockedScrollAnchors": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._hasLockedScrollAnchors#1",
+        "name": "_hasLockedScrollAnchors",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "501b9c620e4f0a4dd3a682b8a9314a462692520b326bb759281805e1f663fd8d"
+    },
+    "_lockedScrollAnchors": {
+      "target": {
+        "name": "_lockedScrollAnchors"
+      },
+      "risk": "UNKNOWN",
+      "summary": null,
+      "riskNote": null,
+      "receiptSha256": "478a181d8baade0ac4ac5fa01c0890ccbe774d337caaddbac0226f59d4efc49e"
+    },
+    "_onLockedScroll": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onLockedScroll#2",
+        "name": "_onLockedScroll",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "1b80662622174c47e31420be864fde5b7da737ae4cbf27dda3b45d2a8969e1a4"
+    },
+    "_refreshLockedScrollAnchors": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._refreshLockedScrollAnchors#0",
+        "name": "_refreshLockedScrollAnchors",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "0acef0e295b3150c013fd34deb28f8631449b13c83a643e25af76a87ecbe1707"
+    },
+    "_toggleLockedScrolling": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._toggleLockedScrolling#0",
+        "name": "_toggleLockedScrolling",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "b552f43791da6c4d4e7ec352536b219f02c1dc3d4ed7ef0a6adac6c2f640bf45"
+    },
+    "_visibleLockedScrollPositions": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._visibleLockedScrollPositions#0",
+        "name": "_visibleLockedScrollPositions",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "receiptSha256": "929fcdbc5eb410a1df7864439dabba81b39b61f0b316127a318e769b9ca88ac3"
+    },
+    "dispose": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.dispose#0",
+        "name": "dispose",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    },
+    "main": {
+      "target": {
+        "id": "Function:app/test/locked_scrolling_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/locked_scrolling_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "receiptSha256": "4799a61128f7c289a3507f7ffd26f84af135e1406a216683d6534065eda35419"
+    },
+    "seedTwoGroups": {
+      "target": {
+        "name": "seedTwoGroups"
+      },
+      "risk": "UNKNOWN",
+      "summary": null,
+      "riskNote": null,
+      "receiptSha256": "692973e9b47fb1834ec5830d42a5640315730cc1c5c7684b1419192139bdb417"
+    }
+  }
+}

@@ -1,0 +1,422 @@
+{
+  "product": "e61899c58bd9cc1a241654a63f36773ec34d2d71",
+  "tree": "bf91fb2aa91d31c79a9610b72c5ba6743a6455da",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "92ee6428dd8b50ec79dd70b94c375d9a93fdf23e03ef9178f5e152d9986b67ac",
+  "sharedAcceptanceSha256": "a2216a2fe2bfd9816da050db35d2837ca1e5e0bc6d61cbf11a777e35159db724",
+  "reference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "scriptSha256": "b298da480193dff020c13c20b662d1e5ffb52fb933a71cb6ff524630322da299",
+    "windows": {
+      "sha256": "6620b9f187a6d8d4404d8ec5bb2ab8a21a0bfeb9fd6aec08fd5bdb20b8249fe4",
+      "projections": [
+        {
+          "platform": "win32",
+          "url": "file://./../target%20%23.md",
+          "range": {
+            "startLineNumber": 1,
+            "startColumn": 1,
+            "endLineNumber": 1,
+            "endColumn": 28
+          },
+          "parsed": "file://./../target%20%23.md",
+          "filePath": "\\\\.\\..\\target #.md",
+          "opened": "file:///e%3A/Temp/scope/target%20%23.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file:///./../target%20%23.md#L2,4",
+          "range": {
+            "startLineNumber": 2,
+            "startColumn": 1,
+            "endLineNumber": 2,
+            "endColumn": 34
+          },
+          "parsed": "file:///./../target%20%23.md#L2%2C4",
+          "filePath": "\\.\\..\\target #.md",
+          "opened": "file:///e%3A/Temp/scope/target%20%23.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file:///./target.md",
+          "range": {
+            "startLineNumber": 3,
+            "startColumn": 1,
+            "endLineNumber": 3,
+            "endColumn": 20
+          },
+          "parsed": "file:///./target.md",
+          "filePath": "\\.\\target.md",
+          "opened": "file:///e%3A/Temp/scope/sub/target.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file://./../../root.md",
+          "range": {
+            "startLineNumber": 4,
+            "startColumn": 1,
+            "endLineNumber": 4,
+            "endColumn": 23
+          },
+          "parsed": "file://./../../root.md",
+          "filePath": "\\\\.\\..\\..\\root.md",
+          "opened": "file:///e%3A/Temp/root.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file:///%2e/../target.md",
+          "range": {
+            "startLineNumber": 5,
+            "startColumn": 1,
+            "endLineNumber": 5,
+            "endColumn": 25
+          },
+          "parsed": "file:///./../target.md",
+          "filePath": "\\.\\..\\target.md",
+          "opened": "file:///e%3A/Temp/scope/target.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file://%2e/../through-authority.md",
+          "range": {
+            "startLineNumber": 6,
+            "startColumn": 1,
+            "endLineNumber": 6,
+            "endColumn": 35
+          },
+          "parsed": "file://./../through-authority.md",
+          "filePath": "\\\\.\\..\\through-authority.md",
+          "opened": "file:///e%3A/Temp/scope/through-authority.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "file://./../keep%3Fquestion.md?same=1",
+          "range": {
+            "startLineNumber": 7,
+            "startColumn": 1,
+            "endLineNumber": 7,
+            "endColumn": 38
+          },
+          "parsed": "file://./../keep%3Fquestion.md?same%3D1",
+          "filePath": "\\\\.\\..\\keep?question.md",
+          "opened": "file:///e%3A/Temp/scope/keep%3Fquestion.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "FILE:///./../case.md",
+          "range": {
+            "startLineNumber": 8,
+            "startColumn": 1,
+            "endLineNumber": 8,
+            "endColumn": 21
+          },
+          "parsed": "FILE:/./../case.md",
+          "filePath": "\\.\\..\\case.md",
+          "opened": "FILE:/./../case.md",
+          "selection": null
+        },
+        {
+          "platform": "win32",
+          "url": "https://example.invalid/elsewhere",
+          "range": {
+            "startLineNumber": 9,
+            "startColumn": 1,
+            "endLineNumber": 9,
+            "endColumn": 34
+          },
+          "parsed": "https://example.invalid/elsewhere",
+          "filePath": "\\elsewhere",
+          "opened": "https://example.invalid/elsewhere",
+          "selection": null
+        }
+      ]
+    },
+    "linux": {
+      "sha256": "3c91d26ab752527313969db8b2a69d465790e21724a4fde459956bb64c3a98c7",
+      "projections": [
+        {
+          "platform": "linux",
+          "url": "file://./../target%20%23.md",
+          "range": {
+            "startLineNumber": 1,
+            "startColumn": 1,
+            "endLineNumber": 1,
+            "endColumn": 28
+          },
+          "parsed": "file://./../target%20%23.md",
+          "filePath": "//./../target #.md",
+          "opened": "file:///tmp/scope/target%20%23.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file:///./../target%20%23.md#L2,4",
+          "range": {
+            "startLineNumber": 2,
+            "startColumn": 1,
+            "endLineNumber": 2,
+            "endColumn": 34
+          },
+          "parsed": "file:///./../target%20%23.md#L2%2C4",
+          "filePath": "/./../target #.md",
+          "opened": "file:///tmp/scope/target%20%23.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file:///./target.md",
+          "range": {
+            "startLineNumber": 3,
+            "startColumn": 1,
+            "endLineNumber": 3,
+            "endColumn": 20
+          },
+          "parsed": "file:///./target.md",
+          "filePath": "/./target.md",
+          "opened": "file:///tmp/scope/sub/target.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file://./../../root.md",
+          "range": {
+            "startLineNumber": 4,
+            "startColumn": 1,
+            "endLineNumber": 4,
+            "endColumn": 23
+          },
+          "parsed": "file://./../../root.md",
+          "filePath": "//./../../root.md",
+          "opened": "file:///tmp/root.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file:///%2e/../target.md",
+          "range": {
+            "startLineNumber": 5,
+            "startColumn": 1,
+            "endLineNumber": 5,
+            "endColumn": 25
+          },
+          "parsed": "file:///./../target.md",
+          "filePath": "/./../target.md",
+          "opened": "file:///tmp/scope/target.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file://%2e/../through-authority.md",
+          "range": {
+            "startLineNumber": 6,
+            "startColumn": 1,
+            "endLineNumber": 6,
+            "endColumn": 35
+          },
+          "parsed": "file://./../through-authority.md",
+          "filePath": "//./../through-authority.md",
+          "opened": "file:///tmp/scope/through-authority.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "file://./../keep%3Fquestion.md?same=1",
+          "range": {
+            "startLineNumber": 7,
+            "startColumn": 1,
+            "endLineNumber": 7,
+            "endColumn": 38
+          },
+          "parsed": "file://./../keep%3Fquestion.md?same%3D1",
+          "filePath": "//./../keep?question.md",
+          "opened": "file:///tmp/scope/keep%3Fquestion.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "FILE:///./../case.md",
+          "range": {
+            "startLineNumber": 8,
+            "startColumn": 1,
+            "endLineNumber": 8,
+            "endColumn": 21
+          },
+          "parsed": "FILE:/./../case.md",
+          "filePath": "/./../case.md",
+          "opened": "FILE:/./../case.md",
+          "selection": null
+        },
+        {
+          "platform": "linux",
+          "url": "https://example.invalid/elsewhere",
+          "range": {
+            "startLineNumber": 9,
+            "startColumn": 1,
+            "endLineNumber": 9,
+            "endColumn": 34
+          },
+          "parsed": "https://example.invalid/elsewhere",
+          "filePath": "/elsewhere",
+          "opened": "https://example.invalid/elsewhere",
+          "selection": null
+        }
+      ]
+    }
+  },
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "671a3a836119aba26abef50c1c95f43fb5f8fa56efac51d4ae72fda2977a0fc4",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "rawReportSha256": "15c97d2ab80947e2c7b8fbbe0afdf27554f3ec3b68dfbdbe8bd0bcab3bc3fc36",
+    "runnerSha256": "3cefccc6ee192aa76f5ebb14c15d124e38026a1c4f9a1b30df557b2f2e442782",
+    "fileSha256": {
+      "nested/source.md": "30a92b1311152783d319c27edb71711abe5eea6c71d71f42c72dc9b7d49d4ed2",
+      "nested/target # 🐙.txt": "d0f098d34841de189c88e08612de6b6584cecf57042c1b42e841861c31f6d042",
+      "outer # 🦊.txt": "c520a36b0eb9af99cdb0a8dffdaac8905042c2dbd2e9deebcd16c3363595823d",
+      "target # 🐙.txt": "6d75d2bd4a3406bb354a0c93ab6dbbaa986c15b8bd646f866d9075a62d2d6696"
+    },
+    "nativeChecks": [
+      "isolated-source-has-five-link-rows",
+      "plain-click-sets-caret-on-relative-link",
+      "native-open-link-command-selects-sibling-with-literal-hash",
+      "source-return-after-command",
+      "native-control-click-resolves-parent-and-keeps-ordinary-open-position",
+      "source-return-after-modified-click",
+      "hover-recognizes-encoded-relative-authority",
+      "pointer-enters-relative-link-action",
+      "native-tooltip-click-opens-sibling-with-encoded-authority",
+      "source-return-after-tooltip",
+      "absolute-file-line-fragment-still-selects-target-coordinate",
+      "source-return-after-absolute-control",
+      "native-control-alt-click-opens-relative-parent-on-right",
+      "nested-and-root-file-bytes-preserved-including-root-decoy"
+    ],
+    "selections": {
+      "native-open-link-command-selects-sibling-with-literal-hash": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "target # 🐙.txt"
+      },
+      "native-control-click-resolves-parent-and-keeps-ordinary-open-position": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "outer # 🦊.txt"
+      },
+      "native-tooltip-click-opens-sibling-with-encoded-authority": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "target # 🐙.txt"
+      },
+      "absolute-file-line-fragment-still-selects-target-coordinate": {
+        "absoluteUtf16": [
+          12,
+          12
+        ],
+        "visibleGroups": 1,
+        "target": "outer # 🦊.txt"
+      },
+      "native-control-alt-click-opens-relative-parent-on-right": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 2,
+        "target": "outer # 🦊.txt"
+      }
+    },
+    "entry": "native F7, Ctrl+click, hover action, absolute fragment control, Ctrl+Alt+click",
+    "cleanExit": true,
+    "windowEnvironment": 120
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "f7ff72dcc5c2e3d43e8bd39582c4a199ca1f642766b571f1892ea4137ad5aaa5",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "db0e7ebc1675fada206150ff594fde38bdd4a2f00b11f616f61d2104a5d533e9",
+    "runnerSha256": "63f86300a895a047182dbbc72dc081d74883fb0d610ed205216fd3b913b473fc",
+    "fileSha256": {
+      "nested/source.md": "4f34f62c958a7c3bd8f0a2f51a47856316da9c31c870569cbb047cd5f5bf7012",
+      "nested/target # 🐙.txt": "d0f098d34841de189c88e08612de6b6584cecf57042c1b42e841861c31f6d042",
+      "outer # 🦊.txt": "c520a36b0eb9af99cdb0a8dffdaac8905042c2dbd2e9deebcd16c3363595823d",
+      "target # 🐙.txt": "6d75d2bd4a3406bb354a0c93ab6dbbaa986c15b8bd646f866d9075a62d2d6696"
+    },
+    "nativeChecks": [
+      "isolated-source-has-five-link-rows",
+      "plain-click-sets-caret-on-relative-link",
+      "native-open-link-command-selects-sibling-with-literal-hash",
+      "source-return-after-command",
+      "native-control-click-resolves-parent-and-keeps-ordinary-open-position",
+      "source-return-after-modified-click",
+      "hover-recognizes-encoded-relative-authority",
+      "pointer-enters-relative-link-action",
+      "native-tooltip-click-opens-sibling-with-encoded-authority",
+      "source-return-after-tooltip",
+      "absolute-file-line-fragment-still-selects-target-coordinate",
+      "source-return-after-absolute-control",
+      "native-control-alt-click-opens-relative-parent-on-right",
+      "nested-and-root-file-bytes-preserved-including-root-decoy"
+    ],
+    "selections": {
+      "native-open-link-command-selects-sibling-with-literal-hash": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "target # 🐙.txt"
+      },
+      "native-control-click-resolves-parent-and-keeps-ordinary-open-position": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "outer # 🦊.txt"
+      },
+      "native-tooltip-click-opens-sibling-with-encoded-authority": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 1,
+        "target": "target # 🐙.txt"
+      },
+      "absolute-file-line-fragment-still-selects-target-coordinate": {
+        "absoluteUtf16": [
+          12,
+          12
+        ],
+        "visibleGroups": 1,
+        "target": "outer # 🦊.txt"
+      },
+      "native-control-alt-click-opens-relative-parent-on-right": {
+        "absoluteUtf16": [
+          0,
+          0
+        ],
+        "visibleGroups": 2,
+        "target": "outer # 🦊.txt"
+      }
+    },
+    "entry": "native F7, Ctrl+click, hover action, absolute fragment control, Ctrl+Alt+click",
+    "cleanExit": true,
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\""
+  }
+}

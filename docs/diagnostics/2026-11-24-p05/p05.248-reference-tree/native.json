@@ -1,0 +1,970 @@
+{
+  "product": "8b31486f881e3697899df5b088ddd10d95ba009e",
+  "tree": "12f2aba4c162728a19190361d2d337d501ffcb2c",
+  "abi": 43,
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "12f2aba4c162728a19190361d2d337d501ffcb2c",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "157a91690bef4b656b547128419649ee42ff7cea1968e1d878ff1aa4e0b482f0",
+      "app/lib/bridge/alula_ffi.dart": "d6cb93b858a9c3c4d605a38133a17f80fc4024925c094922ea82915b05b9fcc6",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/definition_peek.dart": "26da69a7cff25fff034ce7d7a96028f50b7a7c23e00988fa613fba39968b4efe",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "0f7bda34c2e16f3019d9036e07bdc7d798f84234418e6725d46269ad09d04e6e",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "55ee4d721e692aff695ab8405e47a1f070bec8c95b5acd4c12e2343c69a2fefa",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "2d4a8abfa3753fccb1473776216532e37e96f44b326bf5f4e3e8437475fa1d29",
+      "crates/editor-core/src/ffi.rs": "62960b20395ea8d0d4f90019dfca337be3a6aa410421ebdf3b22f6b59ce09ac6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "113e72e8ac6328c64335411b5f438e8d76708c770f13de17cae9769c6b929512",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "acf446bd1cf10d8c7c57ce529798b49d939f0053c708ec186952b41505f344fd",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "rustProduct": "74fbfad8515dccb473ff15998c52113a5405af1f",
+    "nativeCoreSha256": "fd1b9dd90450aceaacec2862f1074f5ab517f35ec34ba279b05cfde7230fecb5",
+    "fixtureSha256": "a83a7bd7a18d4852bf24ecf9f22339cab7d60eb597a4caa751b35cbc8dfc7a66"
+  },
+  "fixtureSha256": "a83a7bd7a18d4852bf24ecf9f22339cab7d60eb597a4caa751b35cbc8dfc7a66",
+  "acceptanceDriverSha256": "116288746e5c84e0a591301b961293ccc9cb97cc34ca9ed3b8f895f5fa562f6c",
+  "diskSha256": {
+    "src/lib.rs": "75fb2711167eacb71e95dc78448c52693941ea0fa4b14c3ae8a1508759b2960a",
+    "src/consumer.rs": "3f69a9007587927b47fe8fce7b55b2f35dec98c2532de0e612fd212a75935f31",
+    "Cargo.toml": "4b69c4fb7a5ae4dbd30a664b2df25dd704d35164b7ac64a54985def9f8deca38"
+  },
+  "localLogsSha256": {
+    "p05-248-core.log": "7966e4ef8797fbb28912dcf1489b26bff044c6c0c08b26a26b234871d33d31e4",
+    "p05-248-analyze.log": "98a18feeaced0b53ced20a5cf9087435f583900c2a9c7f140fec028db7ca53b6",
+    "p05-248-workbench-nav.log": "dcd523739bd98ae06f33c860c23a62020bc80cee15b5a60ead3d385888880be7",
+    "p05-248-focused.log": "e828bad631ad171b904b067409150e4c8e139ff4cdeccc309793466f402b518f",
+    "p05-248-reveal.log": "0f88b47c74d55eee4e55ba574595d436c4c3fd3126e6d619e449632b8b551b33",
+    "p05-248-full.log": "da6749a7bc7ba2bb2e02bcd8a52c58df9dacde89e0d77fac4b67c81a319e38b3",
+    "p05-248-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-248-linux-native.log": "aa28494d427c862540182587e55d948844150fb977092fd8898426fdb1489db8",
+    "windows-build.log": "bdff9911e4347234c39ce57ba9c3767349eb25d7229e8562172cb8673bab4c2f"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 27,
+      "affected_count": 6,
+      "changed_files": 5,
+      "risk_level": "high",
+      "sha256": "b1dab4518e9245303e1d8629b27a5836a7536c5c609d7a4dc6f9ac4e8b255e6f",
+      "flows": [
+        {
+          "id": "proc_30_build",
+          "name": "Build → _revealRow",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_buildFileRow",
+              "step": 4
+            },
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            },
+            {
+              "symbol": "_revealRow",
+              "step": 6
+            },
+            {
+              "symbol": "_toggleFile",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_31_build",
+          "name": "Build → _visibleRows",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_buildFileRow",
+              "step": 4
+            },
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            },
+            {
+              "symbol": "_toggleFile",
+              "step": 5
+            },
+            {
+              "symbol": "_visibleRows",
+              "step": 6
+            }
+          ]
+        },
+        {
+          "id": "proc_32_build",
+          "name": "Build → _readPreviews",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_221_initstate",
+          "name": "InitState → _compareReferenceRanges",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_compareReferenceRanges",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_222_initstate",
+          "name": "InitState → _referenceFileKey",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_referenceFileKey",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_223_initstate",
+          "name": "InitState → _referenceRange",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_referenceRange",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        }
+      ]
+    },
+    "staged": {
+      "changed_count": 27,
+      "affected_count": 6,
+      "changed_files": 5,
+      "risk_level": "high",
+      "sha256": "b1dab4518e9245303e1d8629b27a5836a7536c5c609d7a4dc6f9ac4e8b255e6f",
+      "flows": [
+        {
+          "id": "proc_30_build",
+          "name": "Build → _revealRow",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_buildFileRow",
+              "step": 4
+            },
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            },
+            {
+              "symbol": "_revealRow",
+              "step": 6
+            },
+            {
+              "symbol": "_toggleFile",
+              "step": 5
+            }
+          ]
+        },
+        {
+          "id": "proc_31_build",
+          "name": "Build → _visibleRows",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_buildFileRow",
+              "step": 4
+            },
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            },
+            {
+              "symbol": "_toggleFile",
+              "step": 5
+            },
+            {
+              "symbol": "_visibleRows",
+              "step": 6
+            }
+          ]
+        },
+        {
+          "id": "proc_32_build",
+          "name": "Build → _readPreviews",
+          "process_type": "intra_community",
+          "step_count": 6,
+          "changed_steps": [
+            {
+              "symbol": "_resultList",
+              "step": 3
+            },
+            {
+              "symbol": "_buildResults",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_221_initstate",
+          "name": "InitState → _compareReferenceRanges",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_compareReferenceRanges",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_222_initstate",
+          "name": "InitState → _referenceFileKey",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_referenceFileKey",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        },
+        {
+          "id": "proc_223_initstate",
+          "name": "InitState → _referenceRange",
+          "process_type": "cross_community",
+          "step_count": 3,
+          "changed_steps": [
+            {
+              "symbol": "_referenceRange",
+              "step": 3
+            },
+            {
+              "symbol": "_groupReferences",
+              "step": 2
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "linuxMemory": {
+    "ready": {
+      "mainPrivateMiB": 233.0,
+      "treePrivateMiB": 233.0,
+      "processCount": 1
+    },
+    "tree-open": {
+      "mainPrivateMiB": 244.1,
+      "treePrivateMiB": 812.8,
+      "processCount": 4
+    },
+    "lib-expanded": {
+      "mainPrivateMiB": 245.0,
+      "treePrivateMiB": 813.7,
+      "processCount": 4
+    },
+    "consumer-opened": {
+      "mainPrivateMiB": 236.6,
+      "treePrivateMiB": 805.8,
+      "processCount": 4
+    },
+    "single-file-peek": {
+      "mainPrivateMiB": 239.3,
+      "treePrivateMiB": 808.6,
+      "processCount": 4
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "reportSha256": "7256c2ae8b23d6a69407541a38f599771d323794459b501c0e05e1f6b75adeae",
+    "observations": 20,
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "aotSha256": "5bee3c4c33319bd7c80bb6009eec52209cd0b46580647655033849004b3689a2",
+    "runnerSha256": "5a22b6ff2faa1da740b7b8d819ec2818c9749a19d00bed68c23cd1d3fc84aab8",
+    "explicitCommand": {
+      "id": "editor.action.referenceSearch.trigger",
+      "fixtureShortcut": "ctrl+shift+F12"
+    },
+    "referenceTree": {
+      "provider-many": [
+        [
+          "consumer.rs",
+          0,
+          47
+        ],
+        [
+          "lib.rs",
+          3,
+          43
+        ],
+        [
+          "lib.rs",
+          1,
+          7
+        ]
+      ],
+      "provider-local": [
+        [
+          "lib.rs",
+          5,
+          29
+        ],
+        [
+          "lib.rs",
+          4,
+          7
+        ]
+      ],
+      "tree-open": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "consumer.rs:1",
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": "1:47"
+      },
+      "focus-consumer-parent": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": null
+      },
+      "consumer-collapsed": {
+        "expanded": [],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "lib-expanded": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "first-lib-leaf": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "lib.rs:2",
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "second-lib-leaf": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "lib.rs:4",
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "focus-lib-parent": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "lib-collapsed": {
+        "expanded": [],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "focus-consumer-from-lib": {
+        "expanded": [],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "consumer-expanded": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": null
+      },
+      "consumer-leaf-returned": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "consumer.rs:1",
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": "1:47"
+      },
+      "consumer-opened": {
+        "selection": [
+          46,
+          46
+        ],
+        "editorFocused": true
+      },
+      "source-returned": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "single-file-peek": {
+        "groups": [],
+        "visibleLeaves": [
+          "lib.rs:5",
+          "lib.rs:6"
+        ],
+        "focusedLeaf": "lib.rs:6"
+      },
+      "local-escape": {
+        "selection": [
+          142,
+          142
+        ],
+        "editorFocused": true
+      }
+    },
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      },
+      {
+        "point": [
+          2004,
+          665
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2004,
+          665
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      }
+    ]
+  },
+  "linux": {
+    "reportSha256": "48d28d1d610ba84bbb9db9aa5c772b74fbaaed25a95f1fa45c30ee3ab4a99368",
+    "observations": 20,
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "aotSha256": "73e259ce71b668ea52e69c418c815fd32383dbffb681a8fc0136e76833249b45",
+    "runnerSha256": "e2182425a07a20d171983c50b5a25274b025d17ab2eb402f8bffbd1ea918ab3d",
+    "explicitCommand": {
+      "id": "editor.action.referenceSearch.trigger",
+      "fixtureShortcut": "ctrl+shift+F12"
+    },
+    "referenceTree": {
+      "provider-many": [
+        [
+          "consumer.rs",
+          0,
+          47
+        ],
+        [
+          "lib.rs",
+          3,
+          43
+        ],
+        [
+          "lib.rs",
+          1,
+          7
+        ]
+      ],
+      "provider-local": [
+        [
+          "lib.rs",
+          5,
+          29
+        ],
+        [
+          "lib.rs",
+          4,
+          7
+        ]
+      ],
+      "tree-open": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "consumer.rs:1",
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": "1:47"
+      },
+      "focus-consumer-parent": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": null
+      },
+      "consumer-collapsed": {
+        "expanded": [],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "lib-expanded": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "first-lib-leaf": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "lib.rs:2",
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "second-lib-leaf": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "lib.rs:4",
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "focus-lib-parent": {
+        "expanded": [
+          "lib.rs"
+        ],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "lib.rs:2",
+          "lib.rs:4"
+        ],
+        "resolvedLabel": null
+      },
+      "lib-collapsed": {
+        "expanded": [],
+        "focusedFile": "lib.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "focus-consumer-from-lib": {
+        "expanded": [],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [],
+        "resolvedLabel": null
+      },
+      "consumer-expanded": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": "consumer.rs",
+        "focusedLeaf": null,
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": null
+      },
+      "consumer-leaf-returned": {
+        "expanded": [
+          "consumer.rs"
+        ],
+        "focusedFile": null,
+        "focusedLeaf": "consumer.rs:1",
+        "visibleLeaves": [
+          "consumer.rs:1"
+        ],
+        "resolvedLabel": "1:47"
+      },
+      "consumer-opened": {
+        "selection": [
+          46,
+          46
+        ],
+        "editorFocused": true
+      },
+      "source-returned": {
+        "selection": [
+          23,
+          23
+        ],
+        "editorFocused": true
+      },
+      "single-file-peek": {
+        "groups": [],
+        "visibleLeaves": [
+          "lib.rs:5",
+          "lib.rs:6"
+        ],
+        "focusedLeaf": "lib.rs:6"
+      },
+      "local-escape": {
+        "selection": [
+          142,
+          142
+        ],
+        "editorFocused": true
+      }
+    },
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1402,
+            "ppid": 1401,
+            "private": 244285440,
+            "pss": 270924800,
+            "working_set": 323149824
+          }
+        ],
+        "root_pid": 1402,
+        "total_private_bytes": 244285440,
+        "total_private_mib": 233.0,
+        "total_working_set_bytes": 323149824
+      },
+      "tree-open": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1402,
+            "ppid": 1401,
+            "private": 255938560,
+            "pss": 282612736,
+            "working_set": 335028224
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1553,
+            "ppid": 1402,
+            "private": 586694656,
+            "pss": 593524736,
+            "working_set": 609673216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1729,
+            "ppid": 1553,
+            "private": 4812800,
+            "pss": 12017664,
+            "working_set": 28041216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1728,
+            "ppid": 1553,
+            "private": 4841472,
+            "pss": 12044288,
+            "working_set": 28024832
+          }
+        ],
+        "root_pid": 1402,
+        "total_private_bytes": 852287488,
+        "total_private_mib": 812.8,
+        "total_working_set_bytes": 1000767488
+      },
+      "lib-expanded": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1402,
+            "ppid": 1401,
+            "private": 256856064,
+            "pss": 283528192,
+            "working_set": 335945728
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1553,
+            "ppid": 1402,
+            "private": 586694656,
+            "pss": 593523712,
+            "working_set": 609673216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1729,
+            "ppid": 1553,
+            "private": 4812800,
+            "pss": 12017664,
+            "working_set": 28041216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1728,
+            "ppid": 1553,
+            "private": 4841472,
+            "pss": 12044288,
+            "working_set": 28024832
+          }
+        ],
+        "root_pid": 1402,
+        "total_private_bytes": 853204992,
+        "total_private_mib": 813.7,
+        "total_working_set_bytes": 1001684992
+      },
+      "consumer-opened": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1402,
+            "ppid": 1401,
+            "private": 248045568,
+            "pss": 274848768,
+            "working_set": 327135232
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1553,
+            "ppid": 1402,
+            "private": 587198464,
+            "pss": 594032640,
+            "working_set": 610111488
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1729,
+            "ppid": 1553,
+            "private": 4812800,
+            "pss": 12023808,
+            "working_set": 28041216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1728,
+            "ppid": 1553,
+            "private": 4841472,
+            "pss": 12050432,
+            "working_set": 28024832
+          }
+        ],
+        "root_pid": 1402,
+        "total_private_bytes": 844898304,
+        "total_private_mib": 805.8,
+        "total_working_set_bytes": 993312768
+      },
+      "single-file-peek": {
+        "n_processes": 4,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1402,
+            "ppid": 1401,
+            "private": 250888192,
+            "pss": 277691392,
+            "working_set": 329977856
+          },
+          {
+            "name": "rust-analyzer",
+            "peak_private": 0,
+            "pid": 1553,
+            "ppid": 1402,
+            "private": 587304960,
+            "pss": 594139136,
+            "working_set": 610217984
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1729,
+            "ppid": 1553,
+            "private": 4812800,
+            "pss": 12023808,
+            "working_set": 28041216
+          },
+          {
+            "name": "rust-analyzer-p",
+            "peak_private": 0,
+            "pid": 1728,
+            "ppid": 1553,
+            "private": 4841472,
+            "pss": 12050432,
+            "working_set": 28024832
+          }
+        ],
+        "root_pid": 1402,
+        "total_private_bytes": 847847424,
+        "total_private_mib": 808.6,
+        "total_working_set_bytes": 996261888
+      }
+    }
+  }
+}

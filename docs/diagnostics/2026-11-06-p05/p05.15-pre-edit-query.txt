@@ -1,0 +1,308 @@
+{
+  "processes": [
+    {
+      "id": "proc_107_build",
+      "summary": "Build → NormalizeActivityBarViewOrder",
+      "priority": 0.138,
+      "symbol_count": 2,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_179_onattachedtoengine",
+      "summary": "OnAttachedToEngine → GetPlugin",
+      "priority": 0.121,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_105_build",
+      "summary": "Build → _buildWordSpans",
+      "priority": 0.108,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_172_build",
+      "summary": "Build → _lineNumber",
+      "priority": 0.108,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_159_build",
+      "summary": "Build → _buildResultPane",
+      "priority": 0.107,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_97_build",
+      "summary": "Build → _bulkAcceptButton",
+      "priority": 0.107,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_154_build",
+      "summary": "Build → _resourceName",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_89_build",
+      "summary": "Build → _selectResource",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    },
+    {
+      "id": "proc_42_build",
+      "summary": "Build → _wordSpans",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 5
+    },
+    {
+      "id": "proc_90_build",
+      "summary": "Build → _headerCell",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 4
+    }
+  ],
+  "process_symbols": [
+    {
+      "id": "Function:app/lib/workbench/layout_model.dart:normalizeActivityBarViewOrder",
+      "name": "normalizeActivityBarViewOrder",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 17,
+      "endLine": 23,
+      "module": "Workbench",
+      "process_id": "proc_107_build",
+      "step_index": 4
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar.dart:_ActivityBarState.build#1",
+      "name": "build",
+      "filePath": "app/lib/workbench/activity_bar.dart",
+      "startLine": 195,
+      "endLine": 195,
+      "module": "Workbench",
+      "process_id": "proc_107_build",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java:IrondashEngineContextPlugin.onAttachedToEngine#1",
+      "name": "onAttachedToEngine",
+      "filePath": "app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java",
+      "startLine": 1,
+      "endLine": 62,
+      "module": "Engine_context",
+      "process_id": "proc_179_onattachedtoengine",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/lib/git/git_diff_patch_view.dart:_GitDiffPatchRow.build#1",
+      "name": "build",
+      "filePath": "app/lib/git/git_diff_patch_view.dart",
+      "startLine": 936,
+      "endLine": 936,
+      "module": "Git",
+      "process_id": "proc_105_build",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/lib/editor/merge_editor_surface.dart:_MergeEditorSurfaceState.build#1",
+      "name": "build",
+      "filePath": "app/lib/editor/merge_editor_surface.dart",
+      "startLine": 58,
+      "endLine": 58,
+      "module": "Editor",
+      "process_id": "proc_159_build",
+      "step_index": 1
+    },
+    {
+      "id": "Method:app/lib/editor/bulk_edit_multidiff_preview.dart:_BulkEditMultiDiffPreviewState._buildResourceNavigator#1",
+      "name": "_buildResourceNavigator",
+      "filePath": "app/lib/editor/bulk_edit_multidiff_preview.dart",
+      "startLine": 161,
+      "endLine": 161,
+      "module": "Editor",
+      "process_id": "proc_154_build",
+      "step_index": 2
+    },
+    {
+      "id": "Method:app/lib/editor/bulk_edit_multidiff_preview.dart:_BulkEditMultiDiffPreviewState._buildSelectedDiff#1",
+      "name": "_buildSelectedDiff",
+      "filePath": "app/lib/editor/bulk_edit_multidiff_preview.dart",
+      "startLine": 247,
+      "endLine": 247,
+      "module": "Editor",
+      "process_id": "proc_42_build",
+      "step_index": 2
+    }
+  ],
+  "definitions": [
+    {
+      "id": "Method:app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java:IrondashEngineContextPlugin.getActivity#1",
+      "name": "getActivity",
+      "filePath": "app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java",
+      "startLine": 3,
+      "endLine": 9,
+      "module": "Engine_context"
+    },
+    {
+      "id": "Method:app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java:IrondashEngineContextPlugin.getFlutterView#1",
+      "name": "getFlutterView",
+      "filePath": "app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java",
+      "startLine": 10,
+      "endLine": 16,
+      "module": "Engine_context"
+    },
+    {
+      "id": "Property:app/lib/workbench/activity_bar.dart:_Item.active",
+      "name": "active",
+      "filePath": "crates/editor-buffer/src/lib.rs",
+      "startLine": 310,
+      "endLine": 310
+    },
+    {
+      "id": "Property:app/test/title_bar_test.dart:_RecordingPlatformMenuDelegate.menus",
+      "name": "menus",
+      "filePath": "tools/vscod�\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000����\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "startLine": 1149,
+      "endLine": 1149
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar_size.dart:WorkbenchActivityBarSize.setActivityBarSize#1",
+      "name": "setActivityBarSize",
+      "filePath": "app/lib/workbench/activity_bar_size.dart",
+      "startLine": 14,
+      "endLine": 14,
+      "module": "Workbench"
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar_size.dart",
+      "name": "activity_bar_size.dart",
+      "filePath": "app/lib/workbench/activity_bar_size.dart"
+    },
+    {
+      "id": "Method:tools/editor-ime-probe/lib/main.dart:EditorImeProbeApp.build#1",
+      "name": "build",
+      "filePath": "tools/editor-ime-probe/lib/main.dart",
+      "startLine": 16,
+      "endLine": 16
+    },
+    {
+      "id": "Method:tools/editor-ime-probe/lib/main.dart:_EditorImeProbePageState.build#1",
+      "name": "build",
+      "filePath": "tools/editor-ime-probe/lib/main.dart",
+      "startLine": 10,
+      "endLine": 16,
+      "module": "Cluster_336"
+    },
+    {
+      "id": "Property:app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc:EngineContext.view",
+      "name": "view",
+      "filePath": "app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc",
+      "startLine": 19,
+      "endLine": 19
+    },
+    {
+      "id": "Function:app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc:IrondashEngineContextGetFlutterView",
+      "name": "IrondashEngineContextGetFlutterView",
+      "filePath": "app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc",
+      "startLine": 37,
+      "endLine": 44
+    },
+    {
+      "id": "Function:app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc:IrondashEngineContextGetBinaryMessenger",
+      "name": "IrondashEngineContextGetBinaryMessenger",
+      "filePath": "app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc",
+      "startLine": 46,
+      "endLine": 54
+    },
+    {
+      "id": "Variable:tools/web-engine-probe/linux/webkitgtk_probe.py:view",
+      "name": "view",
+      "filePath": "tools/web-engine-probe/linux/webkitgtk_probe.py",
+      "startLine": 32,
+      "endLine": 32
+    },
+    {
+      "id": "Function:tools/web-engine-probe/linux/webkitgtk_probe.py:destroy_view",
+      "name": "destroy_view",
+      "filePath": "tools/web-engine-probe/linux/webkitgtk_probe.py",
+      "startLine": 160,
+      "endLine": 172,
+      "module": "Linux"
+    },
+    {
+      "id": "Function:tools/web-engine-probe/linux/webkitgtk_probe.py:create_view",
+      "name": "create_view",
+      "filePath": "tools/web-engine-probe/linux/webkitgtk_probe.py",
+      "startLine": 248,
+      "endLine": 259,
+      "module": "Linux"
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar.dart:_Item.build#1",
+      "name": "build",
+      "filePath": "app/lib/workbench/activity_bar.dart",
+      "startLine": 320,
+      "endLine": 320
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar.dart",
+      "name": "activity_bar.dart",
+      "filePath": "app/lib/workbench/activity_bar.dart"
+    },
+    {
+      "id": "Enum:app/lib/workbench/layout_model.dart:ActivityBarLocation",
+      "name": "ActivityBarLocation",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 16,
+      "endLine": 16
+    },
+    {
+      "id": "Enum:app/lib/workbench/layout_model.dart:ActivityBarSize",
+      "name": "ActivityBarSize",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 20,
+      "endLine": 41
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar_position.dart:WorkbenchActivityBarPosition.setActivityBarLocation#1",
+      "name": "setActivityBarLocation",
+      "filePath": "app/lib/workbench/activity_bar_position.dart",
+      "startLine": 21,
+      "endLine": 21,
+      "module": "Workbench"
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar_position.dart",
+      "name": "activity_bar_position.dart",
+      "filePath": "app/lib/workbench/activity_bar_position.dart"
+    }
+  ],
+  "timing": {
+    "vector": 7.5,
+    "bm25": 931.6,
+    "merge": 0.3,
+    "symbol_lookup": 38.7,
+    "ranking": 0.1,
+    "formatting": 0.1,
+    "wall": 972.4
+  }
+}

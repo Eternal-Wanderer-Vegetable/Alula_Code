@@ -1,0 +1,96 @@
+{
+  "feature": "P05.95 / feat-147",
+  "product_sha": "8a995b08a8ec908575d53af1215b6b64536e012f",
+  "captured_at": "2026-11-19T07:49:20Z",
+  "pull_request": {
+    "number": 3,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3",
+    "state": "OPEN",
+    "draft": true,
+    "head_sha": "8a995b08a8ec908575d53af1215b6b64536e012f"
+  },
+  "pr_ci": {
+    "run_id": 44481175224,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44481175224",
+    "event": "pull_request",
+    "head_sha": "8a995b08a8ec908575d53af1215b6b64536e012f",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      { "id": 135413483615, "name": "Harness 文档结构校验", "conclusion": "success" },
+      { "id": 135413483904, "name": "Flutter (analyze + test)", "conclusion": "success" },
+      { "id": 135413483930, "name": "Rust (windows-latest)", "conclusion": "success" },
+      { "id": 135413483989, "name": "Rust (ubuntu-latest)", "conclusion": "success" }
+    ]
+  },
+  "platform_availability": {
+    "run_id": 44481166897,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44481166897",
+    "event": "push",
+    "head_sha": "8a995b08a8ec908575d53af1215b6b64536e012f",
+    "overall_status_at_capture": "in_progress; macOS job not awaited",
+    "required_jobs": [
+      {
+        "id": 135413454729,
+        "name": "Windows x64 build and launch smoke",
+        "conclusion": "success",
+        "passed_steps": [
+          "Build Windows Release bundle",
+          "Launch Windows app and capture visible client area",
+          "Run P03.7 Windows desktop interaction suite",
+          "Verify native Windows move, copy, and external text drag/drop",
+          "Verify native Windows clipboard formats",
+          "Verify Windows accessibility tree and smoke lifecycle",
+          "Launch Windows native-titlebar mode and close gracefully"
+        ]
+      },
+      {
+        "id": 135413455038,
+        "name": "Linux x64 build and launch smoke",
+        "conclusion": "success",
+        "passed_steps": [
+          "Build Linux Release bundle",
+          "Verify native Linux clipboard formats",
+          "Verify native Linux move, copy, and external text drag/drop",
+          "Launch Linux app under Xvfb",
+          "Launch Linux native-titlebar mode under Xvfb"
+        ]
+      }
+    ],
+    "macos_job": {
+      "id": 135413455132,
+      "name": "macOS build, launch smoke, and app package",
+      "status_at_capture": "in_progress",
+      "active_step_at_capture": "Flutter analyze and tests",
+      "awaited": false,
+      "native_device_validation_claimed": false
+    },
+    "artifacts": [
+      {
+        "id": 14509490693,
+        "name": "alula-windows-x64-8a995b08a8ec908575d53af1215b6b64536e012f",
+        "size_bytes": 15704959,
+        "digest": "sha256:db754a976e668deab743f36f2ca02567d8fe1c0d354810828be4b103831293d5"
+      },
+      {
+        "id": 14508787149,
+        "name": "alula-linux-x64-8a995b08a8ec908575d53af1215b6b64536e012f",
+        "size_bytes": 14101376,
+        "digest": "sha256:7eba4cb64991210f7fbdf34737e85ab300071e3caf344ce7f7fdc0b1d78d4224"
+      },
+      {
+        "id": 14508558527,
+        "name": "alula-windows-native-dnd-44481166897-1",
+        "size_bytes": 3848,
+        "digest": "sha256:c92a9659de1cc6e5f2adea175b76d5942827d8d211374aa836407c547f4a94d1"
+      },
+      {
+        "id": 14508418000,
+        "name": "alula-linux-native-dnd-44481166897-1",
+        "size_bytes": 3300,
+        "digest": "sha256:ad8b8cd5abf7f6f0ad2983311d667de527fff5661e157fef54643c9c17491063"
+      }
+    ]
+  },
+  "macos_device_validation": "Not claimed; no macOS device was available."
+}

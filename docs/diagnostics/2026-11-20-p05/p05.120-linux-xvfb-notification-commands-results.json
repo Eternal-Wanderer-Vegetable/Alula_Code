@@ -1,0 +1,332 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "88911fc074decf58535ad35778d3987c06e3f1a3",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "a7bafc52823a76418942891942adf512e53185b8e20b475e67a6260685e27579",
+  "observations": {
+    "initial": {
+      "request": "initial",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "center-open": {
+      "request": "center-open",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          492.0,
+          992.0,
+          664.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "canonical-clear": {
+      "request": "canonical-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "canonical-dnd": {
+      "request": "canonical-dnd",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": true,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "quiet": {
+      "request": "quiet",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": true,
+      "centerVisible": false,
+      "toastIds": [
+        6
+      ],
+      "items": [
+        6,
+        5,
+        4,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "legacy-dnd": {
+      "request": "legacy-dnd",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [
+        6
+      ],
+      "items": [
+        6,
+        5,
+        4,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "legacy-clear": {
+      "request": "legacy-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "palette": {
+      "request": "palette",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "qi-separator-\u6700\u8fd1\u4f7f\u7528": [
+          220.0,
+          97.0,
+          780.0,
+          123.0
+        ],
+        "qi-\u67e5\u770b: \u6e05\u9664\u6240\u6709\u901a\u77e5": [
+          220.0,
+          123.0,
+          780.0,
+          154.0
+        ],
+        "qi-\u67e5\u770b: \u5207\u6362\u8bf7\u52ff\u6253\u6270": [
+          220.0,
+          154.0,
+          780.0,
+          185.0
+        ],
+        "qi-\u6587\u4ef6: \u65b0\u5efa\u6587\u672c\u6587\u4ef6": [
+          220.0,
+          211.0,
+          780.0,
+          242.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "palette-clear": {
+      "request": "palette-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [],
+      "progress": [],
+      "history": [
+        "notifications.clearAll",
+        "notifications.toggleDoNotDisturbMode"
+      ]
+    }
+  },
+  "fixtureSha256": "2cb5062c80e893c5f2488d50a4636f031a2c3b79b64f7dc57982c13a48fa6f75",
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

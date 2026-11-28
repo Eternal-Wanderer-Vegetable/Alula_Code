@@ -1,0 +1,119 @@
+{
+  "feature": "P05.94 / feat-146",
+  "product_sha": "c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+  "captured_at": "2026-11-19T06:10:19Z",
+  "pull_request": {
+    "number": 3,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3",
+    "state": "OPEN",
+    "draft": true,
+    "head_sha": "c46b56548bc7e04aa6656a55f9a99278c0f1200d"
+  },
+  "pr_ci": {
+    "run_id": 44467133921,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44467133921",
+    "event": "pull_request",
+    "head_sha": "c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 135367527490,
+        "name": "Harness 文档结构校验",
+        "conclusion": "success"
+      },
+      {
+        "id": 135367527729,
+        "name": "Flutter (analyze + test)",
+        "conclusion": "success"
+      },
+      {
+        "id": 135367527793,
+        "name": "Rust (ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 135367527991,
+        "name": "Rust (windows-latest)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platform_availability": {
+    "required_jobs_run_id": 44468690336,
+    "required_jobs_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44468690336",
+    "event": "workflow_dispatch",
+    "head_sha": "c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+    "overall_status_at_capture": "in_progress; macOS job not awaited",
+    "required_jobs": [
+      {
+        "id": 135372607473,
+        "name": "Linux x64 build and launch smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 135372607133,
+        "name": "Windows x64 build and launch smoke",
+        "conclusion": "success"
+      }
+    ],
+    "macos_job": {
+      "id": 135372607441,
+      "name": "macOS build, launch smoke, and app package",
+      "status_at_capture": "in_progress",
+      "awaited": false,
+      "native_device_validation_claimed": false
+    },
+    "artifacts": [
+      {
+        "id": 14503941128,
+        "name": "alula-linux-x64-c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+        "size_bytes": 14098543,
+        "digest": "sha256:e6c2a80ec73a14f82975c29a6dd77a7756bed7039c2c86328920082d4f5a302c"
+      },
+      {
+        "id": 14504410012,
+        "name": "alula-windows-x64-c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+        "size_bytes": 15698676,
+        "digest": "sha256:5a2ef55dc4aca60abeced347e203bc4e8ac55b6d904f8567b7f11527d9838918"
+      },
+      {
+        "id": 14503606540,
+        "name": "alula-linux-native-dnd-44468690336-1",
+        "size_bytes": 3284,
+        "digest": "sha256:b0701b8a664a2fe8618f46efff7f6be812269b8b206e459404bf903420198eb5"
+      },
+      {
+        "id": 14503372434,
+        "name": "alula-windows-native-dnd-44468690336-1",
+        "size_bytes": 3852,
+        "digest": "sha256:f5841e377216740e98bb3c7ee19953319c04bcf38d18373c8f21051f199c2bd0"
+      }
+    ]
+  },
+  "initial_platform_attempt": {
+    "run_id": 44467127746,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44467127746",
+    "event": "push",
+    "head_sha": "c46b56548bc7e04aa6656a55f9a99278c0f1200d",
+    "overall_status_at_capture": "in_progress; macOS job not awaited",
+    "linux_job_conclusion": "success",
+    "windows_job": {
+      "id": 135367507966,
+      "conclusion": "failure",
+      "failed_step": "Verify native Windows move, copy, and external text drag/drop",
+      "message": "Windows native drag/drop probe failed: Timed out waiting for drop.json.",
+      "diagnostic_observation": "The recorded pointer sequence ended in cancel and did not contain a drop event; no root cause is inferred.",
+      "artifact": {
+        "id": 14503465451,
+        "name": "alula-windows-native-dnd-44467127746-1",
+        "size_bytes": 2076,
+        "digest": "sha256:50e4159456914fb63ebb785deca3dbf838866e907822a0e8e762703a9bae5296"
+      }
+    },
+    "retry_same_sha_run_id": 44468690336,
+    "retry_conclusion_for_required_jobs": "success",
+    "code_changed_between_attempts": false
+  },
+  "macos_device_validation": "Not claimed; no macOS device was available."
+}

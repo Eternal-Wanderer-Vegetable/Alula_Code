@@ -1,0 +1,592 @@
+{
+  "product": "9ad4d7f01cc6557c0bf8dfdd0d7dae63272687ee",
+  "tree": "88083af1e845f4cb04653221e5b98747b8d09006",
+  "abi": 51,
+  "fixtureSha256": "1a06ca4d7d1c247d8387f4c53e71b46716d3778f40f1ba0e805741f9f79a1541",
+  "windowsSourceFiles": 67,
+  "sourceFixture": {
+    "lines": 12500,
+    "lineEnding": "CRLF",
+    "encoding": "UTF-8 BOM"
+  },
+  "originalLinux": {
+    "baseline": "153580e007c15887605b8019f2192d5984b76460",
+    "build": {
+      "head": "153580e007c15887605b8019f2192d5984b76460",
+      "fixtureSha256": "1a06ca4d7d1c247d8387f4c53e71b46716d3778f40f1ba0e805741f9f79a1541",
+      "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "aotSha256": "64ee6fc001ca79ac91b7361625c559f49811fe833663f79e5811d79678dcf73e"
+    },
+    "rawReportSha256": "0f1cf22675ea3ca96cf688fcbdd37b5d0a7ab4c9cbd9fc6b387dc020b25da2fd",
+    "checks": {
+      "start": {
+        "rows": 31,
+        "firstLine": 1,
+        "lastLine": 31,
+        "maximumGap": 7.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 0.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 0,
+          "label": 1,
+          "bodyTag": 1,
+          "codeY": 22.5,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "goto-800": {
+        "rows": 31,
+        "firstLine": 770,
+        "lastLine": 800,
+        "maximumGap": 200.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16146.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 769,
+          "label": 770,
+          "bodyTag": 770,
+          "codeY": 25.5,
+          "gutterY": 217.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "scroll-800": {
+        "rows": 31,
+        "firstLine": 785,
+        "lastLine": 815,
+        "maximumGap": 203.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16464.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 784,
+          "label": 785,
+          "bodyTag": 785,
+          "codeY": 22.5,
+          "gutterY": 218.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "goto-6600": {
+        "rows": 31,
+        "firstLine": 6600,
+        "lastLine": 6630,
+        "maximumGap": 132.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10437.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 497,
+          "label": 6600,
+          "bodyTag": 6600,
+          "codeY": 22.5,
+          "gutterY": 147.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "scroll-6600": {
+        "rows": 31,
+        "firstLine": 6615,
+        "lastLine": 6645,
+        "maximumGap": 136.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10755.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 512,
+          "label": 6615,
+          "bodyTag": 6615,
+          "codeY": 19.5,
+          "gutterY": 147.5,
+          "sharedStrutY": 19.5,
+          "sharedTextY": 19.5
+        }
+      },
+      "goto-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 128.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10056.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 25.5,
+          "gutterY": 145.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "scroll-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 128.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10056.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 25.5,
+          "gutterY": 145.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "goto-12": {
+        "rows": 31,
+        "firstLine": 12,
+        "lastLine": 42,
+        "maximumGap": 10.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 231.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": false,
+        "sampleFirstRow": {
+          "index": 11,
+          "label": 12,
+          "bodyTag": 12,
+          "codeY": 22.5,
+          "gutterY": 25.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      }
+    }
+  },
+  "screenshots": {
+    "beforeSha256": "813339ca6c8459e7f11be176b43f450bca8a975ad4791a69eba78cfcabeb21b8",
+    "afterSha256": "6300efbcbc1fdcd61ae647d6be01d460014a2b99014ffc3b8f16f173dbf84d94"
+  },
+  "linuxRepeatedShutdownTrial": {
+    "rawReportSha256": "933786a2fb63f41c012ac3ab33959c92a00450dcaf97ace670803e016fe347a4",
+    "runnerLogSha256": "9494b52f36a2faf9da26e04fd37b54fd366cdd3c1956f571b9428cdeb82d4053",
+    "exitCode": -11,
+    "alignedVisibleRows": 241
+  },
+  "windows": {
+    "maximumGap": 0.40000000000009095,
+    "visibleRows": 247,
+    "aotSha256": "9c475f15f5c51a4fcd7d8b83a44a9d6adff33e60b87aef8f5500ac4ba9eb6d09",
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "profileFileSha256": "23f9b646be9004f6d3a2cb0ff6bca1429ea00c48697732d25289acc56910730f",
+    "rawReportSha256": "e2c0800b51ec0c1dbada3bca77732117e4627661a67ddba83625ae01f3c138bb",
+    "driverSha256": "287519c9902c380c19528b42014a15f1b6d6e26e1d817d3ac2ed8df3f9994116",
+    "checks": {
+      "start": {
+        "rows": 31,
+        "firstLine": 1,
+        "lastLine": 31,
+        "maximumGap": 0.40000000000009095,
+        "maximumGapUsingBodyStrut": 0.40000000000009095,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 0.0,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 0,
+          "label": 1,
+          "bodyTag": 1,
+          "codeY": 22.900000000000006,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "goto-800": {
+        "rows": 31,
+        "firstLine": 770,
+        "lastLine": 800,
+        "maximumGap": 0.40000000000009095,
+        "maximumGapUsingBodyStrut": 0.40000000000009095,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16145.0,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 769,
+          "label": 770,
+          "bodyTag": 770,
+          "codeY": 26.900000000000006,
+          "gutterY": 26.5,
+          "sharedStrutY": 26.5,
+          "sharedTextY": 26.5
+        }
+      },
+      "scroll-800": {
+        "rows": 32,
+        "firstLine": 792,
+        "lastLine": 823,
+        "maximumGap": 0.40000000000009095,
+        "maximumGapUsingBodyStrut": 0.40000000000009095,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16625.0,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 791,
+          "label": 792,
+          "bodyTag": 792,
+          "codeY": 8.5,
+          "gutterY": 8.5,
+          "sharedStrutY": 8.5,
+          "sharedTextY": 8.5
+        }
+      },
+      "goto-6600": {
+        "rows": 31,
+        "firstLine": 6600,
+        "lastLine": 6630,
+        "maximumGap": 0.399999999998613,
+        "maximumGapUsingBodyStrut": 0.399999999998613,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10436.599999999999,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 497,
+          "label": 6600,
+          "bodyTag": 6600,
+          "codeY": 22.900000000000006,
+          "gutterY": 22.900000000001455,
+          "sharedStrutY": 22.900000000001455,
+          "sharedTextY": 22.900000000001455
+        }
+      },
+      "scroll-6600": {
+        "rows": 31,
+        "firstLine": 6623,
+        "lastLine": 6653,
+        "maximumGap": 0.399999999998613,
+        "maximumGapUsingBodyStrut": 0.399999999998613,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10916.599999999999,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 520,
+          "label": 6623,
+          "bodyTag": 6623,
+          "codeY": 26.100000000000023,
+          "gutterY": 25.900000000001455,
+          "sharedStrutY": 25.900000000001455,
+          "sharedTextY": 25.900000000001455
+        }
+      },
+      "goto-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 0.39999999999929514,
+        "maximumGapUsingBodyStrut": 0.39999999999929514,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10055.2,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 26.100000000000023,
+          "gutterY": 26.299999999999272,
+          "sharedStrutY": 26.299999999999272,
+          "sharedTextY": 26.299999999999272
+        }
+      },
+      "scroll-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 0.39999999999929514,
+        "maximumGapUsingBodyStrut": 0.39999999999929514,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10055.2,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 26.100000000000023,
+          "gutterY": 26.299999999999272,
+          "sharedStrutY": 26.299999999999272,
+          "sharedTextY": 26.299999999999272
+        }
+      },
+      "goto-12": {
+        "rows": 31,
+        "firstLine": 12,
+        "lastLine": 42,
+        "maximumGap": 0.39999999999889724,
+        "maximumGapUsingBodyStrut": 0.39999999999889724,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 230.8000000000011,
+        "viewportHeight": 678.8,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 11,
+          "label": 12,
+          "bodyTag": 12,
+          "codeY": 22.900000000000006,
+          "gutterY": 22.69999999999891,
+          "sharedStrutY": 22.69999999999891,
+          "sharedTextY": 22.69999999999891
+        }
+      }
+    },
+    "exit": 0,
+    "environment": {
+      "dpi": 120
+    }
+  },
+  "linux": {
+    "maximumGap": 0.0,
+    "visibleRows": 246,
+    "aotSha256": "97a9c576ea12237990ff1317bfd5179e70d3b66db94c8a93e6a1257008936d86",
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "profileFileSha256": "23f9b646be9004f6d3a2cb0ff6bca1429ea00c48697732d25289acc56910730f",
+    "rawReportSha256": "495f71ffd1bb170f0f4a85fad68adf461de4a8fe9592eb51f3398595b3e43645",
+    "driverSha256": "d902e51c2e08d93fcdfde31720fa994bcdeb00b3afba669db53f5c77478bd343",
+    "checks": {
+      "start": {
+        "rows": 31,
+        "firstLine": 1,
+        "lastLine": 31,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 0.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 0,
+          "label": 1,
+          "bodyTag": 1,
+          "codeY": 22.5,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "goto-800": {
+        "rows": 31,
+        "firstLine": 770,
+        "lastLine": 800,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16146.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 769,
+          "label": 770,
+          "bodyTag": 770,
+          "codeY": 25.5,
+          "gutterY": 25.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "scroll-800": {
+        "rows": 31,
+        "firstLine": 785,
+        "lastLine": 815,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 16464.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 784,
+          "label": 785,
+          "bodyTag": 785,
+          "codeY": 22.5,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "goto-6600": {
+        "rows": 31,
+        "firstLine": 6600,
+        "lastLine": 6630,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10437.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 497,
+          "label": 6600,
+          "bodyTag": 6600,
+          "codeY": 22.5,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      },
+      "scroll-6600": {
+        "rows": 31,
+        "firstLine": 6615,
+        "lastLine": 6645,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 100690,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 10755.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 512,
+          "label": 6615,
+          "bodyTag": 6615,
+          "codeY": 19.5,
+          "gutterY": 19.5,
+          "sharedStrutY": 19.5,
+          "sharedTextY": 19.5
+        }
+      },
+      "goto-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10056.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 25.5,
+          "gutterY": 25.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "scroll-12489": {
+        "rows": 30,
+        "firstLine": 12471,
+        "lastLine": 12500,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 197863,
+        "windowLengthUtf16": 8387,
+        "verticalOffset": 10056.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 479,
+          "label": 12471,
+          "bodyTag": 12471,
+          "codeY": 25.5,
+          "gutterY": 25.5,
+          "sharedStrutY": 25.5,
+          "sharedTextY": 25.5
+        }
+      },
+      "goto-12": {
+        "rows": 31,
+        "firstLine": 12,
+        "lastLine": 42,
+        "maximumGap": 0.0,
+        "maximumGapUsingBodyStrut": 0.0,
+        "windowStartUtf16": 0,
+        "windowLengthUtf16": 16127,
+        "verticalOffset": 231.0,
+        "viewportHeight": 678.0000000000001,
+        "matchedSpans": true,
+        "usesGutterStrut": true,
+        "sampleFirstRow": {
+          "index": 11,
+          "label": 12,
+          "bodyTag": 12,
+          "codeY": 22.5,
+          "gutterY": 22.5,
+          "sharedStrutY": 22.5,
+          "sharedTextY": 22.5
+        }
+      }
+    },
+    "exit": 0,
+    "environment": "Xvfb + xfwm4"
+  }
+}

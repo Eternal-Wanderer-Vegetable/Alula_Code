@@ -1,0 +1,221 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "9318a5fb7f433a368d678f40854c87f022f6510d",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "2bd79e8fa4720bb484ab791e5cf19d3bf97d5abfd4a03e00113fb7944bb5e73e",
+  "observations": {
+    "fallback-before": {
+      "request": "fallback-before",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-toast-2": [
+          540.0,
+          522.0,
+          992.0,
+          591.0
+        ],
+        "notification-toast-1": [
+          540.0,
+          595.0,
+          992.0,
+          664.0
+        ]
+      },
+      "focus": null,
+      "calls": [],
+      "centerVisible": false,
+      "items": [
+        2,
+        1
+      ]
+    },
+    "fallback-accepted": {
+      "request": "fallback-accepted",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-toast-1": [
+          540.0,
+          595.0,
+          992.0,
+          664.0
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": false,
+      "items": [
+        1
+      ]
+    },
+    "older-visible": {
+      "request": "older-visible",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-toast-3": [
+          540.0,
+          522.0,
+          992.0,
+          591.0
+        ],
+        "notification-toast-1": [
+          540.0,
+          595.0,
+          992.0,
+          664.0
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": false,
+      "items": [
+        3,
+        1
+      ]
+    },
+    "older-focused": {
+      "request": "older-focused",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          493.0,
+          992.0,
+          664.0
+        ],
+        "notification-item-3": [
+          541.0,
+          529.0,
+          991.0,
+          596.0
+        ],
+        "notification-item-1": [
+          541.0,
+          596.0,
+          991.0,
+          663.0
+        ]
+      },
+      "focus": 3,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        3,
+        1
+      ]
+    },
+    "newest-arrived": {
+      "request": "newest-arrived",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          426.0,
+          992.0,
+          664.0
+        ],
+        "notification-item-4": [
+          541.0,
+          462.0,
+          991.0,
+          529.0
+        ],
+        "notification-item-3": [
+          541.0,
+          529.0,
+          991.0,
+          596.0
+        ],
+        "notification-item-1": [
+          541.0,
+          596.0,
+          991.0,
+          663.0
+        ]
+      },
+      "focus": 3,
+      "calls": [
+        "fallback-newest-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        4,
+        3,
+        1
+      ]
+    },
+    "focus-accepted": {
+      "request": "focus-accepted",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          493.0,
+          992.0,
+          664.0
+        ],
+        "notification-item-4": [
+          541.0,
+          529.0,
+          991.0,
+          596.0
+        ],
+        "notification-item-1": [
+          541.0,
+          596.0,
+          991.0,
+          663.0
+        ]
+      },
+      "focus": null,
+      "calls": [
+        "fallback-newest-first",
+        "focus-older-first"
+      ],
+      "centerVisible": true,
+      "items": [
+        4,
+        1
+      ]
+    }
+  },
+  "fixtureSha256": "05c6e339c4ca9aa5b73a39272d54da10b549d03cef34b08ca07a425ca9b35081",
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

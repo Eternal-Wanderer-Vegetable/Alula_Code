@@ -1,0 +1,47 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages/irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart
+00:00 +0: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextEvent wire data contains only active window/group focus metadata
+00:00 +1: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextEvent rejects malformed and oversized identity payloads
+00:00 +2: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextRegistry focus changes select the latest part and reject stale events
+00:00 +3: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextRegistry blur and close fall back to the most recently active survivor
+00:00 +4: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextRegistry an auxiliary that never owned focus is not chosen as MRU fallback
+00:00 +5: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextRegistry keeps auxiliary owner registration bounded and removes closed owners
+00:00 +6: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_focus_context_test.dart: AuxiliaryFocusContextRegistry focus events never change the transferred editor payload
+00:00 +7: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: AuxiliaryWindowPayload document payload round-trips through arguments
+00:00 +8: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: AuxiliaryWindowPayload untitled payloads keep a null path
+00:00 +9: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: AuxiliaryWindowPayload main-window arguments parse as non-auxiliary
+00:00 +10: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +11: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +12: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +13: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +14: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +15: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +16: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:00 +17: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: auxiliary always-on-top control reads native state and waits for successful on/off changes without touching the document
+00:01 +18: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out outside release creates one auxiliary window with the dirty document
+00:01 +19: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out outside release creates one auxiliary window with the dirty document
+00:01 +20: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out outside release creates one auxiliary window with the dirty document
+00:01 +21: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out outside release creates one auxiliary window with the dirty document
+00:03 +22: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/auxiliary_window_test.dart: main-window move flow the command captures the document payload and removes the source view
+00:03 +23: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out accepted in-window editor drop never creates a window
+00:03 +24: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out rejected in-window title-bar drop never creates a window
+00:04 +25: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out failed window creation keeps the source tab open
+00:04 +26: /home/vegetable/.codex/worktrees/pr3-continuation/alula_code/app/test/editor_tab_tear_out_test.dart: editor tab tear-out unknown pointer position keeps the source tab open
+00:05 +27: All tests passed!

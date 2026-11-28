@@ -1,0 +1,129 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart
+00:00 +0: Enter and Space select focused row and pass preserveFocus
+00:00 +1: Enter from a focused row preserves its async focus owner
+00:00 +2: pending Space never reclaims deliberate external focus
+00:00 +3: hover leaves focus, selection and keyboard target unchanged
+00:00 +4: Shift navigation previews a singleton without taking focus
+00:00 +5: Control-click toggles resources on TargetPlatform.windows
+00:00 +6: Control-click toggles resources on TargetPlatform.linux
+00:01 +7: Command-click toggles resources on macOS
+00:01 +8: foreign modifier click does not open or select on TargetPlatform.windows
+00:01 +9: foreign modifier click does not open or select on TargetPlatform.linux
+00:01 +10: foreign modifier click does not open or select on TargetPlatform.macOS
+00:01 +11: Shift-click replaces only the anchor run and preserves islands
+00:01 +12: toggle plus Shift uses range selection on TargetPlatform.windows
+00:01 +13: toggle plus Shift uses range selection on TargetPlatform.linux
+00:01 +14: toggle plus Shift uses range selection on TargetPlatform.macOS
+00:01 +15: modifier selection moves keyboard focus from an outside control
+00:01 +16: refresh prunes multiselection and remaps staged resources
+00:01 +17: multiselection never batches an explicit row action
+00:01 +18: Shift arrows grow, shrink, remove, and stop at boundaries
+00:01 +19: select all previews a singleton and keeps focus and anchor
+00:01 +20: select all is scoped to list focus and Enter collapses selection
+00:02 +21: focused action activates once; navigation transfers focus to list
+00:02 +22: arrows, Home and End reveal focus across section headers
+00:03 +23: unchanged parent rebuild preserves manual list scrolling
+00:03 +24: focus and selection independently survive updates and clear on removal
+00:03 +25: mixed changes keep the existing staged group identity
+00:03 +26: secondary click targets row without changing selection or anchor
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:763:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 763
+The test description was:
+  secondary click targets row without changing selection or anchor
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +26 -1: secondary click targets row without changing selection or anchor [E]
+  Test failed. See exception logs above.
+  The test description was: secondary click targets row without changing selection or anchor
+  
+00:03 +26 -1: context key opens only on keyup and cancellation is inert
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'scm-context-open'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:800:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 800
+The test description was:
+  context key opens only on keyup and cancellation is inert
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +26 -2: context key opens only on keyup and cancellation is inert [E]
+  Test failed. See exception logs above.
+  The test description was: context key opens only on keyup and cancellation is inert
+  
+00:03 +26 -2: context menu action rejects an entry changed while open
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'scm-context-stage'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart:824:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart line 824
+The test description was:
+  context menu action rejects an entry changed while open
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +26 -3: context menu action rejects an entry changed while open [E]
+  Test failed. See exception logs above.
+  The test description was: context menu action rejects an entry changed while open
+  
+00:03 +26 -3: pending Space completion after disposal does not restore focus
+00:03 +27 -3: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: context key opens only on keyup and cancellation is inert
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: context menu action rejects an entry changed while open
+  E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: secondary click targets row without changing selection or anchor

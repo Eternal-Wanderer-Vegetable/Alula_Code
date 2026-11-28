@@ -1,0 +1,134 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse events; fixture sets the empty-result query",
+  "sourceProvenance": {
+    "baseline": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "parent": "d295ab2402b82d7378168dc8c54be62ef46ed1af",
+    "sha256": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "42906bff35756efd550a4e4ad85169391a05fd8f58de94115077aae5c935bbcd",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "acaf215327b5e5d99aa1ccd7c61f2fd115ac85e27fe2c35a8ee98fd97cd5f9ec",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    }
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "a4b49568e2971a1c40ff152ee6eb571e7a5526984a41d23c8417317c65e967a2",
+  "fixtureSha256": "816d0f264cdc49507108f10d507c4a6fc568cace1fe69dfdf89100a89bd85bb3",
+  "trace": {
+    "partial": {
+      "request": "partial",
+      "checked": false,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 2,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    },
+    "all-matches": {
+      "request": "all-matches",
+      "checked": true,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 3,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    },
+    "no-matches-picked": {
+      "request": "no-matches-picked",
+      "checked": false,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "Match",
+      "count": 1,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    },
+    "no-results": {
+      "request": "no-results",
+      "checked": false,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    },
+    "no-results-after-click": {
+      "request": "no-results-after-click",
+      "checked": false,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    },
+    "before-confirm": {
+      "request": "before-confirm",
+      "checked": false,
+      "checkAll": [
+        221.60000000000002,
+        80.0
+      ],
+      "inputFocused": true,
+      "query": "None",
+      "count": 1,
+      "confirm": [
+        757.4999996185303,
+        80.0
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "screenshot": {
+    "name": "windows-quick-input-select-all.png",
+    "sha256": "bfdce66265be9b8e1931191d6a4db5023cfce1c9da8068b7125e656432634506"
+  },
+  "accepted": [
+    "Hidden picked"
+  ],
+  "checksPassed": true,
+  "exitCode": 0,
+  "productCommit": "7b7061bc150281deb22b687fd7868e235fa18ca6",
+  "productTree": "86417bc40b0367c77eec0b6bfda0c3e9db36d663"
+}

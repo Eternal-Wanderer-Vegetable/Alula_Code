@@ -72,7 +72,10 @@ void main() {
       ));
       await tester.pump(const Duration(milliseconds: 600));
 
-      await tester.tap(find.text('source.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('source.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 250));
       final sourceField = tester.widget<RustTextInputField>(
         find.byType(RustTextInputField),
@@ -83,7 +86,10 @@ void main() {
       final selectionStart = sourceText.indexOf('alpha');
       expect(selectionStart, greaterThanOrEqualTo(0));
 
-      await tester.tap(find.text('target.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('target.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 250));
       final targetField = tester.widget<RustTextInputField>(
         find.byType(RustTextInputField),
@@ -197,7 +203,10 @@ void main() {
       ));
       await tester.pump(const Duration(milliseconds: 600));
 
-      await tester.tap(find.text('source.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('source.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 250));
       final sourceField = tester.widget<RustTextInputField>(
         find.byType(RustTextInputField),
@@ -208,7 +217,10 @@ void main() {
       final selectionStart = sourceText.indexOf('alpha');
       final sourceVersion = sourceDocument.version;
 
-      await tester.tap(find.text('target.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('target.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 250));
       final targetField = tester.widget<RustTextInputField>(
         find.byType(RustTextInputField),
@@ -270,7 +282,10 @@ void main() {
       expect(targetFile.readAsStringSync(), '${targetText}alpha');
       expect(targetDocument.isDirty, isFalse);
 
-      await tester.tap(find.text('source.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('source.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
@@ -285,7 +300,10 @@ void main() {
       final sourceWithFollowUp = sourceDocument.resync().content;
       expect(sourceWithFollowUp, isNot(sourceText.replaceFirst('alpha', '')));
 
-      await tester.tap(find.text('target.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('target.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
@@ -294,7 +312,10 @@ void main() {
       expect(sourceDocument.resync().content, sourceWithFollowUp);
       expect(targetDocument.resync().content, '${targetText}alpha');
 
-      await tester.tap(find.text('source.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('source.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
@@ -303,7 +324,10 @@ void main() {
       expect(sourceDocument.resync().content,
           sourceText.replaceFirst('alpha', ''));
 
-      await tester.tap(find.text('target.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('target.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
@@ -312,7 +336,10 @@ void main() {
       expect(sourceDocument.resync().content, sourceText);
       expect(targetDocument.resync().content, targetText);
 
-      await tester.tap(find.text('source.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('source.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyY);
@@ -338,7 +365,10 @@ void main() {
         selectedText: 'println',
         token: 97643,
       );
-      await tester.tap(find.text('target.rs').first);
+      await tester.tap(find.descendant(
+        of: find.byKey(const ValueKey('editor-tab-strip-editor')),
+        matching: find.textContaining('target.rs'),
+      ));
       await tester.pump(const Duration(milliseconds: 100));
       final currentTargetField = tester.widget<RustTextInputField>(
         find.byType(RustTextInputField),

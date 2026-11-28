@@ -1,0 +1,206 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "f7c60d10442f8c2d6dcc9fc742a26c8c5589b1c4d39398cedc6d23409853c31c",
+  "fixtureSha256": "5dad258b7a1cdc2442c8d2b85aff7658186d6c53b54c65ae8ed86be0d99f0ead",
+  "observations": {
+    "toast": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        501.79999999999995,
+        979.2,
+        537.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        541.8,
+        979.2,
+        628.8
+      ]
+    },
+    "toast-context": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        501.79999999999995,
+        979.2,
+        537.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        541.8,
+        979.2,
+        628.8
+      ],
+      "notification-toast-copy-1": [
+        753.6,
+        593.6,
+        826.0000015258789,
+        633.6
+      ]
+    },
+    "toast-dismissed": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        501.79999999999995,
+        979.2,
+        537.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        541.8,
+        979.2,
+        628.8
+      ]
+    },
+    "center": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        437.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        446.79999999999995,
+        955.2,
+        470.79999999999995
+      ],
+      "notification-item-2": [
+        528.2,
+        507.79999999999995,
+        978.2,
+        542.8
+      ],
+      "notification-item-1": [
+        528.2,
+        542.8,
+        978.2,
+        627.8
+      ]
+    },
+    "center-context": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        437.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        446.79999999999995,
+        955.2,
+        470.79999999999995
+      ],
+      "notification-copy-2": [
+        528.2,
+        550.8,
+        600.600001525879,
+        590.8
+      ],
+      "notification-item-2": [
+        528.2,
+        507.79999999999995,
+        978.2,
+        542.8
+      ],
+      "notification-item-1": [
+        528.2,
+        542.8,
+        978.2,
+        627.8
+      ]
+    },
+    "center-dismissed": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        437.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        446.79999999999995,
+        955.2,
+        470.79999999999995
+      ],
+      "notification-item-2": [
+        528.2,
+        507.79999999999995,
+        978.2,
+        542.8
+      ],
+      "notification-item-1": [
+        528.2,
+        542.8,
+        978.2,
+        627.8
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "nativeInputs": [
+    "mouse secondary click",
+    "Esc",
+    "Shift+F10",
+    "Esc"
+  ],
+  "exitCode": 0,
+  "sourceSha": "3ed5f8d244790a5b8db1e0de3ae161216eb2a23d",
+  "sourceHashes": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "7d642facbaecbd29816852eeca9cec58539667891ff38b63a80f5f7c29c7bd6d",
+    "app/lib/workbench/notifications.dart": "0600cd9fb3ad41d7b839a66fdb1044c308eb3f5ed701f011f8cb29bf746f750c",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "a060107fe56b6cc66cb08fe023c7ef77d5d717c88bd3b0d2f756da0e7075b56a",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  },
+  "beforeAutoFocus": {
+    "aotSha256": "d29492bd215e201ce8d97614dd8ea49a05745566ee0bdf337fa9394c380ee6b3",
+    "toastEscapeClosedMenu": false
+  },
+  "clipboardEvidence": "Exact Clipboard.setData payload is in the Flutter widget test. Native inputs cover both menu routes and Escape."
+}

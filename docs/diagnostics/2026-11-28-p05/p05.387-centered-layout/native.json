@@ -1,0 +1,2957 @@
+{
+  "product": "85d0114e8a3d414e17299a269a4edeae24e11ad5",
+  "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+  "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "normal centered layout state through group, panel and Zen transitions",
+    "normalBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "normal": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            790.4000244140625,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalCentered": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488.3999938964844,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "problemsWhileCentered": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        541.6625366210938
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        540.0625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488,
+            540.0625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            540.0625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            540.0625
+          ]
+        },
+        {
+          "bounds": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            540.0625
+          ],
+          "parent": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            540.0625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalPanelClosed": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            838.4000244140625
+          ],
+          "parent": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "horizontalWithPreference": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            395,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container inactive"
+        },
+        {
+          "bounds": [
+            747.7999877929688,
+            35.79999923706055,
+            395.3999938964844,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalAfterHorizontalClose": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488.3999938964844,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "verticalWithPreference": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488.3999938964844,
+            419
+          ],
+          "classes": "editor-group-container max-height-478px inactive"
+        },
+        {
+          "bounds": [
+            503.8000183105469,
+            454.8000183105469,
+            488.3999938964844,
+            419.3999938964844
+          ],
+          "classes": "editor-group-container max-height-478px active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalAfterVerticalClose": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488.3999938964844,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "zenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "zenWithNormalPreference": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            393.8000183105469,
+            35.79999923706055,
+            1260,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ],
+          "parent": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ],
+          "parent": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "restoredBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "normalAfterZen": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            838.4000244140625
+          ],
+          "parent": [
+            991.7999877929688,
+            35.79999923706055,
+            151.40000915527344,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalDisabled": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            790.4000244140625,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "referenceZenOwnership": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "normal centered layout state through group, panel and Zen transitions",
+    "normalBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "normal": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            790.4000244140625,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "firstFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "autoZenCentered": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            393.8000183105469,
+            35.79999923706055,
+            1260,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ],
+          "parent": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ],
+          "parent": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "autoZenDisabled": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            2038.4000244140625,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "autoZenReenabled": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            393.8000183105469,
+            35.79999923706055,
+            1260.4000244140625,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ],
+          "parent": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            1654.2000732421875,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ],
+          "parent": [
+            1654.2000732421875,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "firstRestored": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "normalAfterAutoCenter": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            790.4000244140625,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "normalManualCentered": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            503.8000183105469,
+            35.79999923706055,
+            488.3999938964844,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            352.8000183105469,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ],
+          "parent": [
+            992.2000122070312,
+            35.79999923706055,
+            151,
+            838.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "secondFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "preexistingZenCentered": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            393.8000183105469,
+            35.79999923706055,
+            1260,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ],
+          "parent": [
+            4.800000190734863,
+            35.79999923706055,
+            389,
+            1111.4000244140625
+          ]
+        },
+        {
+          "bounds": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ],
+          "parent": [
+            1653.800048828125,
+            35.79999923706055,
+            389.3999938964844,
+            1111.4000244140625
+          ]
+        }
+      ],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "preexistingZenDisabled": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "editor": [
+        4,
+        35,
+        2040,
+        1113
+      ],
+      "content": [
+        4.800000190734863,
+        35.79999923706055,
+        2038.4000244140625,
+        1111.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            4.800000190734863,
+            35.79999923706055,
+            2038.4000244140625,
+            1111.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "secondRestored": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "normalAfterManualDisable": {
+      "viewport": [
+        1444,
+        907
+      ],
+      "editor": [
+        352,
+        35,
+        792,
+        840
+      ],
+      "content": [
+        352.8000183105469,
+        35.79999923706055,
+        790.4000244140625,
+        838.4000244140625
+      ],
+      "groups": [
+        {
+          "bounds": [
+            352.8000183105469,
+            35.79999923706055,
+            790.4000244140625,
+            838.4000244140625
+          ],
+          "classes": "editor-group-container active"
+        }
+      ],
+      "margins": [],
+      "nativeWindowBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ]
+    },
+    "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "referenceWorkspaceStorage": {
+    "initialize": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "centered layout requested state by workspace",
+      "mode": "initialize",
+      "workspace": "workspace-A",
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "initial": {
+        "viewport": [
+          1444,
+          907
+        ],
+        "editor": [
+          352,
+          35,
+          792,
+          840
+        ],
+        "content": [
+          352.8000183105469,
+          35.79999923706055,
+          790.4000244140625,
+          838.4000244140625
+        ],
+        "groups": [
+          {
+            "bounds": [
+              352.8000183105469,
+              35.79999923706055,
+              790.4000244140625,
+              838.4000244140625
+            ],
+            "classes": "editor-group-container active"
+          }
+        ],
+        "margins": [],
+        "nativeWindowBounds": [
+          297,
+          126,
+          1755,
+          1040
+        ]
+      },
+      "requested": {
+        "viewport": [
+          1444,
+          907
+        ],
+        "editor": [
+          352,
+          35,
+          792,
+          840
+        ],
+        "content": [
+          352.8000183105469,
+          35.79999923706055,
+          790.4000244140625,
+          838.4000244140625
+        ],
+        "groups": [
+          {
+            "bounds": [
+              503.8000183105469,
+              35.79999923706055,
+              488.3999938964844,
+              838.4000244140625
+            ],
+            "classes": "editor-group-container active"
+          }
+        ],
+        "margins": [
+          {
+            "bounds": [
+              352.8000183105469,
+              35.79999923706055,
+              151,
+              838.4000244140625
+            ],
+            "parent": [
+              352.8000183105469,
+              35.79999923706055,
+              151,
+              838.4000244140625
+            ]
+          },
+          {
+            "bounds": [
+              992.2000122070312,
+              35.79999923706055,
+              151,
+              838.4000244140625
+            ],
+            "parent": [
+              992.2000122070312,
+              35.79999923706055,
+              151,
+              838.4000244140625
+            ]
+          }
+        ],
+        "nativeWindowBounds": [
+          297,
+          126,
+          1755,
+          1040
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "same": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "centered layout requested state by workspace",
+      "mode": "same",
+      "workspace": "workspace-A",
+      "normalBounds": [
+        297,
+        126,
+        1762,
+        1044
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "restored": {
+        "viewport": [
+          1451,
+          912
+        ],
+        "editor": [
+          352,
+          35,
+          799,
+          845
+        ],
+        "content": [
+          352.8000183105469,
+          35.79999923706055,
+          797.4000244140625,
+          843.4000244140625
+        ],
+        "groups": [
+          {
+            "bounds": [
+              504.8000183105469,
+              35.79999923706055,
+              493.3999938964844,
+              843.4000244140625
+            ],
+            "classes": "editor-group-container active"
+          }
+        ],
+        "margins": [
+          {
+            "bounds": [
+              352.8000183105469,
+              35.79999923706055,
+              152,
+              843.4000244140625
+            ],
+            "parent": [
+              352.8000183105469,
+              35.79999923706055,
+              152,
+              843.4000244140625
+            ]
+          },
+          {
+            "bounds": [
+              998.2000122070312,
+              35.79999923706055,
+              152,
+              843.4000244140625
+            ],
+            "parent": [
+              998.2000122070312,
+              35.79999923706055,
+              152,
+              843.4000244140625
+            ]
+          }
+        ],
+        "nativeWindowBounds": [
+          297,
+          126,
+          1762,
+          1044
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "other": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "centered layout requested state by workspace",
+      "mode": "other",
+      "workspace": "workspace-B",
+      "normalBounds": [
+        297,
+        126,
+        1768,
+        1050
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "restored": {
+        "viewport": [
+          1458,
+          918
+        ],
+        "editor": [
+          352,
+          35,
+          806,
+          851
+        ],
+        "content": [
+          352.8000183105469,
+          35.79999923706055,
+          804.4000244140625,
+          849.4000244140625
+        ],
+        "groups": [
+          {
+            "bounds": [
+              352.8000183105469,
+              35.79999923706055,
+              804.4000244140625,
+              849.4000244140625
+            ],
+            "classes": "editor-group-container active"
+          }
+        ],
+        "margins": [],
+        "nativeWindowBounds": [
+          297,
+          126,
+          1768,
+          1050
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "return": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "centered layout requested state by workspace",
+      "mode": "return",
+      "workspace": "workspace-A",
+      "normalBounds": [
+        297,
+        126,
+        1771,
+        1056
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "restored": {
+        "viewport": [
+          1460,
+          923
+        ],
+        "editor": [
+          352,
+          35,
+          808,
+          856
+        ],
+        "content": [
+          352.8000183105469,
+          35.79999923706055,
+          806.4000244140625,
+          854.4000244140625
+        ],
+        "groups": [
+          {
+            "bounds": [
+              506.8000183105469,
+              35.79999923706055,
+              498.3999938964844,
+              854.4000244140625
+            ],
+            "classes": "editor-group-container active"
+          }
+        ],
+        "margins": [
+          {
+            "bounds": [
+              352.8000183105469,
+              35.79999923706055,
+              154,
+              854.4000244140625
+            ],
+            "parent": [
+              352.8000183105469,
+              35.79999923706055,
+              154,
+              854.4000244140625
+            ]
+          },
+          {
+            "bounds": [
+              1005.2000122070312,
+              35.79999923706055,
+              154,
+              854.4000244140625
+            ],
+            "parent": [
+              1005.2000122070312,
+              35.79999923706055,
+              154,
+              854.4000244140625
+            ]
+          }
+        ],
+        "nativeWindowBounds": [
+          297,
+          126,
+          1771,
+          1056
+        ]
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "cases": {
+    "windows": {
+      "initialize": {
+        "platform": "windows",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "build": {
+          "aotSha256": "e3a689056cf60679952660a938877d7b4c0c9c7131a722c9df849ee7500b0c30",
+          "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+          "abi": 51,
+          "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+          "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b"
+        },
+        "testDesktop": "inactive WinSta0",
+        "transport": "registered workbench commands and owned native fullscreen/close",
+        "mode": "initialize",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                328.48,
+                35.0,
+                875.5200000000001,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "centered": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "panel": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": true,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "panelClosed": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "horizontal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                328.48,
+                35.0,
+                435.76000000000005,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                768.24,
+                35.0,
+                435.76000000000005,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "maximized": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "horizontalRestored": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                328.48,
+                35.0,
+                435.76000000000005,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                768.24,
+                35.0,
+                435.76000000000005,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "afterHorizontalClose": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "vertical": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                495.48,
+                405.9,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "afterVerticalClose": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "zen": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                390.0,
+                35.0,
+                1268.0,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 2048.0,
+          "fullscreen": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ]
+        },
+        "nativeFullscreen": {
+          "hwndBounds": [
+            0,
+            0,
+            2048,
+            1152
+          ],
+          "monitorBounds": [
+            0,
+            0,
+            2048,
+            1152
+          ]
+        },
+        "afterZen": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "disabled": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                328.48,
+                35.0,
+                875.5200000000001,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "enabledForRestart": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      },
+      "same": {
+        "platform": "windows",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "build": {
+          "aotSha256": "e3a689056cf60679952660a938877d7b4c0c9c7131a722c9df849ee7500b0c30",
+          "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+          "abi": 51,
+          "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+          "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b"
+        },
+        "testDesktop": "inactive WinSta0",
+        "transport": "registered workbench commands and owned native fullscreen/close",
+        "mode": "same",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      },
+      "other": {
+        "platform": "windows",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "build": {
+          "aotSha256": "e3a689056cf60679952660a938877d7b4c0c9c7131a722c9df849ee7500b0c30",
+          "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+          "abi": 51,
+          "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+          "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b"
+        },
+        "testDesktop": "inactive WinSta0",
+        "transport": "registered workbench commands and owned native fullscreen/close",
+        "mode": "other",
+        "normal": {
+          "windowTitle": "one.txt - workspaceB - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                328.48,
+                35.0,
+                875.5200000000001,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      },
+      "return": {
+        "platform": "windows",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "build": {
+          "aotSha256": "e3a689056cf60679952660a938877d7b4c0c9c7131a722c9df849ee7500b0c30",
+          "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+          "abi": 51,
+          "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+          "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b"
+        },
+        "testDesktop": "inactive WinSta0",
+        "transport": "registered workbench commands and owned native fullscreen/close",
+        "mode": "return",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            276.48,
+            737.8
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                495.48,
+                35.0,
+                541.52,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.25
+            }
+          ],
+          "viewportWidth": 1204.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1226.3999999999999,
+            813.6
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      }
+    },
+    "linux": {
+      "initialize": {
+        "platform": "linux",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "display": "isolated Xvfb with Xfwm4",
+        "transport": "registered workbench commands and X11 fullscreen/close",
+        "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "a0ca42e2bf7bb8a38be03d146ed1877fa8321f9c63e4770fc804e191b687f3aa",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "mode": "initialize",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                331.59999999999997,
+                35.0,
+                885.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "centered": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "panel": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": true,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "panelClosed": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "horizontal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                331.59999999999997,
+                35.0,
+                440.7,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                776.3,
+                35.0,
+                440.7,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "maximized": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "horizontalRestored": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                331.59999999999997,
+                35.0,
+                440.7,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                776.3,
+                35.0,
+                440.7,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "afterHorizontalClose": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "vertical": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            },
+            {
+              "id": "editor-tab-strip-editor-2",
+              "bounds": [
+                500.59999999999997,
+                409.5,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "afterVerticalClose": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "zen": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                366.0,
+                35.0,
+                1188.0,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1920.0,
+          "fullscreen": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ]
+        },
+        "nativeFullscreen": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+        "afterZen": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "disabled": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                331.59999999999997,
+                35.0,
+                885.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "enabledForRestart": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true
+      },
+      "same": {
+        "platform": "linux",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "display": "isolated Xvfb with Xfwm4",
+        "transport": "registered workbench commands and X11 fullscreen/close",
+        "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "a0ca42e2bf7bb8a38be03d146ed1877fa8321f9c63e4770fc804e191b687f3aa",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "mode": "same",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true
+      },
+      "other": {
+        "platform": "linux",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "display": "isolated Xvfb with Xfwm4",
+        "transport": "registered workbench commands and X11 fullscreen/close",
+        "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "a0ca42e2bf7bb8a38be03d146ed1877fa8321f9c63e4770fc804e191b687f3aa",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "mode": "other",
+        "normal": {
+          "windowTitle": "one.txt - workspaceB - Alula Code",
+          "requested": false,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                331.59999999999997,
+                35.0,
+                885.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true
+      },
+      "return": {
+        "platform": "linux",
+        "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+        "display": "isolated Xvfb with Xfwm4",
+        "transport": "registered workbench commands and X11 fullscreen/close",
+        "fixtureSha256": "9b04c715b19ea72313cadcaec47f00997a3997d0b4ddd6ed770a167a2397643c",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "a0ca42e2bf7bb8a38be03d146ed1877fa8321f9c63e4770fc804e191b687f3aa",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "mode": "return",
+        "normal": {
+          "windowTitle": "one.txt - workspaceA - Alula Code",
+          "requested": true,
+          "panelVisible": false,
+          "sidebarBounds": [
+            48.0,
+            35.0,
+            279.59999999999997,
+            745.0
+          ],
+          "groups": [
+            {
+              "id": "editor-tab-strip-editor",
+              "bounds": [
+                500.59999999999997,
+                35.0,
+                547.4,
+                36.0
+              ],
+              "labels": [
+                "one.txt"
+              ],
+              "dpr": 1.0
+            }
+          ],
+          "viewportWidth": 1217.0,
+          "fullscreen": false,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1217.0,
+            804.0
+          ]
+        },
+        "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+        "exitCode": 0,
+        "diskBytesStable": true
+      }
+    }
+  },
+  "measurements": {
+    "windows": {
+      "contentWidth": 875.5200000000001,
+      "centeredWidth": 541.52,
+      "margin": 167
+    },
+    "linux": {
+      "contentWidth": 885.4,
+      "centeredWidth": 547.4,
+      "margin": 169
+    }
+  },
+  "overlay": {
+    "sourceTree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+    "exactTrackedRuntimeFiles": 274,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": []
+  }
+}

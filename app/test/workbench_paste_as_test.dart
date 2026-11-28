@@ -195,7 +195,7 @@ void main() {
 
     await _press(tester, LogicalKeyboardKey.keyV);
     final absolutePath = file.absolute.path.replaceAll('\\', '/');
-    expect(controller.text, absolutePath);
+    expect(controller.text.replaceAll(r'\', '/'), absolutePath);
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('paste-as-widget')), findsOneWidget);
 

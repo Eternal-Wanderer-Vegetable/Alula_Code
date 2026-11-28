@@ -1,0 +1,446 @@
+{
+  "product": "5026e004fa3eee2b1a9f1f8cbf5b0f64393b8ea9",
+  "tree": "81065dac9daa8a2ecc5a4891147d72f5490765b2",
+  "ci": {
+    "id": 46113509983,
+    "sha": "5026e004fa3eee2b1a9f1f8cbf5b0f64393b8ea9",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46113509983",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140882075336,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140882075439,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140882075481,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140882075508,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46113506964,
+    "sha": "5026e004fa3eee2b1a9f1f8cbf5b0f64393b8ea9",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46113506964",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140882067178,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140882067382,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140882067427,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46110202342,
+    "sha": "be8791b58975adba7b161cdb5988ce9196229291",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46110202342",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140871804611,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140871804810,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140871804811,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140871804818,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 15,
+    "affected_count": 4,
+    "changed_files": 7,
+    "risk_level": "medium"
+  },
+  "preEditImpact": {
+    "workbench": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:WorkbenchPage",
+        "name": "WorkbenchPage",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 97,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart"
+      ],
+      "flows": []
+    },
+    "workbench-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart"
+      ],
+      "flows": []
+    },
+    "workbench-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "candidates": null,
+      "callers": [],
+      "flows": []
+    },
+    "state-save": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._scheduleStateSave#0",
+        "name": "_scheduleStateSave",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 70,
+        "processes_affected": 5,
+        "modules_affected": 4
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "_acceptDefinitionPeek",
+        "_activateEditorFromOverflow",
+        "_activateOpenEditorsRow",
+        "_activateSplitEditorView",
+        "_addAuxiliaryTransferReturnDocument",
+        "_adoptAuxiliaryTab",
+        "_applyProgrammaticEdit",
+        "_buildOpenEditorsSection",
+        "_buildSplitEditor",
+        "_checkExternalChanges",
+        "_closeActiveEditorFromKeyboard",
+        "_closeDocNow"
+      ],
+      "flows": [
+        "applyWorkspaceEdit",
+        "reviewWorkspaceEdit",
+        "initState",
+        "build",
+        "_registerCommands"
+      ]
+    },
+    "move-to-window": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._moveEditorToNewWindow#2",
+        "name": "_moveEditorToNewWindow",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "_moveFocusedEditorToNewWindow",
+        "_showEditorTabContextMenu",
+        "_tearOutEditorTabIfOutside"
+      ],
+      "flows": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "titlebar": {
+      "target": {
+        "id": "Class:app/lib/workbench/title_bar.dart:AlulaTitleBar",
+        "name": "AlulaTitleBar",
+        "type": "Class",
+        "filePath": "app/lib/workbench/title_bar.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 6,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "workbench_page.dart",
+        "title_bar_test.dart",
+        "widget_test.dart",
+        "_titleBarApp",
+        "main",
+        "build"
+      ],
+      "flows": [
+        "build"
+      ]
+    },
+    "titlebar-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/title_bar.dart:_AlulaTitleBarState",
+        "name": "_AlulaTitleBarState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/title_bar.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "workbench_page.dart",
+        "title_bar_test.dart",
+        "widget_test.dart"
+      ],
+      "flows": []
+    },
+    "titlebar-close": {
+      "target": {
+        "id": "Method:app/lib/workbench/title_bar.dart:_AlulaTitleBarState._closeWindow#0",
+        "name": "_closeWindow",
+        "type": "Method",
+        "filePath": "app/lib/workbench/title_bar.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "_requestCloseFromMenu",
+        "onWindowClose"
+      ],
+      "flows": []
+    },
+    "auxiliary": {
+      "target": {
+        "id": "Class:app/lib/workbench/auxiliary_window.dart:AuxiliaryEditorApp",
+        "name": "AuxiliaryEditorApp",
+        "type": "Class",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 13,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "main.dart",
+        "workbench_page.dart",
+        "auxiliary_compact_mode_test.dart",
+        "auxiliary_focus_context_test.dart",
+        "auxiliary_scroll_hold_test.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "auxiliary_focus_native_smoke.dart",
+        "runAlulaAuxiliaryEngine",
+        "main",
+        "main"
+      ],
+      "flows": [
+        "main"
+      ]
+    },
+    "auxiliary-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState",
+        "name": "_AuxiliaryEditorAppState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 9,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "main.dart",
+        "workbench_page.dart",
+        "auxiliary_compact_mode_test.dart",
+        "auxiliary_focus_context_test.dart",
+        "auxiliary_scroll_hold_test.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "auxiliary_focus_native_smoke.dart"
+      ],
+      "flows": []
+    },
+    "aux-connect": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._connectFocusContext#0",
+        "name": "_connectFocusContext",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "initState"
+      ],
+      "flows": [
+        "initState"
+      ]
+    },
+    "aux-handoff": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._sendClosedAndDestroy#1",
+        "name": "_sendClosedAndDestroy",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "riskNote": null,
+      "candidates": null,
+      "callers": [
+        "_buildActiveEditorTab",
+        "build",
+        "onWindowClose"
+      ],
+      "flows": [
+        "build"
+      ]
+    },
+    "wire": {
+      "target": {
+        "id": "Variable:app/lib/workbench/auxiliary_window_transfer.dart:auxiliaryWindowCloseReturnMethod",
+        "name": "auxiliaryWindowCloseReturnMethod",
+        "type": "Variable",
+        "filePath": "app/lib/workbench/auxiliary_window_transfer.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "candidates": null,
+      "callers": [],
+      "flows": []
+    }
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "sourceSha": "52748d9b84777f5204079932f53aa84d1fb5f87b",
+  "sourceHashes": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "594c1193e722dc2f380dbd83bbfa2fa5f3bf383681360c3e5488d063f6481623",
+    "app/lib/workbench/notifications.dart": "3bc56c0461c136d51b5455dcf3c138785458452d22b14f29e95caa77effbcaa1",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "bcbdbd89f261af7404962e0d265efb04cb5779457336f25967ad53563c55cab3",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  },
+  "native": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+    "aotSha256": "174609dabb8fff91ddda340bc1814163a9baa7a937e6b1c2876a429bfeda0eda",
+    "fixtureSha256": "4b2e195a285a9cf097b0d2b71be541e42f4fd2b494e723ecbfc58c67f1f008c7",
+    "observations": {
+      "initial": {
+        "request": "initial",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-3": [
+            527.2,
+            512.8,
+            979.2,
+            548.8
+          ],
+          "notification-toast-2": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-1": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ],
+          "notification-toast-more-1": [
+            898.2,
+            593.8,
+            922.2,
+            625.8
+          ]
+        },
+        "dnd": false,
+        "sourceFilters": {
+          "fixture.alpha": {
+            "label": "Same label",
+            "muted": false
+          },
+          "fixture.beta": {
+            "label": "Same label",
+            "muted": false
+          }
+        },
+        "toastIds": [
+          1,
+          2,
+          3
+        ],
+        "items": [
+          3,
+          2,
+          1
+        ]
+      },
+      "menu": {
+        "request": "menu",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-3": [
+            527.2,
+            512.8,
+            979.2,
+            548.8
+          ],
+          "notification-toast-2": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-1": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ],
+          "notification-toast-more-1": [
+            898.2,
+            593.8,
+            922.2,
+            625.8
+          ],
+          "notification-toast-source-dnd-1": [
+            747.8710662841797,
+            504.79999999999995,
+            987.2,
+            544.8
+          ]
+        },
+        "dnd": false,
+        "sourceFilters": {
+          "fixture.alpha": {
+            "label": "Same label",
+            "muted": false
+          },
+          "fixture.beta": {
+            "label": "Same label",
+            "muted": false
+          }
+        },
+        "toastIds": [
+          1,
+          2,
+          3
+        ],
+        "items": [
+          3,
+          2,
+          1
+        ]
+      },
+      "muted": {
+        "request": "muted",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-3": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-2": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ]
+        },
+        "dnd": false,
+        "sourceFilters": {
+          "fixture.alpha": {
+            "label": "Same label",
+            "muted": true
+          },
+          "fixture.beta": {
+            "label": "Same label",
+            "muted": false
+          }
+        },
+        "toastIds": [
+          2,
+          3
+        ],
+        "items": [
+          3,
+          2,
+          1
+        ]
+      },
+      "new": {
+        "request": "new",
+        "boxes": {
+          "status-notifications": [
+            760.860009765625,
+            645.8,
+            791.961572265625,
+            659.8
+          ],
+          "notification-toast-6": [
+            527.2,
+            512.8,
+            979.2,
+            548.8
+          ],
+          "notification-toast-5": [
+            527.2,
+            552.8,
+            979.2,
+            588.8
+          ],
+          "notification-toast-3": [
+            527.2,
+            592.8,
+            979.2,
+            628.8
+          ]
+        },
+        "dnd": false,
+        "sourceFilters": {
+          "fixture.alpha": {
+            "label": "Same label",
+            "muted": true
+          },
+          "fixture.beta": {
+            "label": "Same label",
+            "muted": false
+          }
+        },
+        "toastIds": [
+          3,
+          5,
+          6
+        ],
+        "items": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      },
+      "center": {
+        "request": "center",
+        "boxes": {
+          "status-notifications": [
+            769.410791015625,
+            645.8,
+            783.410791015625,
+            659.8
+          ],
+          "notification-center": [
+            527.2,
+            376.79999999999995,
+            979.2,
+            628.8
+          ],
+          "notification-dnd-toggle": [
+            899.2,
+            389.79999999999995,
+            915.2,
+            405.79999999999995
+          ],
+          "notification-position": [
+            931.2,
+            385.79999999999995,
+            955.2,
+            409.79999999999995
+          ],
+          "notification-item-6": [
+            528.2,
+            418.79999999999995,
+            978.2,
+            453.79999999999995
+          ],
+          "notification-item-5": [
+            528.2,
+            453.79999999999995,
+            978.2,
+            488.79999999999995
+          ],
+          "notification-item-4": [
+            528.2,
+            488.79999999999995,
+            978.2,
+            523.8
+          ],
+          "notification-item-3": [
+            528.2,
+            523.8,
+            978.2,
+            558.8
+          ],
+          "notification-item-2": [
+            528.2,
+            558.8,
+            978.2,
+            593.8
+          ],
+          "notification-item-1": [
+            528.2,
+            593.8,
+            978.2,
+            627.8
+          ]
+        },
+        "dnd": false,
+        "sourceFilters": {
+          "fixture.alpha": {
+            "label": "Same label",
+            "muted": true
+          },
+          "fixture.beta": {
+            "label": "Same label",
+            "muted": false
+          }
+        },
+        "toastIds": [
+          3,
+          5,
+          6
+        ],
+        "items": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    "dpr": 1.25,
+    "clientLogical": [
+      987.2,
+      664.8
+    ],
+    "journalSourceFilters": {
+      "fixture.alpha": {
+        "label": "Same label",
+        "muted": true
+      },
+      "fixture.beta": {
+        "label": "Same label",
+        "muted": false
+      }
+    },
+    "exitCode": 0
+  },
+  "afterReopen": {
+    "request": "new",
+    "boxes": {
+      "status-notifications": [
+        900.860009765625,
+        693.8,
+        931.961572265625,
+        707.8
+      ],
+      "notification-toast-6": [
+        807.2,
+        560.8,
+        1259.2,
+        596.8
+      ],
+      "notification-toast-5": [
+        807.2,
+        600.8,
+        1259.2,
+        636.8
+      ],
+      "notification-toast-3": [
+        807.2,
+        640.8,
+        1259.2,
+        676.8
+      ]
+    },
+    "dnd": false,
+    "sourceFilters": {
+      "fixture.alpha": {
+        "label": "Same label",
+        "muted": true
+      },
+      "fixture.beta": {
+        "label": "Same label",
+        "muted": false
+      }
+    },
+    "toastIds": [
+      3,
+      5,
+      6
+    ],
+    "items": [
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "exitCode": 0
+  },
+  "firstAttempt": "Timed out while waiting for the menu after interacting immediately after the first frame."
+}

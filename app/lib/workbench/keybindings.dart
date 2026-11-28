@@ -22,6 +22,10 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show SingleActivator;
 
+import 'commands.dart';
+
+const exitZenModeCommandId = 'workbench.action.exitZenMode';
+
 /// 解析后的键位：主键 + 修饰键。
 class KeyChord {
   const KeyChord({
@@ -176,6 +180,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['enter'] = LogicalKeyboardKey.enter;
   m['tab'] = LogicalKeyboardKey.tab;
   m['home'] = LogicalKeyboardKey.home;
+  m['pageup'] = LogicalKeyboardKey.pageUp;
+  m['pagedown'] = LogicalKeyboardKey.pageDown;
   m['end'] = LogicalKeyboardKey.end;
   m['insert'] = LogicalKeyboardKey.insert;
   m['backspace'] = LogicalKeyboardKey.backspace;
@@ -187,6 +193,12 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
   m['bracketright'] = LogicalKeyboardKey.bracketRight;
   m['/'] = LogicalKeyboardKey.slash;
+  m['backslash'] = LogicalKeyboardKey.backslash;
+  m[r'\'] = LogicalKeyboardKey.backslash;
+  m['.'] = LogicalKeyboardKey.period;
+  m['period'] = LogicalKeyboardKey.period;
+  m[';'] = LogicalKeyboardKey.semicolon;
+  m['semicolon'] = LogicalKeyboardKey.semicolon;
   m['-'] = LogicalKeyboardKey.minus;
   m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
@@ -232,6 +244,9 @@ KeyChordSequence? parseChordSequence(String spec) {
   return KeyChordSequence(chords.cast<KeyChord>());
 }
 
+const problemsClearFilterTextCommandId = 'problems.action.clearFilterText';
+const closeMarkersNavigationCommandId = 'closeMarkersNavigation';
+
 /// 键位集合：默认表 + 用户覆盖 → 可直接喂给 CallbackShortcuts 的映射。
 class KeybindingSet {
   KeybindingSet._(this._chordToCommands, this._sequenceToCommand);
@@ -240,16 +255,43 @@ class KeybindingSet {
 
   /// 默认键位表（命令 id → 键位串，逗号分隔可给一条命令多个键位）。
   static const Map<String, String> defaults = {
-    'view.commandPalette': 'ctrl+shift+p',
-    'view.quickOpen': 'ctrl+p',
+    showCommandsCommandId: 'ctrl+shift+p,f1',
+    quickOpenCommandId: 'ctrl+p,ctrl+e',
+    'workbench.action.gotoLine': 'ctrl+g',
+    'workbench.action.gotoSymbol': 'ctrl+shift+o',
+    'workbench.action.showAllSymbols': 'ctrl+t',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
+    'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
+    exitZenModeCommandId: 'escape escape',
+    'workbench.actions.view.problems': 'ctrl+shift+m',
+    'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
+    'workbench.action.closeActiveEditor': 'ctrl+w',
+    'workbench.action.closeOtherEditors': 'ctrl+alt+t',
+    'workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup': 'ctrl+tab',
+    'workbench.action.quickOpenLeastRecentlyUsedEditorInGroup':
+        'ctrl+shift+tab',
+    'notifications.showList': 'ctrl+k ctrl+shift+n',
+    'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
+    'workbench.action.closeAllEditors': 'ctrl+k w',
+    'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
+    'workbench.action.toggleMaximizeEditorGroup': 'ctrl+k ctrl+m',
+    'workbench.action.toggleSplitEditorInGroup': r'ctrl+k ctrl+shift+\',
+    'workbench.action.moveActiveEditorGroupLeft': 'ctrl+k arrowleft',
+    'workbench.action.moveActiveEditorGroupRight': 'ctrl+k arrowright',
+    'workbench.action.moveActiveEditorGroupUp': 'ctrl+k arrowup',
+    'workbench.action.moveActiveEditorGroupDown': 'ctrl+k arrowdown',
+    'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
-    'editor.completion': 'ctrl+space,f8',
+    'editor.completion': 'ctrl+space',
+    'editor.action.marker.nextInFiles': 'f8',
+    'editor.action.marker.prevInFiles': 'shift+f8',
+    'editor.action.marker.next': 'alt+f8',
+    'editor.action.marker.prev': 'alt+shift+f8',
     'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
     // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
@@ -259,7 +301,13 @@ class KeybindingSet {
     'editor.action.commentLine': 'ctrl+/',
     'editor.action.blockComment': 'alt+shift+a',
     'editor.action.trimTrailingWhitespace': 'ctrl+k ctrl+x',
-    'editor.gotoDef': 'f12',
+    'togglePeekWidgetFocus': 'ctrl+k f2',
+    'goToNextReference': 'f4',
+    'goToPreviousReference': 'shift+f4',
+    'editor.action.revealDefinition': 'f12',
+    'editor.showCallHierarchy': 'alt+shift+h',
+    'editor.action.revealDefinitionAside': 'ctrl+k f12',
+    'editor.action.goToReferences': 'shift+f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
     'workbench.action.navigateForward': 'alt+arrowright',
     'editor.replace': 'ctrl+h',
@@ -294,20 +342,157 @@ class KeybindingSet {
     'editor.action.moveLinesDownAction': 'alt+arrowdown',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
-    'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
   };
 
+  static const notificationPrimaryActionWhen =
+      'accessibilityModeEnabled && (notificationFocus || notificationToastsVisible)';
+
+  static const openReferenceToSideWhen =
+      'referenceSearchVisible && peekResultFocused';
+
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
+    exitZenModeCommandId: 'inZenMode',
+    'editor.action.revealDefinition': 'editorTextFocus',
+    'editor.action.marker.nextInFiles': 'editorTextFocus',
+    'editor.action.marker.prevInFiles': 'editorTextFocus',
+    'editor.action.marker.next': 'editorTextFocus',
+    'editor.action.marker.prev': 'editorTextFocus',
+    'editor.showCallHierarchy':
+        'editorTextFocus && editorHasCallHierarchyProvider && '
+        '!callHierarchyVisible && !typeHierarchyVisible',
+    'editor.showIncomingCalls': 'callHierarchyHasRoots && !callHierarchyIncoming',
+    'editor.showOutgoingCalls': 'callHierarchyHasRoots && callHierarchyIncoming',
+    'editor.closeCallHierarchy': 'callHierarchyVisible && !callHierarchyStablePeek',
+    'editor.refocusCallHierarchy': 'callHierarchyHasRoots',
+    'editor.showTypeHierarchy':
+        'editorTextFocus && editorHasTypeHierarchyProvider && '
+        '!callHierarchyVisible && !typeHierarchyVisible',
+    'editor.showSupertypes': 'typeHierarchyHasRoots && !typeHierarchySupertypes',
+    'editor.showSubtypes': 'typeHierarchyHasRoots && typeHierarchySupertypes',
+    'editor.closeTypeHierarchy': 'typeHierarchyVisible && !typeHierarchyStablePeek',
+    'editor.refocusTypeHierarchy': 'typeHierarchyHasRoots',
+    'editor.action.revealDefinitionAside': 'editorTextFocus',
+    'editor.action.peekDefinition': 'editorTextFocus',
+    'editor.action.goToImplementation': 'editorTextFocus',
+    'editor.action.peekImplementation': 'editorTextFocus',
+    'editor.action.goToReferences': 'editorTextFocus',
+    'togglePeekWidgetFocus': 'peekWidgetVisible && editorTextFocus',
+    'goToNextReference': 'referenceSearchVisible && editorTextFocus',
+    'goToPreviousReference': 'referenceSearchVisible && editorTextFocus',
+    'openReferenceToSide': openReferenceToSideWhen,
+    'closeReferenceSearch':
+        'referenceSearchVisible && !config.editor.stablePeek && editorTextFocus',
+    'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
+    'list.find': 'listFocus && listSupportsFind',
+    'list.closeFind': 'listFocus && treeFindOpen',
+    'problems.action.focusFilter': 'problemsViewFocus',
+    'problems.action.focusProblemsFromFilter': 'problemsFilterFocus',
+    problemsClearFilterTextCommandId: 'problemsFilterFocus',
+    closeMarkersNavigationCommandId:
+        'markersNavigationVisible && editorTextFocus',
+    'notification.clear': 'notificationFocus',
+    'notification.expand': 'notificationRowFocus',
+    'notification.collapse': 'notificationRowFocus',
+    'notification.toggle': 'notificationRowFocus',
+    'notifications.hideList': 'notificationCenterVisible',
+    'notifications.hideToasts': 'notificationToastsVisible',
+    'notifications.focusNextToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusPreviousToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusFirstToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusLastToast':
+        'notificationFocus && notificationToastsVisible',
+    'breadcrumbs.focus': 'breadcrumbsVisible',
+    'breadcrumbs.focusAndSelect': 'breadcrumbsVisible',
+    'breadcrumbs.toggleToOn': 'config.breadcrumbs.enabled == false',
+    'breadcrumbs.focusNext':
+        'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+    'breadcrumbs.focusPrevious':
+        'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+    'breadcrumbs.focusNextWithPicker':
+        'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+    'breadcrumbs.focusPreviousWithPicker':
+        'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+    'breadcrumbs.selectFocused': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.selectEditor': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.revealFocused': 'breadcrumbsVisible && breadcrumbsActive',
   };
 
   /// Platform-specific defaults with an explicit Merge Editor context.
   static Map<String, String> contextualDefaultsFor(TargetPlatform platform) => {
+        'goToNextReference': 'f12',
+        'editor.showIncomingCalls': 'alt+shift+h',
+        'editor.showOutgoingCalls': 'alt+shift+h',
+        'editor.closeCallHierarchy': 'escape',
+        'editor.refocusCallHierarchy': 'shift+enter',
+        'editor.showSupertypes': 'alt+shift+h',
+        'editor.showSubtypes': 'alt+shift+h',
+        'editor.closeTypeHierarchy': 'escape',
+        'editor.refocusTypeHierarchy': 'shift+enter',
+        'goToPreviousReference': 'shift+f12',
+        'editor.action.peekDefinition':
+            platform == TargetPlatform.linux ? 'ctrl+shift+f10' : 'alt+f12',
+        'editor.action.goToImplementation':
+            platform == TargetPlatform.macOS ? 'cmd+f12' : 'ctrl+f12',
+        'editor.action.peekImplementation': platform == TargetPlatform.macOS
+            ? 'cmd+shift+f12'
+            : 'ctrl+shift+f12',
         'mergeEditor.acceptMerge':
             platform == TargetPlatform.macOS ? 'cmd+enter' : 'ctrl+enter',
+        'openReferenceToSide': 'ctrl+enter',
+        'list.find':
+            platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
+        'list.closeFind': 'escape',
+        'problems.action.focusFilter':
+            platform == TargetPlatform.macOS ? 'cmd+f' : 'ctrl+f',
+        'problems.action.focusProblemsFromFilter':
+            platform == TargetPlatform.macOS ? 'cmd+arrowdown' : 'ctrl+arrowdown',
+        'notifications.hideToasts': 'escape',
+        // A focused Problems filter takes precedence over an unfocused toast.
+        closeMarkersNavigationCommandId: 'escape,shift+escape',
+        problemsClearFilterTextCommandId: 'escape',
+        'notifications.hideList': 'escape',
+        'closeReferenceSearch': 'escape,shift+escape',
+        'notifications.focusNextToast': 'arrowdown',
+        'notifications.focusPreviousToast': 'arrowup',
+        'notifications.focusFirstToast': 'pageup,home',
+        'notifications.focusLastToast': 'pagedown,end',
+        'notification.clear':
+            platform == TargetPlatform.macOS ? 'cmd+backspace' : 'delete',
+        'notification.acceptPrimaryAction':
+            platform == TargetPlatform.macOS ? 'cmd+shift+a' : 'ctrl+shift+a',
+        'breadcrumbs.focus':
+            platform == TargetPlatform.macOS ? 'cmd+shift+;' : 'ctrl+shift+;',
+        'breadcrumbs.focusAndSelect':
+            platform == TargetPlatform.macOS ? 'cmd+shift+.' : 'ctrl+shift+.',
+        'breadcrumbs.toggleToOn':
+            platform == TargetPlatform.macOS ? 'cmd+shift+.' : 'ctrl+shift+.',
+        'breadcrumbs.focusNext': platform == TargetPlatform.macOS
+            ? 'arrowright,alt+arrowright'
+            : 'arrowright,ctrl+arrowright',
+        'breadcrumbs.focusPrevious': platform == TargetPlatform.macOS
+            ? 'arrowleft,alt+arrowleft'
+            : 'arrowleft,ctrl+arrowleft',
+        'breadcrumbs.focusNextWithPicker': platform == TargetPlatform.macOS
+            ? 'alt+arrowright'
+            : 'ctrl+arrowright',
+        'breadcrumbs.focusPreviousWithPicker': platform == TargetPlatform.macOS
+            ? 'alt+arrowleft'
+            : 'ctrl+arrowleft',
+        'breadcrumbs.selectFocused': 'enter,arrowdown',
+        'breadcrumbs.selectEditor': 'escape',
+        'breadcrumbs.revealFocused': platform == TargetPlatform.macOS
+            ? 'space,cmd+enter'
+            : 'space,ctrl+enter',
+        'notification.expand': 'arrowright',
+        'notification.collapse': 'arrowleft',
+        'notification.toggle': 'space,enter',
       };
 
   /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.
@@ -317,11 +502,37 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result[showCommandsCommandId] = 'cmd+shift+p,f1';
+        result[quickOpenCommandId] = 'cmd+p';
+        result['workbench.action.gotoSymbol'] = 'cmd+shift+o';
+        result['workbench.action.showAllSymbols'] = 'cmd+t';
+        result['workbench.action.files.newUntitledFile'] = 'cmd+n';
+        result['workbench.action.closeActiveEditor'] = 'cmd+w';
+        result['workbench.action.closeOtherEditors'] = 'cmd+alt+t';
+        result['notifications.showList'] = 'cmd+k cmd+shift+n';
+        result['workbench.action.closeUnmodifiedEditors'] = 'cmd+k u';
+        result['workbench.action.closeAllEditors'] = 'cmd+k w';
+        result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
+        result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
+        result['togglePeekWidgetFocus'] = 'cmd+k f2';
+        result['editor.action.revealDefinitionAside'] = 'cmd+k f12';
+        result['workbench.action.toggleSplitEditorInGroup'] =
+            r'cmd+k cmd+shift+\';
+        result['workbench.action.moveActiveEditorGroupLeft'] =
+            'cmd+k arrowleft';
+        result['workbench.action.moveActiveEditorGroupRight'] =
+            'cmd+k arrowright';
+        result['workbench.action.moveActiveEditorGroupUp'] = 'cmd+k arrowup';
+        result['workbench.action.moveActiveEditorGroupDown'] =
+            'cmd+k arrowdown';
+        result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
+        result['workbench.action.toggleAuxiliaryBar'] = 'cmd+alt+b';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
+        result['workbench.actions.view.problems'] = 'cmd+shift+m';
         result['editor.action.joinLines'] = 'ctrl+j';
         result['workbench.action.navigateBack'] = 'ctrl+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
@@ -369,6 +580,9 @@ class KeybindingSet {
         result['editor.action.copyLinesUpAction'] = 'ctrl+alt+shift+arrowup';
         result['editor.action.copyLinesDownAction'] =
             'ctrl+alt+shift+arrowdown';
+        break;
+      case TargetPlatform.windows:
+        result['workbench.action.closeActiveEditor'] = 'ctrl+f4,ctrl+w';
         break;
       default:
         break;
@@ -483,9 +697,11 @@ class KeybindingSet {
       final sequence = parseChordSequence(keySpec);
       final chord = sequence == null ? parseChord(keySpec) : null;
       if (chord == null && sequence == null) continue;
-      if (command.startsWith('-')) {
+      final remove = command.startsWith('-');
+      final requestedId = remove ? command.substring(1) : command;
+      final commandId = quickAccessCommandAliases[requestedId] ?? requestedId;
+      if (remove) {
         // Remove only this command's binding; another context may own the chord.
-        final commandId = command.substring(1);
         if (chord != null) {
           _removeCommandFromBinding(map, chord, commandId);
         } else if (sequences[sequence]?.commandId == commandId) {
@@ -493,11 +709,11 @@ class KeybindingSet {
         }
       } else {
         // Rebinding removes the command's defaults and earlier user bindings.
-        _removeCommandFromAll(map, command);
-        sequences.removeWhere((_, binding) => binding.commandId == command);
+        _removeCommandFromAll(map, commandId);
+        sequences.removeWhere((_, binding) => binding.commandId == commandId);
         final condition = entry['when'];
         final binding = KeybindingBinding(
-          commandId: command,
+          commandId: commandId,
           arguments: entry['args'],
           when: condition is String ? condition : null,
         );
@@ -539,10 +755,16 @@ class KeybindingSet {
   /// Resolve each chord to its last binding matching the active context.
   Map<SingleActivator, KeybindingBinding> resolveBindings({
     bool Function(String? condition)? matchesWhen,
+    Set<String> excludeCommands = const {},
   }) {
     final result = <SingleActivator, KeybindingBinding>{};
     for (final e in _chordToCommands.entries) {
-      final binding = _bindingFor(e.value, matchesWhen: matchesWhen);
+      final candidates = excludeCommands.isEmpty
+          ? e.value
+          : e.value.where(
+              (binding) => !excludeCommands.contains(binding.commandId),
+            );
+      final binding = _bindingFor(candidates, matchesWhen: matchesWhen);
       if (binding != null) result[e.key.toActivator()] = binding;
     }
     return result;
@@ -551,9 +773,15 @@ class KeybindingSet {
   /// 键位 → 命令 id（无上下文时优先保留通用默认键位）。
   String? commandForChord(KeyChord chord) => bindingForChord(chord)?.commandId;
 
-  KeybindingBinding? bindingForChord(KeyChord chord) {
+  KeybindingBinding? bindingForChord(
+    KeyChord chord, {
+    bool Function(String? condition)? matchesWhen,
+  }) {
     final bindings = _chordToCommands[chord];
     if (bindings == null || bindings.isEmpty) return null;
+    if (matchesWhen != null) {
+      return _bindingFor(bindings, matchesWhen: matchesWhen);
+    }
     return _bindingFor(bindings,
             matchesWhen: (condition) => condition == null) ??
         bindings.last;
@@ -577,13 +805,14 @@ class KeybindingSet {
   /// Rebinding removes the older entry, so the first remaining binding is the
   /// command's active display chord.
   String? shortcutFor(String commandId) {
+    final resolvedId = quickAccessCommandAliases[commandId] ?? commandId;
     for (final e in _chordToCommands.entries) {
-      if (e.value.any((binding) => binding.commandId == commandId)) {
+      if (e.value.any((binding) => binding.commandId == resolvedId)) {
         return e.key.display;
       }
     }
     for (final e in _sequenceToCommand.entries) {
-      if (e.value.commandId == commandId) return e.key.display;
+      if (e.value.commandId == resolvedId) return e.key.display;
     }
     return null;
   }

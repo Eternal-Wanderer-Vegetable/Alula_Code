@@ -1,0 +1,114 @@
+import 'dart:io';
+
+import 'package:alula_app/workbench/recent_history_store.dart';
+import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'helpers/file_paths.dart';
+
+void main() {
+  late Directory temp;
+  late String journalPath;
+
+  setUp(() async {
+    temp = await Directory.systemTemp.createTemp('alula_recent_history');
+    journalPath = '${temp.path.replaceAll(r'\', '/')}/recent-history.json';
+  });
+
+  tearDown(() async {
+    if (temp.existsSync()) await temp.delete(recursive: true);
+  });
+
+  test('keeps a bounded MRU list per kind and restores it after restart', () {
+    final store = RecentHistoryStore(path: journalPath);
+    for (var index = 0; index < maxRecentHistoryEntriesPerKind + 1; index++) {
+      expect(store.recordFile('${temp.path}/file-$index.dart'), isTrue);
+      expect(store.recordWorkspace('${temp.path}/workspace-$index'), isTrue);
+    }
+    expect(store.recordFile('${temp.path}/file-10.dart'), isTrue);
+
+    final restored = RecentHistoryStore(path: journalPath).load();
+    expect(restored.files, hasLength(maxRecentHistoryEntriesPerKind));
+    expect(restored.workspaces, hasLength(maxRecentHistoryEntriesPerKind));
+    expect(
+        restored.files.first.path, nativeTestPath('${temp.path}/file-10.dart'));
+    expect(restored.files.where((entry) => entry.path.endsWith('file-10.dart')),
+        hasLength(1));
+    expect(
+        restored.files.last.path, nativeTestPath('${temp.path}/file-1.dart'));
+    expect(
+        restored.workspaces.first.path,
+        nativeTestPath(
+            '${temp.path}/workspace-$maxRecentHistoryEntriesPerKind'));
+  });
+
+  test('Quick Open dismissal survives journal reload and MRU changes',
+      () async {
+    final first = File('${temp.path}/first.txt')..writeAsStringSync('first');
+    final second = File('${temp.path}/second.txt')..writeAsStringSync('second');
+    final third = File('${temp.path}/third.txt')..writeAsStringSync('third');
+    final workspace = Directory('${temp.path}/project')..createSync();
+    final journal = SessionStore(path: journalPath);
+    expect(
+        journal.save({
+          'format': 'alula-recent-history',
+          'version': 1,
+          'files': [first.path, second.path],
+          'workspaces': [workspace.path],
+        }),
+        isTrue);
+
+    final store = RecentHistoryStore(path: journalPath);
+    expect(store.load().quickOpenFiles.map((entry) => entry.label),
+        ['first.txt', 'second.txt']);
+    expect(store.hideFileFromQuickOpen(second.path), isTrue);
+    expect(store.hideFileFromQuickOpen(second.path), isTrue);
+    expect(store.recordFile(third.path), isTrue);
+    await first.delete();
+    await store.pruneMissingPaths();
+
+    final restored = RecentHistoryStore(path: journalPath);
+    final snapshot = restored.load();
+    expect(snapshot.files.map((entry) => entry.label),
+        ['third.txt', 'second.txt']);
+    expect(snapshot.workspaces.single.label, 'project');
+    expect(snapshot.quickOpenFiles.map((entry) => entry.label), ['third.txt']);
+    expect(journal.tryLoad()?['files'],
+        [nativeTestPath(third.path), nativeTestPath(second.path)]);
+
+    expect(restored.recordFile(second.path), isTrue);
+    expect(restored.load().quickOpenFiles.map((entry) => entry.label),
+        ['second.txt', 'third.txt']);
+  });
+
+  test('corrupt and oversized journals safely load as empty', () async {
+    final journal = File(journalPath);
+    await journal.writeAsString('{broken');
+    expect(RecentHistoryStore(path: journalPath).load().isEmpty, isTrue);
+
+    await journal.writeAsString('x' * (maxRecentHistoryRecordBytes + 1));
+    expect(RecentHistoryStore(path: journalPath).load().isEmpty, isTrue);
+  });
+
+  test('prunes missing paths and paths whose filesystem kind changed',
+      () async {
+    final file = File('${temp.path}/note.txt')..writeAsStringSync('hello');
+    final directory = Directory('${temp.path}/project')..createSync();
+    final missing = '${temp.path}/missing.txt';
+    final store = RecentHistoryStore(path: journalPath);
+    store.recordFile(file.path);
+    store.recordFile(missing);
+    store.recordWorkspace(directory.path);
+    store.recordWorkspace(file.path);
+
+    final pruned = await store.pruneMissingPaths();
+    expect(
+        pruned.files.map((entry) => entry.path), [nativeTestPath(file.path)]);
+    expect(pruned.workspaces.map((entry) => entry.path),
+        [nativeTestPath(directory.path)]);
+
+    final restored = RecentHistoryStore(path: journalPath).load();
+    expect(restored.files, pruned.files);
+    expect(restored.workspaces, pruned.workspaces);
+  });
+}

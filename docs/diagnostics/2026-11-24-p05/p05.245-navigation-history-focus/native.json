@@ -1,0 +1,3839 @@
+{
+  "product": "615bc6cf5cf39958688eaf83182096644a4c0f5e",
+  "tree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "1f3942f14a0b3b086bcef44f966e30d73f251acd0a285083ad080e140ea8af46",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/definition_peek.dart": "6172dba68a61eb082599b1dc722dc1f61b76e6ff0cc8cabc709cac76c71df330",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "c13bd0f2ee73b7ad072b81a34aca1c1f435c8d443e802d4adbad40078f4c1bb3",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "a57ca5dac8582d43fda49deb7a3ba5fe5b2394c27706be8311a6454d1579fe9f",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "rustTree": "623f42d716d5c3f7edc808a08b6fcd781694c4c4",
+    "nativeCoreSha256": "8a2bdc1ba6272a0939d1a53892061a9d2cc36fe7eedf0818df0601056e7dfb31",
+    "fixtureSha256": "9caf32c449b8fe5b1c85bb343f70e8d40fdda9929c9866591d8f6080ecbe05ea"
+  },
+  "fixtureSha256": "9caf32c449b8fe5b1c85bb343f70e8d40fdda9929c9866591d8f6080ecbe05ea",
+  "acceptanceDriverSha256": "e5b66c939d0ecc843e0d1b5dc2a41bca98435abb0a6142f24ca7457e99785a80",
+  "localLogsSha256": {
+    "red": "2833ce15e16618156226b47a9554a210e435a4b3134ee68fc74c5f2c022935e1",
+    "analyze": "7f200a1420197d8d6cfc686f0f04def3ae57669a49e7d2a1a0d3d1440c655486",
+    "shifted-minus-red": "8372ddac2aa64f428b94f9bac3fe1171c9d4ac19ea32aebaa4e0856623ace97c",
+    "shifted-minus-green": "c44e863e9c3f13686cad4a06001fb9452a86d75289ca694ecdb32323d3dc0fde",
+    "focused": "34b1afc5418f3d220f1c9e501eb348103ed79a934d9006e4e6e0fac4a18ddecd",
+    "full": "35aa810e28ac0d889803de2bfbe5a773777709628bdff8f26ddeb189f7d311ef",
+    "linux-build": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "linux-native": "5272a18f155d48982ade8d2740ccffad557807bbb2bd8d5aa5c7b87392e1c75c"
+  },
+  "gitNexus": {
+    "all": {
+      "changed_count": 5,
+      "affected_count": 0,
+      "changed_files": 4,
+      "risk_level": "low",
+      "sha256": "4d8249684da9563942b964e9b647ff2dde0020de8c9f01d6613ae2426ea326e3"
+    },
+    "staged": {
+      "changed_count": 5,
+      "affected_count": 0,
+      "changed_files": 4,
+      "risk_level": "low",
+      "sha256": "4d8249684da9563942b964e9b647ff2dde0020de8c9f01d6613ae2426ea326e3"
+    }
+  },
+  "linuxShiftedMinusReproduction": {
+    "tree": "7772f4ac7bc1a85625d35d38031a2d551eaca2cc",
+    "reportSha256": "08a72d48f5ddd7d3c85c01754088fbbe81e265c4b4ff7f223975b1cc322b458b",
+    "key": {
+      "logical": "95",
+      "physical": "458797",
+      "alt": false,
+      "control": true,
+      "shift": true
+    },
+    "editor": "lib.rs 主编辑器",
+    "selection": [
+      133,
+      133
+    ],
+    "editorFocused": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+    "appSha256": "b2b073bc6a0da9ecaa544d30a65432f5c50ea10e66c80a3a363210d60ee6bd27",
+    "aotSha256": "8283376a47d4d732133c7a1836901ad025b201e95307917ae0a6ff26c38e5485",
+    "fixtureSha256": "9caf32c449b8fe5b1c85bb343f70e8d40fdda9929c9866591d8f6080ecbe05ea",
+    "runnerSha256": "641fef3d1a504e34394f68d30ebc53ed7f4cf93b4fd81f899602bcb152bca771",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          596
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          596
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false
+      }
+    ],
+    "diskSha256": {
+      "src/lib.rs": "05a2e20a199b45f7a05de457954f6cd9339a27b6e0466224e950a6170c1b4e49",
+      "src/target.rs": "c29b0b7816fa1e1f5917773776f84e4746dd33d710110b14e8d6823f528a85f2",
+      "Cargo.toml": "7bd689b082e9c47f68981aafc111d8f80f418189c5221cce8293c8d6a0b4db66"
+    },
+    "historyFocus": {
+      "provider": [
+        [
+          2,
+          43
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "macro-first": {
+        "selectedLine": 3,
+        "highlight": "generated_probe",
+        "rows": 2
+      },
+      "macro-second": {
+        "selectedLine": 4,
+        "highlight": "create_probe!",
+        "rows": 2
+      },
+      "macro-escape": {
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0
+      },
+      "macro-reopen": {
+        "selectedLine": 3,
+        "highlight": "generated_probe",
+        "rows": 2
+      },
+      "macro-confirm-second": {
+        "selectedLine": 4,
+        "highlight": "create_probe!",
+        "rows": 2
+      },
+      "macro-opened": {
+        "targetOffsetUtf16": 142
+      },
+      "navigate-back": {
+        "selection": [
+          133,
+          133
+        ],
+        "editorFocused": true,
+        "shortcut": "alt+Left"
+      },
+      "navigate-forward": {
+        "selection": [
+          142,
+          142
+        ],
+        "editorFocused": true,
+        "shortcut": "alt+Right"
+      },
+      "source-edit": {
+        "version": 2,
+        "offsetUtf16": 133,
+        "removedCharacter": "e"
+      },
+      "source-undo": {
+        "version": 3,
+        "editorFocused": true
+      }
+    },
+    "exit": 0,
+    "passed": true,
+    "reportSha256": "f16730e8e34b7df6222fd4a28f266f7e97a320a1c0c3d0f190c9942ae1694dbc",
+    "observations": 14,
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          0,
+          0
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": []
+      },
+      "provider-macro": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          114,
+          114
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "caret-line-2": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-first": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "generated_probe"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-second": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "create_probe!"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-escape": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-reopen": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "generated_probe"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-confirm-second": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "create_probe!"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-opened": {
+        "editor": "target.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          142,
+          142
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "navigate-back": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "navigate-forward": {
+        "editor": "target.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          142,
+          142
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968067",
+            "physical": "458831",
+            "alt": true,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "navigate-back-again": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968067",
+            "physical": "458831",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "source-edit": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 2,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968067",
+            "physical": "458831",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967423",
+            "physical": "458828",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "source-undo": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 3,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968067",
+            "physical": "458831",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": true,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967423",
+            "physical": "458828",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "122",
+            "physical": "458781",
+            "alt": false,
+            "control": true,
+            "shift": false
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+    "aotSha256": "3eda7e73ec7efb5d2741b888ea3af8ffffab3d5505d87d7122c5eddf283aaf24",
+    "fixtureSha256": "9caf32c449b8fe5b1c85bb343f70e8d40fdda9929c9866591d8f6080ecbe05ea",
+    "runnerSha256": "70b6eed6153a9ca3ed1f86fe7395527129f7596a9ee56d4fc1f9752f86711bb1",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "05a2e20a199b45f7a05de457954f6cd9339a27b6e0466224e950a6170c1b4e49",
+      "src/target.rs": "c29b0b7816fa1e1f5917773776f84e4746dd33d710110b14e8d6823f528a85f2",
+      "Cargo.toml": "7bd689b082e9c47f68981aafc111d8f80f418189c5221cce8293c8d6a0b4db66"
+    },
+    "historyFocus": {
+      "provider": [
+        [
+          2,
+          43
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "macro-first": {
+        "selectedLine": 3,
+        "highlight": "generated_probe",
+        "rows": 2
+      },
+      "macro-second": {
+        "selectedLine": 4,
+        "highlight": "create_probe!",
+        "rows": 2
+      },
+      "macro-escape": {
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0
+      },
+      "macro-reopen": {
+        "selectedLine": 3,
+        "highlight": "generated_probe",
+        "rows": 2
+      },
+      "macro-confirm-second": {
+        "selectedLine": 4,
+        "highlight": "create_probe!",
+        "rows": 2
+      },
+      "macro-opened": {
+        "targetOffsetUtf16": 142
+      },
+      "navigate-back": {
+        "selection": [
+          133,
+          133
+        ],
+        "editorFocused": true,
+        "shortcut": "ctrl+alt+minus"
+      },
+      "navigate-forward": {
+        "selection": [
+          142,
+          142
+        ],
+        "editorFocused": true,
+        "shortcut": "ctrl+shift+minus"
+      },
+      "source-edit": {
+        "version": 2,
+        "offsetUtf16": 133,
+        "removedCharacter": "e"
+      },
+      "source-undo": {
+        "version": 3,
+        "editorFocused": true
+      }
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "reportSha256": "c73aca82cc608843e63ffb17c059060a17203ad164c50ca66cddc04bedac3f87",
+    "observations": 14,
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          0,
+          0
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": []
+      },
+      "provider-macro": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          118,
+          118
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "caret-line-2": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-first": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "generated_probe"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-second": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "create_probe!"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-escape": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-reopen": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "generated_probe"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-confirm-second": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": false,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": true,
+        "listFocused": true,
+        "highlighted": [
+          "create_probe!"
+        ],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "macro-opened": {
+        "editor": "target.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          142,
+          142
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "navigate-back": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          }
+        ]
+      },
+      "navigate-forward": {
+        "editor": "target.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          142,
+          142
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "95",
+            "physical": "458797",
+            "alt": false,
+            "control": true,
+            "shift": true
+          }
+        ]
+      },
+      "navigate-back-again": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 1,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "95",
+            "physical": "458797",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          }
+        ]
+      },
+      "source-edit": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 2,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "95",
+            "physical": "458797",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294967423",
+            "physical": "458828",
+            "alt": false,
+            "control": false,
+            "shift": false
+          }
+        ]
+      },
+      "source-undo": {
+        "editor": "lib.rs 主编辑器",
+        "editorFocused": true,
+        "selection": [
+          133,
+          133
+        ],
+        "scroll": 0.0,
+        "version": 3,
+        "definitionPeek": false,
+        "listFocused": false,
+        "highlighted": [],
+        "keys": [
+          {
+            "logical": "4294969352",
+            "physical": "458817",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968070",
+            "physical": "458826",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968069",
+            "physical": "458829",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968066",
+            "physical": "458832",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967323",
+            "physical": "458793",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294969356",
+            "physical": "458821",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294968065",
+            "physical": "458833",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "4294967309",
+            "physical": "458792",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934850",
+            "physical": "458977",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "95",
+            "physical": "458797",
+            "alt": false,
+            "control": true,
+            "shift": true
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "8589934852",
+            "physical": "458978",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "45",
+            "physical": "458797",
+            "alt": true,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "4294967423",
+            "physical": "458828",
+            "alt": false,
+            "control": false,
+            "shift": false
+          },
+          {
+            "logical": "8589934848",
+            "physical": "458976",
+            "alt": false,
+            "control": true,
+            "shift": false
+          },
+          {
+            "logical": "122",
+            "physical": "458781",
+            "alt": false,
+            "control": true,
+            "shift": false
+          }
+        ]
+      }
+    }
+  },
+  "gitNexusRecheck": {
+    "product": "615bc6cf5cf39958688eaf83182096644a4c0f5e",
+    "tree": "9ed02fd7c1c0202ee260cea3768c633ae57e8b5d",
+    "parent": "4e01c645e109b00a364a91f7f5e7b8d4139c729a",
+    "changedSymbols": [
+      {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L1:03 · 里程碑计划与验收标准",
+        "name": "03 · 里程碑计划与验收标准",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L3:当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+        "name": "当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L12:N.1 当前状态与依赖",
+        "name": "N.1 当前状态与依赖",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      },
+      {
+        "id": "Section:docs/03-里程碑计划与验收标准.md:L29:P01 受控切片（当前调度依据）",
+        "name": "P01 受控切片（当前调度依据）",
+        "type": "Section",
+        "filePath": "docs/03-里程碑计划与验收标准.md",
+        "change_type": "touched"
+      }
+    ],
+    "affectedProcesses": [],
+    "shortcutImpact": {
+      "target": "_handleCommandChord",
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 2
+      }
+    },
+    "workbenchDiffSha256": "a2e1ac660d7fe08a246b2bf85e2a5c998516e4949adca92057683bdf421c7933",
+    "partial": false,
+    "truncated": false
+  }
+}

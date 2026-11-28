@@ -1,0 +1,218 @@
+{
+  "product": "c368d4055087dc23df0dfc19ed2393678aaae62b",
+  "tree": "eb29e5327d5c2941172589152fba7d79b1d9d1b5",
+  "ci": {
+    "id": 46070717736,
+    "sha": "c368d4055087dc23df0dfc19ed2393678aaae62b",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46070717736",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140746740766,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140746741191,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140746741205,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140746741207,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46070711541,
+    "sha": "c368d4055087dc23df0dfc19ed2393678aaae62b",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46070711541",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140746722536,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140746722929,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140746723007,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46067707579,
+    "sha": "da62eb3cd0e27761d975e1310e94485799969c2c",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46067707579",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140736942636,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140736942972,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140736942982,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140736942992,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousPlatformAvailability": {
+    "id": 46066051456,
+    "sha": "02b8f9b1fcf0401f83b1480de1ed4391674de031",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46066051456",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140731509543,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140731509760,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140731509769,
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "previousMacQuit": {
+    "job": 140731509769,
+    "attempt": 1,
+    "failureStep": "Launch macOS native-titlebar mode and verify native Quit menu",
+    "ordinaryLaunch": "success",
+    "packageStep": "success",
+    "startupArtifact": 15232753443,
+    "appPackageArtifact": 15232443901,
+    "failedStepLogSha256": "a97c80ef225b65232cb0e0dc3dbc45fae024eac6406c929245415ec67aca0efd",
+    "nativeMenuAXError": -25204,
+    "systemEventsTimeoutSeconds": 20,
+    "commandQPosted": true,
+    "quitObservation": {
+      "timeoutSeconds": 20,
+      "app": "alive",
+      "openWrapper": "alive"
+    }
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 13,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "_buildEditor": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null
+    },
+    "_fileLinkPathAtPointer": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null
+    },
+    "_localFileLinkPath": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null
+    },
+    "_onEditorPointerUp": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    "_openEditorFileLink": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "riskNote": null
+    },
+    "_openFileLinkAtCaret": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe."
+    },
+    "_selectQuickOpenLocation": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "riskNote": null
+    }
+  }
+}

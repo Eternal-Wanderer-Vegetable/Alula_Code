@@ -8,6 +8,28 @@ import 'package:flutter/foundation.dart';
 
 import 'context_keys.dart';
 
+const showCommandsCommandId = 'workbench.action.showCommands';
+const commandPaletteCommandAliases = <String, String>{
+  'view.commandPalette': showCommandsCommandId,
+  'view.quickInput': showCommandsCommandId,
+};
+
+const quickOpenCommandId = 'workbench.action.quickOpen';
+const commandCenterQuickOpenCommandId = 'workbench.action.quickOpenWithModes';
+const navigateBackCommandId = 'workbench.action.navigateBack';
+const navigateForwardCommandId = 'workbench.action.navigateForward';
+const quickAccessCommandAliases = <String, String>{
+  ...commandPaletteCommandAliases,
+  'view.quickOpen': quickOpenCommandId,
+  'editor.gotoDef': 'editor.action.revealDefinition',
+  'editor.action.goToDeclaration': 'editor.action.revealDefinition',
+  'editor.action.openDeclarationToTheSide':
+      'editor.action.revealDefinitionAside',
+  'goToNextReferenceFromEmbeddedEditor': 'goToNextReference',
+  'goToPreviousReferenceFromEmbeddedEditor': 'goToPreviousReference',
+  'closeReferenceSearchEditor': 'closeReferenceSearch',
+};
+
 /// 一条可执行命令。
 class Command {
   const Command({
@@ -51,6 +73,10 @@ class Command {
 }
 
 class CommandRegistry {
+  CommandRegistry({Map<String, String> aliases = const {}})
+      : _aliases = Map.unmodifiable(aliases);
+
+  final Map<String, String> _aliases;
   final Map<String, Command> _commands = {};
 
   /// 注册；同 id 覆盖（页面在动作重建时重复注册是合法用法）。
@@ -58,7 +84,9 @@ class CommandRegistry {
 
   void unregister(String id) => _commands.remove(id);
 
-  Command? byId(String id) => _commands[id];
+  /// Resolve an alternate ID to its registered command. Alternate IDs do not
+  /// contribute duplicate entries to UI or search.
+  Command? byId(String id) => _commands[id] ?? _commands[_aliases[id]];
 
   List<Command> get all => _commands.values.toList();
 

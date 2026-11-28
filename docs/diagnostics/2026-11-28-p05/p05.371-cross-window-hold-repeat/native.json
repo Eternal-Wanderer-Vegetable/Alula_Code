@@ -1,0 +1,550 @@
+{
+  "product": "28f447f59f34c9e3555f4999d889df8e94a2a957",
+  "tree": "781902421891decea068eab0db052f805117a927",
+  "abi": 51,
+  "fixtureSha256": "26c0dbfb9f66bfc760778bace86877d81a036327dc1a440082fc648cbf7961d8",
+  "windowsSourceFiles": 71,
+  "windowsSourceTree": "416a558d3ee548d975d5c3904da20580c650a189",
+  "deltaAfterWindowsBuild": [
+    "app/linux/runner/hold_input.cc"
+  ],
+  "baseline": {
+    "windows": {
+      "source": "bee531bc2e0722afce2d7f4add9393ce81b4349d",
+      "tree": "b5537b1f98516f4f44dd0e39e1ffc6fb9d36bf6d",
+      "rawReportSha256": "7c253041477c44c8641171196e6209d812e0249c08bccbfe096c03ff4a930de4",
+      "fixtureSha256": "026edeb2c6db12589db13b64221c49caa3621aa42b435b8d26839584074ec3f8",
+      "repeatPreservedLocked": false,
+      "savedToggle": true,
+      "exitCode": 0
+    },
+    "linux": {
+      "source": "bee531bc2e0722afce2d7f4add9393ce81b4349d",
+      "tree": "b5537b1f98516f4f44dd0e39e1ffc6fb9d36bf6d",
+      "rawReportSha256": "a67bf659d23ee4f584d22849d8f13528a40c717ec49a7f4bbc2b4792757cb6f5",
+      "fixtureSha256": "026edeb2c6db12589db13b64221c49caa3621aa42b435b8d26839584074ec3f8",
+      "repeatPreservedLocked": false,
+      "savedToggle": true,
+      "exitCode": 0
+    }
+  },
+  "historicalWindowsEmptyBaselineMiB": 189.9,
+  "linuxMemoryMetric": "private resident (procfs smaps) and RSS on Xvfb",
+  "checksSha256": "d1fa8c09959c81ac179e9660aad4eb11a0f8835bf176d0a93757a520e60792b4",
+  "windows": {
+    "single": {
+      "executableSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+      "aotSha256": "a208b96c201032b2b47cd82fa1b8782de51c51d33d9b4968caffc0700a3db56a",
+      "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "sourceTree": "416a558d3ee548d975d5c3904da20580c650a189",
+      "fixtureScope": {
+        "key": "f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && !quickInputVisible"
+      },
+      "windowEnvironment": "Win32",
+      "dpi": 120,
+      "rawReportSha256": "5a0577977549c9c836c6103138cd8daf70400a9c3d2e9188272d27149117e8b5",
+      "checks": [
+        "both-windows-open-unlocked",
+        "main-to-auxiliary-source-hold",
+        "main-to-auxiliary-repeat-preserves-toggle",
+        "main-to-auxiliary-original-release-preserves-toggle",
+        "main-to-auxiliary-fresh-press-activates",
+        "main-to-auxiliary-fresh-release-restores-toggle",
+        "durable-toggle-on",
+        "auxiliary-to-main-source-hold",
+        "auxiliary-to-main-repeat-preserves-toggle",
+        "auxiliary-to-main-original-release-preserves-toggle",
+        "auxiliary-to-main-fresh-press-activates",
+        "auxiliary-to-main-fresh-release-restores-toggle",
+        "unrelated-command-keeps-toggle",
+        "unrelated-dismiss-keeps-toggle",
+        "closing-auxiliary-preserves-durable-toggle",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "both-windows-open-unlocked": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-source-hold": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-repeat-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2,
+          "receiver": "child-locked-alpha.txt",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "main-to-auxiliary-original-release-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-press-activates": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-release-restores-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "durable-toggle-on": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-source-hold": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-repeat-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2,
+          "receiver": "main",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "auxiliary-to-main-original-release-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-press-activates": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-release-restores-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-command-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-dismiss-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "closing-auxiliary-preserves-durable-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 1
+        }
+      },
+      "memory": {},
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "exitCode": 0
+    },
+    "chord": {
+      "executableSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+      "aotSha256": "a208b96c201032b2b47cd82fa1b8782de51c51d33d9b4968caffc0700a3db56a",
+      "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "sourceTree": "416a558d3ee548d975d5c3904da20580c650a189",
+      "fixtureScope": {
+        "key": "ctrl+k f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && !quickInputVisible"
+      },
+      "windowEnvironment": "Win32",
+      "dpi": 120,
+      "rawReportSha256": "9e4ccb3f8eae61c6701443be9e68058934dff84551ab701fc001eb0815fff6a7",
+      "checks": [
+        "both-windows-open-unlocked",
+        "main-to-auxiliary-source-hold",
+        "main-to-auxiliary-repeat-preserves-toggle",
+        "main-to-auxiliary-original-release-preserves-toggle",
+        "main-to-auxiliary-fresh-press-activates",
+        "main-to-auxiliary-fresh-release-restores-toggle",
+        "durable-toggle-on",
+        "auxiliary-to-main-source-hold",
+        "auxiliary-to-main-repeat-preserves-toggle",
+        "auxiliary-to-main-original-release-preserves-toggle",
+        "auxiliary-to-main-fresh-press-activates",
+        "auxiliary-to-main-fresh-release-restores-toggle",
+        "unrelated-command-keeps-toggle",
+        "unrelated-dismiss-keeps-toggle",
+        "closing-auxiliary-preserves-durable-toggle",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "both-windows-open-unlocked": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-source-hold": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-repeat-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2,
+          "receiver": "child-locked-alpha.txt",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "main-to-auxiliary-original-release-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-press-activates": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-release-restores-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "durable-toggle-on": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-source-hold": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-repeat-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2,
+          "receiver": "main",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "auxiliary-to-main-original-release-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-press-activates": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-release-restores-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-command-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-dismiss-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "closing-auxiliary-preserves-durable-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 1
+        }
+      },
+      "memory": {},
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "exitCode": 0
+    }
+  },
+  "linux": {
+    "single": {
+      "executableSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "e454912811c602d991d1893bff23d3a4239676059fe15d5e68f71268cada4f58",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "sourceTree": "781902421891decea068eab0db052f805117a927",
+      "fixtureScope": {
+        "key": "f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && !quickInputVisible"
+      },
+      "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "dpi": null,
+      "rawReportSha256": "9641bdd31f8d87ba2a296c7e37a04c12aeb7b086d411aba73746f7ef0580b46f",
+      "checks": [
+        "both-windows-open-unlocked",
+        "main-to-auxiliary-source-hold",
+        "main-to-auxiliary-repeat-preserves-toggle",
+        "main-to-auxiliary-original-release-preserves-toggle",
+        "main-to-auxiliary-fresh-press-activates",
+        "main-to-auxiliary-fresh-release-restores-toggle",
+        "durable-toggle-on",
+        "auxiliary-to-main-source-hold",
+        "auxiliary-to-main-repeat-preserves-toggle",
+        "auxiliary-to-main-original-release-preserves-toggle",
+        "auxiliary-to-main-fresh-press-activates",
+        "auxiliary-to-main-fresh-release-restores-toggle",
+        "unrelated-command-keeps-toggle",
+        "unrelated-dismiss-keeps-toggle",
+        "closing-auxiliary-preserves-durable-toggle",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "both-windows-open-unlocked": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-source-hold": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-repeat-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2,
+          "receiver": "child-locked-alpha.txt",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "main-to-auxiliary-original-release-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-press-activates": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-release-restores-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "durable-toggle-on": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-source-hold": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-repeat-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2,
+          "receiver": "main",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "auxiliary-to-main-original-release-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-press-activates": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-release-restores-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-command-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-dismiss-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "closing-auxiliary-preserves-durable-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 1
+        }
+      },
+      "memory": {},
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "exitCode": 0
+    },
+    "chord": {
+      "executableSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "e454912811c602d991d1893bff23d3a4239676059fe15d5e68f71268cada4f58",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "sourceTree": "781902421891decea068eab0db052f805117a927",
+      "fixtureScope": {
+        "key": "ctrl+k f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && !quickInputVisible"
+      },
+      "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "dpi": null,
+      "rawReportSha256": "067abc131eb691add90d50800c121087e15734d9d4d89ca4940d7e410558857a",
+      "checks": [
+        "both-windows-open-unlocked",
+        "main-to-auxiliary-source-hold",
+        "main-to-auxiliary-repeat-preserves-toggle",
+        "main-to-auxiliary-original-release-preserves-toggle",
+        "main-to-auxiliary-fresh-press-activates",
+        "main-to-auxiliary-fresh-release-restores-toggle",
+        "durable-toggle-on",
+        "auxiliary-to-main-source-hold",
+        "auxiliary-to-main-repeat-preserves-toggle",
+        "auxiliary-to-main-original-release-preserves-toggle",
+        "auxiliary-to-main-fresh-press-activates",
+        "auxiliary-to-main-fresh-release-restores-toggle",
+        "unrelated-command-keeps-toggle",
+        "unrelated-dismiss-keeps-toggle",
+        "closing-auxiliary-preserves-durable-toggle",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "both-windows-open-unlocked": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-source-hold": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-repeat-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2,
+          "receiver": "child-locked-alpha.txt",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "main-to-auxiliary-original-release-preserves-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-press-activates": {
+          "active": true,
+          "durable": false,
+          "windows": 2
+        },
+        "main-to-auxiliary-fresh-release-restores-toggle": {
+          "active": false,
+          "durable": false,
+          "windows": 2
+        },
+        "durable-toggle-on": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-source-hold": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-repeat-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2,
+          "receiver": "main",
+          "nativeBlur": true,
+          "repeatObserved": true,
+          "originalKeyStillDown": true
+        },
+        "auxiliary-to-main-original-release-preserves-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-press-activates": {
+          "active": false,
+          "durable": true,
+          "windows": 2
+        },
+        "auxiliary-to-main-fresh-release-restores-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-command-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "unrelated-dismiss-keeps-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 2
+        },
+        "closing-auxiliary-preserves-durable-toggle": {
+          "active": true,
+          "durable": true,
+          "windows": 1
+        }
+      },
+      "memory": {
+        "main-open": {
+          "privateMiB": 232.5,
+          "rssMiB": 306.2,
+          "sampleCount": 3
+        },
+        "both-windows-open-unlocked": {
+          "privateMiB": 356.4,
+          "rssMiB": 449.3,
+          "sampleCount": 3
+        },
+        "closing-auxiliary-preserves-durable-toggle": {
+          "privateMiB": 385.9,
+          "rssMiB": 461.8,
+          "sampleCount": 3
+        }
+      },
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "exitCode": 0
+    }
+  }
+}

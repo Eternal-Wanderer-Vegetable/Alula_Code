@@ -1,0 +1,23 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/notification_toast_lifetime_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/notification_toast_lifetime_test.dart: info toast expires after 10s, keeping unread
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +6: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +7: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +8: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +9: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +10: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +11: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +12: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +13: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +14: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +15: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:00 +16: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: toast renders and closing it keeps the center entry and badge
+00:01 +17: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: automatic toast expiry retains unread center notification
+00:01 +18: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: do not disturb suppresses toasts but keeps entries
+00:01 +19: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: actions run, source filter narrows and clear all empties
+00:02 +20: E:/temp/alula-pr3-20261117/app/test/notification_ui_test.dart: notification commands drive the center from the palette
+00:02 +21: All tests passed!

@@ -1,0 +1,52 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input validates asynchronously, rejects stale results and accepts current text
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input history retains draft and Escape returns null
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: multi selection accepts picked items hidden by query
+00:00 +3: loading E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart
+00:01 +3: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: QuickInput steps back arrow returns to the previous step and keeps its input
+00:01 +4: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: QuickInput steps item buttons run their own action instead of the item
+00:01 +5: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: QuickInput steps Escape and barrier cancel restore the previous focus
+00:02 +6: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: QuickInput steps running an item leaves focus to the item action
+00:02 +7: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: move-view flow shows the back arrow only on the destination step
+00:02 +8: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: back returns to the view step with the input focused
+00:02 +9: E:/temp/alula-pr3-20261117/app/test/quick_input_steps_test.dart: after going back the flow still moves another view
+00:03 +10: loading E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart
+00:03 +10: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: separators render as headings and navigation skips them
+00:04 +11: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: separators disappear while a query filters the list
+00:04 +12: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: multi-select toggles with Space and accepts the picked items
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: description renders inline and detail renders as a second line
+00:04 +14: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: validation message renders below the filter row
+00:04 +15: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: multi-select item buttons still run their own action
+00:04 +16: loading E:/temp/alula-pr3-20261117/app/test/quick_input_history_test.dart
+00:04 +16: E:/temp/alula-pr3-20261117/app/test/quick_input_history_test.dart: palette records accepted commands, reorders and survives remount
+00:06 +17: E:/temp/alula-pr3-20261117/app/test/quick_input_history_test.dart: keybinding execution does not enter the palette history
+00:06 +18: E:/temp/alula-pr3-20261117/app/test/quick_input_history_test.dart: item buttons render on the active row and run from the keyboard
+00:06 +19: loading E:/temp/alula-pr3-20261117/app/test/commands_test.dart
+00:06 +19: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: 注册表 注册 / 查找 / 同 id 覆盖 / 注销
+00:06 +20: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: 注册表 label 为「分类: 名称」
+00:06 +21: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: fuzzyScore 子序列命中返回分数，不命中返回 null
+00:06 +22: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: fuzzyScore 前缀/词首命中比中段命中分高
+00:06 +23: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: fuzzyScore 连续命中比离散命中分高
+00:06 +24: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: fuzzyScore 大小写不敏感
+00:06 +25: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: search 排序 按分数降序，同分按 label 字典序
+00:06 +26: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: 命令上下文与统一分发 表达式支持布尔组合、相等比较、分组并对非法表达式关闭
+00:06 +27: E:/temp/alula-pr3-20261117/app/test/commands_test.dart: 命令上下文与统一分发 context 变化即时更新可见和启用状态，分发接收 id 与参数
+00:06 +28: All tests passed!

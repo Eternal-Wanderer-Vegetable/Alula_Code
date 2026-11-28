@@ -1,0 +1,181 @@
+{
+  "repo": "E:/temp/alula-pr3-20261117",
+  "workflowSHA256": "2086d82e9e87adc2b2c211b6557963001b8723d9f519eaa8adc7f34a5bfad924",
+  "swiftSHA256": "5b4c6e4e2c8f3e723aa9eb56b5fe0fb7d84fd3d24b9c08bd66efa654356400bd",
+  "limits": "POSIX tests run on WSL Linux, not macOS; Swift untouched and not executed",
+  "checks": [
+    {
+      "name": "bash-syntax Install Linux desktop build dependencies",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build Rust core",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build Linux Release bundle",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Verify native Linux clipboard formats",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Verify native Linux move, copy, and external text drag/drop",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Add Rust core and verify Linux bundle",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Launch Linux app under Xvfb",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Launch Linux native-titlebar mode under Xvfb",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build Rust core",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build Rust core",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build fake LSP fixture for real-FFI tests",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Flutter analyze and tests",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Build macOS Release bundle",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Verify native macOS clipboard formats",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Compile native macOS drag/drop input helper",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Verify native macOS text drag/drop interaction",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Bundle and sign Rust core",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Launch macOS app",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Launch macOS native-titlebar mode and verify native Quit menu",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Collect macOS startup diagnostics",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "bash-syntax Package macOS app",
+      "passed": true,
+      "stderr": ""
+    },
+    {
+      "name": "scoped-diff-check",
+      "passed": true,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "preserve-command-status-7",
+      "passed": true,
+      "elapsed": 0.06464351201429963,
+      "details": "2026-11-18T05:48:21.459203+00:00 watchdog stage=status event=start {}\n2026-11-18T05:48:21.459920+00:00 watchdog stage=status event=spawn {'helperPID': 2316578}\n2026-11-18T05:48:21.491686+00:00 watchdog stage=status event=end {'status': 7}\n"
+    },
+    {
+      "name": "hanging-parent-killed-within-budget",
+      "passed": true,
+      "elapsed": 0.9072104879887775,
+      "details": "2026-11-18T05:48:21.523020+00:00 watchdog stage=hanging-parent event=start {}\n2026-11-18T05:48:21.523687+00:00 watchdog stage=hanging-parent event=spawn {'helperPID': 2316580}\n2026-11-18T05:48:22.197271+00:00 watchdog stage=hanging-parent event=timeout {'helperPID': 2316580}\n"
+    },
+    {
+      "name": "hanging-descendant-group-killed-and-unrelated-survives",
+      "passed": true,
+      "elapsed": 1.008788550971076,
+      "details": {
+        "stderr": "2026-11-18T05:48:22.431601+00:00 watchdog stage=descendants event=start {}\n2026-11-18T05:48:22.432081+00:00 watchdog stage=descendants event=spawn {'helperPID': 2316591}\n2026-11-18T05:48:23.204916+00:00 watchdog stage=descendants event=timeout {'helperPID': 2316591}\n",
+        "descendantPID": 2316595,
+        "unrelatedSurvived": true
+      }
+    },
+    {
+      "name": "shared-quit-budget-includes-retry-delay",
+      "passed": true,
+      "elapsed": 1.3070331930648535,
+      "details": [
+        "2026-11-18T05:48:23.437666+00:00 watchdog stage=attempt1 event=start {}\n2026-11-18T05:48:23.438141+00:00 watchdog stage=attempt1 event=spawn {'helperPID': 2316625}\n2026-11-18T05:48:23.903158+00:00 watchdog stage=attempt1 event=end {'status': 1}\n",
+        "2026-11-18T05:48:23.932943+00:00 watchdog stage=retry-delay event=start {}\n2026-11-18T05:48:23.933567+00:00 watchdog stage=retry-delay event=spawn {'helperPID': 2316627}\n2026-11-18T05:48:24.147818+00:00 watchdog stage=retry-delay event=end {'status': 0}\n",
+        "2026-11-18T05:48:24.177156+00:00 watchdog stage=attempt2 event=start {}\n2026-11-18T05:48:24.177594+00:00 watchdog stage=attempt2 event=spawn {'helperPID': 2316629}\n2026-11-18T05:48:24.513318+00:00 watchdog stage=attempt2 event=timeout {'helperPID': 2316629}\n"
+      ]
+    },
+    {
+      "name": "observer-external-timeout-fails",
+      "passed": true,
+      "elapsed": 0.9056064410833642,
+      "details": "external timeout fails; helper internal20s unchanged"
+    },
+    {
+      "name": "actual-cleanup-hang-preserves7-and-still-stops-wrapper",
+      "passed": true,
+      "elapsed": 0.972302419017069,
+      "details": {
+        "stderr": "2026-11-18T05:48:25Z pre-cleanup result=7 appPID=424242 openPID=2316677\n2026-11-18T05:48:25.700129+00:00 watchdog stage=cleanup-ps event=start {}\n2026-11-18T05:48:25.701057+00:00 watchdog stage=cleanup-ps event=spawn {'helperPID': 2316684}\n2026-11-18T05:48:25.716772+00:00 watchdog stage=cleanup-ps event=end {'status': 0}\n2026-11-18T05:48:25.747918+00:00 watchdog stage=cleanup-windows event=start {}\n2026-11-18T05:48:25.748517+00:00 watchdog stage=cleanup-windows event=spawn {'helperPID': 2316686}\n2026-11-18T05:48:26.370056+00:00 watchdog stage=cleanup-windows event=timeout {'helperPID': 2316686}\n2026-11-18T05:48:26.600251+00:00 watchdog stage=cleanup-identity event=start {}\n2026-11-18T05:48:26.600351+00:00 watchdog stage=cleanup-identity event=timeout {'helperPID': None}\n",
+        "stdout": "2026-11-18T05:48:21.459203+00:00 watchdog stage=status event=start {}\n2026-11-18T05:48:21.459920+00:00 watchdog stage=status event=spawn {'helperPID': 2316578}\n2026-11-18T05:48:21.491686+00:00 watchdog stage=status event=end {'status': 7}\n2026-11-18T05:48:21.523020+00:00 watchdog stage=hanging-parent event=start {}\n2026-11-18T05:48:21.523687+00:00 watchdog stage=hanging-parent event=spawn {'helperPID': 2316580}\n2026-11-18T05:48:22.197271+00:00 watchdog stage=hanging-parent event=timeout {'helperPID': 2316580}\n2026-11-18T05:48:22.431601+00:00 watchdog stage=descendants event=start {}\n2026-11-18T05:48:22.432081+00:00 watchdog stage=descendants event=spawn {'helperPID': 2316591}\n2026-11-18T05:48:23.204916+00:00 watchdog stage=descendants event=timeout {'helperPID': 2316591}\n2026-11-18T05:48:23.437666+00:00 watchdog stage=attempt1 event=start {}\n2026-11-18T05:48:23.438141+00:00 watchdog stage=attempt1 event=spawn {'helperPID': 2316625}\n2026-11-18T05:48:23.903158+00:00 watchdog stage=attempt1 event=end {'status': 1}\n2026-11-18T05:48:23.932943+00:00 watchdog stage=retry-delay event=start {}\n2026-11-18T05:48:23.933567+00:00 watchdog stage=retry-delay event=spawn {'helperPID': 2316627}\n2026-11-18T05:48:24.147818+00:00 watchdog stage=retry-delay event=end {'status': 0}\n2026-11-18T05:48:24.177156+00:00 watchdog stage=attempt2 event=start {}\n2026-11-18T05:48:24.177594+00:00 watchdog stage=attempt2 event=spawn {'helperPID': 2316629}\n2026-11-18T05:48:24.513318+00:00 watchdog stage=attempt2 event=timeout {'helperPID': 2316629}\n2026-11-18T05:48:24.744538+00:00 watchdog stage=observer event=start {}\n2026-11-18T05:48:24.745001+00:00 watchdog stage=observer event=spawn {'helperPID': 2316642}\n2026-11-18T05:48:25.431048+00:00 watchdog stage=observer event=timeout {'helperPID': 2316642}\n2026-11-18T05:48:25.700129+00:00 watchdog stage=cleanup-ps event=start {}\n2026-11-18T05:48:25.701057+00:00 watchdog stage=cleanup-ps event=spawn {'helperPID': 2316684}\n2316677 2316576 Wed Nov 18 13:48:24 2026 S+   /usr/bin/python3 -I -c import time; time.sleep(30)\n2026-11-18T05:48:25.716772+00:00 watchdog stage=cleanup-ps event=end {'status': 0}\n2026-11-18T05:48:25.747918+00:00 watchdog stage=cleanup-windows event=start {}\n2026-11-18T05:48:25.748517+00:00 watchdog stage=cleanup-windows event=spawn {'helperPID': 2316686}\n2026-11-18T05:48:26.370056+00:00 watchdog stage=cleanup-windows event=timeout {'helperPID': 2316686}\n2026-11-18T05:48:26.600251+00:00 watchdog stage=cleanup-identity event=start {}\n2026-11-18T05:48:26.600351+00:00 watchdog stage=cleanup-identity event=timeout {'helperPID': None}\n",
+        "wrapperStatus": -15
+      }
+    },
+    {
+      "name": "reject-nonfinite-deadline",
+      "passed": true,
+      "elapsed": 0.026975089916959405,
+      "details": "Invalid native helper deadline\n"
+    }
+  ],
+  "execution": {
+    "status": 0,
+    "stderr": "",
+    "error": null
+  },
+  "passed": true
+}

@@ -1,0 +1,1270 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "2fd4c2b11514da8f617361f5e75b263d2f351bc3",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "ee2cc2eaf02a09b6bbf2bcc99d11d199067d13cbf532db5600fe29bfcb0c1b33",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "5236d6268c12b361e0b963258bf7808fe49bbb7871ebcabe1622e6cff363a62f",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "59931179b09e5cad4e0b5b60d6e1badc8fc5a97fc7ba5314e30cf9e1fd52b535",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "cf846ab4ab2bfd54c2c8dc9f50135fece5cf088ac087c4d0d000283a34177291"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "a237c8ea63faae30f12289f33c7bbffb365cb528b69146a2cf78e3acfc81c329",
+  "fixtureSha256": "cf846ab4ab2bfd54c2c8dc9f50135fece5cf088ac087c4d0d000283a34177291",
+  "trace": {
+    "ready": {
+      "request": "ready",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        14
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 14,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "one-selected": {
+      "request": "one-selected",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 11,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "control-add": {
+      "request": "control-add",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11,
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 13,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "control-add-again": {
+      "request": "control-add-again",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11,
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "remove-active-mru": {
+      "request": "remove-active-mru",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11,
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 13,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "remove-inactive": {
+      "request": "remove-inactive",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 13,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "cannot-empty-active": {
+      "request": "cannot-empty-active",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 13,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "shift-anchor": {
+      "request": "shift-anchor",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 11,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "shift-forward": {
+      "request": "shift-forward",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11,
+        12,
+        13
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 13,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "shift-reversed": {
+      "request": "shift-reversed",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "ordinary-click-resets": {
+      "request": "ordinary-click-resets",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 11,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "before-context-close": {
+      "request": "before-context-close",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "unselected-menu-close-open": {
+      "request": "unselected-menu-close-open",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ],
+        "14": [
+          840.250109375,
+          45.5,
+          884.132921875,
+          62.5
+        ],
+        "context-close": [
+          694.4,
+          174.4,
+          862.4,
+          222.4
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt",
+        "14": "echo.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "confirm": null
+    },
+    "unselected-menu-close": {
+      "request": "unselected-menu-close",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          390.543078125,
+          62.5
+        ],
+        "11": [
+          466.293078125,
+          45.5,
+          514.89659375,
+          62.5
+        ],
+        "12": [
+          590.64659375,
+          45.5,
+          644.338,
+          62.5
+        ],
+        "13": [
+          719.588,
+          45.5,
+          764.500109375,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "first-dirty": {
+      "request": "first-dirty",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          523.058703125,
+          62.5
+        ],
+        "12": [
+          598.808703125,
+          45.5,
+          652.500109375,
+          62.5
+        ],
+        "13": [
+          727.750109375,
+          45.5,
+          772.66221875,
+          62.5
+        ]
+      },
+      "selected": [
+        10
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "both-dirty": {
+      "request": "both-dirty",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ]
+      },
+      "selected": [
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 11,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "before-keyboard-close": {
+      "request": "before-keyboard-close",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "keyboard-batch-prompt": {
+      "request": "keyboard-batch-prompt",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ],
+        "close-cancel": [
+          532.27822265625,
+          362.4,
+          588.27822265625,
+          394.4
+        ],
+        "close-save": [
+          670.5782218933106,
+          362.4,
+          746.77822265625,
+          394.4
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": "\u201calpha.txt\u201d\u3001\u201cbravo.txt\u201d \u6709\u672a\u4fdd\u5b58\u7684\u66f4\u6539\u3002\u5173\u95ed\u524d\u8981\u4fdd\u5b58\u5417\uff1f"
+    },
+    "after-cancel": {
+      "request": "after-cancel",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "selected-menu-close-open": {
+      "request": "selected-menu-close-open",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ],
+        "context-close": [
+          503.2,
+          174.4,
+          671.2,
+          222.4
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": null
+    },
+    "selected-menu-close": {
+      "request": "selected-menu-close",
+      "boxes": {
+        "10": [
+          343.088,
+          45.5,
+          399.2051875,
+          62.5
+        ],
+        "11": [
+          474.4551875,
+          45.5,
+          531.7208125,
+          62.5
+        ],
+        "12": [
+          606.9708125,
+          45.5,
+          660.66221875,
+          62.5
+        ],
+        "13": [
+          735.91221875,
+          45.5,
+          780.824328125,
+          62.5
+        ],
+        "close-cancel": [
+          532.27822265625,
+          362.4,
+          588.27822265625,
+          394.4
+        ],
+        "close-save": [
+          670.5782218933106,
+          362.4,
+          746.77822265625,
+          394.4
+        ]
+      },
+      "selected": [
+        10,
+        11
+      ],
+      "labels": {
+        "10": "alpha.txt \u2022",
+        "11": "bravo.txt \u2022",
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 10,
+      "documents": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "confirm": "\u201cbravo.txt\u201d\u3001\u201calpha.txt\u201d \u6709\u672a\u4fdd\u5b58\u7684\u66f4\u6539\u3002\u5173\u95ed\u524d\u8981\u4fdd\u5b58\u5417\uff1f"
+    },
+    "saved-batch-closed": {
+      "request": "saved-batch-closed",
+      "boxes": {
+        "12": [
+          343.088,
+          45.5,
+          396.77940625,
+          62.5
+        ],
+        "13": [
+          472.02940625,
+          45.5,
+          516.941515625,
+          62.5
+        ]
+      },
+      "selected": [
+        13
+      ],
+      "labels": {
+        "12": "charlie.txt",
+        "13": "delta.txt"
+      },
+      "active": 13,
+      "documents": [
+        12,
+        13
+      ],
+      "confirm": null
+    }
+  },
+  "screenshots": {
+    "range-selected": {
+      "name": "windows-tab-selection-range-selected.png",
+      "sha256": "1b522d9dcfda999a9b9fe56067dae06828b6313fead2941ec12812495b5c8cae"
+    },
+    "batch-confirmation": {
+      "name": "windows-tab-selection-batch-confirmation.png",
+      "sha256": "6faa294ffd6d6fc61878abe82d9ba3744083caf0e7970612220e2873a366cb60"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 287412224,
+          "pid": 54404,
+          "ppid": 41356,
+          "private": 285384704,
+          "pss": 285384704,
+          "working_set": 156114944
+        }
+      ],
+      "root_pid": 54404,
+      "total_private_bytes": 285384704,
+      "total_private_mib": 272.2,
+      "total_working_set_bytes": 156114944
+    },
+    "multi-selected": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 301371392,
+          "pid": 54404,
+          "ppid": 41356,
+          "private": 247451648,
+          "pss": 247451648,
+          "working_set": 160092160
+        }
+      ],
+      "root_pid": 54404,
+      "total_private_bytes": 247451648,
+      "total_private_mib": 236.0,
+      "total_working_set_bytes": 160092160
+    },
+    "closed": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 301371392,
+          "pid": 54404,
+          "ppid": 41356,
+          "private": 255696896,
+          "pss": 255696896,
+          "working_set": 170807296
+        }
+      ],
+      "root_pid": 54404,
+      "total_private_bytes": 255696896,
+      "total_private_mib": 243.9,
+      "total_working_set_bytes": 170807296
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    1123.2,
+    664.8
+  ],
+  "results": {
+    "savedSha256": {
+      "alpha": "e834f165105c796bdb1a3182e119a7550fee3463df0b60ee456b5dd8269fd742",
+      "bravo": "81af764b25ece59e833c6fe6b4ed59233eb56dc01224a42c946fac3c1340b423"
+    },
+    "closedIds": [
+      10,
+      11
+    ],
+    "remainingIds": [
+      12,
+      13
+    ]
+  },
+  "checksPassed": true,
+  "exitCode": 0
+}

@@ -1,0 +1,248 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "pinnedTabSizing": "compact",
+  "driver": "Owned Code-OSS CDP renderer pointer input",
+  "trace": {
+    "wide-left": {
+      "scrollLeft": 0,
+      "clientWidth": 688,
+      "scrollWidth": 1513,
+      "docked": true,
+      "tabs": [
+        {
+          "name": "",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": 0,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": 28.000003814697266,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": 56.000003814697266,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": 84.00000381469727,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": 112.00000381469727,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_06.txt",
+          "x": 140.00000381469727,
+          "width": 28,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 168.00000381469727,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 335.1250190734863,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 502.2499885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 669.3749885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 836.4999885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 1003.6250495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1170.7500495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1337.8750495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    },
+    "wide-scroll": {
+      "scrollLeft": 50.400001525878906,
+      "clientWidth": 688,
+      "scrollWidth": 1513,
+      "docked": true,
+      "tabs": [
+        {
+          "name": "",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": 0,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": 28.000003814697266,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": 56.000003814697266,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": 84.00000381469727,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": 112.00000381469727,
+          "width": 28,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "",
+          "title": "scroll_fixture_06.txt",
+          "x": 140.00000381469727,
+          "width": 28,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 117.60000991821289,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 284.7249946594238,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 451.8499946594238,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 618.975025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 786.100025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 953.225025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1120.350025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1287.475025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    }
+  },
+  "exitCode": 0
+}

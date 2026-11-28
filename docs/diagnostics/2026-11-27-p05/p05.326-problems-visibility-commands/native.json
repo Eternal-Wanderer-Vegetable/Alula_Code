@@ -1,0 +1,4893 @@
+{
+  "product": "84582ad8b2481b46e645ebe53072477445906dac",
+  "tree": "04b7db881a985d0935804ec0853021685c4037ea",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "04b7db881a985d0935804ec0853021685c4037ea",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "8352cf8631b4d087ffe9090c8306736f2b0ce3689a511d7f55d16b8e52c04c27",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "ac5cc84e9570a1d0f69fd22464a7dfa09abfc7ae90ea2c4f3801e817835e4fb2",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6490bbbd9d8db66ce7fdd447c099255feda2b804452de09810f81f83888c563e",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "96f6ba878d4ffdf63860b86c84ebe01967a8829a74e8c740a209625325023cd4",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "205ca2dd64e33dd7184efa9321024227db53542eefd0a17fba445505a2854956",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+    "abi": 46,
+    "nativeCoreSha256": "be61070640904be7eb9f14f0b006d7013ce7ca99b69e28ef21d36ec894d368d6"
+  },
+  "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+  "acceptanceDriverSha256": "e74723e74312e142906947f5bb693570f1df9d6c457b9341700a761b9ea14de9",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b",
+      "src/vs/workbench/contrib/markers/common/markers.ts": "6f9968056e8eabb00c708889557a089547f3f53877249bb20470adef3a052876",
+      "src/vs/workbench/services/views/browser/viewsService.ts": "cdeba8d07bddea5240bfa6a814d5ca148141547bdfe0bb876c8056f9bb28734f",
+      "src/vs/workbench/browser/layout.ts": "3686b7da2067cdfa1cbb54ce1e8b23d34748b6655021d3a4c58a76e6b533fe0d"
+    }
+  },
+  "localLogsSha256": {
+    "p05-326-full.log": "c26cff2f3de5732db1f16b4f8369159e6e0b9ad9b3dc47473c957789fc2331de",
+    "p05-326-focused.log": "0be214b058e2c76179bc460912cb44d0ba66785e42e5d468bcfd4ddbc2aa52ef",
+    "p05-326-targeted.log": "c21f94d0e9fa7cbbf64626f853592dd1b8cb6236eb1fd798082323febc4ee509",
+    "p05-326-analyze.log": "52ff09b32b53b4c0d9c6a0e864ce43d6dab4386fa8d5466cea3af16fcf31fe5b",
+    "p05-326-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 12,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "00b3b7d6ea4e5a335d1173d2f0d476e271d603f54d890dc5e97137dbbc9f45a2"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 12,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "sha256": "00b3b7d6ea4e5a335d1173d2f0d476e271d603f54d890dc5e97137dbbc9f45a2"
+    }
+  },
+  "preedit": {
+    "_openProblems": {
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "f2f84642542a931f6ef4845367326f4a451261c9df204390d202e1cb2031c661"
+    },
+    "_closeProblems": {
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "ef07b31b43f5c79da227ff22bd943c858e5b4ebd75e01aa67884c53905ad3c88"
+    },
+    "_registerCommands": {
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "c4988e66c43f126cf6418f4d4a8d02d3e38ada8738b116d7baf7d337e7aabdab"
+    },
+    "_showCommandPalette": {
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "d61e6002f094538dcefb5a6848dd02cf85b8c0078c1d86df405e0785c562c423"
+    },
+    "AlulaStatusBar": {
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "7e6eb61823d96fc14fcfaf80fafcffe2c310692d70273c4828b25ce2c069b49b"
+    },
+    "WorkbenchPage": {
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "risk": "LOW",
+      "sha256": "405ebcdae506a02de47c253e612c8e275fd74e49805c5d608e39cd36432b2d15"
+    },
+    "_problemsViewActive": {
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "risk": "UNKNOWN",
+      "sha256": "ca3a9b00d5637c2db43d76b4cc5c3d62a8a106d6b092d3d58f5325f961cf6977"
+    },
+    "workbench-build": {
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "risk": "UNKNOWN",
+      "sha256": "c2246da05dae4b4f130cc4a728a56a1d33509a263de7fb144125a87a43d8e7d7"
+    },
+    "statusbar-build": {
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "risk": "UNKNOWN",
+      "sha256": "a664c7664987d835a65c22adecc15f0ddf8d841210b62c87a1683258f27f8aec"
+    },
+    "sourceConfirmation": {
+      "problemsActiveCallSitesSha256": "3975a28b692100ca43d9602bb916085fe47a29e36f7d543ae4584181ac76c00b",
+      "buildCallbacks": "Both Flutter build overrides have framework dispatch. AlulaStatusBar is instantiated by the WorkbenchPage."
+    }
+  },
+  "macosPhysical": "deferred",
+  "initialLinuxFocusReproduction": {
+    "tree": "b4384c28e63cbea133273e2766d1d34c0fccf119",
+    "rawReportSha256": "d35c028c6aa39e5ed5a9bcae0640bee5e78f6cd08c56d1ea91b91b287939c9e8",
+    "editorFocusedAfterStatusClick": false,
+    "subsequentShortcutLeftPanelHidden": true
+  },
+  "sameBuildFixtureRetries": {
+    "linux": {
+      "rawReportSha256": "39bc3fbe25a9739e99a42a9121476b4002f9810c0c5f8a0dcf3550d51b3ea63e",
+      "cause": "The cleanup expected the prior task’s single-line presentation setting."
+    },
+    "windows": {
+      "rawReportSha256": "39210f1480158f54cb910a3dc5d600efee0ec6486f35f18e5f0d925eb3268ac8",
+      "cause": "An initial focus probe referenced the previous fixture’s step ID before sending input."
+    }
+  },
+  "nativeCheckCountsPerPlatform": {
+    "call": 24,
+    "grouped": 27
+  },
+  "windows": {
+    "call": {
+      "tree": "04b7db881a985d0935804ec0853021685c4037ea",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "fc16aa3e3439bb0d0c512a47d0fa61a55aed0dfa19da2a25bdd28e46c3f1c0eb",
+      "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+      "runnerSha256": "6bb2899fed6d4c25255384dec7cfe109874b161cea81f7245e22fb9c9b959150",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            0,
+            0
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "stable-editor-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-command-opens-with-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": "",
+          "filterSelection": [
+            -1,
+            -1
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 5,
+          "outlinePresent": false
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "editor-focused-with-problems-visible": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "status-count-opens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "isolated-editor-with-panel-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "stable-editor-selection": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-command-opens-with-editor-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focused-with-problems-visible": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-count-opens-and-focuses-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-326-problems-visibility-commands\\probe-1795740165122376900",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            702
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            702
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            741
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            741
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1756,
+            1114
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1756,
+            1114
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1756,
+            1114
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1756,
+            1114
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1425,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1425,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer",
+        "u32"
+      ],
+      "kind": "problemsVisibilityCommands",
+      "visibilityProfile": "call",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "paletteCommandCount": 279,
+      "ids": {
+        "show": "workbench.action.showErrorsWarnings",
+        "toggle": "workbench.actions.view.toggleProblems",
+        "default": "workbench.actions.view.problems"
+      },
+      "finalDiagnosticsCount": 8,
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "7e1614948e527b4444ad62b6d367aadd6e9035e40b04df9f015d808b7256131e"
+    },
+    "grouped": {
+      "tree": "04b7db881a985d0935804ec0853021685c4037ea",
+      "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "fc16aa3e3439bb0d0c512a47d0fa61a55aed0dfa19da2a25bdd28e46c3f1c0eb",
+      "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+      "runnerSha256": "6bb2899fed6d4c25255384dec7cfe109874b161cea81f7245e22fb9c9b959150",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            0,
+            0
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "stable-editor-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-command-opens-with-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": "",
+          "filterSelection": [
+            -1,
+            -1
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 5,
+          "outlinePresent": true
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "editor-focused-with-problems-visible": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "status-count-opens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "outline-receives-focus-with-problems-group-collapsed": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "show-command-expands-original-with-outline-focused": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-keeps-outline-focus-when-original-collapses": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            184,
+            184
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        }
+      },
+      "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+      "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "dpi": 120,
+      "clientRectPhysical": [
+        0,
+        0,
+        1221,
+        941
+      ],
+      "nativeFocus": {
+        "isolated-editor-with-panel-hidden": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "stable-editor-selection": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-command-opens-with-editor-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focused-with-problems-visible": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-count-opens-and-focuses-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "outline-receives-focus-with-problems-group-collapsed": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-command-expands-original-with-outline-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-keeps-outline-focus-when-original-collapses": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      },
+      "nativeKeyFocus": [
+        {
+          "key": "ctrl+g",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Return",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "F1",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "Escape",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F8",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+F7",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        },
+        {
+          "key": "ctrl+shift+m",
+          "available": true,
+          "isRoot": false,
+          "isChild": true,
+          "focusClass": "FLUTTERVIEW",
+          "activeOwned": true,
+          "flags": 0,
+          "imeOpen": null,
+          "imeCompositionBytes": null,
+          "keyboardLanguage": "0x804"
+        }
+      ],
+      "characterDelaySeconds": 0.012,
+      "profile": "E:\\temp\\alula-p05-326-problems-visibility-commands\\probe-1795740209159778900",
+      "nativeClickChecks": [
+        {
+          "point": [
+            1752,
+            702
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            702
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1531,
+            776
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1531,
+            776
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1756,
+            1114
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1756,
+            1114
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1756,
+            1114
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1756,
+            1114
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1769,
+            828
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1769,
+            828
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1425,
+            679
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1425,
+            679
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        },
+        {
+          "point": [
+            1752,
+            476
+          ],
+          "targetOwnedBeforeMove": true,
+          "actualPoint": [
+            1752,
+            476
+          ],
+          "targetOwnedAtClick": true,
+          "foregroundOwnedAtClick": true,
+          "alt": false,
+          "ctrl": false,
+          "shift": false,
+          "double": false,
+          "secondary": false
+        }
+      ],
+      "fixturePositions": [
+        "1:8",
+        "rust-analyzer",
+        "u32"
+      ],
+      "kind": "problemsVisibilityCommands",
+      "visibilityProfile": "grouped",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "paletteCommandCount": 279,
+      "ids": {
+        "show": "workbench.action.showErrorsWarnings",
+        "toggle": "workbench.actions.view.toggleProblems",
+        "default": "workbench.actions.view.problems"
+      },
+      "finalDiagnosticsCount": 8,
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "1438b814f7ef0835a7561a002441f3bb7c71c862acce8b7efbecf99e9aa435ba"
+    }
+  },
+  "linux": {
+    "call": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "04b7db881a985d0935804ec0853021685c4037ea",
+      "processTreeSamples": {},
+      "aotSha256": "7d09cd9c27005445ae94671ac593fc01c753648ba15dc477481c78939bbc6833",
+      "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+      "runnerSha256": "03982618143cc339de9eab2123b4c83b023e730f0c86830253ef4e4346ef2dcb",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            0,
+            0
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "stable-editor-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-command-opens-with-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": "",
+          "filterSelection": [
+            -1,
+            -1
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 5,
+          "outlinePresent": false
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "editor-focused-with-problems-visible": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "status-count-opens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": false
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-hxvft9mk",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            489
+          ],
+          "actual": [
+            740,
+            489
+          ],
+          "logical": [
+            719.76,
+            441.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            784,
+            519
+          ],
+          "actual": [
+            784,
+            519
+          ],
+          "logical": [
+            763.76,
+            470.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            758,
+            848
+          ],
+          "actual": [
+            758,
+            848
+          ],
+          "logical": [
+            737.8177642822266,
+            800.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            758,
+            848
+          ],
+          "actual": [
+            758,
+            848
+          ],
+          "logical": [
+            737.8177642822266,
+            800.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            438,
+            470
+          ],
+          "actual": [
+            438,
+            470
+          ],
+          "logical": [
+            417.82000114440916,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        }
+      ],
+      "kind": "problemsVisibilityCommands",
+      "visibilityProfile": "call",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "paletteCommandCount": 279,
+      "ids": {
+        "show": "workbench.action.showErrorsWarnings",
+        "toggle": "workbench.actions.view.toggleProblems",
+        "default": "workbench.actions.view.problems"
+      },
+      "finalDiagnosticsCount": 8,
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "a013bacfacc66fd402a39b1d506c01361ddd3e94b6b3ffc416e335f88bfcb073"
+    },
+    "grouped": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "04b7db881a985d0935804ec0853021685c4037ea",
+      "processTreeSamples": {},
+      "aotSha256": "7d09cd9c27005445ae94671ac593fc01c753648ba15dc477481c78939bbc6833",
+      "fixtureSha256": "846b1012b9c335b797db28b6ee9554662df997e262bccdedfb2ed6ad99473c9b",
+      "runnerSha256": "03982618143cc339de9eab2123b4c83b023e730f0c86830253ef4e4346ef2dcb",
+      "steps": {
+        "isolated-editor-with-panel-hidden": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            0,
+            0
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "stable-editor-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 0,
+          "statusProblemsLabel": "诊断 0",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "provider-publishes-five-errors-and-warnings": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "only-default-problems-command-shown-in-palette": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "palette-dismissal-preserves-editor-and-hidden-panel": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-command-opens-with-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": false,
+          "filterText": "",
+          "filterSelection": [
+            -1,
+            -1
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 5,
+          "outlinePresent": true
+        },
+        "diagnostic-filter-keeps-one-matching-row": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "show-command-is-idempotent-with-filter-focus": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            7,
+            7
+          ],
+          "filterFocused": true,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "editor-focused-with-problems-visible": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "repeat-show-preserves-editor-focus-and-selection": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-closes-visible-problems-with-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "toggle-reopens-problems-with-focus-and-retains-query": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-from-problems-restores-editor-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "status-count-opens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "status-toggle-setup-keeps-editor-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "status-count-closes-visible-problems-from-editor": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "outline-receives-focus-with-problems-group-collapsed": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "show-command-expands-original-with-outline-focused": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "toggle-keeps-outline-focus-when-original-collapses": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": true,
+          "groupPaneStates": {
+            "original": true,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": true
+        },
+        "toggle-reopens-before-selecting-completions": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "other-panel-tab-replaces-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "editor-focus-before-showing-problems-from-other-tab": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": 1,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "show-selects-problems-from-other-panel-and-preserves-focus": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "default-shortcut-focuses-already-visible-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "default-shortcut-hides-whole-panel-when-problems-focused": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        },
+        "default-shortcut-reopens-and-focuses-problems": {
+          "documentId": 3,
+          "editorFocused": false,
+          "nativeWindowFocused": true,
+          "problemsFocused": true,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {
+            "original": false,
+            "outline": false
+          },
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": "u32",
+          "filterSelection": [
+            3,
+            3
+          ],
+          "panelTab": 0,
+          "panelCollapsed": false,
+          "statusBarPanelCollapsed": false,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 1,
+          "outlinePresent": true
+        },
+        "hide-leaves-editor-and-diagnostic-counter-available": {
+          "documentId": 3,
+          "editorFocused": true,
+          "nativeWindowFocused": true,
+          "problemsFocused": false,
+          "outlineFilterFocused": false,
+          "groupPaneStates": {},
+          "selection": [
+            212,
+            212
+          ],
+          "filterFocused": false,
+          "filterText": null,
+          "filterSelection": null,
+          "panelTab": null,
+          "panelCollapsed": true,
+          "statusBarPanelCollapsed": true,
+          "statusDiagnosticsCount": 8,
+          "statusProblemsLabel": "诊断 8",
+          "visibleProblemRows": 0,
+          "outlinePresent": false
+        }
+      },
+      "profile": "/tmp/alula-p05-177-xvfb-i_4qq4ch",
+      "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+      "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "requestedWindowWidth": 1200,
+      "characterDelayMs": 12,
+      "nativeClicks": [
+        {
+          "screen": [
+            740,
+            489
+          ],
+          "actual": [
+            740,
+            489
+          ],
+          "logical": [
+            719.76,
+            441.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            565,
+            547
+          ],
+          "actual": [
+            565,
+            547
+          ],
+          "logical": [
+            544.64,
+            498.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            758,
+            848
+          ],
+          "actual": [
+            758,
+            848
+          ],
+          "logical": [
+            737.8177642822266,
+            800.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            758,
+            848
+          ],
+          "actual": [
+            758,
+            848
+          ],
+          "logical": [
+            737.8177642822266,
+            800.0
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            798,
+            589
+          ],
+          "actual": [
+            798,
+            589
+          ],
+          "logical": [
+            777.76,
+            540.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            438,
+            470
+          ],
+          "actual": [
+            438,
+            470
+          ],
+          "logical": [
+            417.82000114440916,
+            421.52
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        },
+        {
+          "screen": [
+            740,
+            292
+          ],
+          "actual": [
+            740,
+            292
+          ],
+          "logical": [
+            719.76,
+            244.26
+          ],
+          "control": false,
+          "shift": false,
+          "secondary": false
+        }
+      ],
+      "kind": "problemsVisibilityCommands",
+      "visibilityProfile": "grouped",
+      "sourceSha256": {
+        "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+        "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+        "src/left/other.rs": "6c88a83663f93d15a016954fbcde499dc3d9c5b41d92dc60e528f0066f58035a",
+        "src/right/other.rs": "5bb3b59df31989e29e61300a9ecf0bc878dc1c2500d264285b34c74333ff6b94"
+      },
+      "rawDiagnostics": [
+        {
+          "character": 32,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 42,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `u32`, found `&str`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 17,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 20,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `u32` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        },
+        {
+          "character": 26,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 27,
+          "endLine": 81,
+          "line": 81,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 19,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 81,
+          "line": 81,
+          "message": "expected `bool` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "otherRawDiagnostics": [
+        {
+          "character": 27,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 38,
+          "endLine": 3,
+          "line": 3,
+          "message": "use of deprecated function `right::old_message`: first detail\nsecond detail\nthird detail\nfourth detail\n`#[warn(deprecated)]` on by default",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 24,
+          "code": "deprecated",
+          "documentVersion": 1,
+          "endCharacter": 32,
+          "endLine": 6,
+          "line": 6,
+          "message": "use of deprecated function `right::old_line`: single diagnostic note",
+          "severity": 2,
+          "source": "rustc"
+        },
+        {
+          "character": 35,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 40,
+          "endLine": 0,
+          "line": 0,
+          "message": "mismatched types\nexpected `usize`, found `bool`",
+          "severity": 1,
+          "source": "rustc"
+        },
+        {
+          "character": 18,
+          "code": "E0308",
+          "documentVersion": 1,
+          "endCharacter": 23,
+          "endLine": 0,
+          "line": 0,
+          "message": "expected `usize` because of return type",
+          "severity": 4,
+          "source": "rustc"
+        }
+      ],
+      "paletteCommandCount": 279,
+      "ids": {
+        "show": "workbench.action.showErrorsWarnings",
+        "toggle": "workbench.actions.view.toggleProblems",
+        "default": "workbench.actions.view.problems"
+      },
+      "finalDiagnosticsCount": 8,
+      "savedProblemsViewMode": "tree",
+      "savedDefaultSingleLine": false,
+      "exit": 0,
+      "passed": true,
+      "cleanup": {
+        "exitCode": 0,
+        "driverSentSigterm": false
+      },
+      "rawReportSha256": "ad7bc85829df23f6bf35cc79737b733f73c9835a4999713a290cc20e583ce8f0"
+    }
+  }
+}

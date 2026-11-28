@@ -1,0 +1,141 @@
+{
+  "productCommit": "cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+  "ci": {
+    "conclusion": "success",
+    "headSha": "cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+    "jobs": [
+      {
+        "completedAt": "2026-11-20T15:36:18Z",
+        "conclusion": "success",
+        "databaseId": 136386743761,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-20T15:36:02Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764891062/job/136386743761"
+      },
+      {
+        "completedAt": "2026-11-20T15:48:22Z",
+        "conclusion": "success",
+        "databaseId": 136386744035,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-20T15:36:05Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764891062/job/136386744035"
+      },
+      {
+        "completedAt": "2026-11-20T15:38:18Z",
+        "conclusion": "success",
+        "databaseId": 136386744145,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-20T15:36:01Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764891062/job/136386744145"
+      },
+      {
+        "completedAt": "2026-11-20T15:36:39Z",
+        "conclusion": "success",
+        "databaseId": 136386744414,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-20T15:36:02Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764891062/job/136386744414"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764891062"
+  },
+  "platformAvailability": {
+    "conclusion": "",
+    "headSha": "cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+    "jobs": [
+      {
+        "completedAt": "0001-01-01T00:00:00Z",
+        "conclusion": "",
+        "databaseId": 136386705384,
+        "name": "macOS build, launch smoke, and app package",
+        "startedAt": "2026-11-20T15:35:59Z",
+        "status": "in_progress",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764880915/job/136386705384"
+      },
+      {
+        "completedAt": "2026-11-20T15:45:40Z",
+        "conclusion": "success",
+        "databaseId": 136386705912,
+        "name": "Windows x64 build and launch smoke",
+        "startedAt": "2026-11-20T15:35:58Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764880915/job/136386705912"
+      },
+      {
+        "completedAt": "2026-11-20T15:40:56Z",
+        "conclusion": "success",
+        "databaseId": 136386706015,
+        "name": "Linux x64 build and launch smoke",
+        "startedAt": "2026-11-20T15:35:58Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764880915/job/136386706015"
+      }
+    ],
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44764880915"
+  },
+  "linuxWindowsPackages": [
+    {
+      "digest": "sha256:1105965cac93de48c3445d0225a227c0987bd55b4d217151b996f4658586038f",
+      "id": 14644851718,
+      "name": "alula-windows-x64-cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+      "size_in_bytes": 16347039
+    },
+    {
+      "digest": "sha256:ac3c72aa11c215e6a2b82afc1d103c92f5b0ea2b7f65726a4dda7dda22535165",
+      "id": 14643916773,
+      "name": "alula-linux-x64-cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7",
+      "size_in_bytes": 14844205
+    }
+  ],
+  "previousCloseout": {
+    "conclusion": "success",
+    "headSha": "d5bd808738d3de46719b7c98ba9c591765795bae",
+    "jobs": [
+      {
+        "completedAt": "2026-11-20T15:15:49Z",
+        "conclusion": "success",
+        "databaseId": 136374875454,
+        "name": "Harness 文档结构校验",
+        "startedAt": "2026-11-20T15:15:45Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44761489981/job/136374875454"
+      },
+      {
+        "completedAt": "2026-11-20T15:17:28Z",
+        "conclusion": "success",
+        "databaseId": 136374875785,
+        "name": "Rust (windows-latest)",
+        "startedAt": "2026-11-20T15:15:45Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44761489981/job/136374875785"
+      },
+      {
+        "completedAt": "2026-11-20T15:25:49Z",
+        "conclusion": "success",
+        "databaseId": 136374875808,
+        "name": "Flutter (analyze + test)",
+        "startedAt": "2026-11-20T15:15:46Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44761489981/job/136374875808"
+      },
+      {
+        "completedAt": "2026-11-20T15:16:24Z",
+        "conclusion": "success",
+        "databaseId": 136374875894,
+        "name": "Rust (ubuntu-latest)",
+        "startedAt": "2026-11-20T15:15:45Z",
+        "status": "completed",
+        "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44761489981/job/136374875894"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44761489981"
+  },
+  "macOSPhysical": "deferred at user request"
+}

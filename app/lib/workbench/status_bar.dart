@@ -5,13 +5,56 @@ import 'package:flutter/material.dart';
 
 enum WbSyncState { idle, synced, mismatch, error }
 
+class ProblemsStatusCounts {
+  const ProblemsStatusCounts({
+    this.errors = 0,
+    this.warnings = 0,
+    this.infos = 0,
+  });
+
+  factory ProblemsStatusCounts.fromDiagnostics(
+    Iterable<Map<String, Object?>> diagnostics,
+  ) {
+    var errors = 0;
+    var warnings = 0;
+    var infos = 0;
+    for (final diagnostic in diagnostics) {
+      switch (diagnostic['severity']) {
+        case 1:
+          errors++;
+        case 2:
+          warnings++;
+        case 3 || null:
+          infos++;
+      }
+    }
+    return ProblemsStatusCounts(errors: errors, warnings: warnings, infos: infos);
+  }
+
+  final int errors;
+  final int warnings;
+  final int infos;
+
+  int get total => errors + warnings + infos;
+
+  String get description {
+    final parts = [
+      if (errors > 0) '错误 $errors',
+      if (warnings > 0) '警告 $warnings',
+      if (infos > 0) '信息 $infos',
+    ];
+    return parts.isEmpty ? '没有问题' : parts.join('，');
+  }
+}
+
 class AlulaStatusBar extends StatelessWidget {
   const AlulaStatusBar({
     super.key,
     required this.state,
     required this.detail,
     required this.lspStatus,
-    required this.diagnosticsCount,
+    required this.problems,
+    this.onToggleProblems,
     required this.tabCount,
     required this.abiVersion,
     this.resourcePressure,
@@ -21,6 +64,8 @@ class AlulaStatusBar extends StatelessWidget {
     required this.syncCount,
     required this.panelCollapsed,
     required this.onTogglePanel,
+    this.lockedScrolling = false,
+    this.onToggleLockedScrolling,
     this.encodingLabel,
     this.encodingTooltip,
     this.lineEndingLabel,
@@ -28,12 +73,15 @@ class AlulaStatusBar extends StatelessWidget {
     this.onLineEndingTap,
     this.overtypeMode = false,
     this.onToggleOvertype,
+    this.notificationButton,
+    this.notificationAtStart = false,
   });
 
   final WbSyncState state;
   final String detail;
   final String lspStatus;
-  final int diagnosticsCount;
+  final ProblemsStatusCounts problems;
+  final VoidCallback? onToggleProblems;
   final int tabCount;
   final int abiVersion;
   final String? resourcePressure;
@@ -43,6 +91,8 @@ class AlulaStatusBar extends StatelessWidget {
   final int syncCount;
   final bool panelCollapsed;
   final VoidCallback onTogglePanel;
+  final bool lockedScrolling;
+  final VoidCallback? onToggleLockedScrolling;
   final String? encodingLabel;
   final String? encodingTooltip;
   final String? lineEndingLabel;
@@ -51,20 +101,29 @@ class AlulaStatusBar extends StatelessWidget {
   final bool overtypeMode;
   final VoidCallback? onToggleOvertype;
 
+  final Widget? notificationButton;
+  final bool notificationAtStart;
+
   @override
   Widget build(BuildContext context) {
+    final combinedCount =
+        onToggleProblems == null ? ' · 诊断 ${problems.total}' : '';
     return Container(
       height: 24,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
       child: Row(
         children: [
+          if (notificationButton != null && notificationAtStart) ...[
+            notificationButton!,
+            const SizedBox(width: 8),
+          ],
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
-          Flexible(
+          Expanded(
             child: Text(
-              '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
+              '$lspStatus$combinedCount · 标签 $tabCount · '
               'ABI v$abiVersion · 同步 $syncCount 次',
               maxLines: 1,
               softWrap: false,
@@ -73,6 +132,42 @@ class AlulaStatusBar extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
             ),
           ),
+          if (onToggleProblems case final toggleProblems?) ...[
+            const SizedBox(width: 8),
+            Semantics(
+              button: true,
+              label: problems.description,
+              child: Tooltip(
+                message: problems.description,
+                excludeFromSemantics: true,
+                child: InkWell(
+                  key: const ValueKey('status-problems'),
+                  onTap: toggleProblems,
+                  child: ExcludeSemantics(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _problemCount(Icons.cancel_outlined, problems.errors),
+                        const SizedBox(width: 6),
+                        _problemCount(
+                          Icons.warning_amber_outlined,
+                          problems.warnings,
+                        ),
+                        if (problems.infos > 0) ...[
+                          const SizedBox(width: 6),
+                          _problemCount(Icons.info_outline, problems.infos),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+          if (lockedScrolling && onToggleLockedScrolling != null) ...[
+            const SizedBox(width: 8),
+            LockedScrollingStatusItem(onToggle: onToggleLockedScrolling!),
+          ],
           if (encodingLabel != null && onEncodingTap != null) ...[
             const SizedBox(width: 10),
             InkWell(
@@ -130,6 +225,10 @@ class AlulaStatusBar extends StatelessWidget {
               ),
             ),
           ],
+          if (notificationButton != null && !notificationAtStart) ...[
+            const SizedBox(width: 8),
+            notificationButton!,
+          ],
           const SizedBox(width: 8),
           InkWell(
             onTap: onTogglePanel,
@@ -144,6 +243,27 @@ class AlulaStatusBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _problemCount(IconData icon, int count) {
+    final color = Colors.grey.shade400;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(
+          _packProblemCount(count),
+          style: TextStyle(color: color, fontSize: 11),
+        ),
+      ],
+    );
+  }
+
+  static String _packProblemCount(int count) {
+    if (count >= 10000) return '10K+';
+    if (count >= 1000) return '${count ~/ 1000}K';
+    return '$count';
   }
 
   String get _resourceLabel => switch (resourcePressure) {
@@ -191,4 +311,43 @@ class AlulaStatusBar extends StatelessWidget {
         return const Icon(Icons.error, size: 12, color: Colors.redAccent);
     }
   }
+}
+
+/// The same active-only status action is used by each workbench window.
+class LockedScrollingStatusItem extends StatelessWidget {
+  const LockedScrollingStatusItem({super.key, required this.onToggle});
+
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        container: true,
+        button: true,
+        child: InkWell(
+          key: const ValueKey('status-bar-locked-scrolling'),
+          onTap: onToggle,
+          child: const Tooltip(
+            message: '滚动锁定已开启',
+            excludeFromSemantics: true,
+            child: SizedBox(
+              height: 20,
+              child: ColoredBox(
+                color: Color(0xFF2B435A),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Center(
+                    widthFactor: 1,
+                    child: Text(
+                      '滚动已锁定',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
 }

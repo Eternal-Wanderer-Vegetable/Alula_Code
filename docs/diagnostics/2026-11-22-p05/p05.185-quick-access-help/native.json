@@ -1,0 +1,1190 @@
+{
+  "product": "d1e4bc19264c9455be77021068bf87a7907d98d9",
+  "tree": "6d2f3bc9c67306fdf80451a8979d0d3839b0a1e5",
+  "fixtureSharedRunnerSha256": "31b025b405f576c5b4905f36c63da42fdaada562840b88ac493944cceaadfc73",
+  "windows": {
+    "tree": "6d2f3bc9c67306fdf80451a8979d0d3839b0a1e5",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "0f7091e4c8516fd8660fff6a88ac2ed09b1cb7100506440a60f716940fc664bf",
+    "fixtureSha256": "f5bb9fe23060c61bcfaff03c17fbffd1097e59e6ff98c36d52e79da2a00cbe63",
+    "runnerSha256": "ccf046fc7683ff41bb270948b973ac12dd990115596003956da27630411592f3",
+    "steps": {
+      "ready": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": false
+      },
+      "dirty-editor": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            397.73333333333335,
+            102.5,
+            442.73333333333335,
+            118.5
+          ],
+          "转到行/列": [
+            397.73333333333335,
+            146.5,
+            447.26946614583335,
+            162.5
+          ],
+          "显示并运行命令": [
+            397.73333333333335,
+            190.5,
+            476.48333333333335,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            200.39999999999998,
+            209.0,
+            776.4,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            397.73333333333335,
+            234.5,
+            498.98333333333335,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            397.73333333333335,
+            276.0,
+            532.7333333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            397.73333333333335,
+            300.5,
+            498.98333333333335,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "click-goto": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "goto-preview": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            19,
+            19
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":2",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-goto": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            397.73333333333335,
+            102.5,
+            442.73333333333335,
+            118.5
+          ],
+          "转到行/列": [
+            397.73333333333335,
+            146.5,
+            447.26946614583335,
+            162.5
+          ],
+          "显示并运行命令": [
+            397.73333333333335,
+            190.5,
+            476.48333333333335,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            200.39999999999998,
+            209.0,
+            776.4,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            397.73333333333335,
+            234.5,
+            498.98333333333335,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            397.73333333333335,
+            276.0,
+            532.7333333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            397.73333333333335,
+            300.5,
+            498.98333333333335,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "typed-command": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "command-query": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">diag",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "restored-after-switch": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "command-direct": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-command": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            397.73333333333335,
+            102.5,
+            442.73333333333335,
+            118.5
+          ],
+          "转到行/列": [
+            397.73333333333335,
+            146.5,
+            447.26946614583335,
+            162.5
+          ],
+          "显示并运行命令": [
+            397.73333333333335,
+            190.5,
+            476.48333333333335,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            200.39999999999998,
+            209.0,
+            776.4,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            397.73333333333335,
+            234.5,
+            498.98333333333335,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            397.73333333333335,
+            276.0,
+            532.7333333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            397.73333333333335,
+            300.5,
+            498.98333333333335,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "click-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "restored-after-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "native-continue-edit": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line79\n",
+          "mirror": "Compact example 😀\nSecond line79\n",
+          "totalUtf16": 33,
+          "stateVersion": 5,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            32
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      }
+    },
+    "dpi": 120,
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "exit": 0,
+    "passed": true
+  },
+  "linux": {
+    "tree": "6d2f3bc9c67306fdf80451a8979d0d3839b0a1e5",
+    "aotSha256": "ca2b6efd40b6ca942569ae8b90fa229d18a55c2d12b3c302a9e264d7a97dc79c",
+    "fixtureSha256": "f5bb9fe23060c61bcfaff03c17fbffd1097e59e6ff98c36d52e79da2a00cbe63",
+    "runnerSha256": "36360a0bd5870a7d2a4edcc0ccdea95e819fe8c2c51e79a839b93e4f5932e37d",
+    "steps": {
+      "ready": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "dirty-editor": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            337.7733333333333,
+            102.5,
+            382.7733333333333,
+            118.5
+          ],
+          "转到行/列": [
+            337.7733333333333,
+            146.5,
+            387.0713069661458,
+            162.5
+          ],
+          "显示并运行命令": [
+            337.7733333333333,
+            190.5,
+            416.5233333333333,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            169.32,
+            209.0,
+            658.6800000000001,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            337.7733333333333,
+            234.5,
+            439.0233333333333,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            337.7733333333333,
+            276.0,
+            472.7733333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            337.7733333333333,
+            300.5,
+            439.0233333333333,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "click-goto": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "goto-preview": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            19,
+            19
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":2",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-goto": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            337.7733333333333,
+            102.5,
+            382.7733333333333,
+            118.5
+          ],
+          "转到行/列": [
+            337.7733333333333,
+            146.5,
+            387.0713069661458,
+            162.5
+          ],
+          "显示并运行命令": [
+            337.7733333333333,
+            190.5,
+            416.5233333333333,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            169.32,
+            209.0,
+            658.6800000000001,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            337.7733333333333,
+            234.5,
+            439.0233333333333,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            337.7733333333333,
+            276.0,
+            472.7733333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            337.7733333333333,
+            300.5,
+            439.0233333333333,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "typed-command": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "command-query": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">diag",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "restored-after-switch": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "command-direct": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "help-from-command": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "helpRows": {
+          "转到文件": [
+            337.7733333333333,
+            102.5,
+            382.7733333333333,
+            118.5
+          ],
+          "转到行/列": [
+            337.7733333333333,
+            146.5,
+            387.0713069661458,
+            162.5
+          ],
+          "显示并运行命令": [
+            337.7733333333333,
+            190.5,
+            416.5233333333333,
+            206.5
+          ],
+          "Ctrl+Shift+P": [
+            169.32,
+            209.0,
+            658.6800000000001,
+            224.0
+          ],
+          "转到编辑器中的符号": [
+            337.7733333333333,
+            234.5,
+            439.0233333333333,
+            250.5
+          ],
+          "按类别转到编辑器中的符号": [
+            337.7733333333333,
+            276.0,
+            472.7733333333333,
+            292.0
+          ],
+          "转到工作区中的符号": [
+            337.7733333333333,
+            300.5,
+            439.0233333333333,
+            316.5
+          ]
+        },
+        "nativeWindowFocused": true
+      },
+      "click-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "restored-after-file": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line78\n",
+          "mirror": "Compact example 😀\nSecond line78\n",
+          "totalUtf16": 33,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      },
+      "native-continue-edit": {
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line79\n",
+          "mirror": "Compact example 😀\nSecond line79\n",
+          "totalUtf16": 33,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            32
+          ]
+        },
+        "pickers": [],
+        "helpRows": {},
+        "nativeWindowFocused": true
+      }
+    },
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    }
+  }
+}

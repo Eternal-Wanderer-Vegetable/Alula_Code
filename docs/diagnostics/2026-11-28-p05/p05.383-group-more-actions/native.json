@@ -1,0 +1,695 @@
+{
+  "product": "58b6e9b5247d710ffa6efd137beb3278e28d5e2a",
+  "tree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+  "fixtureSha256": "0197c7b1c7798551283a5edc50a031b6853118c27191962b288be5c2d92bd935",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "inactive group More Actions, Show Opened Editors and Close Saved",
+    "normalBounds": [
+      417,
+      176,
+      1635,
+      986
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "absoluteOpenSuggestions": [
+      "right-group-only.txt"
+    ],
+    "before": [
+      {
+        "classes": "editor-group-container inactive",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "More Actions..."
+        ]
+      },
+      {
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      }
+    ],
+    "menu": [
+      "Show Opened Editors",
+      "Close All",
+      "Close Saved",
+      "Enable Preview Editors",
+      "Maximize Group",
+      "Lock Group",
+      "Configure Editors"
+    ],
+    "showOpened": {
+      "query": "edt active ",
+      "labels": [
+        "status-sample.txt"
+      ],
+      "groups": [
+        {
+          "classes": "editor-group-container active",
+          "labels": [
+            "status-sample.txt"
+          ],
+          "toolbar": [
+            "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+            "More Actions..."
+          ]
+        },
+        {
+          "classes": "editor-group-container inactive",
+          "labels": [
+            "status-sample.txt",
+            "right-group-only.txt"
+          ],
+          "toolbar": [
+            "More Actions..."
+          ]
+        }
+      ]
+    },
+    "afterCancel": [
+      {
+        "classes": "editor-group-container inactive",
+        "labels": [
+          "status-sample.txt"
+        ],
+        "toolbar": [
+          "More Actions..."
+        ]
+      },
+      {
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      }
+    ],
+    "afterCloseSaved": [
+      {
+        "classes": "editor-group-container active",
+        "labels": [
+          "status-sample.txt",
+          "right-group-only.txt"
+        ],
+        "toolbar": [
+          "Split Editor Right (Ctrl+\\)\n[Alt] Split Editor Down",
+          "More Actions..."
+        ]
+      }
+    ],
+    "sourceBytesStable": true,
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselineProduct": "0db66fd9896a03c9450c5e455ee648381500eafb",
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+      "build": {
+        "aotSha256": "28ebdfa41669c1904120a068a20e56e3fc9afb861ae26d2cb9668428e82fc83c",
+        "abi": 51,
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "tree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+        "fixtureSha256": "0197c7b1c7798551283a5edc50a031b6853118c27191962b288be5c2d92bd935",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "owned Win32 Escape and rendered PopupMenu routes",
+      "before": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "leftMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ]
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "groupPicker": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": "edt active ",
+        "pickerFocused": true,
+        "choices": [
+          "shared.txt"
+        ],
+        "pointerDowns": 0
+      },
+      "afterCancel": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "leftMenuAgain": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.25,
+            "more": [
+              726.24,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            590.24,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            590.24,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            590.24,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            590.24,
+            219.0,
+            168.0,
+            48.0
+          ]
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "afterCloseSaved": {
+        "groups": {
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.25,
+            "more": [
+              1166.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "sourceHashes": {
+        "shared.txt": "670a1f10b1da9832a13997c4fc7c2399c07ba498945a5f4d725322ea961581cf",
+        "right.txt": "efb459c119599384c90ed9a66cb483a47c06f3bd2e072caea449586ff3e2bb8a"
+      },
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 pointer and Escape key",
+      "fixtureSha256": "0197c7b1c7798551283a5edc50a031b6853118c27191962b288be5c2d92bd935",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "9209cb16702ad73f49b3f340f95e8eeccad7d041b4fb5d408f7073c76b226733",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "before": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 0
+      },
+      "leftMenu": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ]
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 1
+      },
+      "groupPicker": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": false,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": "edt active ",
+        "pickerFocused": true,
+        "choices": [
+          "shared.txt"
+        ],
+        "pointerDowns": 2
+      },
+      "afterCancel": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 2
+      },
+      "leftMenuAgain": {
+        "groups": {
+          "editor": {
+            "labels": [
+              "shared.txt"
+            ],
+            "split": false,
+            "dpr": 1.0,
+            "more": [
+              734.3,
+              35.0,
+              32.0,
+              32.0
+            ]
+          },
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {
+          "show-opened": [
+            598.3,
+            43.0,
+            168.0,
+            48.0
+          ],
+          "close-all": [
+            598.3,
+            107.0,
+            168.0,
+            48.0
+          ],
+          "close-saved": [
+            598.3,
+            155.0,
+            168.0,
+            48.0
+          ],
+          "start-lsp": [
+            598.3,
+            219.0,
+            168.0,
+            48.0
+          ]
+        },
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 3
+      },
+      "afterCloseSaved": {
+        "groups": {
+          "editor-2": {
+            "labels": [
+              "shared.txt",
+              "right.txt"
+            ],
+            "split": true,
+            "dpr": 1.0,
+            "more": [
+              1179.0,
+              35.0,
+              32.0,
+              32.0
+            ]
+          }
+        },
+        "moreMenu": {},
+        "picker": null,
+        "pickerFocused": false,
+        "choices": [],
+        "pointerDowns": 4
+      },
+      "sourceHashes": {
+        "shared.txt": "670a1f10b1da9832a13997c4fc7c2399c07ba498945a5f4d725322ea961581cf",
+        "right.txt": "efb459c119599384c90ed9a66cb483a47c06f3bd2e072caea449586ff3e2bb8a"
+      },
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "22e9d6537579a670cc46f215b31a3b3b059177b2",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": []
+  }
+}

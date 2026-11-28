@@ -1,0 +1,798 @@
+{
+  "product": "4574b0c57aa476cc733d65d4f18d564c66b05b27",
+  "tree": "d135537672a4f544466098d0639b42f8036c1882",
+  "fixtureSha256": "d594233f83f63d42b1dbcaf6df69711781a84d0690ad9440896bbb50adf7f525",
+  "assetSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+  "providerScriptSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+  "sharedAcceptanceSha256": "32df94ca8c06e57f94082b951b753142e90035058c2ed62ee128090f4c1ca2ad",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "reference": {
+    "compact": {
+      "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "sourceSha256": "aa6d5626e639448eda3c40a71c995d02319e368188b97d06f2c4ec238c30c9e3",
+      "case": "compact",
+      "browser": "Chrome/150.0.7871.250",
+      "checks": {
+        "seed": {
+          "line": 1,
+          "column": 0,
+          "endColumn": 0
+        },
+        "before": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              131.8000030517578,
+              152.8000030517578
+            ],
+            "4": [
+              152.8000030517578,
+              173.8000030517578
+            ],
+            "5": [
+              173.8000030517578,
+              194.8000030517578
+            ]
+          },
+          "detail": null,
+          "editorFocused": true
+        },
+        "withDetail": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              215.8000030517578,
+              236.8000030517578
+            ],
+            "4": [
+              236.8000030517578,
+              257.8000030517578
+            ],
+            "5": [
+              257.8000183105469,
+              278.8000183105469
+            ]
+          },
+          "detail": [
+            131.8000030517578,
+            215.8000030517578
+          ],
+          "editorFocused": true
+        },
+        "afterEscape": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              131.8000030517578,
+              152.8000030517578
+            ],
+            "4": [
+              152.8000030517578,
+              173.8000030517578
+            ],
+            "5": [
+              173.8000030517578,
+              194.8000030517578
+            ]
+          },
+          "detail": null,
+          "editorFocused": true
+        }
+      },
+      "inputKind": "controlled marker on an interior blank row with pinned Code OSS F8",
+      "rawReportSha256": "19176e865fd741c73c8a847d6f6831d0e18c086f385ca1998256eb34c37d843b",
+      "lineHeightCssPx": 21,
+      "markerExtensionSha256": "c9e613b29618301a6fe0bf5ad93f776d22b21e2d086fba37429ff6e419748f5b"
+    },
+    "consecutive": {
+      "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "sourceSha256": "3ac0392381edbb4456f79f5441616db284d51925bc3efe3676857a1afccc3c12",
+      "case": "consecutive",
+      "browser": "Chrome/150.0.7871.250",
+      "checks": {
+        "seed": {
+          "line": 1,
+          "column": 0,
+          "endColumn": 0
+        },
+        "before": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              131.8000030517578,
+              152.8000030517578
+            ],
+            "4": [
+              152.8000030517578,
+              173.8000030517578
+            ],
+            "5": [
+              173.8000030517578,
+              194.8000030517578
+            ],
+            "6": [
+              194.8000030517578,
+              215.8000030517578
+            ],
+            "7": [
+              215.8000030517578,
+              236.8000030517578
+            ]
+          },
+          "detail": null,
+          "editorFocused": true
+        },
+        "withDetail": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              215.8000030517578,
+              236.8000030517578
+            ],
+            "4": [
+              236.8000030517578,
+              257.8000030517578
+            ],
+            "5": [
+              257.8000183105469,
+              278.8000183105469
+            ],
+            "6": [
+              278.8000183105469,
+              299.8000183105469
+            ],
+            "7": [
+              299.8000183105469,
+              320.8000183105469
+            ]
+          },
+          "detail": [
+            131.8000030517578,
+            215.8000030517578
+          ],
+          "editorFocused": true
+        },
+        "afterEscape": {
+          "rows": {
+            "1": [
+              89.80000305175781,
+              110.80000305175781
+            ],
+            "2": [
+              110.80000305175781,
+              131.8000030517578
+            ],
+            "3": [
+              131.8000030517578,
+              152.8000030517578
+            ],
+            "4": [
+              152.8000030517578,
+              173.8000030517578
+            ],
+            "5": [
+              173.8000030517578,
+              194.8000030517578
+            ],
+            "6": [
+              194.8000030517578,
+              215.8000030517578
+            ],
+            "7": [
+              215.8000030517578,
+              236.8000030517578
+            ]
+          },
+          "detail": null,
+          "editorFocused": true
+        }
+      },
+      "inputKind": "controlled marker on an interior blank row with pinned Code OSS F8",
+      "rawReportSha256": "280538b1cf370ce2d8eda46662abd93365e837ae089224d84c718689ecad06eb",
+      "lineHeightCssPx": 21,
+      "markerExtensionSha256": "c9e613b29618301a6fe0bf5ad93f776d22b21e2d086fba37429ff6e419748f5b"
+    }
+  },
+  "previousMemProbe": {
+    "spaces": {
+      "n_processes": 2,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 21396,
+          "ppid": 21395,
+          "private": 259756032,
+          "pss": 286681088,
+          "working_set": 339173376
+        },
+        {
+          "name": "python3",
+          "peak_private": 0,
+          "pid": 21549,
+          "ppid": 21396,
+          "private": 4628480,
+          "pss": 4999168,
+          "working_set": 11579392
+        }
+      ],
+      "root_pid": 21396,
+      "total_private_bytes": 264384512,
+      "total_private_mib": 252.1,
+      "total_working_set_bytes": 350752768
+    },
+    "tab": {
+      "n_processes": 2,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 21744,
+          "ppid": 21734,
+          "private": 259092480,
+          "pss": 286143488,
+          "working_set": 338649088
+        },
+        {
+          "name": "python3",
+          "peak_private": 0,
+          "pid": 21928,
+          "ppid": 21744,
+          "private": 4632576,
+          "pss": 5057536,
+          "working_set": 11575296
+        }
+      ],
+      "root_pid": 21744,
+      "total_private_bytes": 263725056,
+      "total_private_mib": 251.5,
+      "total_working_set_bytes": 350224384
+    }
+  },
+  "initialWindowsAnchor": {
+    "dpi": 120,
+    "logicalYShift": 0.8,
+    "gutterYShift": 0,
+    "rawReportSha256": "86bd291a8aaf4fc581b6d6bbec0ae240a38f1678f172b523824f3d2adbba3850"
+  },
+  "windows": {
+    "compact": {
+      "rawReportSha256": "60e5ed5a3bed0ef27cd719689925859e0b578a1ecd1d03ada6ae5bf565120c88",
+      "aotSha256": "5c8b19899db9a95c9b5e9d3f981605c7c5c52b649eba622245464f5c85fe41b6",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "runnerSha256": "075c9a7119880b7e8fb00edf84399c447047472904006fff31c4208fa873e9d0",
+      "sourceSha256": {
+        "src/lib.rs": "aa6d5626e639448eda3c40a71c995d02319e368188b97d06f2c4ec238c30c9e3"
+      },
+      "selectedUtf16": [
+        20,
+        20
+      ],
+      "followingUtf16": 21,
+      "codeUtf16": 21,
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "cleanExit": true,
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-actual-empty-line",
+        "blank-caret-and-code-x-stay-and-later-code-and-gutters-shift-together",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "click-following-code-preserves-the-source-utf16-offset",
+        "f8-reopens-from-later-code",
+        "down-from-empty-anchor-lands-at-the-original-next-row",
+        "unchanged-source-bytes-including-bom-crlf-emoji"
+      ],
+      "measured": {
+        "blankCaretBefore": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "blankCaretWhileOpen": [
+          328.0,
+          136.0,
+          330.0,
+          157.0
+        ],
+        "validCodeBefore": [
+          345.6,
+          156.0,
+          347.6,
+          177.0
+        ],
+        "validCodeWhileOpen": [
+          345.6,
+          240.8,
+          347.6,
+          261.8
+        ],
+        "followingRows": [
+          {
+            "offset": 21,
+            "caretShift": 84.80000000000001,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 37,
+            "caretShift": 85.60000000000002,
+            "gutterShift": 84.0
+          }
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          319.952,
+          160.8,
+          960.8000000000001,
+          236.8
+        ]
+      },
+      "dpi": 120
+    },
+    "consecutive": {
+      "rawReportSha256": "180f89aabd6329a98a45679b2645ed22928165126c9542c5fe9dd9c826d520a3",
+      "aotSha256": "5c8b19899db9a95c9b5e9d3f981605c7c5c52b649eba622245464f5c85fe41b6",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "runnerSha256": "075c9a7119880b7e8fb00edf84399c447047472904006fff31c4208fa873e9d0",
+      "sourceSha256": {
+        "src/lib.rs": "3ac0392381edbb4456f79f5441616db284d51925bc3efe3676857a1afccc3c12"
+      },
+      "selectedUtf16": [
+        20,
+        20
+      ],
+      "followingUtf16": 21,
+      "codeUtf16": 23,
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "cleanExit": true,
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-actual-empty-line",
+        "blank-caret-and-code-x-stay-and-later-code-and-gutters-shift-together",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "click-following-code-preserves-the-source-utf16-offset",
+        "f8-reopens-from-later-code",
+        "down-from-empty-anchor-lands-at-the-original-next-row",
+        "down-through-empty-rows-to-22",
+        "down-through-empty-rows-to-23",
+        "unchanged-source-bytes-including-bom-crlf-emoji"
+      ],
+      "measured": {
+        "blankCaretBefore": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "blankCaretWhileOpen": [
+          328.0,
+          136.0,
+          330.0,
+          157.0
+        ],
+        "validCodeBefore": [
+          345.6,
+          198.4,
+          347.6,
+          219.4
+        ],
+        "validCodeWhileOpen": [
+          345.6,
+          283.2,
+          347.6,
+          304.2
+        ],
+        "followingRows": [
+          {
+            "offset": 21,
+            "caretShift": 84.80000000000001,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 22,
+            "caretShift": 85.60000000000002,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 23,
+            "caretShift": 84.79999999999998,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 39,
+            "caretShift": 84.79999999999998,
+            "gutterShift": 84.0
+          }
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          319.952,
+          160.8,
+          960.8000000000001,
+          236.8
+        ]
+      },
+      "dpi": 120
+    }
+  },
+  "linux": {
+    "compact": {
+      "rawReportSha256": "6cad4844ff04d5e1064d3b6222049f7d368100200d90b85708b1d5f0cfdb0f74",
+      "aotSha256": "95320a26e76f3a1c45a0510e596f6687908a5fd64f5fbb8fa5ce5f0b30557f74",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "runnerSha256": "374fc25c380df5ec41fe6ddefa3c515a4d0d1c2d905fedeb2d417fbe0077c7ec",
+      "sourceSha256": {
+        "src/lib.rs": "aa6d5626e639448eda3c40a71c995d02319e368188b97d06f2c4ec238c30c9e3"
+      },
+      "selectedUtf16": [
+        20,
+        20
+      ],
+      "followingUtf16": 21,
+      "codeUtf16": 21,
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "cleanExit": true,
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-actual-empty-line",
+        "blank-caret-and-code-x-stay-and-later-code-and-gutters-shift-together",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "click-following-code-preserves-the-source-utf16-offset",
+        "f8-reopens-from-later-code",
+        "down-from-empty-anchor-lands-at-the-original-next-row",
+        "unchanged-source-bytes-including-bom-crlf-emoji"
+      ],
+      "measured": {
+        "blankCaretBefore": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "blankCaretWhileOpen": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "validCodeBefore": [
+          400.0,
+          156.0,
+          402.0,
+          177.0
+        ],
+        "validCodeWhileOpen": [
+          400.0,
+          240.0,
+          402.0,
+          261.0
+        ],
+        "followingRows": [
+          {
+            "offset": 21,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 37,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          }
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          373.52,
+          160.0,
+          1096.0,
+          236.0
+        ]
+      },
+      "allSampledProcessesExited": true,
+      "processTreeSamples": {
+        "controlled-blank-line-diagnostic-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2320,
+              "ppid": 2319,
+              "private": 262819840,
+              "pss": 289892352,
+              "working_set": 342384640
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2478,
+              "ppid": 2320,
+              "private": 4636672,
+              "pss": 5348352,
+              "working_set": 11612160
+            }
+          ],
+          "root_pid": 2320,
+          "total_private_bytes": 267456512,
+          "total_private_mib": 255.1,
+          "total_working_set_bytes": 353996800
+        },
+        "f8-shows-detail-after-actual-empty-line": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2320,
+              "ppid": 2319,
+              "private": 261267456,
+              "pss": 288339968,
+              "working_set": 340832256
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2478,
+              "ppid": 2320,
+              "private": 4636672,
+              "pss": 5348352,
+              "working_set": 11612160
+            }
+          ],
+          "root_pid": 2320,
+          "total_private_bytes": 265904128,
+          "total_private_mib": 253.6,
+          "total_working_set_bytes": 352444416
+        },
+        "escape-restores-the-original-placement": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2320,
+              "ppid": 2319,
+              "private": 261173248,
+              "pss": 288245760,
+              "working_set": 340738048
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2478,
+              "ppid": 2320,
+              "private": 4636672,
+              "pss": 5348352,
+              "working_set": 11612160
+            }
+          ],
+          "root_pid": 2320,
+          "total_private_bytes": 265809920,
+          "total_private_mib": 253.5,
+          "total_working_set_bytes": 352350208
+        }
+      }
+    },
+    "consecutive": {
+      "rawReportSha256": "53cf5ecfa8fb8fa69918243dc9102505703f3d03531f7b17cc05ff006ff4ef8c",
+      "aotSha256": "95320a26e76f3a1c45a0510e596f6687908a5fd64f5fbb8fa5ce5f0b30557f74",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "runnerSha256": "374fc25c380df5ec41fe6ddefa3c515a4d0d1c2d905fedeb2d417fbe0077c7ec",
+      "sourceSha256": {
+        "src/lib.rs": "3ac0392381edbb4456f79f5441616db284d51925bc3efe3676857a1afccc3c12"
+      },
+      "selectedUtf16": [
+        20,
+        20
+      ],
+      "followingUtf16": 21,
+      "codeUtf16": 23,
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "cleanExit": true,
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-actual-empty-line",
+        "blank-caret-and-code-x-stay-and-later-code-and-gutters-shift-together",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "click-following-code-preserves-the-source-utf16-offset",
+        "f8-reopens-from-later-code",
+        "down-from-empty-anchor-lands-at-the-original-next-row",
+        "down-through-empty-rows-to-22",
+        "down-through-empty-rows-to-23",
+        "unchanged-source-bytes-including-bom-crlf-emoji"
+      ],
+      "measured": {
+        "blankCaretBefore": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "blankCaretWhileOpen": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "validCodeBefore": [
+          400.0,
+          198.0,
+          402.0,
+          219.0
+        ],
+        "validCodeWhileOpen": [
+          400.0,
+          282.0,
+          402.0,
+          303.0
+        ],
+        "followingRows": [
+          {
+            "offset": 21,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 22,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 23,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          },
+          {
+            "offset": 39,
+            "caretShift": 84.0,
+            "gutterShift": 84.0
+          }
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          373.52,
+          160.0,
+          1096.0,
+          236.0
+        ]
+      },
+      "allSampledProcessesExited": true,
+      "processTreeSamples": {
+        "controlled-blank-line-diagnostic-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2594,
+              "ppid": 2593,
+              "private": 258273280,
+              "pss": 285322240,
+              "working_set": 337793024
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2741,
+              "ppid": 2594,
+              "private": 4636672,
+              "pss": 5339136,
+              "working_set": 11579392
+            }
+          ],
+          "root_pid": 2594,
+          "total_private_bytes": 262909952,
+          "total_private_mib": 250.7,
+          "total_working_set_bytes": 349372416
+        },
+        "f8-shows-detail-after-actual-empty-line": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2594,
+              "ppid": 2593,
+              "private": 273747968,
+              "pss": 300796928,
+              "working_set": 353267712
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2741,
+              "ppid": 2594,
+              "private": 4636672,
+              "pss": 5339136,
+              "working_set": 11579392
+            }
+          ],
+          "root_pid": 2594,
+          "total_private_bytes": 278384640,
+          "total_private_mib": 265.5,
+          "total_working_set_bytes": 364847104
+        },
+        "escape-restores-the-original-placement": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 2594,
+              "ppid": 2593,
+              "private": 269103104,
+              "pss": 296152064,
+              "working_set": 348622848
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 2741,
+              "ppid": 2594,
+              "private": 4636672,
+              "pss": 5339136,
+              "working_set": 11579392
+            }
+          ],
+          "root_pid": 2594,
+          "total_private_bytes": 273739776,
+          "total_private_mib": 261.1,
+          "total_working_set_bytes": 360202240
+        }
+      }
+    }
+  }
+}

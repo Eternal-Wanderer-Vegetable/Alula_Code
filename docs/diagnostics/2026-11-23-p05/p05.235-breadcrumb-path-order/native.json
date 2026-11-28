@@ -1,0 +1,831 @@
+{
+  "product": "b5be4783a004ca915dbc38629a833f733a1e5228",
+  "tree": "b070ecc6c277f53e9fc307fca4af7abf71c946ab",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "references": [
+      {
+        "path": "src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts",
+        "lines": [
+          331,
+          338
+        ],
+        "sha256": "c866baa8040b70fe24970e10dafe12bd5cdb0a9789b06cf414bbb7c94088d2a2"
+      },
+      {
+        "path": "src/vs/base/common/comparers.ts",
+        "lines": [
+          16,
+          40,
+          47
+        ],
+        "sha256": "31e574fe9e164120cd23f6bcb0aeeaf1501c9565d5d0ef127795620a68bd478c"
+      }
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "b070ecc6c277f53e9fc307fca4af7abf71c946ab",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "3acf26169f9f4521dfc132bada80d93caa737b63cdccca027d5f44ccfc4250ef",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "2a9374483d2d92df10541a1f1fb11e29d3d6ccc97df5b934071b7cc22c168900",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "377811db51cc01826865182d53e1ac2ec2ac14a7d9553453ac4749bc7772f3c2",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "b3b9e813d8ad5dcdafc8188eef3c1a1478c11a5e0665c23fd10821ec9ba98e1c"
+  },
+  "localLogsSha256": {
+    "regression-baseline": "58dd0cc4890007a2b38dd0cfb6103c83fc27b7cc27f4db7bbe8436b9c62d8fcd",
+    "test-collation-fallback": "15ff13c5b2113e8e05109d3c922efc1df9a9df3496f3ef27cae08b8cca40f13e",
+    "real-collation-regression": "b0ee0c00bd008e7ff1f664d28062eb95125e963c6cc0564490f2c8a543e1e227",
+    "regression-fixed": "8143fd2eb991338ae39ab3a03ec88ec5f1c94e8dddd3c137480577ffafaca5f0",
+    "focused": "ed55b6e9b123ba73ae3833b55ad0ddca0a376897224c51f05c378716137af9f4",
+    "analyze": "ac480f1bc51e0f71a9c05657858433833bc10fa3ed1d0faef214ec70ddeabe49",
+    "full": "b157fc837961fab5ac44fd6f70408d0f101b86b9b5ebac9754294bbbb947c2ee"
+  },
+  "graph": {
+    "breadcrumb_picker_test-main": {
+      "target": "main",
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "b692bdae62ceb49a4d91aa4ee7ac2c957005e8c2c6aa24ee05f8d37da985ebc5"
+    },
+    "workbench_page-_showBreadcrumbFolderPicker": {
+      "target": "_showBreadcrumbFolderPicker",
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "c6a7e4eee025dcffe01b2f79a6145cd1e4c9144b64b824be57e1bfd604bb987f"
+    },
+    "all": {
+      "changed_count": 7,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "80a59e89b071f9eca94cb3ddb578439a24f51f17582396db6448f2a0154406e9"
+    },
+    "staged": {
+      "changed_count": 7,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "80a59e89b071f9eca94cb3ddb578439a24f51f17582396db6448f2a0154406e9"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "b070ecc6c277f53e9fc307fca4af7abf71c946ab",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "bea6c0f5a2e5efae479d778103c6da57194e97089be7cd1ae473960091513041",
+    "fixtureSha256": "b3b9e813d8ad5dcdafc8188eef3c1a1478c11a5e0665c23fd10821ec9ba98e1c",
+    "runnerSha256": "a83fcb34e6058f5b899bf8e135466230c1bda48a145b04cb70113978a1636a1e",
+    "dpi": 120,
+    "characterDelaySeconds": 0.012,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044",
+      "A1.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a01.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a2.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a10.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7"
+    },
+    "pathOrder": {
+      "expectedRows": [
+        "dir2/",
+        "dir10/",
+        "src/",
+        "A1.rs",
+        "a01.rs",
+        "a2.rs",
+        "a10.rs",
+        "Cargo.toml"
+      ],
+      "placements": {
+        "sorted-picker": {
+          "rows": [
+            "dir2/",
+            "dir10/",
+            "src/",
+            "A1.rs",
+            "a01.rs",
+            "a2.rs",
+            "a10.rs",
+            "Cargo.toml"
+          ],
+          "rowBounds": {
+            "dir2/": [
+              283.952,
+              107.0,
+              523.952,
+              155.0
+            ],
+            "dir10/": [
+              283.952,
+              155.0,
+              523.952,
+              203.0
+            ],
+            "src/": [
+              283.952,
+              203.0,
+              523.952,
+              251.0
+            ],
+            "A1.rs": [
+              283.952,
+              251.0,
+              523.952,
+              299.0
+            ],
+            "a01.rs": [
+              283.952,
+              299.0,
+              523.952,
+              347.0
+            ],
+            "a2.rs": [
+              283.952,
+              347.0,
+              523.952,
+              395.0
+            ],
+            "a10.rs": [
+              283.952,
+              395.0,
+              523.952,
+              443.0
+            ],
+            "Cargo.toml": [
+              283.952,
+              443.0,
+              523.952,
+              491.0
+            ]
+          },
+          "focused": "src/",
+          "route": 295503831
+        },
+        "sorted-picker-reopened": {
+          "rows": [
+            "dir2/",
+            "dir10/",
+            "src/",
+            "A1.rs",
+            "a01.rs",
+            "a2.rs",
+            "a10.rs",
+            "Cargo.toml"
+          ],
+          "rowBounds": {
+            "dir2/": [
+              283.952,
+              107.0,
+              523.952,
+              155.0
+            ],
+            "dir10/": [
+              283.952,
+              155.0,
+              523.952,
+              203.0
+            ],
+            "src/": [
+              283.952,
+              203.0,
+              523.952,
+              251.0
+            ],
+            "A1.rs": [
+              283.952,
+              251.0,
+              523.952,
+              299.0
+            ],
+            "a01.rs": [
+              283.952,
+              299.0,
+              523.952,
+              347.0
+            ],
+            "a2.rs": [
+              283.952,
+              347.0,
+              523.952,
+              395.0
+            ],
+            "a10.rs": [
+              283.952,
+              395.0,
+              523.952,
+              443.0
+            ],
+            "Cargo.toml": [
+              283.952,
+              443.0,
+              523.952,
+              491.0
+            ]
+          },
+          "focused": "src/",
+          "route": 213464793
+        }
+      },
+      "opened": "a2.rs"
+    },
+    "exit": 0,
+    "passed": true,
+    "reportSha256": "e1652914e34d229553a0d2768af2d9836e42ca84d9234f44f723b8b58e64e93e",
+    "observations": 5,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-0"
+        ],
+        "breadcrumbPickerRows": [
+          "dir2/",
+          "dir10/",
+          "src/",
+          "A1.rs",
+          "a01.rs",
+          "a2.rs",
+          "a10.rs",
+          "Cargo.toml"
+        ],
+        "focusedPickerRows": [
+          "src/"
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-picker-reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-0"
+        ],
+        "breadcrumbPickerRows": [
+          "dir2/",
+          "dir10/",
+          "src/",
+          "A1.rs",
+          "a01.rs",
+          "a2.rs",
+          "a10.rs",
+          "Cargo.toml"
+        ],
+        "focusedPickerRows": [
+          "src/"
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-sibling-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "a2.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "b070ecc6c277f53e9fc307fca4af7abf71c946ab",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2674664,
+            "ppid": 2674663,
+            "private": 248078336,
+            "pss": 262664192,
+            "working_set": 339890176
+          }
+        ],
+        "root_pid": 2674664,
+        "total_private_bytes": 248078336,
+        "total_private_mib": 236.6,
+        "total_working_set_bytes": 339890176
+      },
+      "sorted-picker": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2674664,
+            "ppid": 2674663,
+            "private": 260595712,
+            "pss": 275410944,
+            "working_set": 353644544
+          }
+        ],
+        "root_pid": 2674664,
+        "total_private_bytes": 260595712,
+        "total_private_mib": 248.5,
+        "total_working_set_bytes": 353644544
+      },
+      "sorted-sibling-opened": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 2674664,
+            "ppid": 2674663,
+            "private": 251666432,
+            "pss": 266486784,
+            "working_set": 344768512
+          }
+        ],
+        "root_pid": 2674664,
+        "total_private_bytes": 251666432,
+        "total_private_mib": 240.0,
+        "total_working_set_bytes": 344768512
+      }
+    },
+    "aotSha256": "46f84ffebdaf3d40896f6e1322987753187f7c6a45aa0bcc979449f3586ac8b9",
+    "fixtureSha256": "b3b9e813d8ad5dcdafc8188eef3c1a1478c11a5e0665c23fd10821ec9ba98e1c",
+    "runnerSha256": "b18f10c668bbd75c3e4b30ad2b69cd9a3ee449f72b18314fba2f68842f71d23a",
+    "characterDelayMs": 12,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044",
+      "A1.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a01.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a2.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7",
+      "a10.rs": "cc8862b0feb97808afc8d4248c3edde2c76e1eddaff613931613430b4ffcb9f7"
+    },
+    "pathOrder": {
+      "expectedRows": [
+        "dir2/",
+        "dir10/",
+        "src/",
+        "A1.rs",
+        "a01.rs",
+        "a2.rs",
+        "a10.rs",
+        "Cargo.toml"
+      ],
+      "placements": {
+        "sorted-picker": {
+          "rows": [
+            "dir2/",
+            "dir10/",
+            "src/",
+            "A1.rs",
+            "a01.rs",
+            "a2.rs",
+            "a10.rs",
+            "Cargo.toml"
+          ],
+          "rowBounds": {
+            "dir2/": [
+              337.52,
+              107.0,
+              623.3713189448441,
+              155.0
+            ],
+            "dir10/": [
+              337.52,
+              155.0,
+              623.3713189448441,
+              203.0
+            ],
+            "src/": [
+              337.52,
+              203.0,
+              623.3713189448441,
+              251.0
+            ],
+            "A1.rs": [
+              337.52,
+              251.0,
+              623.3713189448441,
+              299.0
+            ],
+            "a01.rs": [
+              337.52,
+              299.0,
+              623.3713189448441,
+              347.0
+            ],
+            "a2.rs": [
+              337.52,
+              347.0,
+              623.3713189448441,
+              395.0
+            ],
+            "a10.rs": [
+              337.52,
+              395.0,
+              623.3713189448441,
+              443.0
+            ],
+            "Cargo.toml": [
+              337.52,
+              443.0,
+              623.3713189448441,
+              491.0
+            ]
+          },
+          "focused": "src/",
+          "route": 493015359
+        },
+        "sorted-picker-reopened": {
+          "rows": [
+            "dir2/",
+            "dir10/",
+            "src/",
+            "A1.rs",
+            "a01.rs",
+            "a2.rs",
+            "a10.rs",
+            "Cargo.toml"
+          ],
+          "rowBounds": {
+            "dir2/": [
+              337.52,
+              107.0,
+              623.3713189448441,
+              155.0
+            ],
+            "dir10/": [
+              337.52,
+              155.0,
+              623.3713189448441,
+              203.0
+            ],
+            "src/": [
+              337.52,
+              203.0,
+              623.3713189448441,
+              251.0
+            ],
+            "A1.rs": [
+              337.52,
+              251.0,
+              623.3713189448441,
+              299.0
+            ],
+            "a01.rs": [
+              337.52,
+              299.0,
+              623.3713189448441,
+              347.0
+            ],
+            "a2.rs": [
+              337.52,
+              347.0,
+              623.3713189448441,
+              395.0
+            ],
+            "a10.rs": [
+              337.52,
+              395.0,
+              623.3713189448441,
+              443.0
+            ],
+            "Cargo.toml": [
+              337.52,
+              443.0,
+              623.3713189448441,
+              491.0
+            ]
+          },
+          "focused": "src/",
+          "route": 496099118
+        }
+      },
+      "opened": "a2.rs"
+    },
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "reportSha256": "f446560fd711b7bea3ec743cb084dfa876bd74005754dbdce515ba005a3f12be",
+    "observations": 5,
+    "steps": {
+      "ready": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-picker": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-0"
+        ],
+        "breadcrumbPickerRows": [
+          "dir2/",
+          "dir10/",
+          "src/",
+          "A1.rs",
+          "a01.rs",
+          "a2.rs",
+          "a10.rs",
+          "Cargo.toml"
+        ],
+        "focusedPickerRows": [
+          "src/"
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "escape-owner": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-picker-reopened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [
+          "breadcrumbs-segment-editor-0"
+        ],
+        "breadcrumbPickerRows": [
+          "dir2/",
+          "dir10/",
+          "src/",
+          "A1.rs",
+          "a01.rs",
+          "a2.rs",
+          "a10.rs",
+          "Cargo.toml"
+        ],
+        "focusedPickerRows": [
+          "src/"
+        ],
+        "editorFocus": [
+          {
+            "label": "lib.rs 主编辑器",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "sorted-sibling-opened": {
+        "focusedGroup": "editor",
+        "nativeWindowFocused": true,
+        "selectedBreadcrumbs": [],
+        "breadcrumbPickerRows": [],
+        "focusedPickerRows": [],
+        "editorFocus": [
+          {
+            "label": "a2.rs 主编辑器",
+            "editorFocused": true,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          },
+          {
+            "label": "other.rs 编辑器 2",
+            "editorFocused": false,
+            "dirty": false,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

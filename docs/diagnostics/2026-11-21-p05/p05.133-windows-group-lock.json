@@ -1,0 +1,1267 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "baseline": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "parent": "9f1229826ebde7cc6476f330b0fbcc7aaa0d8bad",
+    "sha256": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "eaed0fcbcce33ccc13552e8ae257bf9c074501750cab417f07dcfb53f59db60e",
+      "app/lib/workbench/layout_controller.dart": "a6435f6c9ce11773d4bbd508f39728699291821d21f2557011d933e985da6323",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "ebaefe99bd6e8296d8671e05d60326e19b5040c590cb072c1cd8368c9ec0c4d7",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "391459d1cdb1b76c91268cb56d065d15d68e717ac2f3ecb6013903b84cd40d7b",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    }
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "1c42be713ae116bdfce298d32fa125b9e829fea36f0cc05a1fa210be053f8d16",
+  "fixtureSha256": "77970f096956637a37f9b33736e376f447b055ccc0153988338bb30695edd817",
+  "trace": {
+    "open-source-a.txt-1-editor": {
+      "request": "open-source-a.txt-1-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "68c10af6865bfb8f3de38feb1e4c34dd5d85f54ed16497757606c0618f7558d1"
+    },
+    "primary-locked": {
+      "request": "primary-locked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": true,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "68c10af6865bfb8f3de38feb1e4c34dd5d85f54ed16497757606c0618f7558d1"
+    },
+    "open-source-b.txt-1-editor": {
+      "request": "open-source-b.txt-1-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          463.82400000000007,
+          35.0,
+          495.82400000000007,
+          67.0
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 431964312,
+          "focusNode": 248591344,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 3,
+          "sticky": [],
+          "preview": 3,
+          "docs": [
+            {
+              "id": 3,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-b.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-fallback.txt-2-editor": {
+      "request": "open-fallback.txt-2-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          463.82400000000007,
+          35.0,
+          495.82400000000007,
+          67.0
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "all-locked": {
+      "request": "all-locked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          463.82400000000007,
+          35.0,
+          495.82400000000007,
+          67.0
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": true,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-source-a.txt-2-editor-2": {
+      "request": "open-source-a.txt-2-editor-2",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          463.82400000000007,
+          35.0,
+          495.82400000000007,
+          67.0
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-third.txt-2-editor": {
+      "request": "open-third.txt-2-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          466.448,
+          640.8
+        ],
+        "unlock-editor-group-editor": [
+          300.448,
+          35.0,
+          332.448,
+          67.0
+        ],
+        "editor-3": [
+          470.448,
+          35.0,
+          660.448,
+          640.8
+        ],
+        "editor-2": [
+          664.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 720899083,
+          "focusNode": 109992882,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-3",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "primary-unlocked": {
+      "request": "primary-unlocked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          466.448,
+          640.8
+        ],
+        "editor-3": [
+          470.448,
+          35.0,
+          660.448,
+          640.8
+        ],
+        "editor-2": [
+          664.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 62983347,
+          "focusNode": 873616066,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 720899083,
+          "focusNode": 109992882,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-3",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "open-after-unlock.txt-3-editor": {
+      "request": "open-after-unlock.txt-3-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          466.448,
+          640.8
+        ],
+        "editor-3": [
+          470.448,
+          35.0,
+          660.448,
+          640.8
+        ],
+        "editor-2": [
+          664.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 6,
+          "inputWindow": 669906629,
+          "focusNode": 980267553,
+          "focused": false,
+          "hidden": false,
+          "label": "after-unlock.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 720899083,
+          "focusNode": 109992882,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 6,
+          "sticky": [],
+          "preview": 6,
+          "docs": [
+            {
+              "id": 6,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\after-unlock.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "locked-group-before-restart": {
+      "request": "locked-group-before-restart",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          466.448,
+          640.8
+        ],
+        "editor-3": [
+          470.448,
+          35.0,
+          660.448,
+          640.8
+        ],
+        "editor-2": [
+          664.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 6,
+          "inputWindow": 669906629,
+          "focusNode": 980267553,
+          "focused": false,
+          "hidden": false,
+          "label": "after-unlock.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 720899083,
+          "focusNode": 109992882,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 836661603,
+          "focusNode": 81700759,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 6,
+          "sticky": [],
+          "preview": 6,
+          "docs": [
+            {
+              "id": 6,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\after-unlock.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "restarted-with-locked-group": {
+      "request": "restarted-with-locked-group",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          466.448,
+          640.8
+        ],
+        "editor-3": [
+          470.448,
+          35.0,
+          660.448,
+          640.8
+        ],
+        "editor-2": [
+          664.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ],
+        "unlock-editor-group-editor-2": [
+          821.2000000000002,
+          35.0,
+          853.2000000000002,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 6,
+          "inputWindow": 1013795631,
+          "focusNode": 474186902,
+          "focused": false,
+          "hidden": false,
+          "label": "after-unlock.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 743712852,
+          "focusNode": 707413723,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 534013436,
+          "focusNode": 847346981,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 6,
+          "sticky": [],
+          "preview": 6,
+          "docs": [
+            {
+              "id": 6,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\after-unlock.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "E:\\temp\\alula-p05-133-locked-group-reference\\windows-1795190275052005100/workspace\\third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    }
+  },
+  "screenshots": {
+    "primary-locked": {
+      "name": "windows-editor-group-primary-locked.png",
+      "sha256": "61b205acee15f275a703d6653e82201ce780551bf8cfdf945c1857a052f5a4e4"
+    },
+    "all-locked-open": {
+      "name": "windows-editor-group-all-locked-open.png",
+      "sha256": "025c253dd6b836909e75357a7e0dc2d0765b93006a87a3a7d8d929df11209cc6"
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCodes": [
+    0,
+    0
+  ],
+  "checksPassed": true,
+  "productCommit": "99c8c0cd71d8c37cc5e09937554f9dc5d7c8d821",
+  "productTree": "38a1811f16573ed3c4bc948ba585bdb6219fa0a4"
+}

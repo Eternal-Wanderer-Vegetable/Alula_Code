@@ -1,0 +1,29 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: Enter and Space select focused row and pass preserveFocus
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:01 +6: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust brace pair and is undoable
+00:01 +7: E:/temp/alula-pr3-20261117/app/test/git_changes_list_test.dart: focus and selection independently survive updates and clear on removal
+00:01 +8: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter expands an auto-inserted Rust brace pair and is undoable
+00:01 +9: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter expands an auto-inserted Rust brace pair and is undoable
+00:01 +10: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter expands an auto-inserted Rust brace pair and is undoable
+00:02 +11: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.macOS Enter expands an auto-inserted Rust brace pair and is undoable
+00:02 +12: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust () pair
+00:03 +13: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter expands an auto-inserted Rust () pair
+00:03 +14: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.macOS Enter expands an auto-inserted Rust () pair
+00:03 +15: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter expands an auto-inserted Rust [] pair
+00:04 +16: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter expands an auto-inserted Rust [] pair
+00:04 +17: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.macOS Enter expands an auto-inserted Rust [] pair
+00:04 +18: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.windows Enter continues a Rust line comment before remaining text
+00:04 +19: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.linux Enter continues a Rust line comment before remaining text
+00:05 +20: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: TargetPlatform.macOS Enter continues a Rust line comment before remaining text
+00:05 +21: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust Enter continues an inline line comment using its second rule
+00:05 +22: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust line-comment Enter rule takes priority over an auto-closed brace
+00:06 +23: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust Enter only continues a line comment when afterText has content
+00:06 +24: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust comment continuation keeps a selected-text Enter on the fallback path
+00:06 +25: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust smart Enter edits the second view and saves the supplied sample
+00:07 +26: E:/temp/alula-pr3-20261117/app/test/workbench_smart_enter_test.dart: Rust Enter does not treat an untracked source brace pair as auto-inserted
+00:07 +27: All tests passed!

@@ -1,0 +1,1938 @@
+{
+  "product": "d1efa17777bb50506c6e5ebdeca84e440b6caa19",
+  "tree": "0f8190b58ea34ce6a417d508307c3a24ac1ce435",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "42a50e3fed000ccaf322c2b17897bcbbe89812a94baf517079ee4bd197891140",
+  "sharedAcceptanceSha256": "61813a8da88b14def3be73a9f0426c1168ad5adc45365ac9f0049ac71d6924b9",
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "holdCommand": {
+      "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+      "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803",
+      "lines": [
+        206,
+        232
+      ]
+    },
+    "keyBindingLifecycle": {
+      "path": "src/vs/workbench/services/keybinding/browser/keybindingService.ts",
+      "sha256": "e428222441df0984e96866d883049d3ebdce4f2ca8ef939810511eac86781b6e",
+      "lines": [
+        [
+          274,
+          303
+        ],
+        [
+          411,
+          430
+        ]
+      ]
+    }
+  },
+  "initialHarnessAttemptsSha256": {
+    "linux-initial-hold-report.json": "e0977199d28d14b9425e795b634dcb832e89acac24565afc972888b83110fe95",
+    "linux-initial-hold-autorepeat-off-report.json": "a7d21b112b429fb4ea60f4c1c066a83b043c76d3dd9aa1a880e50a96682c107f",
+    "linux-initial-refocus-travel-report.json": "823ea1c0309779cf36e1c423447ca7648b93070a094a291d2d3a094198b5f229",
+    "windows-initial-refocus-travel-report.json": "fb89f889e2989bfe1af4a546fe7bb04ee9624b7241c95d2739af216cd9c23419",
+    "windows-initial-witness-occlusion-report.json": "22397ba5f49de65e940650f51253b8e4adf9fc4c40708f39ae0ff118185fff51",
+    "windows-resized-wheel-routing-report.json": "daa59ec32b72d217d33bdf2d022b16750f93b56d55883f805a9936b8b45648d6",
+    "windows-witness-z-order-report.json": "5940d80a29257a20473a4ef6751ed6a60229767df8a89ee16ad6ea806f8ef22c",
+    "windows-refocus-key-scope-report.json": "ea329384ddd8096617eaa2ceafb3746b78924d86543e8224aa73f025ed396857"
+  },
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "9e6619b4b60b5963c9087de2957886e8547f348c84ceb3a85108178872f5884f",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "rawReportSha256": "1470c870ea18cbf6137bc25fbdb833d139298f17fe12b99158463f09eb86b33c",
+    "runnerSha256": "8ad9a003575dcb6b7b376a3984364fc53bc6ab59e5dfbb015fb0cca0108a6a7e",
+    "keys": [
+      {
+        "key": "Alt",
+        "action": "down"
+      },
+      {
+        "key": "Alt",
+        "action": "up"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "repeat"
+      },
+      {
+        "key": "F10",
+        "action": "down"
+      },
+      {
+        "key": "F10",
+        "action": "up"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      }
+    ],
+    "wheelInput": [
+      {
+        "ticks": 3,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 3,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 4,
+        "axis": "x"
+      }
+    ],
+    "binding": "f8",
+    "nativeChecks": [
+      "unlocked-start-has-two-native-editors",
+      "native-editor-is-focused-for-bound-commands",
+      "unlocked-panes-have-different-horizontal-and-vertical-origins",
+      "unbound-alt-does-not-lock-the-pane",
+      "bound-f8-press-enables-scrolling-without-moving-origins",
+      "repeat-keeps-the-held-state",
+      "native-horizontal-motion-syncs-during-hold",
+      "native-vertical-motion-syncs-during-hold",
+      "normal-bound-commands-wait-during-hold",
+      "another-key-release-ends-hold",
+      "after-key-up-the-editors-scroll-independently",
+      "ordinary-toggle-latches-the-lock",
+      "hold-temporarily-disables-an-existing-lock",
+      "inverse-hold-leaves-peer-position-in-place",
+      "native-blur-restores-latched-lock-before-driver-key-up",
+      "key-up-after-native-refocus-keeps-the-latched-lock",
+      "native-motion-rebases-and-syncs-after-blur",
+      "normal-toggle-after-blur-returns-unlocked-state",
+      "two-input-file-byte-streams-preserved"
+    ],
+    "focusChanges": [
+      "owned witness gained native focus",
+      "owned workbench regained native focus"
+    ],
+    "windowEnvironment": 120,
+    "steps": {
+      "unlocked-start-has-two-native-editors": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "native-editor-is-focused-for-bound-commands": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "unlocked-panes-have-different-horizontal-and-vertical-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 240.0,
+            "y": 240.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 80.0,
+            "y": 80.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "unbound-alt-does-not-lock-the-pane": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 240.0,
+            "y": 320.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 80.0,
+            "y": 80.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "bound-f8-press-enables-scrolling-without-moving-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 240.0,
+            "y": 320.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 80.0,
+            "y": 80.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "repeat-keeps-the-held-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 240.0,
+            "y": 320.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 80.0,
+            "y": 80.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "native-horizontal-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 320.0,
+            "y": 320.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 80.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "native-vertical-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 320.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "normal-bound-commands-wait-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 320.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "another-key-release-ends-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 320.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "after-key-up-the-editors-scroll-independently": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 400.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "ordinary-toggle-latches-the-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 400.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "hold-temporarily-disables-an-existing-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 400.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "inverse-hold-leaves-peer-position-in-place": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 480.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "native-blur-restores-latched-lock-before-driver-key-up": {
+        "nativeWindowFocused": false,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 480.0,
+            "y": 400.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 160.0,
+            "y": 160.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "key-up-after-native-refocus-keeps-the-latched-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 22.71606250000002,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "native-motion-rebases-and-syncs-after-blur": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 342.7160625,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 22.71606250000002,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      },
+      "normal-toggle-after-blur-returns-unlocked-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 342.7160625,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4496.1786875,
+            "min": 0.0,
+            "max": 2516.2
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 22.71606250000002,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2574.65525,
+            "min": 0.0,
+            "max": 899.2
+          }
+        ]
+      }
+    },
+    "fixtureFilesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "mainExit": 0,
+    "witnessExit": 0
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "55c37ce78885e2c24c4f768ea9ed8a3c490671b187d8b6a17358470fc6576b11",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "0ff2bfc1c1a9d6662f0ebee23da9084c4339fc346b44db9819b3d7780ffb467f",
+    "runnerSha256": "204db82a42c9799c55400b8c440deb0f7f078d03ebde6c170e2e44f9c218880e",
+    "keys": [
+      {
+        "key": "Alt",
+        "action": "down"
+      },
+      {
+        "key": "Alt",
+        "action": "up"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "repeat"
+      },
+      {
+        "key": "F10",
+        "action": "down"
+      },
+      {
+        "key": "F10",
+        "action": "up"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      }
+    ],
+    "wheelInput": [
+      {
+        "ticks": 3,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 3,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 4,
+        "axis": "x"
+      }
+    ],
+    "binding": "f8",
+    "nativeChecks": [
+      "unlocked-start-has-two-native-editors",
+      "native-editor-is-focused-for-bound-commands",
+      "unlocked-panes-have-different-horizontal-and-vertical-origins",
+      "unbound-alt-does-not-lock-the-pane",
+      "bound-f8-press-enables-scrolling-without-moving-origins",
+      "repeat-keeps-the-held-state",
+      "native-horizontal-motion-syncs-during-hold",
+      "native-vertical-motion-syncs-during-hold",
+      "normal-bound-commands-wait-during-hold",
+      "another-key-release-ends-hold",
+      "after-key-up-the-editors-scroll-independently",
+      "ordinary-toggle-latches-the-lock",
+      "hold-temporarily-disables-an-existing-lock",
+      "inverse-hold-leaves-peer-position-in-place",
+      "native-blur-restores-latched-lock-before-driver-key-up",
+      "key-up-after-native-refocus-keeps-the-latched-lock",
+      "native-motion-rebases-and-syncs-after-blur",
+      "normal-toggle-after-blur-returns-unlocked-state",
+      "two-input-file-byte-streams-preserved"
+    ],
+    "focusChanges": [
+      "owned witness gained native focus",
+      "owned workbench regained native focus"
+    ],
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "steps": {
+      "unlocked-start-has-two-native-editors": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-editor-is-focused-for-bound-commands": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "unlocked-panes-have-different-horizontal-and-vertical-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 159.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "unbound-alt-does-not-lock-the-pane": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "bound-f8-press-enables-scrolling-without-moving-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "repeat-keeps-the-held-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-horizontal-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-vertical-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "normal-bound-commands-wait-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "another-key-release-ends-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "after-key-up-the-editors-scroll-independently": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "ordinary-toggle-latches-the-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "hold-temporarily-disables-an-existing-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "inverse-hold-leaves-peer-position-in-place": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 318.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-blur-restores-latched-lock-before-driver-key-up": {
+        "nativeWindowFocused": false,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 318.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "key-up-after-native-refocus-keeps-the-latched-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 23.39232421874999,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-motion-rebases-and-syncs-after-blur": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "normal-toggle-after-blur-returns-unlocked-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      }
+    },
+    "fixtureFilesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "mainExit": 0,
+    "witnessExit": 0
+  },
+  "linux-chord": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "55c37ce78885e2c24c4f768ea9ed8a3c490671b187d8b6a17358470fc6576b11",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "882d94d17637084f21f1d3b72d28a775b52ebe2d318d406e5f94b0c670681266",
+    "runnerSha256": "204db82a42c9799c55400b8c440deb0f7f078d03ebde6c170e2e44f9c218880e",
+    "keys": [
+      {
+        "key": "Alt",
+        "action": "down"
+      },
+      {
+        "key": "Alt",
+        "action": "up"
+      },
+      {
+        "key": "Ctrl+K",
+        "action": "tap"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "repeat"
+      },
+      {
+        "key": "F10",
+        "action": "down"
+      },
+      {
+        "key": "F10",
+        "action": "up"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      },
+      {
+        "key": "Ctrl+K",
+        "action": "tap"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      },
+      {
+        "key": "F7",
+        "action": "tap"
+      },
+      {
+        "key": "Ctrl+K",
+        "action": "tap"
+      },
+      {
+        "key": "F8",
+        "action": "down"
+      },
+      {
+        "key": "F8",
+        "action": "up"
+      }
+    ],
+    "wheelInput": [
+      {
+        "ticks": 3,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 3,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 4,
+        "axis": "x"
+      }
+    ],
+    "binding": "ctrl+k f8",
+    "nativeChecks": [
+      "unlocked-start-has-two-native-editors",
+      "native-editor-is-focused-for-bound-commands",
+      "unlocked-panes-have-different-horizontal-and-vertical-origins",
+      "unbound-alt-does-not-lock-the-pane",
+      "bound-f8-press-enables-scrolling-without-moving-origins",
+      "repeat-keeps-the-held-state",
+      "native-horizontal-motion-syncs-during-hold",
+      "native-vertical-motion-syncs-during-hold",
+      "normal-bound-commands-wait-during-hold",
+      "another-key-release-ends-hold",
+      "after-key-up-the-editors-scroll-independently",
+      "ordinary-toggle-latches-the-lock",
+      "hold-temporarily-disables-an-existing-lock",
+      "inverse-hold-leaves-peer-position-in-place",
+      "native-blur-restores-latched-lock-before-driver-key-up",
+      "key-up-after-native-refocus-keeps-the-latched-lock",
+      "native-motion-rebases-and-syncs-after-blur",
+      "normal-toggle-after-blur-returns-unlocked-state",
+      "the-chord-prefix-alone-does-not-start-hold",
+      "the-final-bound-chord-key-enters-hold",
+      "releasing-the-chord-key-exits-hold",
+      "two-input-file-byte-streams-preserved"
+    ],
+    "focusChanges": [
+      "owned witness gained native focus",
+      "owned workbench regained native focus"
+    ],
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "steps": {
+      "unlocked-start-has-two-native-editors": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-editor-is-focused-for-bound-commands": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "unlocked-panes-have-different-horizontal-and-vertical-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 159.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "unbound-alt-does-not-lock-the-pane": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "bound-f8-press-enables-scrolling-without-moving-origins": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "repeat-keeps-the-held-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 159.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 53.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-horizontal-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 212.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 53.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-vertical-motion-syncs-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "normal-bound-commands-wait-during-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "another-key-release-ends-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 212.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "after-key-up-the-editors-scroll-independently": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "ordinary-toggle-latches-the-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "hold-temporarily-disables-an-existing-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 265.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "inverse-hold-leaves-peer-position-in-place": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 318.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-blur-restores-latched-lock-before-driver-key-up": {
+        "nativeWindowFocused": false,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": false,
+            "x": 318.0,
+            "y": 265.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 106.0,
+            "y": 106.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "key-up-after-native-refocus-keeps-the-latched-lock": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 23.39232421874999,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 0.0,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "native-motion-rebases-and-syncs-after-blur": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "normal-toggle-after-blur-returns-unlocked-state": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "the-chord-prefix-alone-does-not-start-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "the-final-bound-chord-key-enters-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：开（点击关闭）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      },
+      "releasing-the-chord-key-exits-hold": {
+        "nativeWindowFocused": true,
+        "statusTooltip": "锁定滚动：关（点击开启）",
+        "positions": [
+          {
+            "doc": 10,
+            "editorFocus": true,
+            "x": 235.39232421875,
+            "y": 42.0,
+            "minX": 0.0,
+            "maxX": 4719.27869140625,
+            "min": 0.0,
+            "max": 2517.0
+          },
+          {
+            "doc": 11,
+            "editorFocus": false,
+            "x": 23.39232421874999,
+            "y": 0.0,
+            "minX": 0.0,
+            "maxX": 2747.8397265625,
+            "min": 0.0,
+            "max": 899.9999999999999
+          }
+        ]
+      }
+    },
+    "fixtureFilesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "mainExit": 0,
+    "witnessExit": 0
+  }
+}

@@ -1,0 +1,1766 @@
+{
+  "product": "7ad209aa108772047dcc5c87db7a92866aa531bb",
+  "tree": "e3afac0fcce96e756ea8715836ca205bfa132c47",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sourceSha256": {
+      "src/vs/editor/contrib/gotoSymbol/browser/goToCommands.ts": "32a083116edb1d9bc5f9e14659847df72b7f2d5a645b91e85901ac75aeaac8f0",
+      "src/vs/editor/common/config/editorOptions.ts": "2a09e8e63a4d35eb961169d595fee3c0ceff34316c7d19a279776eb74fc7a4b7",
+      "src/vs/workbench/services/editor/browser/codeEditorService.ts": "177d5aef952d26f69c9f4f38ebbbb2f0d31fdddb61e8a4cf0873badfe43bd1ce"
+    }
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "e3afac0fcce96e756ea8715836ca205bfa132c47",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "406964d72b7947009723ba8e38758376ac171418ad61d4e465526e4e17f2d618",
+      "app/lib/bridge/alula_ffi.dart": "bc7de972386989b70ee59911dad858a5924b3d455005f1f7fa7c7274db5175d7",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "ce8dd108f76af2d5562c2ba255a34151c6a72f5eddbc0762d56f25c784f9c155",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "8328272311e863775236209a864d913b29669633069047432f3df55dc563f024",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "dd8750a4548818ebb19c27ec5fcc506444504f319c7f7919bc88813a7e64fd89",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "7b4984121976c96898f47a3f4c97d0e3848de3e810fee1763b210cc6803c4ea6",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "c135a904323dbf8d1bbdd166ad1ce37043d2e5823820ecb2f4f399ccc40daa08",
+      "crates/editor-core/src/ffi.rs": "354a66be7e437eb1f04d9657922843e418cf2df96c7d339d93f8b1b91ae5c36e",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "1147e7010a2aa4a8625c4a6084eb2e000e97f0c12994833d0bd83267b3dccc6b",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/lib.rs": "67aeb306fbaff76caa24b38d73f4355e3b77b1646093db4ea1f13c989c716f2a"
+    },
+    "fixtureSha256": "1d94e3631f83c85624d3aa59e21a7a3413e9d5486cb57223d6a7469a7ff5601f",
+    "nativeCoreSha256": "82a2f1fa6b38167922d4e11fc8f912d17f79feeb4fa045451a3f3ff7b8a73a80",
+    "windowsBuildCoreScriptSha256": "442169b8ccfac487c95949bd6e4519e8c756178fc286278e9be14d6d66e587ed"
+  },
+  "fixtureSha256": "1d94e3631f83c85624d3aa59e21a7a3413e9d5486cb57223d6a7469a7ff5601f",
+  "acceptanceDriverSha256": "0174499b2e53278829a235760a0c42c8590930b6e717a2b477b7756fece30876",
+  "cursors": {
+    "sameSource": 121,
+    "sameTarget": 65,
+    "crossSource": 116,
+    "crossTarget": 70,
+    "plainSource": 13
+  },
+  "providers": {
+    "same": [
+      [
+        "lib.rs",
+        3,
+        8,
+        3,
+        14
+      ]
+    ],
+    "cross": [
+      [
+        "imp.rs",
+        3,
+        7,
+        3,
+        10
+      ]
+    ]
+  },
+  "diskSha256": {
+    "src/lib.rs": "c9fd987b6b89d3f76054a715b57bd585f343fd25199b4c11d83de682315af1db",
+    "src/imp.rs": "c11de4d7a9d1dec033ddc5cdc6c5bbeac63796337d08c5aa4157fa92596e502a",
+    "plain.txt": "f89e9d8a4ba9e9de29deebf3be870e6323ca8613d7a3a72a7598fcc9c31fa5b0",
+    "src/kind.rs": "9d8433a4180fb860189c30a0021a9c57fcc9733f2d4dd6eeb9438b3e2c78aa14",
+    "Cargo.toml": "54343f7b3e59916765d02ba9efff06273f6ebb9c1bf8cee00dedf3cb28446dfb"
+  },
+  "localLogsSha256": {
+    "p05-265-core.log": "02174744429018df8b6b40460b3094430909b5160a19bd4ca65546672df7c4b8",
+    "p05-265-navigation.log": "280c4640bf4dba51f7f5563aa064f7705b063caaccc40f37add4e429a9e3b7f9",
+    "p05-265-side-targeted.log": "1de8a5b3f469d7ef70ed6140c7dbbbd239f6fbecf0ed6e3027d3f0effebf5387",
+    "p05-265-analyze.log": "299a08d5e6e9669288403af5901868cc592ca593c570243e960849657503daa2",
+    "p05-265-focused.log": "64f5fe3fd44dbcad2699b52de06e8cc24f2d4651d800399fee3d3ff5a55ea719",
+    "p05-265-full.log": "c458d5eab5fd4547a9115ff08b2e33af890a054ca49612715c5042747ded1bb8",
+    "p05-265-linux-build.log": "9f2306f71f45bb9c46d9f1158bfc32c9d97d8199541cb405dcc93c65eac4e4b6",
+    "p05-265-linux-native.log": "e5802c119dccc0c969a79127ed9116e3a37318040bfe39eeafd37e7d2a6d37a6",
+    "windows-core.log": "51e61c05e0c927462d8d07e472716d2df447f2004aaacb304ef8d316bc3eb1f3",
+    "windows-build.log": "b25803ed7e3119d21f170cb74edaca644aa8afb6c0f43b736a82f0f19acd9b66"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 10,
+        "affected_count": 0,
+        "changed_files": 7,
+        "risk_level": "low"
+      },
+      "sha256": "f27c43299bc1ec4794f4b0dbf1c09e6eb7bd319c4c06ed95657011cff655306f",
+      "processes": []
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 10,
+        "affected_count": 0,
+        "changed_files": 7,
+        "risk_level": "low"
+      },
+      "sha256": "f27c43299bc1ec4794f4b0dbf1c09e6eb7bd319c4c06ed95657011cff655306f",
+      "processes": []
+    }
+  },
+  "preedit": {
+    "workbench_page-registerCommands": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "de704e2110c153448d4259b284ec838b85d6f83be1c70135fb8f30c26e370a15"
+    },
+    "workbench_page-gotoDefinition": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "72f5a132ac6dbc3d2a8502e2c163c26bf883b646a0839bcb08c78846de5c056a"
+    },
+    "commands-quickAccessCommandAliases": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "f2e2f595b02a2c31c0c0f9f1aa51f00553b44feba370e8995cde7a4db7225fff"
+    },
+    "keybindings-defaultWhen": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "708b003143344c407471bbcbadaf1834d08a850ada3d9a441a1f6bb82b80489b"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "aotSha256": "c00ff65c9fc6fdfe7aceed448fc5c947e10918c6a4f69b1c6309c6332b75db09",
+    "reportSha256": "0386ac0610f3f384fde38aa3f198d779363dde141f92b8e7ac8ad2b5bc7f948d",
+    "rawRunnerSha256": "2325effbe9527017f475f2915257359ecb4f9a4d614ecc9d19944d8027edf13c",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "exit": 0,
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "plain-tab": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "plain-source": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              13,
+              13
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "side-unavailable": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              13,
+              13
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "source-tab": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "lsp-attached": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "same-file-source": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "provider-same": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          [
+            "lib.rs",
+            3,
+            8,
+            3,
+            14
+          ]
+        ],
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "same-file-side": {
+        "editor": "lib.rs 编辑器 2",
+        "selection": [
+          65,
+          65
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 lib.rs（定义）"
+        ]
+      },
+      "same-file-back": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 lib.rs（定义）"
+        ]
+      },
+      "cross-file-source": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "provider-cross": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          [
+            "imp.rs",
+            3,
+            7,
+            3,
+            10
+          ]
+        ],
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "cross-file-side": {
+        "editor": "imp.rs 编辑器 2",
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      },
+      "cross-file-back": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      },
+      "ordinary-definition": {
+        "editor": "imp.rs 主编辑器",
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "imp.rs 主编辑器",
+            "docId": 3,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              281.952,
+              102.0,
+              615.376,
+              550.4
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              635.376,
+              102.0,
+              968.8,
+              550.4
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      }
+    },
+    "dpi": 120,
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeClickChecks": [
+      {
+        "point": [
+          1649,
+          256
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1649,
+          256
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1371,
+          256
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1371,
+          256
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ]
+  },
+  "linux": {
+    "aotSha256": "dffdbd36e2e6652cc94c8002eee1b0d5148c6e255d09dda33680f2d29b6e6886",
+    "reportSha256": "f4dc0cf1565ad428d8ca496f1ff608e094c216fa1bc446561d010841216c403b",
+    "rawRunnerSha256": "78acaee859bb1143a6d87330a494ae5d114aafebdbf6681338b943c3eb95e153",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "exit": 0,
+    "steps": {
+      "ready": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "plain-tab": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "plain-source": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              13,
+              13
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "side-unavailable": {
+        "editor": "plain.txt 主编辑器",
+        "selection": [
+          13,
+          13
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "plain.txt 主编辑器",
+            "docId": 4,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              13,
+              13
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "source-tab": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": false,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "lsp-attached": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              0,
+              0
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "没有可用的定义提供程序"
+        ]
+      },
+      "same-file-source": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "provider-same": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          [
+            "lib.rs",
+            3,
+            8,
+            3,
+            14
+          ]
+        ],
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "same-file-side": {
+        "editor": "lib.rs 编辑器 2",
+        "selection": [
+          65,
+          65
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 lib.rs（定义）"
+        ]
+      },
+      "same-file-back": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          121,
+          121
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              121,
+              121
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 lib.rs（定义）"
+        ]
+      },
+      "cross-file-source": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "provider-cross": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": [
+          [
+            "imp.rs",
+            3,
+            7,
+            3,
+            10
+          ]
+        ],
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "lib.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "lib.rs 编辑器 2",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              65,
+              65
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": []
+      },
+      "cross-file-side": {
+        "editor": "imp.rs 编辑器 2",
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      },
+      "cross-file-back": {
+        "editor": "lib.rs 主编辑器",
+        "selection": [
+          116,
+          116
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "lib.rs 主编辑器",
+            "docId": 2,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              116,
+              116
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      },
+      "ordinary-definition": {
+        "editor": "imp.rs 主编辑器",
+        "selection": [
+          70,
+          70
+        ],
+        "version": 1,
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "lspReady": true,
+        "provider": null,
+        "locationPeek": null,
+        "tabsByRegion": {
+          "editor": {
+            "lib.rs": false,
+            "imp.rs": false,
+            "plain.txt": false,
+            "未命名": false
+          },
+          "editor-2": {
+            "imp.rs": true
+          }
+        },
+        "editorViews": [
+          {
+            "label": "imp.rs 主编辑器",
+            "docId": 3,
+            "focused": true,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              335.52,
+              102.0,
+              753.76,
+              780.0000000000001
+            ]
+          },
+          {
+            "label": "imp.rs 编辑器 2",
+            "docId": 3,
+            "focused": false,
+            "peek": false,
+            "selection": [
+              70,
+              70
+            ],
+            "bounds": [
+              773.76,
+              102.0,
+              1192.0,
+              780.0000000000001
+            ]
+          }
+        ],
+        "statuses": [
+          "跳转到 imp.rs（定义）"
+        ]
+      }
+    },
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "bundleCoreSha256": "a539ae1c45afca3dbbab7ebba89381e3002334d47d97ccc83c6365a7fd7eb2a4"
+  }
+}

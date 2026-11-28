@@ -1,0 +1,487 @@
+{
+  "product": "c8c8da50f78e31c66a255365e4a2c81882280089",
+  "tree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "9aedbde97fd5edda04b5009c4817805a6a4464c4d2e0462bf016b22d2be0e146",
+      "app/lib/workbench/quick_open_query.dart": "2cedc7cb4e1097195c420a92a884e0240dd258634c6073fa520f423b98c05c92",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/workbench_page.dart": "d531715d2b0ac6a1dac1bb7420023127cc98a4b92acffb7dbdf11cfd27b1c096",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "4a6b8ebc9b99e318a8b0f0f1bfd74509d8cc1b8f85f1204b960de57c68a3782b"
+  },
+  "sharedDriverSha256": "51c06abf641979f45e21f497bae9e5e3a45b71b171f16fbb6d1dded008fc8101",
+  "isolatedX11Sha256": "02f9bc93bc3a7ebe2cd9462c8dd4a400502d74e2e92e7026f4e98f5068828f88",
+  "p05213LinuxBaseline": {
+    "rawReportSha256": "b4fc0c350db4363404e67c16eaa26fbe7f258e37f7d1e63970b12e089db753d4",
+    "cases": [
+      {
+        "index": 0,
+        "expected": "@:zebra",
+        "actual": "@ebra",
+        "guidance": true
+      },
+      {
+        "index": 1,
+        "expected": "@:zebra",
+        "actual": "@zebra",
+        "guidance": true
+      },
+      {
+        "index": 2,
+        "expected": "@:zebra",
+        "actual": "@ebra",
+        "guidance": true
+      },
+      {
+        "index": 3,
+        "expected": "@:zebra",
+        "actual": "@zebra",
+        "guidance": true
+      },
+      {
+        "index": 4,
+        "expected": "@:zebra",
+        "actual": "@bra",
+        "guidance": true
+      },
+      {
+        "index": 5,
+        "expected": "@:zebra",
+        "actual": "@zebra",
+        "guidance": true
+      },
+      {
+        "index": 6,
+        "expected": "@:zebra",
+        "actual": "@ebra",
+        "guidance": true
+      },
+      {
+        "index": 7,
+        "expected": "@:zebra",
+        "actual": "@zebra",
+        "guidance": true
+      }
+    ]
+  },
+  "windows": {
+    "fast": {
+      "tree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "765346c91640701c4b082b77c5a173b2f113174bb0e7139bb29c78abe2a36644",
+      "fixtureSha256": "4a6b8ebc9b99e318a8b0f0f1bfd74509d8cc1b8f85f1204b960de57c68a3782b",
+      "runnerSha256": "1ce37a21cb736838e46f7141c9236dd94d84eb75c3ca264063dc7f494df04c56",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "dpi": 120,
+      "characterDelaySeconds": 0.012,
+      "cases": [
+        {
+          "index": 0,
+          "value": "@:zebra"
+        },
+        {
+          "index": 1,
+          "value": "@:zebra"
+        },
+        {
+          "index": 2,
+          "value": "@:zebra"
+        },
+        {
+          "index": 3,
+          "value": "@:zebra"
+        },
+        {
+          "index": 4,
+          "value": "@:zebra"
+        },
+        {
+          "index": 5,
+          "value": "@:zebra"
+        },
+        {
+          "index": 6,
+          "value": "@:zebra"
+        },
+        {
+          "index": 7,
+          "value": "@:zebra"
+        }
+      ],
+      "diskSha256": {
+        "needle-root.rs": "36a88d472abc12a02be8a160fb367c0596993a5ea1a5042391d6fbca609d52e0"
+      },
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "b9b734fae13ad06f434583f15878493267d72a5f5af60b0e238c9fd39734b319",
+      "observations": [
+        "ready",
+        "source-editor-focused",
+        "all-editors-closed",
+        "file-picker-before-burst-0",
+        "full-grouped-query-after-burst-0",
+        "cancel-restores-empty-workbench-0",
+        "file-picker-before-burst-1",
+        "full-grouped-query-after-burst-1",
+        "cancel-restores-empty-workbench-1",
+        "file-picker-before-burst-2",
+        "full-grouped-query-after-burst-2",
+        "cancel-restores-empty-workbench-2",
+        "file-picker-before-burst-3",
+        "full-grouped-query-after-burst-3",
+        "cancel-restores-empty-workbench-3",
+        "file-picker-before-burst-4",
+        "full-grouped-query-after-burst-4",
+        "cancel-restores-empty-workbench-4",
+        "file-picker-before-burst-5",
+        "full-grouped-query-after-burst-5",
+        "cancel-restores-empty-workbench-5",
+        "file-picker-before-burst-6",
+        "full-grouped-query-after-burst-6",
+        "cancel-restores-empty-workbench-6",
+        "file-picker-before-burst-7",
+        "full-grouped-query-after-burst-7",
+        "cancel-restores-empty-workbench-7",
+        "file-picker-reopens-after-bursts",
+        "same-rust-fixture-is-selected",
+        "same-rust-fixture-is-open-and-focused",
+        "active-file-picker-before-symbol-burst",
+        "active-editor-keeps-full-grouped-query",
+        "cancel-grouped-query-restores-editor-selection",
+        "active-file-picker-before-offset-burst",
+        "full-offset-query-after-burst",
+        "position-accept-focuses-editor"
+      ],
+      "selectedActualSymbol": "qi-zebra",
+      "confirmedOffsetQuery": "::28",
+      "editorSelection": [
+        27,
+        27
+      ],
+      "textSha256": "ec8fbc79028c3c6487822ddb0540d5a65e5a63daee108c8667188aa8359430a0"
+    },
+    "paced": {
+      "tree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "765346c91640701c4b082b77c5a173b2f113174bb0e7139bb29c78abe2a36644",
+      "fixtureSha256": "4a6b8ebc9b99e318a8b0f0f1bfd74509d8cc1b8f85f1204b960de57c68a3782b",
+      "runnerSha256": "1ce37a21cb736838e46f7141c9236dd94d84eb75c3ca264063dc7f494df04c56",
+      "observedInitialWindowClass": "Chrome_WidgetWin_1",
+      "dpi": 120,
+      "characterDelaySeconds": 0.06,
+      "cases": [
+        {
+          "index": 0,
+          "value": "@:zebra"
+        },
+        {
+          "index": 1,
+          "value": "@:zebra"
+        },
+        {
+          "index": 2,
+          "value": "@:zebra"
+        },
+        {
+          "index": 3,
+          "value": "@:zebra"
+        },
+        {
+          "index": 4,
+          "value": "@:zebra"
+        },
+        {
+          "index": 5,
+          "value": "@:zebra"
+        },
+        {
+          "index": 6,
+          "value": "@:zebra"
+        },
+        {
+          "index": 7,
+          "value": "@:zebra"
+        }
+      ],
+      "diskSha256": {
+        "needle-root.rs": "36a88d472abc12a02be8a160fb367c0596993a5ea1a5042391d6fbca609d52e0"
+      },
+      "exit": 0,
+      "passed": true,
+      "rawReportSha256": "d1b87ed6ddf96c44f3f6339b7c6fc01190e99d96641d59ca902e1416ed0efe46",
+      "observations": [
+        "ready",
+        "source-editor-focused",
+        "all-editors-closed",
+        "file-picker-before-burst-0",
+        "full-grouped-query-after-burst-0",
+        "cancel-restores-empty-workbench-0",
+        "file-picker-before-burst-1",
+        "full-grouped-query-after-burst-1",
+        "cancel-restores-empty-workbench-1",
+        "file-picker-before-burst-2",
+        "full-grouped-query-after-burst-2",
+        "cancel-restores-empty-workbench-2",
+        "file-picker-before-burst-3",
+        "full-grouped-query-after-burst-3",
+        "cancel-restores-empty-workbench-3",
+        "file-picker-before-burst-4",
+        "full-grouped-query-after-burst-4",
+        "cancel-restores-empty-workbench-4",
+        "file-picker-before-burst-5",
+        "full-grouped-query-after-burst-5",
+        "cancel-restores-empty-workbench-5",
+        "file-picker-before-burst-6",
+        "full-grouped-query-after-burst-6",
+        "cancel-restores-empty-workbench-6",
+        "file-picker-before-burst-7",
+        "full-grouped-query-after-burst-7",
+        "cancel-restores-empty-workbench-7",
+        "file-picker-reopens-after-bursts",
+        "same-rust-fixture-is-selected",
+        "same-rust-fixture-is-open-and-focused",
+        "active-file-picker-before-symbol-burst",
+        "active-editor-keeps-full-grouped-query",
+        "cancel-grouped-query-restores-editor-selection",
+        "active-file-picker-before-offset-burst",
+        "full-offset-query-after-burst",
+        "position-accept-focuses-editor"
+      ],
+      "selectedActualSymbol": "qi-zebra",
+      "confirmedOffsetQuery": "::28",
+      "editorSelection": [
+        27,
+        27
+      ],
+      "textSha256": "ec8fbc79028c3c6487822ddb0540d5a65e5a63daee108c8667188aa8359430a0"
+    }
+  },
+  "linux": {
+    "fast": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+      "aotSha256": "0493be09b0dce694a47ff8591e099ca32a81873349b39f8513111246821cc3ce",
+      "fixtureSha256": "4a6b8ebc9b99e318a8b0f0f1bfd74509d8cc1b8f85f1204b960de57c68a3782b",
+      "runnerSha256": "536fcca04b8e0ef12eae74b0878970d5cc33d8cce498fa6e7ffc2411edfd0d03",
+      "characterDelayMs": 12,
+      "cases": [
+        {
+          "index": 0,
+          "value": "@:zebra"
+        },
+        {
+          "index": 1,
+          "value": "@:zebra"
+        },
+        {
+          "index": 2,
+          "value": "@:zebra"
+        },
+        {
+          "index": 3,
+          "value": "@:zebra"
+        },
+        {
+          "index": 4,
+          "value": "@:zebra"
+        },
+        {
+          "index": 5,
+          "value": "@:zebra"
+        },
+        {
+          "index": 6,
+          "value": "@:zebra"
+        },
+        {
+          "index": 7,
+          "value": "@:zebra"
+        }
+      ],
+      "diskSha256": {
+        "needle-root.rs": "36a88d472abc12a02be8a160fb367c0596993a5ea1a5042391d6fbca609d52e0"
+      },
+      "passed": true,
+      "cleanup": {
+        "exitCode": -15,
+        "driverSentSigterm": true
+      },
+      "rawReportSha256": "910dde68df7f73d47af2d93adb77fd95dd0cfeeff1b5cd165ec0f7eae4389835",
+      "observations": [
+        "ready",
+        "source-editor-focused",
+        "all-editors-closed",
+        "file-picker-before-burst-0",
+        "full-grouped-query-after-burst-0",
+        "cancel-restores-empty-workbench-0",
+        "file-picker-before-burst-1",
+        "full-grouped-query-after-burst-1",
+        "cancel-restores-empty-workbench-1",
+        "file-picker-before-burst-2",
+        "full-grouped-query-after-burst-2",
+        "cancel-restores-empty-workbench-2",
+        "file-picker-before-burst-3",
+        "full-grouped-query-after-burst-3",
+        "cancel-restores-empty-workbench-3",
+        "file-picker-before-burst-4",
+        "full-grouped-query-after-burst-4",
+        "cancel-restores-empty-workbench-4",
+        "file-picker-before-burst-5",
+        "full-grouped-query-after-burst-5",
+        "cancel-restores-empty-workbench-5",
+        "file-picker-before-burst-6",
+        "full-grouped-query-after-burst-6",
+        "cancel-restores-empty-workbench-6",
+        "file-picker-before-burst-7",
+        "full-grouped-query-after-burst-7",
+        "cancel-restores-empty-workbench-7",
+        "file-picker-reopens-after-bursts",
+        "same-rust-fixture-is-selected",
+        "same-rust-fixture-is-open-and-focused",
+        "active-file-picker-before-symbol-burst",
+        "active-editor-keeps-full-grouped-query",
+        "cancel-grouped-query-restores-editor-selection",
+        "active-file-picker-before-offset-burst",
+        "full-offset-query-after-burst",
+        "position-accept-focuses-editor"
+      ],
+      "selectedActualSymbol": "qi-zebra",
+      "confirmedOffsetQuery": "::28",
+      "editorSelection": [
+        27,
+        27
+      ],
+      "textSha256": "ec8fbc79028c3c6487822ddb0540d5a65e5a63daee108c8667188aa8359430a0"
+    },
+    "paced": {
+      "display": ":99",
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "28546f46cca983dc1c2495bac9849b18e6bcc539",
+      "aotSha256": "0493be09b0dce694a47ff8591e099ca32a81873349b39f8513111246821cc3ce",
+      "fixtureSha256": "4a6b8ebc9b99e318a8b0f0f1bfd74509d8cc1b8f85f1204b960de57c68a3782b",
+      "runnerSha256": "536fcca04b8e0ef12eae74b0878970d5cc33d8cce498fa6e7ffc2411edfd0d03",
+      "characterDelayMs": 60,
+      "cases": [
+        {
+          "index": 0,
+          "value": "@:zebra"
+        },
+        {
+          "index": 1,
+          "value": "@:zebra"
+        },
+        {
+          "index": 2,
+          "value": "@:zebra"
+        },
+        {
+          "index": 3,
+          "value": "@:zebra"
+        },
+        {
+          "index": 4,
+          "value": "@:zebra"
+        },
+        {
+          "index": 5,
+          "value": "@:zebra"
+        },
+        {
+          "index": 6,
+          "value": "@:zebra"
+        },
+        {
+          "index": 7,
+          "value": "@:zebra"
+        }
+      ],
+      "diskSha256": {
+        "needle-root.rs": "36a88d472abc12a02be8a160fb367c0596993a5ea1a5042391d6fbca609d52e0"
+      },
+      "passed": true,
+      "cleanup": {
+        "exitCode": -15,
+        "driverSentSigterm": true
+      },
+      "rawReportSha256": "b111f7ed80bb684b1ce1cfa6c5de666f6a47a373bfba610633f1749739b62bfe",
+      "observations": [
+        "ready",
+        "source-editor-focused",
+        "all-editors-closed",
+        "file-picker-before-burst-0",
+        "full-grouped-query-after-burst-0",
+        "cancel-restores-empty-workbench-0",
+        "file-picker-before-burst-1",
+        "full-grouped-query-after-burst-1",
+        "cancel-restores-empty-workbench-1",
+        "file-picker-before-burst-2",
+        "full-grouped-query-after-burst-2",
+        "cancel-restores-empty-workbench-2",
+        "file-picker-before-burst-3",
+        "full-grouped-query-after-burst-3",
+        "cancel-restores-empty-workbench-3",
+        "file-picker-before-burst-4",
+        "full-grouped-query-after-burst-4",
+        "cancel-restores-empty-workbench-4",
+        "file-picker-before-burst-5",
+        "full-grouped-query-after-burst-5",
+        "cancel-restores-empty-workbench-5",
+        "file-picker-before-burst-6",
+        "full-grouped-query-after-burst-6",
+        "cancel-restores-empty-workbench-6",
+        "file-picker-before-burst-7",
+        "full-grouped-query-after-burst-7",
+        "cancel-restores-empty-workbench-7",
+        "file-picker-reopens-after-bursts",
+        "same-rust-fixture-is-selected",
+        "same-rust-fixture-is-open-and-focused",
+        "active-file-picker-before-symbol-burst",
+        "active-editor-keeps-full-grouped-query",
+        "cancel-grouped-query-restores-editor-selection",
+        "active-file-picker-before-offset-burst",
+        "full-offset-query-after-burst",
+        "position-accept-focuses-editor"
+      ],
+      "selectedActualSymbol": "qi-zebra",
+      "confirmedOffsetQuery": "::28",
+      "editorSelection": [
+        27,
+        27
+      ],
+      "textSha256": "ec8fbc79028c3c6487822ddb0540d5a65e5a63daee108c8667188aa8359430a0"
+    }
+  }
+}

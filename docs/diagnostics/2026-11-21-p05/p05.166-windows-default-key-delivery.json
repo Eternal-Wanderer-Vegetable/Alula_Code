@@ -1,0 +1,94 @@
+{
+  "windowsBuild": "Windows 11 26200",
+  "loadedKeyboardLayoutLanguageIds": [
+    "0x0804"
+  ],
+  "attempts": [
+    {
+      "method": "Win32 keybd_event with left-side modifiers",
+      "attemptedChord": "Ctrl+Shift+F",
+      "keyEvents": [
+        {
+          "event": "KeyDownEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": false,
+          "alt": false
+        },
+        {
+          "event": "KeyDownEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": true,
+          "alt": false
+        },
+        {
+          "event": "KeyUpEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": false,
+          "alt": false
+        },
+        {
+          "event": "KeyUpEvent",
+          "logical": null,
+          "physical": null,
+          "control": false,
+          "shift": false,
+          "alt": false
+        }
+      ],
+      "editorOpen": true,
+      "searchOpened": false,
+      "sourceTree": "afca882bb1154b3eebad84f26e6f3edca918c5a3",
+      "fixtureSha256": "6eec426dd85dfdcd5eae7b4a8003ff20c3a6b722b5d47c775ccc48430c11651e"
+    },
+    {
+      "method": "Win32 SendInput scan codes",
+      "attemptedChord": "Ctrl+Shift+F",
+      "keyEvents": [
+        {
+          "event": "KeyDownEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": false,
+          "alt": false
+        },
+        {
+          "event": "KeyDownEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": true,
+          "alt": false
+        },
+        {
+          "event": "KeyUpEvent",
+          "logical": null,
+          "physical": null,
+          "control": true,
+          "shift": false,
+          "alt": false
+        },
+        {
+          "event": "KeyUpEvent",
+          "logical": null,
+          "physical": null,
+          "control": false,
+          "shift": false,
+          "alt": false
+        }
+      ],
+      "editorOpen": true,
+      "searchOpened": false,
+      "sourceTree": "afca882bb1154b3eebad84f26e6f3edca918c5a3",
+      "fixtureSha256": "6eec426dd85dfdcd5eae7b4a8003ff20c3a6b722b5d47c775ccc48430c11651e"
+    }
+  ],
+  "observed": "Flutter hardware keyboard handler received modifier events only.",
+  "verificationBoundary": "Windows replay uses a fixture-local F6 binding for view.search. Linux Xvfb replays Ctrl+Shift+F. The host interception cause was not established."
+}

@@ -1,0 +1,687 @@
+{
+  "product": "b899d75449ca3934c22b730e84beea0c7e2f24e8",
+  "tree": "ff7e5af2f611c33cd3deefcfd252e8b3d8a6aed0",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "ff7e5af2f611c33cd3deefcfd252e8b3d8a6aed0",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "598fe390eab2c03ade08938e48e980466a11662167b4d481f1b6bc030c4a6106",
+      "app/lib/bridge/alula_ffi.dart": "a219f4e6c365a533d9edb1cc292321c0836293773b9c701bac7b9452cc4cbccc",
+      "app/lib/editor/editor_rendering.dart": "7bcb8d538dba1942a60258d83a7dd564915f30f73ae49c221123501c2c951277",
+      "app/lib/editor/editor_scroll_controller.dart": "554f62726d964ad0193c2acdb185089bdddbefab09e91d7f3d0b5379caff5903",
+      "app/lib/editor/rust_text_input_field.dart": "b9fa4f9781b8d0d8d2c339258fd8be57fb9dfb0e8cb50918283b3c4bf210e3f7",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "92bd25875f32eb7bd9e1d7bc1f1a9dbe06638ee0a1fbf0512483809e60159007",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "50054d87222892ab067b84997dc784b0476ece0192ddbe16678cac10e2fc2557",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "638b2365d4e0c12a1a951c0578b644085ea0122119244317dc37c1eda5751efc",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "ab04d8f76da040b85e1240f4723b61bb8b3f40fce4d9b13daf39757409fc65a6",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 49,
+    "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5"
+  },
+  "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+  "localLogsSha256": {
+    "p05-351-targeted.log": "672551dd7536d151ae48f703d0ee4051456c36839c520fa21c969d832a00db69",
+    "p05-351-focused.log": "cc09c578ff57bca60e9200ce3cf2fe25a4d7ed26b9c5049bf51b331f7417ed7f",
+    "p05-351-analyze.log": "72c4d2916f739816af51bf949906bbd474db5032ee05fb66cb256f489a99a285",
+    "p05-351-full.log": "4e2fd8309e43fda9d117d417f2cdd9ab2cbdb9fbd7c3f4635a365f4d3d421986",
+    "p05-351-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-351-red.log": "9112288e82ced5305f1fda265379334cce8cc0602e93ae79ea553ff1a0869d4b"
+  },
+  "oldLinuxReproduction": {
+    "product": "23d5debd274b1ad81a6ed86fd9f6ac8dfcb306ad",
+    "tree": "edfe05541d73aa8240f50821b118477dc844386c",
+    "checks": [
+      "owned-only-editor-ready",
+      "controlled-blank-line-diagnostic-reaches-workbench",
+      "f8-focuses-the-real-empty-source-row",
+      "old-floating-detail-leaves-the-following-source-row-in-place",
+      "escape-keeps-the-original-blank-caret"
+    ],
+    "rawReportSha256": "f53530c4e372f155242bd5b56591be29705ba8cd316b1c3a7d2209a897873c25",
+    "measured": {
+      "followingRowBefore": [
+        382.0,
+        156.0,
+        384.0,
+        177.0
+      ],
+      "followingRowWithDetail": [
+        382.0,
+        156.0,
+        384.0,
+        177.0
+      ],
+      "detailDuringF8": [
+        343.52,
+        160.0,
+        1096.0,
+        244.0
+      ]
+    },
+    "providerKind": "controlled LSP versioned diagnostic"
+  },
+  "pinnedReference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "browser": "Chrome/150.0.7871.250",
+    "checks": {
+      "seed": {
+        "line": 1,
+        "column": 0,
+        "endColumn": 0
+      },
+      "before": {
+        "rows": {
+          "1": [
+            89.80000305175781,
+            108.80000305175781
+          ],
+          "2": [
+            108.80000305175781,
+            127.80000305175781
+          ],
+          "3": [
+            127.80000305175781,
+            146.8000030517578
+          ]
+        },
+        "detail": null,
+        "editorFocused": true
+      },
+      "withDetail": {
+        "rows": {
+          "1": [
+            89.80000305175781,
+            108.80000305175781
+          ],
+          "2": [
+            108.80000305175781,
+            127.80000305175781
+          ],
+          "3": [
+            203.8000030517578,
+            222.8000030517578
+          ]
+        },
+        "detail": [
+          127.80000305175781,
+          203.8000030517578
+        ],
+        "editorFocused": true
+      },
+      "afterEscape": {
+        "rows": {
+          "1": [
+            89.80000305175781,
+            108.80000305175781
+          ],
+          "2": [
+            108.80000305175781,
+            127.80000305175781
+          ],
+          "3": [
+            127.80000305175781,
+            146.8000030517578
+          ]
+        },
+        "detail": null,
+        "editorFocused": true
+      }
+    },
+    "inputKind": "controlled marker on an interior blank row with pinned Code OSS F8",
+    "rawReportSha256": "85e11c45b19ab4169ebf82512a20adbbea511a615a2183c9b8ac4d149220c7b6",
+    "fixtureSha256": "c9e613b29618301a6fe0bf5ad93f776d22b21e2d086fba37429ff6e419748f5b",
+    "sourceSha256": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a"
+  },
+  "renames": {
+    "_measureGapIndent": {
+      "newName": "_measureGapWhitespace",
+      "graphEdits": 2,
+      "receiptSha256": "e6f70ce677fd757a484eaaac5aae9bc7b1142e331d2384055627f57df973c52a"
+    },
+    "_EditorGapIndent": {
+      "newName": "_EditorGapWhitespace",
+      "graphEdits": 4,
+      "receiptSha256": "3cce137e54ebb33103387a6e69745e1a2539b610fc4e40d4b8d2892b5f812f12"
+    }
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 9,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "318aceabd7df011a14af5c3fd0597ea52acb1d1cbcdf05e82bc1ca3081e1d5ee"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 9,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "318aceabd7df011a14af5c3fd0597ea52acb1d1cbcdf05e82bc1ca3081e1d5ee"
+    }
+  },
+  "preedit": {
+    "field-build": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "05ad76b092499dc62f036e7638400a5de5e2030c22399a469d12b23070d8eb70"
+    },
+    "field": {
+      "target": {
+        "id": "Class:app/lib/editor/rust_text_input_field.dart:RustTextInputField",
+        "name": "RustTextInputField",
+        "type": "Class",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 8,
+        "processes_affected": 3,
+        "modules_affected": 3
+      },
+      "sha256": "04bfda33912921f9f6f6a66f03321997ce4b60577d3514111fae7111e9a1e3a0"
+    },
+    "gap-indent-type": {
+      "target": {
+        "id": "TypeAlias:app/lib/editor/rust_text_input_field.dart:_EditorGapIndent",
+        "name": "_EditorGapIndent",
+        "type": "",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c224f65c67800e7cc270dae9a49267134b6ba1ba924288309a9fd271aff36242"
+    },
+    "gap-layout-type": {
+      "target": {
+        "id": "TypeAlias:app/lib/editor/rust_text_input_field.dart:_EditorInlineGapLayout",
+        "name": "_EditorInlineGapLayout",
+        "type": "",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "48a46e59a270982a00108776c615abbc02620ce4e8df3bfd1c740ff2696d560a"
+    },
+    "inline-layout": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._inlineGapLayout#7",
+        "name": "_inlineGapLayout",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "e356d39fe531cddeef8467d69fb362ccc13f14e8f17a73ff9f2e6eae1ff08b83"
+    },
+    "inline-test": {
+      "target": {
+        "id": "Function:app/test/editor_inline_overlay_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/editor_inline_overlay_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "55d0f2bc2c1e3b8f9421d1240e680c91ce2976fd1c66b50794db9b5e030276b1"
+    },
+    "overlay-update": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._scheduleCaretOverlayUpdate#0",
+        "name": "_scheduleCaretOverlayUpdate",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 5,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "sha256": "fb23d2e104e9d823282871663cb0c9b2d85fa0614f171caae1707b138c636b9e"
+    },
+    "span-builder": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:_SyntaxTextEditingController.buildTextSpan#3",
+        "name": "buildTextSpan",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "f42983496849431ae65b0235c8ad201fd3f388359fc71d54442d65f09f7b283e"
+    },
+    "whitespace-measure": {
+      "target": {
+        "id": "Method:app/lib/editor/rust_text_input_field.dart:RustTextInputFieldState._measureGapIndent#5",
+        "name": "_measureGapIndent",
+        "type": "Method",
+        "filePath": "app/lib/editor/rust_text_input_field.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "9a8220bc597eaed8a3990530afd8b7fa1866590f1adf3a199f2d12b6891a31ee"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "spaces": {
+      "rawReportSha256": "1fbca46308f8cc5d0b1ef07571e1da2bdb05f1943470151c4b34374afc2b3337",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "b762c69c9fb8a77a85f9ffbcc9316a5220d83774d4b37729cd9456c3dc321546",
+      "aotSha256": "067b6e110e6918e42a381157c403043831b23f774f0fafe9823b4d45b3d5f75a",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "56fd375e714b0bd89e61ea3328a593b35407b927f6356848908ae1bec077ec01",
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "providerScriptSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "sourceSha256": {
+        "src/lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a"
+      },
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-the-actual-blank-source-row",
+        "blank-caret-stays-and-line-with-internal-whitespace-shifts",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "clicking-following-code-preserves-the-real-utf16-offset",
+        "f8-reopens-from-the-following-code-row",
+        "down-from-blank-line-lands-at-original-next-line-start",
+        "preserved-source-bytes-bom-crlf-emoji-and-indent"
+      ],
+      "cleanExit": true,
+      "selectedUtf16": [
+        25,
+        25
+      ],
+      "nextLineUtf16": 26,
+      "measured": {
+        "blankCaretBefore": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "blankCaretWhileOpen": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "nextCodeBefore": [
+          354.40000000000003,
+          156.0,
+          356.40000000000003,
+          177.0
+        ],
+        "nextCodeWhileOpen": [
+          354.40000000000003,
+          240.8,
+          356.40000000000003,
+          261.8
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          319.952,
+          160.0,
+          960.8000000000001,
+          236.0
+        ]
+      }
+    },
+    "tab": {
+      "rawReportSha256": "9d62aeb1e807a97cc23babfd893717b2e0c37310b3aa3dfc7fb0c37fb9064ea7",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "b762c69c9fb8a77a85f9ffbcc9316a5220d83774d4b37729cd9456c3dc321546",
+      "aotSha256": "067b6e110e6918e42a381157c403043831b23f774f0fafe9823b4d45b3d5f75a",
+      "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "nativeLibrarySha256": "56fd375e714b0bd89e61ea3328a593b35407b927f6356848908ae1bec077ec01",
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "9832caa3786284eec9a5e5585927be05373341c72501acc612cd86589b2c87df",
+      "providerScriptSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "sourceSha256": {
+        "src/lib.rs": "7cf1d1a970cce175efb83d344ba1f3282d9a36d1b201bf1b3c75dcb2e233bd8a"
+      },
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-the-actual-blank-source-row",
+        "blank-caret-stays-and-line-with-internal-whitespace-shifts",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "clicking-following-code-preserves-the-real-utf16-offset",
+        "f8-reopens-from-the-following-code-row",
+        "down-from-blank-line-lands-at-original-next-line-start",
+        "preserved-source-bytes-bom-crlf-emoji-and-indent"
+      ],
+      "cleanExit": true,
+      "selectedUtf16": [
+        25,
+        25
+      ],
+      "nextLineUtf16": 26,
+      "measured": {
+        "blankCaretBefore": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "blankCaretWhileOpen": [
+          328.0,
+          135.20000000000002,
+          330.0,
+          156.20000000000002
+        ],
+        "nextCodeBefore": [
+          354.40000000000003,
+          156.0,
+          356.40000000000003,
+          177.0
+        ],
+        "nextCodeWhileOpen": [
+          354.40000000000003,
+          240.8,
+          356.40000000000003,
+          261.8
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          319.952,
+          160.0,
+          960.8000000000001,
+          236.0
+        ]
+      }
+    }
+  },
+  "linux": {
+    "spaces": {
+      "rawReportSha256": "f16f107422237e8a43f7f0536d9da862b2f943bf4dd0ed509dc20cd63d4987a5",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "33ccfaea2501dc182df4ee14bf07f6c54df4e97569f5e99c21a1fec829d007ff",
+      "aotSha256": "8e294523ecc8cc436dd4689ba26187b19ea25c62f9b274d7ea38914cc4f1346f",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "665778c34653362fba12c70a3142ef49daa80ce8652f1023d638126c235167e5",
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "providerScriptSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "sourceSha256": {
+        "src/lib.rs": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a"
+      },
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-the-actual-blank-source-row",
+        "blank-caret-stays-and-line-with-internal-whitespace-shifts",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "clicking-following-code-preserves-the-real-utf16-offset",
+        "f8-reopens-from-the-following-code-row",
+        "down-from-blank-line-lands-at-original-next-line-start",
+        "preserved-source-bytes-bom-crlf-emoji-and-indent"
+      ],
+      "cleanExit": true,
+      "selectedUtf16": [
+        25,
+        25
+      ],
+      "nextLineUtf16": 26,
+      "measured": {
+        "blankCaretBefore": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "blankCaretWhileOpen": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "nextCodeBefore": [
+          409.0,
+          156.0,
+          411.0,
+          177.0
+        ],
+        "nextCodeWhileOpen": [
+          409.0,
+          240.0,
+          411.0,
+          261.0
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          373.52,
+          160.0,
+          1096.0,
+          236.0
+        ]
+      },
+      "languageServiceChildrenExited": true,
+      "processTreeSamples": {
+        "controlled-blank-line-diagnostic-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 21396,
+              "ppid": 21395,
+              "private": 259756032,
+              "pss": 286681088,
+              "working_set": 339173376
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 21549,
+              "ppid": 21396,
+              "private": 4628480,
+              "pss": 4999168,
+              "working_set": 11579392
+            }
+          ],
+          "root_pid": 21396,
+          "total_private_bytes": 264384512,
+          "total_private_mib": 252.1,
+          "total_working_set_bytes": 350752768
+        }
+      }
+    },
+    "tab": {
+      "rawReportSha256": "8c71dae1e93dcce233ec867e929d350685d4ba5cf2031eaac494e8756e76f6f2",
+      "fixtureSha256": "5d20e2a80fb11d7d8e13d6fcd4f1a790f39c560d1e8915f2e03e6664e07bdcd5",
+      "runnerSha256": "33ccfaea2501dc182df4ee14bf07f6c54df4e97569f5e99c21a1fec829d007ff",
+      "aotSha256": "8e294523ecc8cc436dd4689ba26187b19ea25c62f9b274d7ea38914cc4f1346f",
+      "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "nativeLibrarySha256": "665778c34653362fba12c70a3142ef49daa80ce8652f1023d638126c235167e5",
+      "providerVersion": "Alula local blank-line diagnostic fixture 1.0",
+      "providerSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "providerScriptSha256": "0e13c2a6e1ef572f3416cac0b8ba87d8a615bdc227230254cc220bb02b2c7d69",
+      "sourceSha256": {
+        "src/lib.rs": "7cf1d1a970cce175efb83d344ba1f3282d9a36d1b201bf1b3c75dcb2e233bd8a"
+      },
+      "nativeChecks": [
+        "owned-only-editor-ready",
+        "controlled-blank-line-diagnostic-reaches-workbench",
+        "f8-shows-detail-after-the-actual-blank-source-row",
+        "blank-caret-stays-and-line-with-internal-whitespace-shifts",
+        "escape-restores-the-original-placement",
+        "f8-reopens-the-same-slot",
+        "clicking-following-code-preserves-the-real-utf16-offset",
+        "f8-reopens-from-the-following-code-row",
+        "down-from-blank-line-lands-at-original-next-line-start",
+        "preserved-source-bytes-bom-crlf-emoji-and-indent"
+      ],
+      "cleanExit": true,
+      "selectedUtf16": [
+        25,
+        25
+      ],
+      "nextLineUtf16": 26,
+      "measured": {
+        "blankCaretBefore": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "blankCaretWhileOpen": [
+          382.0,
+          135.0,
+          384.0,
+          156.0
+        ],
+        "nextCodeBefore": [
+          409.0,
+          156.0,
+          411.0,
+          177.0
+        ],
+        "nextCodeWhileOpen": [
+          409.0,
+          240.0,
+          411.0,
+          261.0
+        ],
+        "slotHeight": 84.0,
+        "detailRect": [
+          373.52,
+          160.0,
+          1096.0,
+          236.0
+        ]
+      },
+      "languageServiceChildrenExited": true,
+      "processTreeSamples": {
+        "controlled-blank-line-diagnostic-reaches-workbench": {
+          "n_processes": 2,
+          "processes": [
+            {
+              "name": "alula_app",
+              "peak_private": 0,
+              "pid": 21744,
+              "ppid": 21734,
+              "private": 259092480,
+              "pss": 286143488,
+              "working_set": 338649088
+            },
+            {
+              "name": "python3",
+              "peak_private": 0,
+              "pid": 21928,
+              "ppid": 21744,
+              "private": 4632576,
+              "pss": 5057536,
+              "working_set": 11575296
+            }
+          ],
+          "root_pid": 21744,
+          "total_private_bytes": 263725056,
+          "total_private_mib": 251.5,
+          "total_working_set_bytes": 350224384
+        }
+      }
+    }
+  }
+}

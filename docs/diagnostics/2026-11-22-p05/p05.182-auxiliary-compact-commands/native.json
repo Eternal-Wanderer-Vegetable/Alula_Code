@@ -1,0 +1,864 @@
+{
+  "slice": "P05.182 / feat-234",
+  "productCommit": "646a7ca207561dc0cc9c6931a724ff750ba2e31c",
+  "productTree": "8c76080121e2bd1dc51827abfd5a16700ac6932f",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "windows": {
+    "platform": "Windows 11",
+    "sourceTree": "8c76080121e2bd1dc51827abfd5a16700ac6932f",
+    "aotSha256": "5886375397521a9342db59fe25ee7ac11eb2574e0298bc903b1cf80c9ec585d3",
+    "exeSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "fixtureSha256": "e39e3b695312c5ee6e41dc3a21547ef22439f065a5861c0bcf33feed4446d007",
+    "runnerSha256": "e881ce4d1a2328dc5bce233ee1a353f3b3abfd5de36748e7c9d353ed098af303",
+    "dpi": 120,
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "exitCode": 0,
+    "passed": true,
+    "steps": {
+      "main-ready": {
+        "windowCount": 1,
+        "nativeWindowFocused": false,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        }
+      },
+      "main-palette": {
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "paletteVisible": true,
+        "compactCommandRows": [],
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            30,
+            30
+          ]
+        }
+      },
+      "main-cancelled": {
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            30,
+            30
+          ]
+        }
+      },
+      "auxiliary-ready": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        }
+      },
+      "auxiliary-edited": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-f1-before-cancel": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-f1-cancelled": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-f1-before-run": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-f1-compact": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            665.6,
+            462.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-control-shift-p": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            665.6,
+            462.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-command-expanded": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-toolbar-enabled": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            665.6,
+            462.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "auxiliary-toolbar-disabled": {
+        "windowCount": 2,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            661.6,
+            458.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 2,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "main-returned": {
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 5,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n7",
+          "mirror": "Compact example 😀\nSecond line\n7",
+          "totalUtf16": 32,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            31
+          ]
+        }
+      },
+      "main-continued-editing": {
+        "windowCount": 1,
+        "nativeWindowFocused": true,
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 5,
+          "box": [
+            281.952,
+            102.0,
+            615.376,
+            550.4
+          ],
+          "rust": "Compact example 😀\nSecond line\n9",
+          "mirror": "Compact example 😀\nSecond line\n9",
+          "totalUtf16": 32,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            32,
+            32
+          ]
+        }
+      }
+    },
+    "osBuild": "26200",
+    "helperSha256": "8add1ea87333cbdd7cbc1469a6c755172628911754f483d17cb20987626c3a5d",
+    "sourceAuxiliaryWindowSha256": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0"
+  },
+  "linux": {
+    "platform": "Linux WSL Xvfb xfwm4",
+    "sourceTree": "8c76080121e2bd1dc51827abfd5a16700ac6932f",
+    "aotSha256": "a63aa3020756577924ce3628aa1a48a2cbd03707be39d9a5a9b08dbf6572dd09",
+    "fixtureSha256": "e39e3b695312c5ee6e41dc3a21547ef22439f065a5861c0bcf33feed4446d007",
+    "runnerSha256": "0d13c88f8f296ece079326f2c4f2eb40757d55d4e2ff1ed1d63ae656452fb32a",
+    "diskSha256": "669535bddcebbaa3439dfb8a47de514f54242d3320c5f83094b11c3cb12690ca",
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "steps": {
+      "main-ready": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 1,
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        }
+      },
+      "main-palette": {
+        "paletteVisible": true,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 1,
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 2,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            29,
+            29
+          ]
+        }
+      },
+      "source-open": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀\nSecond line\n",
+          "mirror": "Compact example 😀\nSecond line\n",
+          "totalUtf16": 31,
+          "stateVersion": 1,
+          "dirty": false,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            0,
+            0
+          ]
+        }
+      },
+      "source-edited": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-f1-cancel": {
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-kept-expanded": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-f1-execute": {
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-compact": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            623.0,
+            692.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-control-shift-p": {
+        "paletteVisible": true,
+        "compactCommandRows": [
+          "查看: 切换窗口紧凑模式"
+        ],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            623.0,
+            692.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-expanded": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-layout-enable": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 30.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            0.0,
+            30.0,
+            623.0,
+            692.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "source-layout-disable": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 2,
+        "titleHeight": 35.0,
+        "editor": {
+          "label": "compact-sample.txt 辅助窗口编辑器",
+          "documentId": 4,
+          "box": [
+            4.0,
+            71.0,
+            619.0,
+            688.0
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 3,
+          "dirty": true,
+          "editorFocused": false,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "main-returned": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 1,
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 5,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀482\nSecond line\n",
+          "mirror": "Compact example 😀482\nSecond line\n",
+          "totalUtf16": 34,
+          "stateVersion": 1,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            21,
+            20
+          ]
+        }
+      },
+      "main-edited": {
+        "paletteVisible": false,
+        "compactCommandRows": [],
+        "nativeWindowFocused": true,
+        "windowCount": 1,
+        "titleHeight": null,
+        "editor": {
+          "label": "compact-sample.txt 主编辑器",
+          "documentId": 5,
+          "box": [
+            246.23999999999998,
+            102.0,
+            523.12,
+            780.0000000000001
+          ],
+          "rust": "Compact example 😀48679\nSecond line\n",
+          "mirror": "Compact example 😀48679\nSecond line\n",
+          "totalUtf16": 36,
+          "stateVersion": 4,
+          "dirty": true,
+          "editorFocused": true,
+          "startUtf16": 0,
+          "selection": [
+            23,
+            23
+          ]
+        }
+      }
+    },
+    "helperSha256": "5fe8b939bf75bcac40533746648dc8124109e7faef8ca260360ace8f705a9c6f"
+  },
+  "macOSPhysicalAcceptance": "deferred per user"
+}

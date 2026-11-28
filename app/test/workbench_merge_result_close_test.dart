@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/merge_result_session.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
+import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
@@ -32,9 +34,11 @@ void main() {
   late LayoutStore layoutStore;
   late SessionStore sessionStore;
   late KeybindingsStore keybindingsStore;
+  late CommandService commands;
   MergeResultSession? openedSession;
   AlulaCore? openedCore;
   AlulaDoc? openedDocument;
+  OpenDoc? openedView;
   late bool Function(MergeResultEditPlan plan) applyMergePlan;
 
   setUp(() async {
@@ -54,6 +58,7 @@ void main() {
     keybindingsStore = KeybindingsStore(path: '$root/keybindings.json');
     openedSession = null;
     openedDocument = null;
+    openedView = null;
   });
 
   tearDown(() async {
@@ -70,6 +75,7 @@ void main() {
         layoutStore: layoutStore,
         sessionStore: sessionStore,
         keybindingsStore: keybindingsStore,
+        onCommandServiceReady: (service) => commands = service,
         mergeResultSessionFactory: (core, resultDocument, applyPlan) {
           if (resultDocument.name != 'merge.txt') return null;
           openedCore = core;
@@ -82,6 +88,7 @@ void main() {
           );
           openedSession = session;
           openedDocument = resultDocument.doc;
+          openedView = resultDocument;
           applyMergePlan = applyPlan;
           if (makeDirty) {
             resultDocument.doc.setSavepoint('different saved text');
@@ -332,6 +339,115 @@ void main() {
     expect(releasedIdReplacement.resync().content, initialResult);
     releasedIdReplacement.close();
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets(
+      'workspace switch invalidates inline merge group close before discard or save',
+      (tester) async {
+    tester.view.physicalSize = const Size(2400, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final layout = defaultLayout();
+    expect(layout.splitLeaf('editor', 'editor-2', Axis.horizontal), isNotNull);
+    layoutStore.save(layout);
+    await mountAndOpen(tester);
+    final session = openedSession!;
+    final document = openedDocument!;
+    final field = find.descendant(
+      of: find.byType(RustTextInputField),
+      matching: find.byType(TextField),
+    );
+    const editedResult = 'unsaved merge result 😀\r\n';
+    tester.widget<TextField>(field).controller!.value = const TextEditingValue(
+      text: editedResult,
+      selection: TextSelection.collapsed(offset: editedResult.length),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(document.resync().content, editedResult);
+    expect(session.isDirty, isTrue);
+
+    Future<void> switchWorkspace(Directory directory) async {
+      final switching = commands.execute('file.openFolder');
+      await tester.pumpAndSettle();
+      final folderPath = find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField && widget.decoration?.labelText == '文件夹路径',
+      );
+      await tester.enterText(folderPath, directory.path);
+      await tester.tap(find.widgetWithText(FilledButton, '打开'));
+      await tester.pumpAndSettle();
+      expect(await switching, CommandExecutionStatus.executed);
+      for (var attempt = 0; attempt < 10; attempt++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pumpAndSettle();
+      }
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+      expect(sessionStore.tryLoad()?['workspace'], directory.path);
+    }
+
+    for (final action in ['discard', 'save', 'overwrite']) {
+      if (action != 'discard') await switchWorkspace(workspace);
+      final expectedDisk = action == 'overwrite'
+          ? 'external merge result 😀\r\n'
+          : initialResult;
+      if (action == 'overwrite') {
+        resultFile.writeAsStringSync(expectedDisk);
+        openedView!.diskState = DiskDocumentState.conflict;
+      }
+      final closeGroup =
+          find.byKey(const ValueKey('open-editors-close-group-editor'));
+      await tester.ensureVisible(closeGroup);
+      await tester.tap(closeGroup);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('merge-result-close-dialog')),
+          findsOneWidget);
+
+      if (action == 'overwrite') {
+        await tester.tap(find.byKey(const ValueKey('merge-result-close-save')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('external-conflict-dialog')),
+            findsOneWidget);
+      }
+      // A different parent root keeps the surviving file breadcrumb relative.
+      await switchWorkspace(workspace.parent);
+      final pendingDialog = action == 'overwrite'
+          ? 'external-conflict-dialog'
+          : 'merge-result-close-dialog';
+      expect(find.byKey(ValueKey(pendingDialog)), findsOneWidget);
+      final confirm = action == 'overwrite'
+          ? 'external-conflict-confirm-overwrite'
+          : 'merge-result-close-$action';
+      await tester.tap(find.byKey(ValueKey(confirm)));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('merge-result-close-dialog')),
+          findsNothing);
+      expect(openedSession, same(session));
+      expect(session.isDisposed, isFalse);
+      expect(session.isDirty, isTrue);
+      expect(document.resync().content, editedResult);
+      expect(document.isDirty, isTrue);
+      expect(session.latestSavedResult, initialResult);
+      expect(find.byKey(const ValueKey('editor-tab-strip-editor')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('open-editors-group-editor')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('tab-2')), findsOneWidget);
+      expect(closeGroup, findsOneWidget);
+      expect(resultFile.readAsStringSync(), expectedDisk);
+      expect(
+          find.byKey(const ValueKey('external-conflict-dialog')), findsNothing);
+      expect(tester.takeException(), isNull);
+    }
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
   });
 
   testWidgets('clean result with unresolved conflicts requires confirmation',

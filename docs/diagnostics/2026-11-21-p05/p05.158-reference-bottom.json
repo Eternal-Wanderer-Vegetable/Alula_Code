@@ -1,0 +1,1029 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer pointer and keyboard input",
+  "mode": "bottom",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "pane": {
+            "x": 48.79999923706055,
+            "y": 67,
+            "width": 297.3999938964844,
+            "height": 672.4000244140625,
+            "top": 67,
+            "right": 346.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 48.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "editor-drop-rejected": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "workbench.view.search",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "pane": {
+            "x": 48.79999923706055,
+            "y": 67,
+            "width": 297.3999938964844,
+            "height": 672.4000244140625,
+            "top": 67,
+            "right": 346.1999931335449,
+            "bottom": 739.4000244140625,
+            "left": 48.79999923706055
+          }
+        }
+      ],
+      "activitySearchCount": 1,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-grouped": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Terminal"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 356.8000183105469,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 576.8000183105469,
+            "bottom": 511.6625061035156,
+            "left": 356.8000183105469
+          },
+          "pane": {
+            "x": 352.8000183105469,
+            "y": 483.6625061035156,
+            "width": 228,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 580.8000183105469,
+            "bottom": 744.3875122070312,
+            "left": 352.8000183105469
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 585.6000366210938,
+            "y": 483.6625061035156,
+            "width": 220,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 805.6000366210938,
+            "bottom": 511.6625061035156,
+            "left": 585.6000366210938
+          },
+          "pane": {
+            "x": 580.7999877929688,
+            "y": 483.6625061035156,
+            "width": 228.8000030517578,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 809.5999908447266,
+            "bottom": 744.3875122070312,
+            "left": 580.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-initial": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 512,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 568.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 520,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 572.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 577.6000366210938,
+            "y": 483.6625061035156,
+            "width": 512.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000610351562,
+            "bottom": 511.6625061035156,
+            "left": 577.6000366210938
+          },
+          "pane": {
+            "x": 572.7999877929688,
+            "y": 483.6625061035156,
+            "width": 521.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 572.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-dragged": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-reopened": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom floating-part-outer-right",
+      "query": "fixture",
+      "searchFocused": false,
+      "panelTabs": [
+        "Problems",
+        "Output",
+        "Debug Console",
+        "Terminal",
+        "Ports"
+      ],
+      "panelShown": true,
+      "viewContainer": "terminal",
+      "viewSiblings": [],
+      "panelActive": "Terminal",
+      "paneBoxes": [
+        {
+          "label": "Search",
+          "box": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          }
+        },
+        {
+          "label": "Terminal powershell",
+          "box": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          }
+        }
+      ],
+      "activitySearchCount": 0,
+      "resultsList": "2 results in 2 files"
+    },
+    "bottom-expanded": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-self-drop": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-outside-drop": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-adjacent-no-op": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-member-after": {
+      "panes": [
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 485.1999931335449,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 436.3999938964844,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 489.1999931335449,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Search",
+          "header": {
+            "x": 494,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 511.6625061035156,
+            "left": 494
+          },
+          "pane": {
+            "x": 489.20001220703125,
+            "y": 483.6625061035156,
+            "width": 604.7999877929688,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 489.20001220703125
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        }
+      ]
+    },
+    "bottom-folded-after": {
+      "panes": [
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 1004.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1061.200023651123,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 1012.4000244140625,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1065.200023651123,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Search",
+          "header": {
+            "x": 1070,
+            "y": 483.6625061035156,
+            "width": 20,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 744.3875122070312,
+            "left": 1070
+          },
+          "pane": {
+            "x": 1065.2000732421875,
+            "y": 483.6625061035156,
+            "width": 28.80000114440918,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.0000743865967,
+            "bottom": 744.3875122070312,
+            "left": 1065.2000732421875
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "none",
+          "body": false,
+          "expanded": "false",
+          "query": null,
+          "matches": null,
+          "active": true
+        }
+      ]
+    },
+    "bottom-folded-before": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 20,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 76.79999923706055,
+            "bottom": 744.3875122070312,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 28,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 80.79999923706055,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "none",
+          "body": false,
+          "expanded": "false",
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 85.5999984741211,
+            "y": 483.6625061035156,
+            "width": 1004.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000228881836,
+            "bottom": 511.6625061035156,
+            "left": 85.5999984741211
+          },
+          "pane": {
+            "x": 80.80000305175781,
+            "y": 483.6625061035156,
+            "width": 1013.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.000015258789,
+            "bottom": 744.3875122070312,
+            "left": 80.80000305175781
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-folded-reopened": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 20,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 76.79999923706055,
+            "bottom": 744.3875122070312,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 28,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 80.79999923706055,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "none",
+          "body": false,
+          "expanded": "false",
+          "query": null,
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 85.5999984741211,
+            "y": 483.6625061035156,
+            "width": 1004.4000244140625,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000228881836,
+            "bottom": 511.6625061035156,
+            "left": 85.5999984741211
+          },
+          "pane": {
+            "x": 80.80000305175781,
+            "y": 483.6625061035156,
+            "width": 1013.2000122070312,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094.000015258789,
+            "bottom": 744.3875122070312,
+            "left": 80.80000305175781
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-restored": {
+      "panes": [
+        {
+          "label": "Search",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 652.7999992370605,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 604,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 656.7999992370605,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": true
+        },
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 661.6000366210938,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090.0000305175781,
+            "bottom": 511.6625061035156,
+            "left": 661.6000366210938
+          },
+          "pane": {
+            "x": 656.7999877929688,
+            "y": 483.6625061035156,
+            "width": 437.20001220703125,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 656.7999877929688
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        }
+      ]
+    },
+    "bottom-host-before": {
+      "panes": [
+        {
+          "label": "Terminal",
+          "header": {
+            "x": 56.79999923706055,
+            "y": 483.6625061035156,
+            "width": 428.3999938964844,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 485.1999931335449,
+            "bottom": 511.6625061035156,
+            "left": 56.79999923706055
+          },
+          "pane": {
+            "x": 52.79999923706055,
+            "y": 483.6625061035156,
+            "width": 436.3999938964844,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 489.1999931335449,
+            "bottom": 744.3875122070312,
+            "left": 52.79999923706055
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "",
+          "matches": null,
+          "active": false
+        },
+        {
+          "label": "Search",
+          "header": {
+            "x": 494,
+            "y": 483.6625061035156,
+            "width": 596,
+            "height": 28,
+            "top": 483.6625061035156,
+            "right": 1090,
+            "bottom": 511.6625061035156,
+            "left": 494
+          },
+          "pane": {
+            "x": 489.20001220703125,
+            "y": 483.6625061035156,
+            "width": 604.7999877929688,
+            "height": 260.7250061035156,
+            "top": 483.6625061035156,
+            "right": 1094,
+            "bottom": 744.3875122070312,
+            "left": 489.20001220703125
+          },
+          "writingMode": "horizontal-tb",
+          "transform": "none",
+          "titleDisplay": "block",
+          "body": true,
+          "expanded": "true",
+          "query": "fixture",
+          "matches": "2 results in 2 files",
+          "active": false
+        }
+      ]
+    }
+  },
+  "geometry": {
+    "axis": "x",
+    "original": [
+      604,
+      437.20001220703125
+    ],
+    "folded": [
+      28,
+      1013.2000122070312
+    ],
+    "final": [
+      604.7999877929688,
+      436.3999938964844
+    ]
+  },
+  "exitCode": 0
+}

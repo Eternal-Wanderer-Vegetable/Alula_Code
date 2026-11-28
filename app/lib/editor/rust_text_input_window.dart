@@ -97,14 +97,25 @@ class RustTextInputWindow {
     final caret = selectionUtf16 < 0 ? 0 : selectionUtf16;
     final startUtf16 =
         caret > maxWindowUtf16 ~/ 2 ? caret - (maxWindowUtf16 ~/ 2) : 0;
-    return RustTextInputWindow.open(
-      document,
-      startUtf16: startUtf16,
-      maxWindowUtf16: maxWindowUtf16,
-      compositionReserveUtf16: compositionReserveUtf16,
-      selectionUtf16: caret,
-      selection: selection,
-    );
+    RustTextInputWindow openAt(int start) => RustTextInputWindow.open(
+          document,
+          startUtf16: start,
+          maxWindowUtf16: maxWindowUtf16,
+          compositionReserveUtf16: compositionReserveUtf16,
+          selectionUtf16: caret,
+          selection: selection,
+        );
+    try {
+      return openAt(startUtf16);
+    } on AlulaException catch (error) {
+      if (error.code != 'InvalidUtf16Offset' || startUtf16 == 0) rethrow;
+      // A centered window can start inside a scalar even with a valid caret.
+      final previous = openAt(startUtf16 - 1);
+      if (previous.text.isEmpty) rethrow;
+      final first = previous.text.codeUnitAt(0);
+      if (first < 0xD800 || first > 0xDBFF) rethrow;
+      return previous;
+    }
   }
 
   final AlulaDoc document;

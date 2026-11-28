@@ -1,0 +1,519 @@
+{
+  "product": "85d0114e8a3d414e17299a269a4edeae24e11ad5",
+  "tree": "55608cce0a7a6edf7ac8bcd59be158f25b01d7b8",
+  "ci": {
+    "id": 46160334534,
+    "sha": "85d0114e8a3d414e17299a269a4edeae24e11ad5",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46160334534",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 141026007561,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 141026007749,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 141026007752,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 141026007840,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46160330690,
+    "sha": "85d0114e8a3d414e17299a269a4edeae24e11ad5",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46160330690",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 141025995150,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 141025995338,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 141025995379,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46158037069,
+    "sha": "45919579d3a3b30f3de59972c72d41a27c18fe89",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46158037069",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 141018901334,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 141018901543,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 141018901559,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 141018901595,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 34,
+    "affected_count": 6,
+    "changed_files": 8,
+    "risk_level": "high"
+  },
+  "preEditImpact": {
+    "page": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart",
+        "editor_tab_cross_group_move_test.dart",
+        "editor_tab_overflow_test.dart",
+        "editor_tab_preview_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "explorer_type_ahead_test.dart",
+        "file_link_command_test.dart",
+        "file_link_hint_test.dart",
+        "file_link_hover_test.dart",
+        "file_link_location_integration_test.dart",
+        "file_link_pointer_test.dart",
+        "locked_scrolling_test.dart",
+        "modal_editor_test.dart",
+        "open_editors_close_group_test.dart",
+        "open_editors_group_close_test.dart",
+        "open_editors_view_test.dart",
+        "relative_file_link_integration_test.dart",
+        "walkthrough_test.dart",
+        "widget_test.dart",
+        "workbench_bulk_edit_review_test.dart",
+        "workbench_clear_command_history_test.dart"
+      ],
+      "processes": []
+    },
+    "build": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "register": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "initState"
+      ],
+      "processes": [
+        "initState"
+      ]
+    },
+    "context": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 105,
+        "processes_affected": 6,
+        "modules_affected": 4
+      },
+      "direct": [
+        "_acceptAllMergeCombinations",
+        "_acceptAllMergeConflicts",
+        "_acceptMergeConflict",
+        "_acceptMergeResult",
+        "_activateEditorFromOverflow",
+        "_activateOpenEditorsRow",
+        "_activateSplitEditorView",
+        "_addAuxiliaryTransferReturnDocument",
+        "_adjustEmmetNumber",
+        "_adoptAuxiliaryTab",
+        "_applyColumnSelectionDrag",
+        "_applyCrossWindowSelectionReplacement",
+        "_applyIndentation",
+        "_applyPasteAsOption",
+        "_applyProgrammaticEdit",
+        "_applyRustBracketBackspace",
+        "_applyRustBracketInput",
+        "_buildBreadcrumb",
+        "_buildEditor",
+        "_buildSidebar",
+        "_changeCallHierarchyDirection",
+        "_checkExternalChanges",
+        "_closeActiveEditorFromKeyboard",
+        "_closeCallHierarchy",
+        "_closeDocNow",
+        "_closeOpenEditorsGroup",
+        "_convertIndentation",
+        "_copyDocAcrossGroups",
+        "_copyLines",
+        "_cursorRedo",
+        "_cursorUndo",
+        "_cutMultiSelections"
+      ],
+      "processes": [
+        "applyWorkspaceEdit",
+        "reviewWorkspaceEdit",
+        "initState",
+        "build",
+        "_registerCommands",
+        "dispose"
+      ]
+    },
+    "init": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "initState"
+      ],
+      "processes": [
+        "initState"
+      ]
+    },
+    "encode": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_saveWindowState",
+        "dispose"
+      ],
+      "processes": [
+        "dispose"
+      ]
+    },
+    "restore": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_initCore"
+      ],
+      "processes": [
+        "initState"
+      ]
+    },
+    "folder": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_initCore",
+        "_openRecentEntry",
+        "_showOpenFolderDialog"
+      ],
+      "processes": [
+        "initState",
+        "build"
+      ]
+    },
+    "zen": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_registerCommands",
+        "onWindowLeaveFullScreen"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "zen-grid": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "build"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "grid": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 14,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "workbench_page.dart",
+        "layout_grid_test.dart",
+        "panel_alignment_test.dart",
+        "panel_position_integration_test.dart",
+        "secondary_sidebar_layout_test.dart",
+        "sidebar_position_test.dart",
+        "zen_mode_test.dart",
+        "_host",
+        "main",
+        "_host",
+        "_gridHost",
+        "_gridHost",
+        "_buildZenGrid",
+        "build"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "grid-build": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "node": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "workbench_page.dart",
+        "layout_grid_test.dart",
+        "panel_alignment_test.dart",
+        "panel_position_integration_test.dart",
+        "secondary_sidebar_layout_test.dart",
+        "sidebar_position_test.dart",
+        "zen_mode_test.dart"
+      ],
+      "processes": []
+    },
+    "node-build": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "layout-store": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 267,
+        "processes_affected": 0,
+        "modules_affected": 3
+      },
+      "direct": [
+        "WorkbenchPage",
+        "main.dart",
+        "definition_peek.dart",
+        "workbench_page.dart",
+        "activity_bar_order_integration_test.dart",
+        "activity_bar_pin_integration_test.dart",
+        "activity_bar_position_integration_test.dart",
+        "activity_bar_size_integration_test.dart",
+        "activity_bar_visibility_test.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "call_hierarchy_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_action_location_test.dart",
+        "editor_tab_action_reserve_space_test.dart",
+        "editor_tab_close_action_visibility_test.dart",
+        "editor_tab_cross_group_copy_test.dart",
+        "editor_tab_cross_group_move_test.dart",
+        "editor_tab_mode_test.dart",
+        "editor_tab_overflow_test.dart",
+        "editor_tab_path_disambiguation_test.dart",
+        "editor_tab_preview_test.dart",
+        "editor_tab_sizing_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "editor_tab_wrap_test.dart"
+      ],
+      "processes": []
+    },
+    "write-pref": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 2
+      },
+      "direct": [
+        "saveHierarchyDirection",
+        "savePeekLayout"
+      ],
+      "processes": []
+    },
+    "find-store": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 0,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_WorkbenchPageState",
+        "main.dart",
+        "workbench_page.dart",
+        "find_history_store_test.dart",
+        "find_history_widget_test.dart",
+        "main",
+        "main"
+      ],
+      "processes": []
+    },
+    "find-identity": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 4,
+        "modules_affected": 2
+      },
+      "direct": [
+        "load",
+        "save",
+        "_loadFindHistoryForWorkspace",
+        "_openFolder"
+      ],
+      "processes": [
+        "initState",
+        "build",
+        "dispose",
+        "save"
+      ]
+    },
+    "find-path": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "direct": [
+        "load",
+        "save"
+      ],
+      "processes": [
+        "dispose",
+        "save"
+      ]
+    },
+    "find-hash": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_pathFor"
+      ],
+      "processes": [
+        "save"
+      ]
+    },
+    "zen-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    }
+  }
+}

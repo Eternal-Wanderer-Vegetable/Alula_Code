@@ -1,0 +1,39 @@
+{
+  "summary": {
+    "changed_count": 4,
+    "affected_count": 0,
+    "changed_files": 11,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md:L1:P05.76 / feat-128 / CMD-04 — 文档符号 QuickInput",
+      "name": "P05.76 / feat-128 / CMD-04 — 文档符号 QuickInput",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:progress.md:L8:P05 / feat-027 持续推进；当前 P05.75 层级 Outline；目标整体完成 P05",
+      "name": "P05 / feat-027 持续推进；当前 P05.75 层级 Outline；目标整体完成 P05",
+      "type": "Section",
+      "filePath": "progress.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:session-handoff.md:L1:Session Handoff",
+      "name": "Session Handoff",
+      "type": "Section",
+      "filePath": "session-handoff.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:session-handoff.md:L32:Next Session First Step",
+      "name": "Next Session First Step",
+      "type": "Section",
+      "filePath": "session-handoff.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": []
+}

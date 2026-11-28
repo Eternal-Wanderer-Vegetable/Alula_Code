@@ -3,6 +3,7 @@ import 'dart:io';
 
 import '../editor/find_replace_history.dart';
 import 'session_store.dart';
+import 'workspace_state.dart';
 
 const int maxFindHistoryWorkspaceRecords = 16;
 const int maxFindHistoryRecordBytes = 2 * 1024 * 1024;
@@ -84,23 +85,12 @@ class FindReplaceHistoryStore {
     return saved;
   }
 
-  static String workspaceIdentity(String? workspaceRoot) {
-    if (workspaceRoot == null || workspaceRoot.isEmpty) {
-      return 'empty-workspace';
-    }
-    var normalized = workspaceRoot.replaceAll('\\', '/');
-    while (normalized.length > 1 &&
-        normalized.endsWith('/') &&
-        !RegExp(r'^[a-zA-Z]:/$').hasMatch(normalized)) {
-      normalized = normalized.substring(0, normalized.length - 1);
-    }
-    if (Platform.isWindows) normalized = normalized.toLowerCase();
-    return 'workspace:$normalized';
-  }
+  static String workspaceIdentity(String? workspaceRoot) =>
+      workspaceStateIdentity(workspaceRoot);
 
   String _pathFor(String identity) {
     final root = Directory(directory).absolute.path;
-    return '$root${Platform.pathSeparator}${_stableHash(identity)}.json';
+    return '$root${Platform.pathSeparator}${workspaceStateFileKey(identity)}.json';
   }
 
   Map<String, Object?>? _readPayload(String path) {
@@ -211,13 +201,4 @@ class FindReplaceHistoryStore {
     }
   }
 
-  String _stableHash(String value) {
-    final mask = BigInt.parse('ffffffffffffffff', radix: 16);
-    var hash = BigInt.parse('cbf29ce484222325', radix: 16);
-    for (final byte in utf8.encode(value)) {
-      hash ^= BigInt.from(byte);
-      hash = (hash * BigInt.from(0x100000001b3)) & mask;
-    }
-    return hash.toRadixString(16).padLeft(16, '0');
-  }
 }

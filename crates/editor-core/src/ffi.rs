@@ -27,8 +27,10 @@ use editor_buffer::{
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
-    decode_semantic_tokens, extract_completion_labels, extract_definition_location,
-    DefinitionLocation, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
+    decode_semantic_tokens, extract_completion_labels, extract_definition_targets,
+    extract_hierarchy_entries, extract_reference_targets, extract_workspace_symbols,
+    HierarchyDirection, HierarchyKind, LspPendingRequest, LspRequestOutcome, LspServer,
+    SemanticToken, SemanticTokenLegend, SymbolLocationKind,
 };
 use editor_merge::{
     combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
@@ -37,10 +39,11 @@ use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePr
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
+use crate::file_links::file_link_at_utf16;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 40;
+pub const ALULA_ABI_VERSION: u32 = 51;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -57,6 +60,7 @@ const MAX_PENDING_SEMANTIC_TOKENS: usize = 16;
 const MAX_SEMANTIC_TOKENS_PER_DOCUMENT: usize = 100_000;
 static NEXT_SEMANTIC_TOKENS_ID: AtomicU64 = AtomicU64::new(1);
 const MAX_PENDING_DEFINITIONS: usize = 16;
+const MAX_HIERARCHY_ITEM_JSON_BYTES: usize = 64 * 1024;
 static NEXT_DEFINITION_ID: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Deserialize)]
@@ -257,12 +261,41 @@ struct PendingDefinition {
     server: Arc<LspServer>,
     request: LspPendingRequest,
     deadline: Instant,
+    hierarchy_direction: Option<HierarchyDirection>,
 }
 
 static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
 static PENDING_SEMANTIC_TOKENS: OnceLock<Mutex<HashMap<u64, PendingSemanticTokens>>> =
     OnceLock::new();
 static PENDING_DEFINITIONS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
+static PENDING_REFERENCES: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
+static PENDING_HIERARCHY: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
+static PENDING_WORKSPACE_SYMBOLS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> =
+    OnceLock::new();
+static NEXT_WORKSPACE_SYMBOL_ID: AtomicU64 = AtomicU64::new(1);
+
+fn pending_workspace_symbols_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinition>> {
+    PENDING_WORKSPACE_SYMBOLS
+        .get_or_init(|| Mutex::new(HashMap::new()))
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn cancel_workspace_symbols(mut matches: impl FnMut(&PendingDefinition) -> bool) {
+    let requests: Vec<_> = {
+        let mut pending = pending_workspace_symbols_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(id, request)| matches(request).then_some(*id))
+            .collect();
+        ids.into_iter()
+            .filter_map(|id| pending.remove(&id))
+            .collect()
+    };
+    for mut request in requests {
+        let _ = request.request.cancel();
+    }
+}
 static RESOURCE_MONITOR: OnceLock<Mutex<Option<ResourcePressureMonitor>>> = OnceLock::new();
 
 fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
@@ -367,48 +400,82 @@ fn pending_definitions_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinit
         .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
 
-fn cancel_definitions_for_doc(id: u64) {
-    let requests: Vec<_> = {
-        let mut pending = pending_definitions_lock();
-        let ids: Vec<_> = pending
-            .iter()
-            .filter_map(|(request_id, request)| (request.document_id == id).then_some(*request_id))
-            .collect();
-        ids.into_iter()
-            .filter_map(|request_id| pending.remove(&request_id))
-            .collect()
-    };
-    for mut pending in requests {
-        let _ = pending.request.cancel();
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum LocationQuery {
+    Definition,
+    References,
+    Hierarchy,
+}
+
+#[derive(Clone, Copy)]
+enum LocationRequest {
+    Definition,
+    Symbol(SymbolLocationKind),
+    References { include_declaration: bool },
+    Hierarchy(HierarchyKind),
+}
+
+impl LocationQuery {
+    fn pending(self) -> MutexGuard<'static, HashMap<u64, PendingDefinition>> {
+        match self {
+            Self::Definition => pending_definitions_lock(),
+            Self::References => PENDING_REFERENCES
+                .get_or_init(|| Mutex::new(HashMap::new()))
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner()),
+            Self::Hierarchy => PENDING_HIERARCHY
+                .get_or_init(|| Mutex::new(HashMap::new()))
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner()),
+        }
     }
+
+    fn error_code(self) -> &'static str {
+        match self {
+            Self::Definition => "DefinitionFailed",
+            Self::References => "ReferencesFailed",
+            Self::Hierarchy => "HierarchyFailed",
+        }
+    }
+
+    fn cancel_matching(self, matches: impl Fn(&PendingDefinition) -> bool) {
+        let requests: Vec<_> = {
+            let mut pending = self.pending();
+            let ids: Vec<_> = pending
+                .iter()
+                .filter_map(|(id, request)| matches(request).then_some(*id))
+                .collect();
+            ids.into_iter()
+                .filter_map(|id| pending.remove(&id))
+                .collect()
+        };
+        for mut pending in requests {
+            let _ = pending.request.cancel();
+        }
+    }
+}
+
+fn cancel_definitions_for_doc(id: u64) {
+    let matches = |request: &PendingDefinition| request.document_id == id;
+    cancel_workspace_symbols(matches);
+    LocationQuery::Definition.cancel_matching(matches);
+    LocationQuery::References.cancel_matching(matches);
+    LocationQuery::Hierarchy.cancel_matching(matches);
 }
 
 pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
-    let requests: Vec<_> = {
-        let mut pending = pending_definitions_lock();
-        let ids: Vec<_> = pending
-            .iter()
-            .filter_map(|(request_id, request)| {
-                Arc::ptr_eq(&request.server, server).then_some(*request_id)
-            })
-            .collect();
-        ids.into_iter()
-            .filter_map(|request_id| pending.remove(&request_id))
-            .collect()
-    };
-    for mut pending in requests {
-        let _ = pending.request.cancel();
-    }
+    let matches = |request: &PendingDefinition| Arc::ptr_eq(&request.server, server);
+    cancel_workspace_symbols(matches);
+    LocationQuery::Definition.cancel_matching(matches);
+    LocationQuery::References.cancel_matching(matches);
+    LocationQuery::Hierarchy.cancel_matching(matches);
 }
 
 fn cancel_all_definitions() {
-    let requests: Vec<_> = pending_definitions_lock()
-        .drain()
-        .map(|(_, request)| request)
-        .collect();
-    for mut pending in requests {
-        let _ = pending.request.cancel();
-    }
+    cancel_workspace_symbols(|_| true);
+    LocationQuery::Definition.cancel_matching(|_| true);
+    LocationQuery::References.cancel_matching(|_| true);
+    LocationQuery::Hierarchy.cancel_matching(|_| true);
 }
 
 fn semantic_token_ranges(
@@ -1473,6 +1540,34 @@ pub extern "C" fn alula_doc_line_boundary(id: u64, offset_utf16: u64) -> *mut c_
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_boundary")))
 }
 
+/// Read the file URI containing an absolute UTF-16 caret, if present.
+#[no_mangle]
+pub extern "C" fn alula_doc_file_link_at(id: u64, offset_utf16: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        match file_link_at_utf16(&registry_lock(), id, offset_utf16) {
+            Ok((version, link)) => {
+                let link = link.map(|link| {
+                    json!({
+                        "uri": link.uri,
+                        "startUtf16": link.start_utf16,
+                        "endUtf16": link.end_utf16,
+                    })
+                });
+                to_c_ptr(json!({ "ok": true, "version": version, "link": link }).to_string())
+            }
+            Err(ApplyError::UnknownDoc) => err_json("UnknownDoc", json!({ "id": id })),
+            Err(ApplyError::Buffer(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Err(error) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_file_link_at")))
+}
+
 /// Move a document cursor to the adjacent VS Code word-part boundary.
 /// `direction` is 0 for left and 1 for right; offsets use UTF-16 code units.
 #[no_mangle]
@@ -2457,6 +2552,137 @@ pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_diagnostics")))
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UnopenedDiagnosticQuery {
+    cursor_uri: Option<String>,
+    open_uris: Vec<String>,
+    forward: bool,
+}
+
+/// Return one unopened file candidate from the language server attached to id.
+///
+/// # Safety
+/// query_json must point to a valid NUL-terminated UTF-8 string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_next_unopened_diagnostic(
+    id: u64,
+    query_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let input = match read_c_str(query_json) {
+            Ok(input) => input,
+            Err(error) => return error,
+        };
+        let query: UnopenedDiagnosticQuery = match serde_json::from_str(input) {
+            Ok(query) => query,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return err_json("NoLsp", json!({ "id": id }));
+        };
+        let candidate = server.next_unopened_diagnostic(
+            query.cursor_uri.as_deref(),
+            &query.open_uris,
+            query.forward,
+        );
+        to_c_ptr(json!({ "ok": true, "candidate": candidate }).to_string())
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_lsp_next_unopened_diagnostic"),
+        )
+    })
+}
+
+/// Read a snapshot page of unopened diagnostics from the server attached to id.
+///
+/// # Safety
+/// query_json must point to a valid NUL-terminated UTF-8 string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_unopened_diagnostics_page(
+    id: u64,
+    query_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let input = match read_c_str(query_json) {
+            Ok(input) => input,
+            Err(error) => return error,
+        };
+        let request: editor_lsp::WorkspaceDiagnosticPageRequest = match serde_json::from_str(input)
+        {
+            Ok(request) => request,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return err_json("NoLsp", json!({ "id": id }));
+        };
+        match server.unopened_diagnostics_page(request) {
+            Ok(page) => to_c_ptr(json!({ "ok": true, "page": page }).to_string()),
+            Err(error) => err_json("InvalidDiagnosticPage", json!(error)),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_lsp_unopened_diagnostics_page"),
+        )
+    })
+}
+
+/// Subscribe to changes in the diagnostic cache for the workspace of id.
+/// A null result means the workspace is unavailable or already subscribed.
+///
+/// # Safety
+/// A provided callback must be valid until the subscription is closed and
+/// must post a signal without reentering the diagnostics cache.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_subscribe(
+    id: u64,
+    callback: Option<extern "C" fn()>,
+) -> *mut std::ffi::c_void {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Some(callback) = callback else {
+            return std::ptr::null_mut();
+        };
+        let Some(server) = registry_lock().lsp_of(id) else {
+            return std::ptr::null_mut();
+        };
+        server
+            .subscribe_diagnostics(callback)
+            .map_or(std::ptr::null_mut(), |subscription| {
+                Box::into_raw(Box::new(subscription)).cast()
+            })
+    }))
+    .unwrap_or(std::ptr::null_mut())
+}
+
+/// Allow another diagnostic signal before checking the current snapshot.
+///
+/// # Safety
+/// handle must be null or a live subscription from this library.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_resume(handle: *mut std::ffi::c_void) {
+    if let Some(subscription) =
+        unsafe { handle.cast::<editor_lsp::DiagnosticSubscription>().as_ref() }
+    {
+        subscription.resume();
+    }
+}
+
+/// Remove the subscription before closing the callback.
+///
+/// # Safety
+/// handle must be null or a live subscription from this library. Each
+/// non-null handle can be closed once with no concurrent use of that handle.
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_diagnostics_unsubscribe(handle: *mut std::ffi::c_void) {
+    if !handle.is_null() {
+        drop(unsafe { Box::from_raw(handle.cast::<editor_lsp::DiagnosticSubscription>()) });
+    }
+}
+
 /// Start one cancellable full semantic-token request for a Rust document.
 #[no_mangle]
 pub extern "C" fn alula_semantic_tokens_start(id: u64, timeout_ms: u64) -> *mut c_char {
@@ -2783,6 +3009,230 @@ pub extern "C" fn alula_completion_cancel(request_id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_completion_cancel")))
 }
 
+fn start_location_query(
+    id: u64,
+    offset_utf16: u64,
+    timeout_ms: u64,
+    kind: LocationRequest,
+) -> *mut c_char {
+    let query = match kind {
+        LocationRequest::References { .. } => LocationQuery::References,
+        LocationRequest::Hierarchy(_) => LocationQuery::Hierarchy,
+        LocationRequest::Definition | LocationRequest::Symbol(_) => LocationQuery::Definition,
+    };
+    let supports_unavailable = !matches!(kind, LocationRequest::Definition);
+    let (uri, server, line, character, version) = {
+        let reg = registry_lock();
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        let Some(version) = reg.version_of(id) else {
+            return err_json("UnknownDoc", json!("doc 未设置 uri"));
+        };
+        let uri = reg.uri_of(id);
+        let server = reg.lsp_of(id);
+        if supports_unavailable && (uri.is_none() || server.is_none()) {
+            return to_c_ptr(json!({ "ok": true, "supported": false }).to_string());
+        }
+        let Some(uri) = uri else {
+            return err_json("UnknownDoc", json!("doc 未设置 uri"));
+        };
+        let Some(server) = server else {
+            return err_json("NoLsp", json!({ "id": id }));
+        };
+        let Some((line, character)) = reg.line_col(id, offset_utf16) else {
+            return err_json(
+                "InvalidUtf16Offset",
+                json!({ "id": id, "offsetUtf16": offset_utf16 }),
+            );
+        };
+        (uri, server, line, character, version)
+    };
+
+    // Definitions already supersede a workspace symbol request on this doc.
+    if query == LocationQuery::Definition {
+        cancel_workspace_symbols(|request| request.document_id == id);
+    }
+    if query != LocationQuery::Hierarchy {
+        query.cancel_matching(|request| request.document_id == id);
+    }
+    let issued = match kind {
+        LocationRequest::Definition => server.definition_async(&uri, line, character).map(Some),
+        LocationRequest::Symbol(kind) => server.symbol_location_async(kind, &uri, line, character),
+        LocationRequest::References {
+            include_declaration,
+        } => server.references_async(&uri, line, character, include_declaration),
+        LocationRequest::Hierarchy(kind) => {
+            server.prepare_hierarchy_async(kind, &uri, line, character)
+        }
+    };
+    let request = match issued {
+        Ok(Some(request)) => request,
+        Ok(None) => return to_c_ptr(json!({ "ok": true, "supported": false }).to_string()),
+        Err(error) => return err_json(query.error_code(), json!(error)),
+    };
+    let now = Instant::now();
+    let deadline = now
+        .checked_add(Duration::from_millis(timeout_ms))
+        .unwrap_or_else(|| now + Duration::from_secs(86_400));
+    let request_id = match queue_location_request(
+        query,
+        PendingDefinition {
+            document_id: id,
+            document_version: version,
+            server,
+            request,
+            deadline,
+            hierarchy_direction: None,
+        },
+    ) {
+        Ok(id) => id,
+        Err(reply) => return reply,
+    };
+    let mut response = json!({ "ok": true, "requestId": request_id, "version": version });
+    if supports_unavailable {
+        response["supported"] = json!(true);
+    }
+    to_c_ptr(response.to_string())
+}
+
+fn location_request_is_current(query: LocationQuery, pending: &PendingDefinition) -> bool {
+    let reg = registry_lock();
+    reg.version_of(pending.document_id) == Some(pending.document_version)
+        && (query != LocationQuery::Hierarchy
+            || reg
+                .lsp_of(pending.document_id)
+                .is_some_and(|server| Arc::ptr_eq(&server, &pending.server)))
+}
+
+fn queue_location_request(
+    query: LocationQuery,
+    mut pending: PendingDefinition,
+) -> Result<u64, *mut c_char> {
+    let mut requests = query.pending();
+    if query == LocationQuery::Hierarchy && !location_request_is_current(query, &pending) {
+        drop(requests);
+        let _ = pending.request.cancel();
+        return Err(to_c_ptr(
+            json!({"ok": true, "supported": true, "status": "stale"}).to_string(),
+        ));
+    }
+    if requests.len() >= MAX_PENDING_DEFINITIONS {
+        drop(requests);
+        let _ = pending.request.cancel();
+        return Err(err_json(
+            "Backpressure",
+            json!({"limit": MAX_PENDING_DEFINITIONS}),
+        ));
+    }
+    let request_id = NEXT_DEFINITION_ID.fetch_add(1, Ordering::Relaxed);
+    requests.insert(request_id, pending);
+    Ok(request_id)
+}
+
+fn poll_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
+    enum PollResult {
+        Pending,
+        Timeout(PendingDefinition),
+        Stale(PendingDefinition),
+        Complete(PendingDefinition, serde_json::Value),
+        Failed(PendingDefinition, String),
+    }
+
+    let status = |status| {
+        to_c_ptr(json!({ "ok": true, "status": status, "requestId": request_id }).to_string())
+    };
+    let result = {
+        let mut requests = query.pending();
+        let Some(mut pending) = requests.remove(&request_id) else {
+            return status("cancelled");
+        };
+        if Instant::now() >= pending.deadline {
+            PollResult::Timeout(pending)
+        } else if query != LocationQuery::Definition
+            && !location_request_is_current(query, &pending)
+        {
+            PollResult::Stale(pending)
+        } else {
+            match pending.request.try_recv_outcome() {
+                Ok(Some(LspRequestOutcome::Result(response))) => {
+                    PollResult::Complete(pending, response)
+                }
+                Ok(Some(LspRequestOutcome::ContentModified)) => PollResult::Stale(pending),
+                Ok(Some(LspRequestOutcome::Cancelled)) => return status("cancelled"),
+                Ok(None) => {
+                    requests.insert(request_id, pending);
+                    PollResult::Pending
+                }
+                Err(error) => PollResult::Failed(pending, error),
+            }
+        }
+    };
+
+    match result {
+        PollResult::Pending => status("pending"),
+        PollResult::Timeout(mut pending) => {
+            let _ = pending.request.cancel();
+            status("timeout")
+        }
+        PollResult::Stale(mut pending) => {
+            let _ = pending.request.cancel();
+            status("stale")
+        }
+        PollResult::Complete(pending, response) => {
+            if !location_request_is_current(query, &pending) {
+                return status("stale");
+            }
+            let mut reply = json!({
+                "ok": true,
+                "status": "completed",
+                "requestId": request_id,
+                "version": pending.document_version,
+            });
+            match query {
+                LocationQuery::Definition => {
+                    let targets = match extract_definition_targets(&response) {
+                        Ok(targets) => targets,
+                        Err(error) => return err_json(query.error_code(), json!(error)),
+                    };
+                    reply["definition"] = json!(targets.first().map(|target| {
+                        json!({ "uri": target.uri, "line": target.line, "character": target.character })
+                    }));
+                    reply["definitions"] = json!(targets);
+                }
+                LocationQuery::References => {
+                    let targets = match extract_reference_targets(&response) {
+                        Ok(targets) => targets,
+                        Err(error) => return err_json(query.error_code(), json!(error)),
+                    };
+                    reply["references"] = json!(targets);
+                }
+                LocationQuery::Hierarchy => {
+                    let entries =
+                        match extract_hierarchy_entries(response, pending.hierarchy_direction) {
+                            Ok(entries) => entries,
+                            Err(error) => return err_json(query.error_code(), json!(error)),
+                        };
+                    reply["entries"] = json!(entries);
+                }
+            }
+            to_c_ptr(reply.to_string())
+        }
+        PollResult::Failed(mut pending, error) => {
+            let _ = pending.request.cancel();
+            err_json(query.error_code(), json!(error))
+        }
+    }
+}
+
+fn cancel_location_query(request_id: u64, query: LocationQuery) -> *mut c_char {
+    let pending = query.pending().remove(&request_id);
+    if let Some(mut pending) = pending {
+        let _ = pending.request.cancel();
+    }
+    to_c_ptr(json!({ "ok": true, "requestId": request_id }).to_string())
+}
+
 /// Start a bounded, cancellable LSP definition request. `offset_utf16` is an
 /// absolute document offset in UTF-16 code units.
 #[no_mangle]
@@ -2792,132 +3242,42 @@ pub extern "C" fn alula_definition_start(
     timeout_ms: u64,
 ) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
-        let (uri, server, line, character, version) = {
-            let reg = registry_lock();
-            let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
-                return err_json("InvalidArgument", json!("offset is not representable"));
-            };
-            let Some(uri) = reg.uri_of(id) else {
-                return err_json("UnknownDoc", json!("doc 未设置 uri"));
-            };
-            let Some(server) = reg.lsp_of(id) else {
-                return err_json("NoLsp", json!({ "id": id }));
-            };
-            let Some(version) = reg.version_of(id) else {
-                return err_json("UnknownDoc", json!({ "id": id }));
-            };
-            let Some((line, character)) = reg.line_col(id, offset_utf16) else {
-                return err_json(
-                    "InvalidUtf16Offset",
-                    json!({ "id": id, "offsetUtf16": offset_utf16 }),
-                );
-            };
-            (uri, server, line, character, version)
-        };
-
-        cancel_definitions_for_doc(id);
-        let request = match server.definition_async(&uri, line, character) {
-            Ok(request) => request,
-            Err(error) => return err_json("DefinitionFailed", json!(error)),
-        };
-        let mut pending = pending_definitions_lock();
-        if pending.len() >= MAX_PENDING_DEFINITIONS {
-            drop(pending);
-            let mut request = request;
-            let _ = request.cancel();
-            return err_json("Backpressure", json!({ "limit": MAX_PENDING_DEFINITIONS }));
-        }
-        let request_id = NEXT_DEFINITION_ID.fetch_add(1, Ordering::Relaxed);
-        let now = Instant::now();
-        let deadline = now
-            .checked_add(Duration::from_millis(timeout_ms))
-            .unwrap_or_else(|| now + Duration::from_secs(86_400));
-        pending.insert(
-            request_id,
-            PendingDefinition {
-                document_id: id,
-                document_version: version,
-                server,
-                request,
-                deadline,
-            },
-        );
-        to_c_ptr(json!({ "ok": true, "requestId": request_id, "version": version }).to_string())
+        start_location_query(id, offset_utf16, timeout_ms, LocationRequest::Definition)
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_start")))
 }
 
-/// Poll a definition request. A response is returned only while the source
-/// document remains at the version captured by `alula_definition_start`.
+/// Start a declaration (1), implementation (2), or type-definition (3) query.
+/// Results and lifecycle use alula_definition_poll / alula_definition_cancel.
+#[no_mangle]
+pub extern "C" fn alula_symbol_location_start(
+    id: u64,
+    offset_utf16: u64,
+    kind: u8,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let kind = match kind {
+            1 => SymbolLocationKind::Declaration,
+            2 => SymbolLocationKind::Implementation,
+            3 => SymbolLocationKind::TypeDefinition,
+            _ => return err_json("InvalidArgument", json!({"kind": kind})),
+        };
+        start_location_query(
+            id,
+            offset_utf16,
+            timeout_ms.min(60_000),
+            LocationRequest::Symbol(kind),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_symbol_location_start")))
+}
+
+/// Poll a definition request while its source document version remains current.
 #[no_mangle]
 pub extern "C" fn alula_definition_poll(request_id: u64) -> *mut c_char {
-    enum PollResult {
-        Pending,
-        Timeout(PendingDefinition),
-        Complete(PendingDefinition, serde_json::Value),
-        Failed(PendingDefinition, String),
-    }
-
     catch_unwind(AssertUnwindSafe(|| {
-        let result = {
-            let mut requests = pending_definitions_lock();
-            let Some(mut pending) = requests.remove(&request_id) else {
-                return to_c_ptr(
-                    json!({ "ok": true, "status": "cancelled", "requestId": request_id })
-                        .to_string(),
-                );
-            };
-            if Instant::now() >= pending.deadline {
-                PollResult::Timeout(pending)
-            } else {
-                match pending.request.try_recv() {
-                    Ok(Some(response)) => PollResult::Complete(pending, response),
-                    Ok(None) => {
-                        requests.insert(request_id, pending);
-                        PollResult::Pending
-                    }
-                    Err(error) => PollResult::Failed(pending, error),
-                }
-            }
-        };
-
-        match result {
-            PollResult::Pending => to_c_ptr(
-                json!({ "ok": true, "status": "pending", "requestId": request_id }).to_string(),
-            ),
-            PollResult::Timeout(mut pending) => {
-                let _ = pending.request.cancel();
-                to_c_ptr(
-                    json!({ "ok": true, "status": "timeout", "requestId": request_id }).to_string(),
-                )
-            }
-            PollResult::Complete(pending, response) => {
-                if registry_lock().version_of(pending.document_id) != Some(pending.document_version) {
-                    return to_c_ptr(
-                        json!({ "ok": true, "status": "stale", "requestId": request_id })
-                            .to_string(),
-                    );
-                }
-                let definition = extract_definition_location(&response);
-                let definition_json = definition.map_or(serde_json::Value::Null, |location: DefinitionLocation| {
-                    json!({ "uri": location.uri, "line": location.line, "character": location.character })
-                });
-                to_c_ptr(
-                    json!({
-                        "ok": true,
-                        "status": "completed",
-                        "requestId": request_id,
-                        "version": pending.document_version,
-                        "definition": definition_json,
-                    })
-                    .to_string(),
-                )
-            }
-            PollResult::Failed(mut pending, error) => {
-                let _ = pending.request.cancel();
-                err_json("DefinitionFailed", json!(error))
-            }
-        }
+        poll_location_query(request_id, LocationQuery::Definition)
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_poll")))
 }
@@ -2926,12 +3286,309 @@ pub extern "C" fn alula_definition_poll(request_id: u64) -> *mut c_char {
 #[no_mangle]
 pub extern "C" fn alula_definition_cancel(request_id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
-        if let Some(mut pending) = pending_definitions_lock().remove(&request_id) {
-            let _ = pending.request.cancel();
-        }
-        to_c_ptr(json!({ "ok": true, "requestId": request_id }).to_string())
+        cancel_location_query(request_id, LocationQuery::Definition)
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_cancel")))
+}
+
+/// Start a versioned reference query. `include_declaration` is 0 or 1.
+#[no_mangle]
+pub extern "C" fn alula_references_start(
+    id: u64,
+    offset_utf16: u64,
+    include_declaration: u8,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if include_declaration > 1 {
+            return err_json(
+                "InvalidArgument",
+                json!("includeDeclaration must be 0 or 1"),
+            );
+        }
+        start_location_query(
+            id,
+            offset_utf16,
+            timeout_ms.min(60_000),
+            LocationRequest::References {
+                include_declaration: include_declaration != 0,
+            },
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_start")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_references_poll(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        poll_location_query(request_id, LocationQuery::References)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_poll")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_references_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        cancel_location_query(request_id, LocationQuery::References)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_references_cancel")))
+}
+
+fn hierarchy_kind(kind: u8) -> Option<HierarchyKind> {
+    match kind {
+        1 => Some(HierarchyKind::Call),
+        2 => Some(HierarchyKind::Type),
+        _ => None,
+    }
+}
+
+/// Inspect the attached provider's advertised call (1) or type (2) capability.
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_has_provider(id: u64, kind: u8) -> u8 {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Some(kind) = hierarchy_kind(kind) else {
+            return 0;
+        };
+        let server = {
+            let reg = registry_lock();
+            if reg.uri_of(id).is_none() {
+                return 0;
+            }
+            reg.lsp_of(id)
+        };
+        u8::from(server.is_some_and(|server| server.supports_hierarchy(kind).unwrap_or(false)))
+    }))
+    .unwrap_or(0)
+}
+
+/// Prepare a call (1) or type (2) hierarchy using a UTF-16 document offset.
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_prepare_start(
+    id: u64,
+    offset_utf16: u64,
+    kind: u8,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Some(kind) = hierarchy_kind(kind) else {
+            return err_json("InvalidArgument", json!("unknown hierarchy kind"));
+        };
+        start_location_query(
+            id,
+            offset_utf16,
+            timeout_ms.min(60_000),
+            LocationRequest::Hierarchy(kind),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_prepare_start")))
+}
+
+/// Expand a versioned hierarchy item using incoming (1), outgoing (2),
+/// supertypes (3), or subtypes (4).
+///
+/// # Safety
+/// item_json must point to a valid, NUL-terminated UTF-8 string for this call.
+#[no_mangle]
+pub unsafe extern "C" fn alula_hierarchy_expand_start(
+    id: u64,
+    expected_version: u64,
+    direction: u8,
+    item_json: *const c_char,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let direction = match direction {
+            1 => HierarchyDirection::Incoming,
+            2 => HierarchyDirection::Outgoing,
+            3 => HierarchyDirection::Supertypes,
+            4 => HierarchyDirection::Subtypes,
+            _ => return err_json("InvalidArgument", json!("unknown hierarchy direction")),
+        };
+        let server = {
+            let reg = registry_lock();
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({"id": id}));
+            };
+            if version != expected_version {
+                return to_c_ptr(json!({"ok": true, "supported": true, "status": "stale"}).to_string());
+            }
+            let Some(server) = reg.lsp_of(id) else {
+                return to_c_ptr(json!({"ok": true, "supported": false}).to_string());
+            };
+            server
+        };
+        let item_text = match unsafe { read_c_str(item_json) } {
+            Ok(item) => item,
+            Err(error) => return error,
+        };
+        if item_text.len() > MAX_HIERARCHY_ITEM_JSON_BYTES {
+            return err_json("InvalidArgument", json!({"maxItemBytes": MAX_HIERARCHY_ITEM_JSON_BYTES}));
+        }
+        let item = match serde_json::from_str(item_text) {
+            Ok(item) => item,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let query = LocationQuery::Hierarchy;
+        let request = match server.hierarchy_children_async(direction, item) {
+            Ok(Some(request)) => request,
+            Ok(None) => return to_c_ptr(json!({"ok": true, "supported": false}).to_string()),
+            Err(error) => return err_json(query.error_code(), json!(error)),
+        };
+        let request_id = match queue_location_request(query, PendingDefinition {
+            document_id: id,
+            document_version: expected_version,
+            server,
+            request,
+            deadline: Instant::now() + Duration::from_millis(timeout_ms.min(60_000)),
+            hierarchy_direction: Some(direction),
+        }) {
+            Ok(id) => id,
+            Err(reply) => return reply,
+        };
+        to_c_ptr(json!({"ok": true, "supported": true, "requestId": request_id, "version": expected_version}).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_expand_start")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_poll(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        poll_location_query(request_id, LocationQuery::Hierarchy)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_poll")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_hierarchy_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        cancel_location_query(request_id, LocationQuery::Hierarchy)
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_hierarchy_cancel")))
+}
+
+/// Start a workspace-scoped symbol query using the server attached to `id`.
+/// Query bytes and in-flight requests are bounded; unsupported servers are explicit.
+///
+/// # Safety
+/// `query_ptr` must point to a valid, NUL-terminated UTF-8 string for this call.
+#[no_mangle]
+pub unsafe extern "C" fn alula_workspace_symbols_start(
+    id: u64,
+    query_ptr: *const c_char,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let query = match unsafe { read_c_str(query_ptr) } {
+            Ok(query) => query,
+            Err(error) => return error,
+        };
+        if query.len() > 1024 {
+            return err_json("InvalidArgument", json!({"maxQueryBytes": 1024}));
+        }
+        let (server, version) = {
+            let reg = registry_lock();
+            let Some(server) = reg.lsp_of(id) else {
+                return err_json("NoLsp", json!({"id": id}));
+            };
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({"id": id}));
+            };
+            (server, version)
+        };
+        cancel_workspace_symbols(|request| request.document_id == id);
+        let request = match server.workspace_symbols_async(query) {
+            Ok(Some(request)) => request,
+            Ok(None) => return to_c_ptr(json!({"ok": true, "supported": false}).to_string()),
+            Err(error) => return err_json("WorkspaceSymbolsFailed", json!(error)),
+        };
+        let mut requests = pending_workspace_symbols_lock();
+        if requests.len() >= MAX_PENDING_DEFINITIONS {
+            let mut request = request;
+            let _ = request.cancel();
+            return err_json("Backpressure", json!({"limit": MAX_PENDING_DEFINITIONS}));
+        }
+        let request_id = NEXT_WORKSPACE_SYMBOL_ID.fetch_add(1, Ordering::Relaxed);
+        let deadline = Instant::now() + Duration::from_millis(timeout_ms.min(60_000));
+        requests.insert(
+            request_id,
+            PendingDefinition {
+                document_id: id,
+                document_version: version,
+                server,
+                request,
+                deadline,
+                hierarchy_direction: None,
+            },
+        );
+        to_c_ptr(
+            json!({"ok": true, "supported": true, "requestId": request_id, "version": version})
+                .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_start")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_workspace_symbols_poll(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        enum Poll { Pending, Timeout(PendingDefinition), Stale(PendingDefinition), Complete(PendingDefinition, serde_json::Value), Failed(PendingDefinition, String) }
+        let result = {
+            let mut requests = pending_workspace_symbols_lock();
+            let Some(pending) = requests.get_mut(&request_id) else {
+                return to_c_ptr(json!({"ok": true, "status": "cancelled"}).to_string());
+            };
+            if Instant::now() >= pending.deadline {
+                Poll::Timeout(requests.remove(&request_id).unwrap())
+            } else if registry_lock().version_of(pending.document_id) != Some(pending.document_version) {
+                Poll::Stale(requests.remove(&request_id).unwrap())
+            } else {
+                match pending.request.try_recv() {
+                    Ok(None) => Poll::Pending,
+                    Ok(Some(response)) => Poll::Complete(requests.remove(&request_id).unwrap(), response),
+                    Err(error) => Poll::Failed(requests.remove(&request_id).unwrap(), error),
+                }
+            }
+        };
+        match result {
+            Poll::Pending => to_c_ptr(json!({"ok": true, "status": "pending"}).to_string()),
+            Poll::Timeout(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(json!({"ok": true, "status": "timeout"}).to_string())
+            }
+            Poll::Stale(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(json!({"ok": true, "status": "stale"}).to_string())
+            }
+            Poll::Complete(pending, response) => match extract_workspace_symbols(&response) {
+                Ok(symbols) => {
+                    let items: Vec<_> = symbols.into_iter().map(|symbol| json!({
+                        "name": symbol.name, "kind": symbol.kind, "uri": symbol.uri,
+                        "line": symbol.line, "character": symbol.character,
+                        "endLine": symbol.end_line, "endCharacter": symbol.end_character,
+                        "containerName": symbol.container_name,
+                    })).collect();
+                    to_c_ptr(json!({"ok": true, "status": "completed", "version": pending.document_version, "symbols": items}).to_string())
+                }
+                Err(error) => err_json("WorkspaceSymbolsFailed", json!(error)),
+            },
+            Poll::Failed(mut pending, error) => {
+                let _ = pending.request.cancel();
+                err_json("WorkspaceSymbolsFailed", json!(error))
+            }
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_poll")))
+}
+
+#[no_mangle]
+pub extern "C" fn alula_workspace_symbols_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if let Some(mut pending) = pending_workspace_symbols_lock().remove(&request_id) {
+            let _ = pending.request.cancel();
+        }
+        to_c_ptr(json!({"ok": true, "requestId": request_id}).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_workspace_symbols_cancel")))
 }
 
 /// 同步兼容补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
@@ -3222,7 +3879,40 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 40);
+        assert_eq!(alula_abi_version(), 51);
+    }
+
+    #[test]
+    fn file_link_ffi_preserves_version_and_absolute_utf16_range() {
+        let id = 5_356_001;
+        let prefix = "\u{feff}🦊\r\n中🦊 (";
+        let uri = "file:///tmp/%E4%B8%AD%20(a).rs";
+        let content = c(&format!("{prefix}{uri}).\r\n"));
+        let opened = take(unsafe { alula_doc_open(id, content.as_ptr()) });
+        let start = prefix.encode_utf16().count();
+        let end = start + uri.encode_utf16().count();
+        let link = take(alula_doc_file_link_at(id, (start + 9) as u64));
+        assert_eq!(
+            link,
+            json!({
+                "ok": true,
+                "version": opened["version"],
+                "link": { "uri": uri, "startUtf16": start, "endUtf16": end }
+            })
+        );
+        assert_eq!(
+            take(alula_doc_file_link_at(id, (end + 1) as u64)),
+            json!({ "ok": true, "version": opened["version"], "link": null })
+        );
+        assert_eq!(
+            take(alula_doc_file_link_at(id, u64::from(u32::MAX)))["error"]["code"],
+            "InvalidUtf16Offset"
+        );
+        assert_eq!(take(alula_doc_close(id))["ok"], true);
+        assert_eq!(
+            take(alula_doc_file_link_at(id, 0))["error"]["code"],
+            "UnknownDoc"
+        );
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {

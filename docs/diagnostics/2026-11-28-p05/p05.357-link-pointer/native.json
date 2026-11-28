@@ -1,0 +1,178 @@
+{
+  "product": "b9cfbdb39ee11e99ba02171d86150db589d4251f",
+  "tree": "ad7db9f255d1d51b9f334e21b62d305fb1f0da39",
+  "abi": 51,
+  "pinnedReference": [
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/contrib/gotoSymbol/browser/link/clickLinkGesture.ts",
+      "line": 104,
+      "sha256": "382393020ac114bd001cb47b356751074a9ea3e19661d43ab2e237e15b2ca55a"
+    },
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/contrib/gotoSymbol/browser/link/clickLinkGesture.ts",
+      "line": 106,
+      "sha256": "382393020ac114bd001cb47b356751074a9ea3e19661d43ab2e237e15b2ca55a"
+    },
+    {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "file": "src/vs/editor/contrib/links/browser/links.ts",
+      "line": 218,
+      "sha256": "c0bf8ab8b78eb731a82c85afcd179a4a47681ed0e6ea5735876373636d196426"
+    }
+  ],
+  "windows": {
+    "rawReportSha256": "099f33621cbfb5aca3e5acdf4082fadd8bf0006b2cf57feac11b389bbc737ab4",
+    "fixtureSha256": "4cfde98702852a4cf57b70dae8fe5d65b8995cd1dde9159e277ba01b7239cffa",
+    "runnerSha256": "a7633a2159ea25213dff286647f93251b7af52d98391b80c0a27d7f07b8985e4",
+    "aotSha256": "9001213060ed1372b8b5a690e300c3bf1269369f0e190c6fa6d0d46b03a228ff",
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "sourceSha256": "9d5f0c8c26e5e1320ecbe08e0828c637b8638b50cef9b49b1b58d7400022d7e3",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-and-escaped-target-uri",
+      "control-click-on-plain-text-preserves-source",
+      "control-drag-cancels-local-link-opening",
+      "ordinary-click-on-link-places-caret-without-opening",
+      "control-click-on-current-link-caret-opens-same-group",
+      "closing-target-restores-source-and-its-link-caret",
+      "control-alt-click-opens-right-group-with-target-focus",
+      "ordinary-click-focuses-the-source-in-the-left-group",
+      "second-side-open-reuses-target-in-the-existing-right-group",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native primary Ctrl-click and Ctrl+Alt-click",
+    "windowEnvironment": 120,
+    "sameCaretUtf16": 25,
+    "sameGroupEditors": 1,
+    "sideGroupEditors": 2,
+    "reusedTargetDocumentId": 5
+  },
+  "linux": {
+    "rawReportSha256": "63d22e4e8f872d2cfb812c2088d49f2557d65abc36ff514462e5bf9f6fb449ec",
+    "fixtureSha256": "4cfde98702852a4cf57b70dae8fe5d65b8995cd1dde9159e277ba01b7239cffa",
+    "runnerSha256": "4613fa9df5eaa7db1441c644db36e1ff96ed7adb05d4d1695e6fc90aeb8edf74",
+    "aotSha256": "ae0bb30c0b43383a2da25cd4a3adce94e717497fbf467c94b61c7d2a5ad5d996",
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "sourceSha256": "2b465c700d31dfbfa9aa5bf6fcaf5d26a0a8e345068807b810c3f7b3513925d3",
+    "targetSha256": "7a75b758aacb9871e13885cad9bfbb8b8424af81c19bda09788864431521d810",
+    "nativeChecks": [
+      "owned-source-and-escaped-target-uri",
+      "control-click-on-plain-text-preserves-source",
+      "control-drag-cancels-local-link-opening",
+      "ordinary-click-on-link-places-caret-without-opening",
+      "control-click-on-current-link-caret-opens-same-group",
+      "closing-target-restores-source-and-its-link-caret",
+      "control-alt-click-opens-right-group-with-target-focus",
+      "ordinary-click-focuses-the-source-in-the-left-group",
+      "second-side-open-reuses-target-in-the-existing-right-group",
+      "source-bom-emoji-crlf-and-target-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native primary Ctrl-click and Ctrl+Alt-click",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "sameCaretUtf16": 25,
+    "sameGroupEditors": 1,
+    "sideGroupEditors": 2,
+    "reusedTargetDocumentId": 5
+  },
+  "localChecks": {
+    "p05-357-targeted.log": "f9dbdefaa6a8f644d976e588a1d388d6c52ef16b60694d798ecfe43e5c953c6c",
+    "p05-357-focused.log": "7381853a58908550d47b5aa4955f37f9d050d61355d853ccf3fbbbec4934d33a",
+    "p05-357-analyze.log": "da230f6cbbb5bd00a2d3260a0b14a82560f6c79ab951ef579a4d6ab863c7d527",
+    "p05-357-full.log": "36e2b89c914ff854bd2dca8554a5336c70ee42247442696ad633c8119508eecd",
+    "p05-357-local-link-pointer-repro.log": "c3c71f12a4b16c13e58e1e645a1c487af79e3093b5274eadd0c0c42497d1eb4b",
+    "p05-357-pointer-before-frame.log": "47f390bd195aca1287e97805b4fd18ee62c037e74790e99b965a4313de8be9b4",
+    "p05-357-schedule-frame-check.log": "22a5a6f90e74c7c824ade509421ed52146ea5e8b61e061e80b1929fe3f36a996",
+    "p05-357-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe",
+    "p05-357-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "gitNexus": {
+    "all": {
+      "summary": {
+        "changed_count": 10,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "34d44cc31fbbe07e72a710de1e1cf766e5da6758f9f05f48dfa2e12170ca4d03"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 10,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "34d44cc31fbbe07e72a710de1e1cf766e5da6758f9f05f48dfa2e12170ca4d03"
+    }
+  },
+  "preeditImpact": {
+    "_onEditorPointerDown": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onEditorPointerDown#4",
+        "name": "_onEditorPointerDown",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "sha256": "b34cf78eb321fbe41054a1379bd4412437208a5ca2d489ef11f9581a6efbbe16"
+    },
+    "_onEditorPointerUp": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onEditorPointerUp#1",
+        "name": "_onEditorPointerUp",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "3439eb08db0d71941feb631a6f4756631b22b12968907cc1d44d214f79d74a41"
+    },
+    "_openFileLinkAtCaret": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openFileLinkAtCaret#0",
+        "name": "_openFileLinkAtCaret",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "5464ce41c4daa37290e90e06f40d23343a7f7348247cb216487b3a56ab70ea72"
+    },
+    "_pendingDefinitionPointers": {
+      "target": {
+        "id": "Property:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._pendingDefinitionPointers",
+        "name": "_pendingDefinitionPointers",
+        "type": "",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "3c8f22756a6cf87420ac8019707f51117a13639743f6029f147aa241bab30f27"
+    }
+  }
+}

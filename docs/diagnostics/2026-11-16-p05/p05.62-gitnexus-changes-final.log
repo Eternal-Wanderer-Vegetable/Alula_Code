@@ -1,0 +1,18 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 6 files, 11 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Class WelcomePage → app/lib/workbench/welcome_page.dart
+  Property walkthroughCompletedSteps → app/lib/workbench/welcome_page.dart
+  Class _WelcomeWalkthroughSection → app/lib/workbench/welcome_page.dart
+  Method build → app/lib/workbench/welcome_page.dart
+  Section 03 · 里程碑计划与验收标准 → docs/03-里程碑计划与验收标准.md
+  Section 当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划） → docs/03-里程碑计划与验收标准.md
+  Section N.1 当前状态与依赖 → docs/03-里程碑计划与验收标准.md
+  Section P01 受控切片（当前调度依据） → docs/03-里程碑计划与验收标准.md
+  Section Session Handoff → session-handoff.md
+  Section Current State → session-handoff.md
+  Section Next Session First Step → session-handoff.md

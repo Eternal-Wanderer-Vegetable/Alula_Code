@@ -1,0 +1,97 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart
+00:00 +0: workspace switch invalidates a pending inline group close
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 379 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-20261117/app/lib/workbench/breadcrumb_navigation.dart:246:16
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#9c8b2 relayoutBoundary=up5 OVERFLOWING:
+  creator: Row ← Semantics ← _FocusInheritedScope ← Focus-[<'breadcrumbs-focus-editor'>] ←
+    BreadcrumbNavigation-[<'breadcrumb-navigation-editor'>] ← Align ← Padding ← ConstrainedBox ←
+    Container-[<'breadcrumb-editor'>] ← Column ← ColoredBox ← Container ← ⋯
+  parentData: <none> (can use size)
+  constraints: BoxConstraints(0.0<=w<=870.2, 0.0<=h<=22.0)
+  size: Size(870.2, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 379 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-20261117/app/lib/workbench/breadcrumb_navigation.dart:246:16
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#e787a relayoutBoundary=up5 OVERFLOWING:
+  creator: Row ← Semantics ← _FocusInheritedScope ← Focus-[<'breadcrumbs-focus-editor-2'>] ←
+    BreadcrumbNavigation-[<'breadcrumb-navigation-editor-2'>] ← Align ← Padding ← ConstrainedBox ←
+    Container-[<'breadcrumb-editor-2'>] ← Column ← ColoredBox ← Container ← ⋯
+  parentData: <none> (can use size)
+  constraints: BoxConstraints(0.0<=w<=870.2, 0.0<=h<=22.0)
+  size: Size(870.2, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.finishIo (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:122:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart:271:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart line 122
+The test description was:
+  workspace switch invalidates a pending inline group close
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -1: workspace switch invalidates a pending inline group close [E]
+  Test failed. See exception logs above.
+  The test description was: workspace switch invalidates a pending inline group close
+  
+00:02 +0 -1: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: workspace switch invalidates a pending inline group close

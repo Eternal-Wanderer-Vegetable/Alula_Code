@@ -14,14 +14,16 @@ export 'alula_merge.dart'
         AlulaMergeProjection,
         AlulaMergeSide;
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'alula_ffi.dart';
 import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 40;
+const int expectedAbiVersion = 51;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -279,6 +281,21 @@ class DocumentLineBoundary {
     required this.line,
     required this.startUtf16,
     required this.firstNonWhitespaceUtf16,
+    required this.endUtf16,
+  });
+}
+
+/// A file URI and its absolute UTF-16 range in one document version.
+class DocumentFileLink {
+  final int version;
+  final String uri;
+  final int startUtf16;
+  final int endUtf16;
+
+  const DocumentFileLink({
+    required this.version,
+    required this.uri,
+    required this.startUtf16,
     required this.endUtf16,
   });
 }
@@ -565,18 +582,48 @@ class CompletionResult {
   const CompletionResult(this.version, this.items);
 }
 
-class DefinitionResult {
-  final int version;
+/// The identifier range returned for one semantic definition target.
+class DefinitionTarget {
   final String uri;
   final int line;
   final int character;
+  final int? endLine;
+  final int? endCharacter;
 
-  const DefinitionResult({
-    required this.version,
+  const DefinitionTarget({
     required this.uri,
     required this.line,
     required this.character,
+    this.endLine,
+    this.endCharacter,
   });
+
+  DefinitionTarget._fromJson(Map<String, Object?> json)
+      : uri = json['uri'] as String,
+        line = json['line'] as int,
+        character = json['character'] as int,
+        endLine = json['endLine'] as int,
+        endCharacter = json['endCharacter'] as int;
+}
+
+class DefinitionResult extends DefinitionTarget {
+  final int version;
+  final List<DefinitionTarget> alternatives;
+
+  const DefinitionResult({
+    required this.version,
+    required super.uri,
+    required super.line,
+    required super.character,
+    super.endLine,
+    super.endCharacter,
+    this.alternatives = const [],
+  });
+
+  Iterable<DefinitionTarget> get targets sync* {
+    yield this;
+    yield* alternatives;
+  }
 }
 
 class SemanticTokensResult {
@@ -586,7 +633,147 @@ class SemanticTokensResult {
   const SemanticTokensResult(this.version, this.tokens);
 }
 
-/// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
+/// Provider locations and the version of the reference query's source.
+class ReferencesResult {
+  const ReferencesResult({required this.version, required this.targets});
+
+  final int version;
+
+  /// References and definitions both use zero-based UTF-16 location ranges.
+  final List<DefinitionTarget> targets;
+}
+
+/// Location providers that use the versioned definition result shape.
+enum SymbolLocationKind {
+  declaration(1),
+  implementation(2),
+  typeDefinition(3);
+
+  const SymbolLocationKind(this.nativeValue);
+
+  final int nativeValue;
+}
+
+enum HierarchyKind {
+  call(1),
+  type(2);
+
+  const HierarchyKind(this.nativeValue);
+  final int nativeValue;
+}
+
+enum HierarchyDirection {
+  incoming(1),
+  outgoing(2),
+  supertypes(3),
+  subtypes(4);
+
+  const HierarchyDirection(this.nativeValue);
+  final int nativeValue;
+}
+
+class HierarchyPosition {
+  final int line;
+  final int character;
+
+  HierarchyPosition._fromJson(Map<String, Object?> json)
+    : line = json['line'] as int,
+      character = json['character'] as int;
+}
+
+class HierarchyRange {
+  final HierarchyPosition start;
+  final HierarchyPosition end;
+
+  HierarchyRange._fromJson(Map<String, Object?> json)
+    : start = HierarchyPosition._fromJson(
+        json['start'] as Map<String, Object?>,
+      ),
+      end = HierarchyPosition._fromJson(json['end'] as Map<String, Object?>);
+}
+
+class HierarchyItem {
+  final Map<String, Object?> _providerItem;
+  final String name;
+  final String uri;
+  final int kind;
+  final String? detail;
+  final HierarchyRange range;
+  final HierarchyRange selectionRange;
+
+  HierarchyItem._fromJson(Map<String, Object?> json)
+    : _providerItem = Map.unmodifiable(json),
+      name = json['name'] as String,
+      uri = json['uri'] as String,
+      kind = json['kind'] as int,
+      detail = json['detail'] is String ? json['detail'] as String : null,
+      range = HierarchyRange._fromJson(json['range'] as Map<String, Object?>),
+      selectionRange = HierarchyRange._fromJson(
+        json['selectionRange'] as Map<String, Object?>,
+      );
+}
+
+class HierarchyEntry {
+  final HierarchyItem item;
+  final List<HierarchyRange> fromRanges;
+
+  HierarchyEntry._fromJson(Map<String, Object?> json)
+    : item = HierarchyItem._fromJson(json['item'] as Map<String, Object?>),
+      fromRanges = List.unmodifiable(
+        (json['fromRanges'] as List<Object?>).cast<Map<String, Object?>>().map(
+          HierarchyRange._fromJson,
+        ),
+      );
+}
+
+class HierarchyResult {
+  final int? version;
+  final List<HierarchyEntry> entries;
+
+  bool get supported => version != null;
+
+  const HierarchyResult._unsupported() : version = null, entries = const [];
+
+  HierarchyResult._fromJson(Map<String, Object?> json)
+    : version = json['version'] as int,
+      entries = List.unmodifiable(
+        (json['entries'] as List<Object?>).cast<Map<String, Object?>>().map(
+          HierarchyEntry._fromJson,
+        ),
+      );
+}
+
+/// One unopened diagnostic and its workspace count information.
+typedef WorkspaceDiagnosticCandidate = ({
+  String uri,
+  bool wrapped,
+  Map<String, Object?> diagnostic,
+  int unopenedTotal,
+  int unopenedBeforeFile,
+  int fileTotal,
+});
+
+/// A workspace diagnostic subscription and its native callback.
+class LspDiagnosticSubscription {
+  LspDiagnosticSubscription._(this._ffi, this._handle, this._callback);
+
+  final AlulaFfi _ffi;
+  Pointer<Void> _handle;
+  final NativeCallable<LspDiagnosticsChangedNative> _callback;
+
+  void resume() {
+    if (_handle != nullptr) _ffi.lspDiagnosticsResume(_handle);
+  }
+
+  void close() {
+    if (_handle == nullptr) return;
+    _ffi.lspDiagnosticsUnsubscribe(_handle);
+    _handle = nullptr;
+    _callback.close();
+  }
+}
+
+/// LSP / 语法能力的语义封装，见 docs/02 §2.2。
 class AlulaLsp {
   final AlulaCore _core;
 
@@ -619,18 +806,23 @@ class AlulaLsp {
     _check(_core._ffi.lspDidCloseJson(id));
   }
 
-  /// Resolve a symbol through the server's versioned definition provider.
-  /// Returns null when no target exists, the document changed, or the request
-  /// timed out.
+  /// Resolve a symbol through the requested versioned location provider.
+  /// Returns null when the provider is unavailable, no target exists, the
+  /// document changed, or the request timed out.
   Future<DefinitionResult?> definition(
     int id,
     int offsetUtf16, {
+    SymbolLocationKind? kind,
     int timeoutMs = 8000,
   }) async {
-    final startJson =
-        _core._ffi.definitionStartJson(id, offsetUtf16, timeoutMs);
+    final ffi = _core._ffi;
+    final startJson = kind == null
+        ? ffi.definitionStartJson(id, offsetUtf16, timeoutMs)
+        : ffi.symbolLocationStartJson(
+            id, offsetUtf16, kind.nativeValue, timeoutMs);
     _check(startJson);
     final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] == false) return null;
     final requestId = start['requestId'] as int;
     try {
       while (true) {
@@ -642,14 +834,20 @@ class AlulaLsp {
           case 'pending':
             continue;
           case 'completed':
-            final target = poll['definition'];
-            if (target == null) return null;
-            final location = target as Map<String, Object?>;
+            final targets = (poll['definitions'] as List<Object?>)
+                .cast<Map<String, Object?>>();
+            if (targets.isEmpty) return null;
+            final primary = DefinitionTarget._fromJson(targets.first);
             return DefinitionResult(
               version: poll['version'] as int,
-              uri: location['uri'] as String,
-              line: location['line'] as int,
-              character: location['character'] as int,
+              uri: primary.uri,
+              line: primary.line,
+              character: primary.character,
+              endLine: primary.endLine,
+              endCharacter: primary.endCharacter,
+              alternatives: List.unmodifiable(
+                targets.skip(1).map(DefinitionTarget._fromJson),
+              ),
             );
           case 'stale':
           case 'timeout':
@@ -664,12 +862,276 @@ class AlulaLsp {
     }
   }
 
+  /// Query the attached reference provider at a UTF-16 document offset.
+  /// Null means unavailable, cancelled, stale or timed out. A completed
+  /// response can contain no references.
+  Future<ReferencesResult?> references(
+    int id,
+    int offsetUtf16, {
+    bool includeDeclaration = true,
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) async {
+    final ffi = _core._ffi;
+    final startJson =
+        ffi.referencesStartJson(id, offsetUtf16, includeDeclaration, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] != true) return null;
+    final requestId = start['requestId'] as int;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(cancelSignal.then((_) {
+        if (!finished) ffi.referencesCancelJson(requestId);
+      }));
+    }
+    try {
+      while (true) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final pollJson = ffi.referencesPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            final targets =
+                (poll['references'] as List).cast<Map<String, Object?>>();
+            return ReferencesResult(
+              version: poll['version'] as int,
+              targets:
+                  List.unmodifiable(targets.map(DefinitionTarget._fromJson)),
+            );
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知引用请求状态：${poll['status']}');
+        }
+      }
+    } finally {
+      finished = true;
+      ffi.referencesCancelJson(requestId);
+    }
+  }
+
+  /// Read the attached provider capability without requesting hierarchy data.
+  bool hasHierarchyProvider(int id, HierarchyKind kind) =>
+      _core._ffi.hierarchyHasProvider(id, kind.nativeValue) != 0;
+
+  /// Prepare a hierarchy. A completed result may contain no items.
+  /// Null means the request was cancelled, stale, or timed out.
+  Future<HierarchyResult?> prepareHierarchy(
+    int id,
+    int offsetUtf16,
+    HierarchyKind kind, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) => _pollHierarchy(
+    _core._ffi.hierarchyPrepareStartJson(
+      id,
+      offsetUtf16,
+      kind.nativeValue,
+      timeoutMs,
+    ),
+    cancelSignal,
+  );
+
+  /// Expand a provider item from the same source document version.
+  Future<HierarchyResult?> expandHierarchy(
+    int id,
+    int sourceVersion,
+    HierarchyDirection direction,
+    HierarchyItem item, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) => _pollHierarchy(
+    _core._ffi.hierarchyExpandStartJson(
+      id,
+      sourceVersion,
+      direction.nativeValue,
+      jsonEncode(item._providerItem),
+      timeoutMs,
+    ),
+    cancelSignal,
+  );
+
+  Future<HierarchyResult?> _pollHierarchy(
+    String startJson,
+    Future<void>? cancelSignal,
+  ) async {
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] == false) {
+      return const HierarchyResult._unsupported();
+    }
+    if (start['status'] == 'stale') return null;
+
+    final ffi = _core._ffi;
+    final requestId = start['requestId'] as int;
+    var cancelled = false;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(
+        cancelSignal.then((_) {
+          cancelled = true;
+          if (!finished) ffi.hierarchyCancelJson(requestId);
+        }),
+      );
+    }
+    try {
+      while (!cancelled) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        if (cancelled) return null;
+        final pollJson = ffi.hierarchyPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return HierarchyResult._fromJson(poll);
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知层级请求状态：${poll['status']}');
+        }
+      }
+      return null;
+    } finally {
+      finished = true;
+      ffi.hierarchyCancelJson(requestId);
+    }
+  }
+
+  /// Query the attached workspace provider. A null result means unsupported,
+  /// cancelled, stale, or timed out; an empty list is a completed empty result.
+  Future<List<Map<String, Object?>>?> workspaceSymbols(
+    int id,
+    String query, {
+    int timeoutMs = 8000,
+    Future<void>? cancelSignal,
+  }) async {
+    final startJson =
+        _core._ffi.workspaceSymbolsStartJson(id, query, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] != true) return null;
+    final requestId = start['requestId'] as int;
+    var cancelled = false;
+    var finished = false;
+    if (cancelSignal != null) {
+      unawaited(cancelSignal.then((_) {
+        cancelled = true;
+        if (!finished) _core._ffi.workspaceSymbolsCancelJson(requestId);
+      }));
+    }
+    try {
+      while (!cancelled) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        if (cancelled) return null;
+        final pollJson = _core._ffi.workspaceSymbolsPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return (poll['symbols'] as List).cast<Map<String, Object?>>();
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知工作区符号请求状态：${poll['status']}');
+        }
+      }
+      return null;
+    } finally {
+      finished = true;
+      _core._ffi.workspaceSymbolsCancelJson(requestId);
+    }
+  }
+
   /// 最新诊断快照：{severity, line, character, message, source} 列表。
   List<Map<String, Object?>> diagnostics(int id) {
     final r =
         jsonDecode(_core._ffi.diagnosticsJson(id)) as Map<String, Object?>;
     if (r['ok'] != true) return const [];
     return (r['items'] as List).cast<Map<String, Object?>>();
+  }
+
+  /// Return one directional candidate from the live workspace diagnostics.
+  /// Its provider version can be absent until the file is opened.
+  WorkspaceDiagnosticCandidate? nextUnopenedDiagnostic(
+    int id, {
+    required String? cursorUri,
+    required Iterable<String> openUris,
+    bool forward = true,
+  }) {
+    final raw = _core._ffi.lspNextUnopenedDiagnosticJson(id, jsonEncode({
+      'cursorUri': cursorUri,
+      'openUris': openUris.toList(growable: false),
+      'forward': forward,
+    }));
+    _check(raw);
+    final result = jsonDecode(raw) as Map<String, Object?>;
+    final candidate = result['candidate'] as Map<String, Object?>?;
+    if (candidate == null) return null;
+    return (
+      uri: candidate['uri'] as String,
+      wrapped: candidate['wrapped'] as bool,
+      diagnostic: candidate['diagnostic'] as Map<String, Object?>,
+      unopenedTotal: candidate['unopenedTotal'] as int,
+      unopenedBeforeFile: candidate['unopenedBeforeFile'] as int,
+      fileTotal: candidate['fileTotal'] as int,
+    );
+  }
+
+  /// Returns one page, an unchanged snapshot, or a stale continuation.
+  /// A continuation must use the same open URI set as the first page.
+  Map<String, Object?> unopenedDiagnosticsPage(
+    int id, {
+    required Iterable<String> openUris,
+    int limit = 128,
+    Map<String, Object?>? cursor,
+    String? knownSnapshot,
+  }) {
+    final raw = _core._ffi.lspUnopenedDiagnosticsPageJson(
+      id,
+      jsonEncode({
+        'openUris': openUris.toList(growable: false),
+        'limit': limit,
+        if (cursor != null) 'cursor': cursor,
+        if (knownSnapshot != null) 'knownSnapshot': knownSnapshot,
+      }),
+    );
+    _check(raw);
+    final result = jsonDecode(raw) as Map<String, Object?>;
+    return result['page'] as Map<String, Object?>;
+  }
+
+  LspDiagnosticSubscription? subscribeDiagnostics(
+    int id,
+    void Function() onChange,
+  ) {
+    final callback = NativeCallable<LspDiagnosticsChangedNative>.listener(onChange)
+      ..keepIsolateAlive = false;
+    try {
+      final handle =
+          _core._ffi.lspDiagnosticsSubscribe(id, callback.nativeFunction);
+      if (handle != nullptr) {
+        return LspDiagnosticSubscription._(_core._ffi, handle, callback);
+      }
+    } catch (_) {
+      callback.close();
+      rethrow;
+    }
+    callback.close();
+    return null;
   }
 
   /// Asynchronously request versioned LSP semantic tokens; unsupported servers return null.
@@ -1044,6 +1506,31 @@ class AlulaDoc {
     );
     version = boundary.version;
     return boundary;
+  }
+
+  /// Read the file URI containing this absolute document offset.
+  DocumentFileLink? fileLinkAt(int offsetUtf16) {
+    if (offsetUtf16 < 0) {
+      throw RangeError.value(
+          offsetUtf16, 'offsetUtf16', 'must be non-negative');
+    }
+    final r = jsonDecode(core._ffi.docFileLinkAtJson(id, offsetUtf16))
+        as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final link = r['link'] as Map<String, Object?>?;
+    if (link == null) return null;
+    return DocumentFileLink(
+      version: r['version'] as int,
+      uri: link['uri'] as String,
+      startUtf16: link['startUtf16'] as int,
+      endUtf16: link['endUtf16'] as int,
+    );
   }
 
   /// Convert a zero-based LSP UTF-16 line/column to a safe absolute offset.

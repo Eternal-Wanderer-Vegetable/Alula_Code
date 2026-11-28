@@ -1,0 +1,78 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart
+00:00 +0: registers six breadcrumb commands with live context guards
+00:01 +1: focus shortcut selects last segment and arrows stop at both ends
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'fn main() {\r\n'
+            '    // 😀\r\n'
+            '}\r\n'
+            ''
+  Actual: 'fn main() {\n'
+            '    // 😀\n'
+            '}\n'
+            ''
+   Which: is different.
+          Expected: ...  main() {\r\n    //  ...
+            Actual: ...  main() {\n    // 😀 ...
+                                  ^
+           Differ at offset 12
+breadcrumb navigation did not add an undo transaction
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart:226:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart line 226
+The test description was:
+  focus shortcut selects last segment and arrows stop at both ends
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +1 -1: focus shortcut selects last segment and arrows stop at both ends [E]
+  Test failed. See exception logs above.
+  The test description was: focus shortcut selects last segment and arrows stop at both ends
+  
+00:02 +1 -1: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard8a283828/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard8a283828/workspace\other.rs)
+00:02 +2 -1: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard622c2a87/workspace\other.rs)
+00:03 +3 -1: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard67e77d9e/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard67e77d9e/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard67e77d9e/workspace\other.rs)
+00:03 +4 -1: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardddd44860/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardddd44860/workspace\other.rs)
+00:04 +5 -1: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard185eba23/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard185eba23/workspace\other.rs)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      _field (file:///E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart:20:6)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart:348:12)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  changing the picker resource clears stale breadcrumb state
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +5 -2: changing the picker resource clears stale breadcrumb state [E]
+  Test failed. See exception logs above.
+  The test description was: changing the picker resource clears stale breadcrumb state
+  
+00:04 +5 -2: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: changing the picker resource clears stale breadcrumb state
+  E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends

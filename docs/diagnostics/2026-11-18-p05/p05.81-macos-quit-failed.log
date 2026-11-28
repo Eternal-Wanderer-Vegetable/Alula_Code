@@ -1,0 +1,89 @@
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	﻿2026-11-18T04:16:00.2526780Z ##[group]Run app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2528030Z ^[[36;1mapp_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2529140Z ^[[36;1mbundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2530030Z ^[[36;1m  "$app_bundle/Contents/Info.plist")^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2530820Z ^[[36;1mopen -n -W -a "$app_bundle" --args --native-titlebar \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2531670Z ^[[36;1m  > "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1 &^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2532350Z ^[[36;1mopen_pid=$!^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2532830Z ^[[36;1mcleanup() {^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2533370Z ^[[36;1m  if kill -0 "$open_pid" 2>/dev/null; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2534040Z ^[[36;1m    pkill -TERM -x alula_app 2>/dev/null || true^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2534690Z ^[[36;1m    sleep 1^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2535220Z ^[[36;1m    kill -TERM "$open_pid" 2>/dev/null || true^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2535950Z ^[[36;1m    wait "$open_pid" 2>/dev/null || true^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2536540Z ^[[36;1m  fi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2536930Z ^[[36;1m}^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2537350Z ^[[36;1mtrap cleanup EXIT^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2537850Z ^[[36;1msleep 12^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2538330Z ^[[36;1mif ! kill -0 "$open_pid" 2>/dev/null; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2539060Z ^[[36;1m  cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2539750Z ^[[36;1m  set +e^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2540170Z ^[[36;1m  wait "$open_pid"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2540640Z ^[[36;1m  app_status=$?^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2541130Z ^[[36;1m  set -e^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2541560Z ^[[36;1m  exit "$app_status"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2542040Z ^[[36;1mfi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2542440Z ^[[36;1m^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2542850Z ^[[36;1mquit_action_invoked=false^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2543410Z ^[[36;1mfor attempt in 1 2; do^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2544110Z ^[[36;1m  if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2544900Z ^[[36;1m    "$bundle_identifier" "$app_bundle" \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2545700Z ^[[36;1m    >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2546460Z ^[[36;1m    quit_action_invoked=true^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2546980Z ^[[36;1m    break^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2547460Z ^[[36;1m  fi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2547860Z ^[[36;1m^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2548600Z ^[[36;1m  if ! grep -Fq \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2549340Z ^[[36;1m    "Could not read the native menu bar through Accessibility (AXError " \^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2550280Z ^[[36;1m    "$RUNNER_TEMP/alula-macos-native-titlebar.log"; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2551090Z ^[[36;1m    cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2551900Z ^[[36;1m    echo "Could not invoke the native macOS Quit action"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2552570Z ^[[36;1m    exit 1^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2553000Z ^[[36;1m  fi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2553460Z ^[[36;1m  if [[ "$attempt" -eq 2 ]]; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2554180Z ^[[36;1m    cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2555090Z ^[[36;1m    echo "The native macOS menu bar remained inaccessible after one retry"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2555870Z ^[[36;1m    exit 1^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2556280Z ^[[36;1m  fi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2556970Z ^[[36;1m  echo "The native macOS menu bar is temporarily inaccessible; retrying once."^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2557780Z ^[[36;1m  sleep 2^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2558220Z ^[[36;1mdone^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2558650Z ^[[36;1m^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2559110Z ^[[36;1mif [[ "$quit_action_invoked" != true ]]; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2559870Z ^[[36;1m  cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2560680Z ^[[36;1m  echo "Could not invoke the native macOS Quit action"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2561340Z ^[[36;1m  exit 1^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2561780Z ^[[36;1mfi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2562220Z ^[[36;1mfor _ in $(seq 1 80); do^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2562780Z ^[[36;1m  kill -0 "$open_pid" 2>/dev/null || break^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2563820Z ^[[36;1m  sleep 0.25^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2564290Z ^[[36;1mdone^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2564760Z ^[[36;1mif kill -0 "$open_pid" 2>/dev/null; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2565520Z ^[[36;1m  cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2566490Z ^[[36;1m  echo "Native Quit action did not close the native-titlebar app within 20 seconds"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2567340Z ^[[36;1m  exit 1^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2567770Z ^[[36;1mfi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2568190Z ^[[36;1mset +e^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2568910Z ^[[36;1mwait "$open_pid"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2569450Z ^[[36;1mapp_status=$?^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2569940Z ^[[36;1mset -e^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2570400Z ^[[36;1mif [[ "$app_status" -ne 0 ]]; then^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2571110Z ^[[36;1m  cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2572070Z ^[[36;1m  echo "Native-titlebar Alula exited with status $app_status after menu Quit"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2572910Z ^[[36;1m  exit "$app_status"^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2573400Z ^[[36;1mfi^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2574030Z ^[[36;1mecho "Native macOS Quit action closed the native-titlebar app."^[[0m
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2633040Z shell: /bin/bash -e {0}
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2633560Z env:
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2634000Z   CARGO_HOME: /Users/runner/.cargo
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2634520Z   CARGO_INCREMENTAL: 0
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2635020Z   CARGO_TERM_COLOR: always
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2635520Z   CACHE_ON_FAILURE: false
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2636230Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.8-x64/flutter
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2637060Z   PUB_CACHE: /Users/runner/.pub-cache
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:16:00.2637630Z ##[endgroup]
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:17:13.5680690Z Targeting native Quit menu in Alula Code at /Users/runner/work/Alula_Code/Alula_Code/app/build/macos/Build/Products/Release/alula_app.app (pid 31313, active=true).
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:17:13.5682290Z Target app is active; selecting its native Quit menu.
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:17:13.5683500Z Selected native menu item flutterMenuItemSelected: > flutterMenuItemSelected: through Accessibility API.
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:17:13.5684730Z Native Quit action did not close the native-titlebar app within 20 seconds
+macOS build, launch smoke, and app package	Launch macOS native-titlebar mode and verify native Quit menu	2026-11-18T04:17:14.6082420Z ##[error]Process completed with exit code 1.

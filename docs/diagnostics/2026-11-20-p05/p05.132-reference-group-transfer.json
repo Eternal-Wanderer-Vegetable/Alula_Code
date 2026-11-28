@@ -1,0 +1,234 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "source": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 744.4000244140625,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      }
+    ],
+    "duplicated-right": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 372,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "width": 372.3999938964844,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      }
+    ],
+    "marked-copy": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 372,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      },
+      {
+        "x": 424.8000183105469,
+        "y": 35.79999923706055,
+        "width": 372.3999938964844,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "marker\u00a0opened\u00a0only\u00a0in\u00a0the\u00a0duplicated\u00a0editor\u00a0group"
+      }
+    ],
+    "moved-left": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 372.3999938964844,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "marker\u00a0opened\u00a0only\u00a0in\u00a0the\u00a0duplicated\u00a0editor\u00a0group"
+      },
+      {
+        "x": 425.20001220703125,
+        "y": 35.79999923706055,
+        "width": 372,
+        "height": 709.4000244140625,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      }
+    ],
+    "moved-up-using-horizontal-neighbor": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 744.4000244140625,
+        "height": 354,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "marker\u00a0opened\u00a0only\u00a0in\u00a0the\u00a0duplicated\u00a0editor\u00a0group"
+      },
+      {
+        "x": 52.79999923706055,
+        "y": 389.8000183105469,
+        "width": 744.4000244140625,
+        "height": 355.3999938964844,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      }
+    ],
+    "moved-down": [
+      {
+        "x": 52.79999923706055,
+        "y": 35.79999923706055,
+        "width": 744.4000244140625,
+        "height": 355.3999938964844,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": true
+          }
+        ],
+        "active": false,
+        "firstRenderedLine": "line-108\u00a0synthetic\u00a0source"
+      },
+      {
+        "x": 52.79999923706055,
+        "y": 391.20001220703125,
+        "width": 744.4000244140625,
+        "height": 354,
+        "tabs": [
+          {
+            "label": "source-a.txt",
+            "active": false
+          },
+          {
+            "label": "source-b.txt",
+            "active": false
+          },
+          {
+            "label": "copy-only.txt",
+            "active": true
+          }
+        ],
+        "active": true,
+        "firstRenderedLine": "marker\u00a0opened\u00a0only\u00a0in\u00a0the\u00a0duplicated\u00a0editor\u00a0group"
+      }
+    ]
+  },
+  "dpr": 1.25,
+  "exitCode": 0
+}

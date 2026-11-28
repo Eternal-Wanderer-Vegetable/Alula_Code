@@ -1,17 +1,41 @@
 // 工作台 UI 冒烟测试：应用能构建并进入 W1 工作台（标题栏 + 五大区），
 // 核心加载成功时状态栏就绪；autoFolder 打开 fixture 工程后文件树自动装载根目录条目。
 import 'dart:io';
+import 'dart:ui' show Tristate;
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/status_bar.dart';
+import 'package:alula_app/workbench/title_bar.dart';
+import 'package:alula_app/workbench/window_chrome_configuration.dart';
+import 'package:alula_app/workbench/workbench_page.dart';
 import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+import 'helpers/native_drag_drop.dart';
+
+Future<void> _waitForWidget(
+  WidgetTester tester,
+  Finder finder, {
+  required String reason,
+  Duration timeout = const Duration(seconds: 10),
+}) async {
+  final stopwatch = Stopwatch()..start();
+  while (finder.evaluate().isEmpty && stopwatch.elapsed < timeout) {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    await tester.pump();
+  }
+  expect(finder, findsOneWidget, reason: reason);
+}
 
 /// 带修饰键的按键（tester.sendKeyEvent 在本 SDK 版本无修饰键参数）。
 Future<void> pressChord(
@@ -94,12 +118,220 @@ void main() {
     await tester.pumpWidget(AlulaApp(layoutStore: store));
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Alula Code'), findsWidgets); // 标题栏 + MaterialApp.title
-    expect(find.text('文件'), findsOneWidget); // 标题栏菜单
+    expect(
+      tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle,
+      contains('Alula Code'),
+      reason: '默认工作台标题包含应用名',
+    );
+    expect(find.text('文件(F)'), findsOneWidget); // 标题栏菜单与 mnemonic
+    await tester.tap(find.text('查看(V)'));
+    await tester.pumpAndSettle();
+    expect(find.text('外观(A)'), findsOneWidget);
+    await tester.tap(find.text('外观(A)'));
+    await tester.pumpAndSettle();
+    expect(find.text('切换侧栏(S)'), findsOneWidget,
+        reason: '工作台菜单应提供真实的 View > Appearance 子菜单');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
     expect(find.byIcon(Icons.fact_check_outlined), findsOneWidget,
         reason: '编辑器动作区应有「校验一致性」');
     expect(find.byIcon(Icons.explore_outlined), findsOneWidget,
         reason: '活动栏应有资源管理器');
+  });
+
+  testWidgets('File 菜单按默认分组排序并服从编辑器上下文（P05.4）', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+      final newTextFile = find.textContaining('新建文本文件(N)');
+      expect(newTextFile, findsOneWidget);
+      expect(find.text('打开文件夹(O)'), findsOneWidget);
+      expect(find.textContaining('保存(S)'), findsOneWidget,
+          reason: 'the startup untitled document is an active editor');
+      expect(find.textContaining('另存为…(A)'), findsOneWidget);
+      expect(find.text('从磁盘还原(R)'), findsNothing);
+      expect(
+        tester.getTopLeft(newTextFile).dy,
+        lessThan(tester.getTopLeft(find.text('打开文件夹(O)')).dy),
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsNWidgets(2),
+        reason: 'New, Open, and Save occupy separate visible groups',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 300));
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final openFolder = find.text('打开文件夹(O)');
+      final newTextFile = find.textContaining('新建文本文件(N)');
+      final save = find.textContaining('保存(S)');
+      final saveAs = find.textContaining('另存为…(A)');
+      final revert = find.text('从磁盘还原(R)');
+      expect(newTextFile, findsOneWidget);
+      expect(openFolder, findsOneWidget);
+      expect(save, findsOneWidget);
+      expect(saveAs, findsOneWidget);
+      expect(revert, findsOneWidget);
+      expect(tester.getTopLeft(newTextFile).dy,
+          lessThan(tester.getTopLeft(openFolder).dy));
+      expect(tester.getTopLeft(openFolder).dy,
+          lessThan(tester.getTopLeft(save).dy));
+      expect(tester.getTopLeft(save).dy,
+          lessThan(tester.getTopLeft(saveAs).dy));
+      expect(tester.getTopLeft(saveAs).dy,
+          lessThan(tester.getTopLeft(revert).dy));
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsNWidgets(3),
+        reason: 'New, Open, Save, and Revert belong to separate groups',
+      );
+      expect(find.textContaining('比较活动文件'), findsNothing);
+      expect(find.textContaining('使用编码'), findsNothing);
+      expect(find.textContaining('选择行尾'), findsNothing);
+    });
+  });
+
+  testWidgets('New Text File creates independent documents in the focused group',
+      (tester) async {
+    tester.view.physicalSize = const Size(1600, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final workspace = createP025Workspace(tmp);
+    final created = File('${workspace.path}/created.txt');
+
+    String activeEditorText() {
+      final editable = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      return tester.widget<EditableText>(editable).controller.text;
+    }
+
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+
+      String currentWindowTitle() =>
+          tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle;
+
+      expect(currentWindowTitle(), 'note.txt - p02.5-workspace - Alula Code');
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'Ctrl+N creates a separate untitled document');
+      expect(find.text('未命名-3'), findsOneWidget);
+      expect(currentWindowTitle(), '未命名-3 - p02.5-workspace - Alula Code');
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      await tester.enterText(editor, 'first new document');
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(currentWindowTitle(), '● 未命名-3 - p02.5-workspace - Alula Code');
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget);
+      expect(activeEditorText(), isEmpty,
+          reason: 'each New Text File starts with empty content');
+      await tester.enterText(editor, 'second new document');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('新建文本文件(N)'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the File menu invokes the same new-document command');
+
+      await pressChord(tester, LogicalKeyboardKey.keyP,
+          control: true, shift: true);
+      await tester.pump(const Duration(milliseconds: 200));
+      final paletteInput = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(paletteInput, '新建文本文件');
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.byKey(const ValueKey('qi-文件: 新建文本文件')), findsOneWidget);
+      await pressChord(tester, LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette invokes the same new-document command');
+
+      await tester.tap(find.byKey(const ValueKey('tab-3')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'first new document');
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('另存为…(A)'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('save-as-path')),
+        created.path,
+      );
+      await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(created.readAsStringSync(), 'first new document');
+      expect(currentWindowTitle(), 'created.txt - p02.5-workspace - Alula Code');
+
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'second new document',
+          reason: 'saving another untitled document does not replace this one');
+      expect(currentWindowTitle(), '● 未命名-4 - p02.5-workspace - Alula Code');
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'the saved document is restored from its path');
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget,
+          reason: 'dirty untitled text is restored from the session journal');
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the second untitled document is restored independently');
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette document is restored independently');
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      final editor = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      expect(tester.widget<EditableText>(editor).controller.text,
+          'second new document');
+    });
   });
 
   testWidgets('窗口控制按钮：windowControls 开启时渲染（W1-3）', (tester) async {
@@ -107,6 +339,8 @@ void main() {
       layoutStore: store,
       sessionStore: session,
       keybindingsStore: keybindings,
+      windowChromeConfiguration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
       windowControls: true,
     ));
     await tester.pump(const Duration(milliseconds: 300));
@@ -126,11 +360,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 打开两个文件（+ 未命名）→ 3 个标签；docId：未命名=1、Cargo.toml=2、main.rs=3
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('src'));
     await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.text('main.rs'));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
     await tester.pump(const Duration(milliseconds: 300));
 
     double leftOf(String key) =>
@@ -139,8 +373,14 @@ void main() {
         reason: '初始顺序：未命名 在 Cargo.toml 前');
 
     // 鼠标拖 tab-3（main.rs）到 tab-1（未命名）上 → 变为第一个
-    await tester.drag(find.byKey(const ValueKey('tab-3')), const Offset(-260, 0),
-        kind: PointerDeviceKind.mouse);
+    final iconDrag = await tester.startGesture(
+      tester.getCenter(
+        find.byKey(const ValueKey('editor-tab-file-icon-editor-3')),
+      ),
+      kind: PointerDeviceKind.mouse,
+    );
+    await iconDrag.moveBy(const Offset(-260, 0));
+    await iconDrag.up();
     await tester.pump();
     expect(leftOf('tab-3'), lessThan(leftOf('tab-1')),
         reason: '拖动排序后 main.rs 应在 未命名 前');
@@ -160,7 +400,7 @@ void main() {
     expect(find.byKey(const ValueKey('tab-3')), findsOneWidget);
   });
 
-  testWidgets('W2-2 编辑器组：拆分获焦/文档入新组/清空自动并组', (tester) async {
+  testWidgets('W2-2 编辑器组：拆分复制活动文档/打开文件/清空自动并组', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -170,16 +410,21 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 组 1 打开 Cargo.toml
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 拆分 → 新组 editor-2 获焦（空占位出现），两组各有一个拆分按钮
+    // 拆分 → 新组 editor-2 获焦并复制 Cargo.toml 活动视图。
     await tester.tap(find.byTooltip('拆分编辑器'));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.text('打开文件夹后，从文件树选择文件'), findsOneWidget,
-        reason: '新组应为空占位');
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
+        reason: '新组应复制活动文档');
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
 
     // 文件打开进「焦点组」（新组）
     await tester.tap(find.text('src'));
@@ -190,21 +435,32 @@ void main() {
         reason: '树 + 新组标签 + 面包屑各一处');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 中键关闭新组唯一文档 → 组清空 → 自动摘除并组
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.byKey(const ValueKey('tab-3'))),
-      buttons: kMiddleMouseButton,
-    );
-    await gesture.up();
+    // 关闭新组新开的 main.rs 后，复制的 Cargo.toml 仍留在新组。
+    final closeMainTab = find.byKey(const ValueKey('close-tab-editor-2-3'));
+    await tester.ensureVisible(closeMainTab);
+    await tester.pump();
+    await tester.tap(closeMainTab);
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('tab-3')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
+
+    // 关闭复制的 Cargo.toml → 组清空 → 自动摘除并组。
+    final closeCopiedTab = find.byKey(const ValueKey('close-tab-editor-2-2'));
+    await tester.ensureVisible(closeCopiedTab);
+    await tester.pump();
+    await tester.tap(closeCopiedTab);
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.byTooltip('拆分编辑器'), findsOneWidget,
         reason: '空组应自动摘除');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
         reason: '回到单组且组 1 仍有 Cargo.toml');
   });
 
-  testWidgets('W2-3 面包屑：路径段展示 + 点击文件夹段展开文件树', (tester) async {
+  testWidgets('W2-3 面包屑目录在选择器内展开', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -232,11 +488,24 @@ void main() {
     expect(find.text('main.rs'), findsNWidgets(2),
         reason: '树已收起，剩标签 + 面包屑两处');
 
-    // 点击面包屑的 src 段 → 文件树重新展开到该目录
     await tester.tap(find.descendant(of: bc, matching: find.text('src')));
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
+    final rows = find.byWidgetPredicate((w) => w is PopupMenuItem<String>);
+    final folder = find.descendant(of: rows, matching: find.text('src/'));
+    expect(folder, findsOneWidget);
+    expect(Focus.of(tester.element(folder)).hasPrimaryFocus, isTrue);
+    expect(find.text('main.rs'), findsNWidgets(2));
+
+    await tester.tap(folder);
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: rows, matching: find.text('main.rs')),
+        findsOneWidget);
     expect(find.text('main.rs'), findsNWidgets(3),
-        reason: '面包屑点击应展开文件树，main.rs 回到 树+标签+面包屑 三处');
+        reason: '新出现的 main.rs 位于选择器中');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(rows, findsNothing);
+    expect(find.text('main.rs'), findsNWidgets(2));
   });
 
   testWidgets('W2-4 journal：重启恢复标签与未保存内容', (tester) async {
@@ -303,8 +572,780 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const ValueKey('quick-input')), findsNothing,
         reason: '执行后面板关闭');
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
   });
+
+  testWidgets('Command Center 打开文件搜索并可切换到命令模式', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+    final input = tester.widget<TextField>(field);
+    expect(input.controller!.text, isEmpty);
+    expect(input.decoration!.hintText, '文件名、路径或 path:行:列');
+    await tester.enterText(field, '>拆分');
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('qi-编辑器: 拆分编辑器')), findsOneWidget);
+
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    expect(primaryFocus, isNotNull);
+    expect(
+      primaryFocus!.context!.findAncestorWidgetOfExactType<Scaffold>(),
+      isNotNull,
+      reason: '执行后应把焦点交还给工作台',
+    );
+  });
+
+  testWidgets('Command Center initial modes dispatch existing Quick Access',
+      (tester) async {
+    mockNativeDragDrop();
+    expect(
+      RecentHistoryStore(path: '${session.resolvePath()}.recent-history')
+          .recordFile('$fixtureRoot/src/main.rs'),
+      isTrue,
+    );
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 400));
+    final rust = tester.state<RustTextInputFieldState>(
+        find.byType(RustTextInputField));
+    rust.requestFocus();
+    await tester.pump();
+    final editorFocus = FocusManager.instance.primaryFocus;
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final commandCenter = find.byKey(const ValueKey('command-center-control'));
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+
+    Finder row(String label) => find.byKey(ValueKey('qi-$label'));
+    Future<void> waitForRow(String label) async {
+      final item = row(label);
+      for (var attempt = 0; attempt < 100 && item.evaluate().isEmpty; attempt++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(item, findsOneWidget);
+    }
+
+    Future<void> expectModes({String value = ''}) async {
+      await waitForRow('转到文件');
+      expect(tester.widget<TextField>(field).controller!.text, value);
+      expect(row('转到文件'), findsOneWidget);
+      expect(row('显示并运行命令'), findsOneWidget);
+      expect(row('转到编辑器中的符号'), findsOneWidget);
+      expect(row('更多'), findsOneWidget);
+      await waitForRow('main.rs');
+    }
+
+    Future<void> refresh() async {
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump();
+    }
+
+    Future<void> escape() async {
+      await pressChord(tester, LogicalKeyboardKey.escape);
+      await refresh();
+      expect(picker, findsNothing);
+    }
+
+    Future<void> type(String value) async {
+      await tester.enterText(field, value);
+      await refresh();
+    }
+
+    await title.commands.execute(quickOpenCommandId);
+    await refresh();
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+
+    await tester.tap(commandCenter);
+    await refresh();
+    await expectModes();
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await refresh();
+    expect(picker, findsOneWidget);
+    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+
+    await tester.tap(commandCenter);
+    await refresh();
+    await expectModes();
+    await type('main');
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await type('  ');
+    await expectModes(value: '  ');
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('显示并运行命令'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '>');
+    expect(tester.widget<TextField>(field).decoration!.hintText,
+        '输入命令名（> 前缀可省）');
+    await type('>打开命令中心');
+    expect(row('查看: 打开命令中心'), findsNothing);
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('转到编辑器中的符号'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '@');
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('更多'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '?');
+    expect(row(':'), findsOneWidget);
+    await type('');
+    await expectModes();
+    await tester.tap(row('更多'));
+    await refresh();
+    await tester.tap(row('…'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+    expect(FocusManager.instance.primaryFocus, same(editorFocus));
+  });
+
+  testWidgets('Quick Access shares its custom chrome origin across providers',
+      (tester) async {
+    mockNativeDragDrop();
+    tester.view.physicalSize = const Size(1240, 850);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    Future<void> mount(WorkbenchTitleBarMode mode) async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: fixtureRoot,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+        windowChromeConfiguration: WindowChromeConfiguration(
+          mode: mode,
+          targetPlatform: TargetPlatform.windows,
+        ),
+      ));
+      await tester.pump(const Duration(milliseconds: 650));
+    }
+
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final surface = find.descendant(
+      of: picker,
+      matching: find.byWidgetPredicate((widget) =>
+          widget is DecoratedBox &&
+          widget.decoration is BoxDecoration &&
+          (widget.decoration as BoxDecoration).color ==
+              const Color(0xFF252932)),
+    );
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+
+    void expectSurface(double width, double top) {
+      final box = tester.getRect(surface);
+      expect(box.top, closeTo(top, .01));
+      expect(box.width, closeTo(width * .62 < 600 ? width * .62 : 600, .01));
+      expect(box.center.dx, closeTo(width / 2, .01));
+    }
+
+    Future<void> settlePicker() async {
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump(const Duration(milliseconds: 240));
+    }
+
+    Future<void> close() async {
+      await pressChord(tester, LogicalKeyboardKey.escape);
+      await settlePicker();
+      expect(picker, findsNothing);
+    }
+
+    await mount(WorkbenchTitleBarMode.custom);
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 350));
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final center = find.byKey(const ValueKey('command-center-control'));
+    await tester.tap(center);
+    await settlePicker();
+    expectSurface(1240, 6);
+    for (final prefix in ['>', '@', '@:', '#', ':', '::', '?', '']) {
+      await tester.enterText(field, prefix);
+      await settlePicker();
+      expect(tester.widget<TextField>(field).controller!.text, prefix);
+      expectSurface(1240, 6);
+    }
+
+    await tester.enterText(field, 'main');
+    tester.view.physicalSize = const Size(710, 850);
+    await settlePicker();
+    expect(tester.widget<TextField>(field).controller!.text, 'main');
+    expectSurface(710, 6);
+    await close();
+
+    tester.view.physicalSize = const Size(1240, 850);
+    await tester.pump();
+    await title.commands.execute(quickOpenCommandId);
+    await settlePicker();
+    expectSurface(1240, 6);
+    await close();
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.tap(center);
+    await settlePicker();
+    expectSurface(1240, 6);
+    await close();
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+
+    await mount(WorkbenchTitleBarMode.native);
+    final nativeTitle = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    await nativeTitle.commands.execute(quickOpenCommandId);
+    await settlePicker();
+    expectSurface(1240, 56);
+    await close();
+  });
+
+  testWidgets('Command Center history controls track Back and Forward in Zen',
+      (tester) async {
+    mockNativeDragDrop();
+    final source = '\uFEFF${List.generate(121, (index) {
+      final number = (index + 1).toString().padLeft(3, '0');
+      return '$number sample line 中文 🐙\r\n';
+    }).join()}';
+    final workspace = createP025Workspace(tmp, content: source);
+    final sample = File('${workspace.path}/note.txt');
+    final diskBytes = sample.readAsBytesSync();
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await openPinnedExplorerFile(tester, find.text('note.txt').first);
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    final controller = tester.widget<TextField>(editor).controller!;
+    final primary = tester.state<RustTextInputFieldState>(
+        find.byType(RustTextInputField));
+    primary.requestFocus();
+    await tester.pump();
+    tester.testTextInput.updateEditingValue(
+      controller.value.copyWith(
+        selection: const TextSelection.collapsed(offset: 0),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final back = find.byKey(const ValueKey('command-center-back'));
+    final forward = find.byKey(const ValueKey('command-center-forward'));
+
+    void expectState(bool canBack, bool canForward, int caret) {
+      expect(back, findsOneWidget);
+      expect(forward, findsOneWidget);
+      expect(tester.widget<InkWell>(back).onTap != null, canBack);
+      expect(tester.widget<InkWell>(forward).onTap != null, canForward);
+      final field = tester.widget<TextField>(editor);
+      expect(field.controller!.selection.extentOffset, caret);
+      expect(field.focusNode?.hasFocus, isTrue);
+    }
+
+    Future<void> go(String value) async {
+      final result = title.commands.execute('workbench.action.gotoLine');
+      await tester.pumpAndSettle();
+      final field = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(field, value);
+      await tester.pumpAndSettle();
+      await pressChord(tester, LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(await result, CommandExecutionStatus.executed);
+    }
+
+    expectState(false, false, 0);
+    await go(':18:6');
+    expectState(true, false, 379);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 379);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    await go(':27:3');
+    expectState(true, false, 574);
+
+    tester.view.physicalSize = const Size(650, 900);
+    await tester.pump();
+    final search = find.byKey(const ValueKey('command-center-control'));
+    expect(tester.getRect(back).right,
+        lessThanOrEqualTo(tester.getRect(forward).left));
+    expect(tester.getRect(forward).right,
+        lessThanOrEqualTo(tester.getRect(search).left));
+    expect(tester.getRect(search).width, greaterThan(28));
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    expectState(true, false, 574);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 574);
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    await title.commands.execute('workbench.action.closeAllEditors');
+    await tester.pumpAndSettle();
+    expect(editor, findsNothing);
+    expect(tester.widget<InkWell>(back).onTap, isNotNull);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 574);
+    expect(sample.readAsBytesSync(), diskBytes);
+  });
+
+  testWidgets('P05.393 标题栏布局按钮跟随区域、位置与 Zen 切换',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(650, 900);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    const sidebar = 'view.toggleSidebar';
+    const panel = 'view.togglePanel';
+    const secondary = 'workbench.action.toggleAuxiliaryBar';
+    const regions = {
+      sidebar: 'sidebar',
+      panel: 'panel',
+      secondary: 'secondarySidebar',
+    };
+    final menu = find.byKey(const ValueKey('layout-controls-control'));
+    final search = find.byKey(const ValueKey('command-center-control'));
+    final back = find.byKey(const ValueKey('command-center-back'));
+    final forward = find.byKey(const ValueKey('command-center-forward'));
+
+    Finder button(String id) => find.byKey(ValueKey('title-layout-toggle-$id'));
+    Finder region(String id) =>
+        find.byKey(ValueKey('wb-region-${regions[id]}'));
+
+    void expectState(String id, bool active) {
+      expect(region(id), active ? findsOneWidget : findsNothing);
+      final node =
+          tester.getSemantics(find.byKey(ValueKey('title-layout-state-$id')));
+      final data = node.getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+      expect(data.flagsCollection.isToggled,
+          active ? Tristate.isTrue : Tristate.isFalse);
+    }
+
+    void expectOrder(List<String> ids) {
+      expect(tester.getRect(back).right,
+          lessThanOrEqualTo(tester.getRect(forward).left));
+      expect(tester.getRect(forward).right,
+          lessThanOrEqualTo(tester.getRect(search).left));
+      expect(tester.getRect(search).width, greaterThan(28));
+      expect(tester.getRect(search).right,
+          lessThanOrEqualTo(tester.getRect(menu).left));
+      var previous = tester.getRect(menu);
+      for (final id in ids) {
+        expect(button(id), findsOneWidget);
+        final rect = tester.getRect(button(id));
+        expect(previous.right, lessThanOrEqualTo(rect.left));
+        previous = rect;
+      }
+    }
+
+    expectOrder([sidebar, panel, secondary]);
+    final original = {
+      for (final id in regions.keys) id: region(id).evaluate().isNotEmpty,
+    };
+    for (final id in regions.keys) {
+      expectState(id, original[id]!);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, !original[id]!);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, original[id]!);
+    }
+
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expectState(sidebar, !original[sidebar]!);
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expectState(sidebar, original[sidebar]!);
+
+    await title.commands.execute('workbench.action.toggleSidebarPosition');
+    await tester.pumpAndSettle();
+    expectOrder([secondary, panel, sidebar]);
+    expect(tester.getRect(region(sidebar)).left,
+        greaterThan(tester.getRect(search).left));
+    await title.commands.execute('workbench.action.toggleSidebarPosition');
+    await tester.pumpAndSettle();
+    expectOrder([sidebar, panel, secondary]);
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    for (final id in regions.keys) {
+      expectState(id, false);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, true);
+      expect(title.commands.context['inZenMode'], isTrue);
+      expect(find.byKey(const ValueKey('wb-region-activity')), findsNothing);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, false);
+    }
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    for (final entry in original.entries) {
+      expectState(entry.key, entry.value);
+    }
+
+    tester.view.physicalSize = const Size(520, 900);
+    await tester.pumpAndSettle();
+    expect(menu, findsOneWidget);
+    expect(tester.getRect(search).width, greaterThan(0));
+    for (final id in regions.keys) {
+      expect(button(id), findsNothing);
+    }
+    semantics.dispose();
+  });
+
+  testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',
+      (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final layoutControl = find.byKey(const ValueKey('layout-controls-control'));
+    final sidebarRegion = find.byKey(const ValueKey('wb-region-sidebar'));
+    final panelRegion = find.byKey(const ValueKey('wb-region-panel'));
+    final sidebarItem =
+        find.byKey(const ValueKey('layout-control-view.toggleSidebar'));
+    final panelItem =
+        find.byKey(const ValueKey('layout-control-view.togglePanel'));
+
+    expect(sidebarRegion, findsOneWidget);
+    expect(panelRegion, findsNothing, reason: '面板默认折叠');
+    final statusBar = find.byType(AlulaStatusBar);
+    bool statusPanelCollapsed() =>
+        tester.widget<AlulaStatusBar>(statusBar).panelCollapsed;
+    final panelArrow = find.descendant(
+      of: statusBar,
+      matching: find.byIcon(Icons.keyboard_arrow_up),
+    );
+    expect(statusPanelCollapsed(), isTrue);
+    await tester.tap(panelArrow);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsOneWidget);
+    expect(statusPanelCollapsed(), isFalse, reason: '状态栏点击应同步面板展开图标');
+    await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsNothing);
+    expect(statusPanelCollapsed(), isTrue, reason: '快捷键折叠应同步状态栏');
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<Icon>(),
+      reason: '展开的侧栏应显示选中状态',
+    );
+    expect(
+      tester.widget<MenuItemButton>(panelItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '折叠的面板应显示未选中状态',
+    );
+    await tester.tap(sidebarItem);
+    await tester.pumpAndSettle();
+    expect(sidebarRegion, findsNothing);
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '再次打开菜单时读取最新侧栏状态',
+    );
+    await tester.tap(panelItem);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsOneWidget);
+    expect(statusPanelCollapsed(), isFalse, reason: '布局菜单展开应同步状态栏');
+    expect(
+      find.descendant(
+        of: statusBar,
+        matching: find.byIcon(Icons.keyboard_arrow_down),
+      ),
+      findsOneWidget,
+    );
+
+    // View > Appearance 和默认快捷键仍执行相同的注册命令。
+    await tester.tap(find.text('查看(V)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('外观(A)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('切换面板(P)'));
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsNothing);
+    expect(statusPanelCollapsed(), isTrue, reason: '外观菜单折叠应同步状态栏');
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expect(sidebarRegion, findsOneWidget);
+  });
+
+  testWidgets(
+    'narrow workbench title keeps the command center, menus and controls in reach',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      for (final width in [640.0, 520.0, 1024.0]) {
+        tester.view.physicalSize = Size(width, 720);
+        await tester.pumpWidget(AlulaApp(
+          autoFolder: fixtureRoot,
+          layoutStore: store,
+          sessionStore: session,
+          keybindingsStore: keybindings,
+          windowControls: true,
+        ));
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(tester.takeException(), isNull, reason: 'width $width');
+        final titleBar = find.byType(AlulaTitleBar);
+        final titleBounds = tester.getRect(titleBar);
+        final center = find.byKey(const ValueKey('command-center-control'));
+        final layout = find.byKey(const ValueKey('layout-controls-control'));
+        final close =
+            find.descendant(of: titleBar, matching: find.byTooltip('关闭'));
+        final fileMenu = find.descendant(
+          of: titleBar,
+          matching: find.byTooltip('文件'),
+        );
+        final controls = [center, layout, fileMenu];
+        if (Theme.of(tester.element(titleBar)).platform ==
+            TargetPlatform.linux) {
+          controls.add(close);
+        }
+        for (final control in controls) {
+          expect(control, findsOneWidget, reason: 'width $width');
+          final rect = tester.getRect(control);
+          expect(rect.width, greaterThan(0));
+          expect(rect.left, greaterThanOrEqualTo(titleBounds.left));
+          expect(rect.right, lessThanOrEqualTo(titleBounds.right));
+        }
+        if (controls.contains(close)) {
+          expect(tester.getRect(close).right, closeTo(titleBounds.right, 0.01));
+        }
+        final centerBounds = tester.getRect(center);
+        expect(tester.getRect(fileMenu).right, lessThan(centerBounds.left));
+        if (width >= 1024) {
+          expect(centerBounds.width, greaterThan(240));
+          expect(centerBounds.width, lessThanOrEqualTo(width * 0.38 + 2));
+        }
+        await tester.tap(center);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        await tester.tap(layout);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('layout-control-view.togglePanel')),
+          findsOneWidget,
+        );
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+      }
+    },
+    variant: const TargetPlatformVariant(
+        {TargetPlatform.windows, TargetPlatform.linux}),
+  );
+
+
+  for (final withEditor in [true, false]) {
+    testWidgets(
+      'panel shortcut retains the Problems reopen route (editor: $withEditor)',
+      (tester) async {
+        late CommandService commands;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: WorkbenchPage(
+              layoutStore: store,
+              sessionStore: session,
+              keybindingsStore: keybindings,
+              onCommandServiceReady: (value) => commands = value,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final editor = find.byType(RustTextInputField);
+        if (withEditor) {
+          await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+          await tester.pumpAndSettle();
+          expect(editor, findsOneWidget);
+        } else {
+          final result = await commands.execute(
+            'workbench.action.closeAllEditors',
+          );
+          expect(result, CommandExecutionStatus.executed);
+          await tester.pumpAndSettle();
+          expect(editor, findsNothing);
+        }
+        final panel = find.byKey(const ValueKey('wb-region-panel'));
+        final problemsFocus = find.byKey(
+          const ValueKey('problems-panel-focus'),
+        );
+        bool hasProblemsFocus() =>
+            tester.widget<Focus>(problemsFocus).focusNode!.hasFocus;
+
+        await tester.tap(find.byKey(const ValueKey('status-problems')));
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(problemsFocus, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+        await tester.pumpAndSettle();
+        expect(panel, findsNothing);
+        if (withEditor) {
+          expect(
+            tester.widget<RustTextInputField>(editor).focusNode?.hasFocus,
+            isTrue,
+          );
+        }
+
+        await pressChord(
+          tester,
+          LogicalKeyboardKey.keyM,
+          control: true,
+          shift: true,
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        final status = find.byType(AlulaStatusBar);
+        await tester.tap(
+          find.descendant(
+            of: status,
+            matching: find.byIcon(Icons.keyboard_arrow_down),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsNothing);
+        if (withEditor) {
+          expect(
+            tester.widget<RustTextInputField>(editor).focusNode?.hasFocus,
+            isTrue,
+          );
+        }
+
+        await pressChord(
+          tester,
+          LogicalKeyboardKey.keyM,
+          control: true,
+          shift: true,
+        );
+        await tester.pumpAndSettle();
+        expect(panel, findsOneWidget);
+        expect(hasProblemsFocus(), isTrue);
+
+        if (withEditor) {
+          await pressChord(tester, LogicalKeyboardKey.keyM,
+              control: true, shift: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsNothing);
+          expect(
+            await commands.execute('workbench.action.closeAllEditors'),
+            CommandExecutionStatus.executed,
+          );
+          await tester.pumpAndSettle();
+          expect(editor, findsNothing);
+
+          await tester.tap(find.byKey(const ValueKey('status-problems')));
+          await tester.pumpAndSettle();
+          expect(hasProblemsFocus(), isTrue);
+          await pressChord(tester, LogicalKeyboardKey.keyJ, control: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsNothing);
+
+          await pressChord(tester, LogicalKeyboardKey.keyM,
+              control: true, shift: true);
+          await tester.pumpAndSettle();
+          expect(panel, findsOneWidget);
+          expect(hasProblemsFocus(), isTrue);
+        }
+      },
+      variant: const TargetPlatformVariant({
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+      }),
+    );
+  }
 
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(
@@ -324,7 +1365,13 @@ void main() {
             of: find.byKey(const ValueKey('quick-input')),
             matching: find.byType(TextField)),
         'main');
-    await tester.pump(const Duration(milliseconds: 200));
+    for (var attempt = 0; attempt < 100; attempt++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+      if (find.byKey(const ValueKey('qi-main.rs')).evaluate().isNotEmpty) break;
+    }
+    expect(find.byKey(const ValueKey('qi-main.rs')), findsOneWidget);
     await pressChord(tester, LogicalKeyboardKey.enter);
     await tester.pump(const Duration(milliseconds: 300));
 
@@ -537,7 +1584,20 @@ void main() {
       final repo = await createTempRepo(
           prefix: 'alula_git_widget', extraFiles: {'hello.py': 'print(1)\n'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -574,9 +1634,11 @@ void main() {
           find.byKey(const ValueKey('commit-input')), 'test: widget 提交');
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('commit-button')));
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-      await tester.pump();
-      expect(find.text('工作区干净'), findsOneWidget, reason: '提交后无更改');
+      await _waitForWidget(
+        tester,
+        find.text('工作区干净'),
+        reason: '提交后无更改',
+      );
 
       // 真 git 验证：仓库应有两个提交
       final log = await Process.run('git', ['log', '--oneline'],
@@ -589,13 +1651,213 @@ void main() {
     });
   });
 
+  testWidgets('Git changes list opens resources without staging on Space',
+      (tester) async {
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+        prefix: 'alula_git_keyboard',
+        extraFiles: {
+          'alpha.txt': 'alpha\n',
+          'beta.txt': 'beta\n',
+        },
+      );
+      final seed = await Process.run('git', ['add', 'alpha.txt', 'beta.txt'],
+          workingDirectory: repo.path);
+      expect(seed.exitCode, 0);
+      final commit = await Process.run('git', ['commit', '-m', 'seed changes'],
+          workingDirectory: repo.path);
+      expect(commit.exitCode, 0);
+      File('${repo.path}/alpha.txt').writeAsStringSync('alpha changed\n');
+      File('${repo.path}/beta.txt').writeAsStringSync('beta changed\n');
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+      await tester.tap(find.byTooltip('源代码管理'));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await tester.pump();
+
+      final listFocus = tester
+          .widget<Focus>(find.byKey(const ValueKey('git-changes-list-focus')))
+          .focusNode!;
+      listFocus.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      final alphaRow = find.byKey(const ValueKey('git-w-alpha.txt'));
+      expect(tester.widget<ListTile>(alphaRow).selected, isFalse);
+      expect(tester.widget<Semantics>(find.byKey(
+          const ValueKey('git-focus-w-alpha.txt'))).properties.focused, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await _waitForWidget(tester, find.text('beta.txt（工作区）'),
+          reason: 'Space opens the focused Git change diff');
+      await tester.pump();
+      expect(listFocus.hasFocus, isTrue,
+          reason: 'first Space open must not autofocus the diff');
+      final rowFocus = Focus.of(tester.element(find.descendant(
+        of: find.byKey(const ValueKey('git-w-beta.txt')),
+        matching: find.text('beta.txt'),
+      )));
+      rowFocus.requestFocus();
+      await tester.pump();
+      expect(rowFocus.hasPrimaryFocus, isTrue,
+          reason: 'Exercise Enter from a row reached through focus traversal');
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      final diffFocus = tester
+          .widget<Focus>(find.byKey(const ValueKey('git-diff-panel-focus')))
+          .focusNode!;
+      final focusWait = Stopwatch()..start();
+      while (!diffFocus.hasFocus &&
+          focusWait.elapsed < const Duration(seconds: 10)) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      }
+      expect(diffFocus.hasFocus, isTrue,
+          reason: 'Enter transfers focus after the asynchronous Git diff opens');
+      listFocus.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await _waitForWidget(tester, find.text('alpha.txt（工作区）'),
+          reason: 'Space opens the focused resource and retains list focus');
+      await tester.pump();
+      expect(listFocus.hasFocus, isTrue);
+      final alphaBeforeSelection =
+          File('${repo.path}/alpha.txt').readAsBytesSync();
+      final betaBeforeSelection =
+          File('${repo.path}/beta.txt').readAsBytesSync();
+      final treeBeforeSelection = await Process.run('git', ['ls-files', '--stage', '-z'],
+          workingDirectory: repo.path);
+      expect(treeBeforeSelection.exitCode, 0,
+          reason: '${treeBeforeSelection.stderr}');
+      final toggleModifier = Theme.of(tester.element(alphaRow)).platform ==
+              TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.sendKeyDownEvent(toggleModifier);
+      await tester.tap(find.byKey(const ValueKey('git-w-beta.txt')));
+      await tester.sendKeyUpEvent(toggleModifier);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isTrue);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.tap(alphaRow);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isTrue);
+      final treeAfterSelection = await Process.run('git', ['ls-files', '--stage', '-z'],
+          workingDirectory: repo.path);
+      expect(treeAfterSelection.exitCode, 0,
+          reason: '${treeAfterSelection.stderr}');
+      expect(treeAfterSelection.stdout, treeBeforeSelection.stdout,
+          reason: 'SCM modifier selection preserves the exact Git index tree');
+      expect(File('${repo.path}/alpha.txt').readAsBytesSync(),
+          alphaBeforeSelection);
+      expect(File('${repo.path}/beta.txt').readAsBytesSync(),
+          betaBeforeSelection);
+      expect(find.text('alpha.txt（工作区）'), findsOneWidget,
+          reason: 'Modifier selection must not open another resource');
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isFalse);
+      final before = await Process.run('git', ['diff', '--cached', '--name-only'],
+          workingDirectory: repo.path);
+      expect(before.exitCode, 0);
+      expect((before.stdout as String).trim(), isEmpty,
+          reason: 'Space never modifies the Git index');
+      final menuPointer = await tester.startGesture(
+        tester.getCenter(alphaRow),
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      await menuPointer.up();
+      await tester.pump();
+      expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 300));
+      final treeAfterMenu = await Process.run('git', ['ls-files', '--stage', '-z'],
+          workingDirectory: repo.path);
+      expect(treeAfterMenu.exitCode, 0);
+      expect(treeAfterMenu.stdout, treeBeforeSelection.stdout,
+          reason: 'Context menu cancellation never mutates the Git index');
+      expect(File('${repo.path}/alpha.txt').readAsBytesSync(),
+          alphaBeforeSelection);
+      expect(File('${repo.path}/beta.txt').readAsBytesSync(),
+          betaBeforeSelection);
+      expect(listFocus.hasFocus, isTrue);
+      final stageMenuPointer = await tester.startGesture(
+        tester.getCenter(alphaRow),
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      await stageMenuPointer.up();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+      await _waitForWidget(tester, find.text('暂存的更改（1）'),
+          reason: 'Explicit stage action still stages the file');
+      expect(find.byKey(const ValueKey('git-s-alpha.txt')), findsOneWidget);
+    });
+  });
+
   testWidgets('feat-search 搜索视图：Ctrl+Shift+F/流式结果/点击跳行', (tester) async {
     await tester.runAsync(() async {
       final repo = await createTempRepo(
           prefix: 'alula_search_widget',
           extraFiles: {'src/needle.py': 'find the needle here\n'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -617,11 +1879,11 @@ void main() {
           find.byKey(const ValueKey('search-input')), 'needle');
       await tester.pump();
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await Future<void>.delayed(const Duration(milliseconds: 600));
-      await tester.pump();
-
-      expect(find.textContaining('find the needle here'), findsOneWidget,
-          reason: '命中行文本应出现在结果列表');
+      await _waitForWidget(
+        tester,
+        find.textContaining('find the needle here'),
+        reason: '命中行文本应出现在结果列表',
+      );
       expect(find.textContaining('needle.py'), findsOneWidget,
           reason: '文件名展示');
 
@@ -642,10 +1904,22 @@ void main() {
   testWidgets('feat-filewatch 外部修改：干净文档自动重载', (tester) async {
     await tester.runAsync(() async {
       final repo = await createTempRepo(
-          prefix: 'alula_fw_widget',
-          extraFiles: {'watch.txt': 'v1$kNL'});
+          prefix: 'alula_fw_widget', extraFiles: {'watch.txt': 'v1$kNL'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -668,8 +1942,7 @@ void main() {
           'v1$kNL');
 
       // 外部修改磁盘文件
-      File('${repo.path}/watch.txt')
-          .writeAsStringSync('v2 external$kNL');
+      File('${repo.path}/watch.txt').writeAsStringSync('v2 external$kNL');
       // 防抖 600ms + 事件延迟 + 重载
       await Future<void>.delayed(const Duration(milliseconds: 1800));
       await tester.pump();
@@ -897,7 +2170,20 @@ void main() {
                 '}$kNL'
           });
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -927,7 +2213,14 @@ void main() {
 
       expect(find.text('make_point'), findsOneWidget,
           reason: '大纲应列出函数符号');
-      expect(find.text('Point'), findsOneWidget, reason: '大纲应列出结构体符号');
+      expect(
+        find.descendant(
+          of: find.byType(ListTile),
+          matching: find.text('Point'),
+        ),
+        findsOneWidget,
+        reason: '大纲应列出结构体符号',
+      );
 
       // 点击 make_point → 编辑器光标跳到该符号起始处
       await tester.tap(find.text('make_point'));

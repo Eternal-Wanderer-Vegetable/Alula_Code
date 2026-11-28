@@ -1,0 +1,1569 @@
+{
+  "product": "4d6ce251ba177bfd7de2fc7a9e6d55c824da5af4",
+  "tree": "03bb6c033a0c5039514a7d188c6b0290a9ccd474",
+  "fixedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "path": "src/vs/workbench/contrib/search/browser/symbolsQuickAccess.ts",
+    "line": 116,
+    "sha256": "8479788ea920c82bc5df6697050f42e8046b77e0eba7dd77e30361d825c23a9f"
+  },
+  "predecessor": {
+    "commit": "219f1062c86d3b5f08317369b146d80a705f9873",
+    "sha256": "51536b9779d336979ca3c1a26d216fbfe4f1b77770e1c8d3ee6408349b2fffb3",
+    "observations": 6,
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "80ce36701f24b24bd6cdca94d71ed71ca268554c",
+    "aotSha256": "59aa16c0beedd1734230a2c21945b5bbc1b42ed3abd919202e0aec05d9e51c6c",
+    "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+    "runnerSha256": "5c6446edabc985fbc862b8544f32d855dd4c36e08069a7d8c7115f224e207399",
+    "rustAnalyzer": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "afterClosingEditorsStatus": "当前工作区没有可用符号提供程序",
+    "reproducedNoEditorProviderFailure": true,
+    "diskSha256": {
+      "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+      "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "lspExitedWithWorkbench": true,
+    "steps": {
+      "ready": {
+        "editorCount": 1,
+        "editorTabs": 2,
+        "nativeWindowFocused": true,
+        "languageServerReady": false,
+        "symbolStatus": null,
+        "quickLoading": false,
+        "pickers": [],
+        "acceptedEditors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "selection": [
+              0,
+              0
+            ],
+            "editorFocused": false,
+            "dirty": false
+          }
+        ]
+      },
+      "source-editor-focused": {
+        "editorCount": 1,
+        "editorTabs": 2,
+        "nativeWindowFocused": true,
+        "languageServerReady": false,
+        "symbolStatus": null,
+        "quickLoading": false,
+        "pickers": [],
+        "acceptedEditors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "selection": [
+              74,
+              74
+            ],
+            "editorFocused": true,
+            "dirty": false
+          }
+        ]
+      },
+      "rust-analyzer-ready": {
+        "editorCount": 1,
+        "editorTabs": 2,
+        "nativeWindowFocused": true,
+        "languageServerReady": true,
+        "symbolStatus": null,
+        "quickLoading": false,
+        "pickers": [],
+        "acceptedEditors": [
+          {
+            "label": "lib.rs 主编辑器",
+            "selection": [
+              74,
+              74
+            ],
+            "editorFocused": true,
+            "dirty": false
+          }
+        ]
+      },
+      "no-editor": {
+        "editorCount": 0,
+        "editorTabs": 0,
+        "nativeWindowFocused": true,
+        "languageServerReady": true,
+        "symbolStatus": null,
+        "quickLoading": false,
+        "pickers": [],
+        "acceptedEditors": []
+      },
+      "no-editor-picker": {
+        "editorCount": 0,
+        "editorTabs": 0,
+        "nativeWindowFocused": true,
+        "languageServerReady": true,
+        "symbolStatus": "当前工作区没有可用符号提供程序",
+        "quickLoading": false,
+        "pickers": [
+          {
+            "hint": "工作区符号（#名称）",
+            "value": "#",
+            "controllerIdentity": 1177718,
+            "focused": true
+          }
+        ],
+        "acceptedEditors": []
+      },
+      "baseline-picker-closed": {
+        "editorCount": 0,
+        "editorTabs": 0,
+        "nativeWindowFocused": true,
+        "languageServerReady": true,
+        "symbolStatus": null,
+        "quickLoading": false,
+        "pickers": [],
+        "acceptedEditors": []
+      }
+    }
+  },
+  "linux": {
+    "serverStartedBeforeClosingEditors": {
+      "sha256": "537d630102949cce0da4fedc2f74e2fed3f53bfb2f75040d3ba72aac37e1e8c9",
+      "observations": 11,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "03bb6c033a0c5039514a7d188c6b0290a9ccd474",
+      "aotSha256": "0ef29d7f10fe3b5b0a3ce7e9066bebb1189408ec4702f591f8d9d22002fa28bb",
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+      "runnerSha256": "5c6446edabc985fbc862b8544f32d855dd4c36e08069a7d8c7115f224e207399",
+      "rustAnalyzer": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "startedWithoutEditor": false,
+      "afterClosingEditorsStatus": "输入符号名称以搜索工作区",
+      "workspaceSymbolFromEmptyEditor": {
+        "selectionsUtf16": [
+          [
+            34,
+            34
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "reusedLanguageServer": true
+      },
+      "diskSha256": {
+        "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+        "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+        "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+        "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+      },
+      "lspExitedWithWorkbench": true,
+      "steps": {
+        "ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": false,
+              "dirty": false
+            }
+          ]
+        },
+        "source-editor-focused": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "rust-analyzer-ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "no-editor-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 776873889,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 776873889,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "after-first-return-to-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "second-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 416072458,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 416072458,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        }
+      }
+    },
+    "serverStartedAfterClosingEditors": {
+      "sha256": "1b9c06798ee0d1216f0735096ca8c66d38d7b9b9a66af47facb07926d4d96e68",
+      "observations": 13,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "03bb6c033a0c5039514a7d188c6b0290a9ccd474",
+      "aotSha256": "0ef29d7f10fe3b5b0a3ce7e9066bebb1189408ec4702f591f8d9d22002fa28bb",
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+      "runnerSha256": "5c6446edabc985fbc862b8544f32d855dd4c36e08069a7d8c7115f224e207399",
+      "rustAnalyzer": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "startedWithoutEditor": true,
+      "afterClosingEditorsStatus": "输入符号名称以搜索工作区",
+      "workspaceSymbolFromEmptyEditor": {
+        "selectionsUtf16": [
+          [
+            34,
+            34
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "reusedLanguageServer": true
+      },
+      "diskSha256": {
+        "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+        "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+        "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+        "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+      },
+      "lspExitedWithWorkbench": true,
+      "steps": {
+        "ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": false,
+              "dirty": false
+            }
+          ]
+        },
+        "source-editor-focused": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "before-start-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "before-start-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": "当前工作区没有可用符号提供程序",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 1022248437,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "before-start-picker-closed": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "rust-analyzer-ready": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "no-editor-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 381704782,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 381704782,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "after-first-return-to-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "second-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 202081506,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 202081506,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        }
+      }
+    },
+    "workspaceSwitched": {
+      "sha256": "bbf906952ec6680f68a7479a6077b42595ba75ab7d26230d158bd9ebe6ca8498",
+      "observations": 20,
+      "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "tree": "03bb6c033a0c5039514a7d188c6b0290a9ccd474",
+      "aotSha256": "0ef29d7f10fe3b5b0a3ce7e9066bebb1189408ec4702f591f8d9d22002fa28bb",
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+      "runnerSha256": "eb3ed63ce7f2cf7f2ef05c9c10104748f4778f4d8a7718eb5a4dba567832da22",
+      "rustAnalyzer": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+      "startedWithoutEditor": false,
+      "afterClosingEditorsStatus": "输入符号名称以搜索工作区",
+      "workspaceSymbolFromEmptyEditor": {
+        "selectionsUtf16": [
+          [
+            34,
+            34
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "reusedLanguageServer": true
+      },
+      "workspaceSwitch": {
+        "previousProviderExited": true,
+        "newProviderPid": 2592318,
+        "closedEditorSearchSelectionUtf16": [
+          34,
+          34
+        ]
+      },
+      "diskSha256": {
+        "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+        "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+        "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+        "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+      },
+      "lspExitedWithWorkbench": true,
+      "steps": {
+        "ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": false,
+              "dirty": false
+            }
+          ]
+        },
+        "source-editor-focused": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "rust-analyzer-ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "no-editor-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 786419832,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 786419832,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "after-first-return-to-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "second-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 1053140812,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 1053140812,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "before-switch-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "workspace-switch-file-menu": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "workspace-switch-folder-dialog": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "workspace-switched": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "switched-provider-stopped": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": "当前工作区没有可用符号提供程序",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 740607319,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "new-workspace-provider-ready": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "switched-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 895608967,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "switched-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 895608967,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "switched-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "windowsBuild": {
+    "status": "built",
+    "nativeInteractive": "passed",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "f073c4cb99619ff83930c45bab9f73e64612e2da07603a12d6520fdcde5cde52",
+    "sourceProvenance": {
+      "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+      "sourceTree": "03bb6c033a0c5039514a7d188c6b0290a9ccd474",
+      "source": {
+        "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+        "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+        "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+        "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+        "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+        "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+        "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+        "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+        "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+        "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+        "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+        "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+        "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+        "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+        "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+        "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+        "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+        "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+        "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+        "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+        "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+        "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+        "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+        "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+        "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+        "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+        "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+        "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+        "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+        "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+        "app/lib/workbench/workbench_page.dart": "c1e53c64b5675d487724904c62c529685d12da6fbaccc4a856f6293cd6233285",
+        "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+        "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+        "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+        "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+      },
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e"
+    }
+  },
+  "localGates": {
+    "focusedPassed": 284,
+    "flutterPassed": 1823,
+    "flutterSkipped": 2,
+    "logSha256": {
+      "focused": "43cf63600f6dca837cf2dad865b144b00f92636bfde17c4922764042cc18ba6f",
+      "analyze": "f88aadaa352a8f1785194ebec8efc882d4f269ba0ed81f20cf66b5d6cca48fdc",
+      "full": "23489a0437e5e99e3a2321827137838f77ede533da0979d0d5da57be1d7aea13"
+    }
+  },
+  "gitNexus": {
+    "_showWorkspaceSymbols": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "fc5c39c84ff1fcd0482eb5560a683c94106d1199438ac97d001bc85431a0d8de"
+    },
+    "_startLsp": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "074a0692a9d2c5001f74b9e899013b24345f2db9ecf5501ff57294e3fa047475"
+    },
+    "_shutdownLspWorkspace": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 3,
+        "modules_affected": 1
+      },
+      "sha256": "aad19fc04829c27e7a28ff4d092a011be51e0386501ff79923b485266c858eb0"
+    },
+    "all": {
+      "changed_count": 6,
+      "affected_count": 0,
+      "changed_files": 3,
+      "risk_level": "low",
+      "sha256": "1fc3017f6acea2506b3fe7be974b629d0c990c997fbd936dd87533de7a5d398c"
+    },
+    "staged": {
+      "changed_count": 6,
+      "affected_count": 0,
+      "changed_files": 3,
+      "risk_level": "low",
+      "sha256": "1fc3017f6acea2506b3fe7be974b629d0c990c997fbd936dd87533de7a5d398c"
+    }
+  },
+  "offlineEvidenceSha256": "ee27e1ebe648c1f84021670ea2fd6549a29c33ff03d8156153aab960a3a65f63",
+  "macosPhysical": "deferred",
+  "windows": {
+    "active": {
+      "observations": 13,
+      "reportSha256": "853ac9b96359f91a19d18f31e15f24312cad94cb396a9fc9eaec7d3205a51e52",
+      "steps": {
+        "ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                15,
+                15
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "source-editor-focused": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "rust-analyzer-ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "no-editor-after-close-active": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "未命名 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "no-editor-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 85760003,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 85760003,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "after-first-return-to-no-editor-after-close-active": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "after-first-return-to-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "second-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 564115438,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 564115438,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        }
+      },
+      "dpi": 120,
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "f073c4cb99619ff83930c45bab9f73e64612e2da07603a12d6520fdcde5cde52",
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+      "runnerSha256": "da64c5337e2c9115fe06e94adc8d1b1c0f1f7be83e95b3da786597a2dfde3c7a",
+      "rustAnalyzer": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "diskSha256": {
+        "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+        "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+        "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+        "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+      },
+      "workspaceSymbolFromEmptyEditor": {
+        "selectionsUtf16": [
+          [
+            34,
+            34
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "reusedLanguageServer": true
+      },
+      "lspExitedWithWorkbench": true,
+      "startedWithoutEditor": false,
+      "exit": 0
+    },
+    "empty": {
+      "observations": 15,
+      "reportSha256": "087bbf34a9ec4557be4c554193aa35dc3ded0c1c7e6ccacaa1aae083a3b86a7f",
+      "steps": {
+        "ready": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": false,
+              "dirty": false
+            }
+          ]
+        },
+        "source-editor-focused": {
+          "editorCount": 1,
+          "editorTabs": 2,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "lib.rs 主编辑器",
+              "selection": [
+                74,
+                74
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "before-start-no-editor-after-close-active": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "未命名 主编辑器",
+              "selection": [
+                0,
+                0
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "before-start-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "before-start-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": "当前工作区没有可用符号提供程序",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 973832997,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "before-start-picker-closed": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": false,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "rust-analyzer-ready": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "no-editor-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 684270595,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 684270595,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "first-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        },
+        "after-first-return-to-no-editor-after-close-active": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "after-first-return-to-no-editor": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": []
+        },
+        "second-picker": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": "输入符号名称以搜索工作区",
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#",
+              "controllerIdentity": 1061438351,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-result": {
+          "editorCount": 0,
+          "editorTabs": 0,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [
+            {
+              "hint": "工作区符号（#名称）",
+              "value": "#CandleProbeWidget src/target.rs",
+              "controllerIdentity": 1061438351,
+              "focused": true
+            }
+          ],
+          "acceptedEditors": []
+        },
+        "second-accepted-target": {
+          "editorCount": 1,
+          "editorTabs": 1,
+          "nativeWindowFocused": true,
+          "languageServerReady": true,
+          "symbolStatus": null,
+          "quickLoading": false,
+          "pickers": [],
+          "acceptedEditors": [
+            {
+              "label": "target.rs 主编辑器",
+              "selection": [
+                34,
+                34
+              ],
+              "editorFocused": true,
+              "dirty": false
+            }
+          ]
+        }
+      },
+      "dpi": 120,
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "f073c4cb99619ff83930c45bab9f73e64612e2da07603a12d6520fdcde5cde52",
+      "fixtureSha256": "f49289b5fff25d2beaef98ff12321b6586ee17eced75b31a0bd3d2741b31900e",
+      "runnerSha256": "da64c5337e2c9115fe06e94adc8d1b1c0f1f7be83e95b3da786597a2dfde3c7a",
+      "rustAnalyzer": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+      "diskSha256": {
+        "src/lib.rs": "14f6b224ebc7c93df2ef4b849addcf4ede0a219cfab30472add31bea315cdfb2",
+        "src/target.rs": "e872fda44e652e00ce2620ba9015a9fe9817211a7a284759312ba03987cf7d6b",
+        "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+        "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+      },
+      "workspaceSymbolFromEmptyEditor": {
+        "selectionsUtf16": [
+          [
+            34,
+            34
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "reusedLanguageServer": true
+      },
+      "lspExitedWithWorkbench": true,
+      "startedWithoutEditor": true,
+      "exit": 0
+    }
+  }
+}

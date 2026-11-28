@@ -1,0 +1,494 @@
+{
+  "product": "636d2d68dca6f5da90ca83d9e6799f076fce1637",
+  "tree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+  "ci": {
+    "id": 46156839204,
+    "sha": "636d2d68dca6f5da90ca83d9e6799f076fce1637",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46156839204",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 141015255034,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 141015255152,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 141015255187,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 141015255285,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46156834958,
+    "sha": "636d2d68dca6f5da90ca83d9e6799f076fce1637",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46156834958",
+    "jobs": [
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 141015242442,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 141015242620,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 141015242643,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46152888396,
+    "sha": "2a9e7515cb32946435351ec7f55924351ee37333",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46152888396",
+    "jobs": [
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 141003134661,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 141003134862,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 141003134875,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 141003134963,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 9,
+    "affected_count": 0,
+    "changed_files": 18,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "contents": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "build"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "open": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "drag": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_buildTitleBarContents"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "layout": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "delegate": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 7,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "direct": [
+        "workbench_page.dart",
+        "auxiliary_window_test.dart",
+        "modal_editor_test.dart",
+        "title_bar_test.dart",
+        "widget_test.dart",
+        "zen_mode_test.dart",
+        "_buildTitleBarContents"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "state": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 6,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "workbench_page.dart",
+        "auxiliary_window_test.dart",
+        "modal_editor_test.dart",
+        "title_bar_test.dart",
+        "widget_test.dart",
+        "zen_mode_test.dart"
+      ],
+      "processes": []
+    },
+    "public": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 9,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "workbench_page.dart",
+        "auxiliary_window_test.dart",
+        "modal_editor_test.dart",
+        "title_bar_test.dart",
+        "widget_test.dart",
+        "zen_mode_test.dart",
+        "_titleBarApp",
+        "main",
+        "build"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "quick-open": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "title-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "integration-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    },
+    "enum": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    "zen-tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    "paletteTestEntrypoints": {
+      "Function:app/test/editor_tab_mode_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/editor_tab_wrap_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/notification_keyboard_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/notification_progress_ui_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/notification_progress_ui_test.dart:_runPaletteCommand": {
+        "risk": "LOW",
+        "riskNote": null,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "direct": [
+          "main"
+        ],
+        "processes": []
+      },
+      "Function:app/test/notification_ui_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/notification_ui_test.dart:_runClearAllCommand": {
+        "risk": "LOW",
+        "riskNote": null,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "direct": [
+          "main"
+        ],
+        "processes": []
+      },
+      "Function:app/test/panel_alignment_integration_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/panel_position_integration_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/quick_input_history_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/quick_input_history_test.dart:_openPalette": {
+        "risk": "LOW",
+        "riskNote": null,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "direct": [
+          "main"
+        ],
+        "processes": []
+      },
+      "Function:app/test/quick_input_steps_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/quick_input_steps_test.dart:_openMoveViewCommand": {
+        "risk": "LOW",
+        "riskNote": null,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "direct": [
+          "main"
+        ],
+        "processes": []
+      },
+      "Function:app/test/secondary_sidebar_integration_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/sidebar_view_move_integration_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/welcome_page_test.dart:main": {
+        "risk": "UNKNOWN",
+        "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        },
+        "direct": [],
+        "processes": []
+      },
+      "Function:app/test/welcome_page_test.dart:_runPaletteCommand": {
+        "risk": "LOW",
+        "riskNote": null,
+        "summary": {
+          "direct": 1,
+          "processes_affected": 0,
+          "modules_affected": 1
+        },
+        "direct": [
+          "main"
+        ],
+        "processes": []
+      }
+    },
+    "focusFix": {
+      "Method:app/lib/workbench/title_bar.dart:_AlulaTitleBarState._openCommandCenter#0": {
+        "risk": "UNKNOWN",
+        "summary": {
+          "direct": 0,
+          "processes_affected": 0,
+          "modules_affected": 0
+        }
+      },
+      "Method:app/lib/workbench/title_bar.dart:_AlulaTitleBarState._buildTitleBarContents#3": {
+        "risk": "LOW",
+        "summary": {
+          "direct": 1,
+          "processes_affected": 1,
+          "modules_affected": 1
+        }
+      },
+      "Class:app/lib/workbench/title_bar.dart:_AlulaTitleBarState": {
+        "risk": "HIGH",
+        "summary": {
+          "direct": 6,
+          "processes_affected": 0,
+          "modules_affected": 0
+        }
+      }
+    }
+  }
+}

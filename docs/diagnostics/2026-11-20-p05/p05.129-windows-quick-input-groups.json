@@ -1,0 +1,192 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows keyboard events",
+  "sourceProvenance": {
+    "productTree": "a8fd969ad539dedfe41013fe1ca8582f9cc9d167",
+    "matchedSources": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "42906bff35756efd550a4e4ad85169391a05fd8f58de94115077aae5c935bbcd",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "e96486c1b29dbff28f2c184a09a4028bf3550e03c38cb9466a18b422ce688fa1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "acaf215327b5e5d99aa1ccd7c61f2fd115ac85e27fe2c35a8ee98fd97cd5f9ec",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "productCommit": "9713bfe7171b2f5565eea6d4610bac0370c3cfd5"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "a8f740ec74815c48110ed26a3f993794b750a8c51c4e8a9eac0ac766082939b9",
+  "fixtureSha256": "28836bdea6f445162c2d0d20e79df43a9efb4ca22f3ef0393278a8956c046140",
+  "trace": {
+    "initial": {
+      "request": "initial",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        123.0,
+        793.6,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "next-group": {
+      "request": "next-group",
+      "active": 17,
+      "revision": 2,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        94.0,
+        793.6,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    },
+    "wrap-next": {
+      "request": "wrap-next",
+      "active": 1,
+      "revision": 3,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        123.0,
+        793.6,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wrap-previous": {
+      "request": "wrap-previous",
+      "active": 17,
+      "revision": 4,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        94.0,
+        793.6,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    },
+    "advance-within": {
+      "request": "advance-within",
+      "active": 18,
+      "revision": 5,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        220.5,
+        793.6,
+        242.5
+      ],
+      "scroll": 456.5,
+      "inputFocused": true
+    },
+    "start-of-group": {
+      "request": "start-of-group",
+      "active": 17,
+      "revision": 6,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        176.5,
+        793.6,
+        220.5
+      ],
+      "scroll": 456.5,
+      "inputFocused": true
+    },
+    "previous-group": {
+      "request": "previous-group",
+      "active": 1,
+      "revision": 7,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        123.0,
+        793.6,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "before-accept": {
+      "request": "before-accept",
+      "active": 17,
+      "revision": 8,
+      "viewport": [
+        193.60000000000002,
+        93.0,
+        793.6,
+        370.0
+      ],
+      "row": [
+        193.60000000000002,
+        94.0,
+        793.6,
+        138.0
+      ],
+      "scroll": 539.0,
+      "inputFocused": true
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "screenshot": {
+    "name": "p05.129-windows-next-group.png",
+    "sha256": "954594b62e14447a6e965c22ac6ad305d250d2dc39069a62d6572f15a2317c48"
+  },
+  "accepted": 17,
+  "checksPassed": true,
+  "exitCode": 0
+}

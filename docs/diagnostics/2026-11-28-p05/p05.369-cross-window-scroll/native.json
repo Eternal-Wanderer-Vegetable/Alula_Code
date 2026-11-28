@@ -1,0 +1,474 @@
+{
+  "product": "7ac84999f3bde2cf2d532aab591d00dbc59bf005",
+  "tree": "c29bc64315e09705d44c988ddc139221454ea52a",
+  "abi": 51,
+  "windowsSourceFiles": 68,
+  "fixtureSha256": "c99f79fb564d365577e86ea1c6726cdd0dd353fa6af6ac487e9883a2c0845922",
+  "reference": {
+    "scrollLock": {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+      "lines": [
+        66,
+        154
+      ],
+      "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803"
+    },
+    "visiblePanes": {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "path": "src/vs/workbench/services/editor/browser/editorService.ts",
+      "lines": [
+        492,
+        494
+      ],
+      "sha256": "4129204bd7d6fc82367b3ed00181682b71704c54b86e52227901d3f41cafc7d2"
+    },
+    "editorParts": {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "path": "src/vs/workbench/browser/parts/editor/editorParts.ts",
+      "lines": [
+        718,
+        742
+      ],
+      "sha256": "e0f1bde70613df81e1bc942b11efc188bd754911432d2d1ea1a4c2ed5c2af587"
+    }
+  },
+  "sharedAcceptanceSha256": "144e59f5caeb48bf32e1ae20cdec96cc45a869d956ed19eba7d9ac0fd4bfccfa",
+  "before": {
+    "source": "008e53955b6a115c95c135266e334671fb9ca0ff",
+    "motion": {
+      "label": "main-to-auxiliary-vertical",
+      "axis": "vertical",
+      "source": "main",
+      "delta": 106.0,
+      "targets": {
+        "child-locked-alpha.txt": {
+          "actual": 159.0,
+          "expected": 159.0,
+          "unclamped": 265.0
+        }
+      }
+    },
+    "rawReportSha256": "d17e1e207ba02567837d602e503f629cbd55f016adeb36fa5f3ed0460734adb8"
+  },
+  "firstAttempt": {
+    "tree": "c29bc64315e09705d44c988ddc139221454ea52a",
+    "stage": "unequal origins after native focus changed",
+    "rawReportSha256": "3c7ebab20ac91b4da2366d124e3b9d2b0b06d2609f04381279f426983d1b6dfb",
+    "exitCode": 1
+  },
+  "windowsCalibration": {
+    "initial-activation": {
+      "exitCode": 0,
+      "rawReportSha256": "fb074a6f86576788d4b322a480ca58cac3de94a8a95e1618f966d6f9860d7e11"
+    },
+    "before-tab-calibration": {
+      "exitCode": 3221226525,
+      "rawReportSha256": "7ff470d36461bbc2abf89d5dd85c61a7306104903c6ca4d09119c842fe0b4d90"
+    }
+  },
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "9f4d3dde7d8a993be7c6807399b2539b60aa30ed759a5e2bc8ca4d8088000eb7",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "windowEnvironment": "Win32",
+    "dpi": 120,
+    "rawReportSha256": "72cb4ee81941dc7c2b869f4b3b2cff71b99d9cbfc7425c77116a6e980365b400",
+    "checks": [
+      "unlocked-aux-wheel-independent",
+      "unlocked-main-wheel-independent",
+      "main and auxiliary locked",
+      "unequal vertical origins",
+      "main-to-auxiliary-vertical",
+      "auxiliary-to-main-horizontal",
+      "main-to-auxiliary-horizontal",
+      "main-to-auxiliary-vertical-clamp",
+      "reverse-after-vertical-clamp",
+      "short document resumes from its original anchor",
+      "three windows share lock",
+      "second-auxiliary-follows-to-main-and-first-aux-vertical",
+      "second-auxiliary-follows-to-main-and-first-aux-horizontal",
+      "unlock removes all items",
+      "unlock-restores-auxiliary-independence",
+      "locked-alpha.txt byte SHA preserved",
+      "locked-beta.txt byte SHA preserved",
+      "locked-gamma.txt byte SHA preserved"
+    ],
+    "motion": [
+      {
+        "label": "unlocked-aux-wheel-independent",
+        "axis": "vertical",
+        "source": "child-locked-alpha.txt",
+        "delta": 240.0,
+        "targets": {
+          "main": {
+            "actual": 0.0,
+            "expected": 0.0,
+            "unclamped": 240.0
+          }
+        }
+      },
+      {
+        "label": "unlocked-main-wheel-independent",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 320.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 240.0,
+            "expected": 240.0,
+            "unclamped": 560.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-vertical",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 132.71697998046875,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 372.71697998046875,
+            "expected": 372.71697998046875,
+            "unclamped": 372.71697998046875
+          }
+        }
+      },
+      {
+        "label": "auxiliary-to-main-horizontal",
+        "axis": "horizontal",
+        "source": "child-locked-alpha.txt",
+        "delta": 240.0,
+        "targets": {
+          "main": {
+            "actual": 240.0,
+            "expected": 240.0,
+            "unclamped": 240.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-horizontal",
+        "axis": "horizontal",
+        "source": "main",
+        "delta": 160.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 160.0,
+            "expected": 160.0,
+            "unclamped": 160.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-vertical-clamp",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 1120.3169799804687,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 508.6,
+            "expected": 508.6,
+            "unclamped": 1360.3169799804687
+          }
+        }
+      },
+      {
+        "label": "reverse-after-vertical-clamp",
+        "axis": "vertical",
+        "source": "main",
+        "delta": -239.68302001953134,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 0.31697998046865905,
+            "expected": 0.31697998046865905,
+            "unclamped": 0.31697998046865905
+          }
+        }
+      },
+      {
+        "label": "second-auxiliary-follows-to-main-and-first-aux-vertical",
+        "axis": "vertical",
+        "source": "child-locked-gamma.txt",
+        "delta": 160.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 160.31697998046866,
+            "expected": 160.31697998046866,
+            "unclamped": 160.31697998046866
+          },
+          "main": {
+            "actual": 160.0,
+            "expected": 160.0,
+            "unclamped": 160.0
+          }
+        }
+      },
+      {
+        "label": "second-auxiliary-follows-to-main-and-first-aux-horizontal",
+        "axis": "horizontal",
+        "source": "child-locked-gamma.txt",
+        "delta": 160.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 320.0,
+            "expected": 320.0,
+            "unclamped": 320.0
+          },
+          "main": {
+            "actual": 160.0,
+            "expected": 160.0,
+            "unclamped": 160.0
+          }
+        }
+      },
+      {
+        "label": "unlock-restores-auxiliary-independence",
+        "axis": "vertical",
+        "source": "child-locked-gamma.txt",
+        "delta": 160.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 111.44231567382803,
+            "expected": 111.44231567382803,
+            "unclamped": 271.44231567382803
+          },
+          "main": {
+            "actual": 0.0,
+            "expected": 0.0,
+            "unclamped": 160.0
+          }
+        }
+      }
+    ],
+    "filesSha256": {
+      "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+      "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6",
+      "locked-gamma.txt": "66ed8859b0bf375781619a4e1a1c7d56652a085f853087e5a8c15bf20280b64d"
+    },
+    "exitCode": 0,
+    "memory": {
+      "tool": "tools/mem-probe tree --pid",
+      "samples": {
+        "restore-isolated-session": {
+          "privateBytes": [
+            296722432,
+            296722432,
+            296722432
+          ],
+          "medianMiB": 282.98
+        },
+        "rebased-after-second-auxiliary": {
+          "privateBytes": [
+            533065728,
+            533065728,
+            533065728
+          ],
+          "medianMiB": 508.37
+        },
+        "second-auxiliary-follows-to-main-and-first-aux-horizontal": {
+          "privateBytes": [
+            519786496,
+            519786496,
+            519786496
+          ],
+          "medianMiB": 495.71
+        },
+        "closed-first-auxiliary": {
+          "privateBytes": [
+            440016896,
+            440016896,
+            440016896
+          ],
+          "medianMiB": 419.63
+        }
+      },
+      "reference": {
+        "path": "docs/baselines/2026-10-26/alula-w2-empty.md",
+        "privateMedianMiB": 189.9,
+        "workload": "empty W2 workspace"
+      }
+    }
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "5ed6adeeffb74ef699060f68ee2f5332125b35c2074e85f5d8514aa64bd3fd53",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "dpi": null,
+    "rawReportSha256": "441748772752fdb07b6e8521aaa8f1635697aa01907adcb30863a8616627a328",
+    "checks": [
+      "unlocked-aux-wheel-independent",
+      "unlocked-main-wheel-independent",
+      "main and auxiliary locked",
+      "unequal vertical origins",
+      "main-to-auxiliary-vertical",
+      "auxiliary-to-main-horizontal",
+      "main-to-auxiliary-horizontal",
+      "main-to-auxiliary-vertical-clamp",
+      "reverse-after-vertical-clamp",
+      "short document resumes from its original anchor",
+      "three windows share lock",
+      "second-auxiliary-follows-to-main-and-first-aux-vertical",
+      "second-auxiliary-follows-to-main-and-first-aux-horizontal",
+      "unlock removes all items",
+      "unlock-restores-auxiliary-independence",
+      "locked-alpha.txt byte SHA preserved",
+      "locked-beta.txt byte SHA preserved",
+      "locked-gamma.txt byte SHA preserved"
+    ],
+    "motion": [
+      {
+        "label": "unlocked-aux-wheel-independent",
+        "axis": "vertical",
+        "source": "child-locked-alpha.txt",
+        "delta": 159.0,
+        "targets": {
+          "main": {
+            "actual": 0.0,
+            "expected": 0.0,
+            "unclamped": 159.0
+          }
+        }
+      },
+      {
+        "label": "unlocked-main-wheel-independent",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 212.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 159.0,
+            "expected": 159.0,
+            "unclamped": 371.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-vertical",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 106.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 265.0,
+            "expected": 265.0,
+            "unclamped": 265.0
+          }
+        }
+      },
+      {
+        "label": "auxiliary-to-main-horizontal",
+        "axis": "horizontal",
+        "source": "child-locked-alpha.txt",
+        "delta": 159.0,
+        "targets": {
+          "main": {
+            "actual": 159.0,
+            "expected": 159.0,
+            "unclamped": 159.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-horizontal",
+        "axis": "horizontal",
+        "source": "main",
+        "delta": 106.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 106.0,
+            "expected": 106.0,
+            "unclamped": 106.0
+          }
+        }
+      },
+      {
+        "label": "main-to-auxiliary-vertical-clamp",
+        "axis": "vertical",
+        "source": "main",
+        "delta": 742.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 363.0,
+            "expected": 363.0,
+            "unclamped": 901.0
+          }
+        }
+      },
+      {
+        "label": "reverse-after-vertical-clamp",
+        "axis": "vertical",
+        "source": "main",
+        "delta": -159.0,
+        "targets": {
+          "child-locked-alpha.txt": {
+            "actual": 0.0,
+            "expected": 0.0,
+            "unclamped": 0.0
+          }
+        }
+      },
+      {
+        "label": "second-auxiliary-follows-to-main-and-first-aux-vertical",
+        "axis": "vertical",
+        "source": "child-locked-gamma.txt",
+        "delta": 106.0,
+        "targets": {
+          "main": {
+            "actual": 106.0,
+            "expected": 106.0,
+            "unclamped": 106.0
+          },
+          "child-locked-alpha.txt": {
+            "actual": 106.0,
+            "expected": 106.0,
+            "unclamped": 106.0
+          }
+        }
+      },
+      {
+        "label": "second-auxiliary-follows-to-main-and-first-aux-horizontal",
+        "axis": "horizontal",
+        "source": "child-locked-gamma.txt",
+        "delta": 106.0,
+        "targets": {
+          "main": {
+            "actual": 106.0,
+            "expected": 106.0,
+            "unclamped": 106.0
+          },
+          "child-locked-alpha.txt": {
+            "actual": 212.0,
+            "expected": 212.0,
+            "unclamped": 212.0
+          }
+        }
+      },
+      {
+        "label": "unlock-restores-auxiliary-independence",
+        "axis": "vertical",
+        "source": "child-locked-gamma.txt",
+        "delta": 106.0,
+        "targets": {
+          "main": {
+            "actual": 0.0,
+            "expected": 0.0,
+            "unclamped": 106.0
+          },
+          "child-locked-alpha.txt": {
+            "actual": 106.0,
+            "expected": 106.0,
+            "unclamped": 212.0
+          }
+        }
+      }
+    ],
+    "filesSha256": {
+      "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+      "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6",
+      "locked-gamma.txt": "66ed8859b0bf375781619a4e1a1c7d56652a085f853087e5a8c15bf20280b64d"
+    },
+    "exitCode": 0
+  }
+}

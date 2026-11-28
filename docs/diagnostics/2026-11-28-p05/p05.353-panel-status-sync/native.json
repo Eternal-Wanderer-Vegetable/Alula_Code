@@ -1,0 +1,443 @@
+{
+  "product": "f1c515f7cd901277b7e1e637c247b673965edee7",
+  "tree": "6f6fcaef2bc8165c51c7b49784412d7bfc42289b",
+  "testedTreePromotion": {
+    "validatedTree": "9cebe617b7e8a01b8d429b765ffb1a141dbe45d7",
+    "productTree": "6f6fcaef2bc8165c51c7b49784412d7bfc42289b",
+    "metadataFiles": [
+      "docs/03-里程碑计划与验收标准.md",
+      "feature_list.json"
+    ]
+  },
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "9cebe617b7e8a01b8d429b765ffb1a141dbe45d7",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "ed0d1b67e22839d3651caf37134df3bb3fbf7c210468601ffb8012b30fa75bdd",
+      "app/lib/bridge/alula_ffi.dart": "27ca44d52361c42c3c1a47413da0dcb56196e31d50e003d612c68847259bb33a",
+      "app/lib/editor/editor_rendering.dart": "7bcb8d538dba1942a60258d83a7dd564915f30f73ae49c221123501c2c951277",
+      "app/lib/editor/editor_scroll_controller.dart": "554f62726d964ad0193c2acdb185089bdddbefab09e91d7f3d0b5379caff5903",
+      "app/lib/editor/rust_text_input_field.dart": "b9fa4f9781b8d0d8d2c339258fd8be57fb9dfb0e8cb50918283b3c4bf210e3f7",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "92bd25875f32eb7bd9e1d7bc1f1a9dbe06638ee0a1fbf0512483809e60159007",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "4317cc3e3def90d773ddd5163a6388aebbd3b5281308c8ed0035519c775fceb3",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "ec48ff59c7031878239f1b78c4ad8bc954d2b24d3772905d16c3edd89d535488",
+      "crates/editor-core/src/ffi.rs": "f2a097bf9663678860621f5d8b04d26cac4c07f48c100fd754bb0b182ef32c9a",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "145f3dce88ac5f4b5ae867258f145fe2ba9672d4a7c31ed46dff4aa6b7f35baa",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "814a9eaecc43a71946d748fc838f8c688348b7bfb78285b9fa8311b6fc46676a",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "314e8eb66eedb7dc33f4bf95378bcbd4bbf2755a6b43f61aaec69fa796d9b42b",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "28dc2d1476b35c0d4eda2d65b9fc290a148db88aa11a737dc1b0b9765cd83f78",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 50,
+    "fixtureSha256": "e9ff6c5ad4fc872ffda07c24a2d525007f261a3caa1ace36ae01bac03b232178"
+  },
+  "fixtureSha256": "e9ff6c5ad4fc872ffda07c24a2d525007f261a3caa1ace36ae01bac03b232178",
+  "sharedAcceptanceFixtureSha256": "3fb2e5ac138c5996c073352bd91a106a3b078465504cc04897c22d7f410deaaf",
+  "localLogsSha256": {
+    "p05-353-targeted.log": "0c1c066737a245eeba216cbe305eba5eb19dd11dc1fd30fd48acd711e45e9f7e",
+    "p05-353-focused.log": "0aefe0e19a00bbf6140f921337d4c7b94951293cb640297319065a1f0b4483ef",
+    "p05-353-analyze.log": "a8908cca5ab85b348ba0f2b204b039378b44ff390bc0c44dce44a9c9b00c1af2",
+    "p05-353-full.log": "09c29646a46b541ec203307d0230102692af76b7697f1e4df182c9b948a5399f",
+    "p05-353-panel-status-red.log": "c9ed73a452d81a7816b8040bb32fcd9facf8afec307985ef9119a16077ef69d7",
+    "p05-353-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "oldLinuxReproduction": {
+    "product": "758e7eb791df02b6a57407c6f12967dc9892e94a",
+    "tree": "93c0324ead1ee9a023b5dd9c92e144d645f7f62e",
+    "checks": [
+      "owned-ready-with-panel-hidden",
+      "keyboard-opens-panel-but-status-still-says-collapsed",
+      "second-keyboard-toggle-restores-panel",
+      "preserved-source-bytes"
+    ],
+    "rawReportSha256": "99473fd54a25858d0fdd1ba4089222b69f44f6183f10d669d2fca08c86e19271",
+    "measured": {
+      "panelCollapsed": false,
+      "statusBarPanelCollapsed": true
+    },
+    "memorySamples": {
+      "owned-ready-with-panel-hidden": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 989,
+            "ppid": 988,
+            "private": 258166784,
+            "pss": 284830720,
+            "working_set": 336908288
+          }
+        ],
+        "root_pid": 989,
+        "total_private_bytes": 258166784,
+        "total_private_mib": 246.2,
+        "total_working_set_bytes": 336908288
+      },
+      "keyboard-opens-panel-but-status-still-says-collapsed": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 989,
+            "ppid": 988,
+            "private": 255434752,
+            "pss": 282472448,
+            "working_set": 335712256
+          }
+        ],
+        "root_pid": 989,
+        "total_private_bytes": 255434752,
+        "total_private_mib": 243.6,
+        "total_working_set_bytes": 335712256
+      }
+    },
+    "sampledProcessExited": true
+  },
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "kind": "pinned source",
+    "file": "src/vs/workbench/browser/parts/panel/panelActions.ts",
+    "lines": [
+      40,
+      51,
+      54,
+      58,
+      68
+    ],
+    "sha256": "96e000bac742776fee4cf4c7f896774fef06d42229915b55fdb52d50b86ae05f"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 5,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "ffeaf8b76646a6a1f7df354cef1824caa8c5b7f4818943dcafabd55bd07a36f6"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 5,
+        "affected_count": 0,
+        "changed_files": 4,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "ffeaf8b76646a6a1f7df354cef1824caa8c5b7f4818943dcafabd55bd07a36f6"
+    }
+  },
+  "preedit": {
+    "status-bar": {
+      "target": {
+        "id": "Class:app/lib/workbench/status_bar.dart:AlulaStatusBar",
+        "name": "AlulaStatusBar",
+        "type": "Class",
+        "filePath": "app/lib/workbench/status_bar.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "24ccd539fcd1d05b428d8a1c98798a59e3660afb6262e43b2854cb73cb88c153"
+    },
+    "widget-test": {
+      "target": {
+        "id": "Function:app/test/widget_test.dart:main",
+        "name": "main",
+        "type": "Function",
+        "filePath": "app/test/widget_test.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "86196ed64db169b0632d306b5f399ca87817d669e21c61ffdc043e8fa59177f6"
+    },
+    "workbench-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c2246da05dae4b4f130cc4a728a56a1d33509a263de7fb144125a87a43d8e7d7"
+    },
+    "workbench-page": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:WorkbenchPage",
+        "name": "WorkbenchPage",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "405ebcdae506a02de47c253e612c8e275fd74e49805c5d608e39cd36432b2d15"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "rawReportSha256": "1b1e9c5d02057c35b1813ac1cfd1ab0fbf101adcb610fe9bb03775dc8066ccf8",
+    "fixtureSha256": "e9ff6c5ad4fc872ffda07c24a2d525007f261a3caa1ace36ae01bac03b232178",
+    "runnerSha256": "3401904b5f1f2ec556cca551e4d884ec39a97befd1902ad86a22c6bef633964b",
+    "aotSha256": "9a6b09af1b7c18a42a1f6219209b46bdaa0a85a1e9bd3a912d58505a252a028e",
+    "nativeExecutableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "nativeLibrarySha256": "5d672bb2d225b0645fffcd74ac7bfc0904fcb931818c45fc6233fb41c0064b88",
+    "sourceSha256": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+    "nativeChecks": [
+      "owned-ready-with-panel-hidden",
+      "keyboard-opens-panel-and-arrow-points-down",
+      "status-arrow-click-hides-panel-and-points-up",
+      "status-arrow-click-reopens-panel-and-points-down",
+      "titlebar-layout-menu-exposes-panel-command",
+      "titlebar-menu-hides-panel-and-status-updates",
+      "reopened-layout-menu-exposes-panel-command",
+      "titlebar-menu-opens-panel-and-status-updates",
+      "keyboard-hides-panel-and-arrow-points-up",
+      "preserved-source-bytes"
+    ],
+    "cleanExit": true,
+    "steps": {
+      "owned-ready-with-panel-hidden": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "keyboard-opens-panel-and-arrow-points-down": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "status-arrow-click-hides-panel-and-points-up": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "status-arrow-click-reopens-panel-and-points-down": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "titlebar-layout-menu-exposes-panel-command": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "titlebar-menu-hides-panel-and-status-updates": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "reopened-layout-menu-exposes-panel-command": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "titlebar-menu-opens-panel-and-status-updates": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "keyboard-hides-panel-and-arrow-points-up": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      }
+    },
+    "dpi": 120
+  },
+  "linux": {
+    "rawReportSha256": "685c912add6ed4b8fa1ef778a0e49b388387f6ac2adcdb3966ec92673ec4eb4c",
+    "fixtureSha256": "e9ff6c5ad4fc872ffda07c24a2d525007f261a3caa1ace36ae01bac03b232178",
+    "runnerSha256": "455c7a00f30545487d6e61d2ec4c52a4e075ad0df6616b5951a6fbcb1223a9a7",
+    "aotSha256": "43979edf2686d059ffa798e2647cc05a1afa5be5eeeebbbd3c21e6611267106c",
+    "nativeExecutableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "nativeLibrarySha256": "53ac62e3815af2bf1d59694b28f6e8a8447d53d5fac7420e29e9f348db71517f",
+    "sourceSha256": "00f0b1ee59214a6c8b67ad72c237d00e1aea22544dd245e5e39383a6f78b100a",
+    "nativeChecks": [
+      "owned-ready-with-panel-hidden",
+      "keyboard-opens-panel-and-arrow-points-down",
+      "status-arrow-click-hides-panel-and-points-up",
+      "status-arrow-click-reopens-panel-and-points-down",
+      "titlebar-layout-menu-exposes-panel-command",
+      "titlebar-menu-hides-panel-and-status-updates",
+      "reopened-layout-menu-exposes-panel-command",
+      "titlebar-menu-opens-panel-and-status-updates",
+      "keyboard-hides-panel-and-arrow-points-up",
+      "preserved-source-bytes"
+    ],
+    "cleanExit": true,
+    "steps": {
+      "owned-ready-with-panel-hidden": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "keyboard-opens-panel-and-arrow-points-down": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "status-arrow-click-hides-panel-and-points-up": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "status-arrow-click-reopens-panel-and-points-down": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "titlebar-layout-menu-exposes-panel-command": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "titlebar-menu-hides-panel-and-status-updates": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "reopened-layout-menu-exposes-panel-command": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      },
+      "titlebar-menu-opens-panel-and-status-updates": {
+        "panelTab": 0,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "statusPanelArrow": "down"
+      },
+      "keyboard-hides-panel-and-arrow-points-up": {
+        "panelTab": null,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "statusPanelArrow": "up"
+      }
+    },
+    "sampledProcessExited": true,
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "processTreeSamples": {
+      "owned-ready-with-panel-hidden": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1471,
+            "ppid": 1470,
+            "private": 250040320,
+            "pss": 276962304,
+            "working_set": 329207808
+          }
+        ],
+        "root_pid": 1471,
+        "total_private_bytes": 250040320,
+        "total_private_mib": 238.5,
+        "total_working_set_bytes": 329207808
+      },
+      "keyboard-opens-panel-and-arrow-points-down": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 1471,
+            "ppid": 1470,
+            "private": 248684544,
+            "pss": 275960832,
+            "working_set": 329363456
+          }
+        ],
+        "root_pid": 1471,
+        "total_private_bytes": 248684544,
+        "total_private_mib": 237.2,
+        "total_working_set_bytes": 329363456
+      }
+    }
+  }
+}

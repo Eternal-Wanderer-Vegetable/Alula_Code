@@ -1,0 +1,488 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "pinnedTabSizing": "shrink",
+  "driver": "Owned Code-OSS CDP renderer pointer input",
+  "trace": {
+    "wide-left": {
+      "scrollLeft": 0,
+      "clientWidth": 688,
+      "scrollWidth": 1825,
+      "docked": true,
+      "tabs": [
+        {
+          "name": "scroll_fixture_01.txt",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": 0,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_02.txt",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": 80.00000381469727,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_03.txt",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": 160.00000381469727,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_04.txt",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": 240.00001907348633,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_05.txt",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": 320.0000190734863,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_06.txt",
+          "title": "scroll_fixture_06.txt",
+          "x": 400.0000190734863,
+          "width": 80,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 479.9999885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 647.1249885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 814.2499885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 981.3750495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 1148.5000495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 1315.6250495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1482.7500495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1649.8750495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    },
+    "wide-scroll": {
+      "scrollLeft": 50.400001525878906,
+      "clientWidth": 688,
+      "scrollWidth": 1825,
+      "docked": true,
+      "tabs": [
+        {
+          "name": "scroll_fixture_01.txt",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": 0,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_02.txt",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": 80.00000381469727,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_03.txt",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": 160.00000381469727,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_04.txt",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": 240.00001907348633,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_05.txt",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": 320.0000190734863,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_06.txt",
+          "title": "scroll_fixture_06.txt",
+          "x": 400.0000190734863,
+          "width": 80,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 429.5999946594238,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 596.725025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 763.850025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 930.975025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 1098.100025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 1265.225025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1432.350025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1599.475025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    },
+    "narrow-left": {
+      "scrollLeft": 278.3999938964844,
+      "clientWidth": 158,
+      "scrollWidth": 1825,
+      "docked": false,
+      "tabs": [
+        {
+          "name": "scroll_fixture_01.txt",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": -278.4000053405762,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_02.txt",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": -198.40000534057617,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_03.txt",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": -118.39999771118164,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_04.txt",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": -38.39999866485596,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_05.txt",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": 41.60000228881836,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_06.txt",
+          "title": "scroll_fixture_06.txt",
+          "x": 121.60000991821289,
+          "width": 80,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 201.6000099182129,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 368.7249946594238,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 535.850025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 702.975025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 870.100025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 1037.225025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1204.350025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1371.475025177002,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    },
+    "narrow-scroll": {
+      "scrollLeft": 328,
+      "clientWidth": 158,
+      "scrollWidth": 1825,
+      "docked": false,
+      "tabs": [
+        {
+          "name": "scroll_fixture_01.txt",
+          "title": "scroll_fixture_01.txt, pinned",
+          "x": -328.0000114440918,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_02.txt",
+          "title": "scroll_fixture_02.txt, pinned",
+          "x": -247.99999618530273,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_03.txt",
+          "title": "scroll_fixture_03.txt, pinned",
+          "x": -168.00000381469727,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_04.txt",
+          "title": "scroll_fixture_04.txt, pinned",
+          "x": -88,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_05.txt",
+          "title": "scroll_fixture_05.txt, pinned",
+          "x": -8,
+          "width": 80,
+          "active": false,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_06.txt",
+          "title": "scroll_fixture_06.txt",
+          "x": 72.00000381469727,
+          "width": 80,
+          "active": true,
+          "sticky": true
+        },
+        {
+          "name": "scroll_fixture_07.txt",
+          "title": "scroll_fixture_07.txt",
+          "x": 152.00000381469727,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_08.txt",
+          "title": "scroll_fixture_08.txt",
+          "x": 319.1250190734863,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_09.txt",
+          "title": "scroll_fixture_09.txt",
+          "x": 486.2499885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_10.txt",
+          "title": "scroll_fixture_10.txt",
+          "x": 653.3749885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_11.txt",
+          "title": "scroll_fixture_11.txt",
+          "x": 820.4999885559082,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_12.txt",
+          "title": "scroll_fixture_12.txt",
+          "x": 987.6250495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_13.txt",
+          "title": "scroll_fixture_13.txt",
+          "x": 1154.7500495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        },
+        {
+          "name": "scroll_fixture_14.txt",
+          "title": "scroll_fixture_14.txt",
+          "x": 1321.8750495910645,
+          "width": 167.125,
+          "active": false,
+          "sticky": false
+        }
+      ]
+    }
+  },
+  "exitCode": 0
+}

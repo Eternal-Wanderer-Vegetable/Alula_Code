@@ -1,0 +1,19 @@
+{
+  "productSha": "4590fc534e3f5f19223bda70a1a583c67f5499f6",
+  "ciRun": 44886744177,
+  "firstAttempt": 1,
+  "firstWindowsRustJob": 136793545089,
+  "conclusion": "cancelled",
+  "lastObservedStep": "Tests",
+  "lastObservedStepStartedAt": "2026-11-21T08:51:15Z",
+  "normalCancelRequestedAfterSeconds": 1214,
+  "forceCancelAccepted": true,
+  "firstAttemptUpdatedAt": "2026-11-21T09:16:33Z",
+  "rerunScope": "Windows Rust job via gh run rerun --job",
+  "localWindows": {
+    "workspaceTestsPassed": 191,
+    "workspaceSuites": 32,
+    "asyncLspShutdownRepetitionsPassed": 10,
+    "sourceCheck": "Rust crates and workspace manifests matched scratch base 24e265b725bf6f3db152a746f8ccb5b8b511d925"
+  }
+}

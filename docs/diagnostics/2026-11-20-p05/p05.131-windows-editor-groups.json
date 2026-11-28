@@ -1,0 +1,853 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "baseline": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "parent": "32136e45ecd5340264476c8ed7bb7e4fde9ed1bd",
+    "sha256": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "160791d718e9d8fd30e75035408bf1dee99c385230d1e9d8fb3b323a2682c859",
+      "app/lib/workbench/layout_controller.dart": "84976283d009a3dc8ccfbd6c7bf700143c8650d2f641593e11bb3e906ff767b3",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "ebaefe99bd6e8296d8671e05d60326e19b5040c590cb072c1cd8368c9ec0c4d7",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "cb5497f4836226cd126de42f0e96a59c7200d3e691ca032050e10c9ae8c12e80",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    }
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "14475ff80f54cc8b756d40cf97b955313a5a1b7dea72dbc82f6ba536452cc00b",
+  "fixtureSha256": "eacbebe0953616b94a67fe973114df18d2e6908090ec31f84903c3a63746cafb",
+  "trace": {
+    "single-group": {
+      "request": "single-group",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "e7b8836da53e2a03e49af03fb345e8f1bd1568c7d4f260365f798347c84f13c1"
+    },
+    "two-groups": {
+      "request": "two-groups",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "717ca60af8c059799dd07fa491013057dc15915e360a2255a95bcbea28a8a0c3"
+    },
+    "three-groups": {
+      "request": "three-groups",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          335.9
+        ],
+        "editor-3": [
+          633.8240000000001,
+          339.9,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "05078da8607313032cb0b833f5266518fe7a7aa6c310b3769224495b4e8dee39"
+    },
+    "horizontal-drag": {
+      "request": "horizontal-drag",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          534.624,
+          640.8
+        ],
+        "editor-2": [
+          538.624,
+          35.0,
+          987.2000000000002,
+          335.9
+        ],
+        "editor-3": [
+          538.624,
+          339.9,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "4bbeff99f89eb2fdc6ba014b033e08eb0838c9ddc9cd3d597d11bde66cb0c0aa"
+    },
+    "two-axis-drag": {
+      "request": "two-axis-drag",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          534.624,
+          640.8
+        ],
+        "editor-2": [
+          538.624,
+          35.0,
+          987.2000000000002,
+          415.89999999999986
+        ],
+        "editor-3": [
+          538.624,
+          419.89999999999986,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "324b92674cc2fba454994be677ea07c464814b874d3b746e6385003106ff4d2b"
+    },
+    "before-maximize": {
+      "request": "before-maximize",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          534.624,
+          640.8
+        ],
+        "editor-2": [
+          538.624,
+          35.0,
+          987.2000000000002,
+          415.89999999999986
+        ],
+        "editor-3": [
+          538.624,
+          419.89999999999986,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "324b92674cc2fba454994be677ea07c464814b874d3b746e6385003106ff4d2b"
+    },
+    "maximized": {
+      "request": "maximized",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor-2": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [
+        "editor",
+        "editor-3"
+      ],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": true,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "324b92674cc2fba454994be677ea07c464814b874d3b746e6385003106ff4d2b"
+    },
+    "restored": {
+      "request": "restored",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          534.624,
+          640.8
+        ],
+        "editor-2": [
+          538.624,
+          35.0,
+          987.2000000000002,
+          415.89999999999986
+        ],
+        "editor-3": [
+          538.624,
+          419.89999999999986,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "324b92674cc2fba454994be677ea07c464814b874d3b746e6385003106ff4d2b"
+    },
+    "maximized-again": {
+      "request": "maximized-again",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor-2": [
+          276.448,
+          35.0,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [
+        "editor",
+        "editor-3"
+      ],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": true
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": true,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "324b92674cc2fba454994be677ea07c464814b874d3b746e6385003106ff4d2b"
+    },
+    "reset": {
+      "request": "reset",
+      "boxes": {
+        "activity": [
+          0.0,
+          35.0,
+          48.0,
+          640.8
+        ],
+        "sidebar": [
+          48.0,
+          35.0,
+          272.448,
+          640.8
+        ],
+        "editor": [
+          276.448,
+          35.0,
+          629.8240000000001,
+          640.8
+        ],
+        "editor-2": [
+          633.8240000000001,
+          35.0,
+          987.2000000000002,
+          335.9
+        ],
+        "editor-3": [
+          633.8240000000001,
+          339.9,
+          987.2000000000002,
+          640.8
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 1,
+          "inputWindow": 406383739,
+          "focusNode": 499920510,
+          "focused": false,
+          "hidden": false
+        },
+        "editor-2": {
+          "document": 1,
+          "inputWindow": 993877019,
+          "focusNode": 1018178835,
+          "focused": true,
+          "hidden": false
+        },
+        "editor-3": {
+          "document": 1,
+          "inputWindow": 1035519415,
+          "focusNode": 599246519,
+          "focused": false,
+          "hidden": false
+        }
+      },
+      "persistedLayoutSha256": "05078da8607313032cb0b833f5266518fe7a7aa6c310b3769224495b4e8dee39"
+    }
+  },
+  "screenshots": {
+    "before": {
+      "name": "windows-editor-group-before.png",
+      "sha256": "6fc10ae32be1ed6704d5b2c487887efc383d904876efcf14fdd35b0970604f97"
+    },
+    "maximized": {
+      "name": "windows-editor-group-maximized.png",
+      "sha256": "184dde1b124e2fe04ef755e084720945d7471f51a9d3e9c55f8c44c726ea6cde"
+    },
+    "reset": {
+      "name": "windows-editor-group-reset.png",
+      "sha256": "3abddfaf8a9c717dc92c8f000ecb809187aca2b54f89e02d3d1a012daa1e709e"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 293203968,
+          "pid": 27484,
+          "ppid": 34760,
+          "private": 217014272,
+          "pss": 217014272,
+          "working_set": 165359616
+        }
+      ],
+      "root_pid": 27484,
+      "total_private_bytes": 217014272,
+      "total_private_mib": 207.0,
+      "total_working_set_bytes": 165359616
+    },
+    "maximized": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 293203968,
+          "pid": 27484,
+          "ppid": 34760,
+          "private": 208490496,
+          "pss": 208490496,
+          "working_set": 156508160
+        }
+      ],
+      "root_pid": 27484,
+      "total_private_bytes": 208490496,
+      "total_private_mib": 198.8,
+      "total_working_set_bytes": 156508160
+    },
+    "restored": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 293203968,
+          "pid": 27484,
+          "ppid": 34760,
+          "private": 211955712,
+          "pss": 211955712,
+          "working_set": 160882688
+        }
+      ],
+      "root_pid": 27484,
+      "total_private_bytes": 211955712,
+      "total_private_mib": 202.1,
+      "total_working_set_bytes": 160882688
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "sizes": {
+    "before": [
+      [
+        258.17600000000004,
+        605.8
+      ],
+      [
+        448.57600000000014,
+        380.89999999999986
+      ],
+      [
+        448.57600000000014,
+        220.9000000000001
+      ]
+    ],
+    "maximized": [
+      710.7520000000002,
+      605.8
+    ],
+    "restored": [
+      [
+        258.17600000000004,
+        605.8
+      ],
+      [
+        448.57600000000014,
+        380.89999999999986
+      ],
+      [
+        448.57600000000014,
+        220.9000000000001
+      ]
+    ],
+    "reset": [
+      [
+        353.3760000000001,
+        605.8
+      ],
+      [
+        353.3760000000001,
+        300.9
+      ],
+      [
+        353.3760000000001,
+        300.9
+      ]
+    ]
+  },
+  "checksPassed": true,
+  "exitCode": 0,
+  "persistedLayoutBefore": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.365299284614688,
+                "min": 180.0
+              },
+              {
+                "t": "split",
+                "axis": "v",
+                "weight": 0.634700715385312,
+                "children": [
+                  {
+                    "t": "leaf",
+                    "region": "editor-2",
+                    "weight": 0.6329345297441008,
+                    "min": 180.0
+                  },
+                  {
+                    "t": "leaf",
+                    "region": "editor-3",
+                    "weight": 0.36706547025589925,
+                    "min": 180.0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "persistedLayoutAfterReset": {
+    "t": "split",
+    "axis": "v",
+    "activityBarLocation": "side",
+    "activityBarSize": "default",
+    "children": [
+      {
+        "t": "split",
+        "axis": "h",
+        "weight": 0.7,
+        "name": "main-row",
+        "children": [
+          {
+            "t": "leaf",
+            "region": "activity",
+            "fixed": 48.0,
+            "weight": 1.0
+          },
+          {
+            "t": "leaf",
+            "region": "sidebar",
+            "weight": 0.24,
+            "min": 170.0
+          },
+          {
+            "t": "split",
+            "axis": "h",
+            "weight": 0.76,
+            "children": [
+              {
+                "t": "leaf",
+                "region": "editor",
+                "weight": 0.5,
+                "min": 180.0
+              },
+              {
+                "t": "split",
+                "axis": "v",
+                "weight": 0.5,
+                "children": [
+                  {
+                    "t": "leaf",
+                    "region": "editor-2",
+                    "weight": 0.5,
+                    "min": 180.0
+                  },
+                  {
+                    "t": "leaf",
+                    "region": "editor-3",
+                    "weight": 0.5,
+                    "min": 180.0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "leaf",
+            "region": "secondarySidebar",
+            "weight": 0.26,
+            "min": 170.0,
+            "collapsed": true,
+            "last": 0.26
+          }
+        ]
+      },
+      {
+        "t": "leaf",
+        "region": "panel",
+        "weight": 0.3,
+        "min": 77.0,
+        "collapsed": true,
+        "last": 0.3
+      }
+    ]
+  },
+  "productCommit": "88d745b475ecfc353145dbbf73a76406e8cde6fd",
+  "productTree": "7d965d48281189794ad4af5af8b0d96840c660df"
+}

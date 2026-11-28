@@ -1,0 +1,43 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/editor_group_close_lifetime_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/editor_group_close_lifetime_test.dart: closeAllGroups releases mounted split editor views safely (breadcrumb focus: false)
+00:01 +1: E:/temp/alula-pr3-20261117/app/test/editor_group_mru_close_test.dart: closing the focused group focuses the most recently active group
+00:02 +2: E:/temp/alula-pr3-20261117/app/test/editor_group_mru_close_test.dart: closing the focused group focuses the most recently active group
+00:02 +3: E:/temp/alula-pr3-20261117/app/test/editor_group_mru_close_test.dart: closing the focused group focuses the most recently active group
+00:02 +4: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: fullPath group close targets the nonfocused group, not its sorted first row
+00:02 +5: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copy modifier duplicates the document view with pointer-side insertion
+00:02 +6: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copy modifier duplicates the document view with pointer-side insertion
+00:03 +7: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copy modifier duplicates the document view with pointer-side insertion
+00:03 +8: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copy modifier duplicates the document view with pointer-side insertion
+00:03 +9: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+00:03 +10: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+00:04 +10: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard938b32d2/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard938b32d2/workspace\other.rs)
+00:04 +11: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+00:04 +12: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard4e77bbc5/workspace\other.rs)
+00:05 +14: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+00:05 +15: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: cancel close all atomically preserves clean, dirty, and sticky targets
+00:06 +15: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardd271cd55/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardd271cd55/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardd271cd55/workspace\other.rs)
+00:06 +16: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: cancel close all atomically preserves clean, dirty, and sticky targets
+00:06 +17: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: cancel close all atomically preserves clean, dirty, and sticky targets
+00:06 +18: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard94961c79/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard94961c79/workspace\other.rs)
+00:06 +19: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copies are ordinary tabs regardless of sticky or preview sources
+00:06 +19: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Tab focuses a picker item and Escape still returns to its owner
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc1757887/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc1757887/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc1757887/workspace\other.rs)
+00:06 +20: E:/temp/alula-pr3-20261117/app/test/editor_tab_cross_group_copy_test.dart: copies are ordinary tabs regardless of sticky or preview sources
+00:07 +21: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:07 +21: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: resource invalidation removes a covered picker but keeps its dialog
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardb044c964/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardb044c964/workspace\other.rs)
+00:07 +22: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:07 +22: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardf47887e1/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardf47887e1/workspace\other.rs)
+00:07 +23: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:07 +24: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:08 +25: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: save close all writes the target dirty file before closing and preserves other edits
+00:09 +26: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: closing one group preserves a shared dirty document and its remaining view
+00:10 +27: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: only group rows offer group actions and dismissing the menu changes nothing
+00:11 +28: All tests passed!

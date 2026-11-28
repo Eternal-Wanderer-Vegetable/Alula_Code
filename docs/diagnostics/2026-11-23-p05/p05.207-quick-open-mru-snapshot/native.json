@@ -1,0 +1,1392 @@
+{
+  "product": "bf73c85cc855e6c16c4243efc8a76fbc374ab67a",
+  "tree": "c2b10fc89bd01b6f13e3470b115d24a203fab53d",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "c2b10fc89bd01b6f13e3470b115d24a203fab53d",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "aeb0f1e0aa41000a89ce3e5eab0dc1d9a9313a3493e01f017b1dd3e87e580979",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "6dc528abc930ce16dbd08784f402c45721b6625cd3981f303213060eab9edeaa",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "fc4ddb16977537d39f2faa2c9f5c3d4963ecd7c082969e131a900073026cd8d8",
+      "app/lib/workbench/quick_input.dart": "73116ec6806b7213f52671d60fc54b1dbe8abdd952215151ee67a872740493ea",
+      "app/lib/workbench/quick_open_query.dart": "2cedc7cb4e1097195c420a92a884e0240dd258634c6073fa520f423b98c05c92",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "fbc508bad0afa7afe0931c2733fb709aeca792eba5bf98c873d18e6babb7d77d",
+      "app/lib/workbench/workbench_page.dart": "398f6d289e19e75955ac30162d8f3c7b6c4d03d78f4ca8168a8a5d0e14574738",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "429898b849dd5710e4f6cb7214cff1a4ec7171e62700d1e86dc8e9e00eb8667a",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "6df3957ae1f1753edf4116b92071307d9b2a2eccb8138dd918fe019ebbb85deb"
+  },
+  "sharedDriverSha256": "b28471ff73d3346b0ede90b1aa0ffe5cae907c0178e3d9f8d07123882d641304",
+  "isolatedX11Sha256": "7876db3603944588bdab450f6c96aa1d40f0aedcdbd9824621dca38bff873640",
+  "windowsFirstFixtureAttempts": [
+    {
+      "rawReportSha256": "5652f303410cef4ec143fa03ae660dc35be2cead843e53f122c1f1e6714baf3a",
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "03c4301ac69bf41e22ee4420dded9478fa4b0fec831e191b01029eec8e1cc479",
+      "failedStep": "picker-closes-with-file-contents-preserved"
+    },
+    {
+      "rawReportSha256": "f9a996332a8cd298f1984f58ff1ef3d9b395dbe847cb9dc2e25e22a484f70717",
+      "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+      "aotSha256": "03c4301ac69bf41e22ee4420dded9478fa4b0fec831e191b01029eec8e1cc479",
+      "failedStep": "picker-closes-with-file-contents-preserved"
+    }
+  ],
+  "widgetRegression": {
+    "baselineCommit": "bdb874df4508db2bec0df67396b8ff6933bbe535",
+    "baselineLogSha256": "afa1d2d737eb4bd15e453fd67375b967d3a737a72ad9432eb6f3ee22d371b6c8",
+    "fixedLogSha256": "3a31b30c0a276691e096320c6405680e8f27a9708e3cbcfeb4747d7b9252789a",
+    "baselineFailure": "A new Recent separator appeared when paging the same query."
+  },
+  "windows": {
+    "tree": "c2b10fc89bd01b6f13e3470b115d24a203fab53d",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "03c4301ac69bf41e22ee4420dded9478fa4b0fec831e191b01029eec8e1cc479",
+    "fixtureSha256": "6df3957ae1f1753edf4116b92071307d9b2a2eccb8138dd918fe019ebbb85deb",
+    "runnerSha256": "73312dc49320ea6f2e6b49c7f7270a9e4394c6bd1a8b46cb4b0c1d0290d90219",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "dpi": 120,
+    "workspaceFileCount": 203,
+    "workspaceManifestSha256": "a7886ebcb450134c8f70a242f3f3d6f1956f5481c61165ae427587803dde6e07",
+    "originalLastPage": [
+      "orbit-200.txt",
+      "orbit-201.txt"
+    ],
+    "backgroundOpenedName": "orbit-200.txt",
+    "exit": 0,
+    "passed": true,
+    "rawReportSha256": "292230f0325916c502ec079af4fcf8ac47c648107cf44cf39964dccc6e420be8",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "blank-recent-picker": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.txt",
+          "qi-button-needle-root.txt-0",
+          "qi-button-needle-root.txt-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "first-page-before-history-change": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "last-page-before-history-change": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-200.txt",
+          "qi-button-orbit-200.txt-0",
+          "qi-orbit-201.txt"
+        ],
+        "quickActive": "qi-orbit-200.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "background-open-updates-live-history": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-200.txt",
+          "qi-button-orbit-200.txt-0",
+          "qi-orbit-201.txt"
+        ],
+        "quickActive": "qi-orbit-200.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "location-suffix-keeps-query-and-page": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-200.txt",
+          "qi-button-orbit-200.txt-0",
+          "qi-orbit-201.txt"
+        ],
+        "quickActive": "qi-orbit-200.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "first-page-preserves-original-recent-snapshot": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "last-page-roundtrip-keeps-both-original-files": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-200.txt",
+          "qi-button-orbit-200.txt-0",
+          "qi-orbit-201.txt"
+        ],
+        "quickActive": "qi-orbit-200.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "new-matching-query-uses-current-recent-order": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit*",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-orbit-200.txt",
+          "qi-button-orbit-200.txt-0",
+          "qi-button-orbit-200.txt-1",
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt"
+        ],
+        "quickActive": "qi-orbit-200.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "explicit-remove-updates-the-current-query": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit*",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "picker-closes-with-file-contents-preserved": {
+        "editors": [
+          {
+            "label": "orbit-200.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "result 200\n😀beta\n",
+            "mirror": "result 200\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-200.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      }
+    }
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "c2b10fc89bd01b6f13e3470b115d24a203fab53d",
+    "aotSha256": "007b9dd79f2bf3ee4112832ef30b196a5a144b6b01b79c30e54f10e09c05d0f3",
+    "fixtureSha256": "6df3957ae1f1753edf4116b92071307d9b2a2eccb8138dd918fe019ebbb85deb",
+    "runnerSha256": "1ad079f27df9e5366f5999eb97f0c215ce61d52b6be7dba48c45bfde299ee5ed",
+    "workspaceFileCount": 203,
+    "workspaceManifestSha256": "a7886ebcb450134c8f70a242f3f3d6f1956f5481c61165ae427587803dde6e07",
+    "originalLastPage": [
+      "orbit-062.txt",
+      "orbit-064.txt"
+    ],
+    "backgroundOpenedName": "orbit-062.txt",
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    },
+    "rawReportSha256": "984e1ba0a324b17ef46932a91cb151f751dcaaf2821a37453bc4369a3411c90c",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "source-editor-focused": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "blank-recent-picker": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-needle-root.txt",
+          "qi-button-needle-root.txt-0",
+          "qi-button-needle-root.txt-1",
+          "qi-needle-outside.txt"
+        ],
+        "quickActive": "qi-needle-root.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "first-page-before-history-change": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt",
+          "qi-orbit-021.txt",
+          "qi-orbit-022.txt",
+          "qi-orbit-023.txt",
+          "qi-orbit-024.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "last-page-before-history-change": {
+        "editors": [
+          {
+            "label": "needle-root.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "Root editor 😀\nSecond line\n",
+            "mirror": "Root editor 😀\nSecond line\n",
+            "totalUtf16": 27,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              26,
+              26
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-062.txt",
+          "qi-button-orbit-062.txt-0",
+          "qi-orbit-064.txt"
+        ],
+        "quickActive": "qi-orbit-062.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "background-open-updates-live-history": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-062.txt",
+          "qi-button-orbit-062.txt-0",
+          "qi-orbit-064.txt"
+        ],
+        "quickActive": "qi-orbit-062.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "location-suffix-keeps-query-and-page": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-062.txt",
+          "qi-button-orbit-062.txt-0",
+          "qi-orbit-064.txt"
+        ],
+        "quickActive": "qi-orbit-062.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "first-page-preserves-original-recent-snapshot": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt",
+          "qi-orbit-021.txt",
+          "qi-orbit-022.txt",
+          "qi-orbit-023.txt",
+          "qi-orbit-024.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "last-page-roundtrip-keeps-both-original-files": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit:2:3",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-062.txt",
+          "qi-button-orbit-062.txt-0",
+          "qi-orbit-064.txt"
+        ],
+        "quickActive": "qi-orbit-062.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "new-matching-query-uses-current-recent-order": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit*",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-orbit-062.txt",
+          "qi-button-orbit-062.txt-0",
+          "qi-button-orbit-062.txt-1",
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt",
+          "qi-orbit-021.txt",
+          "qi-orbit-022.txt"
+        ],
+        "quickActive": "qi-orbit-062.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "explicit-remove-updates-the-current-query": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "orbit*",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-文件结果",
+          "qi-orbit-000.txt",
+          "qi-button-orbit-000.txt-0",
+          "qi-orbit-001.txt",
+          "qi-orbit-002.txt",
+          "qi-orbit-003.txt",
+          "qi-orbit-004.txt",
+          "qi-orbit-005.txt",
+          "qi-orbit-006.txt",
+          "qi-orbit-007.txt",
+          "qi-orbit-008.txt",
+          "qi-orbit-009.txt",
+          "qi-orbit-010.txt",
+          "qi-orbit-011.txt",
+          "qi-orbit-012.txt",
+          "qi-orbit-013.txt",
+          "qi-orbit-014.txt",
+          "qi-orbit-015.txt",
+          "qi-orbit-016.txt",
+          "qi-orbit-017.txt",
+          "qi-orbit-018.txt",
+          "qi-orbit-019.txt",
+          "qi-orbit-020.txt",
+          "qi-orbit-021.txt",
+          "qi-orbit-022.txt",
+          "qi-orbit-023.txt",
+          "qi-orbit-024.txt"
+        ],
+        "quickActive": "qi-orbit-000.txt",
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      },
+      "picker-closes-with-file-contents-preserved": {
+        "editors": [
+          {
+            "label": "orbit-062.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "result 062\n😀beta\n",
+            "mirror": "result 062\n😀beta\n",
+            "totalUtf16": 18,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "quickActive": null,
+        "nativeWindowFocused": true,
+        "quickRecent": [
+          "needle-root.txt",
+          "needle-outside.txt"
+        ],
+        "globalRecent": [
+          "orbit-062.txt",
+          "needle-root.txt",
+          "needle-outside.txt"
+        ]
+      }
+    }
+  }
+}

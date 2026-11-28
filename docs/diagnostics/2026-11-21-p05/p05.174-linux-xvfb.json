@@ -1,0 +1,2330 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "input": "native X11 mouse and keyboard in WSL Xvfb",
+  "sourceTree": "b2c356eb25b81cb590be19eed41f8204bf19024f",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "001473b5aedd1b6288290017de072d1596874d15cd9aa5d8fde3b5e64c2c022f",
+  "fixtureSha256": "842194cf1fed227d1910955a768924675a49f24cba794994fd3d61385998a01c",
+  "trace": {
+    "main-baseline": {
+      "main": {
+        "step": "main-baseline",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          770.0,
+          480.0
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            400.43261169433595,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            360.18261169433595,
+            62.5
+          ],
+          "tab-3": [
+            400.43261169433595,
+            42.0,
+            553.3851568603516,
+            64.0
+          ],
+          "editor-tab-label-editor-3": [
+            434.43261169433595,
+            45.5,
+            512.8851568603516,
+            62.5
+          ],
+          "tab-4": [
+            553.3851568603516,
+            42.0,
+            712.8897497558594,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            587.3851568603516,
+            45.5,
+            672.6397497558594,
+            62.5
+          ],
+          "tab-1": [
+            712.8897497558594,
+            42.0,
+            826.8897497558594,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            746.8897497558594,
+            45.5,
+            783.6397497558594,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt",
+          "editor-tab-label-editor-3": "aux-target.txt",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "aux-target.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "target 🪶\nsecond target\n",
+            "mirror": "target 🪶\nsecond target\n",
+            "totalUtf16": 24,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 3,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 3,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "target-dirty-in-main": {
+      "main": {
+        "step": "target-dirty-in-main",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          386.0,
+          174.0
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            400.43261169433595,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            360.18261169433595,
+            62.5
+          ],
+          "tab-3": [
+            400.43261169433595,
+            42.0,
+            560.4532110595703,
+            64.0
+          ],
+          "editor-tab-label-editor-3": [
+            434.43261169433595,
+            45.5,
+            520.4532110595703,
+            62.5
+          ],
+          "tab-4": [
+            560.4532110595703,
+            42.0,
+            719.9578039550781,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            594.4532110595703,
+            45.5,
+            679.7078039550781,
+            62.5
+          ],
+          "tab-1": [
+            719.9578039550781,
+            42.0,
+            833.9578039550781,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            753.9578039550781,
+            45.5,
+            790.7078039550781,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt",
+          "editor-tab-label-editor-3": "aux-target.txt •",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "aux-target.txt 主编辑器",
+            "documentId": 3,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 3,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 3,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "target 🪶B-DIRTY\nsecond target\n"
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "existing-target-opened": {
+      "main": {
+        "step": "existing-target-opened",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          386.0,
+          174.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            400.43261169433595,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            360.18261169433595,
+            62.5
+          ],
+          "tab-4": [
+            400.43261169433595,
+            42.0,
+            559.9372045898438,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            434.43261169433595,
+            45.5,
+            519.6872045898438,
+            62.5
+          ],
+          "tab-1": [
+            559.9372045898438,
+            42.0,
+            673.9372045898438,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            593.9372045898438,
+            45.5,
+            630.6872045898438,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              246.23999999999998,
+              80.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "existing-target-opened",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          386.0,
+          174.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      }
+    },
+    "source-active": {
+      "main": {
+        "step": "source-active",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          339.0,
+          101.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            400.43261169433595,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            360.18261169433595,
+            62.5
+          ],
+          "tab-4": [
+            400.43261169433595,
+            42.0,
+            559.9372045898438,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            434.43261169433595,
+            45.5,
+            519.6872045898438,
+            62.5
+          ],
+          "tab-1": [
+            559.9372045898438,
+            42.0,
+            673.9372045898438,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            593.9372045898438,
+            45.5,
+            630.6872045898438,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀\nsecond source\n",
+            "mirror": "source 😀\nsecond source\n",
+            "totalUtf16": 24,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "two-dirty-documents": {
+      "main": {
+        "step": "two-dirty-documents",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          386.0,
+          174.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-4": [
+            407.5006658935547,
+            42.0,
+            567.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            441.5006658935547,
+            45.5,
+            526.7552587890625,
+            62.5
+          ],
+          "tab-1": [
+            567.0052587890625,
+            42.0,
+            681.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            601.0052587890625,
+            45.5,
+            637.7552587890625,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ],
+        "statuses": [
+          "main-source.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "two-dirty-documents",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          386.0,
+          174.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      }
+    },
+    "returned-to-source-without-transferring": {
+      "main": {
+        "step": "returned-to-source-without-transferring",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          343.0,
+          101.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-4": [
+            407.5006658935547,
+            42.0,
+            567.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            441.5006658935547,
+            45.5,
+            526.7552587890625,
+            62.5
+          ],
+          "tab-1": [
+            567.0052587890625,
+            42.0,
+            681.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            601.0052587890625,
+            45.5,
+            637.7552587890625,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ],
+        "statuses": [
+          "main-source.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "returned-to-source-without-transferring",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          343.0,
+          101.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      }
+    },
+    "overlap-document-selected": {
+      "main": {
+        "step": "overlap-document-selected",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          507.0,
+          101.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-4": [
+            407.5006658935547,
+            42.0,
+            567.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-4": [
+            441.5006658935547,
+            45.5,
+            526.7552587890625,
+            62.5
+          ],
+          "tab-1": [
+            567.0052587890625,
+            42.0,
+            681.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            601.0052587890625,
+            45.5,
+            637.7552587890625,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-4": "aux-overlap.txt",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "aux-overlap.txt 主编辑器",
+            "documentId": 4,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "overlap 🪟\nsecond overlap\n",
+            "mirror": "overlap 🪟\nsecond overlap\n",
+            "totalUtf16": 26,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "main-source.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 4,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 4,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "two-overlapping-auxiliary-windows": {
+      "main": {
+        "step": "two-overlapping-auxiliary-windows",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          507.0,
+          101.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-1": [
+            407.5006658935547,
+            42.0,
+            521.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            441.5006658935547,
+            45.5,
+            478.2506658935547,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ],
+        "statuses": [
+          "main-source.txt •"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "two-overlapping-auxiliary-windows",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          507.0,
+          101.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      },
+      "child-aux-overlap.txt": {
+        "step": "two-overlapping-auxiliary-windows",
+        "slot": "child-aux-overlap.txt",
+        "windowId": "417cf3d2-06da-4890-9710-04bc4f0f262f",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          507.0,
+          101.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-overlap.txt 辅助窗口编辑器",
+            "documentId": 6,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "overlap 🪟\nsecond overlap\n",
+            "mirror": "overlap 🪟\nsecond overlap\n",
+            "totalUtf16": 26,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": []
+      }
+    },
+    "overlap-rejected": {
+      "main": {
+        "step": "overlap-rejected",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          1007.0,
+          156.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-1": [
+            407.5006658935547,
+            42.0,
+            521.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            441.5006658935547,
+            45.5,
+            478.2506658935547,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 2,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 3
+          }
+        ],
+        "statuses": [
+          "main-source.txt •",
+          "多个辅助窗口重叠，无法确定目标；源文档已保留"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 2,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "overlap-rejected",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          1007.0,
+          156.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      },
+      "child-aux-overlap.txt": {
+        "step": "overlap-rejected",
+        "slot": "child-aux-overlap.txt",
+        "windowId": "417cf3d2-06da-4890-9710-04bc4f0f262f",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          1007.0,
+          156.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-overlap.txt 辅助窗口编辑器",
+            "documentId": 6,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "overlap 🪟\nsecond overlap\n",
+            "mirror": "overlap 🪟\nsecond overlap\n",
+            "totalUtf16": 26,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": []
+      }
+    },
+    "untitled-document-after-three-engines": {
+      "main": {
+        "step": "untitled-document-after-three-engines",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          485.0,
+          101.0
+        ],
+        "windowCount": 3,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "417cf3d2-06da-4890-9710-04bc4f0f262f",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-1": [
+            407.5006658935547,
+            42.0,
+            521.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            441.5006658935547,
+            45.5,
+            478.2506658935547,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-1": "未命名"
+        },
+        "editors": [
+          {
+            "label": "未命名 主编辑器",
+            "documentId": 1,
+            "box": [
+              246.23999999999998,
+              80.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "mirror": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+            "totalUtf16": 41,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "main-source.txt •",
+          "多个辅助窗口重叠，无法确定目标；源文档已保留"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 1,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "overlap-window-returned": {
+      "main": {
+        "step": "overlap-window-returned",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          1478.0,
+          104.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-2": [
+            238.23999999999998,
+            42.0,
+            407.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-2": [
+            272.24,
+            45.5,
+            367.7506658935547,
+            62.5
+          ],
+          "tab-1": [
+            407.5006658935547,
+            42.0,
+            521.5006658935547,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            441.5006658935547,
+            45.5,
+            478.2506658935547,
+            62.5
+          ],
+          "tab-7": [
+            521.5006658935547,
+            42.0,
+            681.0052587890625,
+            64.0
+          ],
+          "editor-tab-label-editor-7": [
+            555.5006658935547,
+            45.5,
+            640.7552587890625,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-2": "main-source.txt •",
+          "editor-tab-label-editor-1": "未命名",
+          "editor-tab-label-editor-7": "aux-overlap.txt"
+        },
+        "editors": [
+          {
+            "label": "aux-overlap.txt 主编辑器",
+            "documentId": 7,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "overlap 🪟\nsecond overlap\n",
+            "mirror": "overlap 🪟\nsecond overlap\n",
+            "totalUtf16": 26,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "main-source.txt •",
+          "多个辅助窗口重叠，无法确定目标；源文档已保留"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 7,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 2,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              },
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              },
+              {
+                "id": 7,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "overlap-window-returned",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          1478.0,
+          104.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "aux-target.txt 辅助窗口编辑器",
+            "documentId": 5,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •"
+        ]
+      }
+    },
+    "exchange-committed": {
+      "main": {
+        "step": "exchange-committed",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          1007.0,
+          156.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "tab-1": [
+            238.23999999999998,
+            42.0,
+            352.24,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            272.24,
+            45.5,
+            308.99,
+            62.5
+          ],
+          "tab-7": [
+            352.24,
+            42.0,
+            511.7445928955078,
+            64.0
+          ],
+          "editor-tab-label-editor-7": [
+            386.24,
+            45.5,
+            471.4945928955078,
+            62.5
+          ],
+          "tab-9": [
+            511.7445928955078,
+            42.0,
+            671.7651922607422,
+            64.0
+          ],
+          "editor-tab-label-editor-9": [
+            545.7445928955078,
+            45.5,
+            631.7651922607422,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-1": "未命名",
+          "editor-tab-label-editor-7": "aux-overlap.txt",
+          "editor-tab-label-editor-9": "aux-target.txt •"
+        },
+        "editors": [
+          {
+            "label": "aux-target.txt 主编辑器",
+            "documentId": 9,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "target 🪶B-DIRTY\nsecond target\n",
+            "mirror": "target 🪶B-DIRTY\nsecond target\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •",
+          "已与辅助窗口交换文档"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 9,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              },
+              {
+                "id": 7,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 9,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "target 🪶B-DIRTY\nsecond target\n"
+              }
+            ]
+          }
+        ]
+      },
+      "child-aux-target.txt": {
+        "step": "exchange-committed",
+        "slot": "child-aux-target.txt",
+        "windowId": "79bc348b-eab3-4105-8e00-6af0f20c029a",
+        "bounds": [
+          883.0,
+          80.0,
+          1506.0,
+          772.0
+        ],
+        "pointer": [
+          1007.0,
+          156.0
+        ],
+        "windowCount": 2,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+          "79bc348b-eab3-4105-8e00-6af0f20c029a"
+        ],
+        "boxes": {
+          "auxiliary-close-button": [
+            575.0,
+            4.0,
+            615.0,
+            44.0
+          ]
+        },
+        "labels": {},
+        "editors": [
+          {
+            "label": "main-source.txt 辅助窗口编辑器",
+            "documentId": 8,
+            "box": [
+              4.0,
+              52.0,
+              619.0,
+              688.0
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "main-source.txt •"
+        ]
+      }
+    },
+    "auxiliary-returned-on-close": {
+      "main": {
+        "step": "auxiliary-returned-on-close",
+        "slot": "main",
+        "windowId": "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c",
+        "bounds": [
+          20.0,
+          48.0,
+          848.0,
+          860.0
+        ],
+        "pointer": [
+          1478.0,
+          104.0
+        ],
+        "windowCount": 1,
+        "windowIds": [
+          "3e46d79d-9b8f-40cf-b7b9-2b076d411f2c"
+        ],
+        "boxes": {
+          "tab-1": [
+            91.2141418457031,
+            42.0,
+            205.2141418457031,
+            64.0
+          ],
+          "editor-tab-label-editor-1": [
+            125.2141418457031,
+            45.5,
+            161.9641418457031,
+            62.5
+          ],
+          "tab-7": [
+            205.2141418457031,
+            42.0,
+            364.71873474121094,
+            64.0
+          ],
+          "editor-tab-label-editor-7": [
+            239.2141418457031,
+            45.5,
+            324.46873474121094,
+            62.5
+          ],
+          "tab-9": [
+            364.71873474121094,
+            42.0,
+            524.7393341064453,
+            64.0
+          ],
+          "editor-tab-label-editor-9": [
+            398.71873474121094,
+            45.5,
+            484.7393341064453,
+            62.5
+          ],
+          "tab-10": [
+            524.7393341064453,
+            42.0,
+            694.0,
+            64.0
+          ],
+          "editor-tab-label-editor-10": [
+            558.7393341064453,
+            45.5,
+            654.25,
+            62.5
+          ]
+        },
+        "labels": {
+          "editor-tab-label-editor-1": "未命名",
+          "editor-tab-label-editor-7": "aux-overlap.txt",
+          "editor-tab-label-editor-9": "aux-target.txt •",
+          "editor-tab-label-editor-10": "main-source.txt •"
+        },
+        "editors": [
+          {
+            "label": "main-source.txt 主编辑器",
+            "documentId": 10,
+            "box": [
+              246.23999999999998,
+              102.0,
+              820.0,
+              780.0000000000001
+            ],
+            "rust": "source 😀A-DIRTY\nsecond source\n",
+            "mirror": "source 😀A-DIRTY\nsecond source\n",
+            "totalUtf16": 31,
+            "stateVersion": 1
+          }
+        ],
+        "statuses": [
+          "aux-target.txt •",
+          "main-source.txt •",
+          "已与辅助窗口交换文档"
+        ],
+        "sessionGroups": [
+          {
+            "region": "editor",
+            "active": 10,
+            "sticky": [],
+            "docs": [
+              {
+                "id": 1,
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": false,
+                  "lineEnding": "lf"
+                },
+                "text": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n"
+              },
+              {
+                "id": 7,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-overlap.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                }
+              },
+              {
+                "id": 9,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/aux-target.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "target 🪶B-DIRTY\nsecond target\n"
+              },
+              {
+                "id": 10,
+                "path": "/tmp/alula-p05-174-xvfb-6nkhfsus/workspace/main-source.txt",
+                "fileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "savedFileOptions": {
+                  "encoding": "utf-8",
+                  "bom": true,
+                  "lineEnding": "crlf"
+                },
+                "text": "source 😀A-DIRTY\nsecond source\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "memorySamples": {
+    "before-exchange": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1900596,
+          "ppid": 1900595,
+          "private": 336744448,
+          "pss": 361046016,
+          "working_set": 445820928
+        }
+      ],
+      "root_pid": 1900596,
+      "total_private_bytes": 336744448,
+      "total_private_mib": 321.1,
+      "total_working_set_bytes": 445820928
+    },
+    "after-exchange": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1900596,
+          "ppid": 1900595,
+          "private": 468975616,
+          "pss": 493293568,
+          "working_set": 578117632
+        }
+      ],
+      "root_pid": 1900596,
+      "total_private_bytes": 468975616,
+      "total_private_mib": 447.3,
+      "total_working_set_bytes": 578117632
+    }
+  },
+  "dragEvents": [
+    {
+      "source": "main",
+      "target": "child-aux-target.txt",
+      "start": [
+        343,
+        101
+      ],
+      "intendedTarget": [
+        1007,
+        156
+      ],
+      "releasePoint": [
+        343,
+        101
+      ],
+      "returnToSource": true
+    },
+    {
+      "source": "main",
+      "target": "child-aux-overlap.txt",
+      "start": [
+        343,
+        101
+      ],
+      "intendedTarget": [
+        1007,
+        156
+      ],
+      "releasePoint": [
+        1007,
+        156
+      ],
+      "returnToSource": false
+    },
+    {
+      "source": "main",
+      "target": "child-aux-target.txt",
+      "start": [
+        343,
+        101
+      ],
+      "intendedTarget": [
+        1007,
+        156
+      ],
+      "releasePoint": [
+        1007,
+        156
+      ],
+      "returnToSource": false
+    }
+  ],
+  "results": {
+    "nativeCrossWindowExchange": true,
+    "dragReturnedToSource": true,
+    "ambiguousOverlapRejected": true,
+    "existingTargetPreservedOnRejection": true,
+    "auxiliaryOriginalDocumentReturnedToMain": true,
+    "sameAuxiliaryWindowAfterExchange": true,
+    "bothDirtyBuffersAndEmojiRetained": true,
+    "rustAndDartExactTextAgreement": true,
+    "threeEnginesHadDistinctDocumentIds": {
+      "main": 2,
+      "child-aux-target.txt": 5,
+      "child-aux-overlap.txt": 6
+    },
+    "welcomeRetainedItsOwnCoreDocument": true,
+    "twoNewDocumentIdsAfterCommit": {
+      "main": 9,
+      "child-aux-target.txt": 8
+    },
+    "auxiliaryCloseReturnsItsSwappedDocument": true,
+    "workspaceBytesUnchanged": {
+      "main-source.txt": "ec272a4b308800cfbafa9f6ac0afd52a8cccc7cffa6da426924a329362d2cc94",
+      "aux-target.txt": "9f5fdcbbcc5e6feb7d8e9018dd16f975c10732e304b05588e09685ca66acb8eb",
+      "aux-overlap.txt": "598d47917511d6e8e1c3885bdb96a1adfe531a5ff2550960883ae9f3ead98c24"
+    }
+  },
+  "checksPassed": true,
+  "cleanup": {
+    "exitCode": -15,
+    "driverSentSigterm": true
+  }
+}

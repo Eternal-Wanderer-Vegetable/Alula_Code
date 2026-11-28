@@ -1,0 +1,18 @@
+{
+  "feature": "feat-138",
+  "scope": "P05.86 Open Editors editorOrder/fullPath display projection",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "checks": [
+    {"contract": "Default/unknown preference uses editorOrder and copies without URI evaluation", "test": "open_editors_sort_order_test.dart: parse and lazy iterable cases"},
+    {"contract": "Per-group fullPath uses stable URI ordinal ordering, resources before files and resource-less entries first", "test": "open_editors_sort_order_test.dart: buckets, numeric, directories and stable ties"},
+    {"contract": "Lowercase decoded path then reference serialization; preserve query/fragment case", "test": "open_editors_sort_order_test.dart: drive colon, punctuation, Unicode, UNC and 676 golden-key ordered pairs", "limit": "Golden literals independently checked against actual pinned TypeScript; checked-in test does not execute upstream"},
+    {"contract": "Native paths are encoded locally for POSIX/Windows/UNC and special filenames", "test": "native file URI projection handles POSIX, Windows and UNC paths; real view z%done#.rs red then green"},
+    {"contract": "Menu switching/restoration changes sidebar projection without tab order, active id, Rust view/document or content mutation", "test": "open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference"},
+    {"contract": "Sorting preserves id/group targets for activate/close and disk contents", "test": "same real Workbench regression; existing grouped dirty/focus/copy/collapse regressions"},
+    {"contract": "Groups follow layout visual leaf traversal", "test": "read-only review against grid traversal", "limit": "No new relocated-group UI fixture"}
+  ],
+  "focused": {"policy": 13, "workbench": 5, "passed": 18},
+  "remaining": ["alphabetical Intl locale/numeric name ordering", "name order within resource-less bucket", "P07 formal configuration registration/precedence/UI", "shared document/LSP native path URI producer", "macOS native/visual/device validation"],
+  "diagnostics": ["Non-failing minimap UnknownDoc id=1 output remains unexplained"],
+  "parentsRemainOpen": true
+}

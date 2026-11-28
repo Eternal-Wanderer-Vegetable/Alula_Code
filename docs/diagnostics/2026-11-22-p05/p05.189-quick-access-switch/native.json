@@ -1,0 +1,2273 @@
+{
+  "product": "9fc89a27b87e90dc573978ae5c7f9282d33d2b5f",
+  "tree": "5dec89baf7f201f43ba9d80a21f07a929090339f",
+  "sharedDriverSha256": "0c9f6fece83066a7f124c41622aee80748c6d3a475cb1f29d385aa5864411dd0",
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "5dec89baf7f201f43ba9d80a21f07a929090339f",
+    "aotSha256": "e74721660308c344ecd7117031f55b3d3f82814ec9b48f7b291ccedc9c48cc5a",
+    "fixtureSha256": "eeaa31d7dc296f8ec622435d16784dddbe9dac1960eba33b2b3400d1058de3e3",
+    "runnerSha256": "07fdc0d20c7f500b5bade10268122e1545f919b4b361f80d50939e7ceb1c6090",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "editor-focus": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              28
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "editor-selected": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "initial-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            831.1056518554688,
+            123.0,
+            853.1056518554688,
+            145.0
+          ]
+        }
+      },
+      "initial-command-prefix": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近使用",
+          "qi-查看: 清除命令历史记录",
+          "qi-文件: 保存",
+          "qi-查看: 诊断面板",
+          "qi-separator-其他命令",
+          "qi-文件: 新建文本文件",
+          "qi-面包屑: 聚焦面包屑",
+          "qi-面包屑: 聚焦并选择面包屑",
+          "qi-面包屑: 聚焦下一段",
+          "qi-面包屑: 聚焦上一段",
+          "qi-面包屑: 聚焦下一段并保持选择器",
+          "qi-面包屑: 聚焦上一段并保持选择器",
+          "qi-面包屑: 选择面包屑",
+          "qi-面包屑: 打开面包屑位置",
+          "qi-面包屑: 返回编辑器",
+          "qi-文件: 打开文件夹…",
+          "qi-文件: 打开最近项目",
+          "qi-Merge Editor: Open Merge Editor",
+          "qi-编辑器: 固定编辑器",
+          "qi-编辑器: 取消固定编辑器",
+          "qi-编辑器: 切换编辑器固定状态",
+          "qi-编辑器: 关闭活动编辑器",
+          "qi-文件: 明确关闭活动编辑器",
+          "qi-视图: 按最近使用顺序显示活动组编辑器",
+          "qi-视图: 按最近使用顺序显示所有编辑器",
+          "qi-视图: 快速打开组内上一个最近使用的编辑器"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近使用": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "qi-查看: 清除命令历史记录": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-文件: 保存": [
+            300.0,
+            145.0,
+            900.0,
+            167.0
+          ],
+          "qi-查看: 诊断面板": [
+            300.0,
+            167.0,
+            900.0,
+            189.0
+          ],
+          "qi-separator-其他命令": [
+            300.0,
+            189.0,
+            900.0,
+            215.0
+          ],
+          "qi-文件: 新建文本文件": [
+            300.0,
+            215.0,
+            900.0,
+            237.0
+          ],
+          "qi-面包屑: 聚焦面包屑": [
+            300.0,
+            237.0,
+            900.0,
+            259.0
+          ],
+          "qi-面包屑: 聚焦并选择面包屑": [
+            300.0,
+            259.0,
+            900.0,
+            281.0
+          ],
+          "qi-面包屑: 聚焦下一段": [
+            300.0,
+            281.0,
+            900.0,
+            303.0
+          ],
+          "qi-面包屑: 聚焦上一段": [
+            300.0,
+            303.0,
+            900.0,
+            325.0
+          ],
+          "qi-面包屑: 聚焦下一段并保持选择器": [
+            300.0,
+            325.0,
+            900.0,
+            347.0
+          ],
+          "qi-面包屑: 聚焦上一段并保持选择器": [
+            300.0,
+            347.0,
+            900.0,
+            369.0
+          ],
+          "qi-面包屑: 选择面包屑": [
+            300.0,
+            369.0,
+            900.0,
+            391.0
+          ],
+          "qi-面包屑: 打开面包屑位置": [
+            300.0,
+            391.0,
+            900.0,
+            413.0
+          ],
+          "qi-面包屑: 返回编辑器": [
+            300.0,
+            413.0,
+            900.0,
+            435.0
+          ],
+          "qi-文件: 打开文件夹…": [
+            300.0,
+            435.0,
+            900.0,
+            457.0
+          ],
+          "qi-文件: 打开最近项目": [
+            300.0,
+            457.0,
+            900.0,
+            479.0
+          ],
+          "qi-Merge Editor: Open Merge Editor": [
+            300.0,
+            479.0,
+            900.0,
+            501.0
+          ],
+          "qi-编辑器: 固定编辑器": [
+            300.0,
+            501.0,
+            900.0,
+            523.0
+          ],
+          "qi-编辑器: 取消固定编辑器": [
+            300.0,
+            523.0,
+            900.0,
+            545.0
+          ],
+          "qi-编辑器: 切换编辑器固定状态": [
+            300.0,
+            545.0,
+            900.0,
+            567.0
+          ],
+          "qi-编辑器: 关闭活动编辑器": [
+            300.0,
+            567.0,
+            900.0,
+            589.0
+          ],
+          "qi-文件: 明确关闭活动编辑器": [
+            300.0,
+            589.0,
+            900.0,
+            611.0
+          ],
+          "qi-视图: 按最近使用顺序显示活动组编辑器": [
+            300.0,
+            611.0,
+            900.0,
+            633.0
+          ],
+          "qi-视图: 按最近使用顺序显示所有编辑器": [
+            300.0,
+            633.0,
+            900.0,
+            655.0
+          ],
+          "qi-视图: 快速打开组内上一个最近使用的编辑器": [
+            300.0,
+            655.0,
+            900.0,
+            677.0
+          ]
+        }
+      },
+      "initial-command-query": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">diag",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "replace-with-goto": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "goto-preview": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              15,
+              15
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "replace-with-document-symbols": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-alpha",
+          "qi-button-alpha-0",
+          "qi-zebra"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-alpha": [
+            300.0,
+            97.0,
+            900.0,
+            119.0
+          ],
+          "qi-button-alpha-0": [
+            574.5465698242188,
+            97.0,
+            596.5465698242188,
+            119.0
+          ],
+          "qi-zebra": [
+            300.0,
+            119.0,
+            900.0,
+            141.0
+          ]
+        }
+      },
+      "same-provider-category": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@:alpha",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-function",
+          "qi-alpha",
+          "qi-button-alpha-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-function": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "qi-alpha": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-alpha-0": [
+            574.5465698242188,
+            123.0,
+            596.5465698242188,
+            145.0
+          ]
+        }
+      },
+      "clear-provider-to-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            831.1056518554688,
+            123.0,
+            853.1056518554688,
+            145.0
+          ]
+        }
+      },
+      "open-help": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-…",
+          "qi-:",
+          "qi->",
+          "qi-@",
+          "qi-@:",
+          "qi-#"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-…": [
+            300.0,
+            97.0,
+            900.0,
+            141.0
+          ],
+          "qi-:": [
+            300.0,
+            141.0,
+            900.0,
+            185.0
+          ],
+          "qi->": [
+            300.0,
+            185.0,
+            900.0,
+            229.0
+          ],
+          "qi-@": [
+            300.0,
+            229.0,
+            900.0,
+            273.0
+          ],
+          "qi-@:": [
+            300.0,
+            273.0,
+            900.0,
+            295.0
+          ],
+          "qi-#": [
+            300.0,
+            295.0,
+            900.0,
+            339.0
+          ]
+        }
+      },
+      "clear-help-to-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            831.1056518554688,
+            123.0,
+            853.1056518554688,
+            145.0
+          ]
+        }
+      },
+      "second-command-prefix": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近使用",
+          "qi-查看: 清除命令历史记录",
+          "qi-文件: 保存",
+          "qi-查看: 诊断面板",
+          "qi-separator-其他命令",
+          "qi-文件: 新建文本文件",
+          "qi-面包屑: 聚焦面包屑",
+          "qi-面包屑: 聚焦并选择面包屑",
+          "qi-面包屑: 聚焦下一段",
+          "qi-面包屑: 聚焦上一段",
+          "qi-面包屑: 聚焦下一段并保持选择器",
+          "qi-面包屑: 聚焦上一段并保持选择器",
+          "qi-面包屑: 选择面包屑",
+          "qi-面包屑: 打开面包屑位置",
+          "qi-面包屑: 返回编辑器",
+          "qi-文件: 打开文件夹…",
+          "qi-文件: 打开最近项目",
+          "qi-Merge Editor: Open Merge Editor",
+          "qi-编辑器: 固定编辑器",
+          "qi-编辑器: 取消固定编辑器",
+          "qi-编辑器: 切换编辑器固定状态",
+          "qi-编辑器: 关闭活动编辑器",
+          "qi-文件: 明确关闭活动编辑器",
+          "qi-视图: 按最近使用顺序显示活动组编辑器",
+          "qi-视图: 按最近使用顺序显示所有编辑器",
+          "qi-视图: 快速打开组内上一个最近使用的编辑器"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近使用": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "qi-查看: 清除命令历史记录": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-文件: 保存": [
+            300.0,
+            145.0,
+            900.0,
+            167.0
+          ],
+          "qi-查看: 诊断面板": [
+            300.0,
+            167.0,
+            900.0,
+            189.0
+          ],
+          "qi-separator-其他命令": [
+            300.0,
+            189.0,
+            900.0,
+            215.0
+          ],
+          "qi-文件: 新建文本文件": [
+            300.0,
+            215.0,
+            900.0,
+            237.0
+          ],
+          "qi-面包屑: 聚焦面包屑": [
+            300.0,
+            237.0,
+            900.0,
+            259.0
+          ],
+          "qi-面包屑: 聚焦并选择面包屑": [
+            300.0,
+            259.0,
+            900.0,
+            281.0
+          ],
+          "qi-面包屑: 聚焦下一段": [
+            300.0,
+            281.0,
+            900.0,
+            303.0
+          ],
+          "qi-面包屑: 聚焦上一段": [
+            300.0,
+            303.0,
+            900.0,
+            325.0
+          ],
+          "qi-面包屑: 聚焦下一段并保持选择器": [
+            300.0,
+            325.0,
+            900.0,
+            347.0
+          ],
+          "qi-面包屑: 聚焦上一段并保持选择器": [
+            300.0,
+            347.0,
+            900.0,
+            369.0
+          ],
+          "qi-面包屑: 选择面包屑": [
+            300.0,
+            369.0,
+            900.0,
+            391.0
+          ],
+          "qi-面包屑: 打开面包屑位置": [
+            300.0,
+            391.0,
+            900.0,
+            413.0
+          ],
+          "qi-面包屑: 返回编辑器": [
+            300.0,
+            413.0,
+            900.0,
+            435.0
+          ],
+          "qi-文件: 打开文件夹…": [
+            300.0,
+            435.0,
+            900.0,
+            457.0
+          ],
+          "qi-文件: 打开最近项目": [
+            300.0,
+            457.0,
+            900.0,
+            479.0
+          ],
+          "qi-Merge Editor: Open Merge Editor": [
+            300.0,
+            479.0,
+            900.0,
+            501.0
+          ],
+          "qi-编辑器: 固定编辑器": [
+            300.0,
+            501.0,
+            900.0,
+            523.0
+          ],
+          "qi-编辑器: 取消固定编辑器": [
+            300.0,
+            523.0,
+            900.0,
+            545.0
+          ],
+          "qi-编辑器: 切换编辑器固定状态": [
+            300.0,
+            545.0,
+            900.0,
+            567.0
+          ],
+          "qi-编辑器: 关闭活动编辑器": [
+            300.0,
+            567.0,
+            900.0,
+            589.0
+          ],
+          "qi-文件: 明确关闭活动编辑器": [
+            300.0,
+            589.0,
+            900.0,
+            611.0
+          ],
+          "qi-视图: 按最近使用顺序显示活动组编辑器": [
+            300.0,
+            611.0,
+            900.0,
+            633.0
+          ],
+          "qi-视图: 按最近使用顺序显示所有编辑器": [
+            300.0,
+            633.0,
+            900.0,
+            655.0
+          ],
+          "qi-视图: 快速打开组内上一个最近使用的编辑器": [
+            300.0,
+            655.0,
+            900.0,
+            677.0
+          ]
+        }
+      },
+      "command-text-before-deletion": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">symbol-sample.rs:3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "remove-prefix-retain-query": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "symbol-sample.rs:3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            300.0,
+            97.0,
+            900.0,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            312.0,
+            105.0,
+            355.5999984741211,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            300.0,
+            123.0,
+            900.0,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            831.1056518554688,
+            123.0,
+            853.1056518554688,
+            145.0
+          ]
+        }
+      },
+      "escape-restores-source": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              335.52,
+              102.0,
+              1104.0,
+              780.0000000000001
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      }
+    },
+    "diskSha256": "65eaaa5722f5d4df2a38486723518324318dbef9bca6ebf087182308a35126da",
+    "passed": true,
+    "cleanup": {
+      "exitCode": -15,
+      "driverSentSigterm": true
+    }
+  },
+  "windows": {
+    "tree": "5dec89baf7f201f43ba9d80a21f07a929090339f",
+    "appSha256": "451864a5863b9bf85974e07c8f926ddb03f57cb75cb9987ca10da363ef4249d9",
+    "aotSha256": "c3b34a878a17c935f88b82aba30453afe3e0a02d41578081ae31e9b99ed04865",
+    "fixtureSha256": "eeaa31d7dc296f8ec622435d16784dddbe9dac1960eba33b2b3400d1058de3e3",
+    "runnerSha256": "5de6869f7b09e6a2bfcaee76079ec27d6b732f66836ce8037b722f26105e7280",
+    "steps": {
+      "ready": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": false,
+        "boxes": {}
+      },
+      "editor-focus": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              28
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "editor-selected": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "initial-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "initial-command-prefix": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近使用",
+          "qi-查看: 清除命令历史记录",
+          "qi-文件: 保存",
+          "qi-查看: 诊断面板",
+          "qi-separator-其他命令",
+          "qi-文件: 新建文本文件",
+          "qi-面包屑: 聚焦面包屑",
+          "qi-面包屑: 聚焦并选择面包屑",
+          "qi-面包屑: 聚焦下一段",
+          "qi-面包屑: 聚焦上一段",
+          "qi-面包屑: 聚焦下一段并保持选择器",
+          "qi-面包屑: 聚焦上一段并保持选择器",
+          "qi-面包屑: 选择面包屑",
+          "qi-面包屑: 打开面包屑位置",
+          "qi-面包屑: 返回编辑器",
+          "qi-文件: 打开文件夹…",
+          "qi-文件: 打开最近项目",
+          "qi-Merge Editor: Open Merge Editor",
+          "qi-编辑器: 固定编辑器",
+          "qi-编辑器: 取消固定编辑器",
+          "qi-编辑器: 切换编辑器固定状态",
+          "qi-编辑器: 关闭活动编辑器"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近使用": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "qi-查看: 清除命令历史记录": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-文件: 保存": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            167.0
+          ],
+          "qi-查看: 诊断面板": [
+            188.39999999999998,
+            167.0,
+            788.4,
+            189.0
+          ],
+          "qi-separator-其他命令": [
+            188.39999999999998,
+            189.0,
+            788.4,
+            215.0
+          ],
+          "qi-文件: 新建文本文件": [
+            188.39999999999998,
+            215.0,
+            788.4,
+            237.0
+          ],
+          "qi-面包屑: 聚焦面包屑": [
+            188.39999999999998,
+            237.0,
+            788.4,
+            259.0
+          ],
+          "qi-面包屑: 聚焦并选择面包屑": [
+            188.39999999999998,
+            259.0,
+            788.4,
+            281.0
+          ],
+          "qi-面包屑: 聚焦下一段": [
+            188.39999999999998,
+            281.0,
+            788.4,
+            303.0
+          ],
+          "qi-面包屑: 聚焦上一段": [
+            188.39999999999998,
+            303.0,
+            788.4,
+            325.0
+          ],
+          "qi-面包屑: 聚焦下一段并保持选择器": [
+            188.39999999999998,
+            325.0,
+            788.4,
+            347.0
+          ],
+          "qi-面包屑: 聚焦上一段并保持选择器": [
+            188.39999999999998,
+            347.0,
+            788.4,
+            369.0
+          ],
+          "qi-面包屑: 选择面包屑": [
+            188.39999999999998,
+            369.0,
+            788.4,
+            391.0
+          ],
+          "qi-面包屑: 打开面包屑位置": [
+            188.39999999999998,
+            391.0,
+            788.4,
+            413.0
+          ],
+          "qi-面包屑: 返回编辑器": [
+            188.39999999999998,
+            413.0,
+            788.4,
+            435.0
+          ],
+          "qi-文件: 打开文件夹…": [
+            188.39999999999998,
+            435.0,
+            788.4,
+            457.0
+          ],
+          "qi-文件: 打开最近项目": [
+            188.39999999999998,
+            457.0,
+            788.4,
+            479.0
+          ],
+          "qi-Merge Editor: Open Merge Editor": [
+            188.39999999999998,
+            479.0,
+            788.4,
+            501.0
+          ],
+          "qi-编辑器: 固定编辑器": [
+            188.39999999999998,
+            501.0,
+            788.4,
+            523.0
+          ],
+          "qi-编辑器: 取消固定编辑器": [
+            188.39999999999998,
+            523.0,
+            788.4,
+            545.0
+          ],
+          "qi-编辑器: 切换编辑器固定状态": [
+            188.39999999999998,
+            545.0,
+            788.4,
+            567.0
+          ],
+          "qi-编辑器: 关闭活动编辑器": [
+            188.39999999999998,
+            567.0,
+            788.4,
+            589.0
+          ]
+        }
+      },
+      "initial-command-query": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">diag",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "replace-with-goto": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "goto-preview": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              15,
+              15
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到行/列（:行:列，::字符偏移）",
+            "value": ":3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "replace-with-document-symbols": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-alpha",
+          "qi-button-alpha-0",
+          "qi-zebra"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-alpha": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            119.0
+          ],
+          "qi-button-alpha-0": [
+            462.29013671875,
+            97.0,
+            484.29013671875,
+            119.0
+          ],
+          "qi-zebra": [
+            188.39999999999998,
+            119.0,
+            788.4,
+            141.0
+          ]
+        }
+      },
+      "same-provider-category": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              0,
+              0
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "转到符号（@名称，@: 按类别）",
+            "value": "@:alpha",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-function",
+          "qi-alpha",
+          "qi-button-alpha-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-function": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "qi-alpha": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-alpha-0": [
+            462.29013671875,
+            123.0,
+            484.29013671875,
+            145.0
+          ]
+        }
+      },
+      "clear-provider-to-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "open-help": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "显示快速访问入口",
+            "value": "?",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-…",
+          "qi-:",
+          "qi->",
+          "qi-@",
+          "qi-@:",
+          "qi-#"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-…": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            141.0
+          ],
+          "qi-:": [
+            188.39999999999998,
+            141.0,
+            788.4,
+            185.0
+          ],
+          "qi->": [
+            188.39999999999998,
+            185.0,
+            788.4,
+            229.0
+          ],
+          "qi-@": [
+            188.39999999999998,
+            229.0,
+            788.4,
+            273.0
+          ],
+          "qi-@:": [
+            188.39999999999998,
+            273.0,
+            788.4,
+            295.0
+          ],
+          "qi-#": [
+            188.39999999999998,
+            295.0,
+            788.4,
+            339.0
+          ]
+        }
+      },
+      "clear-help-to-file": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "second-command-prefix": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近使用",
+          "qi-查看: 清除命令历史记录",
+          "qi-文件: 保存",
+          "qi-查看: 诊断面板",
+          "qi-separator-其他命令",
+          "qi-文件: 新建文本文件",
+          "qi-面包屑: 聚焦面包屑",
+          "qi-面包屑: 聚焦并选择面包屑",
+          "qi-面包屑: 聚焦下一段",
+          "qi-面包屑: 聚焦上一段",
+          "qi-面包屑: 聚焦下一段并保持选择器",
+          "qi-面包屑: 聚焦上一段并保持选择器",
+          "qi-面包屑: 选择面包屑",
+          "qi-面包屑: 打开面包屑位置",
+          "qi-面包屑: 返回编辑器",
+          "qi-文件: 打开文件夹…",
+          "qi-文件: 打开最近项目",
+          "qi-Merge Editor: Open Merge Editor",
+          "qi-编辑器: 固定编辑器",
+          "qi-编辑器: 取消固定编辑器",
+          "qi-编辑器: 切换编辑器固定状态",
+          "qi-编辑器: 关闭活动编辑器"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近使用": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "qi-查看: 清除命令历史记录": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-文件: 保存": [
+            188.39999999999998,
+            145.0,
+            788.4,
+            167.0
+          ],
+          "qi-查看: 诊断面板": [
+            188.39999999999998,
+            167.0,
+            788.4,
+            189.0
+          ],
+          "qi-separator-其他命令": [
+            188.39999999999998,
+            189.0,
+            788.4,
+            215.0
+          ],
+          "qi-文件: 新建文本文件": [
+            188.39999999999998,
+            215.0,
+            788.4,
+            237.0
+          ],
+          "qi-面包屑: 聚焦面包屑": [
+            188.39999999999998,
+            237.0,
+            788.4,
+            259.0
+          ],
+          "qi-面包屑: 聚焦并选择面包屑": [
+            188.39999999999998,
+            259.0,
+            788.4,
+            281.0
+          ],
+          "qi-面包屑: 聚焦下一段": [
+            188.39999999999998,
+            281.0,
+            788.4,
+            303.0
+          ],
+          "qi-面包屑: 聚焦上一段": [
+            188.39999999999998,
+            303.0,
+            788.4,
+            325.0
+          ],
+          "qi-面包屑: 聚焦下一段并保持选择器": [
+            188.39999999999998,
+            325.0,
+            788.4,
+            347.0
+          ],
+          "qi-面包屑: 聚焦上一段并保持选择器": [
+            188.39999999999998,
+            347.0,
+            788.4,
+            369.0
+          ],
+          "qi-面包屑: 选择面包屑": [
+            188.39999999999998,
+            369.0,
+            788.4,
+            391.0
+          ],
+          "qi-面包屑: 打开面包屑位置": [
+            188.39999999999998,
+            391.0,
+            788.4,
+            413.0
+          ],
+          "qi-面包屑: 返回编辑器": [
+            188.39999999999998,
+            413.0,
+            788.4,
+            435.0
+          ],
+          "qi-文件: 打开文件夹…": [
+            188.39999999999998,
+            435.0,
+            788.4,
+            457.0
+          ],
+          "qi-文件: 打开最近项目": [
+            188.39999999999998,
+            457.0,
+            788.4,
+            479.0
+          ],
+          "qi-Merge Editor: Open Merge Editor": [
+            188.39999999999998,
+            479.0,
+            788.4,
+            501.0
+          ],
+          "qi-编辑器: 固定编辑器": [
+            188.39999999999998,
+            501.0,
+            788.4,
+            523.0
+          ],
+          "qi-编辑器: 取消固定编辑器": [
+            188.39999999999998,
+            523.0,
+            788.4,
+            545.0
+          ],
+          "qi-编辑器: 切换编辑器固定状态": [
+            188.39999999999998,
+            545.0,
+            788.4,
+            567.0
+          ],
+          "qi-编辑器: 关闭活动编辑器": [
+            188.39999999999998,
+            567.0,
+            788.4,
+            589.0
+          ]
+        }
+      },
+      "command-text-before-deletion": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "输入命令名（> 前缀可省）",
+            "value": ">symbol-sample.rs:3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      },
+      "remove-prefix-retain-query": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": false,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [
+          {
+            "hint": "文件名、路径或 path:行:列",
+            "value": "symbol-sample.rs:3:1",
+            "focused": true
+          }
+        ],
+        "quickRows": [
+          "qi-separator-最近打开",
+          "qi-symbol-sample.rs",
+          "qi-button-symbol-sample.rs-0"
+        ],
+        "nativeWindowFocused": true,
+        "boxes": {
+          "qi-separator-最近打开": [
+            188.39999999999998,
+            97.0,
+            788.4,
+            123.0
+          ],
+          "quick-group-最近打开": [
+            200.39999999999998,
+            105.0,
+            243.99999847412107,
+            120.0
+          ],
+          "qi-symbol-sample.rs": [
+            188.39999999999998,
+            123.0,
+            788.4,
+            145.0
+          ],
+          "qi-button-symbol-sample.rs-0": [
+            754.4,
+            123.0,
+            776.4,
+            145.0
+          ]
+        }
+      },
+      "escape-restores-source": {
+        "editors": [
+          {
+            "label": "symbol-sample.rs 主编辑器",
+            "documentId": 2,
+            "box": [
+              281.952,
+              102.0,
+              968.8000000000001,
+              550.4
+            ],
+            "rust": "fn alpha() {}\n\nfn zebra() {}\n",
+            "mirror": "fn alpha() {}\n\nfn zebra() {}\n",
+            "totalUtf16": 29,
+            "stateVersion": 1,
+            "dirty": false,
+            "editorFocused": true,
+            "startUtf16": 0,
+            "selection": [
+              28,
+              27
+            ]
+          }
+        ],
+        "pickers": [],
+        "quickRows": [],
+        "nativeWindowFocused": true,
+        "boxes": {}
+      }
+    },
+    "dpi": 120,
+    "activation": {
+      "requested": true,
+      "accepted": false,
+      "foreground": false
+    },
+    "diskSha256": "65eaaa5722f5d4df2a38486723518324318dbef9bca6ebf087182308a35126da",
+    "exit": 0,
+    "passed": true
+  }
+}

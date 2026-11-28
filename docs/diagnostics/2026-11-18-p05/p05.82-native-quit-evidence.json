@@ -1,0 +1,38 @@
+{
+  "productCommit": "d5c11f2637135425c0e30178ad4ce268e7554f74",
+  "runId": 44247766537,
+  "macosJobId": 134610765349,
+  "stepStartedAt": "2026-11-18T06:26:15Z",
+  "stepCompletedAt": "2026-11-18T06:26:33Z",
+  "prelaunchMatchingPids": [],
+  "boundApplication": {
+    "pid": 36952,
+    "launchDateUnix": 1794983175.9668989,
+    "bundlePath": "/Users/runner/work/Alula_Code/Alula_Code/app/build/macos/Build/Products/Release/alula_app.app",
+    "executablePath": "/Users/runner/work/Alula_Code/Alula_Code/app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
+  },
+  "openWrapperPid": 36949,
+  "axSelection": {
+    "identifier": "flutterMenuItemSelected:",
+    "title": "Quit Alula Code",
+    "role": "AXMenuItem",
+    "enabled": true,
+    "commandCharacter": "Q",
+    "commandModifiers": 0,
+    "parentIndex": 1,
+    "entryIndex": 9,
+    "matchReason": "AXTitle.lowercased.hasPrefix(quit)"
+  },
+  "states": [
+    {"app": "alive", "open": "alive", "timestamp": "2026-11-18T06:26:33Z"},
+    {"app": "gone", "open": "gone", "timestamp": "2026-11-18T06:26:33Z"}
+  ],
+  "observerStatus": 0,
+  "openStatus": 0,
+  "watchdogTimeoutObserved": false,
+  "quitObservationPassed": true,
+  "historicalQuitRootCauseResolved": false,
+  "macosDnd": "explicit skip: synthetic pointer route false, no Flutter events",
+  "fullFlutterTestsPassed": 1462,
+  "sourceLog": "p05.82-watchdog-macos-final.log"
+}

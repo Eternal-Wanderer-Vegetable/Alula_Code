@@ -1,0 +1,2705 @@
+{
+  "product": "c10ed73fd5cd20c8564d5563785bf5f16aa02af0",
+  "tree": "6ea1d008c5d93411777f1f0dbd4e40913c7476b0",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "6ea1d008c5d93411777f1f0dbd4e40913c7476b0",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "d37614dc70bf45849a09a3a7d32d99ad67c3d7b92955324b24281f2a91a89a43",
+      "app/lib/bridge/alula_ffi.dart": "8a2ae0a478fdefade8593c1abc1b0b0c18234ab6b25ff56fa20c9596454d86b0",
+      "app/lib/editor/editor_rendering.dart": "badcb4167993502352415ae2584611484d2822dd9a320ff70d125273d16073a6",
+      "app/lib/editor/rust_text_input_field.dart": "22de0382bd997aaca0dffdfc5f395a6a0fc539e7a03d3698b295035610180d19",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "af2b7c8b462b796d4e422fcfa97ccf6d6f9cf86677f653b5756a9acb06edcadb",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "0db889fe71333817f8e183f2141e6a46a45a549d03f5cd33d78d27d4d6af56a9",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "ec749a3536c0d8691124fe61cd26642cc0fe7f4638c091d5303caed788bde3dd",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "a5ec7474ab14b08faf0cca36bdecbad54efd948962f5818ba4625d3550078209",
+      "crates/editor-core/src/ffi.rs": "08f139ad59d69ec812f26c433060cb4a6682cabcedc4d30ba71a931874275ab6",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "fda02938b260f317b7a4b9d24cdb6306d45dc9dca69ccb3aebc7d1cebd786bab",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "4ea6db88947d1563979c2df49dbc4b9303c5abea2db8d7eed3f59b3edd26b1b7"
+    },
+    "fixtureSha256": "005c69085eb6246c6776d95525f44b34534154df7d3d479b8247593c7696a7b1",
+    "abi": 46,
+    "nativeCoreSha256": "f6f74c08bec8c98de22fe00e9722a7ce00f4ba6f350a617b6ffa99e63ee521dd"
+  },
+  "fixtureSha256": "005c69085eb6246c6776d95525f44b34534154df7d3d479b8247593c7696a7b1",
+  "acceptanceDriverSha256": "1a6882bbd20d671fefcb18376c584602be58101700b244160b9d1b1284164f11",
+  "codeOss": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "sources": {
+      "src/vs/workbench/contrib/markers/browser/markersView.ts": "f7db413f12fcde3f895b630ac79f93b9c8d975ce05f66b7e842a905113713f1f",
+      "src/vs/workbench/contrib/markers/browser/markers.contribution.ts": "6ca0bf46abb00d239cea998d2adbb782b7b9ac8e45a715d34d1d837dc0f5885b"
+    }
+  },
+  "localLogsSha256": {
+    "p05-292-full.log": "8cb300ad1b3c2f850afa329b75ddb72731e6a3bb2b04bdbf0bc4054a391098be",
+    "p05-292-focused.log": "4b04715abb5020bd19481cd672d99ce8190b92a783e5b0bda79f63d369797a70",
+    "p05-292-targeted.log": "447ad1cca78a7b7863cb7429162db26782893266967273e538d769f7479e94b4",
+    "p05-292-analyze.log": "16dd816316ca7082547dfd208a4067ab2eef119dc76bb4c73bf6a456a2cb7457",
+    "p05-292-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p05-292-offline-pub.log": "b5b38d80cf4eca48eaa82b2b018a4b6f584412d760bd7b885e0ce5549ef4bcfe"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 6,
+        "affected_count": 0,
+        "changed_files": 3,
+        "risk_level": "low"
+      },
+      "sha256": "58a6e06542453215a369cc6eb8f27c764118d5c075227d1edf121fbccb43702d"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 6,
+        "affected_count": 0,
+        "changed_files": 3,
+        "risk_level": "low"
+      },
+      "sha256": "58a6e06542453215a369cc6eb8f27c764118d5c075227d1edf121fbccb43702d"
+    }
+  },
+  "preedit": {
+    "_buildPanel": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "sha256": "f5b11d371f4a54a6af035651cb2944cb682aa76257583c5c40b36f2b0531b06e"
+    },
+    "_buildDiagnosticResults": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "ffdbdd80e4c767222ef57fc39b23ca6be288f0206e6f88bc430fc45fb06f407f"
+    },
+    "dispose": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "c3ee4997640149305addbeec47ee868156c3a439f0d7820fed3966eb9902b56e"
+    }
+  },
+  "macosPhysical": "deferred",
+  "windows": {
+    "tree": "6ea1d008c5d93411777f1f0dbd4e40913c7476b0",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "ff7bbe42472ecb59d4c5ab16c6335c8a4d64e2469d2931191cb9f22a02bf6e92",
+    "fixtureSha256": "005c69085eb6246c6776d95525f44b34534154df7d3d479b8247593c7696a7b1",
+    "runnerSha256": "b34d9ee8f9e6f192a0aaa81e18b111ce036c7518c1c024625ddbf8c752727dc7",
+    "observedInitialWindowClass": "Chrome_WidgetWin_1",
+    "steps": {
+      "ready": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "initial-caret": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "provider-ready": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "problems-title-has-collapse-all": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 2, Col 27]",
+            "locationLabel": "other.rs，第 2 行，第 27 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focus-filter-before-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              623.104,
+              976.8,
+              648.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 2, Col 27]",
+            "locationLabel": "other.rs，第 2 行，第 27 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "only-left-group-matches-before-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "bulk-collapse-keeps-query-and-focuses-first-header": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "return-to-filter-after-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "clearing-query-reveals-both-collapsed-groups": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "right-can-expand-independently-after-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focus-filter-to-enter-a-visible-diagnostic": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focuses-only-visible-right-marker": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": true
+          }
+        ]
+      },
+      "navigation-after-bulk-collapse-keeps-exact-range": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "other-panel-tab-hides-collapse-all": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 1,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "problems-tab-restores-action-and-groups": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "bulk-collapse-focuses-first-of-both-headers": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "closed-panel-hides-action": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "reopening-retains-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              466.104,
+              976.8,
+              491.104
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              273.952,
+              491.104,
+              976.8,
+              516.104
+            ]
+          }
+        ],
+        "rows": []
+      }
+    },
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "dpi": 120,
+    "nativeFocus": {
+      "ready": {
+        "available": true,
+        "isRoot": true,
+        "isChild": false,
+        "focusClass": "FLUTTER_RUNNER_WIN32_WINDOW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "initial-caret": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "provider-ready": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "problems-title-has-collapse-all": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "focus-filter-before-bulk-collapse": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "only-left-group-matches-before-bulk-collapse": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "bulk-collapse-keeps-query-and-focuses-first-header": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "return-to-filter-after-bulk-collapse": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "clearing-query-reveals-both-collapsed-groups": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "right-can-expand-independently-after-bulk-collapse": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "focus-filter-to-enter-a-visible-diagnostic": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "focuses-only-visible-right-marker": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "navigation-after-bulk-collapse-keeps-exact-range": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "other-panel-tab-hides-collapse-all": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "problems-tab-restores-action-and-groups": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "bulk-collapse-focuses-first-of-both-headers": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "closed-panel-hides-action": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      "reopening-retains-bulk-collapse": {
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    },
+    "nativeKeyFocus": [
+      {
+        "key": "ctrl+g",
+        "available": true,
+        "isRoot": true,
+        "isChild": false,
+        "focusClass": "FLUTTER_RUNNER_WIN32_WINDOW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "F1",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+f",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+Down",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "Return",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      },
+      {
+        "key": "ctrl+shift+m",
+        "available": true,
+        "isRoot": false,
+        "isChild": true,
+        "focusClass": "FLUTTERVIEW",
+        "activeOwned": true,
+        "flags": 0,
+        "imeOpen": null,
+        "imeCompositionBytes": null,
+        "keyboardLanguage": "0x804"
+      }
+    ],
+    "characterDelaySeconds": 0.012,
+    "nativeClickChecks": [
+      {
+        "point": [
+          1752,
+          702
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          702
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          2111,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2111,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1752,
+          818
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          818
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1752,
+          741
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1752,
+          741
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1425,
+          679
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1425,
+          679
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          1350,
+          679
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          1350,
+          679
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      },
+      {
+        "point": [
+          2131,
+          681
+        ],
+        "targetOwnedBeforeMove": true,
+        "actualPoint": [
+          2131,
+          681
+        ],
+        "targetOwnedAtClick": true,
+        "foregroundOwnedAtClick": true,
+        "alt": false,
+        "ctrl": false,
+        "double": false
+      }
+    ],
+    "fixturePositions": [
+      "1:8",
+      "rust-analyzer",
+      "u32"
+    ],
+    "kind": "problemsCollapseAll",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "f928ce8f705f86936c484177eae8a7438e8dbe5cffbf9c7bf9a78c7ec8b0c64d",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 1,
+        "line": 1,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 1,
+        "line": 1,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "firstFixtureReportSha256": "a54cc2a0c76f40c3bc5bfa4fc8f2b5e0aa67097e9d2a8980cddfbeb150152115",
+    "rawReportSha256": "2cce1a0f9914c4997e3c3f05d73525fd8e6dcbd9fce5f2eacd6713570d2a0a68"
+  },
+  "linux": {
+    "display": ":99",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "tree": "6ea1d008c5d93411777f1f0dbd4e40913c7476b0",
+    "processTreeSamples": {
+      "ready": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 987,
+            "ppid": 986,
+            "private": 248233984,
+            "pss": 274905088,
+            "working_set": 326983680
+          }
+        ],
+        "root_pid": 987,
+        "total_private_bytes": 248233984,
+        "total_private_mib": 236.7,
+        "total_working_set_bytes": 326983680
+      }
+    },
+    "aotSha256": "7b389e064f7fb7e4a79a5013a827b0f4c1c1c13ca7b617028096727b771064bc",
+    "fixtureSha256": "005c69085eb6246c6776d95525f44b34534154df7d3d479b8247593c7696a7b1",
+    "runnerSha256": "e5455dcfd3d208ac2a5360f2fd1a39e580d048048a64aec134d73fcd55dbbb0e",
+    "steps": {
+      "ready": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          0,
+          0
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "initial-caret": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "provider-ready": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "problems-title-has-collapse-all": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 2, Col 27]",
+            "locationLabel": "other.rs，第 2 行，第 27 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focus-filter-before-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              651.52,
+              1200.0,
+              676.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "location": "[Ln 2, Col 27]",
+            "locationLabel": "other.rs，第 2 行，第 27 列",
+            "canOpen": true,
+            "focused": false
+          },
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "only-left-group-matches-before-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `u32`, found `&str`",
+            "location": "[Ln 1, Col 33]",
+            "locationLabel": "other.rs，第 1 行，第 33 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "bulk-collapse-keeps-query-and-focuses-first-header": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "return-to-filter-after-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "u32",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": "1 / 3",
+        "filterCountLabel": "显示 1 条，共 3 条",
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "clearing-query-reveals-both-collapsed-groups": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "right-can-expand-independently-after-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focus-filter-to-enter-a-visible-diagnostic": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": true,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "focuses-only-visible-right-marker": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 3,
+        "version": 1,
+        "selection": [
+          7,
+          7
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": true
+          }
+        ]
+      },
+      "navigation-after-bulk-collapse-keeps-exact-range": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "other-panel-tab-hides-collapse-all": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 1,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "problems-tab-restores-action-and-groups": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": true,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "message": "mismatched types\nexpected `usize`, found `bool`",
+            "location": "[Ln 1, Col 36]",
+            "locationLabel": "other.rs，第 1 行，第 36 列",
+            "canOpen": true,
+            "focused": false
+          }
+        ]
+      },
+      "bulk-collapse-focuses-first-of-both-headers": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": true,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": true,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": []
+      },
+      "closed-panel-hides-action": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": true,
+        "panelCollapsed": true,
+        "statusBarPanelCollapsed": true,
+        "panelTab": null,
+        "filterText": null,
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": false,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [],
+        "rows": []
+      },
+      "reopening-retains-bulk-collapse": {
+        "editor": "other.rs 主编辑器",
+        "documentId": 4,
+        "version": 1,
+        "selection": [
+          35,
+          40
+        ],
+        "nativeWindowFocused": true,
+        "editorFocused": false,
+        "panelCollapsed": false,
+        "statusBarPanelCollapsed": false,
+        "panelTab": 0,
+        "filterText": "",
+        "filterFocused": false,
+        "noFilterResults": false,
+        "noActiveFileProblems": false,
+        "problemsFocused": true,
+        "resetFiltersBounds": null,
+        "resetFiltersFocused": false,
+        "resultsFocused": false,
+        "resultsPrimary": false,
+        "editorFindBounds": null,
+        "filterCount": null,
+        "filterCountLabel": null,
+        "filterOptions": [],
+        "groupHeaders": [
+          {
+            "key": "problems-file-group-3",
+            "label": "other.rs，src/left，2 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              494.52,
+              1200.0,
+              519.52
+            ]
+          },
+          {
+            "key": "problems-file-group-4",
+            "label": "other.rs，src/right，1 条诊断",
+            "header": true,
+            "expanded": false,
+            "button": true,
+            "focused": false,
+            "bounds": [
+              327.52,
+              519.52,
+              1200.0,
+              544.52
+            ]
+          }
+        ],
+        "rows": []
+      }
+    },
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "characterDelayMs": 12,
+    "kind": "problemsCollapseAll",
+    "sourceSha256": {
+      "Cargo.toml": "9a9dcbc845b2f4439f580474893f503e65b498cbbf5812dd0ab7d455ccc4057d",
+      "src/lib.rs": "3b33d2b24954ef7241a206b580406c2a47efe32e48b3bc99d24ba5a02ebd7ff5",
+      "src/left/other.rs": "f928ce8f705f86936c484177eae8a7438e8dbe5cffbf9c7bf9a78c7ec8b0c64d",
+      "src/right/other.rs": "21e9d1855fc09f5484baacea6650be773b34e97e19e05d23f8b68ab1c2a8f0ef"
+    },
+    "rawDiagnostics": [
+      {
+        "character": 32,
+        "documentVersion": 1,
+        "endCharacter": 42,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `u32`, found `&str`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 17,
+        "documentVersion": 1,
+        "endCharacter": 20,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `u32` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      },
+      {
+        "character": 26,
+        "documentVersion": 1,
+        "endCharacter": 27,
+        "endLine": 1,
+        "line": 1,
+        "message": "mismatched types\nexpected `bool`, found integer",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 19,
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 1,
+        "line": 1,
+        "message": "expected `bool` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "otherRawDiagnostics": [
+      {
+        "character": 35,
+        "documentVersion": 1,
+        "endCharacter": 40,
+        "endLine": 0,
+        "line": 0,
+        "message": "mismatched types\nexpected `usize`, found `bool`",
+        "severity": 1,
+        "source": "rustc"
+      },
+      {
+        "character": 18,
+        "documentVersion": 1,
+        "endCharacter": 23,
+        "endLine": 0,
+        "line": 0,
+        "message": "expected `usize` because of return type",
+        "severity": 4,
+        "source": "rustc"
+      }
+    ],
+    "exit": 0,
+    "passed": true,
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    },
+    "firstFixtureReportSha256": "f0ba42cc0cec65be1e386811cd6c2652e7fd28b6141b59a537a8cf5f766def3c",
+    "rawReportSha256": "3d677ec327311a3abb4a85f67027c284ff880cc74adb1058b5c611768d3d7401"
+  }
+}

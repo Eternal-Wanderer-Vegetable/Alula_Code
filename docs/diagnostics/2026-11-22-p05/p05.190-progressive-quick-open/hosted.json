@@ -1,0 +1,269 @@
+{
+  "capturedAt": "2026-11-22T09:57:25.375659+00:00",
+  "product": "a0465de9bc86298a910fa70c1f842eac2f9d6b5a",
+  "tree": "4e0ff1a9a8878ea757e8acb9dbfe077f3bf0cbdf",
+  "ci": {
+    "conclusion": "success",
+    "databaseId": 45008935307,
+    "headSha": "a0465de9bc86298a910fa70c1f842eac2f9d6b5a",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45008935307",
+    "jobs": [
+      {
+        "databaseId": 137169629837,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:55:27Z",
+        "completedAt": "2026-11-22T09:56:58Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137169630874,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:44:09Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137169631173,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:55:06Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137169659554,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:43:45Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "ciAttempt1": {
+    "conclusion": "failure",
+    "databaseId": 45008935307,
+    "headSha": "a0465de9bc86298a910fa70c1f842eac2f9d6b5a",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45008935307/attempts/1",
+    "jobs": [
+      {
+        "databaseId": 137166680538,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:43:45Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137166680683,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:45:10Z",
+        "failedSteps": [
+          "Repeat async LSP workspace shutdown fixture on Windows"
+        ]
+      },
+      {
+        "databaseId": 137166680724,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:44:09Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137166680773,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:38Z",
+        "completedAt": "2026-11-22T09:55:06Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "windowsRustRetry": {
+    "firstAttemptWindowsJob": 137166680683,
+    "firstAttemptFailedIteration": 8,
+    "failureCode": "ShutdownFailed",
+    "timeoutMs": 1000,
+    "localWindowsRepeatsPassed": 10,
+    "localScratchBase": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "localIterationLogDigests": [
+      {
+        "iteration": 1,
+        "sha256": "e14d7519788015a3bbaeccae143a11c66f0a795afb241b52813ad9e462d80b36"
+      },
+      {
+        "iteration": 2,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 3,
+        "sha256": "3ca04e6e5050779ee629cff27bb80250b3752408c5596e077692497259ee8c21"
+      },
+      {
+        "iteration": 4,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 5,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 6,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 7,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 8,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 9,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      },
+      {
+        "iteration": 10,
+        "sha256": "69b97b501f186864a03502c2af0d077a4df46319654772dfc309888d0d377ade"
+      }
+    ]
+  },
+  "platform": {
+    "conclusion": "",
+    "databaseId": 45008932080,
+    "headSha": "a0465de9bc86298a910fa70c1f842eac2f9d6b5a",
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45008932080",
+    "jobs": [
+      {
+        "databaseId": 137166669729,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "conclusion": "",
+        "startedAt": "2026-11-22T09:43:36Z",
+        "completedAt": "0001-01-01T00:00:00Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137166669960,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:35Z",
+        "completedAt": "2026-11-22T09:47:39Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137166670039,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:43:35Z",
+        "completedAt": "2026-11-22T09:55:12Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "p05.189Evidence": {
+    "conclusion": "success",
+    "databaseId": 45007496004,
+    "headSha": "4fa03a4fbac4050c399bb0f8cea8b39e67f23cb9",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45007496004",
+    "jobs": [
+      {
+        "databaseId": 137162223704,
+        "name": "Rust (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:25:44Z",
+        "completedAt": "2026-11-22T09:26:22Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137162223891,
+        "name": "Flutter (analyze + test)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:25:43Z",
+        "completedAt": "2026-11-22T09:39:04Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137162223961,
+        "name": "Harness 文档结构校验",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:25:43Z",
+        "completedAt": "2026-11-22T09:25:51Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137162224124,
+        "name": "Rust (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:25:43Z",
+        "completedAt": "2026-11-22T09:27:39Z",
+        "failedSteps": []
+      }
+    ]
+  },
+  "p05.189Platform": {
+    "conclusion": "",
+    "databaseId": 45006359091,
+    "headSha": "9fc89a27b87e90dc573978ae5c7f9282d33d2b5f",
+    "name": "Platform Availability",
+    "status": "in_progress",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45006359091",
+    "jobs": [
+      {
+        "databaseId": 137158729487,
+        "name": "macOS build, launch smoke, and app package",
+        "status": "in_progress",
+        "conclusion": "",
+        "startedAt": "2026-11-22T09:12:09Z",
+        "completedAt": "0001-01-01T00:00:00Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137158729731,
+        "name": "Windows x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:11:59Z",
+        "completedAt": "2026-11-22T09:22:31Z",
+        "failedSteps": []
+      },
+      {
+        "databaseId": 137158729757,
+        "name": "Linux x64 build and launch smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "startedAt": "2026-11-22T09:11:59Z",
+        "completedAt": "2026-11-22T09:17:20Z",
+        "failedSteps": []
+      }
+    ]
+  }
+}

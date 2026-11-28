@@ -47,6 +47,8 @@ DynamicLibrary loadAlulaCore() {
   );
 }
 
+typedef LspDiagnosticsChangedNative = Void Function();
+
 /// C 导出函数的原始绑定。
 class AlulaFfi {
   final DynamicLibrary lib;
@@ -162,6 +164,10 @@ class AlulaFfi {
   late final Pointer<Utf8> Function(int, int) _docLineBoundary =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
           Pointer<Utf8> Function(int, int)>('alula_doc_line_boundary');
+
+  late final Pointer<Utf8> Function(int, int) _docFileLinkAt =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_doc_file_link_at');
 
   late final Pointer<Utf8> Function(int, int, int) _docWordPartOffset =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint32),
@@ -297,6 +303,38 @@ class AlulaFfi {
     'alula_diagnostics',
   );
 
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>)
+      _lspNextUnopenedDiagnostic = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_lsp_next_unopened_diagnostic',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>)
+      _lspUnopenedDiagnosticsPage = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_lsp_unopened_diagnostics_page',
+  );
+
+  late final Pointer<Void> Function(
+          int, Pointer<NativeFunction<LspDiagnosticsChangedNative>>)
+      lspDiagnosticsSubscribe = lib.lookupFunction<
+          Pointer<Void> Function(
+              Uint64, Pointer<NativeFunction<LspDiagnosticsChangedNative>>),
+          Pointer<Void> Function(
+              int, Pointer<NativeFunction<LspDiagnosticsChangedNative>>)>(
+    'alula_lsp_diagnostics_subscribe',
+  );
+
+  late final void Function(Pointer<Void>) lspDiagnosticsResume =
+      lib.lookupFunction<Void Function(Pointer<Void>),
+          void Function(Pointer<Void>)>('alula_lsp_diagnostics_resume');
+
+  late final void Function(Pointer<Void>) lspDiagnosticsUnsubscribe =
+      lib.lookupFunction<Void Function(Pointer<Void>),
+          void Function(Pointer<Void>)>('alula_lsp_diagnostics_unsubscribe');
+
   late final Pointer<Utf8> Function(int, int, int) _completion =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
           Pointer<Utf8> Function(int, int, int)>('alula_completion');
@@ -319,6 +357,12 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
           Pointer<Utf8> Function(int, int, int)>('alula_definition_start');
 
+  late final Pointer<Utf8> Function(int, int, int, int) _symbolLocationStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+          Pointer<Utf8> Function(int, int, int, int)>(
+    'alula_symbol_location_start',
+  );
+
   late final Pointer<Utf8> Function(int) _definitionPoll = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_definition_poll',
@@ -328,6 +372,64 @@ class AlulaFfi {
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_definition_cancel',
   );
+
+  late final int Function(int, int) hierarchyHasProvider = lib
+      .lookupFunction<Uint8 Function(Uint64, Uint8), int Function(int, int)>(
+        'alula_hierarchy_has_provider',
+      );
+
+  late final Pointer<Utf8> Function(int, int, int, int) _hierarchyPrepareStart =
+      lib.lookupFunction<
+        Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+        Pointer<Utf8> Function(int, int, int, int)
+      >('alula_hierarchy_prepare_start');
+
+  late final Pointer<Utf8> Function(int, int, int, Pointer<Utf8>, int)
+  _hierarchyExpandStart = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64, Uint64, Uint8, Pointer<Utf8>, Uint64),
+        Pointer<Utf8> Function(int, int, int, Pointer<Utf8>, int)
+      >('alula_hierarchy_expand_start');
+
+  late final Pointer<Utf8> Function(int) _hierarchyPoll = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64),
+        Pointer<Utf8> Function(int)
+      >('alula_hierarchy_poll');
+
+  late final Pointer<Utf8> Function(int) _hierarchyCancel = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64),
+        Pointer<Utf8> Function(int)
+      >('alula_hierarchy_cancel');
+
+  late final Pointer<Utf8> Function(int, int, int, int) _referencesStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint8, Uint64),
+          Pointer<Utf8> Function(int, int, int, int)>('alula_references_start');
+
+  late final Pointer<Utf8> Function(int) _referencesPoll = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_references_poll',
+  );
+
+  late final Pointer<Utf8> Function(int) _referencesCancel = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64),
+      Pointer<Utf8> Function(int)>('alula_references_cancel');
+
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _workspaceSymbolsStart = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint64),
+          Pointer<Utf8> Function(
+              int, Pointer<Utf8>, int)>('alula_workspace_symbols_start');
+
+  late final Pointer<Utf8> Function(int) _workspaceSymbolsPoll =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_workspace_symbols_poll');
+
+  late final Pointer<Utf8> Function(int) _workspaceSymbolsCancel =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_workspace_symbols_cancel');
 
   late final Pointer<Utf8> Function(int, int) _semanticTokensStart =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
@@ -556,6 +658,9 @@ class AlulaFfi {
   String docLineBoundaryJson(int id, int offsetUtf16) =>
       _takeJson(_docLineBoundary(id, offsetUtf16));
 
+  String docFileLinkAtJson(int id, int offsetUtf16) =>
+      _takeJson(_docFileLinkAt(id, offsetUtf16));
+
   String docWordPartOffsetJson(int id, int offsetUtf16, int direction) =>
       _takeJson(_docWordPartOffset(id, offsetUtf16, direction));
 
@@ -748,6 +853,24 @@ class AlulaFfi {
 
   String diagnosticsJson(int id) => _takeJson(_diagnostics(id));
 
+  String lspNextUnopenedDiagnosticJson(int id, String query) {
+    final input = query.toNativeUtf8();
+    try {
+      return _takeJson(_lspNextUnopenedDiagnostic(id, input));
+    } finally {
+      malloc.free(input);
+    }
+  }
+
+  String lspUnopenedDiagnosticsPageJson(int id, String query) {
+    final input = query.toNativeUtf8();
+    try {
+      return _takeJson(_lspUnopenedDiagnosticsPage(id, input));
+    } finally {
+      malloc.free(input);
+    }
+  }
+
   String completionJson(int id, int offsetUtf16, int timeoutMs) =>
       _takeJson(_completion(id, offsetUtf16, timeoutMs));
 
@@ -763,11 +886,80 @@ class AlulaFfi {
   String definitionStartJson(int id, int offsetUtf16, int timeoutMs) =>
       _takeJson(_definitionStart(id, offsetUtf16, timeoutMs));
 
+  String symbolLocationStartJson(
+    int id,
+    int offsetUtf16,
+    int kind,
+    int timeoutMs,
+  ) =>
+      _takeJson(_symbolLocationStart(id, offsetUtf16, kind, timeoutMs));
+
   String definitionPollJson(int requestId) =>
       _takeJson(_definitionPoll(requestId));
 
   String definitionCancelJson(int requestId) =>
       _takeJson(_definitionCancel(requestId));
+
+  String referencesStartJson(
+    int id,
+    int offsetUtf16,
+    bool includeDeclaration,
+    int timeoutMs,
+  ) =>
+      _takeJson(
+        _referencesStart(
+            id, offsetUtf16, includeDeclaration ? 1 : 0, timeoutMs),
+      );
+
+  String referencesPollJson(int requestId) =>
+      _takeJson(_referencesPoll(requestId));
+
+  String referencesCancelJson(int requestId) =>
+      _takeJson(_referencesCancel(requestId));
+
+  String hierarchyPrepareStartJson(
+    int id,
+    int offsetUtf16,
+    int kind,
+    int timeoutMs,
+  ) => _takeJson(_hierarchyPrepareStart(id, offsetUtf16, kind, timeoutMs));
+
+  String hierarchyExpandStartJson(
+    int id,
+    int version,
+    int direction,
+    String item,
+    int timeoutMs,
+  ) {
+    final nativeItem = item.toNativeUtf8();
+    try {
+      return _takeJson(
+        _hierarchyExpandStart(id, version, direction, nativeItem, timeoutMs),
+      );
+    } finally {
+      malloc.free(nativeItem);
+    }
+  }
+
+  String hierarchyPollJson(int requestId) =>
+      _takeJson(_hierarchyPoll(requestId));
+
+  String hierarchyCancelJson(int requestId) =>
+      _takeJson(_hierarchyCancel(requestId));
+
+  String workspaceSymbolsStartJson(int id, String query, int timeoutMs) {
+    final nativeQuery = query.toNativeUtf8();
+    try {
+      return _takeJson(_workspaceSymbolsStart(id, nativeQuery, timeoutMs));
+    } finally {
+      malloc.free(nativeQuery);
+    }
+  }
+
+  String workspaceSymbolsPollJson(int requestId) =>
+      _takeJson(_workspaceSymbolsPoll(requestId));
+  String workspaceSymbolsCancelJson(int requestId) =>
+      _takeJson(_workspaceSymbolsCancel(requestId));
 
   String semanticTokensStartJson(int id, int timeoutMs) =>
       _takeJson(_semanticTokensStart(id, timeoutMs));

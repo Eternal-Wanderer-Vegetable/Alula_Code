@@ -1,0 +1,24 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes the inactive group including sticky editors and preserves other focus
+00:01 +1: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes the inactive group including sticky editors and preserves other focus
+00:01 +2: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes the inactive group including sticky editors and preserves other focus
+00:02 +3: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: fullPath group close targets the nonfocused group, not its sorted first row
+00:02 +4: E:/temp/alula-pr3-20261117/app/test/editor_group_close_lifetime_test.dart: closeAllGroups releases mounted split editor views safely (breadcrumb focus: true)
+00:02 +5: E:/temp/alula-pr3-20261117/app/test/workbench_merge_result_close_test.dart: discard restores the latest saved merge result before close
+00:02 +6: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Cancel preserves the whole target group including sticky
+00:02 +7: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Cancel preserves the whole target group including sticky
+00:03 +8: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Cancel preserves the whole target group including sticky
+00:03 +9: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Cancel preserves the whole target group including sticky
+00:03 +10: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+00:04 +11: E:/temp/alula-pr3-20261117/app/test/workbench_merge_result_close_test.dart: merge plan uses undo edits and synchronizes split views
+00:04 +12: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Save writes before removing the group and its sticky view
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Save writes before removing the group and its sticky view
+00:05 +14: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: dirty Save writes before removing the group and its sticky view
+00:05 +15: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:06 +16: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+00:06 +17: E:/temp/alula-pr3-20261117/app/test/open_editors_close_group_test.dart: inline close removes a preexisting empty inactive group
+00:07 +18: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: save close all writes the target dirty file before closing and preserves other edits
+00:08 +19: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: save close all writes the target dirty file before closing and preserves other edits
+00:08 +20: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: closing one group preserves a shared dirty document and its remaining view
+00:09 +21: E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: only group rows offer group actions and dismissing the menu changes nothing
+00:10 +22: All tests passed!

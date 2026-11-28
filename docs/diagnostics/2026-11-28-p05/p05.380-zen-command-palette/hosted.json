@@ -1,0 +1,141 @@
+{
+  "product": "3b670fcd8b609ca6198f21b389352eb14f2d8473",
+  "tree": "835be98f62b23770166c64bac19649b40ba596ed",
+  "ci": {
+    "id": 46137056796,
+    "sha": "3b670fcd8b609ca6198f21b389352eb14f2d8473",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46137056796",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140954578504,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140954578662,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140954578668,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140954578698,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46137053375,
+    "sha": "3b670fcd8b609ca6198f21b389352eb14f2d8473",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46137053375",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140954568353,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140954568571,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140954568697,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46135747347,
+    "sha": "dd0e700c721a6054cc6368796a4074341924b43c",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46135747347",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140950544258,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140950544496,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140950544520,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140950544534,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 10,
+    "affected_count": 1,
+    "changed_files": 5,
+    "risk_level": "medium"
+  },
+  "preEditImpact": {
+    "show": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 14,
+        "processes_affected": 3,
+        "modules_affected": 1
+      }
+    },
+    "panel": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    "panel-build": {
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      }
+    },
+    "command-palette": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      }
+    }
+  }
+}

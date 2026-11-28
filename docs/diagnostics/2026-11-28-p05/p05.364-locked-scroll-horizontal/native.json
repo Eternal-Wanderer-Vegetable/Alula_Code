@@ -1,0 +1,1072 @@
+{
+  "product": "d7c8dfe290f7d0994642fd25a54ec4a0bd4eacee",
+  "tree": "f78be689ad6a7cc636e7b5d5e9b4ea19470d88db",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "01c8c6bd5b6d22053a82475017b51744530e497c48f306fb33caf372c020567d",
+  "sharedAcceptanceSha256": "7aa1efcf1d481a2535aa61f5ddf76d4a7ebbbf38403da0e6cddb52579c051ae6",
+  "pinnedReference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+    "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803",
+    "scrollDisplacementLines": [
+      66,
+      127
+    ],
+    "splitPanesLines": [
+      130,
+      150
+    ]
+  },
+  "baseline": {
+    "path": "docs/baselines/2026-10-26/alula-w2-empty.json",
+    "sha256": "377c455d360c18043824dd1cdbacfc08b7582fcab2aae8cfc57903e2d59764a2",
+    "platform": "windows",
+    "stablePrivateBytes": 199073792,
+    "workload": "empty window"
+  },
+  "initialLinuxTravel": {
+    "rawReportSha256": "f90858ec8a6e90065bb2ce3ccb60315c8954a4fbadffc2842c88bff2fedab353",
+    "horizontalTicks": 45,
+    "sourceX": 2544.0,
+    "targetX": 2438.0,
+    "targetMaxX": 2747.8397265625
+  },
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "ff2e7446372fa9d1e00186e4c8c6d17dace16cd9b87c681c2115dc952c78f38b",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "rawReportSha256": "0fe2c7ab32c45d820e551d2b3c2d0e7e4df5b17da0ea48770ab360276b1de9e3",
+    "runnerSha256": "91e76b14daf88370c8f5af559c6e55a2a25ed11126ce982e6ef50be928579769",
+    "fixtureFilesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "nativeChecks": [
+      "two-native-viewports-have-different-positive-horizontal-extents",
+      "editor-focused-for-native-keyboard-binding",
+      "unlocked-input-establishes-distinct-horizontal-and-vertical-origins",
+      "locking-retains-the-two-independent-origins",
+      "a-real-horizontal-wheel-moves-both-panes-by-the-same-delta",
+      "the-other-pane-can-drive-a-reverse-horizontal-motion",
+      "vertical-input-retains-the-current-horizontal-pair",
+      "a-narrower-pane-clamps-to-its-own-extent",
+      "reversing-from-the-limit-reuses-the-original-horizontal-anchors",
+      "focus-follows-the-native-click-before-splitting",
+      "same-document-splits-report-separate-horizontal-viewport-identities",
+      "horizontal-input-in-one-split-drives-its-peer-and-the-other-group",
+      "joining-releases-the-extra-horizontal-viewport-and-rebases",
+      "a-horizontal-wheel-still-syncs-after-join",
+      "unlocking-keeps-the-current-horizontal-positions",
+      "horizontal-input-is-independent-again-after-unlock",
+      "bom-crlf-emoji-and-file-bytes-preserved"
+    ],
+    "coordinates": {
+      "two-native-viewports-have-different-positive-horizontal-extents": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "editor-focused-for-native-keyboard-binding": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "unlocked-input-establishes-distinct-horizontal-and-vertical-origins": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 240.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 80.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "locking-retains-the-two-independent-origins": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 240.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 80.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "a-real-horizontal-wheel-moves-both-panes-by-the-same-delta": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 320.0,
+          "y": 240.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 160.0,
+          "y": 80.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "the-other-pane-can-drive-a-reverse-horizontal-motion": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 240.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 80.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "vertical-input-retains-the-current-horizontal-pair": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "a-narrower-pane-clamps-to-its-own-extent": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 3840.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 2574.65525,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "reversing-from-the-limit-reuses-the-original-horizontal-anchors": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 160.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 0.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "focus-follows-the-native-click-before-splitting": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 160.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 0.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "same-document-splits-report-separate-horizontal-viewport-identities": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 160.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 928697979,
+          "horizontalController": 215984636,
+          "x": 0.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2772.34325,
+          "min": 0.0,
+          "max": 899.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 0.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2772.34325,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "horizontal-input-in-one-split-drives-its-peer-and-the-other-group": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 928697979,
+          "horizontalController": 215984636,
+          "x": 80.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2772.34325,
+          "min": 0.0,
+          "max": 899.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2772.34325,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "joining-releases-the-extra-horizontal-viewport-and-rebases": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 240.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 80.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "a-horizontal-wheel-still-syncs-after-join": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 320.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 160.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "unlocking-keeps-the-current-horizontal-positions": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 320.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 160.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ],
+      "horizontal-input-is-independent-again-after-unlock": [
+        {
+          "doc": 10,
+          "controller": 369344254,
+          "horizontalController": 594393660,
+          "x": 320.0,
+          "y": 320.0,
+          "minX": 0.0,
+          "maxX": 4496.1786875,
+          "min": 0.0,
+          "max": 2516.2
+        },
+        {
+          "doc": 11,
+          "controller": 955409534,
+          "horizontalController": 1012602053,
+          "x": 240.0,
+          "y": 160.0,
+          "minX": 0.0,
+          "maxX": 2574.65525,
+          "min": 0.0,
+          "max": 899.2
+        }
+      ]
+    },
+    "wheelInput": [
+      {
+        "ticks": 3,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 3,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": -1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 45,
+        "axis": "x"
+      },
+      {
+        "ticks": -46,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      }
+    ],
+    "cleanExit": true,
+    "windowEnvironment": 120,
+    "memProbe": null
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "bcf7a24c9e88d5622fe59e120a1c25d49915230366b813d0a5eb6aad71424073",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "5b1dd19c009e50ee9f47a438a58de6205767364cb1f8e11f97f569840a8f07cd",
+    "runnerSha256": "077165409f4a780b1de1a6e38d3347457a468b0972b18c42ed422be847a7e8ad",
+    "fixtureFilesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "nativeChecks": [
+      "two-native-viewports-have-different-positive-horizontal-extents",
+      "editor-focused-for-native-keyboard-binding",
+      "unlocked-input-establishes-distinct-horizontal-and-vertical-origins",
+      "locking-retains-the-two-independent-origins",
+      "a-real-horizontal-wheel-moves-both-panes-by-the-same-delta",
+      "the-other-pane-can-drive-a-reverse-horizontal-motion",
+      "vertical-input-retains-the-current-horizontal-pair",
+      "a-narrower-pane-clamps-to-its-own-extent",
+      "reversing-from-the-limit-reuses-the-original-horizontal-anchors",
+      "focus-follows-the-native-click-before-splitting",
+      "same-document-splits-report-separate-horizontal-viewport-identities",
+      "horizontal-input-in-one-split-drives-its-peer-and-the-other-group",
+      "joining-releases-the-extra-horizontal-viewport-and-rebases",
+      "a-horizontal-wheel-still-syncs-after-join",
+      "unlocking-keeps-the-current-horizontal-positions",
+      "horizontal-input-is-independent-again-after-unlock",
+      "bom-crlf-emoji-and-file-bytes-preserved"
+    ],
+    "coordinates": {
+      "two-native-viewports-have-different-positive-horizontal-extents": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "editor-focused-for-native-keyboard-binding": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 0.0,
+          "y": 0.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "unlocked-input-establishes-distinct-horizontal-and-vertical-origins": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 159.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 53.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "locking-retains-the-two-independent-origins": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 159.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 53.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "a-real-horizontal-wheel-moves-both-panes-by-the-same-delta": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 212.0,
+          "y": 159.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 106.0,
+          "y": 53.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "the-other-pane-can-drive-a-reverse-horizontal-motion": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 159.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 53.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "vertical-input-retains-the-current-horizontal-pair": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "a-narrower-pane-clamps-to-its-own-extent": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 3339.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 2747.8397265625,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "reversing-from-the-limit-reuses-the-original-horizontal-anchors": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 106.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 0.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "focus-follows-the-native-click-before-splitting": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 106.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 0.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "same-document-splits-report-separate-horizontal-viewport-identities": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 106.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 829548144,
+          "horizontalController": 27420055,
+          "x": 0.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2896.2797265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 0.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2896.2797265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "horizontal-input-in-one-split-drives-its-peer-and-the-other-group": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 829548144,
+          "horizontalController": 27420055,
+          "x": 53.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2896.2797265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2896.2797265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "joining-releases-the-extra-horizontal-viewport-and-rebases": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 159.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 53.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "a-horizontal-wheel-still-syncs-after-join": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 212.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 106.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "unlocking-keeps-the-current-horizontal-positions": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 212.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 106.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ],
+      "horizontal-input-is-independent-again-after-unlock": [
+        {
+          "doc": 10,
+          "controller": 981670198,
+          "horizontalController": 283664203,
+          "x": 212.0,
+          "y": 212.0,
+          "minX": 0.0,
+          "maxX": 4719.27869140625,
+          "min": 0.0,
+          "max": 2517.0
+        },
+        {
+          "doc": 11,
+          "controller": 610924344,
+          "horizontalController": 576497208,
+          "x": 159.0,
+          "y": 106.0,
+          "minX": 0.0,
+          "maxX": 2747.8397265625,
+          "min": 0.0,
+          "max": 899.9999999999999
+        }
+      ]
+    },
+    "wheelInput": [
+      {
+        "ticks": 3,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 3,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": -1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "y"
+      },
+      {
+        "ticks": 60,
+        "axis": "x"
+      },
+      {
+        "ticks": -61,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      },
+      {
+        "ticks": 1,
+        "axis": "x"
+      }
+    ],
+    "cleanExit": true,
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "memProbe": {
+      "unlocked": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 42694,
+            "ppid": 42686,
+            "private": 247656448,
+            "pss": 273952768,
+            "working_set": 325971968
+          }
+        ],
+        "root_pid": 42694,
+        "total_private_bytes": 247656448,
+        "total_private_mib": 236.2,
+        "total_working_set_bytes": 325971968
+      },
+      "locked": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 42694,
+            "ppid": 42686,
+            "private": 257662976,
+            "pss": 283992064,
+            "working_set": 336031744
+          }
+        ],
+        "root_pid": 42694,
+        "total_private_bytes": 257662976,
+        "total_private_mib": 245.7,
+        "total_working_set_bytes": 336031744
+      },
+      "unlocked-after": {
+        "n_processes": 1,
+        "processes": [
+          {
+            "name": "alula_app",
+            "peak_private": 0,
+            "pid": 42694,
+            "ppid": 42686,
+            "private": 250630144,
+            "pss": 276954112,
+            "working_set": 328998912
+          }
+        ],
+        "root_pid": 42694,
+        "total_private_bytes": 250630144,
+        "total_private_mib": 239.0,
+        "total_working_set_bytes": 328998912
+      }
+    }
+  }
+}

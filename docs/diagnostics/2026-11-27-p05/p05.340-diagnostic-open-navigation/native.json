@@ -1,0 +1,1959 @@
+{
+  "product": "22aa66b6ab6052739d758581c8847c483b4c51d0",
+  "tree": "23cbb376d9a799b58b4b61220f3e3729bf4ad1d7",
+  "windowsSource": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "23cbb376d9a799b58b4b61220f3e3729bf4ad1d7",
+    "source": {
+      "app/lib/bridge/alula_core.dart": "525f74f75972dbb3f80c2b4fd7453c24179fb665f392938de4ad773bed61bd9d",
+      "app/lib/bridge/alula_ffi.dart": "3b64780901968b795f9ab50c5ae448c51f1af4410638c62e0790c8ad5f646be5",
+      "app/lib/editor/editor_rendering.dart": "165b0b774142acbcf2fb355c154b9266af6610e8af22a6b38ed034c4cb5b581b",
+      "app/lib/editor/editor_scroll_controller.dart": "985f5f45d887c0bf70dcf0be693aef548c0ca717cae53442f671f7763261344a",
+      "app/lib/editor/rust_text_input_field.dart": "d95fd38ea4d624a9b6a5541beca8fe4522a11510e2a93da7c6860abf2f7d3a2f",
+      "app/lib/editor/rust_text_input_window.dart": "f078a833473efdddfa70b4684bc1f9842fd7489646fd0d811d91b238092df970",
+      "app/lib/main.dart": "11e6213c8d3f56503d9ebab3e6d5ff2c9b2cba944cd75147db4ca3d8708d7702",
+      "app/lib/workbench/activity_bar.dart": "a6801610b82edca3c4637e86813cbbee3c5fcb1583f2237db28265b903238b3a",
+      "app/lib/workbench/auxiliary_tab_drop_target.dart": "ae521677d1dd617fb113b412c3816520388b4cba066e94ef149c7258dc18a8c1",
+      "app/lib/workbench/auxiliary_window.dart": "36888f1d67bebf452b3a3249517a73421a6546b46dd643c049fea167a06ca4a0",
+      "app/lib/workbench/auxiliary_window_transfer.dart": "1d97979ebdc246b04fe406cfeee3a6dcb5a486dad65c91de9c99c02a521e6b14",
+      "app/lib/workbench/breadcrumb_navigation.dart": "4fabbb2c955af9d2276ef0f2913277be7b352017c2b9c668f74c53545379a6d8",
+      "app/lib/workbench/call_hierarchy.dart": "b88682128d50bb6fbb943a4337c1a0d2ad12e3faa87193ef77ca850063a106a1",
+      "app/lib/workbench/command_history_store.dart": "5b32f02339a8055ad0720c664d33287e8ae7a56ba5bf176720dcbea9af6e84c1",
+      "app/lib/workbench/commands.dart": "f5685a8c7cfb520973d9a12878fcc5b43b0ef50024c674c34d2eb279ec927b3b",
+      "app/lib/workbench/context_keys.dart": "1df22e205c9ade8390a089f01e04d64b3655c3dd52318412275b3c2f7a3d2e93",
+      "app/lib/workbench/definition_peek.dart": "89869f7530337ca90e17e9eed5cfbf76f3da4b5c1c0561c27934ce5907048788",
+      "app/lib/workbench/diagnostic_navigation_peek.dart": "194cf258ab92e8c1cc07e1f37d67bc8784f4503cb96b86da184fa2880fc78a67",
+      "app/lib/workbench/document_symbols.dart": "65896afccc31d0fa036a01d6de5b293a19c3c4f4f51d328ac7e83c08157c2e06",
+      "app/lib/workbench/editor_drop_overlay.dart": "a8b213c878fcbb0e5130e0893724bb4d7ad0af34a261ae4da78b111abec3dd3d",
+      "app/lib/workbench/editor_tab_close_action.dart": "f10a27443fc312e6b8a1ccb7b5389cc70b2354dada842ece5bd68094c5175b19",
+      "app/lib/workbench/editor_tab_close_policy.dart": "2f83e46e52b6c4bbbd05f9919346d192984fa88714d9a75966b7d947b467bb64",
+      "app/lib/workbench/editor_tab_sizing.dart": "11f2c09e9b1454d086c09abbfca4f751494ab161a32b983b136ea952337cd64d",
+      "app/lib/workbench/keybindings.dart": "3dd9284fc10307b58da361fe8a295ecece8d9aa5bac1275240d3307c2c0bc2ad",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "bf83c960c45a0af457156e97bf0f03f2c8b69600e718916e352dc27b6b7010ee",
+      "app/lib/workbench/layout_store.dart": "5d3702fe3d46eaf43c9a2aebd80ba3031fec1d1525b82b844c04a21077b1628d",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/pane_group_drop_target.dart": "33887e24eb7c403937963d9d9e34ea72ac284a7e8707582a5948bb533bc97b46",
+      "app/lib/workbench/pane_group_header.dart": "6770e5fb7a3fc8b8f5b7b92a8586119c9ec5421212bfc6b9d045b97a398fa3d2",
+      "app/lib/workbench/pane_group_split.dart": "134fcf50c1305f47f2d618412361e2acf396ccdca39c593e36e196a22fd0fa3c",
+      "app/lib/workbench/problems_path_filter.dart": "a3744b2c247ab4f3cbd1aa58af79192c8462c794d363070f69a8be84d3c91032",
+      "app/lib/workbench/problems_table.dart": "90177cf80bc3d99887440834a53c1a652cac0a8101fb1016f0a408472a4d1b11",
+      "app/lib/workbench/quick_input.dart": "09b84b70ba7f15c0f8e9e17a94f5323625dfd7a55ad731ef47f5f8edfda3e10f",
+      "app/lib/workbench/quick_open_query.dart": "252b8ae4563da63c5c60387a4e924d3cff47630f8aa1ea45c76ff368b87ad28d",
+      "app/lib/workbench/recent_history_store.dart": "d83ec208ebb350c25223a5780aab1c49bd303cd2b95849c7ce1dbc5001c92778",
+      "app/lib/workbench/sidebar_group_split.dart": "54101e3593c77537ec16fb9abd8f58b3bab34ee839d1d73d12b112283b90dc85",
+      "app/lib/workbench/sidebar_view_locations.dart": "b0b82e605e7001f354806011a13f482ca6921917532c126928c6fc73da5338d1",
+      "app/lib/workbench/status_bar.dart": "af403ac25dfb9c6cf2458c13261d33905ee4a012e89637b9f7011900c9ce757c",
+      "app/lib/workbench/title_bar.dart": "e5994f08e25753e22c7ca5b0357e09097698bd378a61d6949d1c6d615c71f13e",
+      "app/lib/workbench/tree_fuzzy_score.dart": "6e25f25757254363c45ab173bc7a47c8c0647cfbd384048b09b99d2ba6121feb",
+      "app/lib/workbench/workbench_page.dart": "181a57a0b8e3f94efb51fa975354bf68fd1b458647e05a6bbe1f3600430f3bde",
+      "app/pubspec.lock": "7bf7952db23784021b552364e18c0a9a7a82351feedde42f8bc185395a958340",
+      "app/pubspec.yaml": "ba228b5837dbfefd4b96a9c8752238bf9d9512ff4efeef3fb360499d08c6d037",
+      "app/windows/runner/CMakeLists.txt": "5c2a644dc52c7b16d471cf12b20a8c5c9cfc0a48fb28b96d548ef7552952c53b",
+      "app/windows/runner/flutter_window.cpp": "1d873dbd001d98b0de11b8b7e5e686a059be58ce5df967d20cbd878add0a3789",
+      "app/windows/runner/flutter_window.h": "96b2995953fd71c8f37165a357ec786664dd2a529f5057215b56cbe11e5fceb0",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f",
+      "crates/editor-core/src/bin/async_completion_fake_lsp.rs": "2f0ff55553980245e3380bee57eca2c7e8ed2b45637c7ed059343e89227da91d",
+      "crates/editor-core/src/ffi.rs": "cb41023d172d272f5ccca1c7711ad04dbdab76fd4c36f3bd381cee1a407b8294",
+      "crates/editor-core/tests/p01_async_completion.rs": "cc3a63810fee0541e6c4459a832f9d7fe2e5075f0d0da255ab3e529979bc9dc2",
+      "crates/editor-core/tests/p05_references.rs": "d745cad5e75609789b9ddbee5c15ad64de027e86be788493cf51ad5531728a4c",
+      "crates/editor-core/tests/p05_symbol_hierarchy.rs": "363f389ab66fb4849bfe21ddb5f5a1ae3e472b050313a8d8f9705c71b75b6c6a",
+      "crates/editor-core/tests/p05_symbol_locations.rs": "fb005f760cd679fda403b1c842944f8bd47021e4ffb66dcf1ccebb2beec30fda",
+      "crates/editor-core/tests/p05_unopened_diagnostics.rs": "243a308480dd1609f6fe7774955f2fd00a345c6ef94456e0c805f0151253d43e",
+      "crates/editor-core/tests/p05_workspace_symbols.rs": "ed958bf7e6a632bb45f457484bdebdc0edb8ef5c0a61f16cba64dfbec9d774a5",
+      "crates/editor-lsp/src/bin/fake-lsp.rs": "92121901d2c7126f6c06df6636b7771cd22af7bd2adb52bf7875f4b598ab5941",
+      "crates/editor-lsp/src/diagnostic_navigation.rs": "22702ed9355d3e1c2bb12e904a432286e362bd049630413a7bf410407dcfe8dc",
+      "crates/editor-lsp/src/hierarchy.rs": "265be08f6db58d458d5f4ee0c733949934a46d9b3f985184c2eef3fbed9808f9",
+      "crates/editor-lsp/src/lib.rs": "b0386f5002c156d977a7a22964781b65ccce691af6830ef1d416aa80511a53b4",
+      "crates/editor-lsp/tests/roundtrip.rs": "4f9a115914a658e14f7030b46db39aacd1fdeeb34811c4c5eececa4789326ce3"
+    },
+    "abi": 47,
+    "fixtureSha256": "89b75e6b4d3bf88152308b0af1266dd9323a2d5d12ce73ebbac3b397b4b252c0",
+    "cacheProbeSha256": "d55b0a664550f1489887651a093739515102aa92511a7fd68c6cc62b7b118dff"
+  },
+  "acceptanceSha256": "3d8ebe4989c2649b44f968689ed4d3b561b3b2d6cd29937ed11fc0d30c00d363",
+  "localLogsSha256": {
+    "p05-340-widget-first.log": "64d63c3364afba7f3e795b27a2a5e94e80eccb681cfc314bb264942c5a79f289",
+    "p05-340-widget-second.log": "da404188f88d230d21aafbc34d547af456fecb113bbcc79126b4aa6d97043b53",
+    "p05-340-focused.log": "d1c4080d0601d3d05963e01733a6a5821a1e03abd1feb3edf80a0328b86d81c7",
+    "p05-340-analyze.log": "a8908cca5ab85b348ba0f2b204b039378b44ff390bc0c44dce44a9c9b00c1af2",
+    "p05-340-full.log": "763b94f5d9c1ab5ac34ae0bcee06914a8e564d16d0e82d15a1c18e027c194a22",
+    "p05-340-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "graph": {
+    "all": {
+      "summary": {
+        "changed_count": 18,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "4ab1717d756314ec2d7ba53c4b043af7211a721d7ac417df3ac8d94e89d78aa5"
+    },
+    "staged": {
+      "summary": {
+        "changed_count": 18,
+        "affected_count": 0,
+        "changed_files": 5,
+        "risk_level": "low"
+      },
+      "affectedProcesses": [],
+      "sha256": "4ab1717d756314ec2d7ba53c4b043af7211a721d7ac417df3ac8d94e89d78aa5"
+    }
+  },
+  "preedit": {
+    "close-detail": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._closeDiagnosticNavigation#0",
+        "name": "_closeDiagnosticNavigation",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "c0d65aefaac4d3a9f11d8b05230f54befc7f0ccbc7487dfabf9f1afd6388350c"
+    },
+    "command-context-sample": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._syncCommandContext#0",
+        "name": "_syncCommandContext",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 104,
+        "processes_affected": 6,
+        "modules_affected": 4
+      },
+      "sha256": "fdc176453d950938fe8d0ae25cb88b71f3d220acf0477de4427de0ee0fc89a52"
+    },
+    "command-context": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._syncCommandContext#0",
+        "name": "_syncCommandContext",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 104,
+        "processes_affected": 6,
+        "modules_affected": 4
+      },
+      "sha256": "76e6686df53c513bdc366e29022e2b806fb9b6de233e982437799d9568045bf9"
+    },
+    "did-open-ffi-caller": {
+      "target": {
+        "id": "Function:crates/editor-core/src/ffi.rs:alula_lsp_did_open",
+        "name": "alula_lsp_did_open",
+        "type": "Function",
+        "filePath": "crates/editor-core/src/ffi.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "25aecef61158ac00f0fb3afa6ecdcd6fcc8a3ac6875122c03341599a6913c355"
+    },
+    "did-open": {
+      "target": {
+        "id": "Function:crates/editor-lsp/src/lib.rs:LspServer.did_open#4",
+        "name": "did_open",
+        "type": "Function",
+        "filePath": "crates/editor-lsp/src/lib.rs"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "0159d24c5c76ed79bd512452cdfc356d9503ddbcbadc32f40a592981a1d020fe"
+    },
+    "navigate": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._navigateDiagnostics#2",
+        "name": "_navigateDiagnostics",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "d90a4bbf96a9ff7a162f15814cfa79f31a1763ca89675d4a14d764fca2f39e44"
+    },
+    "open-file": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openFileByPath#6",
+        "name": "_openFileByPath",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 12,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "sha256": "2cf437a963801c2b2e3820c3c9ef88fb6d965a7cf12b3e83fe17b16e52aba059"
+    },
+    "open-marker": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._openDiagnostic#3",
+        "name": "_openDiagnostic",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "sha256": "92decfab36bf2000f81d97c2cdf3fe3ccad229afecc3a2854530677c3d2b1ca5"
+    },
+    "poll": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._pollLanguageServices#0",
+        "name": "_pollLanguageServices",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "sha256": "a38cd1adf31607d7f15cafe79e12d7ff50cd069e0955d3f606d70183c823f755"
+    },
+    "state": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "sha256": "8ea5170cdcaec4e2bbc570b26dd43dda5a603f76afa7bf5eef644a04da711651"
+    }
+  },
+  "macosPhysical": "deferred",
+  "previousCacheBaseline": {
+    "librarySha256": "f138e368fe2c2da84f3b8d41d2d0eec795e972d09bd9aa24ac29d9aadad95b2d",
+    "candidateProviderVersion": 1,
+    "newDocumentVersion": 1,
+    "previousDiagnostics": [
+      {
+        "character": 3,
+        "code": "OLD",
+        "documentVersion": 1,
+        "endCharacter": 4,
+        "endLine": 1,
+        "line": 1,
+        "message": "previous version 1",
+        "severity": 1,
+        "source": "fixture"
+      }
+    ],
+    "diagnosticsImmediatelyAfterDidOpen": [
+      {
+        "character": 3,
+        "code": "OLD",
+        "documentVersion": 1,
+        "endCharacter": 4,
+        "endLine": 1,
+        "line": 1,
+        "message": "previous version 1",
+        "severity": 1,
+        "source": "fixture"
+      }
+    ],
+    "diagnosticsAfterSilentPeer": [
+      {
+        "character": 3,
+        "code": "OLD",
+        "documentVersion": 1,
+        "endCharacter": 4,
+        "endLine": 1,
+        "line": 1,
+        "message": "previous version 1",
+        "severity": 1,
+        "source": "fixture"
+      }
+    ],
+    "cleanShutdown": true,
+    "sha256": "57895df8decf00c75ea753805248139672f3d8c0692706407786dfff8a0cd1f7"
+  },
+  "fixedReference": {
+    "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "binarySha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "browser": "Chrome/150.0.7871.250",
+    "checks": {
+      "f8-opened-unopened-target": {
+        "text": "unopened target diagnosticrustc(E0308)",
+        "stale": false,
+        "zoneTop": 108.80000305175781,
+        "zoneHeight": 76,
+        "closestEndingLines": [
+          {
+            "n": 1,
+            "bottom": 108.80000305175781
+          },
+          {
+            "n": 2,
+            "bottom": 203.8000030517578
+          }
+        ],
+        "editorFocused": true
+      }
+    },
+    "inputKind": "controlled diagnostic published for an unopened workspace URI",
+    "seedReceipt": {
+      "activeFile": "other.rs",
+      "targetWasOpen": false,
+      "targetOpenAfterSeeding": false,
+      "markerCount": 1
+    },
+    "sha256": "902bc6e354e7a34b5aca4dafbe87119524181cdc62d54668b9612d6b2ff7e08b",
+    "probeSha256": "a16555cc9f7d69a7df51b73d50df44879c9e8e5b07a039115ef9bc4fb5964848"
+  },
+  "windows": {
+    "providerVersion": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+    "providerSha256": "4aef6099066a6a79ae9a01f3b34b66e8864c94947073c94fb17c880cec7eb9ae",
+    "appSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "d6350f4e7a3d52ea1b0df0637477ac00af8873f48a82e6d5322d5879ae1f96e2",
+    "nativeLibrarySha256": "8a8fb4a5d3a9d374aeadad7979c7f65bcc3d6e7521197c4ef04a966ec343bb9a",
+    "rawReportSha256": "0742660d38ebf177c45bec416b072b434cc560a3d67ce857f274a53ba0e47bef",
+    "initialFixtureReportSha256": "b31fba88b6f2bd2da7a334fc3e8d29aa2b61a07dba059bcde13f7cac31b1d447",
+    "runnerSha256": "bc5b38311553893b5773315ab4f36b3f37ba9413a8ec23eb22738ab8f0484d75",
+    "fixtureSha256": "89b75e6b4d3bf88152308b0af1266dd9323a2d5d12ce73ebbac3b397b4b252c0",
+    "checks": [
+      "owned-editor-ready",
+      "source-caret-recorded",
+      "provider-published-both-unopened-targets",
+      "current-file-route-keeps-unopened-targets-closed",
+      "forward-opens-nearest-later-file-with-fresh-marker",
+      "escape-retains-newly-opened-file-and-selection",
+      "history-returns-to-original-file-and-caret",
+      "backward-prefers-unopened-earlier-file-before-wrapping",
+      "backward-wraps-to-open-later-marker",
+      "forward-wraps-to-open-earlier-marker",
+      "both-original-targets-retained",
+      "all-source-files-exact-bom-crlf-emoji-and-original-bytes"
+    ],
+    "sourceSha256": {
+      "lib.rs": "9fbf6dceb730f4dbfe6ad33084d09cc2c6620001e86b658d6be1e423e95b209e",
+      "left/other.rs": "e4f140af8cdd53b9c75d36df094391a434c60ea359ae5b36c2170d0d04a19c49",
+      "right/other.rs": "beed4e3fa8304f1ebc5c5c845e1d1a252236b78733deee174ab3eccb35e2b5d9",
+      "a_unopened.rs": "3cbc58cfbce98592807bec8baf8562e489706e93250b57fdf6de9b74b978103b",
+      "z marker 🐙.rs": "8a188d29678cb1cc449f9af5d47167d4ffbfceffe6ab697ce5e43b1c65fe9d84"
+    },
+    "exit": 0,
+    "steps": {
+      "owned-editor-ready": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {},
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          328.0,
+          114.4,
+          330.0,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          328.0,
+          114.4,
+          330.0,
+          135.4
+        ]
+      },
+      "source-caret-recorded": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {},
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ]
+      },
+      "provider-published-both-unopened-targets": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ]
+      },
+      "current-file-route-keeps-unopened-targets-closed": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ]
+      },
+      "forward-opens-nearest-later-file-with-fresh-marker": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "z marker 🐙.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            289.952,
+            139.4,
+            960.8000000000001,
+            243.4
+          ]
+        },
+        "diagnosticAnchor": 34,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          626.4000000000001,
+          114.4,
+          628.4000000000001,
+          135.4
+        ],
+        "editorSelectionStartRect": [
+          626.4000000000001,
+          114.4,
+          628.4000000000001,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ]
+      },
+      "escape-retains-newly-opened-file-and-selection": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          626.4000000000001,
+          114.4,
+          628.4000000000001,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ]
+      },
+      "history-returns-to-original-file-and-caret": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          372.0,
+          114.4,
+          374.0,
+          135.4
+        ]
+      },
+      "backward-prefers-unopened-earlier-file-before-wrapping": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "a_unopened.rs",
+          "ordinal": 1,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            289.952,
+            139.4,
+            960.8000000000001,
+            243.4
+          ]
+        },
+        "diagnosticAnchor": 35,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ],
+        "editorSelectionStartRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          678.4000000000001,
+          114.4,
+          680.4000000000001,
+          135.4
+        ]
+      },
+      "backward-wraps-to-open-later-marker": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "z marker 🐙.rs",
+          "ordinal": 2,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            289.952,
+            139.4,
+            960.8000000000001,
+            243.4
+          ]
+        },
+        "diagnosticAnchor": 35,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ],
+        "editorSelectionStartRect": [
+          626.4000000000001,
+          114.4,
+          628.4000000000001,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ]
+      },
+      "forward-wraps-to-open-earlier-marker": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "a_unopened.rs",
+          "ordinal": 1,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            289.952,
+            139.4,
+            960.8000000000001,
+            243.4
+          ]
+        },
+        "diagnosticAnchor": 40,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          678.4000000000001,
+          114.4,
+          680.4000000000001,
+          135.4
+        ],
+        "editorSelectionStartRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          678.4000000000001,
+          114.4,
+          680.4000000000001,
+          135.4
+        ]
+      },
+      "both-original-targets-retained": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          635.2,
+          114.4,
+          637.2,
+          135.4
+        ],
+        "editorSelectionEndRect": [
+          678.4000000000001,
+          114.4,
+          680.4000000000001,
+          135.4
+        ]
+      }
+    },
+    "reopenedCacheControl": {
+      "librarySha256": "8a8fb4a5d3a9d374aeadad7979c7f65bcc3d6e7521197c4ef04a966ec343bb9a",
+      "candidateProviderVersion": 1,
+      "newDocumentVersion": 1,
+      "previousDiagnostics": [
+        {
+          "character": 3,
+          "code": "OLD",
+          "documentVersion": 1,
+          "endCharacter": 4,
+          "endLine": 1,
+          "line": 1,
+          "message": "previous version 1",
+          "severity": 1,
+          "source": "fixture"
+        }
+      ],
+      "diagnosticsImmediatelyAfterDidOpen": [],
+      "diagnosticsAfterSilentPeer": [],
+      "cleanShutdown": true,
+      "sha256": "2fc31fc31f99f928057764fe4e39c969837d71fdf85e30e97937f4a5939f34d9"
+    },
+    "encodedUriControl": {
+      "provider": {
+        "encodedCandidate": "z%20marker%20%F0%9F%90%99.rs",
+        "didOpen": true,
+        "fresh": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "mode": "provider",
+        "closed": true,
+        "sha256": "5a86d297050f8cb9e51ffe2812f575d88118e5a9b9a2c33e10cd3e919e4dc5e1"
+      },
+      "raw": {
+        "encodedCandidate": "z%20marker%20%F0%9F%90%99.rs",
+        "didOpen": true,
+        "fresh": null,
+        "mode": "raw",
+        "closed": true,
+        "sha256": "bbcc028198d741b86876913022aa62870e2f635211f3e5d8add1a4d9d6e83fe1"
+      }
+    },
+    "navigationBackShortcut": "Alt+Left",
+    "initialFixtureMismatch": "First Windows run expected a newly opened anchor during an already-open wrap.",
+    "dpi": 120,
+    "physicalClientSize": [
+      0,
+      0,
+      1221,
+      941
+    ]
+  },
+  "linux": {
+    "providerVersion": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+    "providerSha256": "e800226d398f8f8f501319b887bf04da8e14da877a2df382dc1bf6e4748b9839",
+    "appSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "c5f7a7c1c39afcff8afd085360d8bf259b838f9038f2b9d220363d52830368fc",
+    "nativeLibrarySha256": "778c9f9a557e9a7784a13f7da9c5a528f726e7fb5d2d99617a11403569ef48fd",
+    "rawReportSha256": "90d42216820a7768338c7ae209dc1b5ff516989955707e6041d26456ad377638",
+    "initialFixtureReportSha256": "0833a6a836cd1764128364586c4e0ba81f52f4528b1278df872c18fb85c66f0c",
+    "runnerSha256": "bbfa187f6566e02c5a4bfaeb2b89846430b5743a06bbb97a8c721a625c67ce16",
+    "fixtureSha256": "89b75e6b4d3bf88152308b0af1266dd9323a2d5d12ce73ebbac3b397b4b252c0",
+    "checks": [
+      "owned-editor-ready",
+      "source-caret-recorded",
+      "provider-published-both-unopened-targets",
+      "current-file-route-keeps-unopened-targets-closed",
+      "forward-opens-nearest-later-file-with-fresh-marker",
+      "escape-retains-newly-opened-file-and-selection",
+      "history-returns-to-original-file-and-caret",
+      "backward-prefers-unopened-earlier-file-before-wrapping",
+      "backward-wraps-to-open-later-marker",
+      "forward-wraps-to-open-earlier-marker",
+      "both-original-targets-retained",
+      "all-source-files-exact-bom-crlf-emoji-and-original-bytes"
+    ],
+    "sourceSha256": {
+      "lib.rs": "9fbf6dceb730f4dbfe6ad33084d09cc2c6620001e86b658d6be1e423e95b209e",
+      "left/other.rs": "e4f140af8cdd53b9c75d36df094391a434c60ea359ae5b36c2170d0d04a19c49",
+      "right/other.rs": "beed4e3fa8304f1ebc5c5c845e1d1a252236b78733deee174ab3eccb35e2b5d9",
+      "a_unopened.rs": "3cbc58cfbce98592807bec8baf8562e489706e93250b57fdf6de9b74b978103b",
+      "z marker 🐙.rs": "8a188d29678cb1cc449f9af5d47167d4ffbfceffe6ab697ce5e43b1c65fe9d84"
+    },
+    "exit": 0,
+    "steps": {
+      "owned-editor-ready": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          0,
+          0
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": false,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {},
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          382.0,
+          114.0,
+          384.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          382.0,
+          114.0,
+          384.0,
+          135.0
+        ]
+      },
+      "source-caret-recorded": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {},
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ]
+      },
+      "provider-published-both-unopened-targets": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ]
+      },
+      "current-file-route-keeps-unopened-targets-closed": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          0,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ]
+      },
+      "forward-opens-nearest-later-file-with-fresh-marker": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "z marker 🐙.rs",
+          "ordinal": 1,
+          "total": 1,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            343.52,
+            139.0,
+            1096.0,
+            243.0
+          ]
+        },
+        "diagnosticAnchor": 34,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "editorSelectionStartRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ]
+      },
+      "escape-retains-newly-opened-file-and-selection": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ]
+      },
+      "history-returns-to-original-file-and-caret": {
+        "editor": "other.rs 主编辑器",
+        "selection": [
+          5,
+          5
+        ],
+        "version": 1,
+        "documentId": 3,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs"
+        ],
+        "activeDiagnostics": [],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          1,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          426.0,
+          114.0,
+          428.0,
+          135.0
+        ]
+      },
+      "backward-prefers-unopened-earlier-file-before-wrapping": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "a_unopened.rs",
+          "ordinal": 1,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            343.52,
+            139.0,
+            1096.0,
+            243.0
+          ]
+        },
+        "diagnosticAnchor": 35,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ],
+        "editorSelectionStartRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          730.0,
+          114.0,
+          732.0,
+          135.0
+        ]
+      },
+      "backward-wraps-to-open-later-marker": {
+        "editor": "z marker 🐙.rs 主编辑器",
+        "selection": [
+          34,
+          35
+        ],
+        "version": 1,
+        "documentId": 6,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "z marker 🐙.rs",
+          "ordinal": 2,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `bool`, found integer",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            343.52,
+            139.0,
+            1096.0,
+            243.0
+          ]
+        },
+        "diagnosticAnchor": 35,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ],
+        "editorSelectionStartRect": [
+          676.0,
+          114.0,
+          678.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ]
+      },
+      "forward-wraps-to-open-earlier-marker": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": {
+          "fileName": "a_unopened.rs",
+          "ordinal": 1,
+          "total": 2,
+          "severity": 1,
+          "message": "mismatched types\nexpected `i32`, found `bool`",
+          "isStale": false,
+          "source": "rustc",
+          "code": "E0308",
+          "bounds": [
+            343.52,
+            139.0,
+            1096.0,
+            243.0
+          ]
+        },
+        "diagnosticAnchor": 40,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": [
+          730.0,
+          114.0,
+          732.0,
+          135.0
+        ],
+        "editorSelectionStartRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          730.0,
+          114.0,
+          732.0,
+          135.0
+        ]
+      },
+      "both-original-targets-retained": {
+        "editor": "a_unopened.rs 主编辑器",
+        "selection": [
+          35,
+          40
+        ],
+        "version": 1,
+        "documentId": 7,
+        "abi": 47,
+        "editorFocused": true,
+        "nativeWindowFocused": true,
+        "diagnosticNavigation": null,
+        "diagnosticAnchor": null,
+        "diagnosticInlineBounds": null,
+        "savedEditorFiles": [
+          "lib.rs",
+          "other.rs",
+          "other.rs",
+          "z marker 🐙.rs",
+          "a_unopened.rs"
+        ],
+        "activeDiagnostics": [
+          {
+            "character": 35,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 40,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `i32`, found `bool`",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 20,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 23,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `i32` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "nativePublished": {
+          "a_unopened.rs": 2,
+          "z marker 🐙.rs": 2
+        },
+        "statusDiagnosticsCounts": [
+          2,
+          0,
+          0
+        ],
+        "diagnosticAnchorRect": null,
+        "editorSelectionStartRect": [
+          685.0,
+          114.0,
+          687.0,
+          135.0
+        ],
+        "editorSelectionEndRect": [
+          730.0,
+          114.0,
+          732.0,
+          135.0
+        ]
+      }
+    },
+    "reopenedCacheControl": {
+      "librarySha256": "778c9f9a557e9a7784a13f7da9c5a528f726e7fb5d2d99617a11403569ef48fd",
+      "candidateProviderVersion": 1,
+      "newDocumentVersion": 1,
+      "previousDiagnostics": [
+        {
+          "character": 3,
+          "code": "OLD",
+          "documentVersion": 1,
+          "endCharacter": 4,
+          "endLine": 1,
+          "line": 1,
+          "message": "previous version 1",
+          "severity": 1,
+          "source": "fixture"
+        }
+      ],
+      "diagnosticsImmediatelyAfterDidOpen": [],
+      "diagnosticsAfterSilentPeer": [],
+      "cleanShutdown": true,
+      "sha256": "489a46d5de666e599b8e5bd6527fa2b3d004e2678b76843979577b142fc223f8"
+    },
+    "encodedUriControl": {
+      "provider": {
+        "encodedCandidate": "z%20marker%20%F0%9F%90%99.rs",
+        "didOpen": true,
+        "fresh": [
+          {
+            "character": 34,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 35,
+            "endLine": 0,
+            "line": 0,
+            "message": "mismatched types\nexpected `bool`, found integer",
+            "severity": 1,
+            "source": "rustc"
+          },
+          {
+            "character": 18,
+            "code": "E0308",
+            "documentVersion": 1,
+            "endCharacter": 22,
+            "endLine": 0,
+            "line": 0,
+            "message": "expected `bool` because of return type",
+            "severity": 4,
+            "source": "rustc"
+          }
+        ],
+        "mode": "provider",
+        "closed": true,
+        "sha256": "926c17d1f86389c06784b19d5248b99de2d58af24c0c1c26a88693f2c11b3a96"
+      },
+      "raw": {
+        "encodedCandidate": "z%20marker%20%F0%9F%90%99.rs",
+        "didOpen": true,
+        "fresh": null,
+        "mode": "raw",
+        "closed": true,
+        "sha256": "db43638e9e4e44f9a247c573fe3178c88505780d5a9cdd0b51a0692b6a8bbbf7"
+      }
+    },
+    "navigationBackShortcut": "Ctrl+Alt+-",
+    "initialFixtureMismatch": "First Linux run sent the Windows navigation-back shortcut.",
+    "processPrivateMemoryMiB": [
+      818.3,
+      812.6,
+      821.7
+    ],
+    "processCounts": [
+      4,
+      4,
+      4
+    ],
+    "sampledProcesses": [
+      "alula_app",
+      "rust-analyzer",
+      "rust-analyzer-p",
+      "rust-analyzer-p"
+    ],
+    "sampledProcessesExited": true,
+    "windowManager": "xfwm4/Xvfb",
+    "cleanup": {
+      "exitCode": 0,
+      "driverSentSigterm": false
+    }
+  }
+}

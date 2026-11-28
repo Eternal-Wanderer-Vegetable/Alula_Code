@@ -1,0 +1,123 @@
+{
+  "target": {
+    "id": "Class:app/lib/workbench/layout_model.dart:WbLeaf",
+    "name": "WbLeaf",
+    "type": "Class",
+    "filePath": "app/lib/workbench/layout_model.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 8,
+  "risk": "MEDIUM",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "lower-bound",
+  "boundaries": [
+    "WbNode is an interface with 2 implementations; callers that bind via the interface (e.g. a DI container or dynamic dispatch) are not traced to the concrete symbol — actual impact may be higher."
+  ],
+  "causes": {
+    "scopeExtractionFiles": 0,
+    "receiverTyping": 0,
+    "dispatchBoundary": 2,
+    "externalBoundary": 0,
+    "undecidedSatisfaction": 0,
+    "callableValueReferences": 0
+  },
+  "summary": {
+    "direct": 6,
+    "processes_affected": 0,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 6,
+    "2": 2
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Workbench",
+      "hits": 2,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/activity_bar_position.dart",
+        "name": "activity_bar_position.dart",
+        "filePath": "app/lib/workbench/activity_bar_position.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/layout_controller.dart",
+        "name": "layout_controller.dart",
+        "filePath": "app/lib/workbench/layout_controller.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/layout_grid.dart",
+        "name": "layout_grid.dart",
+        "filePath": "app/lib/workbench/layout_grid.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/layout_store.dart",
+        "name": "layout_store.dart",
+        "filePath": "app/lib/workbench/layout_store.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/lib/workbench/layout_model.dart:defaultLayout",
+        "name": "defaultLayout",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/layout_model.dart:WbSplitTreeOps.splitLeaf#5",
+        "name": "splitLeaf",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/layout_controller.dart:WorkbenchLayout.WorkbenchLayout#1",
+        "name": "WorkbenchLayout",
+        "filePath": "app/lib/workbench/layout_controller.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/main.dart",
+        "name": "main.dart",
+        "filePath": "app/lib/main.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ]
+  }
+}

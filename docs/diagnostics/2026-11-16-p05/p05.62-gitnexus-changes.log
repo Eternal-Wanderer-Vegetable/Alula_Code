@@ -1,0 +1,11 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 6 files, 4 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Class WelcomePage → app/lib/workbench/welcome_page.dart
+  Property walkthroughCompletedSteps → app/lib/workbench/welcome_page.dart
+  Class _WelcomeWalkthroughSection → app/lib/workbench/welcome_page.dart
+  Method build → app/lib/workbench/welcome_page.dart

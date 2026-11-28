@@ -1,0 +1,1485 @@
+﻿2026-11-18T01:34:20.6424618Z Current runner version: '2.338.2'
+2026-11-18T01:34:20.6455479Z ##[group]Runner Image Provisioner
+2026-11-18T01:34:20.6456341Z Hosted Compute Agent
+2026-11-18T01:34:20.6456893Z Version: 20261103.629
+2026-11-18T01:34:20.6457500Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T01:34:20.6458196Z Build Date: 2026-11-03T17:26:59Z
+2026-11-18T01:34:20.6458817Z Worker ID: {93822407-1825-49a9-89b3-d872a2990fe5}
+2026-11-18T01:34:20.6459485Z Region: westus3
+2026-11-18T01:34:20.6460019Z Cloud: Azure
+2026-11-18T01:34:20.6460558Z ##[endgroup]
+2026-11-18T01:34:20.6462097Z ##[group]Operating System
+2026-11-18T01:34:20.6462712Z Microsoft Windows Server 2025
+2026-11-18T01:34:20.6463321Z 10.0.26100
+2026-11-18T01:34:20.6463834Z Datacenter
+2026-11-18T01:34:20.6464309Z ##[endgroup]
+2026-11-18T01:34:20.6464805Z ##[group]Runner Image
+2026-11-18T01:34:20.6465325Z Image: windows-2025-vs2026
+2026-11-18T01:34:20.6465886Z Version: 20261103.298.1
+2026-11-18T01:34:20.6467390Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261103.298/images/windows/Windows2025-VS2026-Readme.md
+2026-11-18T01:34:20.6468963Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261103.298
+2026-11-18T01:34:20.6469826Z ##[endgroup]
+2026-11-18T01:34:20.6470993Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T01:34:20.6473006Z Contents: read
+2026-11-18T01:34:20.6473567Z Metadata: read
+2026-11-18T01:34:20.6474116Z ##[endgroup]
+2026-11-18T01:34:20.6476990Z Secret source: Actions
+2026-11-18T01:34:20.6477910Z Cache mode: write
+2026-11-18T01:34:20.6478577Z Prepare workflow directory
+2026-11-18T01:34:20.6867725Z Prepare all required actions
+2026-11-18T01:34:20.6920022Z Getting action download info
+2026-11-18T01:34:21.0329694Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-18T01:34:21.1599955Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:39008827e6b4319a349e9a42dfc90579dd25f1ca)
+2026-11-18T01:34:21.3858736Z Download action repository 'Swatinem/rust-cache@v2' (SHA:d1527c8f67ef9af357290475d4af4b0fab8f12e0)
+2026-11-18T01:34:22.0432041Z Download action repository 'subosito/flutter-action@v2' (SHA:1a449444c387b1966244ae4d4f8c696479add0b2)
+2026-11-18T01:34:22.4565285Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-18T01:34:22.8854999Z Getting action download info
+2026-11-18T01:34:22.9909662Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-11-18T01:34:23.1966374Z Complete job name: Windows x64 build and launch smoke
+2026-11-18T01:34:23.4809795Z ##[group]Run actions/checkout@v4
+2026-11-18T01:34:23.4811450Z with:
+2026-11-18T01:34:23.4812362Z   repository: Eternal-Wanderer-Vegetable/Alula_Code
+2026-11-18T01:34:23.4819429Z   token: ***
+2026-11-18T01:34:23.4820214Z   ssh-strict: true
+2026-11-18T01:34:23.4820951Z   ssh-user: git
+2026-11-18T01:34:23.4821720Z   persist-credentials: true
+2026-11-18T01:34:23.4822564Z   clean: true
+2026-11-18T01:34:23.4823329Z   sparse-checkout-cone-mode: true
+2026-11-18T01:34:23.4824203Z   fetch-depth: 1
+2026-11-18T01:34:23.4824914Z   fetch-tags: false
+2026-11-18T01:34:23.4825632Z   show-progress: true
+2026-11-18T01:34:23.4826345Z   lfs: false
+2026-11-18T01:34:23.4827003Z   submodules: false
+2026-11-18T01:34:23.4827815Z   set-safe-directory: true
+2026-11-18T01:34:23.4828725Z   allow-unsafe-pr-checkout: false
+2026-11-18T01:34:23.4830066Z ##[endgroup]
+2026-11-18T01:34:23.7011612Z Syncing repository: Eternal-Wanderer-Vegetable/Alula_Code
+2026-11-18T01:34:23.7016569Z ##[group]Getting Git version info
+2026-11-18T01:34:23.7018870Z Working directory is 'D:\a\Alula_Code\Alula_Code'
+2026-11-18T01:34:23.8005647Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T01:34:24.4083520Z git version 2.56.0.windows.4
+2026-11-18T01:34:24.4143615Z ##[endgroup]
+2026-11-18T01:34:24.4171543Z Temporarily overriding HOME='D:\a\_temp\251455f2-f34e-46d0-9729-f9027cb71b75' before making global git config changes
+2026-11-18T01:34:24.4175208Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T01:34:24.4184234Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Alula_Code\Alula_Code
+2026-11-18T01:34:24.5184953Z Deleting the contents of 'D:\a\Alula_Code\Alula_Code'
+2026-11-18T01:34:24.5193464Z ##[group]Initializing the repository
+2026-11-18T01:34:24.5204046Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Alula_Code\Alula_Code
+2026-11-18T01:34:24.7172615Z Initialized empty Git repository in D:/a/Alula_Code/Alula_Code/.git/
+2026-11-18T01:34:24.7236065Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Eternal-Wanderer-Vegetable/Alula_Code
+2026-11-18T01:34:24.8188106Z ##[endgroup]
+2026-11-18T01:34:24.8188738Z ##[group]Disabling automatic garbage collection
+2026-11-18T01:34:24.8199169Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-18T01:34:24.8691031Z ##[endgroup]
+2026-11-18T01:34:24.8691837Z ##[group]Setting up auth
+2026-11-18T01:34:24.8706566Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T01:34:24.9177342Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T01:34:26.3737146Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T01:34:26.4169197Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T01:34:27.0307902Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T01:34:27.0717865Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T01:34:27.6624296Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-18T01:34:27.7047065Z ##[endgroup]
+2026-11-18T01:34:27.7047832Z ##[group]Fetching the repository
+2026-11-18T01:34:27.7064276Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9117a06ef5130c3513648b514a164af481082c64:refs/remotes/origin/codex/vscode-parity-p05
+2026-11-18T01:34:30.4508440Z From https://github.com/Eternal-Wanderer-Vegetable/Alula_Code
+2026-11-18T01:34:30.4510407Z  * [new ref]         9117a06ef5130c3513648b514a164af481082c64 -> origin/codex/vscode-parity-p05
+2026-11-18T01:34:30.4555252Z ##[endgroup]
+2026-11-18T01:34:30.4555865Z ##[group]Determining the checkout info
+2026-11-18T01:34:30.4559407Z ##[endgroup]
+2026-11-18T01:34:30.4570666Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-18T01:34:30.5142990Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-18T01:34:30.5552003Z ##[group]Checking out the ref
+2026-11-18T01:34:30.5563064Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B codex/vscode-parity-p05 refs/remotes/origin/codex/vscode-parity-p05
+2026-11-18T01:34:31.5523667Z Switched to a new branch 'codex/vscode-parity-p05'
+2026-11-18T01:34:31.5610737Z branch 'codex/vscode-parity-p05' set up to track 'origin/codex/vscode-parity-p05'.
+2026-11-18T01:34:31.5688236Z ##[endgroup]
+2026-11-18T01:34:31.6192674Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-18T01:34:31.6549570Z 9117a06ef5130c3513648b514a164af481082c64
+2026-11-18T01:34:31.7137380Z ##[group]Run dtolnay/rust-toolchain@stable
+2026-11-18T01:34:31.7137829Z with:
+2026-11-18T01:34:31.7138758Z   toolchain: stable
+2026-11-18T01:34:31.7138970Z ##[endgroup]
+2026-11-18T01:34:31.7222271Z ##[start-action display=Parse toolchain version;id=__dtolnay_rust-toolchain.parse]
+2026-11-18T01:34:31.7407432Z ##[group]Run if [[ -z $toolchain ]]; then
+2026-11-18T01:34:31.7407900Z [36;1mif [[ -z $toolchain ]]; then[0m
+2026-11-18T01:34:31.7408543Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+2026-11-18T01:34:31.7409141Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+2026-11-18T01:34:31.7409433Z [36;1m  exit 1[0m
+2026-11-18T01:34:31.7409735Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+2026-11-18T01:34:31.7410118Z [36;1m  if [[ Windows == macOS ]]; then[0m
+2026-11-18T01:34:31.7410680Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:31.7411177Z [36;1m  else[0m
+2026-11-18T01:34:31.7411546Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:31.7411962Z [36;1m  fi[0m
+2026-11-18T01:34:31.7412246Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+2026-11-18T01:34:31.7412752Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:31.7413207Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+2026-11-18T01:34:31.7413692Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:31.7414596Z [36;1melse[0m
+2026-11-18T01:34:31.7414790Z [36;1m  delimiter=EOF[0m
+2026-11-18T01:34:31.7415089Z [36;1m  while [[ $toolchain == *$delimiter* ]]; do delimiter+=_; done[0m
+2026-11-18T01:34:31.7415560Z [36;1m  printf 'toolchain<<%s\n%s\n%s\n' "$delimiter" "$toolchain" "$delimiter" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:31.7415960Z [36;1mfi[0m
+2026-11-18T01:34:31.7434103Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:31.7435033Z env:
+2026-11-18T01:34:31.7435239Z   toolchain: stable
+2026-11-18T01:34:31.7435437Z ##[endgroup]
+2026-11-18T01:34:31.9237393Z ##[end-action id=__dtolnay_rust-toolchain.parse;outcome=success;conclusion=success;duration_ms=201]
+2026-11-18T01:34:31.9259396Z ##[start-action display=Set $CARGO_HOME;id=__dtolnay_rust-toolchain.__run]
+2026-11-18T01:34:32.0035635Z ##[group]Run echo CARGO_HOME=${CARGO_HOME:-"$USERPROFILE\.cargo"} >> $GITHUB_ENV
+2026-11-18T01:34:32.0036165Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$USERPROFILE\.cargo"} >> $GITHUB_ENV[0m
+2026-11-18T01:34:32.0051049Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:32.0051461Z ##[endgroup]
+2026-11-18T01:34:32.0475726Z ##[end-action id=__dtolnay_rust-toolchain.__run;outcome=success;conclusion=success;duration_ms=121]
+2026-11-18T01:34:32.0478403Z ##[start-action display=Install rustup if needed;id=__dtolnay_rust-toolchain.__run_2]
+2026-11-18T01:34:32.0490974Z ##[end-action id=__dtolnay_rust-toolchain.__run_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-18T01:34:32.0493229Z ##[start-action display=Install rustup if needed on windows;id=__dtolnay_rust-toolchain.__run_3]
+2026-11-18T01:34:32.0631309Z ##[group]Run if ! command -v rustup &>/dev/null; then
+2026-11-18T01:34:32.0631679Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+2026-11-18T01:34:32.0632401Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://win.rustup.rs/x86_64 --output 'D:\a\_temp\rustup-init.exe'[0m
+2026-11-18T01:34:32.0633192Z [36;1m  'D:\a\_temp\rustup-init.exe' --default-toolchain none --no-modify-path -y[0m
+2026-11-18T01:34:32.0635463Z [36;1m  echo "$CARGO_HOME\bin" >> $GITHUB_PATH[0m
+2026-11-18T01:34:32.0635962Z [36;1mfi[0m
+2026-11-18T01:34:32.0649942Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:32.0650319Z env:
+2026-11-18T01:34:32.0650521Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:32.0650792Z ##[endgroup]
+2026-11-18T01:34:32.1131016Z ##[end-action id=__dtolnay_rust-toolchain.__run_3;outcome=success;conclusion=success;duration_ms=63]
+2026-11-18T01:34:32.1149790Z ##[start-action display=rustup toolchain install stable;id=__dtolnay_rust-toolchain.__run_4]
+2026-11-18T01:34:32.1283453Z ##[group]Run set -f  # split targets and components on commas and whitespace, without glob expansion
+2026-11-18T01:34:32.1284132Z [36;1mset -f  # split targets and components on commas and whitespace, without glob expansion[0m
+2026-11-18T01:34:32.1284537Z [36;1mflags=()[0m
+2026-11-18T01:34:32.1284811Z [36;1mfor t in ${targets//,/ }; do flags+=(--target "$t"); done[0m
+2026-11-18T01:34:32.1285192Z [36;1mfor c in ${components//,/ }; do flags+=(--component "$c"); done[0m
+2026-11-18T01:34:32.1285670Z [36;1mif [[ $toolchain == nightly && -n $components ]]; then flags+=(--allow-downgrade); fi[0m
+2026-11-18T01:34:32.1286056Z [36;1mlog=$(mktemp)[0m
+2026-11-18T01:34:32.1286278Z [36;1mtrap 'rm -f "$log"' EXIT[0m
+2026-11-18T01:34:32.1286515Z [36;1mfor attempt in 1 2 3 4 5; do[0m
+2026-11-18T01:34:32.1287048Z [36;1m  if rustup toolchain install "$toolchain" "${flags[@]}" --profile minimal --no-self-update --force-non-host 2>&1 | tee "$log"; then[0m
+2026-11-18T01:34:32.1287566Z [36;1m    break[0m
+2026-11-18T01:34:32.1287749Z [36;1m  else[0m
+2026-11-18T01:34:32.1287935Z [36;1m    status=$?[0m
+2026-11-18T01:34:32.1288302Z [36;1m  fi[0m
+2026-11-18T01:34:32.1288633Z [36;1m  if [[ $attempt == 5 ]] || ! grep -Fq 'checksum failed for ' "$log" \[0m
+2026-11-18T01:34:32.1289172Z [36;1m      || ! grep -Fq 'this is likely due to an ongoing update of the official release server' "$log"; then[0m
+2026-11-18T01:34:32.1289609Z [36;1m    exit "$status"[0m
+2026-11-18T01:34:32.1289827Z [36;1m  fi[0m
+2026-11-18T01:34:32.1290167Z [36;1m  echo "Retrying rustup toolchain install in 30 seconds (retry $attempt of 4)" >&2[0m
+2026-11-18T01:34:32.1290560Z [36;1m  sleep 30[0m
+2026-11-18T01:34:32.1290758Z [36;1mdone[0m
+2026-11-18T01:34:32.1304559Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:32.1304953Z env:
+2026-11-18T01:34:32.1305162Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:32.1305432Z   toolchain: stable
+2026-11-18T01:34:32.1305626Z   targets: 
+2026-11-18T01:34:32.1305800Z   components: 
+2026-11-18T01:34:32.1306008Z   RUSTUP_PERMIT_COPY_RENAME: 1
+2026-11-18T01:34:32.1306238Z ##[endgroup]
+2026-11-18T01:34:35.8018512Z info: syncing channel updates for stable-x86_64-pc-windows-msvc
+2026-11-18T01:34:36.4207743Z info: latest update on 2026-11-12 for version 1.100.0 (0ef1bc386 2026-11-09)
+2026-11-18T01:34:36.4521047Z info: removing previous version of component rustfmt
+2026-11-18T01:34:36.4678464Z info: removing previous version of component clippy
+2026-11-18T01:34:36.4836737Z info: removing previous version of component rust-std for target x86_64-pc-windows-gnu
+2026-11-18T01:34:36.5951917Z info: removing previous version of component rust-std for target i686-pc-windows-msvc
+2026-11-18T01:34:36.6752622Z info: removing previous version of component cargo
+2026-11-18T01:34:36.7703498Z info: removing previous version of component rust-std
+2026-11-18T01:34:36.8816084Z info: removing previous version of component rustc
+2026-11-18T01:34:36.9607893Z info: downloading 7 components
+2026-11-18T01:34:50.7521292Z 
+2026-11-18T01:34:50.7840142Z   stable-x86_64-pc-windows-msvc updated - rustc 1.100.0 (0ef1bc386 2026-11-09) (from rustc 1.99.1 (58cf8f9c3 2026-10-13))
+2026-11-18T01:34:50.7840804Z 
+2026-11-18T01:34:50.8173830Z ##[end-action id=__dtolnay_rust-toolchain.__run_4;outcome=success;conclusion=success;duration_ms=18702]
+2026-11-18T01:34:50.8182081Z ##[start-action display=rustup default stable;id=__dtolnay_rust-toolchain.__run_5]
+2026-11-18T01:34:50.8321742Z ##[group]Run rustup default "$toolchain" --force-non-host
+2026-11-18T01:34:50.8322128Z [36;1mrustup default "$toolchain" --force-non-host[0m
+2026-11-18T01:34:50.8335843Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:50.8336218Z env:
+2026-11-18T01:34:50.8336419Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:50.8336662Z   toolchain: stable
+2026-11-18T01:34:50.8336859Z ##[endgroup]
+2026-11-18T01:34:50.9040416Z info: using existing install for stable-x86_64-pc-windows-msvc
+2026-11-18T01:34:50.9082282Z info: default toolchain set to stable-x86_64-pc-windows-msvc
+2026-11-18T01:34:50.9082787Z 
+2026-11-18T01:34:50.9303305Z   stable-x86_64-pc-windows-msvc unchanged - rustc 1.100.0 (0ef1bc386 2026-11-09)
+2026-11-18T01:34:50.9303814Z 
+2026-11-18T01:34:50.9391777Z ##[end-action id=__dtolnay_rust-toolchain.__run_5;outcome=success;conclusion=success;duration_ms=120]
+2026-11-18T01:34:50.9395977Z ##[start-action display=Create cachekey;id=__dtolnay_rust-toolchain.rustc-version]
+2026-11-18T01:34:50.9532332Z ##[group]Run DATE=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+2026-11-18T01:34:50.9533155Z [36;1mDATE=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+2026-11-18T01:34:50.9533795Z [36;1mHASH=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+2026-11-18T01:34:50.9534274Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+2026-11-18T01:34:50.9547692Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:50.9548091Z env:
+2026-11-18T01:34:50.9548293Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:50.9548581Z   toolchain: stable
+2026-11-18T01:34:50.9548775Z ##[endgroup]
+2026-11-18T01:34:51.7434536Z ##[end-action id=__dtolnay_rust-toolchain.rustc-version;outcome=success;conclusion=success;duration_ms=803]
+2026-11-18T01:34:51.7437537Z ##[start-action display=Disable incremental compilation;id=__dtolnay_rust-toolchain.__run_6]
+2026-11-18T01:34:51.7589532Z ##[group]Run if [ -z "${CARGO_INCREMENTAL+set}" ]; then
+2026-11-18T01:34:51.7590174Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+2026-11-18T01:34:51.7590736Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+2026-11-18T01:34:51.7591206Z [36;1mfi[0m
+2026-11-18T01:34:51.7610766Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:51.7611404Z env:
+2026-11-18T01:34:51.7611750Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:51.7612177Z ##[endgroup]
+2026-11-18T01:34:51.8039993Z ##[end-action id=__dtolnay_rust-toolchain.__run_6;outcome=success;conclusion=success;duration_ms=60]
+2026-11-18T01:34:51.8042711Z ##[start-action display=Enable colors in Cargo output;id=__dtolnay_rust-toolchain.__run_7]
+2026-11-18T01:34:51.8211575Z ##[group]Run if [ -z "${CARGO_TERM_COLOR+set}" ]; then
+2026-11-18T01:34:51.8211955Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+2026-11-18T01:34:51.8212278Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+2026-11-18T01:34:51.8212556Z [36;1mfi[0m
+2026-11-18T01:34:51.8225085Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:51.8225472Z env:
+2026-11-18T01:34:51.8225680Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:51.8225967Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:51.8226190Z ##[endgroup]
+2026-11-18T01:34:51.8643015Z ##[end-action id=__dtolnay_rust-toolchain.__run_7;outcome=success;conclusion=success;duration_ms=59]
+2026-11-18T01:34:51.8647364Z ##[start-action display=Enable Cargo sparse registry;id=__dtolnay_rust-toolchain.__run_8]
+2026-11-18T01:34:51.8786149Z ##[group]Run # implemented in 1.66, stabilized in 1.68, made default in 1.70
+2026-11-18T01:34:51.8786709Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+2026-11-18T01:34:51.8788123Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+2026-11-18T01:34:51.8788784Z [36;1m  if rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+2026-11-18T01:34:51.8789301Z [36;1m    touch "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-11-18T01:34:51.8789757Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+2026-11-18T01:34:51.8790251Z [36;1m  elif rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+2026-11-18T01:34:51.8790750Z [36;1m    touch "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+2026-11-18T01:34:51.8791205Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+2026-11-18T01:34:51.8791536Z [36;1m  fi[0m
+2026-11-18T01:34:51.8791730Z [36;1mfi[0m
+2026-11-18T01:34:51.8806348Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:51.8806723Z env:
+2026-11-18T01:34:51.8806922Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:51.8807183Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:51.8807380Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:51.8807589Z   toolchain: stable
+2026-11-18T01:34:51.8807776Z ##[endgroup]
+2026-11-18T01:34:52.0761514Z ##[end-action id=__dtolnay_rust-toolchain.__run_8;outcome=success;conclusion=success;duration_ms=211]
+2026-11-18T01:34:52.0766004Z ##[start-action display=Work around spurious network errors in curl 8.0;id=__dtolnay_rust-toolchain.__run_9]
+2026-11-18T01:34:52.0908542Z ##[group]Run # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
+2026-11-18T01:34:52.0909280Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+2026-11-18T01:34:52.0909884Z [36;1mif rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+2026-11-18T01:34:52.0910345Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+2026-11-18T01:34:52.0910630Z [36;1mfi[0m
+2026-11-18T01:34:52.0925271Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:52.0925665Z env:
+2026-11-18T01:34:52.0925890Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:52.0926158Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:52.0926365Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:52.0926567Z   toolchain: stable
+2026-11-18T01:34:52.0926757Z ##[endgroup]
+2026-11-18T01:34:52.2182929Z ##[end-action id=__dtolnay_rust-toolchain.__run_9;outcome=success;conclusion=success;duration_ms=141]
+2026-11-18T01:34:52.2189912Z ##[start-action display=rustc +stable --version --verbose;id=__dtolnay_rust-toolchain.__run_10]
+2026-11-18T01:34:52.2329158Z ##[group]Run rustc +"$toolchain" --version --verbose
+2026-11-18T01:34:52.2329508Z [36;1mrustc +"$toolchain" --version --verbose[0m
+2026-11-18T01:34:52.2342550Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:52.2342944Z env:
+2026-11-18T01:34:52.2343155Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:52.2343410Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:52.2343623Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:52.2343835Z   toolchain: stable
+2026-11-18T01:34:52.2344015Z ##[endgroup]
+2026-11-18T01:34:52.3235205Z rustc 1.100.0 (0ef1bc386 2026-11-09)
+2026-11-18T01:34:52.3235623Z binary: rustc
+2026-11-18T01:34:52.3235912Z commit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a
+2026-11-18T01:34:52.3236222Z commit-date: 2026-11-09
+2026-11-18T01:34:52.3236440Z host: x86_64-pc-windows-msvc
+2026-11-18T01:34:52.3236660Z release: 1.100.0
+2026-11-18T01:34:52.3237279Z LLVM version: 23.1.5
+2026-11-18T01:34:52.3380104Z ##[end-action id=__dtolnay_rust-toolchain.__run_10;outcome=success;conclusion=success;duration_ms=118]
+2026-11-18T01:34:52.3638729Z ##[group]Run Swatinem/rust-cache@v2
+2026-11-18T01:34:52.3639313Z with:
+2026-11-18T01:34:52.3639506Z   prefix-key: v0-rust
+2026-11-18T01:34:52.3639717Z   add-job-id-key: true
+2026-11-18T01:34:52.3639944Z   add-rust-environment-hash-key: true
+2026-11-18T01:34:52.3640190Z   cache-targets: true
+2026-11-18T01:34:52.3640390Z   cache-all-crates: false
+2026-11-18T01:34:52.3640621Z   cache-workspace-crates: false
+2026-11-18T01:34:52.3640838Z   save-if: true
+2026-11-18T01:34:52.3641022Z   cache-provider: github
+2026-11-18T01:34:52.3641294Z   cache-bin: true
+2026-11-18T01:34:52.3641813Z   lookup-only: false
+2026-11-18T01:34:52.3642026Z   cmd-format: {0}
+2026-11-18T01:34:52.3642206Z env:
+2026-11-18T01:34:52.3642420Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:52.3642680Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:52.3642882Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:52.3643087Z ##[endgroup]
+2026-11-18T01:34:53.8856910Z ##[group]Cache Configuration
+2026-11-18T01:34:53.8857561Z Cache Provider:
+2026-11-18T01:34:53.8857856Z     github
+2026-11-18T01:34:53.8858077Z Workspaces:
+2026-11-18T01:34:53.8858326Z     D:\a\Alula_Code\Alula_Code
+2026-11-18T01:34:53.8858620Z Cache Paths:
+2026-11-18T01:34:53.8858901Z     C:\Users\runneradmin\.cargo\bin
+2026-11-18T01:34:53.8859580Z     C:\Users\runneradmin\.cargo\.crates.toml
+2026-11-18T01:34:53.8859983Z     C:\Users\runneradmin\.cargo\.crates2.json
+2026-11-18T01:34:53.8860358Z     C:\Users\runneradmin\.cargo\registry
+2026-11-18T01:34:53.8860719Z     C:\Users\runneradmin\.cargo\git
+2026-11-18T01:34:53.8861063Z     D:\a\Alula_Code\Alula_Code\target
+2026-11-18T01:34:53.8861374Z Restore Key:
+2026-11-18T01:34:53.8861655Z     v0-rust-windows-Windows_NT-x64-ea627442
+2026-11-18T01:34:53.8862002Z Cache Key:
+2026-11-18T01:34:53.8862308Z     v0-rust-windows-Windows_NT-x64-ea627442-35047154
+2026-11-18T01:34:53.8862745Z .. Prefix:
+2026-11-18T01:34:53.8863045Z   - v0-rust-windows-Windows_NT-x64
+2026-11-18T01:34:53.8863436Z .. Environment considered:
+2026-11-18T01:34:53.8863768Z   - Rust Versions:
+2026-11-18T01:34:53.8864228Z     - 1.100.0 x86_64-pc-windows-msvc 0ef1bc386059596dada8fb65b50425aab2ea637a
+2026-11-18T01:34:53.8864790Z   - CARGO_HOME
+2026-11-18T01:34:53.8865071Z   - CARGO_INCREMENTAL
+2026-11-18T01:34:53.8865394Z   - CARGO_TERM_COLOR
+2026-11-18T01:34:53.8865745Z .. Lockfiles considered:
+2026-11-18T01:34:53.8866112Z   - D:\a\Alula_Code\Alula_Code\Cargo.lock
+2026-11-18T01:34:53.8866581Z   - D:\a\Alula_Code\Alula_Code\crates\editor-buffer\Cargo.toml
+2026-11-18T01:34:53.8867139Z   - D:\a\Alula_Code\Alula_Code\crates\editor-core\Cargo.toml
+2026-11-18T01:34:53.8867687Z   - D:\a\Alula_Code\Alula_Code\crates\editor-doc\Cargo.toml
+2026-11-18T01:34:53.8868257Z   - D:\a\Alula_Code\Alula_Code\crates\editor-lang\Cargo.toml
+2026-11-18T01:34:53.8868828Z   - D:\a\Alula_Code\Alula_Code\crates\editor-lsp\Cargo.toml
+2026-11-18T01:34:53.8869414Z   - D:\a\Alula_Code\Alula_Code\crates\editor-merge\Cargo.toml
+2026-11-18T01:34:53.8870075Z   - D:\a\Alula_Code\Alula_Code\crates\editor-process\Cargo.toml
+2026-11-18T01:34:53.8870755Z   - D:\a\Alula_Code\Alula_Code\crates\editor-workspace\Cargo.toml
+2026-11-18T01:34:53.8871337Z   - D:\a\Alula_Code\Alula_Code\tools\mem-probe\Cargo.toml
+2026-11-18T01:34:53.8872156Z ##[endgroup]
+2026-11-18T01:34:53.8872342Z 
+2026-11-18T01:34:53.8872476Z ... Restoring cache ...
+2026-11-18T01:34:54.2062853Z Cache hit for: v0-rust-windows-Windows_NT-x64-ea627442-35047154
+2026-11-18T01:34:55.4280822Z Received 58720256 of 157734595 (37.2%), 55.8 MBs/sec
+2026-11-18T01:34:56.5973144Z Received 134217728 of 157734595 (85.1%), 58.9 MBs/sec
+2026-11-18T01:34:56.8416924Z Received 157734595 of 157734595 (100.0%), 62.2 MBs/sec
+2026-11-18T01:34:56.8420455Z Cache Size: ~150 MB (157734595 B)
+2026-11-18T01:34:56.8503823Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/e1ea7ac9-f953-40e2-ba52-6f565b235ea6/cache.tzst -P -C D:/a/Alula_Code/Alula_Code --force-local --use-compress-program "zstd -d"
+2026-11-18T01:34:59.4993971Z Cache restored successfully
+2026-11-18T01:34:59.5120506Z Restored from cache key "v0-rust-windows-Windows_NT-x64-ea627442-35047154" full match: true.
+2026-11-18T01:34:59.5553925Z ##[group]Run subosito/flutter-action@v2
+2026-11-18T01:34:59.5554285Z with:
+2026-11-18T01:34:59.5554500Z   flutter-version: 3.47.8
+2026-11-18T01:34:59.5554746Z   channel: stable
+2026-11-18T01:34:59.5554953Z   cache: true
+2026-11-18T01:34:59.5555149Z   architecture: X64
+2026-11-18T01:34:59.5555374Z   pub-cache-path: default
+2026-11-18T01:34:59.5555615Z   dry-run: false
+2026-11-18T01:34:59.5555871Z   git-source: https://github.com/flutter/flutter.git
+2026-11-18T01:34:59.5556168Z env:
+2026-11-18T01:34:59.5556370Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:59.5556641Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:59.5556876Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:59.5557112Z   CACHE_ON_FAILURE: false
+2026-11-18T01:34:59.5557331Z ##[endgroup]
+2026-11-18T01:34:59.5563850Z ##[start-action display=Make yq tool available on Windows runners;id=__subosito_flutter-action.__run]
+2026-11-18T01:34:59.5572905Z ##[end-action id=__subosito_flutter-action.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-11-18T01:34:59.5574955Z ##[start-action display=Make setup script executable;id=__subosito_flutter-action.__run_2]
+2026-11-18T01:34:59.5706311Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-11-18T01:34:59.5706759Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-11-18T01:34:59.5720009Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:59.5720413Z env:
+2026-11-18T01:34:59.5720612Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:59.5720872Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:59.5721078Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:59.5721309Z   CACHE_ON_FAILURE: false
+2026-11-18T01:34:59.5721521Z ##[endgroup]
+2026-11-18T01:34:59.6414084Z ##[end-action id=__subosito_flutter-action.__run_2;outcome=success;conclusion=success;duration_ms=83]
+2026-11-18T01:34:59.6417580Z ##[start-action display=Set action inputs;id=__subosito_flutter-action.flutter-action]
+2026-11-18T01:34:59.6547504Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-11-18T01:34:59.6547894Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-11-18T01:34:59.6548180Z [36;1m  -n '3.47.8' \[0m
+2026-11-18T01:34:59.6548391Z [36;1m  -f '' \[0m
+2026-11-18T01:34:59.6548607Z [36;1m  -a 'X64' \[0m
+2026-11-18T01:34:59.6548804Z [36;1m  -k '' \[0m
+2026-11-18T01:34:59.6548994Z [36;1m  -c '' \[0m
+2026-11-18T01:34:59.6549180Z [36;1m  -l '' \[0m
+2026-11-18T01:34:59.6549371Z [36;1m  -d 'default' \[0m
+2026-11-18T01:34:59.6549697Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-11-18T01:34:59.6550016Z [36;1m  stable[0m
+2026-11-18T01:34:59.6563409Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:34:59.6563831Z env:
+2026-11-18T01:34:59.6564045Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:34:59.6564337Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:34:59.6564589Z   CARGO_TERM_COLOR: always
+2026-11-18T01:34:59.6564824Z   CACHE_ON_FAILURE: false
+2026-11-18T01:34:59.6565063Z ##[endgroup]
+2026-11-18T01:35:03.0169258Z ##[end-action id=__subosito_flutter-action.flutter-action;outcome=success;conclusion=success;duration_ms=3375]
+2026-11-18T01:35:03.0172275Z ##[start-action display=Cache Flutter;id=__subosito_flutter-action.cache-flutter]
+2026-11-18T01:35:03.0325878Z ##[group]Run actions/cache@v5
+2026-11-18T01:35:03.0326144Z with:
+2026-11-18T01:35:03.0326438Z   path: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64
+2026-11-18T01:35:03.0326916Z   key: flutter-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e
+2026-11-18T01:35:03.0327332Z   enableCrossOsArchive: false
+2026-11-18T01:35:03.0327576Z   fail-on-cache-miss: false
+2026-11-18T01:35:03.0327848Z   lookup-only: false
+2026-11-18T01:35:03.0328071Z   save-always: false
+2026-11-18T01:35:03.0328276Z env:
+2026-11-18T01:35:03.0328489Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:35:03.0329050Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:35:03.0331559Z   CARGO_TERM_COLOR: always
+2026-11-18T01:35:03.0331903Z   CACHE_ON_FAILURE: false
+2026-11-18T01:35:03.0332149Z ##[endgroup]
+2026-11-18T01:35:03.4790126Z Cache hit for: flutter-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e
+2026-11-18T01:35:04.7038005Z Received 83886080 of 1930860733 (4.3%), 79.7 MBs/sec
+2026-11-18T01:35:05.7185410Z Received 260046848 of 1930860733 (13.5%), 123.1 MBs/sec
+2026-11-18T01:35:06.7644841Z Received 402653184 of 1930860733 (20.9%), 125.3 MBs/sec
+2026-11-18T01:35:07.7751116Z Received 574619648 of 1930860733 (29.8%), 134.5 MBs/sec
+2026-11-18T01:35:08.7808065Z Received 666894336 of 1930860733 (34.5%), 125.2 MBs/sec
+2026-11-18T01:35:09.7864939Z Received 775946240 of 1930860733 (40.2%), 121.7 MBs/sec
+2026-11-18T01:35:10.8542997Z Received 939524096 of 1930860733 (48.7%), 125.2 MBs/sec
+2026-11-18T01:35:11.8622269Z Received 1103101952 of 1930860733 (57.1%), 128.9 MBs/sec
+2026-11-18T01:35:12.8697491Z Received 1241513984 of 1930860733 (64.3%), 129.1 MBs/sec
+2026-11-18T01:35:13.8727619Z Received 1409286144 of 1930860733 (73.0%), 132.1 MBs/sec
+2026-11-18T01:35:14.8823851Z Received 1522532352 of 1930860733 (78.9%), 129.9 MBs/sec
+2026-11-18T01:35:15.8797321Z Received 1686110208 of 1930860733 (87.3%), 132.0 MBs/sec
+2026-11-18T01:35:16.9046197Z Received 1870659584 of 1930860733 (96.9%), 135.2 MBs/sec
+2026-11-18T01:35:17.5321268Z Received 1930860733 of 1930860733 (100.0%), 133.1 MBs/sec
+2026-11-18T01:35:17.5326571Z Cache Size: ~1841 MB (1930860733 B)
+2026-11-18T01:35:17.5400612Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/e7d2233b-2501-4789-8dc9-347ceaff5b70/cache.tzst -P -C D:/a/Alula_Code/Alula_Code --force-local --use-compress-program "zstd -d"
+2026-11-18T01:35:57.9435145Z Cache restored successfully
+2026-11-18T01:35:58.1539648Z Cache restored from key: flutter-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e
+2026-11-18T01:35:58.1800422Z ##[end-action id=__subosito_flutter-action.cache-flutter;outcome=success;conclusion=success;duration_ms=55163]
+2026-11-18T01:35:58.1803274Z ##[start-action display=Cache pub dependencies;id=__subosito_flutter-action.cache-pub]
+2026-11-18T01:35:58.7456424Z ##[group]Run actions/cache@v5
+2026-11-18T01:35:58.7456696Z with:
+2026-11-18T01:35:58.7456955Z   path: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:35:58.7457728Z   key: flutter-pub-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e-e0d42e55aff662739a6173a2fb3b964be3e248a4fa3dc1e0ed14f48e1ecddbb6
+2026-11-18T01:35:58.7458455Z   enableCrossOsArchive: false
+2026-11-18T01:35:58.7458732Z   fail-on-cache-miss: false
+2026-11-18T01:35:58.7458970Z   lookup-only: false
+2026-11-18T01:35:58.7459198Z   save-always: false
+2026-11-18T01:35:58.7459397Z env:
+2026-11-18T01:35:58.7459606Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:35:58.7459895Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:35:58.7460115Z   CARGO_TERM_COLOR: always
+2026-11-18T01:35:58.7460380Z   CACHE_ON_FAILURE: false
+2026-11-18T01:35:58.7460624Z ##[endgroup]
+2026-11-18T01:35:59.2293850Z Cache hit for: flutter-pub-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e-e0d42e55aff662739a6173a2fb3b964be3e248a4fa3dc1e0ed14f48e1ecddbb6
+2026-11-18T01:36:00.3389275Z Received 36038700 of 36038700 (100.0%), 39.6 MBs/sec
+2026-11-18T01:36:00.3391458Z Cache Size: ~34 MB (36038700 B)
+2026-11-18T01:36:00.3420062Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/4c9dc430-b6f3-4f88-a2e7-b31cd222b4ff/cache.tzst -P -C D:/a/Alula_Code/Alula_Code --force-local --use-compress-program "zstd -d"
+2026-11-18T01:36:17.6740265Z Cache restored successfully
+2026-11-18T01:36:17.6893710Z Cache restored from key: flutter-pub-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e-e0d42e55aff662739a6173a2fb3b964be3e248a4fa3dc1e0ed14f48e1ecddbb6
+2026-11-18T01:36:17.7030807Z ##[end-action id=__subosito_flutter-action.cache-pub;outcome=success;conclusion=success;duration_ms=19522]
+2026-11-18T01:36:17.7035489Z ##[start-action display=Run setup script;id=__subosito_flutter-action.__run_3]
+2026-11-18T01:36:17.7195993Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-11-18T01:36:17.7196356Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-11-18T01:36:17.7196663Z [36;1m  -n '3.47.8' \[0m
+2026-11-18T01:36:17.7196890Z [36;1m  -a 'x64' \[0m
+2026-11-18T01:36:17.7197191Z [36;1m  -c 'C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64' \[0m
+2026-11-18T01:36:17.7197609Z [36;1m  -d 'C:\Users\runneradmin\AppData\Local\Pub\Cache' \[0m
+2026-11-18T01:36:17.7197925Z [36;1m  stable[0m
+2026-11-18T01:36:17.7212850Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:36:17.7213252Z env:
+2026-11-18T01:36:17.7213476Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:36:17.7213758Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:36:17.7213993Z   CARGO_TERM_COLOR: always
+2026-11-18T01:36:17.7214222Z   CACHE_ON_FAILURE: false
+2026-11-18T01:36:17.7214469Z ##[endgroup]
+2026-11-18T01:36:20.3190274Z ##[end-action id=__subosito_flutter-action.__run_3;outcome=success;conclusion=success;duration_ms=2615]
+2026-11-18T01:36:20.3343068Z ##[group]Run bash scripts/build_core.sh
+2026-11-18T01:36:20.3343484Z [36;1mbash scripts/build_core.sh[0m
+2026-11-18T01:36:20.3361111Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-18T01:36:20.3361510Z env:
+2026-11-18T01:36:20.3361738Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:36:20.3362013Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:36:20.3362247Z   CARGO_TERM_COLOR: always
+2026-11-18T01:36:20.3362478Z   CACHE_ON_FAILURE: false
+2026-11-18T01:36:20.3362826Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:36:20.3363243Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:36:20.3363554Z ##[endgroup]
+2026-11-18T01:36:21.0698282Z [1m[92m    Updating[0m crates.io index
+2026-11-18T01:36:26.2301640Z [1m[92m   Compiling[0m editor-doc v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-doc)
+2026-11-18T01:36:26.2303099Z [1m[92m   Compiling[0m editor-process v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-process)
+2026-11-18T01:36:26.2304234Z [1m[92m   Compiling[0m editor-buffer v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-buffer)
+2026-11-18T01:36:26.2305272Z [1m[92m   Compiling[0m editor-lang v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-lang)
+2026-11-18T01:36:27.3886098Z [1m[92m   Compiling[0m editor-lsp v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-lsp)
+2026-11-18T01:36:28.4557556Z [1m[92m   Compiling[0m editor-workspace v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-workspace)
+2026-11-18T01:36:28.6142533Z [1m[92m   Compiling[0m editor-merge v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-merge)
+2026-11-18T01:36:32.6367644Z [1m[92m   Compiling[0m editor-core v0.1.0 (D:\a\Alula_Code\Alula_Code\crates\editor-core)
+2026-11-18T01:36:46.0767970Z [1m[92m    Finished[0m `release` profile [optimized] target(s) in 25.58s
+2026-11-18T01:36:46.6788588Z OK: app/native/ 已就绪
+2026-11-18T01:36:46.7006036Z ##[group]Run flutter pub get --enforce-lockfile
+2026-11-18T01:36:46.7006971Z [36;1mflutter pub get --enforce-lockfile[0m
+2026-11-18T01:36:46.7650603Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:36:46.7650988Z env:
+2026-11-18T01:36:46.7651244Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:36:46.7651530Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:36:46.7651779Z   CARGO_TERM_COLOR: always
+2026-11-18T01:36:46.7652029Z   CACHE_ON_FAILURE: false
+2026-11-18T01:36:46.7652386Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:36:46.7652828Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:36:46.7653137Z ##[endgroup]
+2026-11-18T01:36:48.9131241Z Resolving dependencies...
+2026-11-18T01:36:48.9698401Z Downloading packages...
+2026-11-18T01:36:48.9773522Z   device_info_plus 11.5.0 (13.3.0 available)
+2026-11-18T01:36:48.9774345Z   device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+2026-11-18T01:36:48.9775225Z   flutter_lints 4.0.0 (6.0.0 available)
+2026-11-18T01:36:48.9775912Z ! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+2026-11-18T01:36:48.9776583Z   lints 4.0.0 (6.1.0 available)
+2026-11-18T01:36:48.9777041Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-11-18T01:36:48.9777546Z   meta 1.18.3 (1.19.0 available)
+2026-11-18T01:36:48.9778011Z   screen_retriever 0.2.2 (0.4.0 available)
+2026-11-18T01:36:48.9778483Z   test_api 0.7.12 (0.7.15 available)
+2026-11-18T01:36:48.9778908Z   vector_math 2.4.0 (2.4.4 available)
+2026-11-18T01:36:48.9779374Z   win32 5.15.0 (6.4.0 available)
+2026-11-18T01:36:48.9779819Z   win32_registry 2.1.0 (3.0.3 available)
+2026-11-18T01:36:48.9780286Z   window_manager 0.5.2 (0.7.0 available)
+2026-11-18T01:36:48.9780759Z Got dependencies!
+2026-11-18T01:36:48.9781367Z 12 packages have newer versions incompatible with dependency constraints.
+2026-11-18T01:36:48.9782116Z Try `flutter pub outdated` for more information.
+2026-11-18T01:36:49.3323699Z ##[group]Run flutter build windows --release
+2026-11-18T01:36:49.3324158Z [36;1mflutter build windows --release[0m
+2026-11-18T01:36:49.3397728Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:36:49.3398113Z env:
+2026-11-18T01:36:49.3398347Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:36:49.3398649Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:36:49.3398884Z   CARGO_TERM_COLOR: always
+2026-11-18T01:36:49.3399137Z   CACHE_ON_FAILURE: false
+2026-11-18T01:36:49.3399487Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:36:49.3399940Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:36:49.3400257Z ##[endgroup]
+2026-11-18T01:36:50.5118120Z Resolving dependencies...
+2026-11-18T01:36:50.5679603Z Downloading packages...
+2026-11-18T01:36:50.5747450Z   device_info_plus 11.5.0 (13.3.0 available)
+2026-11-18T01:36:50.5748349Z   device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+2026-11-18T01:36:50.5748936Z   flutter_lints 4.0.0 (6.0.0 available)
+2026-11-18T01:36:50.5749613Z ! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+2026-11-18T01:36:50.5768193Z   lints 4.0.0 (6.1.0 available)
+2026-11-18T01:36:50.5768840Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-11-18T01:36:50.5769335Z   meta 1.18.3 (1.19.0 available)
+2026-11-18T01:36:50.5769740Z   screen_retriever 0.2.2 (0.4.0 available)
+2026-11-18T01:36:50.5770201Z   test_api 0.7.12 (0.7.15 available)
+2026-11-18T01:36:50.5770615Z   vector_math 2.4.0 (2.4.4 available)
+2026-11-18T01:36:50.5771023Z   win32 5.15.0 (6.4.0 available)
+2026-11-18T01:36:50.5771460Z   win32_registry 2.1.0 (3.0.3 available)
+2026-11-18T01:36:50.5771958Z   window_manager 0.5.2 (0.7.0 available)
+2026-11-18T01:36:50.5772391Z Got dependencies!
+2026-11-18T01:36:50.5772944Z 12 packages have newer versions incompatible with dependency constraints.
+2026-11-18T01:36:50.5773555Z Try `flutter pub outdated` for more information.
+2026-11-18T01:37:04.5704508Z Building Windows application...                                 
+2026-11-18T01:37:04.5714250Z Get-Item : Could not find item C:\Users\runneradmin\AppData.
+2026-11-18T01:37:04.5716404Z At D:\a\Alula_Code\Alula_Code\app\windows\flutter\ephemeral\.plugin_symlinks\super_native_extensions\cargokit\cmake\res
+2026-11-18T01:37:04.5717559Z olve_symlinks.ps1:25 char:17
+2026-11-18T01:37:04.5718333Z +         $item = Get-Item $realPath
+2026-11-18T01:37:04.5719886Z +                 ~~~~~~~~~~~~~~~~~~
+2026-11-18T01:37:04.5724246Z     + CategoryInfo          : ObjectNotFound: (C:\Users\runneradmin\AppData:String) [Get-Item], IOException
+2026-11-18T01:37:04.5726136Z     + FullyQualifiedErrorId : ItemNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+2026-11-18T01:37:04.5726699Z 
+2026-11-18T01:39:45.3313404Z Building Windows application...                                   174.1s
+2026-11-18T01:39:45.3335908Z √ Built build\windows\x64\runner\Release\alula_app.exe
+2026-11-18T01:39:45.4714834Z ##[group]Run Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
+2026-11-18T01:39:45.4715813Z [36;1mCopy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force[0m
+2026-11-18T01:39:45.4804232Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:39:45.4804759Z env:
+2026-11-18T01:39:45.4805094Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:39:45.4805377Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:39:45.4805624Z   CARGO_TERM_COLOR: always
+2026-11-18T01:39:45.4805865Z   CACHE_ON_FAILURE: false
+2026-11-18T01:39:45.4806236Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:39:45.4806688Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:39:45.4807007Z ##[endgroup]
+2026-11-18T01:39:45.9961250Z ##[group]Run Add-Type -AssemblyName System.Drawing
+2026-11-18T01:39:45.9962976Z [36;1mAdd-Type -AssemblyName System.Drawing[0m
+2026-11-18T01:39:45.9963293Z [36;1mAdd-Type @'[0m
+2026-11-18T01:39:45.9963540Z [36;1musing System;[0m
+2026-11-18T01:39:45.9963808Z [36;1musing System.Runtime.InteropServices;[0m
+2026-11-18T01:39:45.9964120Z [36;1m[0m
+2026-11-18T01:39:45.9964331Z [36;1mpublic struct AlulaRect[0m
+2026-11-18T01:39:45.9964608Z [36;1m{[0m
+2026-11-18T01:39:45.9964816Z [36;1m    public int Left;[0m
+2026-11-18T01:39:45.9965088Z [36;1m    public int Top;[0m
+2026-11-18T01:39:45.9965345Z [36;1m    public int Right;[0m
+2026-11-18T01:39:45.9965632Z [36;1m    public int Bottom;[0m
+2026-11-18T01:39:45.9965874Z [36;1m}[0m
+2026-11-18T01:39:45.9966080Z [36;1m[0m
+2026-11-18T01:39:45.9966287Z [36;1mpublic struct AlulaPoint[0m
+2026-11-18T01:39:45.9966552Z [36;1m{[0m
+2026-11-18T01:39:45.9966751Z [36;1m    public int X;[0m
+2026-11-18T01:39:45.9967371Z [36;1m    public int Y;[0m
+2026-11-18T01:39:45.9967762Z [36;1m}[0m
+2026-11-18T01:39:45.9967972Z [36;1m[0m
+2026-11-18T01:39:45.9968260Z [36;1mpublic static class AlulaWindowApi[0m
+2026-11-18T01:39:45.9968589Z [36;1m{[0m
+2026-11-18T01:39:45.9968930Z [36;1m    [DllImport("user32.dll", SetLastError = true)][0m
+2026-11-18T01:39:45.9969390Z [36;1m    public static extern bool IsWindowVisible(IntPtr window);[0m
+2026-11-18T01:39:45.9969798Z [36;1m[0m
+2026-11-18T01:39:45.9970078Z [36;1m    [DllImport("user32.dll", SetLastError = true)][0m
+2026-11-18T01:39:45.9970589Z [36;1m    public static extern bool GetClientRect(IntPtr window, out AlulaRect rect);[0m
+2026-11-18T01:39:45.9971020Z [36;1m[0m
+2026-11-18T01:39:45.9971328Z [36;1m    [DllImport("user32.dll", SetLastError = true)][0m
+2026-11-18T01:39:45.9971825Z [36;1m    public static extern bool ClientToScreen(IntPtr window, ref AlulaPoint point);[0m
+2026-11-18T01:39:45.9972310Z [36;1m[0m
+2026-11-18T01:39:45.9972568Z [36;1m    [DllImport("user32.dll")][0m
+2026-11-18T01:39:45.9973031Z [36;1m    public static extern bool ShowWindow(IntPtr window, int command);[0m
+2026-11-18T01:39:45.9973463Z [36;1m[0m
+2026-11-18T01:39:45.9973708Z [36;1m    [DllImport("user32.dll")][0m
+2026-11-18T01:39:45.9974147Z [36;1m    public static extern bool SetForegroundWindow(IntPtr window);[0m
+2026-11-18T01:39:45.9974555Z [36;1m[0m
+2026-11-18T01:39:45.9974840Z [36;1m    [DllImport("user32.dll")][0m
+2026-11-18T01:39:45.9975258Z [36;1m    public static extern IntPtr GetWindow(IntPtr window, uint command);[0m
+2026-11-18T01:39:45.9975699Z [36;1m[0m
+2026-11-18T01:39:45.9975939Z [36;1m    [DllImport("user32.dll")][0m
+2026-11-18T01:39:45.9976347Z [36;1m    public static extern uint GetDpiForWindow(IntPtr window);[0m
+2026-11-18T01:39:45.9976728Z [36;1m[0m
+2026-11-18T01:39:45.9977072Z [36;1m    [DllImport("user32.dll", SetLastError = true)][0m
+2026-11-18T01:39:45.9977626Z [36;1m    public static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);[0m
+2026-11-18T01:39:45.9978399Z [36;1m}[0m
+2026-11-18T01:39:45.9978624Z [36;1m'@[0m
+2026-11-18T01:39:45.9978888Z [36;1m[0m
+2026-11-18T01:39:45.9979260Z [36;1m$exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path[0m
+2026-11-18T01:39:45.9979853Z [36;1m$process = Start-Process -FilePath $exe -PassThru -WindowStyle Normal[0m
+2026-11-18T01:39:45.9980296Z [36;1mtry {[0m
+2026-11-18T01:39:45.9980575Z [36;1m  $deadline = (Get-Date).AddSeconds(30)[0m
+2026-11-18T01:39:45.9980937Z [36;1m  $window = [IntPtr]::Zero[0m
+2026-11-18T01:39:45.9981228Z [36;1m  do {[0m
+2026-11-18T01:39:45.9981490Z [36;1m    $process.Refresh()[0m
+2026-11-18T01:39:45.9981956Z [36;1m    if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }[0m
+2026-11-18T01:39:45.9982504Z [36;1m    $window = $process.MainWindowHandle[0m
+2026-11-18T01:39:45.9984551Z [36;1m    if ($window -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }[0m
+2026-11-18T01:39:45.9985150Z [36;1m  } while ($window -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)[0m
+2026-11-18T01:39:45.9985551Z [36;1m[0m
+2026-11-18T01:39:45.9985955Z [36;1m  if ($window -eq [IntPtr]::Zero) { throw "Alula did not create a top-level window" }[0m
+2026-11-18T01:39:45.9986521Z [36;1m  [AlulaWindowApi]::ShowWindow($window, 9) | Out-Null[0m
+2026-11-18T01:39:45.9986974Z [36;1m  [AlulaWindowApi]::SetForegroundWindow($window) | Out-Null[0m
+2026-11-18T01:39:45.9987708Z [36;1m  Start-Sleep -Seconds 2[0m
+2026-11-18T01:39:45.9988333Z [36;1m  if (![AlulaWindowApi]::IsWindowVisible($window)) { throw "Alula top-level window is not visible" }[0m
+2026-11-18T01:39:45.9989009Z [36;1m[0m
+2026-11-18T01:39:45.9989281Z [36;1m  $client = New-Object AlulaRect[0m
+2026-11-18T01:39:45.9989777Z [36;1m  if (![AlulaWindowApi]::GetClientRect($window, [ref]$client)) { throw "GetClientRect failed" }[0m
+2026-11-18T01:39:45.9990346Z [36;1m  $width = $client.Right - $client.Left[0m
+2026-11-18T01:39:45.9990725Z [36;1m  $height = $client.Bottom - $client.Top[0m
+2026-11-18T01:39:45.9991254Z [36;1m  if ($width -lt 640 -or $height -lt 480) { throw "Unexpected client area ${width}x${height}" }[0m
+2026-11-18T01:39:45.9991702Z [36;1m[0m
+2026-11-18T01:39:45.9991995Z [36;1m  $origin = New-Object AlulaPoint[0m
+2026-11-18T01:39:45.9992516Z [36;1m  if (![AlulaWindowApi]::ClientToScreen($window, [ref]$origin)) { throw "ClientToScreen failed" }[0m
+2026-11-18T01:39:45.9993120Z [36;1m  $bitmap = [System.Drawing.Bitmap]::new($width, $height)[0m
+2026-11-18T01:39:45.9993621Z [36;1m  $graphics = [System.Drawing.Graphics]::FromImage($bitmap)[0m
+2026-11-18T01:39:45.9994001Z [36;1m  try {[0m
+2026-11-18T01:39:45.9994406Z [36;1m    $graphics.CopyFromScreen($origin.X, $origin.Y, 0, 0, $bitmap.Size)[0m
+2026-11-18T01:39:45.9994940Z [36;1m    $capture = Join-Path $env:RUNNER_TEMP 'alula-windows-client.png'[0m
+2026-11-18T01:39:45.9995476Z [36;1m    $bitmap.Save($capture, [System.Drawing.Imaging.ImageFormat]::Png)[0m
+2026-11-18T01:39:45.9995846Z [36;1m  }[0m
+2026-11-18T01:39:45.9996053Z [36;1m  finally {[0m
+2026-11-18T01:39:45.9996282Z [36;1m    $graphics.Dispose()[0m
+2026-11-18T01:39:45.9996560Z [36;1m    $bitmap.Dispose()[0m
+2026-11-18T01:39:45.9996795Z [36;1m  }[0m
+2026-11-18T01:39:45.9996999Z [36;1m[0m
+2026-11-18T01:39:45.9997195Z [36;1m  $uiaAvailable = $false[0m
+2026-11-18T01:39:45.9997473Z [36;1m  $uiaNames = @()[0m
+2026-11-18T01:39:45.9997710Z [36;1m  $uiaElementCount = 0[0m
+2026-11-18T01:39:45.9997988Z [36;1m  $uiaRootSnapshots = @()[0m
+2026-11-18T01:39:45.9998262Z [36;1m  $uiaError = $null[0m
+2026-11-18T01:39:45.9998590Z [36;1m  $uiAutomationSkipped = $env:ALULA_SKIP_UI_AUTOMATION -eq '1'[0m
+2026-11-18T01:39:45.9998963Z [36;1m  $msaaAvailable = $false[0m
+2026-11-18T01:39:45.9999221Z [36;1m  $msaaRoots = @()[0m
+2026-11-18T01:39:45.9999474Z [36;1m  $msaaError = $null[0m
+2026-11-18T01:39:45.9999750Z [36;1m  $msaaEditorFocusRequested = $false[0m
+2026-11-18T01:39:46.0000275Z [36;1m  if (!$uiAutomationSkipped) {[0m
+2026-11-18T01:39:46.0000539Z [36;1m    try {[0m
+2026-11-18T01:39:46.0000830Z [36;1m      Add-Type -AssemblyName UIAutomationClient[0m
+2026-11-18T01:39:46.0001147Z [36;1m      $uiaTargets = @([0m
+2026-11-18T01:39:46.0001526Z [36;1m        [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },[0m
+2026-11-18T01:39:46.0001904Z [36;1m        [pscustomobject]@{[0m
+2026-11-18T01:39:46.0002213Z [36;1m          name = 'flutterChildWindow'[0m
+2026-11-18T01:39:46.0002550Z [36;1m          handle = [AlulaWindowApi]::GetWindow($window, 5)[0m
+2026-11-18T01:39:46.0002877Z [36;1m        }[0m
+2026-11-18T01:39:46.0003100Z [36;1m      )[0m
+2026-11-18T01:39:46.0003345Z [36;1m      foreach ($target in $uiaTargets) {[0m
+2026-11-18T01:39:46.0003661Z [36;1m        $targetNames = @()[0m
+2026-11-18T01:39:46.0003923Z [36;1m        $targetElements = @()[0m
+2026-11-18T01:39:46.0004781Z [36;1m        $targetError = $null[0m
+2026-11-18T01:39:46.0005066Z [36;1m        $descendants = $null[0m
+2026-11-18T01:39:46.0005335Z [36;1m        try {[0m
+2026-11-18T01:39:46.0005783Z [36;1m          $automationRoot = [System.Windows.Automation.AutomationElement]::FromHandle($target.handle)[0m
+2026-11-18T01:39:46.0006342Z [36;1m          $descendants = $automationRoot.FindAll([0m
+2026-11-18T01:39:46.0006718Z [36;1m            [System.Windows.Automation.TreeScope]::Subtree,[0m
+2026-11-18T01:39:46.0007160Z [36;1m            [System.Windows.Automation.Condition]::TrueCondition)[0m
+2026-11-18T01:39:46.0007873Z [36;1m          foreach ($element in $descendants) {[0m
+2026-11-18T01:39:46.0008349Z [36;1m            try {[0m
+2026-11-18T01:39:46.0008640Z [36;1m              $current = $element.Current[0m
+2026-11-18T01:39:46.0009095Z [36;1m              if (![string]::IsNullOrWhiteSpace($current.Name)) { $targetNames += $current.Name }[0m
+2026-11-18T01:39:46.0009595Z [36;1m              if ($targetElements.Count -lt 100) {[0m
+2026-11-18T01:39:46.0009927Z [36;1m                $targetElements += [ordered]@{[0m
+2026-11-18T01:39:46.0010244Z [36;1m                  name = $current.Name[0m
+2026-11-18T01:39:46.0010565Z [36;1m                  automationId = $current.AutomationId[0m
+2026-11-18T01:39:46.0010918Z [36;1m                  className = $current.ClassName[0m
+2026-11-18T01:39:46.0011259Z [36;1m                  frameworkId = $current.FrameworkId[0m
+2026-11-18T01:39:46.0011657Z [36;1m                  controlType = $current.ControlType.ProgrammaticName[0m
+2026-11-18T01:39:46.0012115Z [36;1m                  localizedControlType = $current.LocalizedControlType[0m
+2026-11-18T01:39:46.0012528Z [36;1m                  isControlElement = $current.IsControlElement[0m
+2026-11-18T01:39:46.0012925Z [36;1m                  isContentElement = $current.IsContentElement[0m
+2026-11-18T01:39:46.0013242Z [36;1m                }[0m
+2026-11-18T01:39:46.0013486Z [36;1m              }[0m
+2026-11-18T01:39:46.0013866Z [36;1m            } catch [System.Windows.Automation.ElementNotAvailableException] { }[0m
+2026-11-18T01:39:46.0014281Z [36;1m          }[0m
+2026-11-18T01:39:46.0014507Z [36;1m          $uiaAvailable = $true[0m
+2026-11-18T01:39:46.0014832Z [36;1m          $uiaElementCount += $descendants.Count[0m
+2026-11-18T01:39:46.0015133Z [36;1m        } catch {[0m
+2026-11-18T01:39:46.0015415Z [36;1m          $targetError = $_.Exception.Message[0m
+2026-11-18T01:39:46.0015772Z [36;1m          if ($null -eq $uiaError) { $uiaError = $targetError }[0m
+2026-11-18T01:39:46.0016102Z [36;1m        }[0m
+2026-11-18T01:39:46.0016364Z [36;1m        $uiaRootSnapshots += [ordered]@{[0m
+2026-11-18T01:39:46.0016646Z [36;1m          target = $target.name[0m
+2026-11-18T01:39:46.0017033Z [36;1m          elementCount = if ($descendants) { $descendants.Count } else { 0 }[0m
+2026-11-18T01:39:46.0017458Z [36;1m          accessibleNameCount = $targetNames.Count[0m
+2026-11-18T01:39:46.0018073Z [36;1m          accessibleNames = @($targetNames | Select-Object -First 100)[0m
+2026-11-18T01:39:46.0018474Z [36;1m          elements = @($targetElements)[0m
+2026-11-18T01:39:46.0018811Z [36;1m          error = $targetError[0m
+2026-11-18T01:39:46.0019065Z [36;1m        }[0m
+2026-11-18T01:39:46.0019412Z [36;1m        if ($target.name -eq 'topLevelWindow') { $uiaNames = $targetNames }[0m
+2026-11-18T01:39:46.0019801Z [36;1m      }[0m
+2026-11-18T01:39:46.0020048Z [36;1m    } catch {[0m
+2026-11-18T01:39:46.0020382Z [36;1m      if ($null -eq $uiaError) { $uiaError = $_.Exception.Message }[0m
+2026-11-18T01:39:46.0020716Z [36;1m    }[0m
+2026-11-18T01:39:46.0020931Z [36;1m[0m
+2026-11-18T01:39:46.0021122Z [36;1m    try {[0m
+2026-11-18T01:39:46.0021392Z [36;1m      Add-Type -AssemblyName Accessibility[0m
+2026-11-18T01:39:46.0021821Z [36;1m      $accessibilityAssembly = [Accessibility.IAccessible].Assembly.Location[0m
+2026-11-18T01:39:46.0022489Z [36;1m      Add-Type -ReferencedAssemblies @($accessibilityAssembly) -TypeDefinition @'[0m
+2026-11-18T01:39:46.0022916Z [36;1musing System;[0m
+2026-11-18T01:39:46.0023262Z [36;1musing System.Runtime.InteropServices;[0m
+2026-11-18T01:39:46.0023569Z [36;1musing Accessibility;[0m
+2026-11-18T01:39:46.0023821Z [36;1m[0m
+2026-11-18T01:39:46.0024026Z [36;1mpublic static class AlulaMsaaApi[0m
+2026-11-18T01:39:46.0024319Z [36;1m{[0m
+2026-11-18T01:39:46.0024573Z [36;1m    private static readonly Guid IidIAccessible =[0m
+2026-11-18T01:39:46.0024955Z [36;1m        new Guid("618736E0-3C3D-11CF-810C-00AA00389B71");[0m
+2026-11-18T01:39:46.0025281Z [36;1m[0m
+2026-11-18T01:39:46.0025519Z [36;1m    [DllImport("oleacc.dll", PreserveSig = true)][0m
+2026-11-18T01:39:46.0025918Z [36;1m    private static extern int AccessibleObjectFromWindow([0m
+2026-11-18T01:39:46.0026258Z [36;1m        IntPtr window,[0m
+2026-11-18T01:39:46.0026522Z [36;1m        uint objectId,[0m
+2026-11-18T01:39:46.0026778Z [36;1m        ref Guid interfaceId,[0m
+2026-11-18T01:39:46.0027172Z [36;1m        [MarshalAs(UnmanagedType.Interface)] out IAccessible accessible);[0m
+2026-11-18T01:39:46.0027543Z [36;1m[0m
+2026-11-18T01:39:46.0028154Z [36;1m    public static AlulaMsaaSnapshot Capture(IntPtr window)[0m
+2026-11-18T01:39:46.0028554Z [36;1m    {[0m
+2026-11-18T01:39:46.0028814Z [36;1m        Guid interfaceId = IidIAccessible;[0m
+2026-11-18T01:39:46.0029128Z [36;1m        IAccessible accessible = null;[0m
+2026-11-18T01:39:46.0029507Z [36;1m        AlulaMsaaSnapshot snapshot = new AlulaMsaaSnapshot();[0m
+2026-11-18T01:39:46.0029900Z [36;1m        int result = AccessibleObjectFromWindow([0m
+2026-11-18T01:39:46.0030322Z [36;1m            window, unchecked((uint)-4), ref interfaceId, out accessible);[0m
+2026-11-18T01:39:46.0030748Z [36;1m        snapshot.HResult = "0x" + result.ToString("X8");[0m
+2026-11-18T01:39:46.0031116Z [36;1m        if (result != 0 || accessible == null)[0m
+2026-11-18T01:39:46.0031421Z [36;1m        {[0m
+2026-11-18T01:39:46.0031794Z [36;1m            snapshot.Error = "AccessibleObjectFromWindow did not return IAccessible.";[0m
+2026-11-18T01:39:46.0032259Z [36;1m            return snapshot;[0m
+2026-11-18T01:39:46.0032507Z [36;1m        }[0m
+2026-11-18T01:39:46.0032721Z [36;1m[0m
+2026-11-18T01:39:46.0032903Z [36;1m        try[0m
+2026-11-18T01:39:46.0033128Z [36;1m        {[0m
+2026-11-18T01:39:46.0033419Z [36;1m            try { snapshot.RootName = accessible.get_accName(0); }[0m
+2026-11-18T01:39:46.0033929Z [36;1m            catch (Exception exception) { snapshot.RootNameError = exception.Message; }[0m
+2026-11-18T01:39:46.0034429Z [36;1m            try { snapshot.ChildCount = accessible.accChildCount; }[0m
+2026-11-18T01:39:46.0034838Z [36;1m            catch (Exception exception)[0m
+2026-11-18T01:39:46.0035126Z [36;1m            {[0m
+2026-11-18T01:39:46.0035447Z [36;1m                snapshot.Error = "accChildCount: " + exception.Message;[0m
+2026-11-18T01:39:46.0035976Z [36;1m                return snapshot;[0m
+2026-11-18T01:39:46.0036280Z [36;1m            }[0m
+2026-11-18T01:39:46.0036560Z [36;1m            CaptureChildren(accessible, "", 1, snapshot);[0m
+2026-11-18T01:39:46.0036889Z [36;1m        }[0m
+2026-11-18T01:39:46.0037126Z [36;1m        catch (Exception exception)[0m
+2026-11-18T01:39:46.0037414Z [36;1m        {[0m
+2026-11-18T01:39:46.0037763Z [36;1m            snapshot.Error = exception.GetType().FullName + ": " + exception.Message;[0m
+2026-11-18T01:39:46.0038174Z [36;1m        }[0m
+2026-11-18T01:39:46.0038381Z [36;1m        finally[0m
+2026-11-18T01:39:46.0038608Z [36;1m        {[0m
+2026-11-18T01:39:46.0038853Z [36;1m            if (Marshal.IsComObject(accessible))[0m
+2026-11-18T01:39:46.0039156Z [36;1m            {[0m
+2026-11-18T01:39:46.0039437Z [36;1m                Marshal.FinalReleaseComObject(accessible);[0m
+2026-11-18T01:39:46.0039766Z [36;1m            }[0m
+2026-11-18T01:39:46.0040120Z [36;1m        }[0m
+2026-11-18T01:39:46.0040393Z [36;1m        return snapshot;[0m
+2026-11-18T01:39:46.0040665Z [36;1m    }[0m
+2026-11-18T01:39:46.0040864Z [36;1m[0m
+2026-11-18T01:39:46.0041210Z [36;1m    public static bool FocusTextFieldNamed(IntPtr window, string targetName)[0m
+2026-11-18T01:39:46.0041604Z [36;1m    {[0m
+2026-11-18T01:39:46.0041859Z [36;1m        Guid interfaceId = IidIAccessible;[0m
+2026-11-18T01:39:46.0042174Z [36;1m        IAccessible accessible = null;[0m
+2026-11-18T01:39:46.0042522Z [36;1m        int result = AccessibleObjectFromWindow([0m
+2026-11-18T01:39:46.0042920Z [36;1m            window, unchecked((uint)-4), ref interfaceId, out accessible);[0m
+2026-11-18T01:39:46.0043367Z [36;1m        if (result != 0 || accessible == null) return false;[0m
+2026-11-18T01:39:46.0043795Z [36;1m        try { return FocusTextFieldNamed(accessible, targetName, 1); }[0m
+2026-11-18T01:39:46.0044173Z [36;1m        finally[0m
+2026-11-18T01:39:46.0044392Z [36;1m        {[0m
+2026-11-18T01:39:46.0044668Z [36;1m            if (Marshal.IsComObject(accessible))[0m
+2026-11-18T01:39:46.0044969Z [36;1m            {[0m
+2026-11-18T01:39:46.0045251Z [36;1m                Marshal.FinalReleaseComObject(accessible);[0m
+2026-11-18T01:39:46.0045584Z [36;1m            }[0m
+2026-11-18T01:39:46.0045793Z [36;1m        }[0m
+2026-11-18T01:39:46.0046006Z [36;1m    }[0m
+2026-11-18T01:39:46.0046198Z [36;1m[0m
+2026-11-18T01:39:46.0046457Z [36;1m    private static bool FocusTextFieldNamed([0m
+2026-11-18T01:39:46.0046835Z [36;1m        IAccessible accessible, string targetName, int depth)[0m
+2026-11-18T01:39:46.0047174Z [36;1m    {[0m
+2026-11-18T01:39:46.0047429Z [36;1m        if (accessible == null || depth > 8) return false;[0m
+2026-11-18T01:39:46.0047998Z [36;1m        int childCount = 0;[0m
+2026-11-18T01:39:46.0048508Z [36;1m        try { childCount = Math.Min(accessible.accChildCount, 100); }[0m
+2026-11-18T01:39:46.0048913Z [36;1m        catch { return false; }[0m
+2026-11-18T01:39:46.0049254Z [36;1m        for (int childId = 1; childId <= childCount; childId++)[0m
+2026-11-18T01:39:46.0049585Z [36;1m        {[0m
+2026-11-18T01:39:46.0049798Z [36;1m            string name = null;[0m
+2026-11-18T01:39:46.0050074Z [36;1m            object role = null;[0m
+2026-11-18T01:39:46.0050427Z [36;1m            try { name = accessible.get_accName(childId); } catch { }[0m
+2026-11-18T01:39:46.0050842Z [36;1m            try { role = accessible.get_accRole(childId); } catch { }[0m
+2026-11-18T01:39:46.0051239Z [36;1m            if (Convert.ToString(role) == "42" &&[0m
+2026-11-18T01:39:46.0051585Z [36;1m                (String.IsNullOrEmpty(targetName) ||[0m
+2026-11-18T01:39:46.0052018Z [36;1m                    String.Equals(name, targetName, StringComparison.Ordinal)))[0m
+2026-11-18T01:39:46.0052382Z [36;1m            {[0m
+2026-11-18T01:39:46.0052699Z [36;1m                try { accessible.accSelect(1, childId); return true; }[0m
+2026-11-18T01:39:46.0053072Z [36;1m                catch { return false; }[0m
+2026-11-18T01:39:46.0053525Z [36;1m            }[0m
+2026-11-18T01:39:46.0053745Z [36;1m[0m
+2026-11-18T01:39:46.0053981Z [36;1m            object rawChild = null;[0m
+2026-11-18T01:39:46.0054299Z [36;1m            IAccessible nested = null;[0m
+2026-11-18T01:39:46.0054576Z [36;1m            try[0m
+2026-11-18T01:39:46.0054815Z [36;1m            {[0m
+2026-11-18T01:39:46.0055103Z [36;1m                rawChild = accessible.get_accChild(childId);[0m
+2026-11-18T01:39:46.0055482Z [36;1m                nested = rawChild as IAccessible;[0m
+2026-11-18T01:39:46.0055895Z [36;1m                if (nested == null && rawChild != null && Marshal.IsComObject(rawChild))[0m
+2026-11-18T01:39:46.0056310Z [36;1m                {[0m
+2026-11-18T01:39:46.0056641Z [36;1m                    IntPtr unknown = Marshal.GetIUnknownForObject(rawChild);[0m
+2026-11-18T01:39:46.0057034Z [36;1m                    try[0m
+2026-11-18T01:39:46.0057811Z [36;1m                    {[0m
+2026-11-18T01:39:46.0058193Z [36;1m                        nested = (IAccessible)Marshal.GetTypedObjectForIUnknown([0m
+2026-11-18T01:39:46.0058622Z [36;1m                            unknown, typeof(IAccessible));[0m
+2026-11-18T01:39:46.0058935Z [36;1m                    }[0m
+2026-11-18T01:39:46.0059195Z [36;1m                    catch { }[0m
+2026-11-18T01:39:46.0059501Z [36;1m                    finally { Marshal.Release(unknown); }[0m
+2026-11-18T01:39:46.0059818Z [36;1m                }[0m
+2026-11-18T01:39:46.0060153Z [36;1m                if (nested != null && !Object.ReferenceEquals(nested, accessible) &&[0m
+2026-11-18T01:39:46.0060623Z [36;1m                    FocusTextFieldNamed(nested, targetName, depth + 1))[0m
+2026-11-18T01:39:46.0060961Z [36;1m                {[0m
+2026-11-18T01:39:46.0061207Z [36;1m                    return true;[0m
+2026-11-18T01:39:46.0061485Z [36;1m                }[0m
+2026-11-18T01:39:46.0061721Z [36;1m            }[0m
+2026-11-18T01:39:46.0061939Z [36;1m            catch { }[0m
+2026-11-18T01:39:46.0062189Z [36;1m            finally[0m
+2026-11-18T01:39:46.0062411Z [36;1m            {[0m
+2026-11-18T01:39:46.0062712Z [36;1m                if (nested != null && Marshal.IsComObject(nested) &&[0m
+2026-11-18T01:39:46.0063130Z [36;1m                    !Object.ReferenceEquals(nested, accessible))[0m
+2026-11-18T01:39:46.0063451Z [36;1m                {[0m
+2026-11-18T01:39:46.0063747Z [36;1m                    Marshal.FinalReleaseComObject(nested);[0m
+2026-11-18T01:39:46.0064055Z [36;1m                }[0m
+2026-11-18T01:39:46.0064353Z [36;1m                else if (nested == null && rawChild != null &&[0m
+2026-11-18T01:39:46.0064707Z [36;1m                    Marshal.IsComObject(rawChild))[0m
+2026-11-18T01:39:46.0065029Z [36;1m                {[0m
+2026-11-18T01:39:46.0065313Z [36;1m                    Marshal.FinalReleaseComObject(rawChild);[0m
+2026-11-18T01:39:46.0065651Z [36;1m                }[0m
+2026-11-18T01:39:46.0065876Z [36;1m            }[0m
+2026-11-18T01:39:46.0066111Z [36;1m        }[0m
+2026-11-18T01:39:46.0066347Z [36;1m        return false;[0m
+2026-11-18T01:39:46.0066599Z [36;1m    }[0m
+2026-11-18T01:39:46.0066800Z [36;1m[0m
+2026-11-18T01:39:46.0067052Z [36;1m    private static void CaptureChildren([0m
+2026-11-18T01:39:46.0067381Z [36;1m        IAccessible accessible,[0m
+2026-11-18T01:39:46.0067668Z [36;1m        string parentPath,[0m
+2026-11-18T01:39:46.0068210Z [36;1m        int depth,[0m
+2026-11-18T01:39:46.0068619Z [36;1m        AlulaMsaaSnapshot snapshot)[0m
+2026-11-18T01:39:46.0068925Z [36;1m    {[0m
+2026-11-18T01:39:46.0069205Z [36;1m        if (depth > 8 || snapshot.Children.Count >= 250) return;[0m
+2026-11-18T01:39:46.0069605Z [36;1m        int childCount = accessible.accChildCount;[0m
+2026-11-18T01:39:46.0069946Z [36;1m        int limit = Math.Min(childCount, 100);[0m
+2026-11-18T01:39:46.0070315Z [36;1m        for (int childId = 1; childId <= limit; childId++)[0m
+2026-11-18T01:39:46.0071325Z [36;1m        {[0m
+2026-11-18T01:39:46.0071617Z [36;1m            if (snapshot.Children.Count >= 250) return;[0m
+2026-11-18T01:39:46.0071984Z [36;1m            AlulaMsaaNode node = new AlulaMsaaNode();[0m
+2026-11-18T01:39:46.0072387Z [36;1m            node.Path = string.IsNullOrEmpty(parentPath)[0m
+2026-11-18T01:39:46.0072735Z [36;1m                ? childId.ToString()[0m
+2026-11-18T01:39:46.0073051Z [36;1m                : parentPath + "." + childId.ToString();[0m
+2026-11-18T01:39:46.0073383Z [36;1m            node.ChildId = childId;[0m
+2026-11-18T01:39:46.0073669Z [36;1m            object rawChild = null;[0m
+2026-11-18T01:39:46.0073981Z [36;1m            IAccessible nested = null;[0m
+2026-11-18T01:39:46.0074255Z [36;1m            try[0m
+2026-11-18T01:39:46.0074490Z [36;1m            {[0m
+2026-11-18T01:39:46.0074788Z [36;1m                try { node.Name = accessible.get_accName(childId); }[0m
+2026-11-18T01:39:46.0075378Z [36;1m                catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0075882Z [36;1m                try { node.Role = Convert.ToString(accessible.get_accRole(childId)); }[0m
+2026-11-18T01:39:46.0076397Z [36;1m                catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0076874Z [36;1m                try { node.Value = accessible.get_accValue(childId); }[0m
+2026-11-18T01:39:46.0077338Z [36;1m                catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0077866Z [36;1m                try { node.State = Convert.ToInt32(accessible.get_accState(childId)); }[0m
+2026-11-18T01:39:46.0078369Z [36;1m                catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0078751Z [36;1m[0m
+2026-11-18T01:39:46.0078947Z [36;1m                try[0m
+2026-11-18T01:39:46.0079189Z [36;1m                {[0m
+2026-11-18T01:39:46.0079487Z [36;1m                    rawChild = accessible.get_accChild(childId);[0m
+2026-11-18T01:39:46.0079872Z [36;1m                    if (rawChild is IAccessible)[0m
+2026-11-18T01:39:46.0080180Z [36;1m                    {[0m
+2026-11-18T01:39:46.0080468Z [36;1m                        nested = (IAccessible)rawChild;[0m
+2026-11-18T01:39:46.0080832Z [36;1m                    }[0m
+2026-11-18T01:39:46.0081227Z [36;1m                    else if (rawChild != null && Marshal.IsComObject(rawChild))[0m
+2026-11-18T01:39:46.0081658Z [36;1m                    {[0m
+2026-11-18T01:39:46.0082045Z [36;1m                        IntPtr unknown = Marshal.GetIUnknownForObject(rawChild);[0m
+2026-11-18T01:39:46.0082491Z [36;1m                        try[0m
+2026-11-18T01:39:46.0082784Z [36;1m                        {[0m
+2026-11-18T01:39:46.0083206Z [36;1m                            nested = (IAccessible)Marshal.GetTypedObjectForIUnknown([0m
+2026-11-18T01:39:46.0083673Z [36;1m                                unknown, typeof(IAccessible));[0m
+2026-11-18T01:39:46.0084054Z [36;1m                        }[0m
+2026-11-18T01:39:46.0084365Z [36;1m                        catch { }[0m
+2026-11-18T01:39:46.0084730Z [36;1m                        finally { Marshal.Release(unknown); }[0m
+2026-11-18T01:39:46.0085108Z [36;1m                    }[0m
+2026-11-18T01:39:46.0085386Z [36;1m                }[0m
+2026-11-18T01:39:46.0085786Z [36;1m                catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0086188Z [36;1m[0m
+2026-11-18T01:39:46.0086559Z [36;1m                if (nested != null && !Object.ReferenceEquals(nested, accessible))[0m
+2026-11-18T01:39:46.0086965Z [36;1m                {[0m
+2026-11-18T01:39:46.0087255Z [36;1m                    try[0m
+2026-11-18T01:39:46.0087534Z [36;1m                    {[0m
+2026-11-18T01:39:46.0087890Z [36;1m                        node.ChildCount = nested.accChildCount;[0m
+2026-11-18T01:39:46.0088841Z [36;1m                        CaptureChildren(nested, node.Path, depth + 1, snapshot);[0m
+2026-11-18T01:39:46.0089433Z [36;1m                    }[0m
+2026-11-18T01:39:46.0089862Z [36;1m                    catch (Exception exception) { node.Error = exception.Message; }[0m
+2026-11-18T01:39:46.0090308Z [36;1m                }[0m
+2026-11-18T01:39:46.0090671Z [36;1m                snapshot.Children.Add(node);[0m
+2026-11-18T01:39:46.0091017Z [36;1m            }[0m
+2026-11-18T01:39:46.0091322Z [36;1m            finally[0m
+2026-11-18T01:39:46.0091601Z [36;1m            {[0m
+2026-11-18T01:39:46.0091972Z [36;1m                if (nested != null && Marshal.IsComObject(nested) &&[0m
+2026-11-18T01:39:46.0092431Z [36;1m                    !Object.ReferenceEquals(nested, accessible))[0m
+2026-11-18T01:39:46.0092828Z [36;1m                {[0m
+2026-11-18T01:39:46.0093157Z [36;1m                    Marshal.FinalReleaseComObject(nested);[0m
+2026-11-18T01:39:46.0093605Z [36;1m                }[0m
+2026-11-18T01:39:46.0094046Z [36;1m                else if (nested == null && rawChild != null && Marshal.IsComObject(rawChild))[0m
+2026-11-18T01:39:46.0094484Z [36;1m                {[0m
+2026-11-18T01:39:46.0094853Z [36;1m                    Marshal.FinalReleaseComObject(rawChild);[0m
+2026-11-18T01:39:46.0095245Z [36;1m                }[0m
+2026-11-18T01:39:46.0095544Z [36;1m            }[0m
+2026-11-18T01:39:46.0095804Z [36;1m        }[0m
+2026-11-18T01:39:46.0096098Z [36;1m    }[0m
+2026-11-18T01:39:46.0096352Z [36;1m}[0m
+2026-11-18T01:39:46.0096618Z [36;1m[0m
+2026-11-18T01:39:46.0096910Z [36;1mpublic sealed class AlulaMsaaSnapshot[0m
+2026-11-18T01:39:46.0097269Z [36;1m{[0m
+2026-11-18T01:39:46.0097498Z [36;1m    public string HResult { get; set; }[0m
+2026-11-18T01:39:46.0097894Z [36;1m    public string RootName { get; set; }[0m
+2026-11-18T01:39:46.0098266Z [36;1m    public string RootNameError { get; set; }[0m
+2026-11-18T01:39:46.0098682Z [36;1m    public int ChildCount { get; set; }[0m
+2026-11-18T01:39:46.0099195Z [36;1m    public System.Collections.Generic.List<AlulaMsaaNode> Children { get; private set; }[0m
+2026-11-18T01:39:46.0099733Z [36;1m    public string Error { get; set; }[0m
+2026-11-18T01:39:46.0100079Z [36;1m[0m
+2026-11-18T01:39:46.0100331Z [36;1m    public AlulaMsaaSnapshot()[0m
+2026-11-18T01:39:46.0100663Z [36;1m    {[0m
+2026-11-18T01:39:46.0101034Z [36;1m        Children = new System.Collections.Generic.List<AlulaMsaaNode>();[0m
+2026-11-18T01:39:46.0101487Z [36;1m    }[0m
+2026-11-18T01:39:46.0101707Z [36;1m}[0m
+2026-11-18T01:39:46.0101977Z [36;1m[0m
+2026-11-18T01:39:46.0102227Z [36;1mpublic sealed class AlulaMsaaNode[0m
+2026-11-18T01:39:46.0102559Z [36;1m{[0m
+2026-11-18T01:39:46.0102814Z [36;1m    public string Path { get; set; }[0m
+2026-11-18T01:39:46.0103176Z [36;1m    public int ChildId { get; set; }[0m
+2026-11-18T01:39:46.0103496Z [36;1m    public string Name { get; set; }[0m
+2026-11-18T01:39:46.0103837Z [36;1m    public string Role { get; set; }[0m
+2026-11-18T01:39:46.0104172Z [36;1m    public string Value { get; set; }[0m
+2026-11-18T01:39:46.0104541Z [36;1m    public int State { get; set; }[0m
+2026-11-18T01:39:46.0104885Z [36;1m    public int ChildCount { get; set; }[0m
+2026-11-18T01:39:46.0105253Z [36;1m    public string Error { get; set; }[0m
+2026-11-18T01:39:46.0105562Z [36;1m}[0m
+2026-11-18T01:39:46.0106418Z [36;1m'@[0m
+2026-11-18T01:39:46.0106736Z [36;1m      $msaaTargets = @([0m
+2026-11-18T01:39:46.0107189Z [36;1m        [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },[0m
+2026-11-18T01:39:46.0107658Z [36;1m        [pscustomobject]@{[0m
+2026-11-18T01:39:46.0107995Z [36;1m          name = 'flutterChildWindow'[0m
+2026-11-18T01:39:46.0108413Z [36;1m          handle = [AlulaWindowApi]::GetWindow($window, 5)[0m
+2026-11-18T01:39:46.0108764Z [36;1m        }[0m
+2026-11-18T01:39:46.0109056Z [36;1m      )[0m
+2026-11-18T01:39:46.0109436Z [36;1m      $msaaEditorFocusRequested = [AlulaMsaaApi]::FocusTextFieldNamed([0m
+2026-11-18T01:39:46.0110066Z [36;1m        $msaaTargets[1].handle, '')[0m
+2026-11-18T01:39:46.0110496Z [36;1m      if ($msaaEditorFocusRequested) { Start-Sleep -Milliseconds 250 }[0m
+2026-11-18T01:39:46.0110970Z [36;1m      foreach ($target in $msaaTargets) {[0m
+2026-11-18T01:39:46.0111364Z [36;1m        $result = [AlulaMsaaApi]::Capture($target.handle)[0m
+2026-11-18T01:39:46.0111803Z [36;1m        if ($result.HResult -eq '0x00000000') {[0m
+2026-11-18T01:39:46.0112174Z [36;1m          $msaaAvailable = $true[0m
+2026-11-18T01:39:46.0112494Z [36;1m        } else {[0m
+2026-11-18T01:39:46.0112879Z [36;1m          if ($null -eq $msaaError) { $msaaError = $result.Error }[0m
+2026-11-18T01:39:46.0113256Z [36;1m        }[0m
+2026-11-18T01:39:46.0113561Z [36;1m        $msaaRoots += [ordered]@{[0m
+2026-11-18T01:39:46.0113885Z [36;1m          target = $target.name[0m
+2026-11-18T01:39:46.0114342Z [36;1m          hresult = $result.HResult[0m
+2026-11-18T01:39:46.0114706Z [36;1m          rootName = $result.RootName[0m
+2026-11-18T01:39:46.0115120Z [36;1m          rootNameError = $result.RootNameError[0m
+2026-11-18T01:39:46.0115450Z [36;1m          childCount = $result.ChildCount[0m
+2026-11-18T01:39:46.0115825Z [36;1m          children = @($result.Children)[0m
+2026-11-18T01:39:46.0116163Z [36;1m          error = $result.Error[0m
+2026-11-18T01:39:46.0116479Z [36;1m        }[0m
+2026-11-18T01:39:46.0116725Z [36;1m      }[0m
+2026-11-18T01:39:46.0116995Z [36;1m    } catch {[0m
+2026-11-18T01:39:46.0117389Z [36;1m      if ($null -eq $msaaError) { $msaaError = $_.Exception.Message }[0m
+2026-11-18T01:39:46.0117767Z [36;1m    }[0m
+2026-11-18T01:39:46.0118040Z [36;1m  }[0m
+2026-11-18T01:39:46.0118271Z [36;1m[0m
+2026-11-18T01:39:46.0118545Z [36;1m  $themeSettings = Get-ItemProperty `[0m
+2026-11-18T01:39:46.0119028Z [36;1m    -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' `[0m
+2026-11-18T01:39:46.0119539Z [36;1m    -ErrorAction SilentlyContinue[0m
+2026-11-18T01:39:46.0119953Z [36;1m  $operatingSystem = Get-CimInstance Win32_OperatingSystem[0m
+2026-11-18T01:39:46.0120504Z [36;1m  $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'[0m
+2026-11-18T01:39:46.0120946Z [36;1m  [ordered]@{[0m
+2026-11-18T01:39:46.0121259Z [36;1m    processId = $process.Id[0m
+2026-11-18T01:39:46.0121607Z [36;1m    osCaption = $operatingSystem.Caption[0m
+2026-11-18T01:39:46.0122029Z [36;1m    osVersion = $operatingSystem.Version[0m
+2026-11-18T01:39:46.0122453Z [36;1m    osBuildNumber = $operatingSystem.BuildNumber[0m
+2026-11-18T01:39:46.0122894Z [36;1m    clientWidth = $width[0m
+2026-11-18T01:39:46.0123227Z [36;1m    clientHeight = $height[0m
+2026-11-18T01:39:46.0123599Z [36;1m    dpi = [AlulaWindowApi]::GetDpiForWindow($window)[0m
+2026-11-18T01:39:46.0123992Z [36;1m    windowVisible = $true[0m
+2026-11-18T01:39:46.0124286Z [36;1m    screenshot = $capture[0m
+2026-11-18T01:39:46.0124739Z [36;1m    sha256 = (Get-FileHash $capture -Algorithm SHA256).Hash.ToLowerInvariant()[0m
+2026-11-18T01:39:46.0125409Z [36;1m    systemUsesLightTheme = if ($themeSettings) { [bool]$themeSettings.SystemUsesLightTheme } else { $null }[0m
+2026-11-18T01:39:46.0126481Z [36;1m    appsUseLightTheme = if ($themeSettings) { [bool]$themeSettings.AppsUseLightTheme } else { $null }[0m
+2026-11-18T01:39:46.0127132Z [36;1m    uiAutomationAvailable = $uiaAvailable[0m
+2026-11-18T01:39:46.0127629Z [36;1m    uiAutomationSkipped = $uiAutomationSkipped[0m
+2026-11-18T01:39:46.0128075Z [36;1m    uiAutomationElementCount = $uiaElementCount[0m
+2026-11-18T01:39:46.0128461Z [36;1m    accessibleNameCount = $uiaNames.Count[0m
+2026-11-18T01:39:46.0128909Z [36;1m    accessibleNames = @($uiaNames | Select-Object -First 100)[0m
+2026-11-18T01:39:46.0129337Z [36;1m    uiAutomationRoots = @($uiaRootSnapshots)[0m
+2026-11-18T01:39:46.0129723Z [36;1m    uiAutomationError = $uiaError[0m
+2026-11-18T01:39:46.0130223Z [36;1m    msaaAvailable = $msaaAvailable[0m
+2026-11-18T01:39:46.0130648Z [36;1m    msaaEditorFocusRequested = $msaaEditorFocusRequested[0m
+2026-11-18T01:39:46.0131061Z [36;1m    msaaRoots = @($msaaRoots)[0m
+2026-11-18T01:39:46.0131415Z [36;1m    msaaError = $msaaError[0m
+2026-11-18T01:39:46.0131869Z [36;1m  } | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8[0m
+2026-11-18T01:39:46.0132304Z [36;1m[0m
+2026-11-18T01:39:46.0132679Z [36;1m  # Release UI Automation provider proxies before Flutter tears down[0m
+2026-11-18T01:39:46.0133107Z [36;1m  # the native window on WM_CLOSE.[0m
+2026-11-18T01:39:46.0133467Z [36;1m  $descendants = $null[0m
+2026-11-18T01:39:46.0133782Z [36;1m  $automationRoot = $null[0m
+2026-11-18T01:39:46.0134121Z [36;1m  $uiaTargets = $null[0m
+2026-11-18T01:39:46.0134428Z [36;1m  $msaaTargets = $null[0m
+2026-11-18T01:39:46.0134762Z [36;1m  $target = $null[0m
+2026-11-18T01:39:46.0135585Z [36;1m  $element = $null[0m
+2026-11-18T01:39:46.0135939Z [36;1m  [GC]::Collect()[0m
+2026-11-18T01:39:46.0136248Z [36;1m  [GC]::WaitForPendingFinalizers()[0m
+2026-11-18T01:39:46.0136588Z [36;1m}[0m
+2026-11-18T01:39:46.0136828Z [36;1mfinally {[0m
+2026-11-18T01:39:46.0137129Z [36;1m  $wmCloseSent = $false[0m
+2026-11-18T01:39:46.0137391Z [36;1m  $closeTimedOut = $false[0m
+2026-11-18T01:39:46.0137742Z [36;1m  if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {[0m
+2026-11-18T01:39:46.0138137Z [36;1m    $wmCloseSent = [AlulaWindowApi]::PostMessage([0m
+2026-11-18T01:39:46.0138521Z [36;1m      $window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)[0m
+2026-11-18T01:39:46.0138841Z [36;1m  }[0m
+2026-11-18T01:39:46.0139076Z [36;1m  if (!$process.WaitForExit(10000)) {[0m
+2026-11-18T01:39:46.0139380Z [36;1m    $closeTimedOut = $true[0m
+2026-11-18T01:39:46.0139742Z [36;1m    try { $process.Kill() } catch [System.InvalidOperationException] { }[0m
+2026-11-18T01:39:46.0140167Z [36;1m    $process.WaitForExit(10000) | Out-Null[0m
+2026-11-18T01:39:46.0140459Z [36;1m  }[0m
+2026-11-18T01:39:46.0140683Z [36;1m  $process.Refresh()[0m
+2026-11-18T01:39:46.0141039Z [36;1m  $exitCode = if ($process.HasExited) { $process.ExitCode } else { $null }[0m
+2026-11-18T01:39:46.0141521Z [36;1m  $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json[0m
+2026-11-18T01:39:46.0141992Z [36;1m  $gracefulClose = $wmCloseSent -and !$closeTimedOut -and $exitCode -eq 0[0m
+2026-11-18T01:39:46.0142586Z [36;1m  $metadata | Add-Member -NotePropertyName wmClosePosted -NotePropertyValue $wmCloseSent -Force[0m
+2026-11-18T01:39:46.0143254Z [36;1m  $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force[0m
+2026-11-18T01:39:46.0143910Z [36;1m  $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $gracefulClose -Force[0m
+2026-11-18T01:39:46.0144550Z [36;1m  $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force[0m
+2026-11-18T01:39:46.0145143Z [36;1m  $metadata | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8[0m
+2026-11-18T01:39:46.0145572Z [36;1m}[0m
+2026-11-18T01:39:46.0224934Z shell: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.EXE -command ". '{0}'"
+2026-11-18T01:39:46.0225377Z env:
+2026-11-18T01:39:46.0225623Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:39:46.0225929Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:39:46.0226168Z   CARGO_TERM_COLOR: always
+2026-11-18T01:39:46.0226428Z   CACHE_ON_FAILURE: false
+2026-11-18T01:39:46.0226774Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:39:46.0227693Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:39:46.0228010Z ##[endgroup]
+2026-11-18T01:39:54.8687457Z ##[group]Run $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
+2026-11-18T01:39:54.8688181Z [36;1m$env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path[0m
+2026-11-18T01:39:54.8688786Z [36;1mflutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart[0m
+2026-11-18T01:39:54.8783021Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:39:54.8783428Z env:
+2026-11-18T01:39:54.8783671Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:39:54.8783998Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:39:54.8784242Z   CARGO_TERM_COLOR: always
+2026-11-18T01:39:54.8784504Z   CACHE_ON_FAILURE: false
+2026-11-18T01:39:54.8784857Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:39:54.8785320Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:39:54.8785638Z ##[endgroup]
+2026-11-18T01:39:56.8603347Z 00:00 +0: loading D:/a/Alula_Code/Alula_Code/app/integration_test/windows_p03_7_desktop_test.dart
+2026-11-18T01:39:57.3378852Z Building Windows application...                                 
+2026-11-18T01:39:57.3388794Z Get-Item : Could not find item C:\Users\runneradmin\AppData.
+2026-11-18T01:39:57.3393690Z At D:\a\Alula_Code\Alula_Code\app\windows\flutter\ephemeral\.plugin_symlinks\super_native_extensions\cargokit\cmake\res
+2026-11-18T01:39:57.3394585Z olve_symlinks.ps1:25 char:17
+2026-11-18T01:39:57.3394995Z +         $item = Get-Item $realPath
+2026-11-18T01:39:57.3398356Z +                 ~~~~~~~~~~~~~~~~~~
+2026-11-18T01:39:57.3399504Z     + CategoryInfo          : ObjectNotFound: (C:\Users\runneradmin\AppData:String) [Get-Item], IOException
+2026-11-18T01:39:57.3400768Z     + FullyQualifiedErrorId : ItemNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+2026-11-18T01:39:57.3401134Z 
+2026-11-18T01:41:42.5861246Z Building Windows application...                                   105.6s
+2026-11-18T01:41:42.5882337Z √ Built build\windows\x64\runner\Debug\alula_app.exe
+2026-11-18T01:41:44.8493216Z 00:00 +0: (setUpAll)
+2026-11-18T01:41:44.8666325Z 00:00 +0: the same Rust document opens in two groups with independent view state
+2026-11-18T01:41:51.9770687Z 00:07 +1: conflicting duplicate journal entries survive as a recovery draft
+2026-11-18T01:41:53.0354875Z 00:08 +2: session restore shares one Rust document across editor groups
+2026-11-18T01:41:54.0056702Z 00:09 +3: the tail of a 50000-line document remains editable and saveable
+2026-11-18T01:42:01.2097842Z 00:16 +4: P04.23 行边界删除支持选区、多光标、双视图和撤销保存
+2026-11-18T01:42:04.8450817Z 00:19 +5: single-selection copy and cut keep the Rust document in sync
+2026-11-18T01:42:06.4757965Z 00:21 +6: multi-selection copy/cut writes clipboard and Rust once
+2026-11-18T01:42:08.0522198Z 00:23 +7: Ctrl+V distributes copied lines and saves the Rust document
+2026-11-18T01:42:09.6169124Z 00:24 +8: TargetPlatform.windows multi-cursor paste restores copied multiline chunks
+2026-11-18T01:42:11.6146979Z 00:26 +9: TargetPlatform.linux multi-cursor paste restores copied multiline chunks
+2026-11-18T01:42:13.6910545Z 00:28 +10: Alt+Click adds a cursor at the hit-tested UTF-16 position
+2026-11-18T01:42:14.9842164Z 00:30 +11: Ctrl+D adds an occurrence and typing updates both Rust ranges
+2026-11-18T01:42:16.7702039Z 00:31 +12: Ctrl+K Ctrl+D moves the last selected occurrence forward
+2026-11-18T01:42:18.2372123Z 00:33 +13: Ctrl+Alt+ArrowUp adds a cursor across a long input window
+2026-11-18T01:42:19.9567020Z 00:35 +14: Ctrl+Alt+ArrowDown adds a cursor across a long input window
+2026-11-18T01:42:21.6437630Z 00:36 +15: vertical cursor snaps a UTF-16 column before an emoji
+2026-11-18T01:42:22.9347844Z 00:38 +16: Ctrl+D finds and reveals an occurrence outside the input window
+2026-11-18T01:42:26.1756700Z 00:41 +17: Ctrl+D ignores a selection that splits an emoji surrogate pair
+2026-11-18T01:42:27.4280325Z 00:42 +18: Ctrl+Shift+L respects the VS Code multi-cursor limit
+2026-11-18T01:42:28.7971317Z 00:43 +19: Alt+Shift+Down edits a CRLF file at each column caret
+2026-11-18T01:42:30.3320965Z 00:45 +20: Shift+Alt mouse box selection edits and saves each visual row (variant: TargetPlatform.linux)
+2026-11-18T01:42:32.0343633Z 00:47 +21: Shift+Alt mouse box selection edits and saves each visual row (variant: TargetPlatform.macOS)
+2026-11-18T01:42:33.7809998Z 00:48 +22: Shift+Alt mouse box selection edits and saves each visual row (variant: TargetPlatform.windows)
+2026-11-18T01:42:35.5220652Z 00:50 +23: secondary occurrence follows IME preedit and commits to Rust
+2026-11-18T01:42:37.0666410Z 00:52 +24: selection sets remain independent when switching document tabs
+2026-11-18T01:42:39.1214894Z 00:54 +25: (tearDownAll)
+2026-11-18T01:42:39.1657132Z 00:54 +25: All tests passed!
+2026-11-18T01:42:39.2791787Z ##[group]Run python tools/vscode-parity/windows-native-dnd-input.py "$env:RUNNER_TEMP\alula-windows-native-dnd"
+2026-11-18T01:42:39.2792781Z [36;1mpython tools/vscode-parity/windows-native-dnd-input.py "$env:RUNNER_TEMP\alula-windows-native-dnd"[0m
+2026-11-18T01:42:39.2879902Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:42:39.2880369Z env:
+2026-11-18T01:42:39.2880670Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:42:39.2881063Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:42:39.2881351Z   CARGO_TERM_COLOR: always
+2026-11-18T01:42:39.2881672Z   CACHE_ON_FAILURE: false
+2026-11-18T01:42:39.2882070Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:42:39.2882609Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:42:39.2882973Z ##[endgroup]
+2026-11-18T01:43:14.1913078Z {
+2026-11-18T01:43:14.1940035Z   "window": {
+2026-11-18T01:43:14.1940752Z     "windowHandle": 327986,
+2026-11-18T01:43:14.1942413Z     "windowProcessId": 7536,
+2026-11-18T01:43:14.1943431Z     "windowTitle": "alula_app",
+2026-11-18T01:43:14.1944157Z     "foregroundWindow": 327986,
+2026-11-18T01:43:14.1944794Z     "clientRect": {
+2026-11-18T01:43:14.1945391Z       "width": 1028,
+2026-11-18T01:43:14.1945972Z       "height": 681
+2026-11-18T01:43:14.1946580Z     },
+2026-11-18T01:43:14.1947193Z     "clientScreenOrigin": {
+2026-11-18T01:43:14.1947805Z       "x": 18,
+2026-11-18T01:43:14.1948425Z       "y": 41
+2026-11-18T01:43:14.1948960Z     },
+2026-11-18T01:43:14.1949540Z     "devicePixelRatio": 1.0,
+2026-11-18T01:43:14.1950278Z     "sourceScreen": {
+2026-11-18T01:43:14.1950993Z       "x": 532,
+2026-11-18T01:43:14.1951570Z       "y": 223
+2026-11-18T01:43:14.1952179Z     },
+2026-11-18T01:43:14.1952730Z     "externalSourceScreen": {
+2026-11-18T01:43:14.1953387Z       "x": 532,
+2026-11-18T01:43:14.1954070Z       "y": 329
+2026-11-18T01:43:14.1954621Z     },
+2026-11-18T01:43:14.1955202Z     "targetScreen": {
+2026-11-18T01:43:14.1955725Z       "x": 532,
+2026-11-18T01:43:14.1956291Z       "y": 539
+2026-11-18T01:43:14.1956814Z     }
+2026-11-18T01:43:14.1957378Z   },
+2026-11-18T01:43:14.1957882Z   "layout": {
+2026-11-18T01:43:14.1958529Z     "source": {
+2026-11-18T01:43:14.1959534Z       "x": 514.0,
+2026-11-18T01:43:14.1960117Z       "y": 182.5
+2026-11-18T01:43:14.1960643Z     },
+2026-11-18T01:43:14.1961187Z     "externalSource": {
+2026-11-18T01:43:14.1961749Z       "x": 514.0,
+2026-11-18T01:43:14.1962363Z       "y": 288.5
+2026-11-18T01:43:14.1962886Z     },
+2026-11-18T01:43:14.1963404Z     "target": {
+2026-11-18T01:43:14.1963907Z       "x": 514.0,
+2026-11-18T01:43:14.1964452Z       "y": 498.5
+2026-11-18T01:43:14.1964963Z     },
+2026-11-18T01:43:14.1965528Z     "devicePixelRatio": 1.0
+2026-11-18T01:43:14.1965985Z   },
+2026-11-18T01:43:14.1966389Z   "drop": {
+2026-11-18T01:43:14.1966731Z     "selectedText": "alpha",
+2026-11-18T01:43:14.1967261Z     "operation": "move",
+2026-11-18T01:43:14.1967752Z     "targetOffsetUtf16": 11
+2026-11-18T01:43:14.1968167Z   },
+2026-11-18T01:43:14.1968560Z   "dragCompleted": {
+2026-11-18T01:43:14.1969373Z     "selectedText": "alpha",
+2026-11-18T01:43:14.1969881Z     "operation": "move"
+2026-11-18T01:43:14.1970306Z   },
+2026-11-18T01:43:14.1970721Z   "crossDocumentDrop": {
+2026-11-18T01:43:14.1971170Z     "selectedText": "alpha",
+2026-11-18T01:43:14.1971632Z     "operation": "copy",
+2026-11-18T01:43:14.1972022Z     "targetDocumentId": 7002,
+2026-11-18T01:43:14.1972882Z     "targetDocumentVersion": 4,
+2026-11-18T01:43:14.1973269Z     "targetOffsetUtf16": 6
+2026-11-18T01:43:14.1973658Z   },
+2026-11-18T01:43:14.1973989Z   "crossDocumentDragCompleted": {
+2026-11-18T01:43:14.1974471Z     "selectedText": "alpha",
+2026-11-18T01:43:14.1974869Z     "operation": "copy"
+2026-11-18T01:43:14.1975236Z   },
+2026-11-18T01:43:14.1975527Z   "externalDrop": {
+2026-11-18T01:43:14.1975887Z     "text": "external text",
+2026-11-18T01:43:14.1980087Z     "targetDocumentId": 7002,
+2026-11-18T01:43:14.1980977Z     "targetDocumentVersion": 4,
+2026-11-18T01:43:14.1981452Z     "targetOffsetUtf16": 6
+2026-11-18T01:43:14.1981887Z   },
+2026-11-18T01:43:14.1982235Z   "dropOverOperations": [
+2026-11-18T01:43:14.1982654Z     "move",
+2026-11-18T01:43:14.1982981Z     "move",
+2026-11-18T01:43:14.1983313Z     "move",
+2026-11-18T01:43:14.1983631Z     "move",
+2026-11-18T01:43:14.1983968Z     "move",
+2026-11-18T01:43:14.1984279Z     "move",
+2026-11-18T01:43:14.1984625Z     "move",
+2026-11-18T01:43:14.1984948Z     "move",
+2026-11-18T01:43:14.1985281Z     "move",
+2026-11-18T01:43:14.1985598Z     "move",
+2026-11-18T01:43:14.1986205Z     "move",
+2026-11-18T01:43:14.1986533Z     "move",
+2026-11-18T01:43:14.1986875Z     "move",
+2026-11-18T01:43:14.1987197Z     "move",
+2026-11-18T01:43:14.1987541Z     "move",
+2026-11-18T01:43:14.1987863Z     "move",
+2026-11-18T01:43:14.1988198Z     "move",
+2026-11-18T01:43:14.1988513Z     "move",
+2026-11-18T01:43:14.1988854Z     "move",
+2026-11-18T01:43:14.1989193Z     "move",
+2026-11-18T01:43:14.1989541Z     "move",
+2026-11-18T01:43:14.1989869Z     "move",
+2026-11-18T01:43:14.1990213Z     "move",
+2026-11-18T01:43:14.1990523Z     "move",
+2026-11-18T01:43:14.1990868Z     "move",
+2026-11-18T01:43:14.1991195Z     "move",
+2026-11-18T01:43:14.1991536Z     "move",
+2026-11-18T01:43:14.1991854Z     "move",
+2026-11-18T01:43:14.1992198Z     "move",
+2026-11-18T01:43:14.1992531Z     "move",
+2026-11-18T01:43:14.1992886Z     "move",
+2026-11-18T01:43:14.1993203Z     "move",
+2026-11-18T01:43:14.1993539Z     "move",
+2026-11-18T01:43:14.1993855Z     "move",
+2026-11-18T01:43:14.1994193Z     "move",
+2026-11-18T01:43:14.1994505Z     "move",
+2026-11-18T01:43:14.1994846Z     "move",
+2026-11-18T01:43:14.1995209Z     "move",
+2026-11-18T01:43:14.1995562Z     "move",
+2026-11-18T01:43:14.1995889Z     "move",
+2026-11-18T01:43:14.1996231Z     "move",
+2026-11-18T01:43:14.1996549Z     "move",
+2026-11-18T01:43:14.1996877Z     "copy",
+2026-11-18T01:43:14.1997199Z     "copy",
+2026-11-18T01:43:14.1997525Z     "copy",
+2026-11-18T01:43:14.1997854Z     "copy",
+2026-11-18T01:43:14.1998189Z     "copy",
+2026-11-18T01:43:14.1998505Z     "copy",
+2026-11-18T01:43:14.1998851Z     "copy",
+2026-11-18T01:43:14.1999187Z     "copy",
+2026-11-18T01:43:14.1999523Z     "copy",
+2026-11-18T01:43:14.1999841Z     "copy",
+2026-11-18T01:43:14.2000174Z     "copy",
+2026-11-18T01:43:14.2000498Z     "copy",
+2026-11-18T01:43:14.2000832Z     "copy",
+2026-11-18T01:43:14.2001162Z     "copy",
+2026-11-18T01:43:14.2001500Z     "copy",
+2026-11-18T01:43:14.2001869Z     "copy",
+2026-11-18T01:43:14.2002186Z     "copy",
+2026-11-18T01:43:14.2002524Z     "copy",
+2026-11-18T01:43:14.2002856Z     "copy",
+2026-11-18T01:43:14.2003203Z     "copy",
+2026-11-18T01:43:14.2003531Z     "copy",
+2026-11-18T01:43:14.2003863Z     "copy",
+2026-11-18T01:43:14.2004192Z     "copy",
+2026-11-18T01:43:14.2004532Z     "copy",
+2026-11-18T01:43:14.2004856Z     "copy",
+2026-11-18T01:43:14.2005193Z     "copy",
+2026-11-18T01:43:14.2005515Z     "copy",
+2026-11-18T01:43:14.2005862Z     "copy",
+2026-11-18T01:43:14.2006455Z     "copy",
+2026-11-18T01:43:14.2006799Z     "copy",
+2026-11-18T01:43:14.2007124Z     "copy",
+2026-11-18T01:43:14.2007455Z     "copy",
+2026-11-18T01:43:14.2007776Z     "copy",
+2026-11-18T01:43:14.2008122Z     "copy",
+2026-11-18T01:43:14.2008447Z     "copy",
+2026-11-18T01:43:14.2008778Z     "copy",
+2026-11-18T01:43:14.2009108Z     "copy",
+2026-11-18T01:43:14.2009740Z     "copy",
+2026-11-18T01:43:14.2010060Z     "copy",
+2026-11-18T01:43:14.2010407Z     "copy",
+2026-11-18T01:43:14.2010742Z     "copy",
+2026-11-18T01:43:14.2011091Z     "copy",
+2026-11-18T01:43:14.2011617Z     "copy",
+2026-11-18T01:43:14.2011962Z     "copy"
+2026-11-18T01:43:14.2012281Z   ],
+2026-11-18T01:43:14.2012672Z   "flutterPointerEventCount": 13,
+2026-11-18T01:43:14.2013191Z   "flutterPointerEventTypes": [
+2026-11-18T01:43:14.2013662Z     "cancel",
+2026-11-18T01:43:14.2014001Z     "down",
+2026-11-18T01:43:14.2015513Z     "move"
+2026-11-18T01:43:14.2016665Z   ]
+2026-11-18T01:43:14.2017543Z }
+2026-11-18T01:43:14.3309933Z ##[group]Run actions/upload-artifact@v4
+2026-11-18T01:43:14.3310413Z with:
+2026-11-18T01:43:14.3310689Z   name: alula-windows-native-dnd-44141648010-2
+2026-11-18T01:43:14.3311019Z   path: D:\a\_temp/alula-windows-native-dnd
+2026-11-18T01:43:14.3311333Z   if-no-files-found: warn
+2026-11-18T01:43:14.3311580Z   retention-days: 7
+2026-11-18T01:43:14.3311828Z   compression-level: 6
+2026-11-18T01:43:14.3312069Z   overwrite: false
+2026-11-18T01:43:14.3312289Z   include-hidden-files: false
+2026-11-18T01:43:14.3312549Z env:
+2026-11-18T01:43:14.3312767Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:43:14.3313052Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:43:14.3313285Z   CARGO_TERM_COLOR: always
+2026-11-18T01:43:14.3313531Z   CACHE_ON_FAILURE: false
+2026-11-18T01:43:14.3313878Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:43:14.3314325Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:43:14.3314693Z ##[endgroup]
+2026-11-18T01:43:14.5369521Z (node:3472) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T01:43:14.5370353Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T01:43:14.5471634Z With the provided path, there will be 13 files uploaded
+2026-11-18T01:43:14.5476369Z Artifact name is valid!
+2026-11-18T01:43:14.5478194Z Root directory input is valid!
+2026-11-18T01:43:14.9388592Z Beginning upload of artifact content to blob storage
+2026-11-18T01:43:14.9938493Z (node:3472) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-18T01:43:15.3120421Z Uploaded bytes 3849
+2026-11-18T01:43:15.3123068Z Finished uploading artifact content to blob storage!
+2026-11-18T01:43:15.3126775Z SHA256 digest of uploaded artifact zip is 812eb2226b1937169a33c9d22d529265b13a98196550b0bb8e4c6a1b505dfdae
+2026-11-18T01:43:15.3128154Z Finalizing artifact upload
+2026-11-18T01:43:15.6937602Z Artifact alula-windows-native-dnd-44141648010-2.zip successfully finalized. Artifact ID 14389521532
+2026-11-18T01:43:15.6938686Z Artifact alula-windows-native-dnd-44141648010-2 has been successfully uploaded! Final size is 3849 bytes. Artifact ID is 14389521532
+2026-11-18T01:43:15.6950883Z Artifact download URL: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44141648010/artifacts/14389521532
+2026-11-18T01:43:15.7294549Z ##[group]Run flutter test --no-pub -d windows --reporter expanded integration_test/editor_clipboard_desktop_test.dart
+2026-11-18T01:43:15.7295557Z [36;1mflutter test --no-pub -d windows --reporter expanded integration_test/editor_clipboard_desktop_test.dart[0m
+2026-11-18T01:43:15.7378812Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:43:15.7379552Z env:
+2026-11-18T01:43:15.7380001Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:43:15.7380624Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:43:15.7380957Z   CARGO_TERM_COLOR: always
+2026-11-18T01:43:15.7381250Z   CACHE_ON_FAILURE: false
+2026-11-18T01:43:15.7381683Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:43:15.7382198Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:43:15.7382826Z ##[endgroup]
+2026-11-18T01:43:17.6246936Z 00:00 +0: loading D:/a/Alula_Code/Alula_Code/app/integration_test/editor_clipboard_desktop_test.dart
+2026-11-18T01:43:18.2200648Z Building Windows application...                                 
+2026-11-18T01:43:18.2212136Z Get-Item : Could not find item C:\Users\runneradmin\AppData.
+2026-11-18T01:43:18.2215993Z At D:\a\Alula_Code\Alula_Code\app\windows\flutter\ephemeral\.plugin_symlinks\super_native_extensions\cargokit\cmake\res
+2026-11-18T01:43:18.2217347Z olve_symlinks.ps1:25 char:17
+2026-11-18T01:43:18.2218145Z +         $item = Get-Item $realPath
+2026-11-18T01:43:18.2218868Z +                 ~~~~~~~~~~~~~~~~~~
+2026-11-18T01:43:18.2219929Z     + CategoryInfo          : ObjectNotFound: (C:\Users\runneradmin\AppData:String) [Get-Item], IOException
+2026-11-18T01:43:18.2221773Z     + FullyQualifiedErrorId : ItemNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+2026-11-18T01:43:18.2222564Z 
+2026-11-18T01:43:39.1482351Z Building Windows application...                                    21.4s
+2026-11-18T01:43:39.1499607Z √ Built build\windows\x64\runner\Debug\alula_app.exe
+2026-11-18T01:43:41.1390015Z 00:00 +0: native clipboard round trips text, HTML, and Code-OSS metadata
+2026-11-18T01:43:41.4873264Z 00:00 +1: (tearDownAll)
+2026-11-18T01:43:41.5275018Z 00:00 +1: All tests passed!
+2026-11-18T01:43:41.7000314Z ##[group]Run $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
+2026-11-18T01:43:41.7001147Z [36;1m$metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'[0m
+2026-11-18T01:43:41.7001779Z [36;1mif (!(Test-Path $metadataPath)) { throw "Windows client smoke metadata was not created" }[0m
+2026-11-18T01:43:41.7002400Z [36;1m$metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json[0m
+2026-11-18T01:43:41.7003014Z [36;1mif (!$metadata.msaaAvailable) { throw "Flutter window did not expose an MSAA provider" }[0m
+2026-11-18T01:43:41.7003771Z [36;1m$flutterRoot = $metadata.msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1[0m
+2026-11-18T01:43:41.7004547Z [36;1mif (!$flutterRoot) { throw "MSAA snapshot did not include the Flutter child window" }[0m
+2026-11-18T01:43:41.7005401Z [36;1mif (!$metadata.msaaEditorFocusRequested) { throw "MSAA could not focus the unnamed editor before reading its text value" }[0m
+2026-11-18T01:43:41.7006331Z [36;1m$editorNode = $flutterRoot.children | Where-Object { $_.Role -eq '42' } | Select-Object -First 1[0m
+2026-11-18T01:43:41.7006981Z [36;1mif (!$editorNode) { throw "MSAA tree did not expose an editor text field" }[0m
+2026-11-18T01:43:41.7007676Z [36;1mif (([int]$editorNode.State -band 4) -eq 0) { throw "MSAA focus request did not focus the editor text field" }[0m
+2026-11-18T01:43:41.7008476Z [36;1mif (!$editorNode.Value.Contains('打开一个文件夹开始工作')) { throw "Focused MSAA editor value is missing the visible welcome text" }[0m
+2026-11-18T01:43:41.7009294Z [36;1m$accessibleText = (@($flutterRoot.children | ForEach-Object { [string]$_.Name; [string]$_.Value }) -join "`n")[0m
+2026-11-18T01:43:41.7010540Z [36;1mforeach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式')) {[0m
+2026-11-18T01:43:41.7011170Z [36;1m  if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected semantic text: $expected" }[0m
+2026-11-18T01:43:41.7011731Z [36;1m}[0m
+2026-11-18T01:43:41.7012166Z [36;1mif (!$metadata.wmClosePosted) { throw "WM_CLOSE was not posted to the Alula window" }[0m
+2026-11-18T01:43:41.7012835Z [36;1mif ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }[0m
+2026-11-18T01:43:41.7013523Z [36;1mif ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }[0m
+2026-11-18T01:43:41.7014218Z [36;1mif (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }[0m
+2026-11-18T01:43:41.7110049Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:43:41.7110752Z env:
+2026-11-18T01:43:41.7111419Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:43:41.7111839Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:43:41.7112182Z   CARGO_TERM_COLOR: always
+2026-11-18T01:43:41.7112490Z   CACHE_ON_FAILURE: false
+2026-11-18T01:43:41.7112929Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:43:41.7113466Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:43:41.7113855Z ##[endgroup]
+2026-11-18T01:43:42.2159853Z ##[group]Run $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+2026-11-18T01:43:42.2160716Z [36;1m$exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path[0m
+2026-11-18T01:43:42.2161427Z [36;1m$process = Start-Process -FilePath $exe -ArgumentList '--native-titlebar' -PassThru -WindowStyle Normal[0m
+2026-11-18T01:43:42.2161951Z [36;1mtry {[0m
+2026-11-18T01:43:42.2162214Z [36;1m  $deadline = (Get-Date).AddSeconds(30)[0m
+2026-11-18T01:43:42.2162550Z [36;1m  do {[0m
+2026-11-18T01:43:42.2162788Z [36;1m    $process.Refresh()[0m
+2026-11-18T01:43:42.2163292Z [36;1m    if ($process.HasExited) { throw "Native-titlebar mode exited during startup (code $($process.ExitCode))" }[0m
+2026-11-18T01:43:42.2163960Z [36;1m    if ($process.MainWindowHandle -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }[0m
+2026-11-18T01:43:42.2164602Z [36;1m  } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)[0m
+2026-11-18T01:43:42.2165277Z [36;1m  if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'Native-titlebar mode did not create a top-level window' }[0m
+2026-11-18T01:43:42.2166032Z [36;1m  if (!$process.CloseMainWindow()) { throw 'CloseMainWindow was not accepted by native-titlebar mode' }[0m
+2026-11-18T01:43:42.2166740Z [36;1m  if (!$process.WaitForExit(10000)) { throw 'Native-titlebar mode did not exit within 10 seconds after close' }[0m
+2026-11-18T01:43:42.2167352Z [36;1m  $process.Refresh()[0m
+2026-11-18T01:43:42.2167911Z [36;1m  if ($process.ExitCode -ne 0) { throw "Native-titlebar mode exited after close with code $($process.ExitCode)" }[0m
+2026-11-18T01:43:42.2168644Z [36;1m}[0m
+2026-11-18T01:43:42.2168857Z [36;1mfinally {[0m
+2026-11-18T01:43:42.2169233Z [36;1m  if (!$process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }[0m
+2026-11-18T01:43:42.2169646Z [36;1m}[0m
+2026-11-18T01:43:42.2243863Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T01:43:42.2244228Z env:
+2026-11-18T01:43:42.2244444Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:43:42.2244737Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:43:42.2245049Z   CARGO_TERM_COLOR: always
+2026-11-18T01:43:42.2245290Z   CACHE_ON_FAILURE: false
+2026-11-18T01:43:42.2245731Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:43:42.2246640Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:43:42.2246960Z ##[endgroup]
+2026-11-18T01:43:44.6389652Z ##[group]Run actions/upload-artifact@v4
+2026-11-18T01:43:44.6390103Z with:
+2026-11-18T01:43:44.6390407Z   name: alula-windows-x64-9117a06ef5130c3513648b514a164af481082c64
+2026-11-18T01:43:44.6391081Z   path: app/build/windows/x64/runner/Release
+D:\a\_temp/alula-windows-client.png
+D:\a\_temp/alula-windows-client.json
+
+2026-11-18T01:43:44.6391619Z   if-no-files-found: warn
+2026-11-18T01:43:44.6392087Z   compression-level: 6
+2026-11-18T01:43:44.6393141Z   overwrite: false
+2026-11-18T01:43:44.6393763Z   include-hidden-files: false
+2026-11-18T01:43:44.6394050Z env:
+2026-11-18T01:43:44.6394368Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+2026-11-18T01:43:44.6394771Z   CARGO_INCREMENTAL: 0
+2026-11-18T01:43:44.6394996Z   CARGO_TERM_COLOR: always
+2026-11-18T01:43:44.6395224Z   CACHE_ON_FAILURE: false
+2026-11-18T01:43:44.6395566Z   FLUTTER_ROOT: C:\hostedtoolcache\windows\flutter\stable-3.47.8-x64/flutter
+2026-11-18T01:43:44.6396036Z   PUB_CACHE: C:\Users\runneradmin\AppData\Local\Pub\Cache
+2026-11-18T01:43:44.6396654Z ##[endgroup]
+2026-11-18T01:43:44.8511953Z (node:4284) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T01:43:44.8512666Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T01:43:44.8693029Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-18T01:43:44.8696078Z The least common ancestor is D:\a. This will be the root directory of the artifact
+2026-11-18T01:43:44.8696843Z With the provided path, there will be 23 files uploaded
+2026-11-18T01:43:44.8702546Z Artifact name is valid!
+2026-11-18T01:43:44.8704082Z Root directory input is valid!
+2026-11-18T01:43:45.2542807Z Beginning upload of artifact content to blob storage
+2026-11-18T01:43:45.9558870Z (node:4284) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-18T01:43:47.0662601Z Uploaded bytes 8388608
+2026-11-18T01:43:47.3189220Z Uploaded bytes 15663506
+2026-11-18T01:43:47.3920923Z Finished uploading artifact content to blob storage!
+2026-11-18T01:43:47.3922836Z SHA256 digest of uploaded artifact zip is bbaf89e1ce3e7920527ba524200ca5af29ea9102e4f6a822b753871736952daa
+2026-11-18T01:43:47.3925792Z Finalizing artifact upload
+2026-11-18T01:43:47.7874764Z Artifact alula-windows-x64-9117a06ef5130c3513648b514a164af481082c64.zip successfully finalized. Artifact ID 14388169041
+2026-11-18T01:43:47.7876969Z Artifact alula-windows-x64-9117a06ef5130c3513648b514a164af481082c64 has been successfully uploaded! Final size is 15663506 bytes. Artifact ID is 14388169041
+2026-11-18T01:43:47.7897261Z Artifact download URL: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44141648010/artifacts/14388169041
+2026-11-18T01:43:47.8413347Z Post job cleanup.
+2026-11-18T01:43:47.8418246Z ##[start-action display=Cache pub dependencies;id=__22596534-dacd-43b5-a5d1-781bc07fe842.cache-pub]
+2026-11-18T01:43:48.9658625Z Post job cleanup.
+2026-11-18T01:43:49.1389163Z Cache hit occurred on the primary key flutter-pub-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e-e0d42e55aff662739a6173a2fb3b964be3e248a4fa3dc1e0ed14f48e1ecddbb6, not saving cache.
+2026-11-18T01:43:49.1510185Z ##[end-action id=__22596534-dacd-43b5-a5d1-781bc07fe842.cache-pub;outcome=success;conclusion=success;duration_ms=1309]
+2026-11-18T01:43:49.1512892Z ##[start-action display=Cache Flutter;id=__22596534-dacd-43b5-a5d1-781bc07fe842.cache-flutter]
+2026-11-18T01:43:49.1665483Z Post job cleanup.
+2026-11-18T01:43:49.3326366Z Cache hit occurred on the primary key flutter-windows-stable-3.47.8-x64-737ba8f885dc774b53b442759999a312c9461e4e, not saving cache.
+2026-11-18T01:43:49.3442815Z ##[end-action id=__22596534-dacd-43b5-a5d1-781bc07fe842.cache-flutter;outcome=success;conclusion=success;duration_ms=192]
+2026-11-18T01:43:49.3652992Z Post job cleanup.
+2026-11-18T01:43:49.5331171Z Cache up-to-date.
+2026-11-18T01:43:49.5662189Z Post job cleanup.
+2026-11-18T01:43:49.7462262Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T01:43:49.7827650Z git version 2.56.0.windows.4
+2026-11-18T01:43:49.7901974Z Temporarily overriding HOME='D:\a\_temp\73425642-7299-47cb-8992-c46f9213c561' before making global git config changes
+2026-11-18T01:43:49.7903082Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T01:43:49.7913348Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Alula_Code\Alula_Code
+2026-11-18T01:43:49.8347285Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T01:43:49.8755691Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T01:43:50.4923892Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T01:43:50.5328011Z http.https://github.com/.extraheader
+2026-11-18T01:43:50.5400599Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-11-18T01:43:50.5864552Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T01:43:51.1564368Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T01:43:51.1961422Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T01:43:51.8282091Z Cleaning up orphan processes
+2026-11-18T01:43:51.8609764Z Terminate orphan process: pid (1720) (vctip)
+2026-11-18T01:43:51.9242500Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

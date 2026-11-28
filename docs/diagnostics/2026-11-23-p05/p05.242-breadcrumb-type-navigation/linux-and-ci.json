@@ -1,0 +1,306 @@
+{
+  "product": "a593c9ce39ec454f136c48efa05f985ad81dd6de",
+  "tree": "42575bed64f71c0233a44c0234f7ad5e4770fb29",
+  "recordedAt": "2026-11-23T13:29:59.653157+00:00",
+  "macosPhysical": "deferred",
+  "windowsPhysical": "waiting-for-normal-desktop",
+  "workflows": [
+    {
+      "headSha": "a593c9ce39ec454f136c48efa05f985ad81dd6de",
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45182394887",
+      "conclusion": "success",
+      "jobs": {
+        "Flutter (analyze + test)": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Rust (windows-latest)": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Rust (ubuntu-latest)": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Harness 文档结构校验": {
+          "status": "completed",
+          "conclusion": "success"
+        }
+      }
+    },
+    {
+      "headSha": "a593c9ce39ec454f136c48efa05f985ad81dd6de",
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45182384536",
+      "conclusion": "",
+      "jobs": {
+        "Windows x64 build and launch smoke": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Linux x64 build and launch smoke": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "macOS build, launch smoke, and app package": {
+          "status": "in_progress",
+          "conclusion": ""
+        }
+      }
+    },
+    {
+      "headSha": "04ce4f607059e028bc61e5a84828a39c95642d0f",
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/45178844424",
+      "conclusion": "success",
+      "jobs": {
+        "Rust (windows-latest)": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Rust (ubuntu-latest)": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Harness 文档结构校验": {
+          "status": "completed",
+          "conclusion": "success"
+        },
+        "Flutter (analyze + test)": {
+          "status": "completed",
+          "conclusion": "success"
+        }
+      }
+    }
+  ],
+  "localLogsSha256": {
+    "full": "dad55aea466be9dc95a981e7e44116281249df7ca86b29925c1512172a729e26",
+    "analyze": "f8a948ec7021e3d8a64925c38575c08d73d517ecfc09e5095404cf2b62491a9c",
+    "focused": "e0f18368c91f826db55d79ebd0f233513c70b8b7c0d8848858d75db85d347b03",
+    "editor-renderer": "0064527355a39ca28f10a9f30beb7b1dfe7b5d8f37f14ae3caaa594507971e47"
+  },
+  "graph": {
+    "all": {
+      "changed_count": 19,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "31b61532819d472642044307846b14bd6e2af7e9033402b175f71cfe943b2218"
+    },
+    "staged": {
+      "changed_count": 19,
+      "affected_count": 0,
+      "changed_files": 5,
+      "risk_level": "low",
+      "sha256": "31b61532819d472642044307846b14bd6e2af7e9033402b175f71cfe943b2218"
+    }
+  },
+  "linux": {
+    "rawSha256": "b9d1ee9e02e31038f60846e1d5be07f1ba6dca57756b85b364b0e5f22cf3ccaf",
+    "windowManager": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "steps": 16,
+    "fixtureSha256": "db794321360d5bd243ae9b62cbc14067eaf22f16cb7a69198fca9fb527d9f544",
+    "aotSha256": "b6e9ddc27a005b4e8ecf595e76ce85cf3c544dd99700d618efc746d4c90f2519",
+    "exit": 0,
+    "typeNavigation": {
+      "observations": {
+        "symbol-initial": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": null
+        },
+        "symbol-collapsed-no-match": {
+          "focus": "outer",
+          "rows": [
+            "outer",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "i"
+        },
+        "symbol-section-focus": {
+          "focus": "section",
+          "rows": [
+            "outer",
+            "section",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "s"
+        },
+        "symbol-descendant-previews": {
+          "focus": "inner",
+          "rows": [
+            "outer",
+            "section",
+            "inner",
+            "closed"
+          ],
+          "route": 952618931,
+          "typed": "i"
+        },
+        "symbol-escape": {
+          "selection": [
+            16,
+            16
+          ],
+          "editorFocused": true
+        },
+        "file-initial": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": null
+        },
+        "file-collapsed-no-match": {
+          "focus": "lib.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "u"
+        },
+        "file-first-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-second-prefix": {
+          "focus": "apex.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-prefix-wrap": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "a"
+        },
+        "file-refined-prefix": {
+          "focus": "alpha.rs",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "al"
+        },
+        "file-folder-focus": {
+          "focus": "nested/",
+          "rows": [
+            "nested/",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "n"
+        },
+        "file-child-focus": {
+          "focus": "util.rs",
+          "rows": [
+            "nested/",
+            "util.rs",
+            "alpha.rs",
+            "apex.rs",
+            "enum_rank.rs",
+            "lib.rs",
+            "other.rs",
+            "struct_rank.rs",
+            "struct_second.rs",
+            "target.rs"
+          ],
+          "route": 771416744,
+          "typed": "u"
+        },
+        "file-enter": {
+          "activeEditor": "util.rs",
+          "editorFocused": true
+        }
+      },
+      "originalSelection": [
+        16,
+        16
+      ],
+      "previewedInnerUtf16": 44
+    },
+    "diskSha256": {
+      "src/lib.rs": "8ff4e6eb74880e4eeaf3fce50e77eee7dfe2cbcf8192913ebb4495328b3a067f",
+      "src/other.rs": "73c389c9c1d6600362f3a0273ee91e07b26bf48da573948844669066c3c2de8b",
+      "src/alpha.rs": "c626952887e00de16914165b9805485a777d4905a83921a6716ac0ecb7784a8b",
+      "src/apex.rs": "4db5fe45ab501a2cd1d909dfd5aa2206e4052b153324fc965e9eda5ed7450f7b",
+      "src/nested/util.rs": "8a25509373135f42a770c7caa094b2b63a73053dd735acf1e1b67e3bd19f77f0",
+      "Cargo.toml": "85de25c313ddc903e4a8d5efc9b4d92d972d912067445652b555c675021b8044"
+    },
+    "memoryPrivateMiB": {
+      "ready": 241.6,
+      "symbol-descendant-previews": 250.1,
+      "file-refined-prefix": 257.0,
+      "file-enter": 254.1
+    }
+  }
+}

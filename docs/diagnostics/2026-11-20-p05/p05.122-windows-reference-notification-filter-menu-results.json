@@ -1,0 +1,29 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "menuLabels": [
+    "Fixture Source 01",
+    "Fixture Source 02",
+    "Fixture Source 03",
+    "Fixture Source 04",
+    "Fixture Source 05",
+    "Fixture Source 06",
+    "Fixture Source 07",
+    "Fixture Source 08",
+    "Fixture Source 09",
+    "Fixture Source 10"
+  ],
+  "source01CheckBefore": true,
+  "source01CheckAfter": false,
+  "morePickerIncludes": [
+    "Fixture Source 11",
+    "Fixture Source 12"
+  ],
+  "centerVisibleAfterPickerAccept": true,
+  "centerHiddenAfterGlobalEnable": true,
+  "exitCode": 0
+}

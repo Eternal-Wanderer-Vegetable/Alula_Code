@@ -1,0 +1,20 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "before": [
+    "Initial error",
+    "Initial info"
+  ],
+  "showCenterChord": "Ctrl+K Ctrl+Shift+N",
+  "centerEscapeRestoredEditor": true,
+  "toastEscapeRestoredEditor": true,
+  "centerFindEscapePriority": {
+    "centerVisibleAfterEscape": false,
+    "findVisibleAfterEscape": true
+  },
+  "exitCode": 0
+}

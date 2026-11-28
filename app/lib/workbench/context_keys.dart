@@ -4,9 +4,13 @@ import 'package:flutter/foundation.dart';
 /// enabled. Expressions support identifiers, `!`, `&&`, `||`, `==`, `!=`, and
 /// parentheses. Invalid expressions fail closed.
 class ContextKeyService extends ChangeNotifier {
+  ContextKeyService({Map<String, bool Function()> booleanReaders = const {}})
+      : _booleanReaders = Map.of(booleanReaders);
+
+  final Map<String, bool Function()> _booleanReaders;
   final Map<String, Object?> _values = {};
 
-  Object? operator [](String key) => _values[key];
+  Object? operator [](String key) => _booleanReaders[key]?.call() ?? _values[key];
 
   void setValue(String key, Object? value) {
     if (_values.containsKey(key) && _values[key] == value) return;
@@ -39,6 +43,7 @@ class ContextKeyService extends ChangeNotifier {
 
   @override
   void dispose() {
+    _booleanReaders.clear();
     _values.clear();
     super.dispose();
   }

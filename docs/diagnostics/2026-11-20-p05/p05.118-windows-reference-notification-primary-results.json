@@ -1,0 +1,19 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "results": {
+    "Toast": {
+      "dismissedBeforeCompletion": true,
+      "secondsUntilDismiss": 0.3049283999716863
+    },
+    "Center": {
+      "dismissedBeforeCompletion": true,
+      "secondsUntilDismiss": 0.03025419998448342
+    }
+  },
+  "exitCode": 0
+}

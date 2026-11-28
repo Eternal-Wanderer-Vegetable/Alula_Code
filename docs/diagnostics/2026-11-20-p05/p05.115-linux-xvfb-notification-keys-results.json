@@ -1,0 +1,521 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "367dbdb2f83acd53c0ef129aad7ba07428e63251",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "7cdd726a5c1775525c1a77ca55b5b90aa3da9915a7561f14b55fb3477c27b065",
+  "observations": {
+    "before": {
+      "request": "before",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ],
+        "notification-toast-2": [
+          540.0,
+          588.0,
+          992.0,
+          624.0
+        ],
+        "notification-toast-1": [
+          540.0,
+          628.0,
+          992.0,
+          664.0
+        ]
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        1,
+        2
+      ],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "editor-before": {
+      "request": "closed",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ],
+        "notification-toast-2": [
+          540.0,
+          588.0,
+          992.0,
+          624.0
+        ],
+        "notification-toast-1": [
+          540.0,
+          628.0,
+          992.0,
+          664.0
+        ]
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [
+        1,
+        2
+      ],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "open": {
+      "request": "open",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ],
+        "notification-center": [
+          540.0,
+          552.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          912.0,
+          565.0,
+          928.0,
+          581.0
+        ],
+        "notification-position": [
+          944.0,
+          561.0,
+          968.0,
+          585.0
+        ],
+        "notification-center-close": [
+          968.0,
+          564.5,
+          985.0,
+          581.5
+        ],
+        "notification-item-2": [
+          541.0,
+          594.0,
+          991.0,
+          629.0
+        ],
+        "notification-item-1": [
+          541.0,
+          629.0,
+          991.0,
+          663.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "closed": {
+      "request": "closed",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "find": {
+      "request": "find",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "find-query-input": [
+          571.0,
+          93.0,
+          731.8191070556641,
+          111.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "after": {
+      "request": "after",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "find-query-input": [
+          571.0,
+          93.0,
+          731.8191070556641,
+          111.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ],
+        "notification-toast-3": [
+          540.0,
+          628.0,
+          992.0,
+          664.0
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-closed": {
+      "request": "find-closed",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ],
+        "notification-toast-3": [
+          540.0,
+          628.0,
+          992.0,
+          664.0
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "toast-closed": {
+      "request": "toast-closed",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-again": {
+      "request": "find-again",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "find-query-input": [
+          571.0,
+          93.0,
+          731.8191070556641,
+          111.0
+        ],
+        "status-notifications": [
+          764.8374481201172,
+          681.0,
+          796.1634826660156,
+          695.0
+        ],
+        "status-notifications-badge": [
+          782.8374481201172,
+          681.5,
+          796.1634826660156,
+          694.5
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "open-with-find": {
+      "request": "open-with-find",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "find-query-input": [
+          571.0,
+          93.0,
+          731.8191070556641,
+          111.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ],
+        "notification-center": [
+          540.0,
+          517.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          912.0,
+          530.0,
+          928.0,
+          546.0
+        ],
+        "notification-position": [
+          944.0,
+          526.0,
+          968.0,
+          550.0
+        ],
+        "notification-center-close": [
+          968.0,
+          529.5,
+          985.0,
+          546.5
+        ],
+        "notification-item-3": [
+          541.0,
+          559.0,
+          991.0,
+          594.0
+        ],
+        "notification-item-2": [
+          541.0,
+          594.0,
+          991.0,
+          629.0
+        ],
+        "notification-item-1": [
+          541.0,
+          629.0,
+          991.0,
+          663.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "center-closed-first": {
+      "request": "center-closed-first",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "find-query-input": [
+          571.0,
+          93.0,
+          731.8191070556641,
+          111.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-after-center": {
+      "request": "find-after-center",
+      "boxes": {
+        "native-probe-editor": [
+          287.52,
+          80.0,
+          992.0,
+          668.0
+        ],
+        "status-notifications": [
+          773.5004653930664,
+          681.0,
+          787.5004653930664,
+          695.0
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    }
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "fixtureSha256": "45d6633c50aae10ce96cb069c226b8a6bdae8d9940ea523e9625456f1bfbad62"
+}

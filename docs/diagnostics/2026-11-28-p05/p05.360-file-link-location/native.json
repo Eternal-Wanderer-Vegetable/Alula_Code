@@ -1,0 +1,129 @@
+{
+  "tree": "eb29e5327d5c2941172589152fba7d79b1d9d1b5",
+  "nativeTestedTree": "31db16d581acba498879c191ffb77d043be0ee79",
+  "product": "c368d4055087dc23df0dfc19ed2393678aaae62b",
+  "fixtureSha256": "68c97f935a68d0c9e70de9e27b82e5450585efb258c4afd03c6756f7378983d0",
+  "sharedRunnerSha256": "317943e81bb7f0e2dd4356e206d0cc684734c744ac3fe0e2b42a9f824740d970",
+  "windowsSourceFiles": 66,
+  "abi": 51,
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "2ab806e1a0da9c2c5bcc4c1502c167e104be8227e91ec4896f4e33981284239d",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "rawReportSha256": "9ebb7f7fb45e57d67fed307f1488ccbbf9bd0a00b600ec5d5d71940dd6829529",
+    "runnerSha256": "21915726b94437f0070f22e01831436e741b6fbba1a89613c57579e786c018c6",
+    "sourceSha256": "01881749abeec0339cb168a1cf8c070bc678a19e73700283d0fcfda7d2a0b9bf",
+    "targetSha256": "21b877a0a861246c76a152645873b02fa18ca5010cee7a59d1254a7f90af89c3",
+    "nativeChecks": [
+      "isolated-source-has-four-physical-link-rows",
+      "plain-click-keeps-source-and-sets-link-caret",
+      "native-open-link-command-snaps-start-to-surrogate-boundary",
+      "return-to-source-after-command",
+      "native-control-click-selects-reversed-percent-encoded-range",
+      "return-to-source-after-control-click",
+      "native-hover-exposes-link-action-on-a-selection-fragment",
+      "can-move-onto-hover-action",
+      "native-tooltip-click-expands-range-end-past-surrogate",
+      "return-to-source-after-tooltip",
+      "native-control-alt-click-opens-right-group-and-clamps-to-eof",
+      "source-and-target-bom-crlf-and-emoji-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native F7, Ctrl+click, pointer dwell and action click, Ctrl+Alt+click",
+    "windowEnvironment": 120,
+    "selections": {
+      "native-open-link-command-snaps-start-to-surrogate-boundary": {
+        "absoluteUtf16": [
+          14,
+          14
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-control-click-selects-reversed-percent-encoded-range": {
+        "absoluteUtf16": [
+          14,
+          19
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-tooltip-click-expands-range-end-past-surrogate": {
+        "absoluteUtf16": [
+          13,
+          16
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-control-alt-click-opens-right-group-and-clamps-to-eof": {
+        "absoluteUtf16": [
+          24,
+          24
+        ],
+        "visibleGroups": 2,
+        "targetFocused": true
+      }
+    }
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "63c0b3730235eff21fc43bef203c8d5bd077d2a7147655b92f99e97f0406507b",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "rawReportSha256": "391f7f8be11b38b69317efa426f59be6b64e5ad410ae95e8f870499af7bcd5fa",
+    "runnerSha256": "0ac66db35bcddb85b9dc1873b8e845ee12c49a2c836951d008d2d1acb0a69fe4",
+    "sourceSha256": "e66e4249f4feac02b0d8228d85d44ee28baa401f96b6ac611caf1405e4c099b9",
+    "targetSha256": "21b877a0a861246c76a152645873b02fa18ca5010cee7a59d1254a7f90af89c3",
+    "nativeChecks": [
+      "isolated-source-has-four-physical-link-rows",
+      "plain-click-keeps-source-and-sets-link-caret",
+      "native-open-link-command-snaps-start-to-surrogate-boundary",
+      "return-to-source-after-command",
+      "native-control-click-selects-reversed-percent-encoded-range",
+      "return-to-source-after-control-click",
+      "native-hover-exposes-link-action-on-a-selection-fragment",
+      "can-move-onto-hover-action",
+      "native-tooltip-click-expands-range-end-past-surrogate",
+      "return-to-source-after-tooltip",
+      "native-control-alt-click-opens-right-group-and-clamps-to-eof",
+      "source-and-target-bom-crlf-and-emoji-bytes-preserved"
+    ],
+    "cleanExit": true,
+    "nativeEntry": "native F7, Ctrl+click, pointer dwell and action click, Ctrl+Alt+click",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "selections": {
+      "native-open-link-command-snaps-start-to-surrogate-boundary": {
+        "absoluteUtf16": [
+          14,
+          14
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-control-click-selects-reversed-percent-encoded-range": {
+        "absoluteUtf16": [
+          14,
+          19
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-tooltip-click-expands-range-end-past-surrogate": {
+        "absoluteUtf16": [
+          13,
+          16
+        ],
+        "visibleGroups": 1,
+        "targetFocused": true
+      },
+      "native-control-alt-click-opens-right-group-and-clamps-to-eof": {
+        "absoluteUtf16": [
+          24,
+          24
+        ],
+        "visibleGroups": 2,
+        "targetFocused": true
+      }
+    }
+  }
+}
