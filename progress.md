@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.374 / feat-426 完成。模态文档的 Emoji 编辑和 Rust 全文一致。Escape、外点与关闭按钮显示未保存确认，取消保留正文与焦点，保存失败可重试，移回标签保留同一 Rust 文档。Windows 和 Linux 各通过三个入口及 BOM/CRLF 字节验证。定向 13/13，专题 92/92，Flutter 1,994 项通过、2 项跳过。产品 499ef3f 的 CI 46119007607 四项及 Platform Availability 46119005387 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.374-dirty-modal-close.md。
 - P05.373 / feat-425 完成。固定版与 Alula 在 Windows 125% DPI 下对照。滚动锁定入口移至编码与行尾格式之前，通知铃铛在开关前后位置一致。Windows 和 Linux 的显隐、点击关闭及几何通过。定向 27/27，Flutter 1,990 项通过、2 项跳过。产品 26d0311 的 CI 46116127507 四项及 Platform Availability 46116120872 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md。
 - P05.372 / feat-424 完成。主窗在辅助窗移交、原生退出及会话写入后关闭。Windows 和 Linux 四次正常退出及两次移交冲突通过，定向 48/48、专题 143/143，Flutter 1,990 项通过、2 项跳过。产品 5026e00 的 CI 46113509983 四项及 Platform Availability 46113506964 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.372-main-close-with-auxiliary.md。
 - P05.371 / feat-423 完成。共用 Hold 键位在失焦后恢复常驻开关，按住切窗的重复键不再触发反转。Windows 和 Linux 的单键及组合键各通过 17 项，专题 215/215，Flutter 1,989 项通过、2 项跳过。产品 28f447f 的 CI 46109080964 四项及 Platform Availability 46109078191 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md。
@@ -2401,7 +2402,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- LAY-15 的 Toggle、Hold、多组多窗与状态栏证据已汇总。下一项核对 LAY-13 模态编辑重复应用及关闭未保存文档的行为。固定版有保存、不保存和取消选项，Alula 基线三个入口均未出现确认。
+- 模态编辑一致性和三个文档关闭入口已通过 P05.374 验证。隔离 Windows 和 Linux 已复现主窗正常关闭后模态正文未进入会话恢复。下一项核对原生关停与恢复。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)

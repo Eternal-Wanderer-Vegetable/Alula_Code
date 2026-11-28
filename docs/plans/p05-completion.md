@@ -26,6 +26,8 @@ P05.94/feat-146 已收尾：Breadcrumb 文件/符号 picker 侧开实现及准�
 
 P05.373 已登记 LAY-15 滚动锁定状态栏固定版对照。Windows 125% DPI 同宿主完成图像对照，Windows 和 Linux 的释放构建完成显隐与点击复验。[对照和托管证据](../diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md)。
 
+P05.374 已登记 LAY-13 模态文档编辑一致性和三个关闭入口。固定版行为与 Windows/Linux 发布构建通过，移回标签保留同一 Rust 文档。[原生和托管证据](../diagnostics/2026-11-28-p05/p05.374-dirty-modal-close.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。
