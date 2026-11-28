@@ -160,6 +160,7 @@ class QuickInput {
     BuildContext context, {
     required String prompt,
     String value = '',
+    double? topInset,
     FutureOr<String?> Function(String value)? validateInput,
     FutureOr<QuickInputValidationMessage?> Function(String value)?
         validateInputMessage,
@@ -176,6 +177,7 @@ class QuickInput {
       context,
       hint: prompt,
       items: const [],
+      topInset: topInset,
       inputMode: true,
       initialValue: value,
       validateInput: validateInput,

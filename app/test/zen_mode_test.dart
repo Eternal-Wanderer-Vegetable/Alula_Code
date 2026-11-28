@@ -555,7 +555,7 @@ void main() {
     await expectCommandPalette();
 
     await execute(tester, quickOpenCommandId);
-    expect(paintedCard().top, 56);
+    expect(paintedCard().top, 6);
     await pressEscape(tester);
   });
 

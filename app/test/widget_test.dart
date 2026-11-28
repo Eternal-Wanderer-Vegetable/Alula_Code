@@ -745,6 +745,105 @@ void main() {
     expect(FocusManager.instance.primaryFocus, same(editorFocus));
   });
 
+  testWidgets('Quick Access shares its custom chrome origin across providers',
+      (tester) async {
+    mockNativeDragDrop();
+    tester.view.physicalSize = const Size(1240, 850);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    Future<void> mount(WorkbenchTitleBarMode mode) async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: fixtureRoot,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+        windowChromeConfiguration: WindowChromeConfiguration(
+          mode: mode,
+          targetPlatform: TargetPlatform.windows,
+        ),
+      ));
+      await tester.pump(const Duration(milliseconds: 650));
+    }
+
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final surface = find.descendant(
+      of: picker,
+      matching: find.byWidgetPredicate((widget) =>
+          widget is DecoratedBox &&
+          widget.decoration is BoxDecoration &&
+          (widget.decoration as BoxDecoration).color ==
+              const Color(0xFF252932)),
+    );
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+
+    void expectSurface(double width, double top) {
+      final box = tester.getRect(surface);
+      expect(box.top, closeTo(top, .01));
+      expect(box.width, closeTo(width * .62 < 600 ? width * .62 : 600, .01));
+      expect(box.center.dx, closeTo(width / 2, .01));
+    }
+
+    Future<void> settlePicker() async {
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump(const Duration(milliseconds: 240));
+    }
+
+    Future<void> close() async {
+      await pressChord(tester, LogicalKeyboardKey.escape);
+      await settlePicker();
+      expect(picker, findsNothing);
+    }
+
+    await mount(WorkbenchTitleBarMode.custom);
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 350));
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final center = find.byKey(const ValueKey('command-center-control'));
+    await tester.tap(center);
+    await settlePicker();
+    expectSurface(1240, 6);
+    for (final prefix in ['>', '@', '@:', '#', ':', '::', '?', '']) {
+      await tester.enterText(field, prefix);
+      await settlePicker();
+      expect(tester.widget<TextField>(field).controller!.text, prefix);
+      expectSurface(1240, 6);
+    }
+
+    await tester.enterText(field, 'main');
+    tester.view.physicalSize = const Size(710, 850);
+    await settlePicker();
+    expect(tester.widget<TextField>(field).controller!.text, 'main');
+    expectSurface(710, 6);
+    await close();
+
+    tester.view.physicalSize = const Size(1240, 850);
+    await tester.pump();
+    await title.commands.execute(quickOpenCommandId);
+    await settlePicker();
+    expectSurface(1240, 6);
+    await close();
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.tap(center);
+    await settlePicker();
+    expectSurface(1240, 6);
+    await close();
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+
+    await mount(WorkbenchTitleBarMode.native);
+    final nativeTitle = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    await nativeTitle.commands.execute(quickOpenCommandId);
+    await settlePicker();
+    expectSurface(1240, 56);
+    await close();
+  });
+
   testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',
       (tester) async {
     await tester.pumpWidget(AlulaApp(

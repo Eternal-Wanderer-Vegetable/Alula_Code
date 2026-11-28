@@ -4591,6 +4591,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  double? get _quickAccessTopInset =>
+      (WindowChromeConfigurationScope.maybeOf(context)?.isCustom ?? true)
+          ? 6
+          : null;
+
   void _showCommandPalette({
     String initialValue = '',
     FocusNode? restoreFocus,
@@ -4638,11 +4643,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       description: _keybindings.shortcutFor(id) ?? byId[id]!.shortcut,
       commandId: id,
     );
-    final customTitleBar =
-        WindowChromeConfigurationScope.maybeOf(context)?.isCustom ?? true;
     QuickInput.show(
       context,
-      topInset: customTitleBar ? 6 : null,
+      topInset: _quickAccessTopInset,
       hint: '输入命令名（> 前缀可省）',
       queryPrefix: '>',
       initialValue: initialValue,
@@ -4967,6 +4970,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     await QuickInput.show(
       context,
+      topInset: _quickAccessTopInset,
       hint: '工作区符号（#名称）',
       initialValue: initialValue,
       restoreFocus: previousFocus,
@@ -5043,6 +5047,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (doc == null) {
       await QuickInput.show(
         context,
+        topInset: _quickAccessTopInset,
         hint: hint,
         initialValue: initialValue,
         items: const [],
@@ -5128,6 +5133,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _focusEditorAfterLayout(destination, target);
     }
     await QuickInput.show(context,
+      topInset: _quickAccessTopInset,
       hint: hint, initialValue: initialValue, items: const [],
       emptyMessageForQuery: (query) {
         final value = query.trim();
@@ -5265,6 +5271,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         context,
         prompt: prompt,
         value: initialValue,
+        topInset: _quickAccessTopInset,
         restoreFocus: previousFocus,
         redirectOnInput: inputRedirect,
         validateInputMessage: (_) => const QuickInputValidationMessage(
@@ -5315,6 +5322,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final result = await QuickInput.input(context,
       prompt: prompt,
       value: initialValue,
+      topInset: _quickAccessTopInset,
       onAcceptModifiers: (modifiers) {
         // The default Quick Access preferences keep the opened tab.
         openAside = modifiers.alt || modifiers.ctrlCmd;
@@ -5575,6 +5583,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     unawaited(QuickInput.show(
       context,
+      topInset: _quickAccessTopInset,
       hint: '显示快速访问入口',
       initialValue: value,
       queryPrefix: '?',
@@ -5719,6 +5728,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _quickOpenCancellations.add(cancelSearch);
     QuickInput.show(
       context,
+      topInset: _quickAccessTopInset,
       hint: '文件名、路径或 path:行:列',
       quickNavigateKeys: Theme.of(context).platform == TargetPlatform.macOS
           ? const [LogicalKeyboardKey.keyP]
