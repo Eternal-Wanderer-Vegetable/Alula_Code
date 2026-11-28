@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/modal_editor.dart';
@@ -28,7 +29,8 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
       ),
     ));
     await tester.pump(const Duration(milliseconds: 600));
@@ -83,6 +85,96 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
   }
+
+  final modal = find.byKey(const ValueKey('modal-editor-dialog'));
+  final confirmation = find.byKey(const ValueKey('editor-close-dirty-dialog'));
+  for (final route in ['Escape', 'outside click', 'close button']) {
+    testWidgets('dirty modal confirmation from $route', (tester) async {
+      await prepareWorkspace(tester);
+      final file = File('${workspace.path}/settings.json');
+      final original = file.readAsBytesSync();
+      await openSettingsByExplorer(tester);
+      final input = find.descendant(
+        of: modal,
+        matching: find.byType(EditableText),
+      );
+      const draft = '{"editor.fontSize": 14, "note": "🔧"}\n';
+      await tester.enterText(input, draft);
+      await tester.pumpAndSettle();
+      final core = tester
+          .widget<RustTextInputField>(find.descendant(
+            of: modal,
+            matching: find.byType(RustTextInputField),
+          ))
+          .inputWindow
+          .document;
+      expect(core.resync().content, draft);
+      expect(core.isDirty, isTrue);
+      final selection = tester.widget<EditableText>(input).controller.selection;
+      switch (route) {
+        case 'Escape':
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        case 'outside click':
+          await tester.tapAt(const Offset(10, 100));
+        case 'close button':
+          await tester.tap(find.byKey(const ValueKey('modal-editor-close')));
+      }
+      await tester.pumpAndSettle();
+      expect(confirmation, findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+      await tester.pumpAndSettle();
+      expect(modal, findsOneWidget);
+      expect(core.resync().content, draft);
+      expect(
+          tester.widget<EditableText>(input).controller.selection, selection);
+      expect(tester.widget<EditableText>(input).focusNode.hasFocus, isTrue);
+      expect(file.readAsBytesSync(), original);
+
+      await tester.tap(find.byKey(const ValueKey('modal-editor-close')));
+      await tester.pumpAndSettle();
+      final choice = route == 'outside click' ? 'save' : 'discard';
+      await tester.tap(find.byKey(ValueKey('editor-close-$choice')));
+      await tester.pumpAndSettle();
+      expect(modal, findsNothing);
+      expect(file.readAsBytesSync(),
+          choice == 'save' ? utf8.encode(draft) : original);
+    });
+  }
+
+  testWidgets('a failed modal save preserves the draft for retry',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final original = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    final input =
+        find.descendant(of: modal, matching: find.byType(EditableText));
+    const draft = '{"note":"保留😀"}\n';
+    await tester.enterText(input, draft);
+    await tester.pumpAndSettle();
+
+    final backup = file.renameSync('${baseOf()}/settings-backup.json');
+    final obstructed = Directory(file.path)..createSync();
+    final close = find.byKey(const ValueKey('modal-editor-close'));
+    final save = find.byKey(const ValueKey('editor-close-save'));
+    await tester.tap(close);
+    await tester.pumpAndSettle();
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(modal, findsOneWidget);
+    expect(confirmation, findsNothing);
+    expect(tester.widget<EditableText>(input).controller.text, draft);
+    expect(backup.readAsBytesSync(), original);
+
+    obstructed.deleteSync();
+    backup.renameSync(file.path);
+    await tester.tap(close);
+    await tester.pumpAndSettle();
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(modal, findsNothing);
+    expect(file.readAsBytesSync(), utf8.encode(draft));
+  });
 
   group('ModalEditorPreferences', () {
     test('json round-trips and defaults to some', () {
@@ -154,15 +246,39 @@ void main() {
     (tester) async {
       await prepareWorkspace(tester);
       await openSettingsByExplorer(tester);
-      expect(find.byKey(const ValueKey('modal-editor-dialog')), findsOneWidget);
+      expect(modal, findsOneWidget);
+      final input =
+          find.descendant(of: modal, matching: find.byType(EditableText));
+      final before = tester
+          .widget<RustTextInputField>(
+            find.descendant(
+                of: modal, matching: find.byType(RustTextInputField)),
+          )
+          .inputWindow
+          .document;
+      const draft = '{"note":"移回🐙"}\n';
+      await tester.enterText(input, draft);
+      await tester.pumpAndSettle();
+      expect(before.resync().content, draft);
 
-      await tester
-          .tap(find.byKey(const ValueKey('modal-editor-move-to-tab')));
+      await tester.tap(find.byKey(const ValueKey('modal-editor-move-to-tab')));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('modal-editor-dialog')), findsNothing);
       expect(find.byKey(const ValueKey('tab-1')), findsOneWidget,
           reason: 'the document opens as a regular tab after move-back');
       expect(find.text('settings.json'), findsWidgets);
+      expect(confirmation, findsNothing);
+      final after = tester
+          .widget<RustTextInputField>(
+            find.byType(RustTextInputField),
+          )
+          .inputWindow
+          .document;
+      expect(after, same(before));
+      expect(after.resync().content, draft);
+      expect(after.isDirty, isTrue);
+      expect(File('${workspace.path}/settings.json').readAsStringSync(),
+          '{"editor.fontSize": 14}\n');
     },
   );
 

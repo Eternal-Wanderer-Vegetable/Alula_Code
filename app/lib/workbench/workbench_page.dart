@@ -15542,57 +15542,99 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final doc = await _createDetachedModalDoc(core, path);
     if (doc == null || !mounted) return;
     _recordRecentFile(path);
-    var moveBack = false;
-    await showGeneralDialog(
-      context: context,
+    final navigator = Navigator.of(context, rootNavigator: true);
+    late final RawDialogRoute<bool> route;
+    var resolvingClose = false;
+
+    bool isActive() => mounted && route.isActive;
+
+    Future<void> saveDraft() async {
+      final currentPath = doc.path;
+      if (currentPath == null || !isActive()) return;
+      _flushInput(doc, commitComposition: true);
+      await _saveDocToPath(doc, currentPath, isCurrent: isActive);
+    }
+
+    Future<void> requestClose({bool moveToTab = false}) async {
+      if (!isActive() || !route.isCurrent || resolvingClose) return;
+      resolvingClose = true;
+      try {
+        _flushInput(doc, commitComposition: true);
+        _updateDirty(doc);
+        if (!moveToTab && doc.isDirty) {
+          final decision = await _confirmDirtyEditorClose([doc]);
+          if (!isActive() ||
+              !route.isCurrent ||
+              decision == null ||
+              decision == _DirtyEditorCloseDecision.cancel) {
+            return;
+          }
+          if (decision == _DirtyEditorCloseDecision.save) {
+            await saveDraft();
+            if (!isActive() ||
+                !route.isCurrent ||
+                doc.isDirty ||
+                doc.diskState != DiskDocumentState.current) {
+              return;
+            }
+          }
+        }
+        navigator.pop(moveToTab);
+      } finally {
+        resolvingClose = false;
+        if (isActive() && route.isCurrent) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (isActive() && route.isCurrent) {
+              doc.inputFieldKey.currentState?.requestFocus();
+            }
+          });
+        }
+      }
+    }
+
+    route = RawDialogRoute<bool>(
       barrierDismissible: true,
       barrierLabel: '模态编辑器屏障',
       barrierColor: Colors.black54,
-      pageBuilder: (dialogContext, _, __) => ModalEditorDialog(
-        title: doc.name,
-        onMoveBackToTab: () {
-          moveBack = true;
-          Navigator.of(dialogContext).pop();
+      pageBuilder: (dialogContext, _, __) => PopScope<bool>(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) unawaited(requestClose());
         },
-        onClose: () => Navigator.of(dialogContext).pop(),
-        child: CallbackShortcuts(
-          bindings: {
-            SingleActivator(
-              LogicalKeyboardKey.keyS,
-              control: defaultTargetPlatform != TargetPlatform.macOS,
-              meta: defaultTargetPlatform == TargetPlatform.macOS,
-            ): () {
-              final currentPath = doc.path;
-              if (currentPath != null) {
-                unawaited(_saveDocToPath(doc, currentPath));
-              }
+        child: ModalEditorDialog(
+          title: doc.name,
+          onMoveBackToTab: () => unawaited(requestClose(moveToTab: true)),
+          onClose: () => unawaited(requestClose()),
+          child: CallbackShortcuts(
+            bindings: {
+              SingleActivator(
+                LogicalKeyboardKey.keyS,
+                control: defaultTargetPlatform != TargetPlatform.macOS,
+                meta: defaultTargetPlatform == TargetPlatform.macOS,
+              ): () => unawaited(saveDraft()),
             },
-          },
-          child: RustTextInputField(
-            inputWindow: doc.inputWindow,
-            scrollController: doc.editorScrollController,
-            tabSize: doc.tabSize,
-            semanticsLabel: '${doc.name} 模态编辑器',
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-            onDelta: (delta) {
-              try {
-                doc.doc.applyWith(delta.version, delta.operations);
-                if (mounted) setState(() {});
-              } on Object {
-                // 陈旧脱离视图：忽略增量。
-              }
-            },
-            onError: (error) {
-              if (mounted) {
-                setState(() => _statusDetail = '模态编辑错误：$error');
-              }
-            },
+            child: RustTextInputField(
+              key: doc.inputFieldKey,
+              inputWindow: doc.inputWindow,
+              scrollController: doc.editorScrollController,
+              tabSize: doc.tabSize,
+              semanticsLabel: '${doc.name} 模态编辑器',
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+              onDelta: (_) => _updateDirty(doc),
+              onError: (error) {
+                if (mounted) {
+                  setState(() => _statusDetail = '模态编辑错误：$error');
+                }
+              },
+            ),
           ),
         ),
       ),
     );
+    final moveBack = await navigator.push(route);
+    await route.completed;
     if (!mounted) return;
-    if (moveBack) {
+    if (moveBack == true) {
       // 移回标签：同一 OpenDoc 视图入焦点组（状态/选区随行）。
       setState(() {
         _modalEditorDoc = null;

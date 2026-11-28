@@ -5384,6 +5384,18 @@
       "evidence": "固定版与 Alula 在 Windows 125% DPI 下对照。滚动锁定入口移至编码与行尾格式之前，通知铃铛在开关前后位置一致。Windows 和 Linux 的显隐、点击关闭及几何通过。定向 27/27，Flutter 1,990 项通过、2 项跳过。产品 26d0311 的 CI 46116127507 四项及 Platform Availability 46116120872 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-426",
+      "name": "P05.374 LAY-13 模态编辑单次提交与未保存关闭",
+      "description": "保证模态编辑单次修改与 Rust 全文一致。Escape、外点和关闭按钮复用保存、不保存和取消，保存失败保留正文与焦点。移回标签沿用同一文档。",
+      "dependencies": [
+        "feat-102"
+      ],
+      "status": "in-progress",
+      "evidence": "隔离基线复现三种入口缺少未保存确认及 Emoji 修改重复提交，已核对固定 Code-OSS。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
