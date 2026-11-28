@@ -58,6 +58,8 @@ P05.388 已登记 LAY-14 居中分隔线、双侧手势、限位、配置档与�
 
 P05.389 已登记 LAY-02/LAY-17 命令中心支持的初始模式、空查询、提供程序返回及焦点。[原生与托管证据](../diagnostics/2026-11-29-p05/p05.389-command-center-help.md)。
 
+P05.390 已登记 LAY-02/LAY-14/LAY-17 快速访问顶部锚点、窗口改宽、提供程序和焦点。[原生与托管证据](../diagnostics/2026-11-29-p05/p05.390-quick-access-placement.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。
