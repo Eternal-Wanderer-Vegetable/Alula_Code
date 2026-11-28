@@ -24,6 +24,8 @@
 
 P05.94/feat-146 已收尾：Breadcrumb 文件/符号 picker 侧开实现及准确本地/CI/WinLinux 证据见 `docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md` 与 hosted JSON。P05.95/feat-147 已完成本地完整 DoD 与 exact-SHA hosted gates：产品 `8a995b08a8ec908575d53af1215b6b64536e012f` 的 PR CI `44481175224` 四 job 全绿，Platform Availability `44481166897` Linux/Windows 全绿；macOS job 未等待、设备验证不声称通过。证据见 `docs/diagnostics/2026-11-19-p05/p05.95-breadcrumb-picker-focus-navigation-scope.md` 和 `p05.95-hosted-verification.json`。P05.96/feat-148 Open Editors 行中键关闭已完成，本地完整 DoD、PR CI `44488427815` 四 job 与 Platform Availability `44488418388` Linux/Windows 通过；macOS hosted job 未等待、设备缺口保留。完整证据见 `docs/diagnostics/2026-11-19-p05/p05.96-open-editors-middle-click-close-scope.md` 与 `p05.96-hosted-verification.json`。P05 父阶段保持 in-progress。
 
+P05.373 已登记 LAY-15 滚动锁定状态栏固定版对照。Windows 125% DPI 同宿主完成图像对照，Windows 和 Linux 的释放构建完成显隐与点击复验。[对照和托管证据](../diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。

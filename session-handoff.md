@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.373 / feat-425 完成。固定版与 Alula 在 Windows 125% DPI 下对照。滚动锁定入口移至编码与行尾格式之前，通知铃铛在开关前后位置一致。Windows 和 Linux 的显隐、点击关闭及几何通过。定向 27/27，Flutter 1,990 项通过、2 项跳过。产品 26d0311 的 CI 46116127507 四项及 Platform Availability 46116120872 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md。
 - P05.372 / feat-424 完成。主窗在辅助窗移交、原生退出及会话写入后关闭。Windows 和 Linux 四次正常退出及两次移交冲突通过，定向 48/48、专题 143/143，Flutter 1,990 项通过、2 项跳过。产品 5026e00 的 CI 46113509983 四项及 Platform Availability 46113506964 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.372-main-close-with-auxiliary.md。
 - P05.371 / feat-423 完成。共用 Hold 键位在失焦后恢复常驻开关，按住切窗的重复键不再触发反转。Windows 和 Linux 的单键及组合键各通过 17 项，专题 215/215，Flutter 1,989 项通过、2 项跳过。产品 28f447f 的 CI 46109080964 四项及 Platform Availability 46109078191 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md。
 - P05.370 / feat-422 完成限定验收。辅助窗限定键位可临时反转共享锁定，键释放、失焦和关闭均恢复。Windows 与 Linux 的单键和组合键各通过 19 项，专题 218/218，Flutter 1,986 项通过、2 项跳过。产品 ff52992 的 CI 46105313832 四项及 Platform Availability 46105312940 Windows/Linux 通过。X11 切换到同样绑定 Hold 的窗口时会重触发，保留复现并继续处理。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md。
@@ -404,6 +405,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.370 辅助窗口 Hold 锁定滚动键位](docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md)。
 [P05.371 切窗后抑制 Hold 键自动重触发](docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md)。
 [P05.372 主窗关闭前收尾已打开的辅助窗](docs/diagnostics/2026-11-28-p05/p05.372-main-close-with-auxiliary.md)。
+[P05.373 滚动锁定状态栏固定版对照](docs/diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -669,4 +671,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.372 收尾 CI。按 docs/03、docs/11 和 P05 完成计划汇总 LAY-15 原生与固定版证据，核对 LAY-12 关闭依赖，再按 32 行矩阵选依赖已满足的验收差异。macOS 实机暂缓，PR #3 保持草稿。
+核对 P05.373 收尾 CI 和本地基线。按 docs/03 选取依赖 P05.50 的 LAY-13 模态文档编辑与关闭子项。隔离验证已复现编辑重复应用和三种关闭入口缺少未保存提示，固定版已核对。PR #3 保持草稿，macOS 实机暂缓。

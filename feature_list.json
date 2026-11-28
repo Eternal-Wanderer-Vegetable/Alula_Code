@@ -5380,8 +5380,8 @@
         "feat-420",
         "feat-423"
       ],
-      "status": "in-progress",
-      "evidence": "固定 Code-OSS 4bda7217 的 Windows 125% 基线已确认位置差异，等待修复和复验。",
+      "status": "done",
+      "evidence": "固定版与 Alula 在 Windows 125% DPI 下对照。滚动锁定入口移至编码与行尾格式之前，通知铃铛在开关前后位置一致。Windows 和 Linux 的显隐、点击关闭及几何通过。定向 27/27，Flutter 1,990 项通过、2 项跳过。产品 26d0311 的 CI 46116127507 四项及 Platform Availability 46116120872 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.373-locked-scroll-visual.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

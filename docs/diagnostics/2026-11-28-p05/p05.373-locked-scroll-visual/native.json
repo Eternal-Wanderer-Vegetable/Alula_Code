@@ -1,0 +1,595 @@
+{
+  "product": "26d03118e7aa6d969f86f11db6ffc55bad499890",
+  "tree": "c8df57f189949b04a295113e6a3f709d735007bc",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "status scrollbar lock effective on/off",
+    "suggestions": [
+      "View: Toggle Locked Scrolling Across Editors"
+    ],
+    "view": {
+      "dpi": 1.25,
+      "width": 1204,
+      "height": 804
+    },
+    "item": {
+      "text": "Scrolling Locked",
+      "className": "statusbar-item right has-command prominent-kind has-background-color first-visible-item",
+      "aria": "Scrolling Locked",
+      "x": 698.5875244140625,
+      "y": 778,
+      "width": 102.5250015258789,
+      "height": 24,
+      "background": "rgb(57, 148, 188)",
+      "labelBackground": "rgba(0, 0, 0, 0)",
+      "labelColor": "rgb(255, 255, 255)",
+      "fontSize": "12px",
+      "lineHeight": "22px",
+      "padding": "0px 8px",
+      "previous": "status.editor.selection",
+      "next": null,
+      "statusbar": {
+        "x": 0,
+        "y": 776,
+        "width": 1204,
+        "height": 28,
+        "top": 776,
+        "right": 1204,
+        "bottom": 804,
+        "left": 0
+      }
+    },
+    "statusItems": [
+      {
+        "id": "status.scrollLockingEnabled",
+        "text": "Scrolling Locked",
+        "x": 698.5875244140625,
+        "width": 102.5250015258789
+      },
+      {
+        "id": "status.editor.selection",
+        "text": "Ln 1, Col 1",
+        "x": 801.1124877929688,
+        "width": 71.2125015258789
+      },
+      {
+        "id": "status.editor.indentation",
+        "text": "Spaces: 4",
+        "x": 872.3250122070312,
+        "width": 64.8125
+      },
+      {
+        "id": "status.editor.encoding",
+        "text": "UTF-8",
+        "x": 937.1375122070312,
+        "width": 47.66250228881836
+      },
+      {
+        "id": "status.editor.eol",
+        "text": "LF",
+        "x": 984.7999877929688,
+        "width": 27.512500762939453
+      },
+      {
+        "id": "status.languageStatus",
+        "text": "",
+        "x": 1012.3125,
+        "width": 27
+      },
+      {
+        "id": "status.editor.mode",
+        "text": "Plain Text",
+        "x": 1039.3125,
+        "width": 60.6875
+      },
+      {
+        "id": "chat.statusBarEntry",
+        "text": "",
+        "x": 1100,
+        "width": 32
+      },
+      {
+        "id": "status.notifications",
+        "text": "",
+        "x": 1132,
+        "width": 32
+      },
+      {
+        "id": "codex.statusBarEntry",
+        "text": "",
+        "x": 1164,
+        "width": 28
+      }
+    ],
+    "fixtureSha256": "4c9a119ac165b707bdcd725fb0b2fea67b56b6a106ff7b78807d13ec55bc625d",
+    "clickedToggleRemovesItem": true,
+    "fixtureClosedOwnedJob": true,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "windowsBaseline": {
+    "tree": "4527ebe363280e2db81687212d81a09e7ba52d83",
+    "build": {
+      "abi": 51,
+      "aotSha256": "38c022655b6d9d536e77aad4ab95c6ecad958f39f29077d5e99fc46bc89578a2",
+      "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+      "tree": "4527ebe363280e2db81687212d81a09e7ba52d83",
+      "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+      "fixtureSha256": "fed25b0b12edc4a81bcad3e6496a9245b5e5d13f6502e68b0c61a2945cc1aec1"
+    },
+    "profile": "E:\\temp\\alula-p05-373-lock-status-visual\\windows-baseline-1795846115505215800",
+    "testDesktop": "inactive WinSta0",
+    "osKeyboardOrPointerEventsSent": 0,
+    "states": {
+      "off": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 718.608251953125,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 776.967626953125,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 815.237646484375,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 906.286474609375,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "on": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 680.483251953125,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 738.842626953125,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 777.112646484375,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-bar-locked-scrolling": {
+          "x": 868.161474609375,
+          "y": 770.8,
+          "width": 68.25,
+          "height": 20.0
+        },
+        "status-notifications": {
+          "x": 944.411474609375,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "afterClick": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 718.608251953125,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 776.967626953125,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 815.237646484375,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 906.286474609375,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      }
+    },
+    "imageSha256": {
+      "off": "3ecd07a158bdda00db02c84e20adfcd3ce443afae01fd3ee891b04a1b44923fd",
+      "on": "92b9c4a8ee2f46321b177e460342f8f2cc9880a58f4c8d81b422e87df6097812",
+      "after-click": "3ecd07a158bdda00db02c84e20adfcd3ce443afae01fd3ee891b04a1b44923fd"
+    },
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "windows": {
+    "tree": "c8df57f189949b04a295113e6a3f709d735007bc",
+    "build": {
+      "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "fixtureSha256": "fed25b0b12edc4a81bcad3e6496a9245b5e5d13f6502e68b0c61a2945cc1aec1",
+      "aotSha256": "17215598a60d829aa13dff3478d579e6d1534e9b57170685481292cf654b26cb",
+      "abi": 51,
+      "tree": "c8df57f189949b04a295113e6a3f709d735007bc",
+      "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+      "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc"
+    },
+    "profile": "E:\\temp\\alula-p05-373-lock-status-visual\\windows-native-1795846407685793600",
+    "testDesktop": "inactive WinSta0",
+    "osKeyboardOrPointerEventsSent": 0,
+    "states": {
+      "off": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 1001.12177734375,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 1059.48115234375,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1097.751171875,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1188.8,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "on": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 915.87177734375,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-bar-locked-scrolling": {
+          "x": 972.23115234375,
+          "y": 770.8,
+          "width": 77.25,
+          "height": 20.0
+        },
+        "status-encoding": {
+          "x": 1059.48115234375,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1097.751171875,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1188.8,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "afterClick": {
+        "viewportWidth": 1236.8,
+        "viewportHeight": 792.8,
+        "dpiScale": 1.25,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 768.8,
+          "width": 1236.8,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 1001.12177734375,
+          "y": 772.8,
+          "width": 48.359375,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 1059.48115234375,
+          "y": 772.8,
+          "width": 30.27001953125,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1097.751171875,
+          "y": 772.8,
+          "width": 11.048828125,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1188.8,
+          "y": 768.8,
+          "width": 14.0,
+          "height": 24.0
+        }
+      }
+    },
+    "imageSha256": {
+      "off": "9ece3fb3499f2e281a9b07f60591746c1f2bcbe666c4ec7d58bda510b86c0c96",
+      "on": "ba9bc5c86486066cf0470013541c5bda529f5b0df41090ea9626228e5735fc9b",
+      "after-click": "13338907147c7f8bffb14579dbbf16dc13790b6f3ca930d166c1b062599407bf"
+    },
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "linux": {
+    "sourceTree": "c8df57f189949b04a295113e6a3f709d735007bc",
+    "fixtureSha256": "fed25b0b12edc4a81bcad3e6496a9245b5e5d13f6502e68b0c61a2945cc1aec1",
+    "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+    "aotSha256": "d8cdd58fdc53484a300bff37e0086b6226a3d3b01d517035f1636dad8b52a471",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "display": "isolated Xvfb with Xfwm4",
+    "profile": "/tmp/alula-p05-177-xvfb-h2w8xts8",
+    "states": {
+      "off": {
+        "viewportWidth": 1250.0,
+        "viewportHeight": 800.0,
+        "dpiScale": 1.0,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 776.0,
+          "width": 1250.0,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 1013.1374359130859,
+          "y": 780.0,
+          "width": 48.90789794921875,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 1072.0453338623047,
+          "y": 780.0,
+          "width": 30.06976318359375,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1110.1150970458984,
+          "y": 780.0,
+          "width": 11.884902954101562,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1202.0,
+          "y": 776.0,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "on": {
+        "viewportWidth": 1250.0,
+        "viewportHeight": 800.0,
+        "dpiScale": 1.0,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 776.0,
+          "width": 1250.0,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 927.8874359130859,
+          "y": 780.0,
+          "width": 48.90789794921875,
+          "height": 16.0
+        },
+        "status-bar-locked-scrolling": {
+          "x": 984.7953338623047,
+          "y": 778.0,
+          "width": 77.25,
+          "height": 20.0
+        },
+        "status-encoding": {
+          "x": 1072.0453338623047,
+          "y": 780.0,
+          "width": 30.06976318359375,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1110.1150970458984,
+          "y": 780.0,
+          "width": 11.884902954101562,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1202.0,
+          "y": 776.0,
+          "width": 14.0,
+          "height": 24.0
+        }
+      },
+      "afterClick": {
+        "viewportWidth": 1250.0,
+        "viewportHeight": 800.0,
+        "dpiScale": 1.0,
+        "recordedNativeWindow": true,
+        "bar": {
+          "x": 0.0,
+          "y": 776.0,
+          "width": 1250.0,
+          "height": 24.0
+        },
+        "status-problems": {
+          "x": 1013.1374359130859,
+          "y": 780.0,
+          "width": 48.90789794921875,
+          "height": 16.0
+        },
+        "status-encoding": {
+          "x": 1072.0453338623047,
+          "y": 780.0,
+          "width": 30.06976318359375,
+          "height": 16.0
+        },
+        "status-line-ending": {
+          "x": 1110.1150970458984,
+          "y": 780.0,
+          "width": 11.884902954101562,
+          "height": 16.0
+        },
+        "status-notifications": {
+          "x": 1202.0,
+          "y": 776.0,
+          "width": 14.0,
+          "height": 24.0
+        }
+      }
+    },
+    "imageSha256": {
+      "off": "3fee8396b27e817c7d0710a62aabfcd525107b6b231f5cc65801c55c33386ea1",
+      "on": "2c9e03e439bb02111bd7a67d0d2c97b63360457681dc3db8cf157f61210530f2",
+      "after-click": "c367286aba6f2d2df4d3b76d415f63316cd68587205d7012156cefc714cedfd5"
+    },
+    "exitCode": 0
+  },
+  "comparison": {
+    "normalization": "right-aligned logical-pixel crop; 3 pixel dividers",
+    "comparisonSha256": "639aaa1bd272098c91831b806d7f807e720bb11cb9269c1c6f93169c68079d4e",
+    "strips": [
+      {
+        "panel": "reference-on",
+        "originalSha256": "3df3e59e70133aabb6e81cdefa55fb32bad91714ca3eb96da66b42ac510718c5",
+        "logicalSize": [
+          1204,
+          28
+        ],
+        "compositeBounds": [
+          33,
+          0,
+          1237,
+          28
+        ]
+      },
+      {
+        "panel": "reference-off",
+        "originalSha256": "ff2b277c554413f46ba1c88bd62b6cfe0418ba4b3e2ca7e137e7d1faed358093",
+        "logicalSize": [
+          1204,
+          28
+        ],
+        "compositeBounds": [
+          33,
+          31,
+          1237,
+          59
+        ]
+      },
+      {
+        "panel": "baseline-on",
+        "originalSha256": "92b9c4a8ee2f46321b177e460342f8f2cc9880a58f4c8d81b422e87df6097812",
+        "logicalSize": [
+          1237,
+          24
+        ],
+        "compositeBounds": [
+          0,
+          62,
+          1237,
+          86
+        ]
+      },
+      {
+        "panel": "released-on",
+        "originalSha256": "ba9bc5c86486066cf0470013541c5bda529f5b0df41090ea9626228e5735fc9b",
+        "logicalSize": [
+          1237,
+          24
+        ],
+        "compositeBounds": [
+          0,
+          89,
+          1237,
+          113
+        ]
+      },
+      {
+        "panel": "released-off",
+        "originalSha256": "13338907147c7f8bffb14579dbbf16dc13790b6f3ca930d166c1b062599407bf",
+        "logicalSize": [
+          1237,
+          24
+        ],
+        "compositeBounds": [
+          0,
+          116,
+          1237,
+          140
+        ]
+      }
+    ]
+  }
+}
