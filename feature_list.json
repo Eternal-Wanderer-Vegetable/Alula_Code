@@ -5487,8 +5487,8 @@
         "feat-103",
         "feat-432"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "默认自定义标题栏在普通、Zen、退出及会话恢复时可见，顶部为 0、高度为 35 逻辑像素。命令中心能打开可聚焦的命令面板，Zen 保持隐藏状态栏。Windows 和 Linux 共四次系统关窗均退出 0。定向 21/21，专题 228/228，Flutter 2,014 项通过、2 项跳过。产品 7c90d0b 的 CI 46139494124 四项及 Platform Availability 46139491101 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

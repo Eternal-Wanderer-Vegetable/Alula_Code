@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.381 / feat-433 完成。默认自定义标题栏在普通、Zen、退出及会话恢复时可见，顶部为 0、高度为 35 逻辑像素。命令中心能打开可聚焦的命令面板，Zen 保持隐藏状态栏。Windows 和 Linux 共四次系统关窗均退出 0。定向 21/21，专题 228/228，Flutter 2,014 项通过、2 项跳过。产品 7c90d0b 的 CI 46139494124 四项及 Platform Availability 46139491101 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md。
 - P05.380 / feat-432 完成。默认主窗命令面板在普通、Zen 和退出后三阶段距顶部 6 逻辑像素，水平居中且输入可聚焦。Windows 和 Linux 原生复验通过，两次系统关窗退出码为 0。定向 20/20，专题 201/201，Flutter 2,013 项通过、2 项跳过。产品 3b670fc 的 CI 46137056796 四项及 Platform Availability 46137053375 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md。
 - P05.379 / feat-431 完成。主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md。
 - P05.378 / feat-430 完成。活动栏、两侧栏和面板各自恢复进入前的显隐。正常关停并重启后仍可还原。双端四个场景和八次原生退出通过，可见区域几何最大偏差 0 逻辑像素。定向 18/18，专题 170/170，Flutter 2,011 项通过、2 项跳过。产品 2f3778e 的 CI 46132042681 四项及 Platform Availability 46132039692 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.378-zen-layout.md。
@@ -420,6 +421,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.378 Zen 四个布局区域独立恢复](docs/diagnostics/2026-11-28-p05/p05.378-zen-layout.md)。
 [P05.379 Zen 普通文本编辑器行号](docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md)。
 [P05.380 默认命令面板位置](docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md)。
+[P05.381 Zen 默认标题栏与命令中心](docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -685,4 +687,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.380 收尾 CI 和本地基线。按 P05.51 和 P05.380 核对 Zen 内默认标题栏与命令中心，再核对编辑器工具条。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.381 收尾 CI 和本地基线，按固定版复测普通与 Zen 的默认编辑器组工具条，选择依赖已满足的产品差异。PR #3 保持草稿，macOS 实机暂缓。

@@ -1,0 +1,950 @@
+{
+  "product": "7c90d0b718d8ac4a25dc3aa2f18b6591a384d73c",
+  "tree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+  "fixtureSha256": "2e6492593deed4bd389e93261fc32eea1d6ff411bd51539c1a6eb7305fe53b75",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "default editor toolbar and chrome visibility before, during and after Zen",
+    "normalBounds": [
+      417,
+      176,
+      1635,
+      986
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "normal": {
+      "titleBar": {
+        "visible": true,
+        "bounds": [
+          0,
+          0,
+          1204,
+          35
+        ]
+      },
+      "commandCenter": {
+        "visible": true,
+        "bounds": [
+          347.2375183105469,
+          5.700000286102295,
+          509.51251220703125,
+          23.600000381469727
+        ]
+      },
+      "statusBar": {
+        "visible": true,
+        "bounds": [
+          0,
+          776,
+          1204,
+          28
+        ]
+      }
+    },
+    "zenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "zen": {
+      "titleBar": {
+        "visible": true,
+        "bounds": [
+          0,
+          0,
+          2048,
+          35
+        ]
+      },
+      "commandCenter": {
+        "visible": true,
+        "bounds": [
+          691.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ]
+      },
+      "statusBar": {
+        "visible": false,
+        "bounds": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "restoredBounds": [
+      417,
+      176,
+      1635,
+      986
+    ],
+    "exit": {
+      "titleBar": {
+        "visible": true,
+        "bounds": [
+          0,
+          0,
+          1204,
+          35
+        ]
+      },
+      "commandCenter": {
+        "visible": true,
+        "bounds": [
+          347.2375183105469,
+          5.700000286102295,
+          509.51251220703125,
+          23.600000381469727
+        ]
+      },
+      "statusBar": {
+        "visible": true,
+        "bounds": [
+          0,
+          776,
+          1204,
+          28
+        ]
+      }
+    },
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselineProduct": "3b670fcd8b609ca6198f21b389352eb14f2d8473",
+  "baseline": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "835be98f62b23770166c64bac19649b40ba596ed",
+      "build": {
+        "fixtureSha256": "6241a40b76a6d83d34719578db2fec2a3ea64a0ffe3c668003dfaacb80ea0435",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "6df2180fcc4175986c4907b38b794d0313354b3a1c8dc3f8ce26a7a17b3ddb33",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "abi": 51,
+        "tree": "835be98f62b23770166c64bac19649b40ba596ed"
+      },
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "states": {
+        "normalPalette": {
+          "x": 268.4,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 314.0,
+          "windowWidth": 1136.8,
+          "windowHeight": 742.4,
+          "windowBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.25,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenPalette": {
+          "x": 724.0,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 490.0,
+          "windowWidth": 2048.0,
+          "windowHeight": 1152.0,
+          "windowBounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.25,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitPalette": {
+          "x": 268.4,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 314.0,
+          "windowWidth": 1136.8,
+          "windowHeight": 742.4,
+          "windowBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.25,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "quickOpen": {
+          "x": 268.4,
+          "y": 56.0,
+          "width": 600.0,
+          "height": 83.0,
+          "windowWidth": 1136.8,
+          "windowHeight": 742.4,
+          "windowBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.25,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "835be98f62b23770166c64bac19649b40ba596ed",
+      "display": "isolated Xvfb with Xfwm4",
+      "fixtureSha256": "6241a40b76a6d83d34719578db2fec2a3ea64a0ffe3c668003dfaacb80ea0435",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "8b8f3205471c3448e466aa9cc3c94004d08c272d7c16cec21a05b31e0a673756",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "states": {
+        "normalPalette": {
+          "x": 275.0,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 314.0,
+          "windowWidth": 1150.0,
+          "windowHeight": 750.0,
+          "windowBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.0,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenPalette": {
+          "x": 660.0,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 402.0,
+          "windowWidth": 1920.0,
+          "windowHeight": 960.0,
+          "windowBounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.0,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitPalette": {
+          "x": 275.0,
+          "y": 6.0,
+          "width": 600.0,
+          "height": 314.0,
+          "windowWidth": 1150.0,
+          "windowHeight": 750.0,
+          "windowBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.0,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "quickOpen": {
+          "x": 275.0,
+          "y": 56.0,
+          "width": 600.0,
+          "height": 82.0,
+          "windowWidth": 1150.0,
+          "windowHeight": 750.0,
+          "windowBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "fieldFocused": true,
+          "devicePixelRatio": 1.0,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+      "build": {
+        "abi": 51,
+        "fixtureSha256": "2e6492593deed4bd389e93261fc32eea1d6ff411bd51539c1a6eb7305fe53b75",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "tree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "aotSha256": "5b8b68e108e5c24ba1f99d831e5076f4c6e3f6104d01ee40275021472823f8d5"
+      },
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "states": {
+        "normal": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            1136.8,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            268.4,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        },
+        "zen": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            2048.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            724.0,
+            6.0,
+            600.0,
+            490.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        },
+        "commandExit": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            1136.8,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            268.4,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        },
+        "beforeNativeClose": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            2048.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            724.0,
+            6.0,
+            600.0,
+            490.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        }
+      },
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "nativeFullscreenBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "sourceSha256": "f9833801f41740156e186d399daf4ffabf8de62195b76861edd8f1e3bc80af90",
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restart": {
+        "restoredZen": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            2048.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            724.0,
+            6.0,
+            600.0,
+            490.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        },
+        "restoredZenExit": {
+          "devicePixelRatio": 1.25,
+          "titlebar": [
+            0.0,
+            0.0,
+            1136.8,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            268.4,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+      "display": "isolated Xvfb with Xfwm4",
+      "fixtureSha256": "2e6492593deed4bd389e93261fc32eea1d6ff411bd51539c1a6eb7305fe53b75",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "2d58be1ef0b5b74ba0655eb533fb61ab9458ebc6003f61ad9d19cbf2dbcfc2de",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "states": {
+        "normal": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1150.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            275.0,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        },
+        "zen": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1920.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            660.0,
+            6.0,
+            600.0,
+            402.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        },
+        "commandExit": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1150.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            275.0,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        },
+        "beforeNativeClose": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1920.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            660.0,
+            6.0,
+            600.0,
+            402.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        }
+      },
+      "nativeFullscreenProperty": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "sourceSha256": "f9833801f41740156e186d399daf4ffabf8de62195b76861edd8f1e3bc80af90",
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restart": {
+        "restoredZen": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1920.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            660.0,
+            6.0,
+            600.0,
+            402.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "statusbarVisible": false
+        },
+        "restoredZenExit": {
+          "devicePixelRatio": 1.0,
+          "titlebar": [
+            0.0,
+            0.0,
+            1150.0,
+            35.0
+          ],
+          "commandCenter": [
+            10.0,
+            0.0,
+            240.0,
+            35.0
+          ],
+          "palette": [
+            275.0,
+            6.0,
+            600.0,
+            314.0
+          ],
+          "fieldFocused": true,
+          "nativeBounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "statusbarVisible": true
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "068b2b15f28d976fbc2994889ab85f195fd60a10",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "Cargo.lock",
+      "Cargo.toml",
+      "app/assets/seti/LICENSE-SETI.md",
+      "app/assets/seti/vs-seti-icon-theme.json",
+      "app/lib/bridge/alula_merge.dart",
+      "app/lib/editor/bulk_edit_multidiff_preview.dart",
+      "app/lib/editor/bulk_edit_multidiff_projection.dart",
+      "app/lib/editor/bulk_edit_preview.dart",
+      "app/lib/editor/bulk_edit_preview_surface.dart",
+      "app/lib/editor/clipboard_compare_preview.dart",
+      "app/lib/editor/clipboard_metadata.dart",
+      "app/lib/editor/diff_revert_plan.dart",
+      "app/lib/editor/diff_view_model.dart",
+      "app/lib/editor/editor_clipboard.dart",
+      "app/lib/editor/editor_folding.dart",
+      "app/lib/editor/editor_highlight_tokens.dart",
+      "app/lib/editor/editor_minimap.dart",
+      "app/lib/editor/editor_minimap_markers.dart",
+      "app/lib/editor/editor_minimap_syntax.dart",
+      "app/lib/editor/editor_native_text_drag_drop.dart",
+      "app/lib/editor/editor_sticky_scroll.dart",
+      "app/lib/editor/find_replace.dart",
+      "app/lib/editor/find_replace_history.dart",
+      "app/lib/editor/indentation.dart",
+      "app/lib/editor/line_diff.dart",
+      "app/lib/editor/lsp_diagnostic_decorations.dart",
+      "app/lib/editor/merge_editor_open_request.dart",
+      "app/lib/editor/merge_editor_surface.dart",
+      "app/lib/editor/merge_result_session.dart",
+      "app/lib/editor/multi_selection.dart",
+      "app/lib/editor/navigation_history.dart",
+      "app/lib/editor/occurrence_search.dart",
+      "app/lib/editor/paste_as.dart",
+      "app/lib/editor/rich_text_clipboard.dart",
+      "app/lib/editor/rust_document_viewport.dart",
+      "app/lib/editor/rust_string_context.dart",
+      "app/lib/editor/snapshot_compare_preview.dart",
+      "app/lib/editor/snippet_choice_suggestion_list.dart",
+      "app/lib/editor/snippet_session.dart",
+      "app/lib/editor/snippet_template.dart",
+      "app/lib/editor/snippet_variable_transform.dart",
+      "app/lib/editor/text_diff.dart",
+      "app/lib/editor/text_drag_drop.dart",
+      "app/lib/editor/undo_stack.dart",
+      "app/lib/editor/unicode_case_mapping.dart",
+      "app/lib/editor/word_diff.dart",
+      "app/lib/editor/workspace_edit.dart",
+      "app/lib/editor/workspace_search_decorations.dart",
+      "app/lib/git/git_changes_list.dart",
+      "app/lib/git/git_cli.dart",
+      "app/lib/git/git_diff_commands.dart",
+      "app/lib/git/git_diff_moved_blocks.dart",
+      "app/lib/git/git_diff_moved_blocks_projection.dart",
+      "app/lib/git/git_diff_navigation.dart",
+      "app/lib/git/git_diff_patch.dart",
+      "app/lib/git/git_diff_patch_view.dart",
+      "app/lib/git/git_diff_side_by_side.dart",
+      "app/lib/git/git_diff_unchanged_regions_projection.dart",
+      "app/lib/git/git_diff_whitespace_projection.dart",
+      "app/lib/git/git_diff_word_highlights.dart",
+      "app/lib/process/process_lifecycle.dart",
+      "app/lib/search/search_service.dart",
+      "app/lib/workbench/activity_bar_badges.dart",
+      "app/lib/workbench/activity_bar_global_actions.dart",
+      "app/lib/workbench/activity_bar_order.dart",
+      "app/lib/workbench/activity_bar_pins.dart",
+      "app/lib/workbench/activity_bar_position.dart",
+      "app/lib/workbench/activity_bar_size.dart",
+      "app/lib/workbench/auxiliary_focus_context.dart",
+      "app/lib/workbench/command_history.dart",
+      "app/lib/workbench/editor_tab_action_location.dart",
+      "app/lib/workbench/editor_tab_file_icon.dart",
+      "app/lib/workbench/editor_tab_label.dart",
+      "app/lib/workbench/editor_tab_mode.dart",
+      "app/lib/workbench/editor_tab_mru_policy.dart",
+      "app/lib/workbench/editor_tab_tear_out_policy.dart",
+      "app/lib/workbench/find_history_store.dart",
+      "app/lib/workbench/goto_position.dart",
+      "app/lib/workbench/open_editors_sort_order.dart",
+      "app/lib/workbench/panel_alignment.dart",
+      "app/lib/workbench/panel_maximize.dart",
+      "app/lib/workbench/panel_position.dart",
+      "app/lib/workbench/secondary_sidebar_empty_state.dart",
+      "app/lib/workbench/secondary_sidebar_layout.dart",
+      "app/lib/workbench/session_store.dart",
+      "app/lib/workbench/sidebar_position.dart",
+      "app/lib/workbench/tree_find.dart",
+      "app/lib/workbench/walkthrough.dart",
+      "app/lib/workbench/welcome_page.dart",
+      "app/lib/workbench/window_chrome_configuration.dart",
+      "app/lib/workbench/window_chrome_driver.dart",
+      "app/lib/workbench/workbench_page.dart",
+      "app/lib/workbench/workbench_window_title.dart",
+      "app/lib/workspace/workspace_watcher.dart",
+      "app/packages/irondash_engine_context/CHANGELOG.md",
+      "app/packages/irondash_engine_context/LICENSE",
+      "app/packages/irondash_engine_context/README.md",
+      "app/packages/irondash_engine_context/analysis_options.yaml",
+      "app/packages/irondash_engine_context/android/build.gradle",
+      "app/packages/irondash_engine_context/android/rust/Cargo.lock",
+      "app/packages/irondash_engine_context/android/rust/Cargo.toml",
+      "app/packages/irondash_engine_context/android/rust/cargokit.yaml",
+      "app/packages/irondash_engine_context/android/rust/src/jni_sys.rs",
+      "app/packages/irondash_engine_context/android/rust/src/lib.rs",
+      "app/packages/irondash_engine_context/android/settings.gradle",
+      "app/packages/irondash_engine_context/android/src/main/AndroidManifest.xml",
+      "app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/IrondashEngineContextPlugin.java",
+      "app/packages/irondash_engine_context/android/src/main/java/dev/irondash/engine_context/Notifier.java",
+      "app/packages/irondash_engine_context/cargokit/LICENSE",
+      "app/packages/irondash_engine_context/cargokit/README",
+      "app/packages/irondash_engine_context/cargokit/build_pod.sh",
+      "app/packages/irondash_engine_context/cargokit/build_tool/README.md",
+      "app/packages/irondash_engine_context/cargokit/build_tool/analysis_options.yaml",
+      "app/packages/irondash_engine_context/cargokit/build_tool/bin/build_tool.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/build_tool.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/android_environment.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/artifacts_provider.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_cmake.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_gradle.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_pod.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_tool.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/builder.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/cargo.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/crate_hash.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/environment.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/logging.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/options.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/precompile_binaries.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/rustup.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/target.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/util.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/verify_binaries.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/pubspec.lock",
+      "app/packages/irondash_engine_context/cargokit/build_tool/pubspec.yaml",
+      "app/packages/irondash_engine_context/cargokit/build_tool/test/builder_test.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/test/cargo_test.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/test/options_test.dart",
+      "app/packages/irondash_engine_context/cargokit/build_tool/test/rustup_test.dart",
+      "app/packages/irondash_engine_context/cargokit/cmake/cargokit.cmake",
+      "app/packages/irondash_engine_context/cargokit/cmake/resolve_symlinks.ps1",
+      "app/packages/irondash_engine_context/cargokit/docs/architecture.md",
+      "app/packages/irondash_engine_context/cargokit/docs/precompiled_binaries.md",
+      "app/packages/irondash_engine_context/cargokit/gradle/plugin.gradle",
+      "app/packages/irondash_engine_context/cargokit/run_build_tool.cmd",
+      "app/packages/irondash_engine_context/cargokit/run_build_tool.sh",
+      "app/packages/irondash_engine_context/ios/Classes/EngineContextPlugin.h",
+      "app/packages/irondash_engine_context/ios/Classes/EngineContextPlugin.m",
+      "app/packages/irondash_engine_context/ios/irondash_engine_context.podspec",
+      "app/packages/irondash_engine_context/lib/irondash_engine_context.dart",
+      "app/packages/irondash_engine_context/linux/CMakeLists.txt",
+      "app/packages/irondash_engine_context/linux/include/irondash_engine_context/irondash_engine_context_plugin.h",
+      "app/packages/irondash_engine_context/linux/irondash_engine_context_plugin.cc",
+      "app/packages/irondash_engine_context/macos/Classes/EngineContextPlugin.h",
+      "app/packages/irondash_engine_context/macos/Classes/EngineContextPlugin.m",
+      "app/packages/irondash_engine_context/macos/irondash_engine_context.podspec",
+      "app/packages/irondash_engine_context/pubspec.yaml",
+      "app/packages/irondash_engine_context/test/flutter_engine_context_test.dart",
+      "app/packages/irondash_engine_context/windows/CMakeLists.txt",
+      "app/packages/irondash_engine_context/windows/include/irondash_engine_context/irondash_engine_context_plugin_c_api.h",
+      "app/packages/irondash_engine_context/windows/irondash_engine_context_plugin.cpp",
+      "app/packages/irondash_engine_context/windows/irondash_engine_context_plugin.h",
+      "app/packages/irondash_engine_context/windows/irondash_engine_context_plugin_c_api.cpp",
+      "app/windows/.gitignore",
+      "app/windows/CMakeLists.txt",
+      "app/windows/flutter/CMakeLists.txt",
+      "app/windows/runner/Runner.rc",
+      "app/windows/runner/main.cpp",
+      "app/windows/runner/resource.h",
+      "app/windows/runner/runner.exe.manifest",
+      "app/windows/runner/utils.cpp",
+      "app/windows/runner/utils.h",
+      "app/windows/runner/win32_window.cpp",
+      "app/windows/runner/win32_window.h",
+      "crates/editor-buffer/Cargo.toml",
+      "crates/editor-buffer/src/lib.rs",
+      "crates/editor-core/Cargo.toml",
+      "crates/editor-core/src/bin/workspace_lifecycle_fake_lsp.rs",
+      "crates/editor-core/tests/p00_workspace_close.rs",
+      "crates/editor-doc/Cargo.toml",
+      "crates/editor-doc/src/lib.rs",
+      "crates/editor-lang/Cargo.toml",
+      "crates/editor-lang/src/lib.rs",
+      "crates/editor-lsp/Cargo.toml",
+      "crates/editor-lsp/src/bin/ra-check.rs",
+      "crates/editor-lsp/src/bin/slow_fake_lsp.rs",
+      "crates/editor-lsp/tests/p00_slow_completion.rs",
+      "crates/editor-lsp/tests/workspace_symbols.rs",
+      "crates/editor-merge/Cargo.toml",
+      "crates/editor-merge/src/combination.rs",
+      "crates/editor-merge/src/lib.rs",
+      "crates/editor-process/Cargo.toml",
+      "crates/editor-process/src/lib.rs",
+      "crates/editor-process/tests/process_supervision.rs",
+      "crates/editor-workspace/Cargo.toml",
+      "crates/editor-workspace/src/lib.rs",
+      "scripts/build_core.sh"
+    ]
+  }
+}
