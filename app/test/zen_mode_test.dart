@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
+import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
@@ -50,16 +51,29 @@ void main() {
     WidgetTester tester, {
     bool zenMode = false,
     bool windowControls = false,
+    Map<String, bool>? regions,
+    Object? zenPreviousCollapsed,
   }) async {
     temp = Directory.systemTemp.createTempSync('alula-zen-mode');
     workspace = Directory('${temp.path}/workspace')..createSync();
     final base = temp.path.replaceAll(r'\', '/');
     layoutStore = LayoutStore(path: '$base/layout.json');
+    if (regions != null) {
+      final initial = WorkbenchLayout();
+      for (final region in regions.entries) {
+        initial.setRegionCollapsed(region.key, !region.value);
+      }
+      layoutStore.save(initial.root);
+      initial.dispose();
+    }
     sessionStore = SessionStore(path: '$base/session.json');
     File('${baseOf()}/session.json').writeAsStringSync(jsonEncode({
       'v': 1,
       'editorTabMode': 'multiple',
       'zenMode': zenMode,
+      if (zenPreviousCollapsed != null)
+        'zenPreviousCollapsed': zenPreviousCollapsed,
+      if (regions != null) 'workspace': workspace.path,
       'groups': <Object?>[],
     }));
     File('${workspace.path}/main.rs')
@@ -355,6 +369,106 @@ void main() {
     expect(find.text('文件(F)'), findsNothing);
     await pressEscape(tester);
     expect(find.text('文件(F)'), findsOneWidget);
+  });
+
+  const layoutCases = {
+    'panel visible': {
+      'activity': false,
+      'sidebar': true,
+      'secondarySidebar': false,
+      'panel': true,
+    },
+    'secondary sidebar visible': {
+      'activity': true,
+      'sidebar': false,
+      'secondarySidebar': true,
+      'panel': false,
+    },
+  };
+
+  Finder region(String name) => find.byKey(ValueKey('wb-region-$name'));
+
+  void expectRegions(Map<String, bool> visibility) {
+    for (final state in visibility.entries) {
+      expect(region(state.key), state.value ? findsOneWidget : findsNothing,
+          reason: state.key);
+    }
+  }
+
+  Map<String, Rect> visibleRegionBounds(
+    WidgetTester tester,
+    Map<String, bool> visibility,
+  ) =>
+      {
+        for (final state in visibility.entries)
+          if (state.value) state.key: tester.getRect(region(state.key)),
+      };
+
+  for (final layout in layoutCases.entries) {
+    testWidgets('Zen restores independent shell regions with ${layout.key}',
+        (tester) async {
+      await prepareWorkspace(tester, regions: layout.value);
+      expectRegions(layout.value);
+      final before = visibleRegionBounds(tester, layout.value);
+
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expectRegions({for (final key in layout.value.keys) key: false});
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expectRegions(layout.value);
+      expect(visibleRegionBounds(tester, layout.value), before);
+    });
+
+    testWidgets(
+        'Zen recovers the original shell after restart with ${layout.key}',
+        (tester) async {
+      await prepareWorkspace(tester, regions: layout.value);
+      final before = visibleRegionBounds(tester, layout.value);
+      await execute(tester, 'workbench.action.toggleZenMode');
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      final journal = sessionStore.tryLoad()!;
+      expect(journal['zenMode'], isTrue);
+
+      await mountPage(tester);
+      expectRegions({for (final key in layout.value.keys) key: false});
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expectRegions(layout.value);
+      expect(visibleRegionBounds(tester, layout.value), before);
+      expect(journal['zenPreviousCollapsed'],
+          {for (final entry in layout.value.entries) entry.key: !entry.value});
+      expect(
+          sessionStore.tryLoad()!.containsKey('zenPreviousCollapsed'), false);
+    });
+  }
+
+  testWidgets(
+      'restoring Zen uses defaults for missing and invalid region values',
+      (tester) async {
+    const hidden = {
+      'activity': false,
+      'sidebar': false,
+      'secondarySidebar': false,
+      'panel': false,
+    };
+    await prepareWorkspace(
+      tester,
+      zenMode: true,
+      regions: hidden,
+      zenPreviousCollapsed: {
+        'activity': true,
+        'sidebar': 'bad',
+        'ignored': false,
+      },
+    );
+    expectRegions(hidden);
+    await execute(tester, 'workbench.action.toggleZenMode');
+    expectRegions({
+      'activity': false,
+      'sidebar': true,
+      'secondarySidebar': false,
+      'panel': false,
+    });
   });
 
   testWidgets(

@@ -803,8 +803,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _zenFullscreenSyncRequested = false;
   bool _checkingZenFullscreenMetrics = false;
   int _zenModeGeneration = 0;
-  bool _zenPreZenSidebarCollapsed = false;
-  bool _zenPreZenPanelCollapsed = false;
+  static const _zenRegions = ['activity', 'sidebar', 'secondarySidebar', 'panel'];
+  Map<String, bool> _zenPreviousCollapsed = const {};
   // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
   final _detachedModalDocuments = <String, OpenDoc>{};
 
@@ -5974,6 +5974,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'problemsDefaultSingleLine': _problemsMessageLines.defaultSingleLine,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
+        if (_zenMode) 'zenPreviousCollapsed': _zenPreviousCollapsed,
         'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
         if (_splitInGroupVertical) 'splitInGroupVertical': true,
@@ -6128,6 +6129,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
+    _zenPreviousCollapsed = _zenMode
+        ? _decodeZenPreviousCollapsed(data['zenPreviousCollapsed'])
+        : const {};
     _commands.context.setValue('inZenMode', _zenMode);
     _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
@@ -15777,25 +15781,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- Zen 模式（LAY-14） ----------
 
   /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
-  /// 再次切换恢复进入前的侧栏/面板折叠态。会话 journal 持久化。
+  /// 再次切换独立恢复四个区域的折叠态，会话 journal 保留进入前的快照。
   void _toggleZenMode() {
     if (_hasPendingZenExitChord) _clearPendingCommandChord();
     _zenModeGeneration++;
     setState(() {
       _zenMode = !_zenMode;
       if (_zenMode) {
-        _zenPreZenSidebarCollapsed = _layout.isCollapsed('sidebar');
-        _zenPreZenPanelCollapsed = _layout.isCollapsed('panel');
-        _layout.setRegionCollapsed('activity', true);
-        _layout.setRegionCollapsed('sidebar', true);
-        _layout.setRegionCollapsed('secondarySidebar', true);
-        _layout.setRegionCollapsed('panel', true);
+        _zenPreviousCollapsed = {
+          for (final region in _zenRegions) region: _layout.isCollapsed(region),
+        };
+        for (final region in _zenRegions) {
+          _layout.setRegionCollapsed(region, true);
+        }
       } else {
-        _layout.setRegionCollapsed('activity', false);
-        _layout.setRegionCollapsed('sidebar', _zenPreZenSidebarCollapsed);
-        _layout.setRegionCollapsed(
-            'secondarySidebar', _zenPreZenPanelCollapsed);
-        _layout.setRegionCollapsed('panel', _zenPreZenPanelCollapsed);
+        for (final entry in _zenPreviousCollapsed.entries) {
+          _layout.setRegionCollapsed(entry.key, entry.value);
+        }
+        _zenPreviousCollapsed = const {};
       }
     });
     _commands.context.setValue('inZenMode', _zenMode);
@@ -15803,6 +15806,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncNotificationFocusContext();
     _scheduleStateSave();
     unawaited(_syncZenFullscreen());
+  }
+
+  static Map<String, bool> _decodeZenPreviousCollapsed(Object? value) {
+    final saved = value is Map ? value : const {};
+    final states = {
+      for (final region in _zenRegions)
+        if (saved[region] case final bool collapsed) region: collapsed,
+    };
+    if (states.length != _zenRegions.length) {
+      final defaults = WorkbenchLayout();
+      for (final region in _zenRegions) {
+        states[region] ??= defaults.isCollapsed(region);
+      }
+      defaults.dispose();
+    }
+    return states;
   }
 
   Future<void> _syncZenFullscreen() async {
