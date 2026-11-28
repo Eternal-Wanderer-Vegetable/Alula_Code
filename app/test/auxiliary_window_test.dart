@@ -12,6 +12,7 @@ import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1258,6 +1259,121 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
       expect(commands, isNotNull);
     }
+
+    testWidgets('owner close waits for native removal and journals the handoff',
+        (tester) async {
+      const windows = MethodChannel('mixin.one/desktop_multi_window');
+      const messages = MethodChannel('mixin.one/desktop_multi_window/channels');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      final requests = <Map<dynamic, dynamic>>[];
+      var auxiliaryLive = false;
+      var refuseClose = true;
+      var nativeCloses = 0;
+      final reply = Completer<bool>();
+      messenger.setMockMethodCallHandler(windows, (call) async {
+        switch (call.method) {
+          case 'getWindowDefinition':
+            return {'windowId': 'main', 'windowArgument': ''};
+          case 'createWindow':
+            auxiliaryLive = true;
+            final config = call.arguments as Map;
+            createdPayloads.add(config['arguments'] as String);
+            return 'aux-1';
+          case 'getAllWindows':
+            return [
+              {'windowId': 'main', 'windowArgument': ''},
+              if (auxiliaryLive)
+                {'windowId': 'aux-1', 'windowArgument': createdPayloads.single},
+            ];
+        }
+        return null;
+      });
+      messenger.setMockMethodCallHandler(messages, (call) async {
+        if (call.method != 'invokeMethod') return null;
+        final request = call.arguments as Map;
+        if (request['method'] != auxiliaryWindowCloseWithOwnerMethod) {
+          return null;
+        }
+        requests.add(request);
+        if (refuseClose) return false;
+        return await reply.future;
+      });
+      addTearDown(() {
+        messenger.setMockMethodCallHandler(windows, null);
+        messenger.setMockMethodCallHandler(messages, null);
+      });
+
+      await mountWorkbench(tester);
+      await commands!.execute('workbench.action.moveEditorToNewWindow');
+      await tester.pumpAndSettle();
+      expect(auxiliaryLive, isTrue);
+      final ownerClose =
+          tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).closeWindow!;
+      Future<void> nativeClose() async {
+        nativeCloses++;
+      }
+
+      var refusedFinished = false;
+      unawaited(ownerClose(nativeClose).then((_) => refusedFinished = true));
+      for (var attempt = 0; attempt < 5 && !refusedFinished; attempt++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(requests, hasLength(1));
+      expect(requests.single['channel'], 'mixin.one/window_controller/aux-1');
+      expect(requests.single['arguments'], 'main');
+      expect(refusedFinished, isTrue);
+      expect(nativeCloses, 0);
+      expect(auxiliaryLive, isTrue);
+
+      refuseClose = false;
+      final closing = ownerClose(nativeClose);
+      await tester.pump();
+      expect(requests, hasLength(2));
+      final payload =
+          AuxiliaryWindowPayload.fromArguments(createdPayloads.single);
+      const dirtyText = 'edited 😀 after tear out';
+      expect(
+        await dispatchPlatformMethod(
+          tester,
+          messages.name,
+          MethodCall('methodCall', {
+            'channel': 'mixin.one/window_controller/main',
+            'method': auxiliaryWindowCloseReturnMethod,
+            'arguments': {
+              ...AuxiliaryWindowPayload.forDocument(
+                path: payload.path,
+                name: payload.name,
+                text: dirtyText,
+                dirty: true,
+              ).toMap(),
+              'windowId': 'aux-1',
+              'sequence': 1,
+              'selectionBase': 8,
+              'selectionExtent': 5,
+            },
+          }),
+        ),
+        isTrue,
+      );
+      reply.complete(true);
+      await tester.pump();
+      expect(nativeCloses, 0, reason: 'the auxiliary native window is still live');
+
+      auxiliaryLive = false;
+      await dispatchPlatformMethod(
+        tester,
+        windows.name,
+        const MethodCall('onWindowsChanged'),
+      );
+      await tester.pump();
+      expect(nativeCloses, 1);
+      await closing;
+      final docs = (sessionStore.tryLoad()!['groups'] as List)
+          .cast<Map>()
+          .expand((group) => (group['docs'] as List).cast<Map>());
+      final returned = docs.singleWhere((doc) => doc['text'] == dirtyText);
+      expect(returned['path'], payload.path);
+    });
 
     testWidgets(
       'the command captures the document payload and removes the source view',

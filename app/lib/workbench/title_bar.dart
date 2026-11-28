@@ -96,6 +96,7 @@ class AlulaTitleBar extends StatefulWidget {
     this.windowControls = false,
     this.windowChromeDriver,
     this.onCloseRequested,
+    this.closeWindow,
     this.enableMenuBarMnemonics = true,
     this.customMenuBarAltFocus = true,
     this.windowTitle = 'Alula Code',
@@ -118,6 +119,7 @@ class AlulaTitleBar extends StatefulWidget {
 
   /// 处理系统关闭事件；回调完成后由标题栏销毁窗口。
   final VoidCallback? onCloseRequested;
+  final Future<void> Function(Future<void> Function() nativeClose)? closeWindow;
 
   /// 与 window.enableMenuBarMnemonics 的默认值一致；设置接入留 P07。
   final bool enableMenuBarMnemonics;
@@ -483,13 +485,31 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   }
 
   Future<void> _closeWindow() async {
-    try {
+    var requested = false;
+
+    Future<void> nativeClose() async {
       widget.onCloseRequested?.call();
       await _windowChrome.setPreventClose(false);
-      await _windowChrome.close();
+      try {
+        await _windowChrome.close();
+        requested = true;
+      } catch (_) {
+        await _windowChrome.setPreventClose(true);
+        rethrow;
+      }
+    }
+
+    try {
+      final closeWindow = widget.closeWindow;
+      if (closeWindow == null) {
+        await nativeClose();
+      } else {
+        await closeWindow(nativeClose);
+      }
     } catch (error) {
-      _closeInProgress = false;
       debugPrint('关闭窗口失败：$error');
+    } finally {
+      if (!requested) _closeInProgress = false;
     }
   }
 

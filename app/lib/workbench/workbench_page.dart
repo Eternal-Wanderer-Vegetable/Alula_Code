@@ -764,6 +764,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _mainFocusEventSequence = 0;
   int _mainNativeFocusGeneration = 0;
   int _auxiliaryWindowCreationsInProgress = 0;
+  Completer<void>? _auxiliaryWindowCreationDrain;
+  bool _closingWorkbenchWindow = false;
   bool? _mainWindowFocused;
   bool _auxiliaryFocusHandlerReady = false;
   // LAY-15：会话只保存常驻开关，Hold 临时反转其有效状态。
@@ -5849,23 +5851,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
-    _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
-      widget.layoutStore.save(_layout.root);
-      final saved = widget.sessionStore.save(_encodeSession());
-      if (!mounted) return;
-      if (!saved) {
-        setState(() {
-          _journalSaveError = '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。'
-              '${widget.sessionStore.lastSaveError ?? ''}';
-        });
-        _notifyJournalSaveFailure();
-      } else {
-        if (_journalSaveError != null) {
-          setState(() => _journalSaveError = null);
-        }
-        _journalFailureNotified = false;
+    _stateSaveTimer = Timer(const Duration(milliseconds: 500), _saveWindowState);
+  }
+
+  bool _saveWindowState() {
+    widget.layoutStore.save(_layout.root);
+    final saved = widget.sessionStore.save(_encodeSession());
+    if (!mounted) return saved;
+    if (!saved) {
+      setState(() {
+        _journalSaveError = '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。'
+            '${widget.sessionStore.lastSaveError ?? ''}';
+      });
+      _notifyJournalSaveFailure();
+    } else {
+      if (_journalSaveError != null) {
+        setState(() => _journalSaveError = null);
       }
-    });
+      _journalFailureNotified = false;
+    }
+    return saved;
   }
 
   /// 会话 journal 序列化：文档文本只在 untitled 或已脏时落盘；
@@ -16434,7 +16439,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// （上游移动保留状态，不做脏确认——无数据丢失）。
   Future<void> _moveEditorToNewWindow(EditorGroup group, OpenDoc doc) async {
     await _auxiliaryWindowHandlersReady.future;
-    if (!mounted) return;
+    if (!mounted || _closingWorkbenchWindow) return;
     if (_auxiliaryWindowIds.length + _auxiliaryWindowCreationsInProgress >=
         maxAuxiliaryFocusWindows) {
       setState(() => _statusDetail =
@@ -16462,6 +16467,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     } finally {
       _auxiliaryWindowCreationsInProgress--;
+      if (_auxiliaryWindowCreationsInProgress == 0) {
+        _auxiliaryWindowCreationDrain?.complete();
+        _auxiliaryWindowCreationDrain = null;
+      }
     }
     _closeDocNow(group, doc);
     _syncCommandContext();
@@ -24696,6 +24705,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     super.dispose();
   }
 
+  Future<void> _closeWorkbenchWindow(Future<void> Function() nativeClose) async {
+    if (_closingWorkbenchWindow) return;
+    _closingWorkbenchWindow = true;
+    var hiddenForClose = false;
+    var nativeCloseRequested = false;
+    try {
+      if (_auxiliaryWindowCreationsInProgress > 0) {
+        final drain = _auxiliaryWindowCreationDrain ??= Completer<void>();
+        await drain.future.timeout(const Duration(seconds: 10));
+      }
+      final windows = _auxiliaryWindowIds.toList(growable: false);
+      if (windows.isNotEmpty &&
+          widget.windowControls &&
+          defaultTargetPlatform == TargetPlatform.linux &&
+          await windowManager.isVisible()) {
+        // Stop drawing the main GTK surface during auxiliary view teardown.
+        await windowManager.hide();
+        hiddenForClose = true;
+      }
+      for (final windowId in windows) {
+        if (!await _closeAuxiliaryForWorkbenchExit(windowId)) {
+          if (mounted && !_disposing) {
+            setState(() => _statusDetail = '辅助窗口未完成文档移交，主窗口保持打开');
+          }
+          return;
+        }
+      }
+      if (!mounted || _disposing) return;
+      _stateSaveTimer?.cancel();
+      if (_saveWindowState()) {
+        await nativeClose();
+        nativeCloseRequested = true;
+      }
+    } on TimeoutException {
+      if (mounted && !_disposing) {
+        setState(() => _statusDetail = '辅助窗口尚未就绪，主窗口保持打开');
+      }
+    } finally {
+      _closingWorkbenchWindow = false;
+      if (hiddenForClose && !nativeCloseRequested && mounted && !_disposing) {
+        await windowManager.show(inactive: true);
+      }
+    }
+  }
+
+  Future<bool> _closeAuxiliaryForWorkbenchExit(String windowId) async {
+    final owner = _mainWindowController;
+    if (owner == null) return false;
+    final closed = Completer<bool>();
+
+    Future<void> detectClosed() async {
+      try {
+        final windows =
+            await WindowController.getAll().timeout(const Duration(seconds: 2));
+        if (!closed.isCompleted &&
+            windows.any((window) => window.windowId == owner.windowId) &&
+            !windows.any((window) => window.windowId == windowId)) {
+          closed.complete(true);
+        }
+      } on Object {
+        // Keep the owner alive if the native window list is unavailable.
+      }
+    }
+
+    final subscription = onWindowsChanged.listen((_) {
+      unawaited(detectClosed());
+    });
+    try {
+      await detectClosed();
+      if (closed.isCompleted) return true;
+      // A child engine can shut down before its method reply is delivered.
+      // The window list confirms native disposal independently of that reply.
+      unawaited(WindowController.fromWindowId(windowId)
+          .invokeMethod<bool>(auxiliaryWindowCloseWithOwnerMethod, owner.windowId)
+          .then<void>((accepted) {
+        if (accepted == false && !closed.isCompleted) closed.complete(false);
+      }, onError: (Object _) {
+        // Native disposal can precede a channel reply.
+      }));
+      return await closed.future
+          .timeout(const Duration(seconds: 10), onTimeout: () => false);
+    } finally {
+      unawaited(subscription.cancel());
+    }
+  }
+
   void _shutdownLspWorkspace() {
     final core = _core;
     final root = _workspaceRoot;
@@ -24834,6 +24929,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       notificationInTitleBar ? notificationButton : null,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
+                  closeWindow: _closeWorkbenchWindow,
                   layoutControlsBuilder: () => [
                     TitleMenuItem(
                       '侧栏',

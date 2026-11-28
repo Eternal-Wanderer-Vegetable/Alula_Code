@@ -322,6 +322,12 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
           _acceptGlobalFocusSnapshot(call.arguments);
           return null;
         }
+        if (call.method == auxiliaryWindowCloseWithOwnerMethod) {
+          final ownerId =
+              widget.payload.mainWindowId ?? _mainWindowController?.windowId;
+          if (ownerId == null || call.arguments != ownerId) return false;
+          return _sendClosedAndDestroy(closingWithOwner: true);
+        }
         if (call.method == auxiliaryLockedScrollingMethod) {
           _acceptLockedScrollingSnapshot(call.arguments);
           return null;
@@ -1199,8 +1205,11 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
 
   String _statusMessage = '';
 
-  Future<void> _sendClosedAndDestroy({bool restoreMainFocus = false}) async {
-    if (_closing || _returningTab || _pendingTransfer != null) return;
+  Future<bool> _sendClosedAndDestroy({
+    bool restoreMainFocus = false,
+    bool closingWithOwner = false,
+  }) async {
+    if (_closing || _returningTab || _pendingTransfer != null) return false;
     final document = _doc;
     final input = _inputWindow;
     if (input != null &&
@@ -1208,7 +1217,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
             input.pendingCount != 0 ||
             input.version != document?.version)) {
       _keepOpenAfterCloseFailure('请完成当前编辑后再关闭，内容已保留');
-      return;
+      return false;
     }
 
     final version = document?.version;
@@ -1258,18 +1267,33 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       // An unavailable channel cannot authorize releasing unsaved content.
     }
 
-    if (!mounted) return;
-    if ((dirty && !confirmed) ||
-        !identical(document, _doc) ||
-        document?.version != version) {
+    if (!mounted) return false;
+    if ((dirty || closingWithOwner) && !confirmed) {
       _keepOpenAfterCloseFailure('主窗口未确认接收当前文档，未保存内容已保留');
-      return;
+      return false;
     }
-    try {
-      await _closeNativeWindow(restoreMainFocus: restoreMainFocus && confirmed);
-    } on Object catch (error) {
-      _keepOpenAfterCloseFailure('辅助窗口关闭失败：$error');
+
+    Future<bool> finishClose() async {
+      if (!mounted) return false;
+      if (!identical(document, _doc) || document?.version != version) {
+        _keepOpenAfterCloseFailure('主窗口未确认接收当前文档，未保存内容已保留');
+        return false;
+      }
+      try {
+        await _closeNativeWindow(restoreMainFocus: restoreMainFocus && confirmed);
+        return true;
+      } on Object catch (error) {
+        _keepOpenAfterCloseFailure('辅助窗口关闭失败：$error');
+        return false;
+      }
     }
+
+    if (closingWithOwner) {
+      // Reply on the inter-window channel before destroying its engine.
+      Timer.run(() => unawaited(finishClose()));
+      return true;
+    }
+    return finishClose();
   }
 
   void _keepOpenAfterCloseFailure(String message) {
