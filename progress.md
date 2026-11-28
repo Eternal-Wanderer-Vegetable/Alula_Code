@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.364 / feat-416 完成。锁定后按各可见视图起始位置同步横纵两轴，拆分、合并和范围回转通过。Windows 与 Linux 各通过 17 项原生检查，专题 272/272，Flutter 1,978 项通过、2 项跳过。产品 d7c8dfe 的 CI 46085021722 四项和 Platform Availability 46085017863 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.364-locked-scroll-horizontal.md。
 - P05.363 / feat-415 完成。锁定后按可见视图起始位置同步纵向位移，拆分、合并与越界返回通过。Windows 与 Linux 各通过 16 项原生检查，专题 242/242，Flutter 1,976 项通过、2 项跳过。产品 ea4aa75 的 CI 46081981014 四项和 Platform Availability 46081976626 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.363-locked-scroll-origin.md。
 - P05.362 / feat-414 完成。两种相对文件 URI 从源文件目录定位，含父目录和编码路径。Windows 与 Linux 各通过 14 项原生检查，专题 186/186，Flutter 1,975 项通过、2 项跳过。产品 e61899c 的 CI 46078677276 四项及 Platform Availability 46078674329 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.362-relative-file-link.md。
 - P05.361 / feat-413 完成。真实空行后无可用空白或连续空行时，F8 详情留出空间，键鼠落点与行号保持一致。Windows 与 Linux 各通过 22 项原生检查，固定版两种场景均通过。专题 300/300，Flutter 1,974 项通过、2 项跳过。产品 4574b0c 的 CI 46075659983 四项和 Platform Availability 46075649662 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.361-diagnostic-empty-separator.md。
@@ -2389,7 +2390,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-- LAY-15 同窗纵向锁定滚动已对齐各视图起始位移。继续核对横向位移、固定 Hold、状态栏和跨窗归属。
+- LAY-15 同窗横纵位移已对齐。继续核对固定版 Hold 命令、状态栏和跨窗归属。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
