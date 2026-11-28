@@ -5543,8 +5543,8 @@
         "feat-430",
         "feat-436"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "普通文本的 Zen 居中按可用编辑器宽度计算。并排时取消侧边留白，最大化、关闭多余组或上下堆叠时重新居中。两端发布验证（逻辑宽度/单边留白）Windows 2048/390、Linux 1920 1920/366、Linux 1280 1280/244，还原组几何及退出原生全屏通过，文件字节一致。定向 24/24，专题 281/281，Flutter 2,020 项通过、2 项跳过。产品 525bc55 的 CI 46151540561 四项及 Platform Availability 46151537543 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.385-zen-centered-layout.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
