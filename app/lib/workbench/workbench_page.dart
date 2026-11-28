@@ -127,6 +127,7 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'locked_scroll_hold_input.dart';
 import 'locked_scroll_motion.dart';
 import 'notification_widgets.dart';
 import 'notifications.dart';
@@ -769,6 +770,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _lockedScrolling = false;
   bool _lockedScrollingHeld = false;
   String? _lockedScrollHoldWindowId;
+  late final _localLockedScrollHold = LockedScrollHoldInput(
+    (held) => _setLockedScrollingHeld(held),
+  );
   final _auxiliaryScrollHoldSequences = <String, int>{};
   int _lockedScrollingRevision = 0;
   bool _broadcastingLockedScrolling = false;
@@ -2829,14 +2833,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return sc == null ? '' : '    $sc';
   }
 
-  void _runShortcutCommand(KeybindingBinding binding) {
+  bool _isLockedScrollHoldBinding(KeybindingBinding binding) =>
+      binding.commandId == _holdLockedScrollingCommandId &&
+      binding.arguments == null;
+
+  void _runShortcutCommand(KeybindingBinding binding, {KeyDownEvent? event}) {
     if (_lockedScrollingHeld) return;
-    if (binding.commandId == _holdLockedScrollingCommandId &&
-        binding.arguments == null) {
-      _setLockedScrollingHeld(true);
+    if (_isLockedScrollHoldBinding(binding)) {
+      if (event != null && _mainWindowFocused != false) {
+        _localLockedScrollHold.begin(event);
+      }
       return;
     }
     _runCommand(binding.commandId, arguments: binding.arguments);
+  }
+
+  KeyEventResult _handleLockedScrollHoldShortcut(
+    KeyEvent event,
+    Iterable<MapEntry<SingleActivator, KeybindingBinding>> bindings,
+  ) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    for (final entry in bindings) {
+      if (entry.key.accepts(event, HardwareKeyboard.instance)) {
+        if (event is KeyDownEvent) {
+          _runShortcutCommand(entry.value, event: event);
+        }
+        return KeyEventResult.handled;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   /// 执行命令（键位/菜单/面板统一出口）；未知 id（用户键位指向不存在的命令）
@@ -4273,7 +4300,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   @override
   void onWindowBlur() {
-    _setLockedScrollingHeld(false);
+    _localLockedScrollHold.cancel();
     _onMainWindowFocusChanged(false);
   }
 
@@ -15971,13 +15998,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     // A release belongs to the window that started the current hold.
     if (!held && (!previous || windowId != previousWindow)) return;
 
-    if (previous && previousWindow == null) {
-      HardwareKeyboard.instance.removeHandler(_onLockedScrollingHoldKey);
+    if (held && windowId != null) {
+      _localLockedScrollHold.cancel(notify: false);
     }
     _lockedScrollHoldWindowId = held ? windowId : null;
-    if (held && windowId == null) {
-      HardwareKeyboard.instance.addHandler(_onLockedScrollingHoldKey);
-    }
     if (previous != held) {
       setState(() => _lockedScrollingHeld = held);
       _refreshLockedScrollingState();
@@ -16005,11 +16029,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _auxiliaryScrollHoldSequences[windowId] = sequence;
     _setLockedScrollingHeld(held, windowId: windowId);
     return true;
-  }
-
-  bool _onLockedScrollingHoldKey(KeyEvent event) {
-    if (event is KeyUpEvent) _setLockedScrollingHeld(false);
-    return false;
   }
 
   void _refreshLockedScrollingState() {
@@ -20447,7 +20466,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (binding != null &&
           _commands.context.matches(binding.when) &&
           isEnabled(binding.commandId)) {
-        _runShortcutCommand(binding);
+        _runShortcutCommand(binding, event: event);
         return KeyEventResult.handled;
       }
     }
@@ -24564,9 +24583,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
-    if (_lockedScrollingHeld) {
-      HardwareKeyboard.instance.removeHandler(_onLockedScrollingHoldKey);
-    }
+    _localLockedScrollHold.cancel(notify: false);
     _clearLockedScrollAnchors();
     FocusManager.instance.removeListener(_syncNotificationFocusContext);
     FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
@@ -24754,6 +24771,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       onPressed: () => _runCommand('notifications.toggleList'),
     );
 
+    final shortcutBindings = _keybindings
+        .resolveBindings(
+          matchesWhen: _commands.context.matches,
+          excludeCommands: _hierarchyOpenCommands,
+        )
+        .entries
+        .where((entry) => _commands.isEnabled(entry.value.commandId));
+    final holdBindings =
+        shortcutBindings.where((entry) => _isLockedScrollHoldBinding(entry.value));
+
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
@@ -24773,27 +24800,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (_commands.isEnabled('editor.cursorPageDownSelect'))
             const SingleActivator(LogicalKeyboardKey.pageDown, shift: true):
                 () => _runCommand('editor.cursorPageDownSelect'),
-          for (final e in _keybindings
-              .resolveBindings(
-                matchesWhen: _commands.context.matches,
-                excludeCommands: _hierarchyOpenCommands,
-              )
-              .entries
-              .where((entry) => _commands.isEnabled(entry.value.commandId)))
-            e.key: () => _runShortcutCommand(e.value),
+          for (final entry in shortcutBindings)
+            if (!_isLockedScrollHoldBinding(entry.value))
+              entry.key: () => _runShortcutCommand(entry.value),
         },
         child: Focus(
           focusNode: _workbenchKeyboardFocus,
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
-          onKeyEvent: (_, event) => _handleCommandChord(
-            event,
-            permittedCommands: const {
-              'notifications.showList',
-              'togglePeekWidgetFocus',
-              _holdLockedScrollingCommandId,
-              ..._hierarchyOpenCommands,
-            },
-          ),
+          onKeyEvent: (_, event) {
+            final chord = _handleCommandChord(
+              event,
+              permittedCommands: const {
+                'notifications.showList',
+                'togglePeekWidgetFocus',
+                _holdLockedScrollingCommandId,
+                ..._hierarchyOpenCommands,
+              },
+            );
+            return chord == KeyEventResult.ignored
+                ? _handleLockedScrollHoldShortcut(event, holdBindings)
+                : chord;
+          },
           child: Stack(
             fit: StackFit.expand,
             children: [

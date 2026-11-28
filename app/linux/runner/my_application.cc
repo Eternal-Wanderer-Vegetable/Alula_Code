@@ -8,6 +8,7 @@
 #endif
 
 #include "flutter/generated_plugin_registrant.h"
+#include "hold_input.h"
 
 struct _MyApplication {
   GtkApplication parent_instance;
@@ -148,6 +149,7 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_realize(GTK_WIDGET(view));
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
+  RegisterHoldInputChannel(view);
 
   g_autoptr(FlStandardMethodCodec) accessibility_codec =
       fl_standard_method_codec_new();
@@ -164,7 +166,10 @@ static void my_application_activate(GApplication* application) {
       drag_input_channel, drag_input_method_call, view, nullptr);
 
   desktop_multi_window_plugin_set_window_created_callback(
-      [](FlPluginRegistry* registry) { fl_register_plugins(registry); });
+      [](FlPluginRegistry* registry) {
+        fl_register_plugins(registry);
+        RegisterHoldInputChannel(FL_VIEW(registry));
+      });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

@@ -8,6 +8,7 @@
 
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
+#include "hold_input.h"
 #include "notification_accessibility.h"
 
 namespace {
@@ -40,6 +41,7 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
   RegisterNotificationAccessibilityChannel(*flutter_controller_);
+  RegisterHoldInputChannel(*flutter_controller_);
   flutter::MethodChannel<flutter::EncodableValue> drag_input_channel(
       flutter_controller_->engine()->messenger(), "alula/drag_input",
       &flutter::StandardMethodCodec::GetInstance());
@@ -55,6 +57,7 @@ bool FlutterWindow::OnCreate() {
     auto* view_controller =
         reinterpret_cast<flutter::FlutterViewController*>(controller);
     RegisterPlugins(view_controller->engine());
+    RegisterHoldInputChannel(*view_controller);
     const HWND source_view = view_controller->view()->GetNativeWindow();
     flutter::MethodChannel<flutter::EncodableValue> close_focus_channel(
         view_controller->engine()->messenger(), "alula/auxiliary_close_focus",

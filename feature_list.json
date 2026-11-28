@@ -5343,6 +5343,19 @@
       "evidence": "辅助窗限定键位可临时反转共享锁定，键释放、失焦和关闭均恢复。Windows 与 Linux 的单键和组合键各通过 19 项，专题 218/218，Flutter 1,986 项通过、2 项跳过。产品 ff52992 的 CI 46105313832 四项及 Platform Availability 46105312940 Windows/Linux 通过。X11 切换到同样绑定 Hold 的窗口时会重触发，保留复现并继续处理。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-423",
+      "name": "P05.371 LAY-15 切窗后抑制 Hold 键自动重触发",
+      "description": "持有共用键位切换原生窗口时释放临时反转。保持按键产生的重复事件不进入接收引擎的 Hold，松开后真实按下仍可触发。",
+      "dependencies": [
+        "feat-417",
+        "feat-422"
+      ],
+      "status": "in-progress",
+      "evidence": [],
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

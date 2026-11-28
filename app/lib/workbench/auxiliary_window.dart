@@ -26,6 +26,7 @@ import 'commands.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
 import 'keybindings.dart';
+import 'locked_scroll_hold_input.dart';
 import 'locked_scroll_motion.dart';
 import 'quick_input.dart';
 import 'status_bar.dart';
@@ -202,7 +203,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   KeybindingSet? _holdKeybindings;
   KeyChord? _holdChordPrefix;
   Timer? _holdChordTimeout;
-  PhysicalKeyboardKey? _auxiliaryHoldKey;
+  late final _auxiliaryHoldInput = LockedScrollHoldInput(
+    (held) => unawaited(_sendAuxiliaryHoldState(held)),
+  );
   int _auxiliaryHoldSequence = 0;
   WindowController? _windowController;
   WindowController? _mainWindowController;
@@ -444,9 +447,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   }
 
   KeyEventResult _handleAuxiliaryEditorKey(FocusNode node, KeyEvent event) {
-    if (_auxiliaryHoldKey != null &&
-        event is KeyRepeatEvent &&
-        event.physicalKey == _auxiliaryHoldKey) {
+    final holdKey = _auxiliaryHoldInput.triggerKey;
+    if (event is KeyRepeatEvent && event.physicalKey == holdKey) {
       return KeyEventResult.handled;
     }
     final bindings = _holdKeybindings;
@@ -458,7 +460,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         _closing ||
         _pendingTransfer != null ||
         _returningTab ||
-        _auxiliaryHoldKey != null) {
+        holdKey != null) {
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
@@ -502,7 +504,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _clearAuxiliaryHoldChord();
       final sequence = bindings.bindingForSequence([prefix, chord]);
       if (_acceptsAuxiliaryHoldBinding(sequence)) {
-        return _beginAuxiliaryLockedScrollHold(event.physicalKey);
+        return _beginAuxiliaryLockedScrollHold(event);
       }
     }
     if (bindings.hasSequencePrefix(
@@ -519,7 +521,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
     if (_acceptsAuxiliaryHoldBinding(
         bindings.bindingForChord(chord, matchesWhen: context.matches))) {
-      return _beginAuxiliaryLockedScrollHold(event.physicalKey);
+      return _beginAuxiliaryLockedScrollHold(event);
     }
     return KeyEventResult.ignored;
   }
@@ -530,16 +532,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       binding.arguments == null &&
       _compactCommands.context.matches(binding.when);
 
-  KeyEventResult _beginAuxiliaryLockedScrollHold(PhysicalKeyboardKey key) {
-    _auxiliaryHoldKey = key;
-    HardwareKeyboard.instance.addHandler(_onAuxiliaryHoldKey);
-    unawaited(_sendAuxiliaryHoldState(true));
+  KeyEventResult _beginAuxiliaryLockedScrollHold(KeyDownEvent event) {
+    _auxiliaryHoldInput.begin(event);
     return KeyEventResult.handled;
-  }
-
-  bool _onAuxiliaryHoldKey(KeyEvent event) {
-    if (event is KeyUpEvent) _releaseAuxiliaryLockedScrollHold();
-    return false;
   }
 
   void _clearAuxiliaryHoldChord() {
@@ -550,10 +545,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
 
   void _releaseAuxiliaryLockedScrollHold() {
     _clearAuxiliaryHoldChord();
-    if (_auxiliaryHoldKey == null) return;
-    _auxiliaryHoldKey = null;
-    HardwareKeyboard.instance.removeHandler(_onAuxiliaryHoldKey);
-    unawaited(_sendAuxiliaryHoldState(false));
+    _auxiliaryHoldInput.cancel();
   }
 
   Future<void> _sendAuxiliaryHoldState(bool held) async {
