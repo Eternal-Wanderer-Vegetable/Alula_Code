@@ -1,0 +1,554 @@
+{
+  "product": "4bf59e484ee233c5ac4a15c8e5f13c07214d275f",
+  "tree": "a2f9a7981d10f5d198c3f2da854cb0de0926ae5c",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "84a32b6637ce6890b552b789e9973cf55d9c5e89741f9a8e5eda377c3f2f3d50",
+  "reference": {
+    "lockedScroll": {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+      "lines": [
+        161,
+        206
+      ],
+      "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803"
+    },
+    "auxCompact": {
+      "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "path": "src/vs/workbench/browser/parts/editor/auxiliaryEditorPart.ts",
+      "lines": [
+        237,
+        248
+      ],
+      "sha256": "2eae07632a34ec2613dfb1ec6203d038b1ad6436b7e24749bdb0e0a20f1fe9eb"
+    }
+  },
+  "sharedAcceptanceSha256": "cdf9f8a22dcb589ac052897034285e8a5f40aa7a9c8c42f34dd959fc908a6d56",
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "033f23cdfe7b1019598765322b723d08b4fe89576a4ae67a995c277db1674181",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "windowEnvironment": "Win32",
+    "dpi": 120,
+    "rawReportSha256": "e96674164e2d97dd01bb09e449107ee4f19b7e79be5ce44b86138f90c186b148",
+    "checks": [
+      "main starts unlocked",
+      "auxiliary-spawn-unlocked",
+      "main-toggle-publishes-active",
+      "main-held-inversion-published",
+      "main-release-publishes-restored",
+      "aux-status-click-updates-owner-and-journal",
+      "canonical Toggle offered in auxiliary palette",
+      "aux-f1-toggle-updates-owner",
+      "compact auxiliary hides entry while owner stays active",
+      "auxiliary-expanded-restores-effective-item",
+      "closing auxiliary preserves the owner lock",
+      "new-auxiliary-receives-active-snapshot",
+      "main-status-click-turns-off-both",
+      "second child closes normally",
+      "locked-alpha.txt bytes unchanged",
+      "locked-beta.txt bytes unchanged"
+    ],
+    "observed": {
+      "main-off": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "auxiliary-spawn-unlocked": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "main-toggle-publishes-active": {
+        "windows": {
+          "main": {
+            "bounds": [
+              805.761474609375,
+              646.8,
+              874.011474609375,
+              666.8
+            ],
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              628.6,
+              460.9,
+              695.6,
+              479.9
+            ],
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-held-inversion-published": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-release-publishes-restored": {
+        "windows": {
+          "main": {
+            "bounds": [
+              805.761474609375,
+              646.8,
+              874.011474609375,
+              666.8
+            ],
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              628.6,
+              460.9,
+              695.6,
+              479.9
+            ],
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "aux-status-click-updates-owner-and-journal": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "auxiliary-toggle-in-f1": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "aux-f1-toggle-updates-owner": {
+        "windows": {
+          "main": {
+            "bounds": [
+              805.761474609375,
+              646.8,
+              874.011474609375,
+              666.8
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              628.6,
+              460.9,
+              695.6,
+              479.9
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "auxiliary-compact": {
+        "windows": {
+          "main": {
+            "bounds": [
+              805.761474609375,
+              646.8,
+              874.011474609375,
+              666.8
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "auxiliary-expanded-restores-effective-item": {
+        "windows": {
+          "main": {
+            "bounds": [
+              805.761474609375,
+              646.8,
+              874.011474609375,
+              666.8
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              628.6,
+              460.9,
+              695.6,
+              479.9
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-still-active-after-child-close": {
+        "windows": {
+          "main": {
+            "bounds": [
+              826.951171875,
+              646.8,
+              895.201171875,
+              666.8
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "new-auxiliary-receives-active-snapshot": {
+        "windows": {
+          "main": {
+            "bounds": [
+              826.951171875,
+              646.8,
+              895.201171875,
+              666.8
+            ],
+            "focused": false
+          },
+          "child-locked-beta.txt": {
+            "bounds": [
+              628.6,
+              460.9,
+              695.6,
+              479.9
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-status-click-turns-off-both": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          },
+          "child-locked-beta.txt": {
+            "bounds": null,
+            "focused": false
+          }
+        },
+        "persistedToggle": false
+      },
+      "only-main-remains": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      }
+    },
+    "filesSha256": {
+      "locked-alpha.txt": "0a4a7601375b3c80d72dfef58f86f0fa032cf20a8283bd8e9e6c8e824907f325",
+      "locked-beta.txt": "05be1aa94f8913308dcf2154a52f918da905df336f78af4f70aaac4959eb7fba"
+    },
+    "exitCode": 0
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "abf6e312a61b26801b59cccbf41333f8199290379acfab4ec73dc21e8405ab60",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "dpi": null,
+    "rawReportSha256": "431c3656c5b3d015c0b2f03cd0f6ed1c90f58c802254e9ce55801bbe3114d8c0",
+    "checks": [
+      "main starts unlocked",
+      "auxiliary-spawn-unlocked",
+      "main-toggle-publishes-active",
+      "main-held-inversion-published",
+      "main-release-publishes-restored",
+      "aux-status-click-updates-owner-and-journal",
+      "canonical Toggle offered in auxiliary palette",
+      "aux-f1-toggle-updates-owner",
+      "compact auxiliary hides entry while owner stays active",
+      "auxiliary-expanded-restores-effective-item",
+      "closing auxiliary preserves the owner lock",
+      "new-auxiliary-receives-active-snapshot",
+      "main-status-click-turns-off-both",
+      "second child closes normally",
+      "locked-alpha.txt bytes unchanged",
+      "locked-beta.txt bytes unchanged"
+    ],
+    "observed": {
+      "main-off": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "auxiliary-spawn-unlocked": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "main-toggle-publishes-active": {
+        "windows": {
+          "main": {
+            "bounds": [
+              662.6125411987305,
+              790.0,
+              730.8625411987305,
+              810.0
+            ],
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              546.0,
+              671.0,
+              613.0,
+              689.0
+            ],
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-held-inversion-published": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-release-publishes-restored": {
+        "windows": {
+          "main": {
+            "bounds": [
+              662.6125411987305,
+              790.0,
+              730.8625411987305,
+              810.0
+            ],
+            "focused": true
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              546.0,
+              671.0,
+              613.0,
+              689.0
+            ],
+            "focused": false
+          }
+        },
+        "persistedToggle": true
+      },
+      "aux-status-click-updates-owner-and-journal": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "auxiliary-toggle-in-f1": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      },
+      "aux-f1-toggle-updates-owner": {
+        "windows": {
+          "main": {
+            "bounds": [
+              662.6125411987305,
+              790.0,
+              730.8625411987305,
+              810.0
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              546.0,
+              671.0,
+              613.0,
+              689.0
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "auxiliary-compact": {
+        "windows": {
+          "main": {
+            "bounds": [
+              662.6125411987305,
+              790.0,
+              730.8625411987305,
+              810.0
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "auxiliary-expanded-restores-effective-item": {
+        "windows": {
+          "main": {
+            "bounds": [
+              662.6125411987305,
+              790.0,
+              730.8625411987305,
+              810.0
+            ],
+            "focused": false
+          },
+          "child-locked-alpha.txt": {
+            "bounds": [
+              546.0,
+              671.0,
+              613.0,
+              689.0
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-still-active-after-child-close": {
+        "windows": {
+          "main": {
+            "bounds": [
+              683.9653930664062,
+              790.0,
+              752.2153930664062,
+              810.0
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "new-auxiliary-receives-active-snapshot": {
+        "windows": {
+          "main": {
+            "bounds": [
+              683.9653930664062,
+              790.0,
+              752.2153930664062,
+              810.0
+            ],
+            "focused": false
+          },
+          "child-locked-beta.txt": {
+            "bounds": [
+              546.0,
+              671.0,
+              613.0,
+              689.0
+            ],
+            "focused": true
+          }
+        },
+        "persistedToggle": true
+      },
+      "main-status-click-turns-off-both": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          },
+          "child-locked-beta.txt": {
+            "bounds": null,
+            "focused": false
+          }
+        },
+        "persistedToggle": false
+      },
+      "only-main-remains": {
+        "windows": {
+          "main": {
+            "bounds": null,
+            "focused": true
+          }
+        },
+        "persistedToggle": false
+      }
+    },
+    "filesSha256": {
+      "locked-alpha.txt": "0a4a7601375b3c80d72dfef58f86f0fa032cf20a8283bd8e9e6c8e824907f325",
+      "locked-beta.txt": "05be1aa94f8913308dcf2154a52f918da905df336f78af4f70aaac4959eb7fba"
+    },
+    "exitCode": 0
+  }
+}
