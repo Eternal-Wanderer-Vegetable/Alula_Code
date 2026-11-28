@@ -183,15 +183,15 @@ void main() {
 
   testWidgets('custom window title is a keyboard-accessible Command Center',
       (tester) async {
-    var paletteCalls = 0;
+    var quickAccessCalls = 0;
     const title = '● notes.md - sample - Alula Code';
     commands.register(Command(
-      id: 'view.commandPalette',
-      title: '命令面板',
+      id: quickOpenCommandId,
+      title: '快速打开文件',
       category: '查看',
-      shortcut: 'Ctrl+Shift+P',
+      shortcut: 'Ctrl+P',
       run: () async {
-        paletteCalls++;
+        quickAccessCalls++;
       },
     ));
     await tester.pumpWidget(_titleBarApp(
@@ -212,13 +212,14 @@ void main() {
     expect(semantics.label, contains(title));
     expect(semantics.flagsCollection.isButton, isTrue);
     expect(semantics.hasAction(SemanticsAction.tap), isTrue);
-    expect(commands.isEnabled('view.commandPalette'), isTrue);
+    expect(semantics.hint, contains('Ctrl+P'));
+    expect(commands.isEnabled(quickOpenCommandId), isTrue);
 
     await tester.tap(commandCenterControl);
     await tester.pumpAndSettle();
     expect(tester.widget<InkWell>(commandCenterControl).onTap, isNotNull);
     expect(window.dragCalls, 0);
-    expect(paletteCalls, 1);
+    expect(quickAccessCalls, 1);
 
     final focusNode = tester.widget<InkWell>(commandCenterControl).focusNode!;
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
@@ -226,10 +227,43 @@ void main() {
     expect(focusNode.hasFocus, isTrue);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
-    expect(paletteCalls, 2);
+    expect(quickAccessCalls, 2);
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pumpAndSettle();
-    expect(paletteCalls, 3);
+    expect(quickAccessCalls, 3);
+  });
+
+  testWidgets('Command Center is centered and capped as the window widens',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final center = find.byKey(const ValueKey('command-center-control'));
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+    ));
+    for (final (width, buttonWidth) in [(1200.0, 458.0), (2200.0, 602.0)]) {
+      tester.view.physicalSize = Size(width, 740);
+      await tester.pumpAndSettle();
+      final bounds = tester.getRect(center);
+      expect(bounds.width, closeTo(buttonWidth, 0.01));
+      expect(bounds.height, 24);
+      expect(bounds.center.dx, closeTo(width / 2, 0.01));
+      expect(bounds.center.dy, 17.5);
+    }
+    final leadingDrag =
+        find.byKey(const ValueKey('titlebar-leading-drag-region'));
+    final trailingDrag = find.byKey(const ValueKey('titlebar-drag-region'));
+    expect(tester.getRect(leadingDrag).right, tester.getRect(center).left);
+    expect(tester.getRect(trailingDrag).left, tester.getRect(center).right);
+    await tester.drag(leadingDrag, const Offset(30, 0));
+    await tester.drag(trailingDrag, const Offset(30, 0));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(window.dragCalls, 2);
   });
 
   testWidgets('custom layout controls reflect command visibility and state',

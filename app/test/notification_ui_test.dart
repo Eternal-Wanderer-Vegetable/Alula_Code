@@ -646,7 +646,7 @@ void main() {
       (tester) async {
     await _mountApp(tester);
     try {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '通知位置：右上角');
       await tester.pumpAndSettle();
@@ -1448,7 +1448,7 @@ void main() {
       (tester) async {
     await _mountApp(tester);
     try {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '切换请勿打扰');
       await tester.pumpAndSettle();
@@ -1492,7 +1492,7 @@ void main() {
     final betaRow = find.byKey(const ValueKey('qi-$betaLabel'));
 
     Future<void> openSourcePicker() async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '按来源切换请勿打扰');
       await tester.pumpAndSettle();
@@ -1902,7 +1902,7 @@ void main() {
       await tester.pump();
       expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '清除所有通知');
       await tester.pumpAndSettle();
@@ -1939,7 +1939,7 @@ void main() {
       final older = add('Earlier action notification');
       final latest = add('Newest action notification');
       await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '执行通知主操作');
       await tester.pumpAndSettle();
@@ -1956,7 +1956,7 @@ void main() {
       (tester) async {
     await _mountApp(tester);
     try {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       await tester.enterText(_paletteInput(), '通知');
       await tester.pumpAndSettle();
@@ -2006,7 +2006,7 @@ Future<void> _middleClick(WidgetTester tester, Finder target) async {
 }
 
 Future<void> _runClearAllCommand(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey('command-center-control')));
+  await tester.sendKeyEvent(LogicalKeyboardKey.f1);
   await tester.pumpAndSettle();
   await tester.enterText(_paletteInput(), '清除所有通知');
   await tester.pumpAndSettle();

@@ -44,7 +44,7 @@ void main() {
     }
 
     Future<Finder> openCommand(String query, String commandKey) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
@@ -193,7 +193,7 @@ void main() {
       }
 
       Future<void> run(String label) async {
-        await tester.tap(find.byKey(const ValueKey('command-center-control')));
+        await tester.sendKeyEvent(LogicalKeyboardKey.f1);
         await tester.pumpAndSettle();
         final input = find.descendant(
           of: find.byKey(const ValueKey('quick-input')),
@@ -3306,7 +3306,7 @@ void main() {
       findsOneWidget,
     );
 
-    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.sendKeyEvent(LogicalKeyboardKey.f1);
     await tester.pumpAndSettle();
     final input = find.descendant(
       of: find.byKey(const ValueKey('quick-input')),

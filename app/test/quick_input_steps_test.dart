@@ -265,7 +265,7 @@ bool _inputHasFocus(WidgetTester tester) {
 }
 
 Future<void> _openMoveViewCommand(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey('command-center-control')));
+  await tester.sendKeyEvent(LogicalKeyboardKey.f1);
   await tester.pumpAndSettle();
   await tester.enterText(_inputFinder(), '移动视图');
   await tester.pumpAndSettle();

@@ -6,6 +6,7 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 late Directory temp;
@@ -217,7 +218,7 @@ void main() {
 
 Future<void> _runPaletteCommand(
     WidgetTester tester, String query, String key) async {
-  await tester.tap(find.byKey(const ValueKey('command-center-control')));
+  await tester.sendKeyEvent(LogicalKeyboardKey.f1);
   await tester.pumpAndSettle();
   await tester.enterText(
     find.descendant(

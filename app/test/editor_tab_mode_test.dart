@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/editor_tab_mode.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -48,7 +49,7 @@ void main() {
     }
 
     Future<void> openCommand(String query, String commandKey) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await settle('command center open');
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),

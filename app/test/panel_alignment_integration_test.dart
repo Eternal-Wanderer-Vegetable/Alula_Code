@@ -73,7 +73,7 @@ void main() {
     }
 
     Future<void> openCommand(String query, String commandKey) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:alula_app/editor/editor_rendering.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
@@ -575,16 +576,45 @@ void main() {
     expect(status, findsNothing);
     expect(tester.getRect(title), initialTitle);
     expect(tester.getRect(commandCenter), initialCenter);
-    await tester.tap(commandCenter);
-    await tester.pumpAndSettle();
+    tester
+        .state<RustTextInputFieldState>(find.byType(RustTextInputField))
+        .requestFocus();
+    await tester.pump();
+    final editorFocus = FocusManager.instance.primaryFocus;
+    expect(
+      editorFocus?.context
+          ?.findAncestorWidgetOfExactType<RustTextInputField>(),
+      isNotNull,
+    );
+    await tester.tap(commandCenter, kind: PointerDeviceKind.mouse);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
     final card = find.byKey(const ValueKey('quick-input'));
     expect(card, findsOneWidget);
     final field =
         find.descendant(of: card, matching: find.byType(EditableText));
     expect(tester.widget<EditableText>(field).focusNode.hasFocus, isTrue);
-    await pressEscape(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
     expect(card, findsNothing);
+    expect(FocusManager.instance.primaryFocus, same(editorFocus));
     expect(status, findsNothing);
+
+    final buttonFocus = tester.widget<InkWell>(commandCenter).focusNode!;
+    buttonFocus.requestFocus();
+    await tester.pump();
+    expect(buttonFocus.hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(card, findsOneWidget);
+    expect(tester.widget<EditableText>(field).focusNode.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(card, findsNothing);
+    expect(FocusManager.instance.primaryFocus, same(editorFocus));
 
     await execute(tester, 'workbench.action.toggleZenMode');
     expect(status, findsOneWidget);

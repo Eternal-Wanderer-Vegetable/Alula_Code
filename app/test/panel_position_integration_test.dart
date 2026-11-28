@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/panel_position.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -64,7 +65,7 @@ void main() {
     }
 
     Future<void> openCommand(String query, String commandKey) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
@@ -171,7 +172,7 @@ void main() {
     }
 
     Future<void> movePanelToLeft() async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
@@ -205,7 +206,7 @@ void main() {
     await mountApp();
     savedPanel();
 
-    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.sendKeyEvent(LogicalKeyboardKey.f1);
     await tester.pumpAndSettle();
     final input = find.descendant(
       of: find.byKey(const ValueKey('quick-input')),
@@ -243,7 +244,7 @@ void main() {
 
     Future<void> invokeCommandFromPalette(
         String query, String commandKey) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
@@ -322,7 +323,7 @@ void main() {
       reason: 'non-center Top Panel does not expose an enabled maximize action',
     );
 
-    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.sendKeyEvent(LogicalKeyboardKey.f1);
     await tester.pumpAndSettle();
     final input = find.descendant(
       of: find.byKey(const ValueKey('quick-input')),

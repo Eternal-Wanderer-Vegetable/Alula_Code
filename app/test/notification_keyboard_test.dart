@@ -179,7 +179,7 @@ void main() {
       final second = _notify(center, 'Middle toast');
       final third = _notify(center, 'Newest toast');
       await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final palette = find.byKey(const ValueKey('quick-input'));
       await tester.enterText(

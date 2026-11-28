@@ -581,12 +581,12 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
               child: ListenableBuilder(
                 listenable: widget.commands,
                 builder: (context, _) {
-                  final command = widget.commands.byId('view.commandPalette');
+                  final command = widget.commands.byId(quickOpenCommandId);
                   final enabled = command != null &&
-                      widget.commands.isEnabled('view.commandPalette');
+                      widget.commands.isEnabled(quickOpenCommandId);
                   final hint = command?.shortcut == null
-                      ? '打开命令面板'
-                      : '打开命令面板，${command!.shortcut}';
+                      ? '打开快速访问'
+                      : '打开快速访问，${command!.shortcut}';
                   return Tooltip(
                     message: widget.windowTitle,
                     child: Semantics(
@@ -597,27 +597,35 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                       hint: hint,
                       onTap: enabled ? _openCommandCenter : null,
                       child: SizedBox(
-                        width: 240,
-                        height: chrome.titleBarHeight,
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: InkWell(
-                            key: const ValueKey('command-center-control'),
-                            focusNode: _commandCenterFocusNode,
-                            canRequestFocus: enabled,
-                            onTap: enabled ? _openCommandCenter : null,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  widget.windowTitle,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13),
+                        height: 24,
+                        child: Listener(
+                          onPointerDown: enabled
+                              ? (_) => _rememberCommandCenterFocus()
+                              : null,
+                          child: Material(
+                            color: const Color(0xFF20242B),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              side: BorderSide(color: Color(0xFF414752)),
+                            ),
+                            child: InkWell(
+                              key: const ValueKey('command-center-control'),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              focusNode: _commandCenterFocusNode,
+                              canRequestFocus: enabled,
+                              onTap: enabled ? _openCommandCenter : null,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    widget.windowTitle,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
                                 ),
                               ),
                             ),
@@ -673,6 +681,14 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
               ],
             ),
           ),
+          if (chrome.isCustom)
+            LayoutId(
+              id: _TitleBarPart.leadingDragArea,
+              child: _dragArea(
+                const SizedBox.expand(),
+                key: const ValueKey('titlebar-leading-drag-region'),
+              ),
+            ),
           if (chrome.isCustom)
             LayoutId(
               id: _TitleBarPart.dragArea,
@@ -963,20 +979,30 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     }
   }
 
-  void _openCommandCenter() {
-    final primaryFocus = FocusManager.instance.primaryFocus;
-    if (primaryFocus?.context != null &&
-        !identical(primaryFocus, _commandCenterFocusNode) &&
+  void _rememberCommandCenterFocus() {
+    final focus = FocusManager.instance.primaryFocus;
+    final focusContext = focus?.context;
+    if (focusContext != null &&
+        focusContext.mounted &&
+        focus is! FocusScopeNode &&
         !identical(
-          primaryFocus!.context!.findAncestorWidgetOfExactType<AlulaTitleBar>(),
+          focusContext.findAncestorWidgetOfExactType<AlulaTitleBar>(),
           widget,
         )) {
-      _commandCenterFocusToReturn = primaryFocus;
+      _commandCenterFocusToReturn = focus;
     }
+  }
+
+  void _openCommandCenter() {
+    _rememberCommandCenterFocus();
     final focusToReturn = _commandCenterFocusToReturn;
     _commandCenterFocusToReturn = null;
-    if (focusToReturn?.context != null) focusToReturn!.requestFocus();
-    unawaited(widget.commands.execute('view.commandPalette'));
+    if (focusToReturn?.context?.mounted == true) {
+      focusToReturn!.requestFocus();
+      // Quick Access captures the restored focus when it opens.
+      FocusManager.instance.applyFocusChangesIfNeeded();
+    }
+    unawaited(widget.commands.execute(quickOpenCommandId));
   }
 
   List<Widget> _buildWindowButtons() {
@@ -1001,7 +1027,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   }
 }
 
-enum _TitleBarPart { commandCenter, menus, dragArea, trailing }
+enum _TitleBarPart { commandCenter, menus, leadingDragArea, dragArea, trailing }
 
 class _TitleBarLayout extends MultiChildLayoutDelegate {
   _TitleBarLayout(this.direction);
@@ -1026,34 +1052,52 @@ class _TitleBarLayout extends MultiChildLayoutDelegate {
       positionChild(part, Offset(left, (size.height - child.height) / 2));
     }
 
-    var start = leadingInset;
+    place(_TitleBarPart.menus, menu, leadingInset);
+    final leadingEnd = leadingInset + menu.width;
+    var dragStart = leadingEnd;
     if (hasChild(_TitleBarPart.commandCenter)) {
-      final available = trailingStart - start - menu.width;
-      final spacing = math.min(10.0, available);
-      final remaining = available - spacing;
-      // Keep a drag target at narrow widths when the command center has room.
-      final dragWidth = math.min(
+      final remaining = math.max(0.0, trailingStart - leadingEnd);
+      final spacing = math.min(10.0, remaining);
+      final available = remaining - spacing;
+      final reservedDragWidth = math.min(
         size.height,
-        math.max(0.0, remaining - size.height),
+        math.max(0.0, available - size.height),
       );
+      final preferredWidth = math.min(600.0, size.width * 0.38) + 2;
       final command = layoutChild(
         _TitleBarPart.commandCenter,
-        BoxConstraints.loose(Size(remaining - dragWidth, size.height)),
+        BoxConstraints.tightFor(
+          width: math.min(preferredWidth, available - reservedDragWidth),
+        ),
       );
-      place(_TitleBarPart.commandCenter, command, start);
-      start += command.width + spacing;
+      final minimumStart = leadingEnd + spacing;
+      final maximumStart = math.max(
+        minimumStart,
+        trailingStart - reservedDragWidth - command.width,
+      );
+      final commandStart = ((size.width - command.width) / 2)
+          .clamp(minimumStart, maximumStart)
+          .toDouble();
+      final leadingDrag = layoutChild(
+        _TitleBarPart.leadingDragArea,
+        BoxConstraints.tightFor(
+          width: commandStart - leadingEnd,
+          height: size.height,
+        ),
+      );
+      place(_TitleBarPart.leadingDragArea, leadingDrag, leadingEnd);
+      place(_TitleBarPart.commandCenter, command, commandStart);
+      dragStart = commandStart + command.width;
     }
-    place(_TitleBarPart.menus, menu, start);
-    start += menu.width;
     if (hasChild(_TitleBarPart.dragArea)) {
       final drag = layoutChild(
         _TitleBarPart.dragArea,
         BoxConstraints.tightFor(
-          width: math.max(0.0, trailingStart - start),
+          width: math.max(0.0, trailingStart - dragStart),
           height: size.height,
         ),
       );
-      place(_TitleBarPart.dragArea, drag, start);
+      place(_TitleBarPart.dragArea, drag, dragStart);
     }
     place(_TitleBarPart.trailing, trailing, trailingStart);
   }

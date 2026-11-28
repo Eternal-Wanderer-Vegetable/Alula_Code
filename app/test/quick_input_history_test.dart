@@ -181,7 +181,7 @@ double _rowTop(WidgetTester tester, String label) =>
     tester.getTopLeft(find.byKey(ValueKey('qi-$label'))).dy;
 
 Future<void> _openPalette(WidgetTester tester) async {
-  await tester.tap(find.byKey(const ValueKey('command-center-control')));
+  await tester.sendKeyEvent(LogicalKeyboardKey.f1);
   await tester.pumpAndSettle();
 }
 

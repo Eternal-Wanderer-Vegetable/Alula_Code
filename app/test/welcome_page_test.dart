@@ -271,7 +271,7 @@ void main() {
 Future<void> _runPaletteCommand(
     WidgetTester tester, String query, String key) async {
   if (find.byKey(const ValueKey('quick-input')).evaluate().isEmpty) {
-    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.sendKeyEvent(LogicalKeyboardKey.f1);
     await tester.pumpAndSettle();
   }
   await tester.enterText(

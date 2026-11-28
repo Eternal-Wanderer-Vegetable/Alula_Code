@@ -97,7 +97,7 @@ void main() {
       expect(region, findsOneWidget,
           reason: 'visible state restores on reload');
 
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final paletteInput = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
@@ -150,7 +150,7 @@ void main() {
     }
 
     Future<void> runPaletteCommand(String title) async {
-      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),

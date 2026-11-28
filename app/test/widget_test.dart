@@ -576,7 +576,7 @@ void main() {
     expect(find.byTooltip('拆分编辑器'), findsOneWidget);
   });
 
-  testWidgets('P05.8 Command Center 标题入口打开现有命令面板并执行动作', (tester) async {
+  testWidgets('Command Center 打开文件搜索并可切换到命令模式', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -589,11 +589,12 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
 
-    await tester.enterText(
-        find.descendant(
-            of: find.byKey(const ValueKey('quick-input')),
-            matching: find.byType(TextField)),
-        '拆分');
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+    final input = tester.widget<TextField>(field);
+    expect(input.controller!.text, isEmpty);
+    expect(input.decoration!.hintText, '文件名、路径或 path:行:列');
+    await tester.enterText(field, '>拆分');
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('qi-编辑器: 拆分编辑器')), findsOneWidget);
 
@@ -741,8 +742,11 @@ void main() {
         if (controls.contains(close)) {
           expect(tester.getRect(close).right, closeTo(titleBounds.right, 0.01));
         }
+        final centerBounds = tester.getRect(center);
+        expect(tester.getRect(fileMenu).right, lessThan(centerBounds.left));
         if (width >= 1024) {
-          expect(tester.getSize(center).width, 240);
+          expect(centerBounds.width, greaterThan(240));
+          expect(centerBounds.width, lessThanOrEqualTo(width * 0.38 + 2));
         }
         await tester.tap(center);
         await tester.pumpAndSettle();
