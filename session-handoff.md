@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.377 / feat-429 完成。默认两次 Escape 退出。重复按键可完成组合，按错键或超时可重试。查找与快速打开先关闭，焦点回到原编辑器。Windows 和 Linux 发布构建各通过 23 个阶段，原文件字节一致。定向 60/60，专题 187/187，Flutter 2,006 项通过、2 项跳过。产品 39c6989 的 CI 46129408987 四项及 Platform Availability 46129403126 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.377-zen-escape.md。
 - P05.376 / feat-428 完成。默认 Zen 进入原生全屏，退出恢复原生窗口范围，已有全屏保留。外部离开 Zen 触发的全屏时恢复普通工作台。Windows 和 Linux 的 Zen 内正常关停及重启读回均通过。定向 8/8，专题 135/135，Flutter 2,001 项通过、2 项跳过。产品 b9f33e6 的 CI 46125295425 四项及 Platform Availability 46125289981 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.376-native-zen.md。
 - P05.375 / feat-427 完成。Windows 和 Linux 的正常关停及会话写入失败重试均通过。模态草稿重启后精确恢复，原件保留 BOM、CRLF 和全部字节。定向 15/15，专题 121/121，Flutter 1,996 项通过、2 项跳过。产品 ba15b29 的 CI 46121692160 四项及 Platform Availability 46121689464 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.375-modal-window-recovery.md。
 - P05.374 / feat-426 完成。模态文档的 Emoji 编辑和 Rust 全文一致。Escape、外点与关闭按钮显示未保存确认，取消保留正文与焦点，保存失败可重试，移回标签保留同一 Rust 文档。Windows 和 Linux 各通过三个入口及 BOM/CRLF 字节验证。定向 13/13，专题 92/92，Flutter 1,994 项通过、2 项跳过。产品 499ef3f 的 CI 46119007607 四项及 Platform Availability 46119005387 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.374-dirty-modal-close.md。
@@ -412,6 +413,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.374 模态编辑单次提交与未保存关闭](docs/diagnostics/2026-11-28-p05/p05.374-dirty-modal-close.md)。
 [P05.375 主窗退出保存模态草稿供恢复](docs/diagnostics/2026-11-28-p05/p05.375-modal-window-recovery.md)。
 [P05.376 Zen 原生全屏与窗口生命周期](docs/diagnostics/2026-11-28-p05/p05.376-native-zen.md)。
+[P05.377 Zen 双 Escape 退出与焦点](docs/diagnostics/2026-11-28-p05/p05.377-zen-escape.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -677,4 +679,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.376 收尾 CI 和本地基线。按 P05.51 与 P05.376 依赖继续处理 LAY-14 Zen 双 Escape 的退出键位及焦点。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.377 收尾 CI 和本地基线。按 P05.51 和 P05.377 核对 Zen 退出后活动栏、两侧栏与面板各自的布局恢复。PR #3 保持草稿，macOS 实机暂缓。

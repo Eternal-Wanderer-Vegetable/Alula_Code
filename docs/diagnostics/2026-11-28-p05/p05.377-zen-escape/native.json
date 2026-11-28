@@ -1,0 +1,1546 @@
+{
+  "product": "39c6989c891288d98d458544e36015b7c4ce2144",
+  "tree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+  "fixtureSha256": "ad243057a5ae254a58ad2ea93dcf5593fd03222784b19ff1bc3b5e3d1444eef2",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "default Zen Escape chord and focused surface routes",
+    "normalBounds": [
+      417,
+      176,
+      1635,
+      986
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "cases": {
+      "editor": [
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ],
+      "repeat": [
+        {
+          "event": "hold",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "repeat",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "release",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ],
+      "interrupted": [
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "ArrowDown",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ],
+      "timeout": [
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "timeout",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ],
+      "quickInput": [
+        {
+          "event": "openQuickInput",
+          "zen": true,
+          "fullscreen": true,
+          "palette": true,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "input empty"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ],
+      "find": [
+        {
+          "event": "openFind",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": true,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "33px"
+            }
+          ],
+          "active": "input"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        },
+        {
+          "event": "Escape",
+          "zen": true,
+          "fullscreen": true,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "ime-text-area"
+        },
+        {
+          "event": "Escape",
+          "zen": false,
+          "fullscreen": false,
+          "palette": false,
+          "find": false,
+          "cursor": [
+            {
+              "x": "23px",
+              "y": "0px"
+            }
+          ],
+          "active": "native-edit-context"
+        }
+      ]
+    },
+    "zenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+      "build": {
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "aotSha256": "f2f06f92ac89fa60e5106bc903f2cee6f9b81fed235cc0c79e89a835817de5c5",
+        "abi": 51,
+        "fixtureSha256": "ad243057a5ae254a58ad2ea93dcf5593fd03222784b19ff1bc3b5e3d1444eef2",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "tree": "d92d702b6da24474935f7bc339f0898f6cc127df"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "owned Win32 keyboard messages",
+      "phases": [
+        {
+          "label": "editorZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 0
+        },
+        {
+          "label": "firstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 1,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "secondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 4
+        },
+        {
+          "label": "repeatZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 4
+        },
+        {
+          "label": "heldFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 5,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "repeatedEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 7
+        },
+        {
+          "label": "releasedEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 7
+        },
+        {
+          "label": "cancelZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 7
+        },
+        {
+          "label": "cancelPrefix",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 8,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "invalidSecondKey",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 10,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "timeoutPrefix",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 13
+        },
+        {
+          "label": "firstEscapeAfterTimeout",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 14,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "secondEscapeAfterTimeout",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 17
+        },
+        {
+          "label": "quickZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 17
+        },
+        {
+          "label": "quickOpen",
+          "zen": true,
+          "owner": "quick",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 17
+        },
+        {
+          "label": "quickClosed",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 19
+        },
+        {
+          "label": "quickFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 20,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "quickSecondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 23
+        },
+        {
+          "label": "findZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 23
+        },
+        {
+          "label": "findOpen",
+          "zen": true,
+          "owner": "find",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 23
+        },
+        {
+          "label": "findClosed",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 25
+        },
+        {
+          "label": "findFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 26,
+          "measuredBy": "native key trace before the follow-up event"
+        },
+        {
+          "label": "findSecondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 29
+        }
+      ],
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true,
+      "keyEvents": [
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Arrow Down",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Arrow Down"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Arrow Down",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        }
+      ],
+      "sourceTextSha256": "5de8b02d67f1b000723a8300779812f000801fd5962a8a60a927e5b3b1a67f5a"
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 XTEST and native auto-repeat",
+      "fixtureSha256": "ad243057a5ae254a58ad2ea93dcf5593fd03222784b19ff1bc3b5e3d1444eef2",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "1480d0b0e37b252ea5d0b1fb3b87578e29e4a9a1f3e882cc3ab696111796bf63",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "phases": [
+        {
+          "label": "editorZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 0
+        },
+        {
+          "label": "firstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 2
+        },
+        {
+          "label": "secondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 4
+        },
+        {
+          "label": "repeatZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 4
+        },
+        {
+          "label": "heldFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 5
+        },
+        {
+          "label": "repeatedEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 14
+        },
+        {
+          "label": "releasedEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 15
+        },
+        {
+          "label": "cancelZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 15
+        },
+        {
+          "label": "cancelPrefix",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 17
+        },
+        {
+          "label": "invalidSecondKey",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 19
+        },
+        {
+          "label": "timeoutPrefix",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 21
+        },
+        {
+          "label": "firstEscapeAfterTimeout",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 23
+        },
+        {
+          "label": "secondEscapeAfterTimeout",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 25
+        },
+        {
+          "label": "quickZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 25
+        },
+        {
+          "label": "quickOpen",
+          "zen": true,
+          "owner": "quick",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 25
+        },
+        {
+          "label": "quickClosed",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 27
+        },
+        {
+          "label": "quickFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 29
+        },
+        {
+          "label": "quickSecondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 31
+        },
+        {
+          "label": "findZen",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 31
+        },
+        {
+          "label": "findOpen",
+          "zen": true,
+          "owner": "find",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 31
+        },
+        {
+          "label": "findClosed",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 33
+        },
+        {
+          "label": "findFirstEscape",
+          "zen": true,
+          "owner": "editor",
+          "nativeFullscreen": true,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 35
+        },
+        {
+          "label": "findSecondEscape",
+          "zen": false,
+          "owner": "editor",
+          "nativeFullscreen": false,
+          "selection": [
+            3,
+            3
+          ],
+          "events": 37
+        }
+      ],
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "keyEvents": [
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyRepeatEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Arrow Down",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Arrow Down"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Arrow Down",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyDownEvent",
+          "zenContext": true,
+          "physical": null,
+          "pressed": [
+            "Escape"
+          ],
+          "focus": null
+        },
+        {
+          "key": "Escape",
+          "type": "KeyUpEvent",
+          "zenContext": false,
+          "physical": null,
+          "pressed": [],
+          "focus": null
+        }
+      ],
+      "sourceTextSha256": "5de8b02d67f1b000723a8300779812f000801fd5962a8a60a927e5b3b1a67f5a"
+    }
+  },
+  "overlay": {
+    "sourceTree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+    "exactTrackedRuntimeFiles": 273,
+    "changedContentFiles": 0,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ]
+  }
+}

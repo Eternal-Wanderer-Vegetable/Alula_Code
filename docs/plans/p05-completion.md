@@ -32,6 +32,8 @@ P05.375 已登记 LAY-13 主窗退出后继续编辑模态草稿。Windows/Linux
 
 P05.376 已登记 LAY-14 Zen 原生全屏、外部退出与正常关停重启。固定版双 Escape 与布局独立恢复仍按矩阵核对。[原生和托管证据](../diagnostics/2026-11-28-p05/p05.376-native-zen.md)。
 
+P05.377 已登记 LAY-14 Zen 双 Escape、重复按键、超时及覆层焦点。独立布局恢复继续按矩阵对照。[原生和托管证据](../diagnostics/2026-11-28-p05/p05.377-zen-escape.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。

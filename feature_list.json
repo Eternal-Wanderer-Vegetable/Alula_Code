@@ -5431,8 +5431,8 @@
         "feat-103",
         "feat-428"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "默认两次 Escape 退出。重复按键可完成组合，按错键或超时可重试。查找与快速打开先关闭，焦点回到原编辑器。Windows 和 Linux 发布构建各通过 23 个阶段，原文件字节一致。定向 60/60，专题 187/187，Flutter 2,006 项通过、2 项跳过。产品 39c6989 的 CI 46129408987 四项及 Platform Availability 46129403126 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.377-zen-escape.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
