@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.392 / feat-444 完成。自绘标题栏的后退和前进沿用现有历史，并随可用路径更新。窄窗与 Zen 仍可点击导航。关闭全部编辑器后可以重开历史文件，恢复光标与焦点。Windows/Linux 原生回执通过。定向 136/136、组合 89/89、专题 439/439，Flutter 2,029 项通过、2 项跳过。产品 48957e8 的 CI 46175267344 四项及 Platform Availability 46175263915 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.392-title-navigation-controls.md。
 - P05.391 / feat-443 完成。确认跨行位置后可后退及前进。同一行内移动保留前进路径，新的跨行确认从当前位置建立分支。取消预览与无效输入维持原路径。两端各验证 19 个光标及焦点观测点，文件字节一致。定向 47/47、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 445ddc2 的 CI 46172225136 四项及 Platform Availability 46172221416 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.391-position-navigation-history.md。
 - P05.390 / feat-442 完成。主窗自绘标题栏下，文件、命令、符号、帮助和位置输入统一使用顶部 6 逻辑像素。两端各验证 33 个窗口状态与提供程序组合，测量开放期间改宽、Zen、查询及焦点。定向 150/150、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 5a88bf7 的 CI 46169323057 四项及 Platform Availability 46169319561 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.390-quick-access-placement.md。
 - P05.389 / feat-441 完成。标题栏打开快速访问时展示文件、命令、文档符号与更多模式，转到文件默认聚焦。清空查询和提供程序前缀恢复模式。键盘普通文件入口与显式转到文件使用文件列表。Windows/Linux 验证选择、文件历史、Zen 和退出焦点。定向 106/106、组合 87/87、专题 437/437，Flutter 2,027 项通过、2 项跳过。产品 ff351a4 的 CI 46166442816 四项及 Platform Availability 46166438782 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md。
@@ -2419,7 +2420,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- 确认跨行的位置跳转已接入工作台历史并通过焦点及两端验收。继续推进标题栏历史控件。
+- 标题栏后退、前进和空工作台历史文件重开已通过两端验收。继续核对标题栏布局切换按钮。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
