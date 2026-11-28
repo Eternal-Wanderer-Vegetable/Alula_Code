@@ -5448,6 +5448,20 @@
       "evidence": "活动栏、两侧栏和面板各自恢复进入前的显隐。正常关停并重启后仍可还原。双端四个场景和八次原生退出通过，可见区域几何最大偏差 0 逻辑像素。定向 18/18，专题 170/170，Flutter 2,011 项通过、2 项跳过。产品 2f3778e 的 CI 46132042681 四项及 Platform Availability 46132039692 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.378-zen-layout.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-431",
+      "name": "P05.379 LAY-14 主窗文本编辑器 Zen 行号",
+      "description": "普通文本编辑器在 Zen 隐藏行号，分组和新编辑器沿用该显示状态。退出恢复，Rust 折叠控件可用且保存文字一致。",
+      "dependencies": [
+        "feat-103",
+        "feat-418",
+        "feat-430"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

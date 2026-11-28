@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/editor_rendering.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
@@ -470,6 +471,53 @@ void main() {
       'panel': false,
     });
   });
+
+  testWidgets(
+    'Zen hides line numbers in visible and newly opened editors',
+    (tester) async {
+      await prepareWorkspace(tester);
+      final source = File('${workspace.path}/main.rs');
+      final original = source.readAsBytesSync();
+      final editor = await openEditor(tester);
+      final document = editor.widget.inputWindow.document;
+      final version = document.version;
+      final content = document.resync().content;
+
+      List<bool> numberModes() => tester
+          .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+          .map((field) => field.showLineNumbers)
+          .toList();
+
+      List<EditorGutterPainter> gutters() => tester
+          .widgetList<CustomPaint>(find.byWidgetPredicate((widget) =>
+              widget is CustomPaint && widget.painter is EditorGutterPainter))
+          .map((paint) => paint.painter! as EditorGutterPainter)
+          .toList();
+
+      await execute(tester, 'workbench.action.splitEditorRight');
+      expect(numberModes(), [true, true]);
+      expect(gutters().where((gutter) => gutter.showLineNumbers), hasLength(2));
+
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expect(numberModes(), [false, false]);
+      expect(gutters().where((gutter) => gutter.showLineNumbers), isEmpty);
+      expect(gutters().any((gutter) => gutter.foldableLineIndices.contains(0)),
+          isTrue,
+          reason: 'a Rust fold control keeps its gutter in Zen');
+
+      await execute(tester, 'workbench.action.files.newUntitledFile');
+      expect(numberModes(), [false, false]);
+      expect(gutters().where((gutter) => gutter.showLineNumbers), isEmpty);
+
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expect(numberModes(), [true, true]);
+      expect(gutters().where((gutter) => gutter.showLineNumbers), hasLength(2));
+      expect(document.resync().content, content);
+      expect(document.version, version);
+      expect(document.isDirty, isFalse);
+      expect(source.readAsBytesSync(), original);
+    },
+  );
 
   testWidgets(
     'the zen toggle round-trips through the registered command',

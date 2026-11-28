@@ -30475,6 +30475,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 contextMenuBuilder: (_, state) =>
                                     _buildEditorHierarchyContextMenu(active, state),
                                 tabSize: active.tabSize,
+                                showLineNumbers: !_zenMode,
                                 syntaxTokens: syntaxTokens,
                                 syntaxVersion: syntaxVersion,
                                 enableCodeFolding: usesRustSyntax,
