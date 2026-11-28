@@ -2059,6 +2059,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _toggleZenMode(),
     );
     reg(
+      exitZenModeCommandId,
+      '查看',
+      '退出禅模式',
+      () async => _toggleZenMode(),
+      when: 'inZenMode',
+    );
+    reg(
       'workbench.action.toggleLockedScrolling',
       '查看',
       '切换锁定滚动',
@@ -4313,6 +4320,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   @override
   void onWindowBlur() {
+    if (_hasPendingZenExitChord) _clearPendingCommandChord();
     _localLockedScrollHold.cancel();
     _onMainWindowFocusChanged(false);
   }
@@ -4594,6 +4602,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final available = [
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
+            c.id != exitZenModeCommandId &&
             c.id != _holdLockedScrollingCommandId &&
             !problemsMenuCommands.contains(c.id) &&
             (showProblemsMessageCommands ||
@@ -6119,6 +6128,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
+    _commands.context.setValue('inZenMode', _zenMode);
     _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
     _splitInGroupVertical = data['splitInGroupVertical'] == true;
@@ -15769,6 +15779,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
   /// 再次切换恢复进入前的侧栏/面板折叠态。会话 journal 持久化。
   void _toggleZenMode() {
+    if (_hasPendingZenExitChord) _clearPendingCommandChord();
     _zenModeGeneration++;
     setState(() {
       _zenMode = !_zenMode;
@@ -15787,6 +15798,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.setRegionCollapsed('panel', _zenPreZenPanelCollapsed);
       }
     });
+    _commands.context.setValue('inZenMode', _zenMode);
     _syncCommandContext();
     _syncNotificationFocusContext();
     _scheduleStateSave();
@@ -20586,6 +20598,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _awaitingMoveSelectionChord = false;
   KeyChord? _pendingChordPrefix;
 
+  static const _zenEscape = KeyChord(key: LogicalKeyboardKey.escape);
+
+  bool get _hasPendingZenExitChord =>
+      _pendingChordPrefix == _zenEscape &&
+      _commands.isEnabled(exitZenModeCommandId) &&
+      _keybindings.bindingForSequence(const [_zenEscape, _zenEscape])?.commandId ==
+          exitZenModeCommandId;
+
+  void _clearPendingCommandChord() {
+    _pendingMoveSelectionChordTimer?.cancel();
+    _pendingMoveSelectionChordTimer = null;
+    _awaitingMoveSelectionChord = false;
+    _pendingChordPrefix = null;
+  }
+
   static const _hierarchyOpenCommands = {
     'editor.showCallHierarchy',
     'editor.showTypeHierarchy',
@@ -20595,7 +20622,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     KeyEvent event, {
     Set<String>? permittedCommands,
   }) {
-    if (_lockedScrollingHeld || event is! KeyDownEvent) {
+    final pendingZenExit = _hasPendingZenExitChord;
+    final repeatedZenEscape = pendingZenExit &&
+        event is KeyRepeatEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape;
+    if (_lockedScrollingHeld || (event is! KeyDownEvent && !repeatedZenEscape)) {
       return KeyEventResult.ignored;
     }
     final keyboard = HardwareKeyboard.instance;
@@ -20631,20 +20662,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           key == LogicalKeyboardKey.altRight) {
         return KeyEventResult.ignored;
       }
-      _pendingMoveSelectionChordTimer?.cancel();
-      _pendingMoveSelectionChordTimer = null;
-      _awaitingMoveSelectionChord = false;
       final prefix = _pendingChordPrefix;
-      _pendingChordPrefix = null;
+      _clearPendingCommandChord();
       final binding = prefix == null
           ? null
           : _keybindings.bindingForSequence([prefix, currentChord]);
       if (binding != null &&
           _commands.context.matches(binding.when) &&
           isEnabled(binding.commandId)) {
-        _runShortcutCommand(binding, event: event);
+        _runShortcutCommand(
+          binding,
+          event: event is KeyDownEvent ? event : null,
+        );
         return KeyEventResult.handled;
       }
+      // An invalid second key ends the Zen chord without editing the document.
+      if (pendingZenExit) return KeyEventResult.handled;
     }
     if (_keybindings.hasSequencePrefix(
       currentChord,
@@ -20655,10 +20688,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _pendingChordPrefix = currentChord;
       _pendingMoveSelectionChordTimer = Timer(
         const Duration(seconds: 5),
-        () {
-          _awaitingMoveSelectionChord = false;
-          _pendingChordPrefix = null;
-        },
+        _clearPendingCommandChord,
       );
       return KeyEventResult.handled;
     }
@@ -20782,6 +20812,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !alt &&
             !shift &&
             !activeHasComposition;
+        final pendingZenExit = _hasPendingZenExitChord;
+        if (pendingZenExit &&
+            _handleCommandChord(event) == KeyEventResult.handled) {
+          return KeyEventResult.handled;
+        }
         if (plainEscape && _handleNotificationEscape(centerOnly: true)) {
           return KeyEventResult.handled;
         }
@@ -20893,7 +20928,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
         }
-        if (_handleCommandChord(event) == KeyEventResult.handled) {
+        // Let local Escape actions run before the workbench starts the
+        // default Zen exit chord.
+        if (!pendingZenExit &&
+            (!plainEscape || !_zenMode) &&
+            _handleCommandChord(event) == KeyEventResult.handled) {
           return KeyEventResult.handled;
         }
         if (commandModifier && !shift && key == LogicalKeyboardKey.keyD) {
@@ -25053,10 +25092,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
-          // LAY-14：Zen 模式下 Escape 退出（优先于编辑器局部 Esc 绑定）。
-          if (_zenMode)
-            const SingleActivator(LogicalKeyboardKey.escape):
-                _toggleZenMode,
           if (_commands.isEnabled('editor.cursorPageUp'))
             const SingleActivator(LogicalKeyboardKey.pageUp): () =>
                 _runCommand('editor.cursorPageUp'),
@@ -25080,6 +25115,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             final chord = _handleCommandChord(
               event,
               permittedCommands: const {
+                exitZenModeCommandId,
                 'notifications.showList',
                 'togglePeekWidgetFocus',
                 _holdLockedScrollingCommandId,

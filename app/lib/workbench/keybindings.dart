@@ -24,6 +24,8 @@ import 'package:flutter/widgets.dart' show SingleActivator;
 
 import 'commands.dart';
 
+const exitZenModeCommandId = 'workbench.action.exitZenMode';
+
 /// 解析后的键位：主键 + 修饰键。
 class KeyChord {
   const KeyChord({
@@ -262,6 +264,7 @@ class KeybindingSet {
     'view.toggleSidebar': 'ctrl+b',
     'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
+    exitZenModeCommandId: 'escape escape',
     'workbench.actions.view.problems': 'ctrl+shift+m',
     'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
@@ -351,6 +354,7 @@ class KeybindingSet {
 
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
+    exitZenModeCommandId: 'inZenMode',
     'editor.action.revealDefinition': 'editorTextFocus',
     'editor.action.marker.nextInFiles': 'editorTextFocus',
     'editor.action.marker.prevInFiles': 'editorTextFocus',

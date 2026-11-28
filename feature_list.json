@@ -5422,6 +5422,19 @@
       "evidence": "默认 Zen 进入原生全屏，退出恢复原生窗口范围，已有全屏保留。外部离开 Zen 触发的全屏时恢复普通工作台。Windows 和 Linux 的 Zen 内正常关停及重启读回均通过。定向 8/8，专题 135/135，Flutter 2,001 项通过、2 项跳过。产品 b9f33e6 的 CI 46125295425 四项及 Platform Availability 46125289981 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.376-native-zen.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-429",
+      "name": "P05.377 LAY-14 Zen 双 Escape 退出与焦点",
+      "description": "用固定版双 Escape 退出 Zen。覆盖重复事件、取消组合、超时、查找与快速打开优先级、焦点恢复。",
+      "dependencies": [
+        "feat-103",
+        "feat-428"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

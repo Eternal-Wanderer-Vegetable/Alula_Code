@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
@@ -61,7 +62,8 @@ void main() {
       'zenMode': zenMode,
       'groups': <Object?>[],
     }));
-    File('${workspace.path}/main.rs').writeAsStringSync('fn main() {}\n');
+    File('${workspace.path}/main.rs')
+        .writeAsStringSync('fn main() {\n    let value = 1;\n}\n');
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump(const Duration(milliseconds: 100));
@@ -85,6 +87,21 @@ void main() {
       reason: '$command is registered and callable',
     );
     await tester.pump(const Duration(milliseconds: 700));
+  }
+
+  Future<void> pressEscape(WidgetTester tester) async {
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+  }
+
+  Future<RustTextInputFieldState> openEditor(WidgetTester tester) async {
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 400));
+    final state =
+        tester.state<RustTextInputFieldState>(find.byType(RustTextInputField));
+    state.requestFocus();
+    await tester.pump();
+    return state;
   }
 
   void Function(bool) installNativeFullscreen(
@@ -195,11 +212,12 @@ void main() {
       expect(gridRect.width, lessThan(2400),
           reason: 'the centered grid is width-limited');
 
-      // Esc 退出禅模式并恢复标题行。
-      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-      await tester.pumpAndSettle();
+      await pressEscape(tester);
+      expect(find.text('文件(F)'), findsNothing);
+      await pressEscape(tester);
       expect(find.text('文件(F)'), findsOneWidget,
-          reason: 'Esc exits zen mode and restores the title bar');
+          reason:
+              'the second Escape exits zen mode and restores the title bar');
       expect(zenStrip('editor'), findsOneWidget);
     },
   );
@@ -218,9 +236,10 @@ void main() {
       expect(gridRect.width, lessThan(2400),
           reason: 'the centered grid restores');
 
-      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-      await tester.pumpAndSettle();
-      expect(find.text('文件(F)'), findsOneWidget, reason: 'Esc exits zen mode');
+      await pressEscape(tester);
+      expect(requests, [true]);
+      await pressEscape(tester);
+      expect(find.text('文件(F)'), findsOneWidget);
       expect(requests, [true, false]);
     },
   );
@@ -241,6 +260,101 @@ void main() {
     await tester.pumpAndSettle();
     expect(requests, [true]);
     expect(find.text('文件(F)'), findsNothing);
+  });
+
+  testWidgets('zen chord timeout and invalid second key preserve editor state',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final editor = await openEditor(tester);
+    const caret = TextSelection.collapsed(offset: 3);
+    editor.setSelection(caret);
+    await execute(tester, 'workbench.action.toggleZenMode');
+
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(editor.editingValue.selection, caret);
+    expect(find.text('文件(F)'), findsNothing);
+
+    await pressEscape(tester);
+    await tester.pump(const Duration(milliseconds: 5200));
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsNothing);
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsOneWidget);
+    expect(editor.widget.focusNode!.hasFocus, isTrue);
+    expect(editor.editingValue.selection, caret);
+  });
+
+  testWidgets('a repeated Escape can finish the held zen chord',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final editor = await openEditor(tester);
+    await execute(tester, 'workbench.action.toggleZenMode');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    final stayedInZen = find.text('文件(F)').evaluate().isEmpty;
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.escape);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(stayedInZen, isTrue);
+    expect(find.text('文件(F)'), findsOneWidget);
+    expect(editor.widget.focusNode!.hasFocus, isTrue);
+  });
+
+  for (final overlay in ['quick open', 'find']) {
+    testWidgets('Escape closes $overlay before starting the zen chord',
+        (tester) async {
+      await prepareWorkspace(tester);
+      final editor = await openEditor(tester);
+      await execute(tester, 'workbench.action.toggleZenMode');
+      final overlayInput = overlay == 'find'
+          ? find.byKey(const ValueKey('find-query-input'))
+          : find.byWidgetPredicate((widget) =>
+              widget is TextField &&
+              widget.focusNode?.debugLabel == 'quick-input-field');
+      await execute(tester,
+          overlay == 'find' ? 'editor.find' : 'workbench.action.quickOpen');
+      expect(overlayInput, findsOneWidget);
+      await tester.tap(overlayInput);
+      await tester.pump();
+      final input = find.descendant(
+          of: overlayInput, matching: find.byType(EditableText));
+      expect(tester.widget<EditableText>(input).focusNode.hasFocus, isTrue);
+      await pressEscape(tester);
+      expect(overlayInput, findsNothing);
+      expect(find.text('文件(F)'), findsNothing);
+      expect(editor.widget.focusNode!.hasFocus, isTrue);
+
+      await pressEscape(tester);
+      expect(find.text('文件(F)'), findsNothing);
+      await pressEscape(tester);
+      expect(find.text('文件(F)'), findsOneWidget);
+      expect(editor.widget.focusNode!.hasFocus, isTrue);
+    });
+  }
+
+  testWidgets(
+      'leaving zen or losing main window focus clears its pending chord',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await execute(tester, 'workbench.action.toggleZenMode');
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsNothing);
+    await execute(tester, 'workbench.action.toggleZenMode');
+    await execute(tester, 'workbench.action.toggleZenMode');
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsNothing);
+
+    final listener = tester.state(find.byType(WorkbenchPage)) as WindowListener;
+    listener.onWindowBlur();
+    listener.onWindowFocus();
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsNothing);
+    await pressEscape(tester);
+    expect(find.text('文件(F)'), findsOneWidget);
   });
 
   testWidgets(
