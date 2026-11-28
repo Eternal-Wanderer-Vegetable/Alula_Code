@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.371 / feat-423 完成。共用 Hold 键位在失焦后恢复常驻开关，按住切窗的重复键不再触发反转。Windows 和 Linux 的单键及组合键各通过 17 项，专题 215/215，Flutter 1,989 项通过、2 项跳过。产品 28f447f 的 CI 46109080964 四项及 Platform Availability 46109078191 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md。
 - P05.370 / feat-422 完成限定验收。辅助窗限定键位可临时反转共享锁定，键释放、失焦和关闭均恢复。Windows 与 Linux 的单键和组合键各通过 19 项，专题 218/218，Flutter 1,986 项通过、2 项跳过。产品 ff52992 的 CI 46105313832 四项及 Platform Availability 46105312940 Windows/Linux 通过。X11 切换到同样绑定 Hold 的窗口时会重触发，保留复现并继续处理。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md。
 - P05.369 / feat-421 完成。按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md。
 - P05.368 / feat-420 完成。主辅窗口共用滚动锁定状态。辅助窗支持状态栏点击和命令面板切换，紧凑模式隐藏状态项。Windows 与 Linux 各通过 16 项，专题 214/214，Flutter 1,982 项通过、2 项跳过。产品 4bf59e4 的 CI 46097220975 四项及 Platform Availability 46097215444 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md。
@@ -400,6 +401,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.368 辅助窗口滚动锁定状态与切换命令](docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md)。
 [P05.369 主辅窗口横纵滚动锁定](docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md)。
 [P05.370 辅助窗口 Hold 锁定滚动键位](docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md)。
+[P05.371 切窗后抑制 Hold 键自动重触发](docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -665,4 +667,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.370 收尾 CI。先沿记录的 X11 重复键复现推进 P05.371，验证共享键位跨引擎从失焦到再次按下的完整路径。macOS 实机暂缓，PR #3 保持草稿。
+核对 P05.371 收尾 CI。先复现主窗在辅助窗仍打开时的正常退出，核对 Windows 与 Linux 中断记录，再按 docs/03 继续 LAY-15 和 P05 审计。macOS 实机暂缓，PR #3 保持草稿。

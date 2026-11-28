@@ -1,0 +1,464 @@
+{
+  "product": "28f447f59f34c9e3555f4999d889df8e94a2a957",
+  "tree": "781902421891decea068eab0db052f805117a927",
+  "ci": {
+    "id": 46109080964,
+    "sha": "28f447f59f34c9e3555f4999d889df8e94a2a957",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46109080964",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140868334879,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140868335019,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140868335043,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140868335186,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46109078191,
+    "sha": "28f447f59f34c9e3555f4999d889df8e94a2a957",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46109078191",
+    "jobs": [
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140868325701,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140868325885,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140868325941,
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46106480911,
+    "sha": "bee531bc2e0722afce2d7f4add9393ce81b4349d",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46106480911",
+    "jobs": [
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140860279018,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140860279168,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140860279169,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140860279221,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 51,
+    "affected_count": 2,
+    "changed_files": 14,
+    "risk_level": "medium"
+  },
+  "preEditImpact": {
+    "workbench-page": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:WorkbenchPage",
+        "name": "WorkbenchPage",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 97,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "callers": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart"
+      ],
+      "processes": []
+    },
+    "workbench-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "callers": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart"
+      ],
+      "processes": []
+    },
+    "workbench-shortcut": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._runShortcutCommand#1",
+        "name": "_runShortcutCommand",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 1,
+        "modules_affected": 1
+      },
+      "callers": [
+        "_handleCommandChord",
+        "build"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "workbench-chord": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._handleCommandChord#2",
+        "name": "_handleCommandChord",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 5,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "callers": [
+        "_focusNodeFor",
+        "_handleCallHierarchyKey",
+        "_handleDefinitionPeekKey",
+        "_onProblemsPaneKey",
+        "build"
+      ],
+      "processes": [
+        "build",
+        "_registerCommands"
+      ]
+    },
+    "workbench-build": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.build#1",
+        "name": "build",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "hold-state": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._setLockedScrollingHeld#2",
+        "name": "_setLockedScrollingHeld",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "MEDIUM",
+      "summary": {
+        "direct": 5,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "callers": [
+        "_handleAuxiliaryLockedScrollHold",
+        "_onLockedScrollingHoldKey",
+        "_removeClosedAuxiliaryWindows",
+        "_runShortcutCommand",
+        "onWindowBlur"
+      ],
+      "processes": [
+        "initState",
+        "build"
+      ]
+    },
+    "hold-release": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState._onLockedScrollingHoldKey#1",
+        "name": "_onLockedScrollingHoldKey",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "workbench-blur": {
+      "target": {
+        "id": "Method:app/lib/workbench/workbench_page.dart:_WorkbenchPageState.onWindowBlur#0",
+        "name": "onWindowBlur",
+        "type": "Method",
+        "filePath": "app/lib/workbench/workbench_page.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "workbench-dispose": {
+      "target": {
+        "name": "dispose"
+      },
+      "risk": "UNKNOWN",
+      "callers": [],
+      "processes": []
+    },
+    "auxiliary-app": {
+      "target": {
+        "id": "Class:app/lib/workbench/auxiliary_window.dart:AuxiliaryEditorApp",
+        "name": "AuxiliaryEditorApp",
+        "type": "Class",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 13,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "callers": [
+        "main.dart",
+        "workbench_page.dart",
+        "auxiliary_compact_mode_test.dart",
+        "auxiliary_focus_context_test.dart",
+        "auxiliary_scroll_hold_test.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "auxiliary_focus_native_smoke.dart",
+        "runAlulaAuxiliaryEngine",
+        "main",
+        "main"
+      ],
+      "processes": [
+        "main"
+      ]
+    },
+    "auxiliary-state": {
+      "target": {
+        "id": "Class:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState",
+        "name": "_AuxiliaryEditorAppState",
+        "type": "Class",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "HIGH",
+      "summary": {
+        "direct": 9,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "callers": [
+        "main.dart",
+        "workbench_page.dart",
+        "auxiliary_compact_mode_test.dart",
+        "auxiliary_focus_context_test.dart",
+        "auxiliary_scroll_hold_test.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "auxiliary_focus_native_smoke.dart"
+      ],
+      "processes": []
+    },
+    "auxiliary-editor-key": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._handleAuxiliaryEditorKey#2",
+        "name": "_handleAuxiliaryEditorKey",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "auxiliary-begin": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._beginAuxiliaryLockedScrollHold#1",
+        "name": "_beginAuxiliaryLockedScrollHold",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 0,
+        "modules_affected": 1
+      },
+      "callers": [
+        "_handleAuxiliaryEditorKey"
+      ],
+      "processes": []
+    },
+    "auxiliary-key-observer": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._onAuxiliaryHoldKey#1",
+        "name": "_onAuxiliaryHoldKey",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "auxiliary-release": {
+      "target": {
+        "id": "Method:app/lib/workbench/auxiliary_window.dart:_AuxiliaryEditorAppState._releaseAuxiliaryLockedScrollHold#0",
+        "name": "_releaseAuxiliaryLockedScrollHold",
+        "type": "Method",
+        "filePath": "app/lib/workbench/auxiliary_window.dart"
+      },
+      "risk": "LOW",
+      "summary": {
+        "direct": 4,
+        "processes_affected": 2,
+        "modules_affected": 2
+      },
+      "callers": [
+        "_closeNativeWindow",
+        "_onAuxiliaryHoldKey",
+        "dispose",
+        "onWindowBlur"
+      ],
+      "processes": [
+        "build",
+        "dispose"
+      ]
+    },
+    "linux-activate": {
+      "target": {
+        "id": "Function:app/linux/runner/my_application.cc:my_application_activate~shape:GApplication:none:pointer:1",
+        "name": "my_application_activate",
+        "type": "Function",
+        "filePath": "app/linux/runner/my_application.cc"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    },
+    "windows-create": {
+      "target": {
+        "id": "Method:app/windows/runner/flutter_window.cpp:OnCreate#0",
+        "name": "OnCreate",
+        "type": "Method",
+        "filePath": "app/windows/runner/flutter_window.cpp"
+      },
+      "risk": "UNKNOWN",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "callers": [],
+      "processes": []
+    }
+  }
+}
