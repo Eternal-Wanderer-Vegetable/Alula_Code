@@ -5283,6 +5283,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final version = doc.doc.version;
+    final navigationOrigin = _currentNavigationLocation();
+    final originalSelection = doc.selection;
     final originalSelections = doc.selectionSet.toList();
     final scrollOffset = doc.editorScrollController.hasClients
         ? doc.editorScrollController.offset
@@ -5409,6 +5411,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         [TextSelection.collapsed(offset: target.offsetUtf16)],
         recordHistory: false,
       );
+      if (navigationOrigin != null) {
+        // A column change on the same line keeps the existing forward path.
+        final originLine =
+            originalSelection.start == originalSelection.extentOffset
+                ? navigationOrigin.line
+                : doc.doc.positionAt(originalSelection.start).line;
+        if (originLine != target.line ||
+            navigationOrigin.groupRegion != destination.region) {
+          _navigationHistory.recordNavigation(
+            navigationOrigin,
+            _navigationLocation(view, target.offsetUtf16, destination.region),
+          );
+        }
+      }
       setState(() {
         if (openAside && destination.previewDocId == view.id) {
           destination.previewDocId = null;

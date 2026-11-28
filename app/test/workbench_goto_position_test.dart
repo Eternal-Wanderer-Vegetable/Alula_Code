@@ -50,7 +50,14 @@ void main() {
     final controller = tester.widget<TextField>(editor).controller!;
     final text = controller.text;
     await tester.tap(editor);
+    tester.testTextInput.updateEditingValue(
+      controller.value.copyWith(
+        selection: const TextSelection.collapsed(offset: 0),
+      ),
+    );
+    await tester.pumpAndSettle();
     final original = controller.selection;
+    expect(original.extentOffset, 0);
     await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
     await tester.sendKeyEvent(LogicalKeyboardKey.keyG);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
@@ -107,6 +114,39 @@ void main() {
     await tester.pumpAndSettle();
     await offsets;
     await tester.pump(const Duration(milliseconds: 600));
+
+    Future<void> navigate(String direction, int offset) async {
+      expect(await commands!.execute('workbench.action.$direction'),
+          CommandExecutionStatus.executed);
+      await tester.pumpAndSettle();
+      expect(controller.selection.extentOffset, offset);
+      expect(tester.widget<TextField>(editor).focusNode?.hasFocus, isTrue);
+    }
+
+    Future<void> acceptOffset(String value) async {
+      final change = commands!.execute('workbench.action.gotoOffset');
+      await tester.pumpAndSettle();
+      await tester.enterText(input, value);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(await change, CommandExecutionStatus.executed);
+    }
+
+    await navigate('navigateBack', 0);
+    await navigate('navigateForward', 9);
+    await navigate('navigateBack', 0);
+    await acceptOffset('::2');
+    expect(controller.selection.extentOffset, 2);
+    await navigate('navigateForward', 9);
+    await navigate('navigateBack', 2);
+
+    await acceptOffset('::14');
+    expect(controller.selection.extentOffset, 14);
+    await navigate('navigateForward', 14);
+    await navigate('navigateBack', 2);
+    await navigate('navigateForward', 14);
+    expect(controller.text, text);
     expect(session.tryLoad()?['gotoLine.useZeroBasedOffset'], isTrue);
     expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
   });

@@ -5617,6 +5617,19 @@
       "evidence": "主窗自绘标题栏下，文件、命令、符号、帮助和位置输入统一使用顶部 6 逻辑像素。两端各验证 33 个窗口状态与提供程序组合，测量开放期间改宽、Zen、查询及焦点。定向 150/150、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 5a88bf7 的 CI 46169323057 四项及 Platform Availability 46169319561 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.390-quick-access-placement.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-443",
+      "name": "P05.391 CMD-08/09 位置跳转接入工作台导航历史",
+      "description": "接入已确认的跨行位置跳转，核对后退、前进、取消、同一行内移动、UTF-16 光标与焦点。",
+      "dependencies": [
+        "feat-260",
+        "feat-297"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版确认跨行写入、同一行保留前进；Windows 旧发布构建复现确认 :18:6 后后退无变化。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
