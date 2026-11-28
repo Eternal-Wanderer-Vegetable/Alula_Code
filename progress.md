@@ -5,10 +5,11 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.386 / feat-438 完成。自绘标题栏的命令中心随窗口布置，窄窗保留菜单、控件和拖动区。点击、Enter 和 Space 触发现有快速文件搜索，保留前缀模式及焦点恢复。两端发布构建验证正常、窄窗和 Zen，源文件字节一致。定向 82/82，专题 371/371，Flutter 2,021 项通过、2 项跳过。产品 636d2d6 的 CI 46156839204 四项及 Platform Availability 46156834958 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.386-command-center.md。
 - P05.385 / feat-437 完成。普通文本的 Zen 居中按可用编辑器宽度计算。并排时取消侧边留白，最大化、关闭多余组或上下堆叠时重新居中。两端发布验证（逻辑宽度/单边留白）Windows 2048/390、Linux 1920 1920/366、Linux 1280 1280/244，还原组几何及退出原生全屏通过，文件字节一致。定向 24/24，专题 281/281，Flutter 2,020 项通过、2 项跳过。产品 525bc55 的 CI 46151540561 四项及 Platform Availability 46151537543 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.385-zen-centered-layout.md。
 - P05.384 / feat-436 完成。默认组更多操作可以锁定点击组，以及最大化和还原该组。锁定保留原活动组，最大化激活目标组，还原位置与尺寸偏差为 0 逻辑像素。Windows 发布构建验证菜单路由，Linux 验证真实键鼠，两端关窗正常且文件字节一致。定向 10/10，专题 280/280，Flutter 2,019 项通过、2 项跳过。产品 ff7457f 的 CI 46148779284 四项及 Platform Availability 46148776325 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.384-group-menu-state.md。
 - P05.383 / feat-435 完成。默认多标签模式的更多操作提供「显示已打开的编辑器」「全部关闭」「关闭已保存」，按点击组处理。取消列表恢复原活动组，共享、固定及未保存的文档按现有规则保护。Windows 发布构建通过菜单路由和原生 Escape，Linux 通过完整键鼠路径，均正常关窗且文件字节一致。定向 9/9，专题 279/279，Flutter 2,018 项通过、2 项跳过。产品 58b6e9b 的 CI 46145963791 四项及 Platform Availability 46145959371 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.383-group-more-actions.md。
-- P05.382 / feat-434 完成。默认多标签模式仅活动组显示拆分按钮。普通点击向右，按住 Alt 点击向下。Windows 发布构建验证原生 Alt 和按钮回调，Linux 验证 X11 完整键鼠路径。两端系统关窗均正常退出，文件字节一致。定向 23/23，专题 253/253，Flutter 2,016 项通过、2 项跳过。产品 0db66fd 的 CI 46142329742 四项及 Platform Availability 46142325017 Windows/Linux 通过。macOS 实机暂缓。 Windows 原生指针端到端仍待复验。详见 docs/diagnostics/2026-11-28-p05/p05.382-group-split-toolbar.md。
+- P05.382 / feat-434 完成。默认多标签模式仅活动组显示拆分按钮。普通点击向右，按住 Alt 点击向下。Windows 发布构建实测鼠标和 Alt，Linux 验证 X11 完整键鼠路径。两端系统关窗均正常退出，文件字节一致。定向 23/23，专题 253/253，Flutter 2,016 项通过、2 项跳过。产品 0db66fd 的 CI 46142329742 四项及 Platform Availability 46142325017 Windows/Linux 通过。macOS 实机暂缓。详见 docs/diagnostics/2026-11-28-p05/p05.382-group-split-toolbar.md。
 - P05.381 / feat-433 完成。默认自定义标题栏在普通、Zen、退出及会话恢复时可见，顶部为 0、高度为 35 逻辑像素。命令中心能打开可聚焦的命令面板，Zen 保持隐藏状态栏。Windows 和 Linux 共四次系统关窗均退出 0。定向 21/21，专题 228/228，Flutter 2,014 项通过、2 项跳过。产品 7c90d0b 的 CI 46139494124 四项及 Platform Availability 46139491101 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md。
 - P05.380 / feat-432 完成。默认主窗命令面板在普通、Zen 和退出后三阶段距顶部 6 逻辑像素，水平居中且输入可聚焦。Windows 和 Linux 原生复验通过，两次系统关窗退出码为 0。定向 20/20，专题 201/201，Flutter 2,013 项通过、2 项跳过。产品 3b670fc 的 CI 46137056796 四项及 Platform Availability 46137053375 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md。
 - P05.379 / feat-431 完成。主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md。
@@ -2413,7 +2414,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- 普通文本的 Zen 居中宽度已完成限定验收。核对命令中心位置和独立居中布局入口，并继续补齐 P05.382 Windows 原生指针。
+- 命令中心响应宽度与已有文件搜索入口已完成限定验收。继续核对独立居中布局与命令中心初始帮助。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)

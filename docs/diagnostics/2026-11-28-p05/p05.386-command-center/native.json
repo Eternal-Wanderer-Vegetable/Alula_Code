@@ -1,0 +1,1904 @@
+{
+  "product": "636d2d68dca6f5da90ca83d9e6799f076fce1637",
+  "tree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+  "fixtureSha256": "663861370a4163772945cabde99ab65ed92ad1b0b3a045a0338e8c3318fdc07c",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "Non-AI Command Center width and placement across window sizes",
+    "referenceSettings": {
+      "chat.agentsControl.enabled": "hidden",
+      "chat.disableAIFeatures": true
+    },
+    "normalBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "narrow": {
+      "viewport": [
+        636,
+        794
+      ],
+      "titlebar": [
+        0,
+        0,
+        636,
+        35
+      ],
+      "left": [
+        0,
+        0,
+        93.5,
+        35
+      ],
+      "center": [
+        103.5,
+        0,
+        280.5,
+        35
+      ],
+      "right": [
+        394,
+        0,
+        242,
+        35
+      ],
+      "commandCenter": [
+        103.5,
+        5.700000286102295,
+        280.5,
+        23.600000381469727
+      ],
+      "centralAction": [
+        161.5,
+        5.700000286102295,
+        216.5,
+        23.600000381469727
+      ],
+      "centerActions": [
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            103.5,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-left",
+          "title": "Go Back (Alt+LeftArrow)",
+          "bounds": [
+            103.5,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            129.5,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-right",
+          "title": "Go Forward (Alt+RightArrow)",
+          "bounds": [
+            129.5,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item command-center-center",
+          "title": null,
+          "bounds": [
+            161.5,
+            5.700000286102295,
+            216.5,
+            23.600000381469727
+          ]
+        },
+        {
+          "className": "action-item command-center-quick-pick",
+          "title": null,
+          "bounds": [
+            230.78750610351562,
+            6.5,
+            77.9124984741211,
+            22
+          ]
+        }
+      ],
+      "button": [
+        230.78750610351562,
+        6.5,
+        77.9124984741211,
+        22
+      ],
+      "css": {
+        "width": "214.9px",
+        "maxWidth": "600px",
+        "height": "22px",
+        "border": "0.8px",
+        "boxSizing": "content-box"
+      },
+      "nativeWindowBounds": [
+        24,
+        36,
+        674,
+        836
+      ]
+    },
+    "medium": {
+      "viewport": [
+        1206,
+        794
+      ],
+      "titlebar": [
+        0,
+        0,
+        1206,
+        35
+      ],
+      "left": [
+        0,
+        0,
+        330.9875183105469,
+        35
+      ],
+      "center": [
+        340.9875183105469,
+        0,
+        524.0250244140625,
+        35
+      ],
+      "right": [
+        875.0125122070312,
+        0,
+        330.9875183105469,
+        35
+      ],
+      "commandCenter": [
+        340.9875183105469,
+        5.700000286102295,
+        524.0250244140625,
+        23.600000381469727
+      ],
+      "centralAction": [
+        398.9875183105469,
+        5.700000286102295,
+        460.0249938964844,
+        23.600000381469727
+      ],
+      "centerActions": [
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            340.9875183105469,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-left",
+          "title": "Go Back (Alt+LeftArrow)",
+          "bounds": [
+            340.9875183105469,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            366.9875183105469,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-right",
+          "title": "Go Forward (Alt+RightArrow)",
+          "bounds": [
+            366.9875183105469,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item command-center-center",
+          "title": null,
+          "bounds": [
+            398.9875183105469,
+            5.700000286102295,
+            460.0249938964844,
+            23.600000381469727
+          ]
+        },
+        {
+          "className": "action-item command-center-quick-pick",
+          "title": null,
+          "bounds": [
+            590.0375366210938,
+            6.5,
+            77.9124984741211,
+            22
+          ]
+        }
+      ],
+      "button": [
+        590.0375366210938,
+        6.5,
+        77.9124984741211,
+        22
+      ],
+      "css": {
+        "width": "458.425px",
+        "maxWidth": "600px",
+        "height": "22px",
+        "border": "0.8px",
+        "boxSizing": "content-box"
+      },
+      "nativeWindowBounds": [
+        24,
+        36,
+        1244,
+        836
+      ]
+    },
+    "wide": {
+      "viewport": [
+        1766,
+        794
+      ],
+      "titlebar": [
+        0,
+        0,
+        1766,
+        35
+      ],
+      "left": [
+        0,
+        0,
+        540.2000122070312,
+        35
+      ],
+      "center": [
+        550.2000122070312,
+        0,
+        665.6000366210938,
+        35
+      ],
+      "right": [
+        1225.800048828125,
+        0,
+        540.2000122070312,
+        35
+      ],
+      "commandCenter": [
+        550.2000122070312,
+        5.700000286102295,
+        665.6000366210938,
+        23.600000381469727
+      ],
+      "centralAction": [
+        608.2000122070312,
+        5.700000286102295,
+        601.6000366210938,
+        23.600000381469727
+      ],
+      "centerActions": [
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            550.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-left",
+          "title": "Go Back (Alt+LeftArrow)",
+          "bounds": [
+            550.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            576.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-right",
+          "title": "Go Forward (Alt+RightArrow)",
+          "bounds": [
+            576.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item command-center-center",
+          "title": null,
+          "bounds": [
+            608.2000122070312,
+            5.700000286102295,
+            601.6000366210938,
+            23.600000381469727
+          ]
+        },
+        {
+          "className": "action-item command-center-quick-pick",
+          "title": null,
+          "bounds": [
+            870.0375366210938,
+            6.5,
+            77.9124984741211,
+            22
+          ]
+        }
+      ],
+      "button": [
+        870.0375366210938,
+        6.5,
+        77.9124984741211,
+        22
+      ],
+      "css": {
+        "width": "600px",
+        "maxWidth": "600px",
+        "height": "22px",
+        "border": "0.8px",
+        "boxSizing": "content-box"
+      },
+      "nativeWindowBounds": [
+        24,
+        36,
+        1804,
+        836
+      ]
+    },
+    "normalPicker": {
+      "bounds": {
+        "x": 590.6000366210938,
+        "y": 13.600000381469727,
+        "width": 586.3999633789062,
+        "height": 25.600000381469727
+      },
+      "query": "",
+      "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+      "rows": [
+        "Go to File\nCtrl\n+\nP",
+        "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+        "Search for Text%",
+        "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+        "Start Debuggingdebug ",
+        "Run Tasktask ",
+        "More?",
+        "one.txt\nrecently opened"
+      ]
+    },
+    "normalPickerFileQuery": {
+      "bounds": {
+        "x": 590.6000366210938,
+        "y": 13.600000381469727,
+        "width": 586.3999633789062,
+        "height": 25.600000381469727
+      },
+      "query": "one",
+      "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+      "rows": [
+        "one.txt\nrecently opened"
+      ]
+    },
+    "normalPickerReopened": {
+      "bounds": {
+        "x": 590.6000366210938,
+        "y": 13.600000381469727,
+        "width": 586.3999633789062,
+        "height": 25.600000381469727
+      },
+      "query": "",
+      "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+      "rows": [
+        "Go to File\nCtrl\n+\nP",
+        "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+        "Search for Text%",
+        "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+        "Start Debuggingdebug ",
+        "Run Tasktask ",
+        "More?",
+        "one.txt\nrecently opened"
+      ]
+    },
+    "normalPickerCommands": {
+      "bounds": {
+        "x": 590.6000366210938,
+        "y": 13.600000381469727,
+        "width": 586.3999633789062,
+        "height": 25.600000381469727
+      },
+      "query": ">Toggle Zen",
+      "placeholder": "Type the name of a command to run.",
+      "rows": [
+        "View: Toggle Zen Mode\nCtrl\n+\nK\nZ"
+      ]
+    },
+    "zenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "zen": {
+      "viewport": [
+        2048,
+        1152
+      ],
+      "titlebar": [
+        0,
+        0,
+        2048,
+        35
+      ],
+      "left": [
+        0,
+        0,
+        681.2000122070312,
+        35
+      ],
+      "center": [
+        691.2000122070312,
+        0,
+        665.6000366210938,
+        35
+      ],
+      "right": [
+        1366.800048828125,
+        0,
+        681.2000122070312,
+        35
+      ],
+      "commandCenter": [
+        691.2000122070312,
+        5.700000286102295,
+        665.6000366210938,
+        23.600000381469727
+      ],
+      "centralAction": [
+        749.2000122070312,
+        5.700000286102295,
+        601.6000366210938,
+        23.600000381469727
+      ],
+      "centerActions": [
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            691.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-left",
+          "title": "Go Back (Alt+LeftArrow)",
+          "bounds": [
+            691.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            717.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-right",
+          "title": "Go Forward (Alt+RightArrow)",
+          "bounds": [
+            717.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item command-center-center",
+          "title": null,
+          "bounds": [
+            749.2000122070312,
+            5.700000286102295,
+            601.6000366210938,
+            23.600000381469727
+          ]
+        },
+        {
+          "className": "action-item command-center-quick-pick",
+          "title": null,
+          "bounds": [
+            1011.0375366210938,
+            6.5,
+            77.9124984741211,
+            22
+          ]
+        }
+      ],
+      "button": [
+        1011.0375366210938,
+        6.5,
+        77.9124984741211,
+        22
+      ],
+      "css": {
+        "width": "600px",
+        "maxWidth": "600px",
+        "height": "22px",
+        "border": "0.8px",
+        "boxSizing": "content-box"
+      },
+      "nativeWindowBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ]
+    },
+    "zenPicker": {
+      "bounds": {
+        "x": 731.6000366210938,
+        "y": 13.600000381469727,
+        "width": 586.3999633789062,
+        "height": 25.600000381469727
+      },
+      "query": "",
+      "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+      "rows": [
+        "Go to File\nCtrl\n+\nP",
+        "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+        "Search for Text%",
+        "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+        "Start Debuggingdebug ",
+        "Run Tasktask ",
+        "More?",
+        "one.txt\nrecently opened"
+      ]
+    },
+    "normalRestored": [
+      24,
+      36,
+      1804,
+      836
+    ],
+    "afterZen": {
+      "viewport": [
+        1766,
+        794
+      ],
+      "titlebar": [
+        0,
+        0,
+        1766,
+        35
+      ],
+      "left": [
+        0,
+        0,
+        540.2000122070312,
+        35
+      ],
+      "center": [
+        550.2000122070312,
+        0,
+        665.6000366210938,
+        35
+      ],
+      "right": [
+        1225.800048828125,
+        0,
+        540.2000122070312,
+        35
+      ],
+      "commandCenter": [
+        550.2000122070312,
+        5.700000286102295,
+        665.6000366210938,
+        23.600000381469727
+      ],
+      "centralAction": [
+        608.2000122070312,
+        5.700000286102295,
+        601.6000366210938,
+        23.600000381469727
+      ],
+      "centerActions": [
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            550.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-left",
+          "title": "Go Back (Alt+LeftArrow)",
+          "bounds": [
+            550.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item disabled menu-entry",
+          "title": null,
+          "bounds": [
+            576.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-label disabled codicon codicon-arrow-right",
+          "title": "Go Forward (Alt+RightArrow)",
+          "bounds": [
+            576.2000122070312,
+            6.5,
+            22,
+            22
+          ]
+        },
+        {
+          "className": "action-item command-center-center",
+          "title": null,
+          "bounds": [
+            608.2000122070312,
+            5.700000286102295,
+            601.6000366210938,
+            23.600000381469727
+          ]
+        },
+        {
+          "className": "action-item command-center-quick-pick",
+          "title": null,
+          "bounds": [
+            870.0375366210938,
+            6.5,
+            77.9124984741211,
+            22
+          ]
+        }
+      ],
+      "button": [
+        870.0375366210938,
+        6.5,
+        77.9124984741211,
+        22
+      ],
+      "css": {
+        "width": "600px",
+        "maxWidth": "600px",
+        "height": "22px",
+        "border": "0.8px",
+        "boxSizing": "content-box"
+      },
+      "nativeWindowBounds": [
+        24,
+        36,
+        1804,
+        836
+      ]
+    },
+    "normalExit": true,
+    "exitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselineProduct": "525bc5547db4f1c21e66c126332e70db0693e120",
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+      "build": {
+        "tree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "aotSha256": "17cf11232a78b72daeec6823b98a0d9ce87eaaf1fe3435f40433f7ca1e91c952",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "abi": 51,
+        "fixtureSha256": "663861370a4163772945cabde99ab65ed92ad1b0b3a045a0338e8c3318fdc07c"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "rendered titlebar activation and picker input, owned Win32 Escape and fullscreen/close",
+      "normal": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "narrow": {
+        "titlebar": [
+          0.0,
+          0.0,
+          647.2,
+          35.0
+        ],
+        "center": [
+          285.87109375,
+          5.5,
+          247.936,
+          24.0
+        ],
+        "viewportWidth": 647.2,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          669.6,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "narrowPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          647.2,
+          35.0
+        ],
+        "center": [
+          285.87109375,
+          5.5,
+          247.936,
+          24.0
+        ],
+        "viewportWidth": 647.2,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          669.6,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "narrowClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          647.2,
+          35.0
+        ],
+        "center": [
+          285.87109375,
+          5.5,
+          247.936,
+          24.0
+        ],
+        "viewportWidth": 647.2,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          669.6,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "normalRestored": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "normalPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "fileSearch": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-文件结果",
+          "one.txt",
+          "button-one.txt-0"
+        ]
+      },
+      "commands": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": ">Select for Compare",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "文件: Select for Compare"
+        ]
+      },
+      "commandsClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "zen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "nativeFullscreen": {
+        "hwndBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "zenClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "afterZen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 pointer, text, Escape and native fullscreen/close",
+      "fixtureSha256": "663861370a4163772945cabde99ab65ed92ad1b0b3a045a0338e8c3318fdc07c",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "fca0983de95e836e2a2fefb8ac5e4f1d052c543ca20abf0d420bdb68776e7863",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "normal": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "narrow": {
+        "titlebar": [
+          0.0,
+          0.0,
+          660.0,
+          35.0
+        ],
+        "center": [
+          288.50843811035156,
+          5.5,
+          216.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 660.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          660.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "narrowPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          660.0,
+          35.0
+        ],
+        "center": [
+          288.50843811035156,
+          5.5,
+          216.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 660.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          660.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "narrowClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          660.0,
+          35.0
+        ],
+        "center": [
+          288.50843811035156,
+          5.5,
+          216.49156188964844,
+          24.0
+        ],
+        "viewportWidth": 660.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          660.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "normalRestored": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "normalPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "fileSearch": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-文件结果",
+          "one.txt",
+          "button-one.txt-0"
+        ]
+      },
+      "commands": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": ">Select for Compare",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "文件: Select for Compare"
+        ]
+      },
+      "commandsClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "zen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "nativeFullscreen": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "zenPicker": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": []
+      },
+      "zenClosed": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "afterZen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": []
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "measurements": {
+    "windows": {
+      "normal": {
+        "viewport": 1204.0,
+        "searchWidth": 459.52
+      },
+      "narrow": {
+        "viewport": 647.2,
+        "searchWidth": 247.936
+      },
+      "zen": {
+        "viewport": 2048.0,
+        "searchWidth": 602.0
+      }
+    },
+    "linux": {
+      "normal": {
+        "viewport": 1217.0,
+        "searchWidth": 464.46
+      },
+      "narrow": {
+        "viewport": 660.0,
+        "searchWidth": 216.49156188964844
+      },
+      "zen": {
+        "viewport": 1920.0,
+        "searchWidth": 602.0
+      }
+    }
+  },
+  "overlay": {
+    "sourceTree": "7e4d320943df63a68d8aebb45306e7188b59b729",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "app/lib/workbench/title_bar.dart"
+    ]
+  },
+  "beforeFocusFix": {
+    "tree": "e0834f1e3c91d62b2ddfc39f18a091c0a2153313",
+    "narrow": {
+      "titlebar": [
+        0.0,
+        0.0,
+        660.0,
+        35.0
+      ],
+      "center": [
+        288.50843811035156,
+        5.5,
+        216.49156188964844,
+        24.0
+      ],
+      "viewportWidth": 660.0,
+      "dpr": 1.0,
+      "fullscreen": false,
+      "nativeBounds": [
+        0.0,
+        0.0,
+        660.0,
+        804.0
+      ],
+      "picker": false,
+      "pickerFocused": false,
+      "editorFocused": true,
+      "rows": []
+    },
+    "picker": {
+      "titlebar": [
+        0.0,
+        0.0,
+        660.0,
+        35.0
+      ],
+      "center": [
+        288.50843811035156,
+        5.5,
+        216.49156188964844,
+        24.0
+      ],
+      "viewportWidth": 660.0,
+      "dpr": 1.0,
+      "fullscreen": false,
+      "nativeBounds": [
+        0.0,
+        0.0,
+        660.0,
+        804.0
+      ],
+      "query": "",
+      "picker": true,
+      "pickerFocused": true,
+      "editorFocused": false,
+      "rows": []
+    },
+    "closed": {
+      "titlebar": [
+        0.0,
+        0.0,
+        660.0,
+        35.0
+      ],
+      "center": [
+        288.50843811035156,
+        5.5,
+        216.49156188964844,
+        24.0
+      ],
+      "viewportWidth": 660.0,
+      "dpr": 1.0,
+      "fullscreen": false,
+      "nativeBounds": [
+        0.0,
+        0.0,
+        660.0,
+        804.0
+      ],
+      "picker": false,
+      "pickerFocused": false,
+      "editorFocused": false,
+      "rows": []
+    }
+  }
+}
