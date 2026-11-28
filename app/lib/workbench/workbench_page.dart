@@ -1464,6 +1464,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       shortcut: _keybindings.shortcutFor(quickOpenCommandId),
       runWithArguments: _runQuickOpenAction,
     );
+    reg(commandCenterQuickOpenCommandId, '查看', '打开命令中心',
+        () async => _showQuickOpen(includeCommandCenterModes: true));
     reg('view.search', '查看', '全局搜索…', () async => _revealSearchView());
     reg(
       'workbench.action.moveView',
@@ -4615,6 +4617,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final c in _commands.all)
         if (c.id != 'breadcrumbs.toggleToOn' &&
             c.id != exitZenModeCommandId &&
+            c.id != commandCenterQuickOpenCommandId &&
             c.id != _holdLockedScrollingCommandId &&
             !problemsMenuCommands.contains(c.id) &&
             (showProblemsMessageCommands ||
@@ -5412,18 +5415,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  VoidCallback? _quickAccessHelpRedirect(String value, FocusNode? restoreFocus) {
+  VoidCallback? _quickAccessHelpRedirect(
+    String value,
+    FocusNode? restoreFocus, {
+    List<_QuickAccessEntry>? availableEntries,
+  }) {
     if (!value.startsWith('?')) return null;
-    return () => _showQuickAccessHelp(value, restoreFocus);
+    return () => _showQuickAccessHelp(value, restoreFocus,
+        availableEntries: availableEntries);
   }
 
-  List<_QuickAccessEntry> _quickAccessEntries(FocusNode? restoreFocus) => [
+  List<_QuickAccessEntry> _quickAccessEntries(
+    FocusNode? restoreFocus, {
+    bool includeCommandCenterModes = false,
+  }) =>
+      [
         (
           prefix: '',
           title: '转到文件',
           command: quickOpenCommandId,
           run: (value, _) => _showQuickOpen(
-              initialValue: value, restoreFocus: restoreFocus),
+              initialValue: value,
+              restoreFocus: restoreFocus,
+              includeCommandCenterModes: includeCommandCenterModes),
         ),
         (
           prefix: ':',
@@ -5522,7 +5536,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     FocusNode? restoreFocus, {
     required String? currentCommand,
   }) {
-    if (_quickAccessHelpRedirect(value, restoreFocus) case final help?) {
+    if (_quickAccessHelpRedirect(value, restoreFocus, availableEntries: entries)
+        case final help?) {
       return help;
     }
     final entry = _quickAccessPrefixedEntry(value, entries) ?? entries.first;
@@ -5533,9 +5548,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         unawaited(_openQuickAccessEntry(entry, value, entries, restoreFocus));
   }
 
-  void _showQuickAccessHelp(String value, FocusNode? restoreFocus) {
+  void _showQuickAccessHelp(
+    String value,
+    FocusNode? restoreFocus, {
+    List<_QuickAccessEntry>? availableEntries,
+  }) {
     if (!mounted) return;
-    final entries = _quickAccessEntries(restoreFocus);
+    final entries = availableEntries ?? _quickAccessEntries(restoreFocus);
 
     VoidCallback? match(String query) {
       if (!query.startsWith('?')) {
@@ -5570,8 +5589,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               detail: entry.prefix == '@:'
                   ? null
                   : _keybindings.shortcutFor(entry.command),
-              onRun: () => _openQuickAccessEntry(
-                  entry, entry.prefix, entries, restoreFocus),
+              onRun: entry.prefix.isEmpty
+                  ? () async => _showQuickOpen(restoreFocus: restoreFocus)
+                  : () => _openQuickAccessEntry(
+                      entry, entry.prefix, entries, restoreFocus),
             ),
       ],
     ));
@@ -5589,14 +5610,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     )?.call();
   }
 
+  List<QuickItem> _commandCenterModeItems(
+    List<_QuickAccessEntry> entries,
+    FocusNode? restoreFocus,
+  ) {
+    return [
+      for (final entry in entries)
+        if (const {'', '>', '@'}.contains(entry.prefix) &&
+            _commands.isEnabled(entry.command))
+          QuickItem(
+            label: entry.title,
+            description: [
+              if (entry.prefix.isNotEmpty) entry.prefix,
+              if (_keybindings.shortcutFor(entry.command) case final shortcut?)
+                shortcut,
+            ].join('  '),
+            initiallyActive: entry.prefix.isEmpty,
+            onRun: entry.prefix.isEmpty
+                ? () async => _showQuickOpen(restoreFocus: restoreFocus)
+                : () => _openQuickAccessEntry(
+                    entry, entry.prefix, entries, restoreFocus),
+          ),
+      QuickItem(
+        label: '更多',
+        description: '?',
+        onRun: () async => _showQuickAccessHelp('?', restoreFocus,
+            availableEntries: entries),
+      ),
+    ];
+  }
+
   void _showQuickOpen({
     String initialValue = '',
     FocusNode? restoreFocus,
+    bool includeCommandCenterModes = false,
   }) {
+    if (!mounted) return;
     final previousFocus = restoreFocus ?? QuickInput.externalFocus();
     final root = _workspaceRoot ?? Directory.current.path;
     final search = QuickOpenSearch();
-    final entries = _quickAccessEntries(previousFocus);
+    final entries = _quickAccessEntries(previousFocus,
+        includeCommandCenterModes: includeCommandCenterModes);
+    final modeItems = includeCommandCenterModes
+        ? _commandCenterModeItems(entries, previousFocus)
+        : const <QuickItem>[];
     final removedPaths = <String>{};
     ({String pattern, bool includeFileResults}) queryKey(String value) => (
           pattern: parseQuickOpenQuery(value).pathQuery,
@@ -5779,6 +5836,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final recent = matches.where((match) => match.recent);
           final files = matches.where((match) => !match.recent);
           return [
+            if (!key.includeFileResults) ...modeItems,
             if (recent.isNotEmpty) ...[
               const QuickItem(label: '最近打开', kind: QuickItemKind.separator),
               for (final match in recent)

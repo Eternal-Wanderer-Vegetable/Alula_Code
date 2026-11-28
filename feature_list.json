@@ -5589,6 +5589,20 @@
       "evidence": "普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-441",
+      "name": "P05.389 LAY-02/LAY-17 命令中心初始快速访问模式",
+      "description": "为标题栏的快速访问入口显示可用的文件、命令、文档符号与更多模式，核对默认项、前缀往返、普通打开及退出焦点。",
+      "dependencies": [
+        "feat-237",
+        "feat-251",
+        "feat-438"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版 Windows 125% DPI 隔离对照确认初始模式、选择 Go to File、前缀往返与普通窗口和 Zen 焦点。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

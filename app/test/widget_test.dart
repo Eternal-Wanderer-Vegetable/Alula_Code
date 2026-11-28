@@ -7,6 +7,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/status_bar.dart';
 import 'package:alula_app/workbench/title_bar.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/explorer_preview.dart';
+import 'helpers/native_drag_drop.dart';
 
 Future<void> _waitForWidget(
   WidgetTester tester,
@@ -613,6 +615,134 @@ void main() {
       isNotNull,
       reason: '执行后应把焦点交还给工作台',
     );
+  });
+
+  testWidgets('Command Center initial modes dispatch existing Quick Access',
+      (tester) async {
+    mockNativeDragDrop();
+    expect(
+      RecentHistoryStore(path: '${session.resolvePath()}.recent-history')
+          .recordFile('$fixtureRoot/src/main.rs'),
+      isTrue,
+    );
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 400));
+    final rust = tester.state<RustTextInputFieldState>(
+        find.byType(RustTextInputField));
+    rust.requestFocus();
+    await tester.pump();
+    final editorFocus = FocusManager.instance.primaryFocus;
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final commandCenter = find.byKey(const ValueKey('command-center-control'));
+    final picker = find.byKey(const ValueKey('quick-input'));
+    final field = find.descendant(of: picker, matching: find.byType(TextField));
+
+    Finder row(String label) => find.byKey(ValueKey('qi-$label'));
+    Future<void> waitForRow(String label) async {
+      final item = row(label);
+      for (var attempt = 0; attempt < 100 && item.evaluate().isEmpty; attempt++) {
+        await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump();
+      }
+      expect(item, findsOneWidget);
+    }
+
+    Future<void> expectModes({String value = ''}) async {
+      await waitForRow('转到文件');
+      expect(tester.widget<TextField>(field).controller!.text, value);
+      expect(row('转到文件'), findsOneWidget);
+      expect(row('显示并运行命令'), findsOneWidget);
+      expect(row('转到编辑器中的符号'), findsOneWidget);
+      expect(row('更多'), findsOneWidget);
+      await waitForRow('main.rs');
+    }
+
+    Future<void> refresh() async {
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump(const Duration(milliseconds: 240));
+      await tester.pump();
+    }
+
+    Future<void> escape() async {
+      await pressChord(tester, LogicalKeyboardKey.escape);
+      await refresh();
+      expect(picker, findsNothing);
+    }
+
+    Future<void> type(String value) async {
+      await tester.enterText(field, value);
+      await refresh();
+    }
+
+    await title.commands.execute(quickOpenCommandId);
+    await refresh();
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+
+    await tester.tap(commandCenter);
+    await refresh();
+    await expectModes();
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await refresh();
+    expect(picker, findsOneWidget);
+    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+
+    await tester.tap(commandCenter);
+    await refresh();
+    await expectModes();
+    await type('main');
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await type('  ');
+    await expectModes(value: '  ');
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('显示并运行命令'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '>');
+    expect(tester.widget<TextField>(field).decoration!.hintText,
+        '输入命令名（> 前缀可省）');
+    await type('>打开命令中心');
+    expect(row('查看: 打开命令中心'), findsNothing);
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('转到编辑器中的符号'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '@');
+    await type('');
+    await expectModes();
+
+    await tester.tap(row('更多'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, '?');
+    expect(row(':'), findsOneWidget);
+    await type('');
+    await expectModes();
+    await tester.tap(row('更多'));
+    await refresh();
+    await tester.tap(row('…'));
+    await refresh();
+    expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+    expect(row('转到文件'), findsNothing);
+    await waitForRow('main.rs');
+    await escape();
+    expect(FocusManager.instance.primaryFocus, same(editorFocus));
   });
 
   testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',

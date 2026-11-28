@@ -581,12 +581,13 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
               child: ListenableBuilder(
                 listenable: widget.commands,
                 builder: (context, _) {
-                  final command = widget.commands.byId(quickOpenCommandId);
-                  final enabled = command != null &&
-                      widget.commands.isEnabled(quickOpenCommandId);
-                  final hint = command?.shortcut == null
+                  final enabled =
+                      widget.commands.isEnabled(_commandCenterActionId);
+                  final shortcut =
+                      widget.commands.byId(quickOpenCommandId)?.shortcut;
+                  final hint = shortcut == null
                       ? '打开快速访问'
-                      : '打开快速访问，${command!.shortcut}';
+                      : '打开快速访问，$shortcut';
                   return Tooltip(
                     message: widget.windowTitle,
                     child: Semantics(
@@ -993,6 +994,11 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     }
   }
 
+  String get _commandCenterActionId =>
+      widget.commands.byId(commandCenterQuickOpenCommandId) != null
+          ? commandCenterQuickOpenCommandId
+          : quickOpenCommandId;
+
   void _openCommandCenter() {
     _rememberCommandCenterFocus();
     final focusToReturn = _commandCenterFocusToReturn;
@@ -1002,7 +1008,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       // Quick Access captures the restored focus when it opens.
       FocusManager.instance.applyFocusChangesIfNeeded();
     }
-    unawaited(widget.commands.execute(quickOpenCommandId));
+    unawaited(widget.commands.execute(_commandCenterActionId));
   }
 
   List<Widget> _buildWindowButtons() {
