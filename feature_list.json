@@ -5462,6 +5462,20 @@
       "evidence": "主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-432",
+      "name": "P05.380 LAY-14 默认命令面板位置",
+      "description": "主窗默认自定义标题栏使用固定版 Command Palette 顶部定位。普通、Zen、退出均距视口顶部 6 逻辑像素并水平居中，输入可聚焦及关闭。",
+      "dependencies": [
+        "feat-103",
+        "feat-124",
+        "feat-431"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

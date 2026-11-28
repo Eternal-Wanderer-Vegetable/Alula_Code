@@ -197,6 +197,7 @@ class QuickInput {
     BuildContext context, {
     required String hint,
     required List<QuickItem> items,
+    double? topInset,
     String emptyMessage = '无匹配项',
     String Function(String query)? emptyMessageForQuery,
     CommandService? commands,
@@ -258,6 +259,7 @@ class QuickInput {
           child: Material(
             type: MaterialType.transparency,
             child: _QuickInputPanel(
+              topInset: topInset ?? 56,
               hint: hint,
               items: items,
               emptyMessage: emptyMessage,
@@ -300,6 +302,7 @@ class QuickInput {
 
 class _QuickInputPanel extends StatefulWidget {
   const _QuickInputPanel({
+    required this.topInset,
     required this.hint,
     required this.items,
     required this.emptyMessage,
@@ -329,6 +332,7 @@ class _QuickInputPanel extends StatefulWidget {
     required this.onHandled,
   });
 
+  final double topInset;
   final String hint;
   final List<QuickItem> items;
   final String emptyMessage;
@@ -1320,7 +1324,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final maxListHeight = listHeight + 6 + _listPadding.vertical;
     final panel = Container(
       key: const ValueKey('quick-input'),
-      margin: const EdgeInsets.only(top: 56),
+      margin: EdgeInsets.only(top: widget.topInset),
       width: math.min(600.0, window.width * 0.62),
       decoration: BoxDecoration(
         color: const Color(0xFF252932),

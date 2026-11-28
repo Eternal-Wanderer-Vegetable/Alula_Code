@@ -4623,8 +4623,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       description: _keybindings.shortcutFor(id) ?? byId[id]!.shortcut,
       commandId: id,
     );
+    final customTitleBar =
+        WindowChromeConfigurationScope.maybeOf(context)?.isCustom ?? true;
     QuickInput.show(
       context,
+      topInset: customTitleBar ? 6 : null,
       hint: '输入命令名（> 前缀可省）',
       queryPrefix: '>',
       initialValue: initialValue,

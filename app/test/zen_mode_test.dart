@@ -519,6 +519,43 @@ void main() {
     },
   );
 
+  testWidgets('Command Palette placement stays at the window top in Zen',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final card = find.byKey(const ValueKey('quick-input'));
+
+    Rect paintedCard() {
+      final style = tester.widget<Container>(card).decoration;
+      return tester.getRect(find.descendant(
+        of: card,
+        matching: find.byWidgetPredicate((widget) =>
+            widget is DecoratedBox && identical(widget.decoration, style)),
+      ));
+    }
+
+    Future<void> expectCommandPalette() async {
+      await execute(tester, showCommandsCommandId);
+      final bounds = paintedCard();
+      expect(bounds.top, 6);
+      expect(bounds.center.dx, 1200);
+      final input =
+          find.descendant(of: card, matching: find.byType(EditableText));
+      expect(tester.widget<EditableText>(input).focusNode.hasFocus, isTrue);
+      await pressEscape(tester);
+      expect(card, findsNothing);
+    }
+
+    await expectCommandPalette();
+    await execute(tester, 'workbench.action.toggleZenMode');
+    await expectCommandPalette();
+    await execute(tester, 'workbench.action.toggleZenMode');
+    await expectCommandPalette();
+
+    await execute(tester, quickOpenCommandId);
+    expect(paintedCard().top, 56);
+    await pressEscape(tester);
+  });
+
   testWidgets(
     'the zen toggle round-trips through the registered command',
     (tester) async {
