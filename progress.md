@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.372 / feat-424 完成。主窗在辅助窗移交、原生退出及会话写入后关闭。Windows 和 Linux 四次正常退出及两次移交冲突通过，定向 48/48、专题 143/143，Flutter 1,990 项通过、2 项跳过。产品 5026e00 的 CI 46113509983 四项及 Platform Availability 46113506964 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.372-main-close-with-auxiliary.md。
 - P05.371 / feat-423 完成。共用 Hold 键位在失焦后恢复常驻开关，按住切窗的重复键不再触发反转。Windows 和 Linux 的单键及组合键各通过 17 项，专题 215/215，Flutter 1,989 项通过、2 项跳过。产品 28f447f 的 CI 46109080964 四项及 Platform Availability 46109078191 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.371-cross-window-hold-repeat.md。
 - P05.370 / feat-422 完成限定验收。辅助窗限定键位可临时反转共享锁定，键释放、失焦和关闭均恢复。Windows 与 Linux 的单键和组合键各通过 19 项，专题 218/218，Flutter 1,986 项通过、2 项跳过。产品 ff52992 的 CI 46105313832 四项及 Platform Availability 46105312940 Windows/Linux 通过。X11 切换到同样绑定 Hold 的窗口时会重触发，保留复现并继续处理。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md。
 - P05.369 / feat-421 完成。按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md。
@@ -2399,7 +2400,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- 核对主窗在辅助窗仍打开时的退出。P05.369 Windows 夹具中断后出现退出码 3221226525，P05.371 Linux 中断关闭也出现退出码 -11。正常先关辅助窗的复验通过。
+- 主窗在辅助窗打开时的退出已通过 P05.372 验证。核对 LAY-15 相关子项、LAY-12 关闭依赖和矩阵行验收。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
