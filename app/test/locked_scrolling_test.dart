@@ -461,6 +461,15 @@ void main() {
       try {
         await h.mount(tester);
         expect(statusEntry, findsNothing);
+        final encoding = find.byKey(const ValueKey('status-encoding'));
+        final lineEnding = find.byKey(const ValueKey('status-line-ending'));
+        final notifications =
+            find.byKey(const ValueKey('status-notifications'));
+        final notificationsBefore = tester.getRect(notifications);
+        expect(
+          notificationsBefore.right,
+          greaterThan(tester.view.physicalSize.width - 55),
+        );
 
         await h.commands!.execute('workbench.action.toggleLockedScrolling');
         await tester.pumpAndSettle();
@@ -469,6 +478,10 @@ void main() {
         expect(find.descendant(of: statusEntry, matching: find.text('滚动已锁定')),
             findsOneWidget);
         expect(find.bySemanticsLabel('滚动已锁定'), findsOneWidget);
+        final bounds = tester.getRect(statusEntry);
+        expect(bounds.right, lessThan(tester.getTopLeft(encoding).dx));
+        expect(bounds.right, lessThan(tester.getTopLeft(lineEnding).dx));
+        expect(tester.getRect(notifications), notificationsBefore);
         expect(h.sessionStore!.tryLoad()?['lockedScrolling'], isTrue);
 
         await tester.tap(statusEntry);

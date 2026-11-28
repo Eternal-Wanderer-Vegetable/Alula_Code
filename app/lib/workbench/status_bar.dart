@@ -121,7 +121,7 @@ class AlulaStatusBar extends StatelessWidget {
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
-          Flexible(
+          Expanded(
             child: Text(
               '$lspStatus$combinedCount · 标签 $tabCount · '
               'ABI v$abiVersion · 同步 $syncCount 次',
@@ -163,6 +163,10 @@ class AlulaStatusBar extends StatelessWidget {
                 ),
               ),
             ),
+          ],
+          if (lockedScrolling && onToggleLockedScrolling != null) ...[
+            const SizedBox(width: 8),
+            LockedScrollingStatusItem(onToggle: onToggleLockedScrolling!),
           ],
           if (encodingLabel != null && onEncodingTap != null) ...[
             const SizedBox(width: 10),
@@ -220,10 +224,6 @@ class AlulaStatusBar extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-          if (lockedScrolling && onToggleLockedScrolling != null) ...[
-            const SizedBox(width: 8),
-            LockedScrollingStatusItem(onToggle: onToggleLockedScrolling!),
           ],
           if (notificationButton != null && !notificationAtStart) ...[
             const SizedBox(width: 8),
@@ -329,13 +329,21 @@ class LockedScrollingStatusItem extends StatelessWidget {
           child: const Tooltip(
             message: '滚动锁定已开启',
             excludeFromSemantics: true,
-            child: ColoredBox(
-              color: Color(0xFF2B435A),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: Text(
-                  '滚动已锁定',
-                  style: TextStyle(color: Colors.white, fontSize: 11),
+            child: SizedBox(
+              height: 20,
+              child: ColoredBox(
+                color: Color(0xFF2B435A),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Center(
+                    widthFactor: 1,
+                    child: Text(
+                      '滚动已锁定',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      maxLines: 1,
+                      softWrap: false,
+                    ),
+                  ),
                 ),
               ),
             ),
