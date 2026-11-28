@@ -17327,9 +17327,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _closeTabsForAction(
     EditorGroup group,
     OpenDoc target,
-    EditorTabCloseOperation action,
-  ) async {
-    if (!group.docs.any((doc) => identical(doc, target))) return;
+    EditorTabCloseOperation action, {
+    bool Function()? isCurrent,
+  }) async {
+    if (isCurrent?.call() == false ||
+        !group.docs.any((doc) => identical(doc, target))) {
+      return;
+    }
     for (final doc in group.docs.toList(growable: false)) {
       for (final view in _viewsOf(doc).toList(growable: false)) {
         _flushInput(view, commitComposition: true);
@@ -17351,16 +17355,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         for (final doc in group.docs)
           if (doc.id == id) (group: group, doc: doc),
     ];
-    await _requestCloseEditorViews(targets);
+    await _requestCloseEditorViews(targets, isCurrent: isCurrent);
   }
 
-  Future<void> _closeAllEditorsInFocusedGroup() async {
-    final group = _focused;
-    await _requestCloseEditorViews([
-      for (final doc in group.docs)
-        if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
-    ]);
-  }
+  Future<void> _closeAllEditorsInFocusedGroup() =>
+      _closeNonStickyGroupEditors(_focused);
+
+  Future<void> _closeNonStickyGroupEditors(
+    EditorGroup group, {
+    bool Function()? isCurrent,
+  }) =>
+      _requestCloseEditorViews([
+        for (final doc in group.docs)
+          if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
+      ], isCurrent: isCurrent);
 
   Future<void> _closeAllEditorGroups() async {
     await _requestCloseEditorViews([
@@ -27252,10 +27260,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         break;
       case 'close-all':
-        await _requestCloseEditorViews([
-          for (final doc in group.docs)
-            if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
-        ]);
+        await _closeNonStickyGroupEditors(group);
         break;
     }
   }
@@ -28361,10 +28366,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _showRecentEditorPicker({
     required bool allGroups,
     QuickInputNavigation? navigation,
+    EditorGroup? targetGroup,
   }) {
     if (_recentEditorPickerOpen) return;
-    final currentGroup = _focused;
-    final current = currentGroup.active;
+    final previousGroup = _focused;
+    final previous = previousGroup.active;
+    final currentGroup = targetGroup ?? previousGroup;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    final queryPrefix = targetGroup == null ? null : 'edt active';
     final groups = allGroups ? _groups.values : [currentGroup];
     final candidates = <({EditorGroup group, OpenDoc doc, int index})>[];
     final labels = <OpenDoc, String>{};
@@ -28397,13 +28406,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final groupNumbers = {
       for (final (index, group) in _groups.values.indexed) group: index + 1,
     };
+    final temporaryGroupFocus = !identical(currentGroup, previousGroup);
+    if (temporaryGroupFocus) {
+      setState(() => _focusedRegion = currentGroup.region);
+      _syncCommandContext();
+    }
     _recentEditorPickerOpen = true;
-    unawaited(QuickInput.show(
+    var editorPicked = false;
+    final picker = QuickInput.show(
       context,
       hint: allGroups ? '最近使用的编辑器' : '组内最近使用的编辑器',
       navigation: navigation,
+      initialValue: queryPrefix == null ? '' : '$queryPrefix ',
+      queryPrefix: queryPrefix,
       restoreFocus:
-          current == null ? null : _focusNodeFor(currentGroup, current),
+          previous == null ? null : _focusNodeFor(previousGroup, previous),
       onClose: () => _recentEditorPickerOpen = false,
       items: [
         for (final (:group, :doc, index: _) in candidates)
@@ -28413,13 +28430,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ? '编辑器组 ${groupNumbers[group]}'
                 : null,
             onRun: () async {
-              if (mounted && identical(_groups[group.region], group)) {
+              if (mounted &&
+                  (targetGroup == null ||
+                      (workspaceGeneration == _quickOpenWorkspaceGeneration &&
+                          group.docs.contains(doc))) &&
+                  identical(_groups[group.region], group)) {
+                editorPicked = true;
                 _activateEditorFromOverflow(group, doc.id);
               }
             },
           ),
       ],
-    ));
+    );
+    unawaited(picker.then((_) {
+      if (mounted &&
+          temporaryGroupFocus &&
+          !editorPicked &&
+          workspaceGeneration == _quickOpenWorkspaceGeneration &&
+          _focusedRegion == currentGroup.region &&
+          identical(_groups[currentGroup.region], currentGroup) &&
+          identical(_groups[previousGroup.region], previousGroup)) {
+        setState(() => _focusedRegion = previousGroup.region);
+        _syncCommandContext();
+      }
+    }));
   }
 
   void _activateEditorFromOverflow(EditorGroup group, int documentId) {
@@ -28618,6 +28652,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final defaultTabMode = _editorTabMode.value == EditorTabMode.multiple;
+    final showGroupMenu = defaultTabMode && g.docs.isNotEmpty;
+    final lspLabel = _lspReady
+        ? 'LSP 运行中'
+        : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP');
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    bool isCurrentGroup() =>
+        mounted &&
+        workspaceGeneration == _quickOpenWorkspaceGeneration &&
+        identical(_groups[g.region], g);
     final actions = <Widget>[
       // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
       if (g.locked)
@@ -28648,16 +28691,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           icon: const Icon(Icons.splitscreen, size: 16),
           visualDensity: VisualDensity.compact,
         ),
-      IconButton(
-        tooltip: _lspReady
-            ? 'LSP 运行中'
-            : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP'),
-        onPressed: _commands.isEnabled('lsp.start')
-            ? () => _runCommand('lsp.start')
-            : null,
-        icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow, size: 16),
-        visualDensity: VisualDensity.compact,
-      ),
+      if (!showGroupMenu)
+        IconButton(
+          tooltip: lspLabel,
+          onPressed: _commands.isEnabled('lsp.start')
+              ? () => _runCommand('lsp.start')
+              : null,
+          icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow, size: 16),
+          visualDensity: VisualDensity.compact,
+        ),
       IconButton(
         tooltip: '补全    Ctrl+Space',
         onPressed: _commands.isEnabled('editor.completion')
@@ -28769,6 +28811,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : null,
           icon: const Icon(Icons.fact_check_outlined, size: 16),
           visualDensity: VisualDensity.compact,
+        ),
+      if (showGroupMenu)
+        PopupMenuButton<String>(
+          key: ValueKey('editor-group-more-actions-${g.region}'),
+          tooltip: '更多操作',
+          icon: const Icon(Icons.more_horiz, size: 16),
+          style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
+          itemBuilder: (_) => [
+            const PopupMenuItem(
+              key: ValueKey('editor-group-more-show-opened'),
+              value: 'show-opened',
+              child: Text('显示已打开的编辑器'),
+            ),
+            const PopupMenuDivider(),
+            const PopupMenuItem(
+              key: ValueKey('editor-group-more-close-all'),
+              value: 'close-all',
+              child: Text('全部关闭'),
+            ),
+            const PopupMenuItem(
+              key: ValueKey('editor-group-more-close-saved'),
+              value: 'close-saved',
+              child: Text('关闭已保存'),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem(
+              key: const ValueKey('editor-group-more-start-lsp'),
+              value: 'start-lsp',
+              enabled: _commands.isEnabled('lsp.start'),
+              child: Text(lspLabel),
+            ),
+          ],
+          onSelected: (action) {
+            if (!isCurrentGroup()) return;
+            switch (action) {
+              case 'show-opened':
+                _showRecentEditorPicker(allGroups: false, targetGroup: g);
+              case 'close-all':
+                unawaited(_closeNonStickyGroupEditors(
+                  g,
+                  isCurrent: isCurrentGroup,
+                ));
+              case 'close-saved':
+                final anchor = g.active;
+                if (anchor != null) {
+                  unawaited(_closeTabsForAction(
+                    g,
+                    anchor,
+                    EditorTabCloseOperation.closeSaved,
+                    isCurrent: isCurrentGroup,
+                  ));
+                }
+              case 'start-lsp':
+                _runCommand('lsp.start');
+            }
+          },
         ),
       const SizedBox(width: 6),
     ];

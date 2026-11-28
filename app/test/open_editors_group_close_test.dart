@@ -196,6 +196,92 @@ void main() {
     }
   }
 
+  Finder activeSplit(String region) => find.descendant(
+        of: find.byKey(ValueKey('editor-tab-strip-$region')),
+        matching: find.byTooltip('拆分编辑器'),
+      );
+
+  Future<void> chooseGroupToolbar(
+    WidgetTester tester,
+    String region,
+    String action,
+  ) async {
+    final button = find.byKey(ValueKey('editor-group-more-actions-$region'));
+    expect(button, findsOneWidget);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey('editor-group-more-$action')));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('group toolbar picker uses the clicked group and restores focus',
+      (tester) async {
+    await prepare(tester);
+    seed(target: [10], other: [10, 20]);
+    await mount(tester);
+
+    expect(activeSplit('editor-2'), findsOneWidget);
+    await chooseGroupToolbar(tester, 'editor', 'show-opened');
+    final picker = find.byKey(const ValueKey('quick-input'));
+    expect(picker, findsOneWidget);
+    final query =
+        find.descendant(of: picker, matching: find.byType(EditableText));
+    expect(tester.widget<EditableText>(query).controller.text, 'edt active ');
+    expect(find.byKey(const ValueKey('qi-doc_10.rs')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-doc_20.rs')), findsNothing);
+    expect(activeSplit('editor'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(activeSplit('editor-2'), findsOneWidget);
+
+    await chooseGroupToolbar(tester, 'editor', 'show-opened');
+    await tester.tap(find.byKey(const ValueKey('qi-doc_10.rs')));
+    await tester.pumpAndSettle();
+    expect(activeSplit('editor'), findsOneWidget);
+    expect(_tab('editor-2', 20), findsOneWidget);
+    await activate(tester, 'editor-2', 20);
+    await chooseGroupToolbar(tester, 'editor', 'close-saved');
+    await finishIo(tester);
+    expect(_tab('editor', 10), findsNothing);
+    expect(_tab('editor-2', 10), findsOneWidget);
+    expect(_tab('editor-2', 20), findsOneWidget);
+    for (final entry in files.entries) {
+      expect(entry.value.readAsStringSync(), original(entry.key));
+    }
+  });
+
+  testWidgets(
+      'group toolbar closes saved or all views inside the clicked group',
+      (tester) async {
+    await prepare(tester);
+    seed(target: [10, 11, 12], other: [11, 20], sticky: [10]);
+    await mount(tester);
+    const unsaved = 'fn changed_12() { /* 🐙 */ }\n';
+    await edit(tester, 'editor', 12, unsaved);
+    await activate(tester, 'editor-2', 20);
+
+    await chooseGroupToolbar(tester, 'editor', 'close-saved');
+    await finishIo(tester);
+    expect(_tab('editor', 10), findsOneWidget);
+    expect(_tab('editor', 11), findsNothing);
+    expect(_tab('editor', 12), findsOneWidget);
+    expect(_tab('editor-2', 11), findsOneWidget);
+    expect(_tab('editor-2', 20), findsOneWidget);
+    expect(find.byKey(_dirtyDialog), findsNothing);
+
+    await chooseGroupToolbar(tester, 'editor', 'close-all');
+    final dialog = find.byKey(_dirtyDialog);
+    expect(dialog, findsOneWidget);
+    await tester.tap(find.descendant(of: dialog, matching: find.text('取消')));
+    await tester.pumpAndSettle();
+    expect(_tab('editor', 10), findsOneWidget);
+    expect(_tab('editor', 12), findsOneWidget);
+    expect(_tab('editor-2', 11), findsOneWidget);
+    expect(files[12]!.readAsStringSync(), original(12));
+    expect(activeSplit('editor-2'), findsOneWidget);
+  });
+
   testWidgets(
       'fullPath group close targets the nonfocused group, not its sorted first row',
       (tester) async {
