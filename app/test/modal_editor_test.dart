@@ -6,6 +6,7 @@ import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/modal_editor.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -174,6 +175,112 @@ void main() {
     await tester.pumpAndSettle();
     expect(modal, findsNothing);
     expect(file.readAsBytesSync(), utf8.encode(draft));
+  });
+
+  List<Map<String, Object?>> journalEntriesFor(File file) {
+    final groups = (sessionStore.tryLoad()!['groups'] as List)
+        .cast<Map<String, Object?>>();
+    return groups
+        .expand((group) => (group['docs'] as List).cast<Map<String, Object?>>())
+        .where((entry) =>
+            entry['path'] is String &&
+            File(entry['path'] as String).absolute.path == file.absolute.path)
+        .toList();
+  }
+
+  testWidgets('owner close preserves a dirty modal document across restart',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final source = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    const draft = '{"note":"重启后恢复🦉"}\n';
+    await tester.enterText(
+      find.descendant(of: modal, matching: find.byType(EditableText)),
+      draft,
+    );
+    await tester.pumpAndSettle();
+    final doc = tester
+        .widget<RustTextInputField>(
+          find.descendant(of: modal, matching: find.byType(RustTextInputField)),
+        )
+        .inputWindow
+        .document;
+    expect(doc.resync().content, draft);
+    expect(doc.isDirty, isTrue);
+    final title = tester.widget<AlulaTitleBar>(
+      find.byType(AlulaTitleBar, skipOffstage: false),
+    );
+    var nativeCloseCalled = false;
+    final closed = title.closeWindow!(() async {
+      nativeCloseCalled = true;
+    });
+    await tester.pumpAndSettle();
+    await closed;
+    expect(nativeCloseCalled, isTrue);
+
+    void expectDurableDraft() {
+      final recovered = journalEntriesFor(file);
+      expect(recovered, hasLength(1));
+      expect(recovered.single['text'], draft);
+      expect(file.readAsBytesSync(), source);
+    }
+
+    expectDurableDraft();
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    expectDurableDraft();
+
+    await mountPage(tester);
+    final resumed = tester
+        .widget<RustTextInputField>(
+          find.byWidgetPredicate((widget) =>
+              widget is RustTextInputField && widget.inputWindow.text == draft),
+        )
+        .inputWindow
+        .document;
+    expect(resumed.resync().content, draft);
+    expect(resumed.isDirty, isTrue);
+    expect(file.readAsBytesSync(), source);
+  });
+
+  testWidgets('owner close keeps the modal draft when journal writing fails',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final file = File('${workspace.path}/settings.json');
+    final source = file.readAsBytesSync();
+    await openSettingsByExplorer(tester);
+    const draft = '{"note":"保留草稿🦉"}\n';
+    final input =
+        find.descendant(of: modal, matching: find.byType(EditableText));
+    await tester.enterText(input, draft);
+    await tester.pumpAndSettle();
+
+    final journal = File('${baseOf()}/session.json');
+    final previous = journal.renameSync('${baseOf()}/session-held.json');
+    final obstruction = Directory(journal.path)..createSync();
+    final title = tester.widget<AlulaTitleBar>(
+      find.byType(AlulaTitleBar, skipOffstage: false),
+    );
+    var nativeCloseCalls = 0;
+    Future<void> nativeClose() async {
+      nativeCloseCalls++;
+    }
+
+    await title.closeWindow!(nativeClose);
+    await tester.pumpAndSettle();
+    expect(nativeCloseCalls, 0);
+    expect(modal, findsOneWidget);
+    expect(tester.widget<EditableText>(input).controller.text, draft);
+    expect(file.readAsBytesSync(), source);
+
+    obstruction.deleteSync();
+    previous.renameSync(journal.path);
+    await title.closeWindow!(nativeClose);
+    await tester.pumpAndSettle();
+    expect(nativeCloseCalls, 1);
+    expect(journalEntriesFor(file).single['text'], draft);
+    expect(file.readAsBytesSync(), source);
   });
 
   group('ModalEditorPreferences', () {

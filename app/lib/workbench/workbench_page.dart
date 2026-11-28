@@ -801,7 +801,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _zenPreZenSidebarCollapsed = false;
   bool _zenPreZenPanelCollapsed = false;
   // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
-  OpenDoc? _modalEditorDoc;
+  final _detachedModalDocuments = <String, OpenDoc>{};
 
   // LAY-19a：欢迎页（编辑器区整页视图；上游为编辑器标签页，差异登记）。
   bool _welcomeVisible = false;
@@ -5873,6 +5873,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return saved;
   }
 
+  Iterable<OpenDoc> get _modalDraftsForRecovery =>
+      _closingWorkbenchWindow || _disposing
+          ? _detachedModalDocuments.values.where((doc) => doc.isDirty)
+          : const <OpenDoc>[];
+
   /// 会话 journal 序列化：文档文本只在 untitled 或已脏时落盘；
   /// 干净文件恢复时从磁盘重读（journal 保持小）。
   Map<String, Object?> _encodeSession() => {
@@ -5908,7 +5913,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           for (final g in _groups.values)
             {
               'region': g.region,
-              'active': g.activeDocId,
+              'active': g.region == _focusedRegion
+                  ? _modalDraftsForRecovery.lastOrNull?.id ?? g.activeDocId
+                  : g.activeDocId,
               if (g.locked) 'locked': true,
               'sticky': [
                 for (final doc in g.docs)
@@ -5918,7 +5925,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   g.docs.any((d) => d.id == g.previewDocId && !d.isDirty))
                 'preview': g.previewDocId,
               'docs': [
-                for (final d in g.docs)
+                for (final d in g.region == _focusedRegion
+                    ? g.docs.followedBy(_modalDraftsForRecovery)
+                    : g.docs)
                   {
                     'id': d.id,
                     if (d._splitEditor case final split?)
@@ -15294,11 +15303,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final core = _core;
     if (core == null) return;
+    if (_detachedModalDocuments.containsKey(_canonicalPath(path))) return;
     // LAY-13a：配置编辑器路径按 useModal 偏好以模态对话框打开（不进标签）。
-    if (!inBackground &&
+    if (!_closingWorkbenchWindow &&
+        !inBackground &&
         expectedContent == null &&
         _findOpenDocumentByPath(path) == null &&
-        !(_modalEditorDoc?.path == path) &&
         _modalEditorUseMode.opensAutomatically(path)) {
       await _openModalEditor(core, path);
       return;
@@ -15539,8 +15549,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 以模态对话框打开配置编辑器路径（脱离视图，不入组；上游 useModal）。
   Future<void> _openModalEditor(AlulaCore core, String path) async {
-    final doc = await _createDetachedModalDoc(core, path);
+    final doc = _createDetachedModalDoc(core, path);
     if (doc == null || !mounted) return;
+    final modalPath = _canonicalPath(path);
+    _detachedModalDocuments[modalPath] = doc;
     _recordRecentFile(path);
     final navigator = Navigator.of(context, rootNavigator: true);
     late final RawDialogRoute<bool> route;
@@ -15579,6 +15591,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             }
           }
         }
+        if (!moveToTab) _detachedModalDocuments.remove(modalPath);
         navigator.pop(moveToTab);
       } finally {
         resolvingClose = false;
@@ -15633,11 +15646,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     final moveBack = await navigator.push(route);
     await route.completed;
+    if (identical(_detachedModalDocuments[modalPath], doc)) {
+      _detachedModalDocuments.remove(modalPath);
+    }
     if (!mounted) return;
     if (moveBack == true) {
       // 移回标签：同一 OpenDoc 视图入焦点组（状态/选区随行）。
       setState(() {
-        _modalEditorDoc = null;
         final group = _focused;
         group.docs.add(doc);
         group.activeDocId = doc.id;
@@ -15650,7 +15665,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _disposeModalEditorDoc(doc);
   }
 
-  Future<OpenDoc?> _createDetachedModalDoc(AlulaCore core, String path) async {
+  OpenDoc? _createDetachedModalDoc(AlulaCore core, String path) {
     try {
       final decoded = _readDiskDocument(core, path);
       final id = _nextDocId++;
@@ -15677,7 +15692,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _editorFocusNodes.remove(_focusKeyFor(_focused, doc))?.dispose();
     doc.disposeView();
-    setState(() => _modalEditorDoc = null);
+    _scheduleStateSave();
+  }
+
+  void _flushModalEditorInputs() {
+    for (final doc in _detachedModalDocuments.values) {
+      _flushInput(doc, commitComposition: true);
+      _updateDirty(doc);
+    }
   }
 
   // ---------- Zen 模式（LAY-14） ----------
@@ -24678,6 +24700,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final binding in compareBindings) {
       _flushInput(binding.view, commitComposition: true);
     }
+    _flushModalEditorInputs();
     _shutdownLspWorkspace();
     // 退出前把未落盘的布局与会话冲写
     widget.layoutStore.save(_layout.root);
@@ -24689,6 +24712,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final d in _allDocViews.toList()) {
       d.disposeView();
     }
+    for (final doc in _detachedModalDocuments.values) {
+      doc.disposeView();
+    }
+    _detachedModalDocuments.clear();
     _auxiliaryTransferSourceLocks.clear();
     _discardCallHierarchy();
     _definitionPeekFocus.dispose();
@@ -24776,6 +24803,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (!mounted || _disposing) return;
       _stateSaveTimer?.cancel();
+      _flushModalEditorInputs();
       if (_saveWindowState()) {
         await nativeClose();
         nativeCloseRequested = true;
