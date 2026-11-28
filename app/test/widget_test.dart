@@ -416,7 +416,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
         reason: '新组应复制活动文档');
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
     expect(find.byType(RustTextInputField), findsNWidgets(2));
 
     // 文件打开进「焦点组」（新组）
@@ -435,7 +439,11 @@ void main() {
     await tester.tap(closeMainTab);
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('tab-3')), findsNothing);
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
 
     // 关闭复制的 Cargo.toml → 组清空 → 自动摘除并组。
     final closeCopiedTab = find.byKey(const ValueKey('close-tab-editor-2-2'));
@@ -561,7 +569,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const ValueKey('quick-input')), findsNothing,
         reason: '执行后面板关闭');
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
   });
 
   testWidgets('P05.8 Command Center 标题入口打开现有命令面板并执行动作', (tester) async {
@@ -588,7 +600,11 @@ void main() {
     await pressChord(tester, LogicalKeyboardKey.enter);
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const ValueKey('quick-input')), findsNothing);
-    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('editor-tab-strip-editor-2')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget);
     final primaryFocus = FocusManager.instance.primaryFocus;
     expect(primaryFocus, isNotNull);
     expect(

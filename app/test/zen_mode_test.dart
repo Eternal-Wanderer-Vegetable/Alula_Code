@@ -592,6 +592,51 @@ void main() {
     expect(tester.getRect(commandCenter), initialCenter);
   });
 
+  testWidgets('the default split toolbar follows the active editor group',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await openEditor(tester);
+    final firstGroup = zenStrip('editor');
+    final secondGroup = zenStrip('editor-2');
+    final split = find.byTooltip('拆分编辑器');
+    expect(find.descendant(of: firstGroup, matching: split), findsOneWidget);
+    await tester.tap(split);
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(secondGroup).dx,
+        greaterThan(tester.getTopLeft(firstGroup).dx));
+    expect(tester.getTopLeft(secondGroup).dy, tester.getTopLeft(firstGroup).dy);
+    expect(find.descendant(of: firstGroup, matching: split), findsNothing);
+    expect(find.descendant(of: secondGroup, matching: split), findsOneWidget);
+
+    final leftBounds = tester.getRect(firstGroup);
+    await tester.tapAt(Offset(leftBounds.center.dx, leftBounds.bottom + 56));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: firstGroup, matching: split), findsOneWidget);
+    expect(find.descendant(of: secondGroup, matching: split), findsNothing);
+  });
+
+  testWidgets('Alt activates the down split on the default Zen toolbar',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await openEditor(tester);
+    await execute(tester, 'workbench.action.toggleZenMode');
+    final firstGroup = zenStrip('editor');
+    final secondGroup = zenStrip('editor-2');
+    final split = find.byTooltip('拆分编辑器');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    try {
+      await tester.pump();
+      await tester.tap(split);
+      await tester.pumpAndSettle();
+    } finally {
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    }
+    expect(tester.getTopLeft(secondGroup).dx, tester.getTopLeft(firstGroup).dx);
+    expect(tester.getTopLeft(secondGroup).dy,
+        greaterThan(tester.getTopLeft(firstGroup).dy));
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
+  });
+
   testWidgets(
     'the zen toggle round-trips through the registered command',
     (tester) async {

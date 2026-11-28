@@ -28617,6 +28617,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+    final defaultTabMode = _editorTabMode.value == EditorTabMode.multiple;
     final actions = <Widget>[
       // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
       if (g.locked)
@@ -28636,12 +28637,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           icon: const Icon(Icons.close_fullscreen, size: 16),
           visualDensity: VisualDensity.compact,
         ),
-      IconButton(
-        tooltip: '拆分编辑器',
-        onPressed: () => _runCommand('editor.split'),
-        icon: const Icon(Icons.splitscreen, size: 16),
-        visualDensity: VisualDensity.compact,
-      ),
+      if (!defaultTabMode || g.region == _focusedRegion)
+        IconButton(
+          tooltip: '拆分编辑器',
+          onPressed: () => _runCommand(
+            defaultTabMode && HardwareKeyboard.instance.isAltPressed
+                ? 'workbench.action.splitEditorDown'
+                : 'editor.split',
+          ),
+          icon: const Icon(Icons.splitscreen, size: 16),
+          visualDensity: VisualDensity.compact,
+        ),
       IconButton(
         tooltip: _lspReady
             ? 'LSP 运行中'
