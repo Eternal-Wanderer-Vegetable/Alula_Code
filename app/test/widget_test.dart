@@ -844,6 +844,117 @@ void main() {
     await close();
   });
 
+  testWidgets('Command Center history controls track Back and Forward in Zen',
+      (tester) async {
+    mockNativeDragDrop();
+    final source = '\uFEFF${List.generate(121, (index) {
+      final number = (index + 1).toString().padLeft(3, '0');
+      return '$number sample line 中文 🐙\r\n';
+    }).join()}';
+    final workspace = createP025Workspace(tmp, content: source);
+    final sample = File('${workspace.path}/note.txt');
+    final diskBytes = sample.readAsBytesSync();
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+    await openPinnedExplorerFile(tester, find.text('note.txt').first);
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    final controller = tester.widget<TextField>(editor).controller!;
+    final primary = tester.state<RustTextInputFieldState>(
+        find.byType(RustTextInputField));
+    primary.requestFocus();
+    await tester.pump();
+    tester.testTextInput.updateEditingValue(
+      controller.value.copyWith(
+        selection: const TextSelection.collapsed(offset: 0),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    final back = find.byKey(const ValueKey('command-center-back'));
+    final forward = find.byKey(const ValueKey('command-center-forward'));
+
+    void expectState(bool canBack, bool canForward, int caret) {
+      expect(back, findsOneWidget);
+      expect(forward, findsOneWidget);
+      expect(tester.widget<InkWell>(back).onTap != null, canBack);
+      expect(tester.widget<InkWell>(forward).onTap != null, canForward);
+      final field = tester.widget<TextField>(editor);
+      expect(field.controller!.selection.extentOffset, caret);
+      expect(field.focusNode?.hasFocus, isTrue);
+    }
+
+    Future<void> go(String value) async {
+      final result = title.commands.execute('workbench.action.gotoLine');
+      await tester.pumpAndSettle();
+      final field = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(field, value);
+      await tester.pumpAndSettle();
+      await pressChord(tester, LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(await result, CommandExecutionStatus.executed);
+    }
+
+    expectState(false, false, 0);
+    await go(':18:6');
+    expectState(true, false, 379);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 379);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    await go(':27:3');
+    expectState(true, false, 574);
+
+    tester.view.physicalSize = const Size(650, 900);
+    await tester.pump();
+    final search = find.byKey(const ValueKey('command-center-control'));
+    expect(tester.getRect(back).right,
+        lessThanOrEqualTo(tester.getRect(forward).left));
+    expect(tester.getRect(forward).right,
+        lessThanOrEqualTo(tester.getRect(search).left));
+    expect(tester.getRect(search).width, greaterThan(28));
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    expectState(true, false, 574);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 574);
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    await title.commands.execute('workbench.action.closeAllEditors');
+    await tester.pumpAndSettle();
+    expect(editor, findsNothing);
+    expect(tester.widget<InkWell>(back).onTap, isNotNull);
+    await tester.tap(back);
+    await tester.pumpAndSettle();
+    expectState(false, true, 0);
+    await tester.tap(forward);
+    await tester.pumpAndSettle();
+    expectState(true, false, 574);
+    expect(sample.readAsBytesSync(), diskBytes);
+  });
+
   testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',
       (tester) async {
     await tester.pumpWidget(AlulaApp(

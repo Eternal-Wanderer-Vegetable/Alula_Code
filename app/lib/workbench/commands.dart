@@ -16,6 +16,8 @@ const commandPaletteCommandAliases = <String, String>{
 
 const quickOpenCommandId = 'workbench.action.quickOpen';
 const commandCenterQuickOpenCommandId = 'workbench.action.quickOpenWithModes';
+const navigateBackCommandId = 'workbench.action.navigateBack';
+const navigateForwardCommandId = 'workbench.action.navigateForward';
 const quickAccessCommandAliases = <String, String>{
   ...commandPaletteCommandAliases,
   'view.quickOpen': quickOpenCommandId,

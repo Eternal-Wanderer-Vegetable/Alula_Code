@@ -566,6 +566,9 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
 
     final showCustomControls =
         widget.windowControls && chrome.usesCustomWindowControls;
+    final showNavigationControls = chrome.isCustom &&
+        widget.commands.byId(navigateBackCommandId) != null &&
+        widget.commands.byId(navigateForwardCommandId) != null;
     return Container(
       // Non-macOS native mode keeps the existing menu row below the OS title bar.
       height: chrome.isCustom
@@ -573,7 +576,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
           : WindowChromeConfiguration.customTitleBarHeight,
       decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
       child: CustomMultiChildLayout(
-        delegate: _TitleBarLayout(Directionality.of(context)),
+        delegate: _TitleBarLayout(
+          Directionality.of(context),
+          showNavigationControls: showNavigationControls,
+        ),
         children: [
           if (chrome.isCustom)
             LayoutId(
@@ -588,7 +594,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                   final hint = shortcut == null
                       ? '打开快速访问'
                       : '打开快速访问，$shortcut';
-                  return Tooltip(
+                  final search = Tooltip(
                     message: widget.windowTitle,
                     child: Semantics(
                       key: const ValueKey('command-center'),
@@ -633,6 +639,37 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                           ),
                         ),
                       ),
+                    ),
+                  );
+                  final back = widget.commands.byId(navigateBackCommandId);
+                  final forward =
+                      widget.commands.byId(navigateForwardCommandId);
+                  if (back == null || forward == null) return search;
+                  return LayoutBuilder(
+                    builder: (context, constraints) => Row(
+                      children: [
+                        if (constraints.maxWidth >=
+                            _navigationControlsWidth + 24) ...[
+                            _buildHistoryButton(
+                              command: back,
+                              availability: 'canNavigateBack',
+                              key: const ValueKey('command-center-back'),
+                              icon: Icons.arrow_back,
+                            ),
+                            const SizedBox(width: _navigationControlGap),
+                            _buildHistoryButton(
+                              command: forward,
+                              availability: 'canNavigateForward',
+                              key: const ValueKey('command-center-forward'),
+                              icon: Icons.arrow_forward,
+                            ),
+                            const SizedBox(width: _navigationSearchGap),
+                          ],
+                        Expanded(
+                          key: const ValueKey('command-center-search-slot'),
+                          child: search,
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -1011,6 +1048,46 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     unawaited(widget.commands.execute(_commandCenterActionId));
   }
 
+  Widget _buildHistoryButton({
+    required Command command,
+    required String availability,
+    required Key key,
+    required IconData icon,
+  }) {
+    final enabled = widget.commands.isEnabled(command.id) &&
+        widget.commands.context[availability] == true;
+    final shortcut = command.shortcut;
+    final tooltip =
+        shortcut == null ? command.title : '${command.title} ($shortcut)';
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: enabled,
+        label: command.title,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: key,
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            canRequestFocus: enabled,
+            onTap: enabled
+                ? () => unawaited(widget.commands.execute(command.id))
+                : null,
+            child: SizedBox.square(
+              dimension: _navigationControlExtent,
+              child: Icon(
+                icon,
+                size: 16,
+                color: enabled ? null : Theme.of(context).disabledColor,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Widget> _buildWindowButtons() {
     return [
       _WindowButton(
@@ -1035,10 +1112,17 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
 
 enum _TitleBarPart { commandCenter, menus, leadingDragArea, dragArea, trailing }
 
+const _navigationControlExtent = 22.0;
+const _navigationControlGap = 4.0;
+const _navigationSearchGap = 10.0;
+const _navigationControlsWidth =
+    2 * _navigationControlExtent + _navigationControlGap + _navigationSearchGap;
+
 class _TitleBarLayout extends MultiChildLayoutDelegate {
-  _TitleBarLayout(this.direction);
+  _TitleBarLayout(this.direction, {required this.showNavigationControls});
 
   final TextDirection direction;
+  final bool showNavigationControls;
 
   @override
   void performLayout(Size size) {
@@ -1069,7 +1153,8 @@ class _TitleBarLayout extends MultiChildLayoutDelegate {
         size.height,
         math.max(0.0, available - size.height),
       );
-      final preferredWidth = math.min(600.0, size.width * 0.38) + 2;
+      final preferredWidth = math.min(600.0, size.width * 0.38) +
+          2 + (showNavigationControls ? _navigationControlsWidth : 0);
       final command = layoutChild(
         _TitleBarPart.commandCenter,
         BoxConstraints.tightFor(
@@ -1110,7 +1195,8 @@ class _TitleBarLayout extends MultiChildLayoutDelegate {
 
   @override
   bool shouldRelayout(_TitleBarLayout oldDelegate) =>
-      direction != oldDelegate.direction;
+      direction != oldDelegate.direction ||
+      showNavigationControls != oldDelegate.showNavigationControls;
 }
 
 class _WindowButton extends StatelessWidget {

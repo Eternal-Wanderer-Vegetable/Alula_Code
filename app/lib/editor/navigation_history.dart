@@ -33,13 +33,16 @@ class NavigationLocation {
 
 /// Bounded back/forward and last-edit stacks for the workbench.
 class NavigationHistory {
-  NavigationHistory(
-      {this.maxNavigationEntries = 128, this.maxEditEntries = 128})
-      : assert(maxNavigationEntries > 1),
+  NavigationHistory({
+    this.maxNavigationEntries = 128,
+    this.maxEditEntries = 128,
+    this.onNavigationChanged,
+  })  : assert(maxNavigationEntries > 1),
         assert(maxEditEntries > 0);
 
   final int maxNavigationEntries;
   final int maxEditEntries;
+  final void Function()? onNavigationChanged;
   final List<NavigationLocation> _entries = [];
   final List<NavigationLocation> _editEntries = [];
   int _cursor = -1;
@@ -64,19 +67,22 @@ class NavigationHistory {
     _entries.add(to);
     _cursor = _entries.length - 1;
     _trimNavigationEntries();
+    onNavigationChanged?.call();
   }
 
-  NavigationLocation? goBack(NavigationLocation current) {
+  NavigationLocation? goBack(NavigationLocation? current) {
     if (!canGoBack) return null;
-    _entries[_cursor] = current;
+    if (current != null) _entries[_cursor] = current;
     _cursor--;
+    onNavigationChanged?.call();
     return _entries[_cursor];
   }
 
-  NavigationLocation? goForward(NavigationLocation current) {
+  NavigationLocation? goForward(NavigationLocation? current) {
     if (!canGoForward) return null;
-    _entries[_cursor] = current;
+    if (current != null) _entries[_cursor] = current;
     _cursor++;
+    onNavigationChanged?.call();
     return _entries[_cursor];
   }
 
@@ -99,6 +105,7 @@ class NavigationHistory {
     _editEntries.removeWhere(
       (location) => location.path == null && location.documentId == documentId,
     );
+    final previousLength = _entries.length;
     for (var index = _entries.length - 1; index >= 0; index--) {
       final location = _entries[index];
       if (location.path != null || location.documentId != documentId) continue;
@@ -106,6 +113,7 @@ class NavigationHistory {
       if (index <= _cursor) _cursor--;
     }
     if (_cursor >= _entries.length) _cursor = _entries.length - 1;
+    if (_entries.length != previousLength) onNavigationChanged?.call();
   }
 
   void _trimNavigationEntries() {

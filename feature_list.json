@@ -5630,6 +5630,19 @@
       "evidence": "确认跨行位置后可后退及前进。同一行内移动保留前进路径，新的跨行确认从当前位置建立分支。取消预览与无效输入维持原路径。两端各验证 19 个光标及焦点观测点，文件字节一致。定向 47/47、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 445ddc2 的 CI 46172225136 四项及 Platform Availability 46172221416 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.391-position-navigation-history.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-444",
+      "name": "P05.392 LAY-02 标题栏导航历史按钮",
+      "description": "自绘标题栏的后退和前进反映工作台导航历史，核对窄窗、Zen、按钮状态和空工作台下的历史文件重开。",
+      "dependencies": [
+        "feat-438",
+        "feat-443"
+      ],
+      "status": "in-progress",
+      "evidence": "固定版隔离桌面确认前进和后退、分支、窄窗、Zen、关闭全部编辑器及历史文件重开。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -640,7 +640,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
   final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
-  final NavigationHistory _navigationHistory = NavigationHistory();
+  late final NavigationHistory _navigationHistory = NavigationHistory(
+    onNavigationChanged: _syncNavigationAvailability,
+  );
   final Set<int> _appliedLocalEditorTextDragTokens = <int>{};
   final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
   final Set<int> _mergeCloseInProgress = <int>{};
@@ -2358,10 +2360,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       shortcut: _keybindings.shortcutFor('openReferenceToSide'),
       when: KeybindingSet.openReferenceToSideWhen,
     );
-    reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
-        shortcut: 'Alt+←');
-    reg('workbench.action.navigateForward', '导航', '前进', _navigateForward,
-        shortcut: 'Alt+→');
+    reg(navigateBackCommandId, '导航', '后退', _navigateBack,
+        shortcut: _keybindings.shortcutFor(navigateBackCommandId));
+    reg(navigateForwardCommandId, '导航', '前进', _navigateForward,
+        shortcut: _keybindings.shortcutFor(navigateForwardCommandId));
     reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
         _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
@@ -23865,9 +23867,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  void _syncNavigationAvailability() {
+    _commands.context.setValue('canNavigateBack', _navigationHistory.canGoBack);
+    _commands.context
+        .setValue('canNavigateForward', _navigationHistory.canGoForward);
+  }
+
   Future<void> _navigateBack() async {
     final current = _currentNavigationLocation();
-    if (current == null) return;
+    if (current == null && !_navigationHistory.canGoBack) return;
     final target = _navigationHistory.goBack(current);
     if (target == null) {
       setState(() => _statusDetail = '没有更早的导航位置');
@@ -23880,7 +23888,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Future<void> _navigateForward() async {
     final current = _currentNavigationLocation();
-    if (current == null) return;
+    if (current == null && !_navigationHistory.canGoForward) return;
     final target = _navigationHistory.goForward(current);
     if (target == null) {
       setState(() => _statusDetail = '没有更新的导航位置');
