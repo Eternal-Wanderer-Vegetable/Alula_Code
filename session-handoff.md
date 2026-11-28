@@ -8,6 +8,7 @@ Last Updated: 2026-11-29
 
 ## Current State
 
+- P05.391 / feat-443 完成。确认跨行位置后可后退及前进。同一行内移动保留前进路径，新的跨行确认从当前位置建立分支。取消预览与无效输入维持原路径。两端各验证 19 个光标及焦点观测点，文件字节一致。定向 47/47、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 445ddc2 的 CI 46172225136 四项及 Platform Availability 46172221416 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.391-position-navigation-history.md。
 - P05.390 / feat-442 完成。主窗自绘标题栏下，文件、命令、符号、帮助和位置输入统一使用顶部 6 逻辑像素。两端各验证 33 个窗口状态与提供程序组合，测量开放期间改宽、Zen、查询及焦点。定向 150/150、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 5a88bf7 的 CI 46169323057 四项及 Platform Availability 46169319561 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.390-quick-access-placement.md。
 - P05.389 / feat-441 完成。标题栏打开快速访问时展示文件、命令、文档符号与更多模式，转到文件默认聚焦。清空查询和提供程序前缀恢复模式。键盘普通文件入口与显式转到文件使用文件列表。Windows/Linux 验证选择、文件历史、Zen 和退出焦点。定向 106/106、组合 87/87、专题 437/437，Flutter 2,027 项通过、2 项跳过。产品 ff351a4 的 CI 46166442816 四项及 Platform Availability 46166438782 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md。
 - P05.388 / feat-440 完成。普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md。
@@ -440,6 +441,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.388 居中编辑区边距分隔线](docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md)。
 [P05.389 命令中心初始快速访问模式](docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md)。
 [P05.390 快速访问弹出位置](docs/diagnostics/2026-11-29-p05/p05.390-quick-access-placement.md)。
+[P05.391 位置跳转接入导航历史](docs/diagnostics/2026-11-29-p05/p05.391-position-navigation-history.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -705,4 +707,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.390 收尾 CI 和本地基线，继续对照 LAY-02 的标题栏导航历史按钮和可用状态。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.391 收尾 CI 和本地基线，继续实现 LAY-02 标题栏前进、后退及历史可用状态。PR #3 保持草稿，macOS 实机暂缓。

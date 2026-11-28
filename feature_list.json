@@ -5626,8 +5626,8 @@
         "feat-260",
         "feat-297"
       ],
-      "status": "in-progress",
-      "evidence": "固定版确认跨行写入、同一行保留前进；Windows 旧发布构建复现确认 :18:6 后后退无变化。",
+      "status": "done",
+      "evidence": "确认跨行位置后可后退及前进。同一行内移动保留前进路径，新的跨行确认从当前位置建立分支。取消预览与无效输入维持原路径。两端各验证 19 个光标及焦点观测点，文件字节一致。定向 47/47、组合 88/88、专题 438/438，Flutter 2,028 项通过、2 项跳过。产品 445ddc2 的 CI 46172225136 四项及 Platform Availability 46172221416 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.391-position-navigation-history.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
