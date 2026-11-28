@@ -799,6 +799,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final ScrollController _treeScroll = ScrollController();
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _centeredLayout = false;
+  late CenteredMargins _centeredMargins;
   bool _zenLayoutCentered = true;
   bool? _zenOwnsCentering;
   bool _zenMode = false;
@@ -1021,6 +1022,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     WidgetsBinding.instance.addObserver(this);
     // LAY-12a：辅助窗口关闭恢复入口（主窗自身窗口通道）。
     unawaited(_setupAuxiliaryWindowHandlers());
+    _centeredMargins = widget.layoutStore.loadCenteredMargins();
     final saved = widget.layoutStore.tryLoad();
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
@@ -25649,7 +25651,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   listenable: _layout,
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
-                    centeredEditorArea: _shouldCenterEditorArea,
+                    centeredEditorArea: _centeredEditorLayout,
                     builders: {
                       'activity': (_) => _buildSidebarEntryDropTarget(
                             primarySidebarViewLocation,
@@ -26992,9 +26994,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  CenteredEditorLayout get _centeredEditorLayout => (
+        enabled: _shouldCenterEditorArea,
+        margins: _centeredMargins,
+        onMarginsChanged: _setCenteredMargins,
+      );
+
+  void _setCenteredMargins(CenteredMargins margins) {
+    if (margins == _centeredMargins) return;
+    setState(() => _centeredMargins = margins);
+    widget.layoutStore.saveCenteredMargins(margins);
+  }
+
   Widget _buildZenGrid() {
     return CenteredEditorArea(
-      enabled: _shouldCenterEditorArea,
+      layout: _centeredEditorLayout,
       child: WorkbenchGrid(
         layout: _layout,
         builders: {

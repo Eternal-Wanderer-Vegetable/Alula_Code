@@ -10,11 +10,18 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart'
-    show PointerDeviceKind, kDoubleTapSlop, kDoubleTapTimeout, kTouchSlop;
+    show
+        DragStartBehavior,
+        PointerDeviceKind,
+        kDoubleTapSlop,
+        kDoubleTapTimeout,
+        kTouchSlop;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HardwareKeyboard;
 
 import 'layout_controller.dart';
 import 'layout_model.dart';
+import 'layout_store.dart';
 import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 
@@ -23,30 +30,201 @@ const double kDividerThickness = workbenchDividerThickness;
 
 const Color _kDividerColor = Color(0xFF2A2E37);
 
-class CenteredEditorArea extends StatelessWidget {
+typedef CenteredEditorLayout = ({
+  bool enabled,
+  CenteredMargins margins,
+  ValueChanged<CenteredMargins> onMarginsChanged,
+});
+
+class CenteredEditorArea extends StatefulWidget {
   const CenteredEditorArea({
     super.key,
-    required this.enabled,
+    required this.layout,
     required this.child,
   });
 
-  final bool enabled;
+  final CenteredEditorLayout layout;
   final Widget child;
+
+  @override
+  State<CenteredEditorArea> createState() => _CenteredEditorAreaState();
+}
+
+class _CenteredMarginDrag {
+  _CenteredMarginDrag({
+    required this.left,
+    required this.from,
+    required this.width,
+    required this.margins,
+    required this.independent,
+  }) : current = from;
+
+  final bool left;
+  final double from;
+  final double width;
+  final CenteredMargins margins;
+  final bool independent;
+  double current;
+}
+
+class _CenteredEditorAreaState extends State<CenteredEditorArea> {
+  static const _minimumMargin = 60.0;
+  _CenteredMarginDrag? _drag;
+  CenteredMargins? _preview;
+
+  EdgeInsets _marginPixels(double width, CenteredMargins margins) {
+    final space = math.max(0.0, width - editorGroupMinimumWidth);
+    final minimum = math.min(_minimumMargin, space / 2);
+    final useWholePixels = margins == defaultCenteredMargins;
+    double extent(double ratio) {
+      final pixels = width * ratio;
+      return math.max(
+          minimum, useWholePixels ? pixels.floorToDouble() : pixels);
+    }
+
+    final left = extent(margins.left);
+    final right = extent(margins.right);
+    if (left + right <= space) return EdgeInsets.only(left: left, right: right);
+
+    // Preserve the two preferred proportions when a narrower area has to
+    // reduce its margins to keep the editor usable.
+    final available = space - 2 * minimum;
+    final desired = left + right - 2 * minimum;
+    final fittedLeft = minimum + available * (left - minimum) / desired;
+    return EdgeInsets.only(left: fittedLeft, right: space - fittedLeft);
+  }
+
+  @override
+  void didUpdateWidget(covariant CenteredEditorArea oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.layout.enabled ||
+        oldWidget.layout.margins != widget.layout.margins) {
+      _drag = null;
+      _preview = null;
+    }
+  }
+
+  void _startDrag(bool left, double width, double position) {
+    if (_drag != null) return;
+    _drag = _CenteredMarginDrag(
+      left: left,
+      from: position,
+      width: width,
+      margins: widget.layout.margins,
+      independent: HardwareKeyboard.instance.isAltPressed,
+    );
+  }
+
+  void _resizeMargin(bool left, double width, double position) {
+    var drag = _drag;
+    if (drag == null || drag.left != left) return;
+    final independent = HardwareKeyboard.instance.isAltPressed;
+    if (drag.width != width || drag.independent != independent) {
+      // Continue from the last pointer position when Alt changes mid-drag.
+      drag = _CenteredMarginDrag(
+        left: left,
+        from: drag.current,
+        width: width,
+        margins: _preview ?? widget.layout.margins,
+        independent: independent,
+      );
+      _drag = drag;
+    }
+    drag.current = position;
+    final padding = _marginPixels(width, drag.margins);
+    final own = left ? padding.left : padding.right;
+    final opposite = left ? padding.right : padding.left;
+    final room =
+        math.max(0.0, width - padding.horizontal - editorGroupMinimumWidth);
+    final minimum =
+        math.min(_minimumMargin, (width - editorGroupMinimumWidth) / 2);
+    final limit = independent ? room + opposite - minimum : room / 2;
+    final delta = (left ? position - drag.from : drag.from - position)
+        .clamp(minimum - own, limit)
+        .toDouble();
+    final nextOwn = own + delta;
+    final nextOpposite = independent
+        ? opposite - math.max(0.0, delta - room)
+        : math.max(minimum, opposite + delta);
+    final next = delta == 0
+        ? drag.margins
+        : (
+            left: (left ? nextOwn : nextOpposite) / width,
+            right: (left ? nextOpposite : nextOwn) / width,
+          );
+    if (next == (_preview ?? widget.layout.margins)) return;
+    setState(() => _preview = next);
+  }
+
+  void _finishDrag(bool left, {required bool save}) {
+    if (_drag?.left != left) return;
+    _drag = null;
+    final preview = _preview;
+    if (preview == null) return;
+    setState(() => _preview = null);
+    if (save && preview != widget.layout.margins) {
+      widget.layout.onMarginsChanged(preview);
+    }
+  }
+
+  Widget _sash({
+    required bool left,
+    required double width,
+    required double offset,
+  }) {
+    return Positioned(
+      left: left ? offset - kDividerThickness / 2 : null,
+      right: left ? null : offset - kDividerThickness / 2,
+      top: 0,
+      bottom: 0,
+      width: kDividerThickness,
+      child: MouseRegion(
+        key: ValueKey(left
+            ? 'centered-editor-margin-left'
+            : 'centered-editor-margin-right'),
+        cursor: SystemMouseCursors.resizeLeftRight,
+        child: TextFieldTapRegion(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            dragStartBehavior: DragStartBehavior.down,
+            onHorizontalDragStart: (details) =>
+                _startDrag(left, width, details.globalPosition.dx),
+            onHorizontalDragUpdate: (details) =>
+                _resizeMargin(left, width, details.globalPosition.dx),
+            onHorizontalDragEnd: (_) => _finishDrag(left, save: true),
+            onHorizontalDragCancel: () => _finishDrag(left, save: false),
+            onDoubleTap: () =>
+                widget.layout.onMarginsChanged(defaultCenteredMargins),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final padding = enabled && constraints.hasBoundedWidth
-            ? math.min(
-                (width * 0.1909).floorToDouble(),
-                math.max(0.0, (width - editorGroupMinimumWidth) / 2),
-              )
-            : 0.0;
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: child,
+        final canResize = widget.layout.enabled &&
+            constraints.hasBoundedWidth &&
+            width > editorGroupMinimumWidth;
+        final padding = canResize
+            ? _marginPixels(width, _preview ?? widget.layout.margins)
+            : EdgeInsets.zero;
+        if (!canResize) {
+          _drag = null;
+          _preview = null;
+        }
+        return Stack(
+          fit: StackFit.passthrough,
+          children: [
+            Padding(padding: padding, child: widget.child),
+            if (canResize) ...[
+              _sash(left: true, width: width, offset: padding.left),
+              _sash(left: false, width: width, offset: padding.right),
+            ],
+          ],
         );
       },
     );
@@ -69,9 +247,9 @@ class WorkbenchGrid extends StatefulWidget {
   final WorkbenchLayout layout;
   final Map<String, WidgetBuilder> builders;
 
-  // Null uses the ordinary grid. False keeps the editor wrapper mounted when
-  // centering is requested later or is temporarily suspended by the layout.
-  final bool? centeredEditorArea;
+  // Null uses the ordinary grid. An inactive layout keeps the editor
+  // wrapper mounted when centering is temporarily suspended.
+  final CenteredEditorLayout? centeredEditorArea;
 
   @override
   State<WorkbenchGrid> createState() => _WorkbenchGridState();
@@ -174,7 +352,7 @@ class _NodeView extends StatelessWidget {
   final Map<String, GlobalKey> regionKeys;
   final PanelAlignmentProjection? projection;
   final String? omitRegion;
-  final bool? centeredEditorArea;
+  final CenteredEditorLayout? centeredEditorArea;
 
   bool get _isEditorArea {
     var hasEditor = false;
@@ -194,12 +372,13 @@ class _NodeView extends StatelessWidget {
       return _buildContents(context, centered);
     }
     return CenteredEditorArea(
-      enabled: centered,
+      layout: centered,
       child: _buildContents(context, null),
     );
   }
 
-  Widget _buildContents(BuildContext context, bool? nestedCentering) {
+  Widget _buildContents(
+      BuildContext context, CenteredEditorLayout? nestedCentering) {
     final leaf = node;
     if (leaf is WbLeaf) {
       if (leaf.region == omitRegion) return const SizedBox.shrink();

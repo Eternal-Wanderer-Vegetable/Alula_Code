@@ -835,6 +835,120 @@ void main() {
     expect(requested(), isFalse);
   });
 
+  testWidgets('centered margin sashes resize together, with Alt, and reset',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final editor = await openEditor(tester);
+    final strip = zenStrip('editor');
+    final area = tester.getRect(strip);
+    const center = 'workbench.action.toggleCenteredLayout';
+    Finder sash(String side) =>
+        find.byKey(ValueKey('centered-editor-margin-$side'));
+
+    void expectMargins(double left, double right) {
+      final bounds = tester.getRect(strip);
+      expect(bounds.left - area.left, closeTo(left, 0.01));
+      expect(area.right - bounds.right, closeTo(right, 0.01));
+    }
+
+    await execute(tester, center);
+    final editorFocus = FocusManager.instance.primaryFocus;
+    expect(
+      editorFocus?.context?.findAncestorWidgetOfExactType<RustTextInputField>(),
+      isNotNull,
+    );
+    expect(sash('left'), findsOneWidget);
+    expect(sash('right'), findsOneWidget);
+    final margin = (area.width * 0.1909).floorToDouble();
+    expectMargins(margin, margin);
+
+    await tester.drag(sash('left'), const Offset(45, 0),
+        kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expectMargins(margin + 45, margin + 45);
+    expect(FocusManager.instance.primaryFocus, same(editorFocus),
+        reason: 'plain drag');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    try {
+      await tester.drag(sash('right'), const Offset(52, 0),
+          kind: PointerDeviceKind.mouse);
+    } finally {
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    }
+    await tester.pumpAndSettle();
+    expectMargins(margin + 45, margin - 7);
+    expect(
+        tester.state<RustTextInputFieldState>(find.byType(RustTextInputField)),
+        same(editor));
+
+    expect(FocusManager.instance.primaryFocus, same(editorFocus));
+
+    await execute(tester, center);
+    expect(sash('left'), findsNothing);
+    expectMargins(0, 0);
+    await execute(tester, center);
+    expectMargins(margin + 45, margin - 7);
+
+    await tester.tap(sash('right'), kind: PointerDeviceKind.mouse);
+    await tester.pump(const Duration(milliseconds: 70));
+    await tester.tap(sash('right'), kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expectMargins(margin, margin);
+
+    await tester.drag(sash('left'), Offset(area.width, 0),
+        kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expect(tester.getRect(strip).width, closeTo(220, 0.01));
+  });
+
+  testWidgets('centered margin resize rebases Alt and keeps profile ratio',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final workspaceB = Directory('${baseOf()}/centered-b')..createSync();
+    final strip = zenStrip('editor');
+    final area = tester.getRect(strip);
+    const center = 'workbench.action.toggleCenteredLayout';
+    await execute(tester, center);
+    final left = find.byKey(const ValueKey('centered-editor-margin-left'));
+    expect(left, findsOneWidget);
+    final initial = tester.getRect(strip);
+    final pointer = await tester.startGesture(tester.getCenter(left),
+        kind: PointerDeviceKind.mouse);
+    await pointer.moveBy(const Offset(37, 0));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    try {
+      await pointer.moveBy(const Offset(29, 0));
+      await tester.pump();
+      await pointer.up();
+    } finally {
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    }
+    await tester.pumpAndSettle();
+    final moved = tester.getRect(strip);
+    expect(moved.left - initial.left, closeTo(66, 0.01));
+    expect(initial.right - moved.right, closeTo(37, 0.01));
+
+    expect(
+        await commands!.execute('file.openRecent', arguments: {
+          'path': workspaceB.path,
+          'kind': 'workspace',
+        }),
+        CommandExecutionStatus.executed);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(left, findsNothing);
+    expect(tester.getRect(strip), area);
+    await execute(tester, center);
+    expect(tester.getRect(strip), moved);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
+    workspace = workspaceB;
+    await mountPage(tester);
+    expect(tester.getRect(strip), moved);
+  });
+
   testWidgets('Alt activates the down split on the default Zen toolbar',
       (tester) async {
     await prepareWorkspace(tester);

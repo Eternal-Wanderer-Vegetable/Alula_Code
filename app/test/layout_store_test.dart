@@ -62,6 +62,32 @@ void main() {
     expect(store.tryLoad(), isNull);
   });
 
+  test('centered margins are profile-local and invalid pairs use defaults', () {
+    const margins = (left: 0.32, right: 0.12);
+    expect(store.loadCenteredMargins(), defaultCenteredMargins);
+
+    store.saveCenteredLayout('/workspace-a', true);
+    store.saveCenteredMargins(margins);
+    expect(LayoutStore(path: store.resolvePath()).loadCenteredMargins(), margins);
+    expect(store.loadCenteredLayout('/workspace-a'), isTrue);
+    expect(store.loadCenteredLayout('/workspace-b'), isFalse);
+    final otherProfile = LayoutStore(path: '${tmp.path}/other-layout.json');
+    expect(otherProfile.loadCenteredMargins(), defaultCenteredMargins);
+
+    final file = File('${store.resolvePath()}.centered-margins.json');
+    for (final value in [
+      '{',
+      '{"left":0.12}',
+      '{"left":-0.12,"right":0.22}',
+      '{"left":0.65,"right":0.35}',
+      '{"left":1e999,"right":0.02}',
+    ]) {
+      file.writeAsStringSync(value);
+      expect(store.loadCenteredMargins(), defaultCenteredMargins);
+      expect(store.loadCenteredLayout('/workspace-a'), isTrue);
+    }
+  });
+
   test('hierarchy directions round-trip independently in the profile', () {
     final reopened = LayoutStore(path: store.resolvePath());
     expect(reopened.loadHierarchyDirection(HierarchyKind.call), isNull);

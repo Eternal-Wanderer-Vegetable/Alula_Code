@@ -12,6 +12,10 @@ import 'layout_model.dart';
 import 'secondary_sidebar_layout.dart';
 import 'workspace_state.dart';
 
+typedef CenteredMargins = ({double left, double right});
+
+const defaultCenteredMargins = (left: 0.1909, right: 0.1909);
+
 typedef PeekLayout = ({double previewRatio, int heightInLines});
 
 const defaultPeekLayout = (previewRatio: 0.7, heightInLines: 18);
@@ -138,6 +142,29 @@ class LayoutStore {
     } on FormatException {
       return null;
     }
+  }
+
+  String get _centeredMarginsPath => '${resolvePath()}.centered-margins.json';
+
+  CenteredMargins loadCenteredMargins() {
+    final data = _readCenteredLayout(_centeredMarginsPath);
+    final left = data?['left'];
+    final right = data?['right'];
+    if (left is num &&
+        right is num &&
+        left >= 0 &&
+        right >= 0 &&
+        left + right < 1) {
+      return (left: left.toDouble(), right: right.toDouble());
+    }
+    return defaultCenteredMargins;
+  }
+
+  void saveCenteredMargins(CenteredMargins margins) {
+    _writePreference(_centeredMarginsPath, {
+      'left': margins.left,
+      'right': margins.right,
+    });
   }
 
   bool loadCenteredLayout(String? workspaceRoot) {
