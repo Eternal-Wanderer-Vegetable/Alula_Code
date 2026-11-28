@@ -1,0 +1,887 @@
+{
+  "product": "b9f33e6c984218531159284d6548069ca991f563",
+  "tree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+  "baselineProduct": "ba15b2941d1b1b0009f894dfaaa37128c4229d13",
+  "reference": {
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+    "separateDesktop": true,
+    "operatingSystemKeyboardOrPointerEvents": 0,
+    "case": "default Zen native fullness and Escape chord",
+    "normalBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "monitorBounds": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "DPI": 1.25,
+    "zenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "firstEscapePreservedZen": true,
+    "twoEscapesRestoredBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "reenteredZen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "externalFullscreenExitRestoredBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "externalFullscreenExitRestoredShell": true,
+    "manualFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "leavingZenPreservedManualFullscreen": true,
+    "manualFullscreenExitRestoredBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "nativeCloseWhileZen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "normalExit": true,
+    "exitCode": 0,
+    "restartZenFullscreen": [
+      0,
+      0,
+      2048,
+      1152
+    ],
+    "restartShellHidden": true,
+    "restartZenExitBounds": [
+      297,
+      126,
+      1755,
+      1040
+    ],
+    "restartExitCode": 0,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "baselines": {
+    "windows": {
+      "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "build": {
+        "abi": 51,
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "aotSha256": "3f10a1adf83a6b641d941e320289db27c1939bfda7c251933a514705402ba321",
+        "fixtureSha256": "b45e12d1ff2890d379f9928042705b5ea19f983519273df766c2e0cb490bac70"
+      },
+      "profile": "E:\\temp\\alula-p05-next-zen-fullscreen-readonly\\windows-baseline-1795851222599786800",
+      "testDesktop": "inactive WinSta0",
+      "osKeyboardOrPointerEventsSent": 0,
+      "states": {
+        "normal": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zen": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "escape1": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "escape2": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitZenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreenExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "sourceTree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "fixtureSha256": "b45e12d1ff2890d379f9928042705b5ea19f983519273df766c2e0cb490bac70",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "f5da493391959161765ce5106a0c2cd1d83d9a81d4521c00bfc6f3dba53ac77a",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "display": "isolated Xvfb with Xfwm4",
+      "profile": "/tmp/alula-p05-177-xvfb-tts5xqhj",
+      "states": {
+        "normal": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "escape1": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "escape2": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitZenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreenExit": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "exitCode": 0
+    }
+  },
+  "baselineZenClose": {
+    "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+    "build": {
+      "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+      "aotSha256": "b3a8e06280710c9068d13188af47e70d979b37a79a91e06dd547cdce63d02a3c",
+      "abi": 51,
+      "tree": "5e2dd1aff271c54351a8e7c51c6e418db512aac7",
+      "fixtureSha256": "5c0e5c7ac496e994adb927aff48574a1b6b453a25c10bdcb06d0e754d4a96d17",
+      "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc"
+    },
+    "profile": "E:\\temp\\alula-p05-next-zen-close-readonly\\windows-baseline-1795851897270764400",
+    "testDesktop": "inactive WinSta0",
+    "osKeyboardOrPointerEventsSent": 0,
+    "states": {
+      "normal": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "zen": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": false,
+        "titlebarVisible": false
+      },
+      "escape1": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "escape2": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "manualFullscreen": {
+        "bounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "fullscreen": true,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "zenWithManualFullscreen": {
+        "bounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "fullscreen": true,
+        "visible": true,
+        "statusbarVisible": false,
+        "titlebarVisible": false
+      },
+      "exitZenWithManualFullscreen": {
+        "bounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "fullscreen": true,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "manualFullscreenExit": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": true,
+        "titlebarVisible": true
+      },
+      "beforeClose": {
+        "bounds": [
+          9.6,
+          9.6,
+          1159.1999999999998,
+          759.2
+        ],
+        "fullscreen": false,
+        "visible": true,
+        "statusbarVisible": false,
+        "titlebarVisible": false
+      }
+    },
+    "closedNormally": false,
+    "exitCode": null,
+    "ownedWindowRemained": true,
+    "fixtureCleanupTermination": true,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "windowsMissingLeaveEvent": {
+    "tree": "aad9a4c28d217f64be79745d6ed9fe193be0cfe9",
+    "externalExit": {
+      "bounds": [
+        9.6,
+        9.6,
+        1159.1999999999998,
+        759.2
+      ],
+      "fullscreen": false,
+      "visible": true,
+      "statusbarVisible": false,
+      "titlebarVisible": false
+    },
+    "windowEvents": [
+      "blur",
+      "show",
+      "focus",
+      "blur",
+      "focus",
+      "blur",
+      "focus",
+      "blur",
+      "focus",
+      "blur",
+      "focus",
+      "blur",
+      "focus",
+      "blur",
+      "focus",
+      "blur"
+    ]
+  },
+  "windowsHiddenRestart": {
+    "tree": "83c516f439b97e39628dc63ace7ecb067acf49a7",
+    "state": {
+      "bounds": [
+        0.0,
+        0.0,
+        2048.0,
+        1152.0
+      ],
+      "fullscreen": true,
+      "visible": false,
+      "statusbarVisible": false,
+      "titlebarVisible": false
+    }
+  },
+  "windowsStockEntrypoint": {
+    "sourceTree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+    "entrypoint": "lib/main.dart",
+    "build": {
+      "tree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+      "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+      "abi": 51,
+      "aotSha256": "fd8c44eb966b413f90e59cf808238899fcdf9798d35cc5c1ffe6167bade363ec",
+      "entrypoint": "lib/main.dart",
+      "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc"
+    },
+    "cases": [
+      {
+        "launch": 1,
+        "windowVisible": true,
+        "bounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitor": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "exitCode": 0,
+        "zenPersisted": true,
+        "originalBytesStable": true
+      },
+      {
+        "launch": 2,
+        "windowVisible": true,
+        "bounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitor": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "exitCode": 0,
+        "zenPersisted": true,
+        "originalBytesStable": true
+      }
+    ],
+    "noOsKeyboardOrPointerEvents": true,
+    "inputDesktopStayedOutsideFixture": true
+  },
+  "windowsBuildSourceOverlay": {
+    "sourceTree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+    "exactTrackedRuntimeFiles": 273,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0
+  },
+  "fixtureSha256": "6bf025b3915c04c1b2d4171e1a94ee92b014eee9b510dd6475761dc297eabe3c",
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+      "build": {
+        "aotSha256": "5113bb3bc606f1c26fc49f0cbdacbcf8a0adf39d9bbe2754e74a71d398abdde0",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "fixtureSha256": "6bf025b3915c04c1b2d4171e1a94ee92b014eee9b510dd6475761dc297eabe3c",
+        "abi": 51,
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "tree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977"
+      },
+      "profile": "E:\\temp\\alula-p05-376-native-zen\\windows-zen-1795853515353883500",
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "states": {
+        "normal": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "commandExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "externalExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitZenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreenExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "beforeNativeClose": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        }
+      },
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "nativeFullscreenBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restart": {
+        "restoredZen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "restoredZenExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "00a0cd6324bc7b7928c7434ed8c0ef4d0eba4977",
+      "display": "isolated Xvfb with Xfwm4",
+      "profile": "/tmp/alula-p05-177-xvfb-yxmbn3ra",
+      "fixtureSha256": "6bf025b3915c04c1b2d4171e1a94ee92b014eee9b510dd6475761dc297eabe3c",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "d335a32de093071417b3870d5da2eba0a9677f33130983535e3fd3fd3781385c",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "states": {
+        "normal": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "commandExit": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "externalExit": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "zenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "exitZenWithManualFullscreen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "manualFullscreenExit": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        },
+        "beforeNativeClose": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        }
+      },
+      "nativeFullscreenProperty": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restart": {
+        "restoredZen": {
+          "bounds": [
+            0.0,
+            0.0,
+            1920.0,
+            960.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false
+        },
+        "restoredZenExit": {
+          "bounds": [
+            0.0,
+            0.0,
+            1150.0,
+            750.0
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true
+    }
+  }
+}
