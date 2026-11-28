@@ -1,0 +1,1300 @@
+{
+  "product": "2f3778e771c91ff7dcfcf302b32ed8e7bec63392",
+  "tree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+  "fixtureSha256": "a2920d5b42b643f246944e121a2ae6fef67e201a863a50472ed9e048c1cd37b7",
+  "maxRegionDeltaLogicalPx": 0,
+  "reference": {
+    "panel-visible": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "panel-visible",
+      "desiredBeforeZen": {
+        "activity": false,
+        "primary": true,
+        "secondary": false,
+        "panel": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "beforeZen": {
+        "activity": false,
+        "primary": true,
+        "secondary": false,
+        "panel": true
+      },
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "insideZen": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "exitZenBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "afterCommandExit": {
+        "activity": false,
+        "primary": true,
+        "secondary": false,
+        "panel": true
+      },
+      "nativeCloseWhileZen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "beforeNativeClose": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "normalExit": true,
+      "exitCode": 0,
+      "restartZenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "restartedZen": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "restartShellHidden": true,
+      "restartZenExitBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "afterRestartExit": {
+        "activity": false,
+        "primary": true,
+        "secondary": false,
+        "panel": true
+      },
+      "restartExitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "secondary-visible": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "secondary-visible",
+      "desiredBeforeZen": {
+        "activity": true,
+        "primary": false,
+        "secondary": true,
+        "panel": false
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "beforeZen": {
+        "activity": true,
+        "primary": false,
+        "secondary": true,
+        "panel": false
+      },
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "insideZen": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "exitZenBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "afterCommandExit": {
+        "activity": true,
+        "primary": false,
+        "secondary": true,
+        "panel": false
+      },
+      "nativeCloseWhileZen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "beforeNativeClose": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "normalExit": true,
+      "exitCode": 0,
+      "restartZenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "restartedZen": {
+        "activity": false,
+        "primary": false,
+        "secondary": false,
+        "panel": false
+      },
+      "restartShellHidden": true,
+      "restartZenExitBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "afterRestartExit": {
+        "activity": true,
+        "primary": false,
+        "secondary": true,
+        "panel": false
+      },
+      "restartExitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "baselineProduct": "39c6989c891288d98d458544e36015b7c4ce2144",
+  "baseline": {
+    "panel-visible": {
+      "platform": "windows",
+      "sourceTree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+      "build": {
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "abi": 51,
+        "aotSha256": "491161e932b20debf393253bac161fd380a79c28f0ea23ae7f442d1e8dbf768b",
+        "tree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+        "fixtureSha256": "ca82483c5ee2b12e145f133c1fea6c1797bb545ef27c9ee4a0518b3db9ccab33"
+      },
+      "case": "panel-visible",
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "expectedRestoredRegions": {
+        "activity": false,
+        "sidebar": true,
+        "secondarySidebar": false,
+        "panel": true
+      },
+      "commandRestoredAllRegions": false,
+      "states": {
+        "normal": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": false,
+            "sidebar": true,
+            "secondarySidebar": false,
+            "panel": true
+          }
+        },
+        "zen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        },
+        "commandExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": true,
+            "sidebar": true,
+            "secondarySidebar": true,
+            "panel": true
+          }
+        },
+        "beforeNativeClose": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        }
+      },
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "nativeFullscreenBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restartRestoredAllRegions": false,
+      "restart": {
+        "restoredZen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        },
+        "restoredZenExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": true,
+            "sidebar": true,
+            "secondarySidebar": true,
+            "panel": true
+          }
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "secondary-visible": {
+      "platform": "windows",
+      "sourceTree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+      "build": {
+        "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+        "abi": 51,
+        "aotSha256": "491161e932b20debf393253bac161fd380a79c28f0ea23ae7f442d1e8dbf768b",
+        "tree": "d92d702b6da24474935f7bc339f0898f6cc127df",
+        "fixtureSha256": "ca82483c5ee2b12e145f133c1fea6c1797bb545ef27c9ee4a0518b3db9ccab33"
+      },
+      "case": "secondary-visible",
+      "testDesktop": "inactive WinSta0",
+      "noOsKeyboardOrPointerEvents": true,
+      "expectedRestoredRegions": {
+        "activity": true,
+        "sidebar": false,
+        "secondarySidebar": true,
+        "panel": false
+      },
+      "commandRestoredAllRegions": false,
+      "states": {
+        "normal": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": true,
+            "sidebar": false,
+            "secondarySidebar": true,
+            "panel": false
+          }
+        },
+        "zen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        },
+        "commandExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": true,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        },
+        "beforeNativeClose": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        }
+      },
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "nativeFullscreenBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "firstExitCode": 0,
+      "zenPersistedBeforeRestart": true,
+      "restartRestoredAllRegions": false,
+      "restart": {
+        "restoredZen": {
+          "bounds": [
+            0.0,
+            0.0,
+            2048.0,
+            1152.0
+          ],
+          "fullscreen": true,
+          "visible": true,
+          "statusbarVisible": false,
+          "titlebarVisible": false,
+          "regions": {
+            "activity": false,
+            "sidebar": false,
+            "secondarySidebar": false,
+            "panel": false
+          }
+        },
+        "restoredZenExit": {
+          "bounds": [
+            9.6,
+            9.6,
+            1159.1999999999998,
+            759.2
+          ],
+          "fullscreen": false,
+          "visible": true,
+          "statusbarVisible": true,
+          "titlebarVisible": true,
+          "regions": {
+            "activity": true,
+            "sidebar": true,
+            "secondarySidebar": true,
+            "panel": true
+          }
+        }
+      },
+      "secondExitCode": 0,
+      "zenClearedAfterRestartExit": true,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "cases": {
+    "panel-visible": {
+      "windows": {
+        "platform": "windows",
+        "sourceTree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+        "build": {
+          "tree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+          "aotSha256": "dd5ab3b1ad73af061bd17e3eb19d358818ebc8b839827dad89ec3c2306598d42",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "abi": 51,
+          "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+          "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+          "fixtureSha256": "a2920d5b42b643f246944e121a2ae6fef67e201a863a50472ed9e048c1cd37b7"
+        },
+        "case": "panel-visible",
+        "testDesktop": "inactive WinSta0",
+        "noOsKeyboardOrPointerEvents": true,
+        "expectedRestoredRegions": {
+          "activity": false,
+          "sidebar": true,
+          "secondarySidebar": false,
+          "panel": true
+        },
+        "commandRestoredAllRegions": true,
+        "states": {
+          "normal": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                271.87199999999996,
+                683.4
+              ],
+              "panel": [
+                275.87199999999996,
+                514.5799999999999,
+                860.928,
+                203.82
+              ]
+            }
+          },
+          "zen": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "commandExit": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                271.87199999999996,
+                683.4
+              ],
+              "panel": [
+                275.87199999999996,
+                514.5799999999999,
+                860.928,
+                203.82
+              ]
+            }
+          },
+          "beforeNativeClose": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          }
+        },
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "nativeFullscreenBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "firstExitCode": 0,
+        "zenPersistedBeforeRestart": true,
+        "restartRestoredAllRegions": true,
+        "restart": {
+          "restoredZen": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "restoredZenExit": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                271.87199999999996,
+                683.4
+              ],
+              "panel": [
+                275.87199999999996,
+                514.5799999999999,
+                860.928,
+                203.82
+              ]
+            }
+          }
+        },
+        "regionBoundsPreserved": true,
+        "secondExitCode": 0,
+        "zenClearedAfterRestartExit": true,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      },
+      "linux": {
+        "platform": "linux",
+        "sourceTree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+        "display": "isolated Xvfb with Xfwm4",
+        "case": "panel-visible",
+        "fixtureSha256": "a2920d5b42b643f246944e121a2ae6fef67e201a863a50472ed9e048c1cd37b7",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "fc88cee7f7ba401194351db9dd94b36fad3bd1c38cc633484cc18ded00d2c932",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "expectedRestoredRegions": {
+          "activity": false,
+          "sidebar": true,
+          "secondarySidebar": false,
+          "panel": true
+        },
+        "commandRestoredAllRegions": true,
+        "states": {
+          "normal": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                275.03999999999996,
+                691.0
+              ],
+              "panel": [
+                279.03999999999996,
+                519.9,
+                870.96,
+                206.1
+              ]
+            }
+          },
+          "zen": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "commandExit": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                275.03999999999996,
+                691.0
+              ],
+              "panel": [
+                279.03999999999996,
+                519.9,
+                870.96,
+                206.1
+              ]
+            }
+          },
+          "beforeNativeClose": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          }
+        },
+        "nativeFullscreenProperty": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+        "firstExitCode": 0,
+        "zenPersistedBeforeRestart": true,
+        "restartRestoredAllRegions": true,
+        "restart": {
+          "restoredZen": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "restoredZenExit": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": false,
+              "sidebar": true,
+              "secondarySidebar": false,
+              "panel": true
+            },
+            "regionBounds": {
+              "sidebar": [
+                0.0,
+                35.0,
+                275.03999999999996,
+                691.0
+              ],
+              "panel": [
+                279.03999999999996,
+                519.9,
+                870.96,
+                206.1
+              ]
+            }
+          }
+        },
+        "regionBoundsPreserved": true,
+        "secondExitCode": 0,
+        "zenClearedAfterRestartExit": true,
+        "diskBytesStable": true
+      }
+    },
+    "secondary-visible": {
+      "windows": {
+        "platform": "windows",
+        "sourceTree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+        "build": {
+          "tree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+          "aotSha256": "dd5ab3b1ad73af061bd17e3eb19d358818ebc8b839827dad89ec3c2306598d42",
+          "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+          "abi": 51,
+          "librarySha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+          "releaseAppSha256": "74e4d1a0284a9068524a67d19cec37012513e608ce15e02355e18a76162e3ddc",
+          "fixtureSha256": "a2920d5b42b643f246944e121a2ae6fef67e201a863a50472ed9e048c1cd37b7"
+        },
+        "case": "secondary-visible",
+        "testDesktop": "inactive WinSta0",
+        "noOsKeyboardOrPointerEvents": true,
+        "expectedRestoredRegions": {
+          "activity": true,
+          "sidebar": false,
+          "secondarySidebar": true,
+          "panel": false
+        },
+        "commandRestoredAllRegions": true,
+        "states": {
+          "normal": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                683.4
+              ],
+              "secondarySidebar": [
+                860.2823529411764,
+                35.0,
+                276.5176470588235,
+                683.4
+              ]
+            }
+          },
+          "zen": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "commandExit": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                683.4
+              ],
+              "secondarySidebar": [
+                860.2823529411764,
+                35.0,
+                276.5176470588235,
+                683.4
+              ]
+            }
+          },
+          "beforeNativeClose": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          }
+        },
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "nativeFullscreenBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "firstExitCode": 0,
+        "zenPersistedBeforeRestart": true,
+        "restartRestoredAllRegions": true,
+        "restart": {
+          "restoredZen": {
+            "bounds": [
+              0.0,
+              0.0,
+              2048.0,
+              1152.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "restoredZenExit": {
+            "bounds": [
+              9.6,
+              9.6,
+              1159.1999999999998,
+              759.2
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                683.4
+              ],
+              "secondarySidebar": [
+                860.2823529411764,
+                35.0,
+                276.5176470588235,
+                683.4
+              ]
+            }
+          }
+        },
+        "regionBoundsPreserved": true,
+        "secondExitCode": 0,
+        "zenClearedAfterRestartExit": true,
+        "diskBytesStable": true,
+        "inputDesktopStayedOutsideFixture": true
+      },
+      "linux": {
+        "platform": "linux",
+        "sourceTree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+        "display": "isolated Xvfb with Xfwm4",
+        "case": "secondary-visible",
+        "fixtureSha256": "a2920d5b42b643f246944e121a2ae6fef67e201a863a50472ed9e048c1cd37b7",
+        "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+        "aotSha256": "fc88cee7f7ba401194351db9dd94b36fad3bd1c38cc633484cc18ded00d2c932",
+        "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+        "expectedRestoredRegions": {
+          "activity": true,
+          "sidebar": false,
+          "secondarySidebar": true,
+          "panel": false
+        },
+        "commandRestoredAllRegions": true,
+        "states": {
+          "normal": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                691.0
+              ],
+              "secondarySidebar": [
+                870.1176470588235,
+                35.0,
+                279.88235294117646,
+                691.0
+              ]
+            }
+          },
+          "zen": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "commandExit": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                691.0
+              ],
+              "secondarySidebar": [
+                870.1176470588235,
+                35.0,
+                279.88235294117646,
+                691.0
+              ]
+            }
+          },
+          "beforeNativeClose": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          }
+        },
+        "nativeFullscreenProperty": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+        "firstExitCode": 0,
+        "zenPersistedBeforeRestart": true,
+        "restartRestoredAllRegions": true,
+        "restart": {
+          "restoredZen": {
+            "bounds": [
+              0.0,
+              0.0,
+              1920.0,
+              960.0
+            ],
+            "fullscreen": true,
+            "visible": true,
+            "statusbarVisible": false,
+            "titlebarVisible": false,
+            "regions": {
+              "activity": false,
+              "sidebar": false,
+              "secondarySidebar": false,
+              "panel": false
+            },
+            "regionBounds": {}
+          },
+          "restoredZenExit": {
+            "bounds": [
+              0.0,
+              0.0,
+              1150.0,
+              750.0
+            ],
+            "fullscreen": false,
+            "visible": true,
+            "statusbarVisible": true,
+            "titlebarVisible": true,
+            "regions": {
+              "activity": true,
+              "sidebar": false,
+              "secondarySidebar": true,
+              "panel": false
+            },
+            "regionBounds": {
+              "activity": [
+                0.0,
+                35.0,
+                48.0,
+                691.0
+              ],
+              "secondarySidebar": [
+                870.1176470588235,
+                35.0,
+                279.88235294117646,
+                691.0
+              ]
+            }
+          }
+        },
+        "regionBoundsPreserved": true,
+        "secondExitCode": 0,
+        "zenClearedAfterRestartExit": true,
+        "diskBytesStable": true
+      }
+    }
+  },
+  "overlay": {
+    "sourceTree": "0c17980eaa92ed4b0e345ef5a5cf4864ff4ad971",
+    "exactTrackedRuntimeFiles": 273,
+    "changedContentFiles": 0,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ]
+  }
+}
