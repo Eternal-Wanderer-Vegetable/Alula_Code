@@ -5585,8 +5585,8 @@
         "feat-437",
         "feat-439"
       ],
-      "status": "in-progress",
-      "evidence": "固定版在 Windows 125% DPI 的私有桌面验证普通拖动、Alt、边距限位、比例恢复与双击复位。",
+      "status": "done",
+      "evidence": "普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

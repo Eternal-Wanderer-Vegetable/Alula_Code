@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last Updated: 2026-11-28
+Last Updated: 2026-11-29
 
 ## Current Objective
 
@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.388 / feat-440 完成。普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md。
 - P05.387 / feat-439 完成。普通窗口可通过外观菜单或命令请求居中，工作区独立保存。横向分组临时展开，单组、纵向组和最大化组恢复留白。Windows/Linux 各验证四次进程启动、全屏恢复和文件字节。定向 84/84，专题 433/433，Flutter 2,023 项通过、2 项跳过。产品 85d0114 的 CI 46160334534 四项及 Platform Availability 46160330690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md。
 - P05.386 / feat-438 完成。自绘标题栏的命令中心随窗口布置，窄窗保留菜单、控件和拖动区。点击、Enter 和 Space 触发现有快速文件搜索，保留前缀模式及焦点恢复。两端发布构建验证正常、窄窗和 Zen，源文件字节一致。定向 82/82，专题 371/371，Flutter 2,021 项通过、2 项跳过。产品 636d2d6 的 CI 46156839204 四项及 Platform Availability 46156834958 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.386-command-center.md。
 - P05.385 / feat-437 完成。普通文本的 Zen 居中按可用编辑器宽度计算。并排时取消侧边留白，最大化、关闭多余组或上下堆叠时重新居中。两端发布验证（逻辑宽度/单边留白）Windows 2048/390、Linux 1920 1920/366、Linux 1280 1280/244，还原组几何及退出原生全屏通过，文件字节一致。定向 24/24，专题 281/281，Flutter 2,020 项通过、2 项跳过。产品 525bc55 的 CI 46151540561 四项及 Platform Availability 46151537543 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.385-zen-centered-layout.md。
@@ -434,6 +435,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.385 默认 Zen 居中宽度与编辑器列](docs/diagnostics/2026-11-28-p05/p05.385-zen-centered-layout.md)。
 [P05.386 自绘标题栏命令中心与文件搜索](docs/diagnostics/2026-11-28-p05/p05.386-command-center.md)。
 [P05.387 工作区独立居中布局](docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md)。
+[P05.388 居中编辑区边距分隔线](docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -699,4 +701,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.387 收尾 CI 和本地基线，按验收矩阵继续核对居中留白及命令中心初始帮助。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.388 收尾 CI 和本地基线，继续对照 LAY-02/LAY-17 命令中心初始帮助。PR #3 保持草稿，macOS 实机暂缓。

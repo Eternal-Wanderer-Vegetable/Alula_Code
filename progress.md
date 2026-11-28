@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.388 / feat-440 完成。普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md。
 - P05.387 / feat-439 完成。普通窗口可通过外观菜单或命令请求居中，工作区独立保存。横向分组临时展开，单组、纵向组和最大化组恢复留白。Windows/Linux 各验证四次进程启动、全屏恢复和文件字节。定向 84/84，专题 433/433，Flutter 2,023 项通过、2 项跳过。产品 85d0114 的 CI 46160334534 四项及 Platform Availability 46160330690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md。
 - P05.386 / feat-438 完成。自绘标题栏的命令中心随窗口布置，窄窗保留菜单、控件和拖动区。点击、Enter 和 Space 触发现有快速文件搜索，保留前缀模式及焦点恢复。两端发布构建验证正常、窄窗和 Zen，源文件字节一致。定向 82/82，专题 371/371，Flutter 2,021 项通过、2 项跳过。产品 636d2d6 的 CI 46156839204 四项及 Platform Availability 46156834958 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.386-command-center.md。
 - P05.385 / feat-437 完成。普通文本的 Zen 居中按可用编辑器宽度计算。并排时取消侧边留白，最大化、关闭多余组或上下堆叠时重新居中。两端发布验证（逻辑宽度/单边留白）Windows 2048/390、Linux 1920 1920/366、Linux 1280 1280/244，还原组几何及退出原生全屏通过，文件字节一致。定向 24/24，专题 281/281，Flutter 2,020 项通过、2 项跳过。产品 525bc55 的 CI 46151540561 四项及 Platform Availability 46151537543 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.385-zen-centered-layout.md。
@@ -2415,7 +2416,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- 普通窗口居中命令与工作区持久化已完成验收。继续核对居中留白调节与命令中心初始帮助。
+- 居中边距的拖动、复位及配置档恢复已完成限定验收。继续对照命令中心初始帮助。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
