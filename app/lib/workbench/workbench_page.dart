@@ -25570,14 +25570,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             onClose: _closeWalkthrough,
                           )
                     : _zenMode
-                    ? Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 1100),
-                          child: ListenableBuilder(
-                            listenable: _layout,
-                            builder: (context, _) => _buildZenGrid(),
-                          ),
-                        ),
+                    ? ListenableBuilder(
+                        listenable: _layout,
+                        builder: (context, _) => _buildZenGrid(),
                       )
                     : ListenableBuilder(
                   listenable: _layout,
@@ -26926,10 +26921,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildZenGrid() {
-    return WorkbenchGrid(
+    bool hasEditorColumns(WbNode node) =>
+        node is WbSplit &&
+        ((node.axis == Axis.horizontal && node.editorGroupSpan != null) ||
+            node.children.any(hasEditorColumns));
+
+    final centered = _layout.maximizedEditorRegion != null ||
+        !hasEditorColumns(_layout.root);
+    final grid = WorkbenchGrid(
       layout: _layout,
       builders: {
         for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
+      },
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const marginRatio = 0.1909;
+        final width = constraints.maxWidth;
+        final margin = centered && constraints.hasBoundedWidth
+            ? math.min(
+                (width * marginRatio).floorToDouble(),
+                math.max(0.0, (width - editorGroupMinimumWidth) / 2),
+              )
+            : 0.0;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: margin),
+          child: grid,
+        );
       },
     );
   }

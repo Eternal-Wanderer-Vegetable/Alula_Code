@@ -615,6 +615,56 @@ void main() {
     expect(find.descendant(of: secondGroup, matching: split), findsNothing);
   });
 
+  testWidgets('Zen centers proportionally and follows the editor columns',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await openEditor(tester);
+    await execute(tester, 'workbench.action.toggleZenMode');
+
+    final first = zenStrip('editor');
+    final second = zenStrip('editor-2');
+    void expectCentered(Finder tabStrip, double viewportWidth) {
+      final expectedMargin = (viewportWidth * 0.1909).floorToDouble();
+      final bounds = tester.getRect(tabStrip);
+      expect(bounds.left, closeTo(expectedMargin, 0.01));
+      expect(bounds.right, closeTo(viewportWidth - expectedMargin, 0.01));
+    }
+
+    void expectColumns(double viewportWidth) {
+      final left = tester.getRect(first);
+      final right = tester.getRect(second);
+      expect(left.left, closeTo(0, 0.01));
+      expect(right.right, closeTo(viewportWidth, 0.01));
+      expect(right.left, greaterThan(left.left));
+      expect(right.top, closeTo(left.top, 0.01));
+    }
+
+    expectCentered(first, 2400);
+    tester.view.physicalSize = const Size(960, 800);
+    await tester.pumpAndSettle();
+    expectCentered(first, 960);
+
+    await execute(tester, 'workbench.action.splitEditorRight');
+    expectColumns(960);
+    await execute(tester, 'workbench.action.toggleMaximizeEditorGroup');
+    expect(first, findsNothing);
+    expectCentered(second, 960);
+    await execute(tester, 'workbench.action.toggleMaximizeEditorGroup');
+    expectColumns(960);
+    await execute(tester, 'workbench.action.closeAllEditors');
+    expect(second, findsNothing);
+    expectCentered(first, 960);
+
+    await execute(tester, 'workbench.action.splitEditorDown');
+    expectCentered(first, 960);
+    expectCentered(second, 960);
+    expect(
+        tester.getTopLeft(second).dy, greaterThan(tester.getTopLeft(first).dy));
+    await execute(tester, 'workbench.action.toggleZenMode');
+    expect(find.byType(AlulaStatusBar), findsOneWidget);
+    expect(second, findsOneWidget);
+  });
+
   testWidgets('Alt activates the down split on the default Zen toolbar',
       (tester) async {
     await prepareWorkspace(tester);
