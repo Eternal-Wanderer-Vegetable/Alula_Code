@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.382 / feat-434 完成。默认多标签模式仅活动组显示拆分按钮。普通点击向右，按住 Alt 点击向下。Windows 发布构建验证原生 Alt 和按钮回调，Linux 验证 X11 完整键鼠路径。两端系统关窗均正常退出，文件字节一致。定向 23/23，专题 253/253，Flutter 2,016 项通过、2 项跳过。产品 0db66fd 的 CI 46142329742 四项及 Platform Availability 46142325017 Windows/Linux 通过。macOS 实机暂缓。 Windows 原生指针端到端仍待复验。详见 docs/diagnostics/2026-11-28-p05/p05.382-group-split-toolbar.md。
 - P05.381 / feat-433 完成。默认自定义标题栏在普通、Zen、退出及会话恢复时可见，顶部为 0、高度为 35 逻辑像素。命令中心能打开可聚焦的命令面板，Zen 保持隐藏状态栏。Windows 和 Linux 共四次系统关窗均退出 0。定向 21/21，专题 228/228，Flutter 2,014 项通过、2 项跳过。产品 7c90d0b 的 CI 46139494124 四项及 Platform Availability 46139491101 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md。
 - P05.380 / feat-432 完成。默认主窗命令面板在普通、Zen 和退出后三阶段距顶部 6 逻辑像素，水平居中且输入可聚焦。Windows 和 Linux 原生复验通过，两次系统关窗退出码为 0。定向 20/20，专题 201/201，Flutter 2,013 项通过、2 项跳过。产品 3b670fc 的 CI 46137056796 四项及 Platform Availability 46137053375 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md。
 - P05.379 / feat-431 完成。主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md。
@@ -422,6 +423,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.379 Zen 普通文本编辑器行号](docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md)。
 [P05.380 默认命令面板位置](docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md)。
 [P05.381 Zen 默认标题栏与命令中心](docs/diagnostics/2026-11-28-p05/p05.381-zen-titlebar.md)。
+[P05.382 默认编辑器组拆分工具条](docs/diagnostics/2026-11-28-p05/p05.382-group-split-toolbar.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -687,4 +689,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.381 收尾 CI 和本地基线，按固定版复测普通与 Zen 的默认编辑器组工具条，选择依赖已满足的产品差异。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.382 收尾 CI 和本地基线，继续核对默认编辑器组 More Actions 现有命令与可用条件。普通 Windows 桌面可用时补齐 P05.382 原生指针复验。PR #3 保持草稿，macOS 实机暂缓。
