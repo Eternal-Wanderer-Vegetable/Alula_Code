@@ -5572,8 +5572,8 @@
         "feat-103",
         "feat-437"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "普通窗口可通过外观菜单或命令请求居中，工作区独立保存。横向分组临时展开，单组、纵向组和最大化组恢复留白。Windows/Linux 各验证四次进程启动、全屏恢复和文件字节。定向 84/84，专题 433/433，Flutter 2,023 项通过、2 项跳过。产品 85d0114 的 CI 46160334534 四项及 Platform Availability 46160330690 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
