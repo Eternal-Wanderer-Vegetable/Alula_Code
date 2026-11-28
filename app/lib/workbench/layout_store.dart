@@ -10,6 +10,7 @@ import 'dart:io';
 import '../bridge/alula_core.dart' show HierarchyDirection, HierarchyKind;
 import 'layout_model.dart';
 import 'secondary_sidebar_layout.dart';
+import 'workspace_state.dart';
 
 typedef PeekLayout = ({double previewRatio, int heightInLines});
 
@@ -113,6 +114,44 @@ class LayoutStore {
       }
       return false;
     }
+  }
+
+  static const _centeredLayoutMaxBytes = 256 * 1024;
+
+  String _centeredLayoutPath(String identity) =>
+      '${resolvePath()}.centered/${workspaceStateFileKey(identity)}.json';
+
+  Map<String, Object?>? _readCenteredLayout(String path) {
+    try {
+      final file = File(path).openSync();
+      try {
+        final length = file.lengthSync();
+        if (length > _centeredLayoutMaxBytes) return null;
+        final bytes = file.readSync(length);
+        final decoded = jsonDecode(utf8.decode(bytes));
+        return decoded is Map<String, Object?> ? decoded : null;
+      } finally {
+        file.closeSync();
+      }
+    } on FileSystemException {
+      return null;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  bool loadCenteredLayout(String? workspaceRoot) {
+    final identity = workspaceStateIdentity(workspaceRoot);
+    final value = _readCenteredLayout(_centeredLayoutPath(identity));
+    return value?['workspace'] == identity && value?['centered'] == true;
+  }
+
+  bool saveCenteredLayout(String? workspaceRoot, bool centered) {
+    final identity = workspaceStateIdentity(workspaceRoot);
+    final path = _centeredLayoutPath(identity);
+    final owner = _readCenteredLayout(path)?['workspace'];
+    if (owner != null && owner != identity) return false;
+    return _writePreference(path, {'workspace': identity, 'centered': centered});
   }
 
   /// 读取已保存布局；不存在或损坏返回 null（调用方回退 defaultLayout）。

@@ -127,6 +127,7 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'workspace_state.dart';
 import 'locked_scroll_hold_input.dart';
 import 'locked_scroll_motion.dart';
 import 'notification_widgets.dart';
@@ -797,6 +798,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String? _treeKeyboardPath;
   final ScrollController _treeScroll = ScrollController();
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
+  bool _centeredLayout = false;
+  bool _zenLayoutCentered = true;
+  bool? _zenOwnsCentering;
   bool _zenMode = false;
   bool _zenOwnsFullscreen = false;
   bool _syncingZenFullscreen = false;
@@ -2051,6 +2055,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '编辑器',
       '在新窗口打开活动编辑器',
       () async => _moveFocusedEditorToNewWindow(),
+    );
+    reg(
+      'workbench.action.toggleCenteredLayout',
+      '查看',
+      '切换居中布局',
+      () async => _toggleCenteredLayout(),
     );
     reg(
       'workbench.action.toggleZenMode',
@@ -5977,6 +5987,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'problemsDefaultSingleLine': _problemsMessageLines.defaultSingleLine,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
+        if (_zenMode) 'zenLayoutCentered': _zenLayoutCentered,
+        if (_zenMode) 'zenOwnsCentering': _zenOwnsCentering,
         if (_zenMode) 'zenPreviousCollapsed': _zenPreviousCollapsed,
         'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
@@ -6027,6 +6039,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _core = core;
       _abiVersion = core.abiVersion;
       _restoreSession(core);
+      _centeredLayout = widget.layoutStore.loadCenteredLayout(_workspaceRoot);
+      if (_zenMode) _zenOwnsCentering ??= !_centeredLayout;
+      _syncCenteredLayoutContext();
       _loadFindHistoryForWorkspace(_workspaceRoot);
       // journal 没有未命名文档时才建欢迎页（避免恢复后出现重复未命名）
       final g = _focused;
@@ -6132,6 +6147,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
+    _zenLayoutCentered = data['zenLayoutCentered'] != false;
+    if (data['zenOwnsCentering'] case final bool ownsCentering) {
+      _zenOwnsCentering = ownsCentering;
+    }
     _zenPreviousCollapsed = _zenMode
         ? _decodeZenPreviousCollapsed(data['zenPreviousCollapsed'])
         : const {};
@@ -14443,6 +14462,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     try {
       final entries = core.workspace.listDir(path);
+      final centeredWorkspaceChanged =
+          workspaceStateIdentity(_workspaceRoot) != workspaceStateIdentity(path);
+      final centered = centeredWorkspaceChanged
+          ? widget.layoutStore.loadCenteredLayout(path)
+          : _centeredLayout;
       final historyWorkspaceChanged = _findHistoryWorkspaceIdentity !=
           FindReplaceHistoryStore.workspaceIdentity(path);
       if (historyWorkspaceChanged) _flushFindHistory();
@@ -14481,6 +14505,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         _treeFind.workspaceChanged(path);
         _workspaceRoot = path;
+        _centeredLayout = centered;
+        if (centeredWorkspaceChanged && _zenMode) {
+          _zenLayoutCentered = true;
+          _zenOwnsCentering = !centered;
+        }
         _treeRoots.clear();
         _treeRoots.addAll(entries
             .map((e) => TreeNode(
@@ -14507,6 +14536,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       });
       _recordRecentWorkspace(path);
       _loadFindHistoryForWorkspace(path);
+      _syncCenteredLayoutContext();
       _attachWorkspaceWatcher();
       _updateLanguageServicePolling();
       _startResourceMonitoring();
@@ -15781,7 +15811,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  // ---------- Zen 模式（LAY-14） ----------
+  // ---------- 居中布局与 Zen 模式（LAY-14） ----------
+
+  bool get _centeredRequested => _zenMode ? _zenLayoutCentered : _centeredLayout;
+
+  void _syncCenteredLayoutContext() {
+    _commands.context.setValue('isMainEditorCenteredLayout', _centeredRequested);
+  }
+
+  bool get _shouldCenterEditorArea =>
+      _centeredRequested &&
+      (_layout.maximizedEditorRegion != null ||
+          !hasHorizontalEditorColumns(_layout.root)) &&
+      !_groups.values.any((group) {
+        final doc = group.active;
+        return doc?.mergeResultSession != null || doc?._splitEditor != null;
+      });
+
+  void _toggleCenteredLayout() {
+    final centered = !_centeredRequested;
+    final persist = !_zenMode || _zenOwnsCentering != true;
+    setState(() {
+      if (_zenMode) _zenLayoutCentered = centered;
+      if (persist) _centeredLayout = centered;
+    });
+    if (persist &&
+        !widget.layoutStore.saveCenteredLayout(_workspaceRoot, centered)) {
+      setState(() => _statusDetail = '无法保存此工作区的居中布局。');
+    }
+    _syncCenteredLayoutContext();
+    if (_active case final active?) _focusEditorAfterLayout(_focused, active);
+    _scheduleStateSave();
+  }
 
   /// Zen 模式隐藏活动栏、主侧栏、次侧栏、面板和状态栏，并限制居中编辑器的宽度。
   /// 再次切换独立恢复四个区域的折叠态，会话 journal 保留进入前的快照。
@@ -15791,6 +15852,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {
       _zenMode = !_zenMode;
       if (_zenMode) {
+        _zenLayoutCentered = true;
+        _zenOwnsCentering = !_centeredLayout;
         _zenPreviousCollapsed = {
           for (final region in _zenRegions) region: _layout.isCollapsed(region),
         };
@@ -15802,8 +15865,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _layout.setRegionCollapsed(entry.key, entry.value);
         }
         _zenPreviousCollapsed = const {};
+        _zenOwnsCentering = null;
       }
     });
+    _syncCenteredLayoutContext();
     _commands.context.setValue('inZenMode', _zenMode);
     _syncCommandContext();
     _syncNotificationFocusContext();
@@ -25254,6 +25319,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         ),
                         TitleMenuItem.submenu('外观(&&A)', children: [
                           TitleMenuItem(
+                            '居中布局(&&C)',
+                            commandId: 'workbench.action.toggleCenteredLayout',
+                            checkedListenable: _commands,
+                            checkedBuilder: () => _centeredRequested,
+                          ),
+                          TitleMenuItem(
                             '切换禅模式(&&Z)',
                             commandId: 'workbench.action.toggleZenMode',
                             checkedListenable: _layout,
@@ -25578,6 +25649,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   listenable: _layout,
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
+                    centeredEditorArea: _shouldCenterEditorArea,
                     builders: {
                       'activity': (_) => _buildSidebarEntryDropTarget(
                             primarySidebarViewLocation,
@@ -26921,34 +26993,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildZenGrid() {
-    bool hasEditorColumns(WbNode node) =>
-        node is WbSplit &&
-        ((node.axis == Axis.horizontal && node.editorGroupSpan != null) ||
-            node.children.any(hasEditorColumns));
-
-    final centered = _layout.maximizedEditorRegion != null ||
-        !hasEditorColumns(_layout.root);
-    final grid = WorkbenchGrid(
-      layout: _layout,
-      builders: {
-        for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
-      },
-    );
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const marginRatio = 0.1909;
-        final width = constraints.maxWidth;
-        final margin = centered && constraints.hasBoundedWidth
-            ? math.min(
-                (width * marginRatio).floorToDouble(),
-                math.max(0.0, (width - editorGroupMinimumWidth) / 2),
-              )
-            : 0.0;
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: margin),
-          child: grid,
-        );
-      },
+    return CenteredEditorArea(
+      enabled: _shouldCenterEditorArea,
+      child: WorkbenchGrid(
+        layout: _layout,
+        builders: {
+          for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
+        },
+      ),
     );
   }
 

@@ -695,6 +695,146 @@ void main() {
     expect(second, findsOneWidget);
   });
 
+  testWidgets(
+    'standalone centered layout follows editor groups and preserves the shell',
+    (tester) async {
+      await prepareWorkspace(tester);
+      final editor = await openEditor(tester);
+      final first = zenStrip('editor');
+      final second = zenStrip('editor-2');
+      final sideBar = find.byKey(const ValueKey('wb-region-sidebar'));
+      const center = 'workbench.action.toggleCenteredLayout';
+      final editorBounds = tester.getRect(first);
+      final sidebarBounds = tester.getRect(sideBar);
+      final margin = (editorBounds.width * 0.1909).floorToDouble();
+
+      void expectCentered(Finder strip) {
+        final bounds = tester.getRect(strip);
+        expect(bounds.left, closeTo(editorBounds.left + margin, .01));
+        expect(bounds.right, closeTo(editorBounds.right - margin, .01));
+      }
+
+      await execute(tester, center);
+      expectCentered(first);
+      expect(tester.state<RustTextInputFieldState>(
+          find.byType(RustTextInputField)), same(editor));
+      expect(tester.getRect(sideBar), sidebarBounds);
+      expect(commands!.context['isMainEditorCenteredLayout'], true);
+
+      await execute(tester, 'view.togglePanel');
+      expect(find.byKey(const ValueKey('wb-region-panel')), findsOneWidget);
+      expectCentered(first);
+      await execute(tester, 'view.togglePanel');
+
+      await execute(tester, 'workbench.action.splitEditorRight');
+      expect(tester.getTopLeft(first).dx, closeTo(editorBounds.left, .01));
+      expect(tester.getTopRight(second).dx, closeTo(editorBounds.right, .01));
+      expect(commands!.context['isMainEditorCenteredLayout'], true);
+
+      await execute(tester, 'workbench.action.toggleMaximizeEditorGroup');
+      expect(first, findsNothing);
+      expectCentered(second);
+      await execute(tester, 'workbench.action.toggleMaximizeEditorGroup');
+      expect(tester.getTopRight(second).dx, closeTo(editorBounds.right, .01));
+
+      await execute(tester, 'workbench.action.closeAllEditors');
+      expect(second, findsNothing);
+      expectCentered(first);
+      await execute(tester, 'workbench.action.splitEditorDown');
+      expectCentered(first);
+      expectCentered(second);
+      expect(tester.getTopLeft(second).dy, greaterThan(editorBounds.top));
+
+      await execute(tester, 'workbench.action.toggleZenMode');
+      await execute(tester, 'workbench.action.toggleZenMode');
+      expectCentered(first);
+      expect(tester.getRect(sideBar), sidebarBounds);
+      Future<MenuItemButton> centeredMenu() async {
+        await tester.tap(find.text('查看(V)'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('外观(A)'));
+        await tester.pumpAndSettle();
+        final item = find
+            .ancestor(
+              of: find.text('居中布局(C)'),
+              matching: find.byType(MenuItemButton),
+            )
+            .first;
+        return tester.widget<MenuItemButton>(item);
+      }
+
+      expect((await centeredMenu()).leadingIcon, isA<Icon>());
+      await tester.tap(find.text('居中布局(C)'));
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(first).dx, closeTo(editorBounds.left, .01));
+      expect(tester.getTopRight(first).dx, closeTo(editorBounds.right, .01));
+      expect(commands!.context['isMainEditorCenteredLayout'], false);
+      expect((await centeredMenu()).leadingIcon, isA<SizedBox>());
+      await pressEscape(tester);
+    },
+  );
+
+  testWidgets('centered layout belongs to each workspace across remounts',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final workspaceA = workspace;
+    final workspaceB = Directory('${baseOf()}/workspace-b')..createSync();
+    const center = 'workbench.action.toggleCenteredLayout';
+
+    Future<void> remount(Directory folder) async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      workspace = folder;
+      await mountPage(tester);
+    }
+
+    Future<void> switchWorkspace(Directory folder) async {
+      expect(
+        await commands!.execute('file.openRecent', arguments: {
+          'path': folder.path,
+          'kind': 'workspace',
+        }),
+        CommandExecutionStatus.executed,
+      );
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    bool requested() =>
+        commands!.context['isMainEditorCenteredLayout'] == true;
+
+    expect(requested(), isFalse);
+    await execute(tester, center);
+    expect(requested(), isTrue);
+    final centered = tester.getRect(zenStrip('editor'));
+
+    await remount(workspaceA);
+    expect(requested(), isTrue);
+    expect(tester.getRect(zenStrip('editor')), centered);
+    await switchWorkspace(workspaceB);
+    expect(requested(), isFalse);
+    expect(tester.getRect(zenStrip('editor')).width, greaterThan(centered.width));
+    const zen = 'workbench.action.toggleZenMode';
+    await execute(tester, zen);
+    expect(requested(), isTrue);
+    await execute(tester, center);
+    expect(requested(), isFalse);
+    await execute(tester, center);
+    expect(requested(), isTrue);
+    await execute(tester, zen);
+    expect(requested(), isFalse);
+
+    await switchWorkspace(workspaceA);
+    expect(requested(), isTrue);
+    expect(tester.getRect(zenStrip('editor')), centered);
+    await execute(tester, zen);
+    await execute(tester, center);
+    expect(requested(), isFalse);
+    await execute(tester, zen);
+    expect(requested(), isFalse);
+    await remount(workspaceA);
+    expect(requested(), isFalse);
+  });
+
   testWidgets('Alt activates the down split on the default Zen toolbar',
       (tester) async {
     await prepareWorkspace(tester);

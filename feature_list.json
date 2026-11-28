@@ -5563,6 +5563,19 @@
       "evidence": "自绘标题栏的命令中心随窗口布置，窄窗保留菜单、控件和拖动区。点击、Enter 和 Space 触发现有快速文件搜索，保留前缀模式及焦点恢复。两端发布构建验证正常、窄窗和 Zen，源文件字节一致。定向 82/82，专题 371/371，Flutter 2,021 项通过、2 项跳过。产品 636d2d6 的 CI 46156839204 四项及 Platform Availability 46156834958 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.386-command-center.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-439",
+      "name": "P05.387 LAY-14 工作区独立居中布局",
+      "description": "提供普通编辑区域的居中命令和外观菜单，按工作区记忆，横纵拆分、最大化和 Zen 切换时保持正确布局。",
+      "dependencies": [
+        "feat-103",
+        "feat-437"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -23,15 +23,55 @@ const double kDividerThickness = workbenchDividerThickness;
 
 const Color _kDividerColor = Color(0xFF2A2E37);
 
+class CenteredEditorArea extends StatelessWidget {
+  const CenteredEditorArea({
+    super.key,
+    required this.enabled,
+    required this.child,
+  });
+
+  final bool enabled;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final padding = enabled && constraints.hasBoundedWidth
+            ? math.min(
+                (width * 0.1909).floorToDouble(),
+                math.max(0.0, (width - editorGroupMinimumWidth) / 2),
+              )
+            : 0.0;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+bool hasHorizontalEditorColumns(WbNode node) =>
+    node is WbSplit &&
+    ((node.axis == Axis.horizontal && node.editorGroupSpan != null) ||
+        node.children.any(hasHorizontalEditorColumns));
+
 class WorkbenchGrid extends StatefulWidget {
   const WorkbenchGrid({
     super.key,
     required this.layout,
     required this.builders,
+    this.centeredEditorArea,
   });
 
   final WorkbenchLayout layout;
   final Map<String, WidgetBuilder> builders;
+
+  // Null uses the ordinary grid. False keeps the editor wrapper mounted when
+  // centering is requested later or is temporarily suspended by the layout.
+  final bool? centeredEditorArea;
 
   @override
   State<WorkbenchGrid> createState() => _WorkbenchGridState();
@@ -81,6 +121,7 @@ class _WorkbenchGridState extends State<WorkbenchGrid> {
                   regionKeys: _regionKeys,
                   projection: projection,
                   omitRegion: 'panel',
+                  centeredEditorArea: widget.centeredEditorArea,
                 ),
               ),
               Positioned.fill(
@@ -101,6 +142,7 @@ class _WorkbenchGridState extends State<WorkbenchGrid> {
           builders: widget.builders,
           regionKeys: _regionKeys,
           projection: projection,
+          centeredEditorArea: widget.centeredEditorArea,
         );
       },
     );
@@ -123,6 +165,7 @@ class _NodeView extends StatelessWidget {
     required this.regionKeys,
     required this.projection,
     this.omitRegion,
+    this.centeredEditorArea,
   });
 
   final WbNode node;
@@ -131,9 +174,32 @@ class _NodeView extends StatelessWidget {
   final Map<String, GlobalKey> regionKeys;
   final PanelAlignmentProjection? projection;
   final String? omitRegion;
+  final bool? centeredEditorArea;
+
+  bool get _isEditorArea {
+    var hasEditor = false;
+    for (final leaf in node.leaves) {
+      if (leaf.collapsed || leaf.region == omitRegion) continue;
+      final region = leaf.region;
+      if (region != 'editor' && !region.startsWith('editor-')) return false;
+      hasEditor = true;
+    }
+    return hasEditor;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final centered = centeredEditorArea;
+    if (centered == null || !_isEditorArea) {
+      return _buildContents(context, centered);
+    }
+    return CenteredEditorArea(
+      enabled: centered,
+      child: _buildContents(context, null),
+    );
+  }
+
+  Widget _buildContents(BuildContext context, bool? nestedCentering) {
     final leaf = node;
     if (leaf is WbLeaf) {
       if (leaf.region == omitRegion) return const SizedBox.shrink();
@@ -223,6 +289,7 @@ class _NodeView extends StatelessWidget {
           regionKeys: regionKeys,
           projection: projection,
           omitRegion: hidden ? maximized : omitRegion,
+          centeredEditorArea: hidden ? null : nestedCentering,
         );
         items.add(
           SizedBox(
@@ -269,6 +336,7 @@ class _NodeView extends StatelessWidget {
               builders: builders,
               regionKeys: regionKeys,
               projection: projection,
+              centeredEditorArea: nestedCentering,
             ),
           ),
         ],
