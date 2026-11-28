@@ -7,7 +7,6 @@ import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
-import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/status_bar.dart';
@@ -224,11 +223,11 @@ void main() {
       expect(zenStrip('editor'), findsOneWidget,
           reason: 'the editor remains visible');
 
-      final gridRect = tester.getRect(find.byType(WorkbenchGrid));
-      expect(gridRect.left, greaterThan(0),
-          reason: 'the centered grid leaves side margins');
-      expect(gridRect.width, lessThan(2400),
-          reason: 'the centered grid is width-limited');
+      final editorRect = tester.getRect(zenStrip('editor'));
+      expect(editorRect.left, greaterThan(0),
+          reason: 'the centered editor leaves side margins');
+      expect(editorRect.width, lessThan(2400),
+          reason: 'the centered editor is width-limited');
 
       await pressEscape(tester);
       expect(find.byType(AlulaStatusBar), findsNothing);
@@ -250,9 +249,9 @@ void main() {
       expect(requests, [true]);
       expect(find.byType(AlulaStatusBar), findsNothing,
           reason: 'a zen-mode session restores without the status bar');
-      final gridRect = tester.getRect(find.byType(WorkbenchGrid));
-      expect(gridRect.width, lessThan(2400),
-          reason: 'the centered grid restores');
+      final editorRect = tester.getRect(zenStrip('editor'));
+      expect(editorRect.width, lessThan(2400),
+          reason: 'the centered editor restores');
 
       await pressEscape(tester);
       expect(requests, [true]);

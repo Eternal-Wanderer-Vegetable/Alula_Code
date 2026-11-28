@@ -1,6 +1,7 @@
 // 工作台 UI 冒烟测试：应用能构建并进入 W1 工作台（标题栏 + 五大区），
 // 核心加载成功时状态栏就绪；autoFolder 打开 fixture 工程后文件树自动装载根目录条目。
 import 'dart:io';
+import 'dart:ui' show Tristate;
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
@@ -953,6 +954,122 @@ void main() {
     await tester.pumpAndSettle();
     expectState(true, false, 574);
     expect(sample.readAsBytesSync(), diskBytes);
+  });
+
+  testWidgets('P05.393 标题栏布局按钮跟随区域、位置与 Zen 切换',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(650, 900);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+    final title = tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar));
+    const sidebar = 'view.toggleSidebar';
+    const panel = 'view.togglePanel';
+    const secondary = 'workbench.action.toggleAuxiliaryBar';
+    const regions = {
+      sidebar: 'sidebar',
+      panel: 'panel',
+      secondary: 'secondarySidebar',
+    };
+    final menu = find.byKey(const ValueKey('layout-controls-control'));
+    final search = find.byKey(const ValueKey('command-center-control'));
+    final back = find.byKey(const ValueKey('command-center-back'));
+    final forward = find.byKey(const ValueKey('command-center-forward'));
+
+    Finder button(String id) => find.byKey(ValueKey('title-layout-toggle-$id'));
+    Finder region(String id) =>
+        find.byKey(ValueKey('wb-region-${regions[id]}'));
+
+    void expectState(String id, bool active) {
+      expect(region(id), active ? findsOneWidget : findsNothing);
+      final node =
+          tester.getSemantics(find.byKey(ValueKey('title-layout-state-$id')));
+      final data = node.getSemanticsData();
+      expect(data.flagsCollection.isButton, isTrue);
+      expect(data.flagsCollection.isToggled,
+          active ? Tristate.isTrue : Tristate.isFalse);
+    }
+
+    void expectOrder(List<String> ids) {
+      expect(tester.getRect(back).right,
+          lessThanOrEqualTo(tester.getRect(forward).left));
+      expect(tester.getRect(forward).right,
+          lessThanOrEqualTo(tester.getRect(search).left));
+      expect(tester.getRect(search).width, greaterThan(28));
+      expect(tester.getRect(search).right,
+          lessThanOrEqualTo(tester.getRect(menu).left));
+      var previous = tester.getRect(menu);
+      for (final id in ids) {
+        expect(button(id), findsOneWidget);
+        final rect = tester.getRect(button(id));
+        expect(previous.right, lessThanOrEqualTo(rect.left));
+        previous = rect;
+      }
+    }
+
+    expectOrder([sidebar, panel, secondary]);
+    final original = {
+      for (final id in regions.keys) id: region(id).evaluate().isNotEmpty,
+    };
+    for (final id in regions.keys) {
+      expectState(id, original[id]!);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, !original[id]!);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, original[id]!);
+    }
+
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expectState(sidebar, !original[sidebar]!);
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expectState(sidebar, original[sidebar]!);
+
+    await title.commands.execute('workbench.action.toggleSidebarPosition');
+    await tester.pumpAndSettle();
+    expectOrder([secondary, panel, sidebar]);
+    expect(tester.getRect(region(sidebar)).left,
+        greaterThan(tester.getRect(search).left));
+    await title.commands.execute('workbench.action.toggleSidebarPosition');
+    await tester.pumpAndSettle();
+    expectOrder([sidebar, panel, secondary]);
+
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    for (final id in regions.keys) {
+      expectState(id, false);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, true);
+      expect(title.commands.context['inZenMode'], isTrue);
+      expect(find.byKey(const ValueKey('wb-region-activity')), findsNothing);
+      await tester.tap(button(id));
+      await tester.pumpAndSettle();
+      expectState(id, false);
+    }
+    await title.commands.execute('workbench.action.toggleZenMode');
+    await tester.pump(const Duration(milliseconds: 700));
+    for (final entry in original.entries) {
+      expectState(entry.key, entry.value);
+    }
+
+    tester.view.physicalSize = const Size(520, 900);
+    await tester.pumpAndSettle();
+    expect(menu, findsOneWidget);
+    expect(tester.getRect(search).width, greaterThan(0));
+    for (final id in regions.keys) {
+      expect(button(id), findsNothing);
+    }
+    semantics.dispose();
   });
 
   testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',

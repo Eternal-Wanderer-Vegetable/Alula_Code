@@ -16,6 +16,9 @@ import 'package:window_manager/window_manager.dart';
 
 import 'commands.dart';
 import 'keybindings.dart';
+import 'layout_controller.dart';
+import 'layout_model.dart' show SideBarPosition;
+import 'sidebar_position.dart';
 import 'window_chrome_configuration.dart';
 import 'window_chrome_driver.dart';
 
@@ -92,6 +95,7 @@ class AlulaTitleBar extends StatefulWidget {
     required this.menus,
     required this.commands,
     this.layoutControlsBuilder,
+    this.workbenchLayout,
     this.notificationButton,
     this.windowControls = false,
     this.windowChromeDriver,
@@ -109,6 +113,9 @@ class AlulaTitleBar extends StatefulWidget {
 
   /// Current layout toggle items, read when the custom title-bar menu opens.
   final List<TitleMenuItem> Function()? layoutControlsBuilder;
+
+  /// Live layout behind the main workbench's direct title-bar toggles.
+  final WorkbenchLayout? workbenchLayout;
   final Widget? notificationButton;
 
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
@@ -714,8 +721,6 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                       ),
                     ),
                   ),
-                if (chrome.isCustom && widget.layoutControlsBuilder != null)
-                  _buildLayoutControls(context),
               ],
             ),
           ),
@@ -737,15 +742,22 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             ),
           LayoutId(
             id: _TitleBarPart.trailing,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.notificationButton != null) ...[
-                  widget.notificationButton!,
-                  const SizedBox(width: 8),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (chrome.isCustom && widget.layoutControlsBuilder != null)
+                    _buildLayoutControls(
+                      context,
+                      showDirectToggles: constraints.maxWidth >= 600,
+                    ),
+                  if (widget.notificationButton != null) ...[
+                    widget.notificationButton!,
+                    const SizedBox(width: 8),
+                  ],
+                  if (showCustomControls) ..._buildWindowButtons(),
                 ],
-                if (showCustomControls) ..._buildWindowButtons(),
-              ],
+              ),
             ),
           ),
         ],
@@ -753,15 +765,19 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     );
   }
 
-  Widget _buildLayoutControls(BuildContext context) {
+  Widget _buildLayoutControls(
+    BuildContext context, {
+    required bool showDirectToggles,
+  }) {
     final builder = widget.layoutControlsBuilder!;
+    final layout = widget.workbenchLayout;
     return ListenableBuilder(
-      listenable: widget.commands,
+      listenable: Listenable.merge([widget.commands, layout]),
       builder: (context, _) {
         final items = _visibleTitleMenuItems(builder(), widget.commands);
         if (items.isEmpty) return const SizedBox.shrink();
 
-        return MenuAnchor(
+        final menu = MenuAnchor(
           controller: _layoutControlsMenuController,
           childFocusNode: _layoutControlsFocusNode,
           style: _layoutControlsMenuStyle,
@@ -817,7 +833,107 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             ),
           ),
         );
+        if (!showDirectToggles || layout == null) return menu;
+
+        const primary = 'view.toggleSidebar';
+        const secondary = 'workbench.action.toggleAuxiliaryBar';
+        final primaryOnLeft = layout.sideBarPosition == SideBarPosition.left;
+        final byId = {
+          for (final entry in items)
+            if (entry.item.commandId case final String id) id: entry.item,
+        };
+        return TextFieldTapRegion(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              menu,
+              for (final (id, alignment) in [
+                (primaryOnLeft ? primary : secondary, Alignment.centerLeft),
+                ('view.togglePanel', Alignment.bottomCenter),
+                (primaryOnLeft ? secondary : primary, Alignment.centerRight),
+              ])
+                if (byId[id] case final item?) ...[
+                  const SizedBox(width: 4),
+                  _buildLayoutVisibilityToggle(context, item, alignment),
+                ],
+            ],
+          ),
+        );
       },
+    );
+  }
+
+  Widget _buildLayoutVisibilityToggle(
+    BuildContext context,
+    TitleMenuItem item,
+    Alignment alignment,
+  ) {
+    final id = item.commandId!;
+    final enabled = item.enabled && widget.commands.isEnabled(id);
+    final active = item.currentChecked == true;
+    final onTap = enabled ? () => unawaited(_executeLayoutControl(item)) : null;
+    final shortcut = widget.commands.byId(id)?.shortcut;
+    final label = '切换${_plainTitleMenuLabel(item.label)}';
+    final color =
+        enabled ? const Color(0xFFE0E0E0) : Theme.of(context).disabledColor;
+    final panel = alignment == Alignment.bottomCenter;
+    final edge = BorderSide(color: color);
+    return Tooltip(
+      message: shortcut == null ? label : '$label ($shortcut)',
+      excludeFromSemantics: true,
+      child: Semantics(
+        key: ValueKey('title-layout-state-$id'),
+        button: true,
+        toggled: active,
+        enabled: enabled,
+        label: label,
+        hint: shortcut,
+        onTap: onTap,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: ValueKey('title-layout-toggle-$id'),
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            canRequestFocus: enabled,
+            excludeFromSemantics: true,
+            onTap: onTap,
+            child: SizedBox.square(
+              dimension: 22,
+              child: Center(
+                child: SizedBox(
+                  width: 16,
+                  height: 14,
+                  child: DecoratedBox(
+                    position: DecorationPosition.foreground,
+                    decoration: BoxDecoration(
+                      border: Border.fromBorderSide(edge),
+                      borderRadius: const BorderRadius.all(Radius.circular(2)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(1),
+                      child: FractionallySizedBox(
+                        alignment: alignment,
+                        widthFactor: panel ? 1 : 0.34,
+                        heightFactor: panel ? 0.34 : 1,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: active ? color : null,
+                            border: switch (alignment) {
+                              Alignment.centerLeft => Border(right: edge),
+                              Alignment.centerRight => Border(left: edge),
+                              _ => Border(top: edge),
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

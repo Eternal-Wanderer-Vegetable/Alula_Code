@@ -1489,7 +1489,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
-        shortcut: 'Ctrl+B');
+        shortcut: _keybindings.shortcutFor('view.toggleSidebar'));
     _registerToggleSideBarPositionCommand();
     reg(
       'workbench.action.toggleAuxiliaryBar',
@@ -1501,8 +1501,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     reg('view.togglePanel', '查看', '切换面板', () async => _togglePanel(),
-        shortcut:
-            defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+        shortcut: _keybindings.shortcutFor('view.togglePanel'));
     reg(
       'workbench.actions.view.problems',
       '查看',
@@ -25339,9 +25338,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
                   closeWindow: _closeWorkbenchWindow,
+                  workbenchLayout: _layout,
                   layoutControlsBuilder: () => [
                     TitleMenuItem(
-                      '侧栏',
+                      '主侧栏',
                       commandId: 'view.toggleSidebar',
                       checked: !_layout.isCollapsed('sidebar'),
                     ),
@@ -27099,14 +27099,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildZenGrid() {
-    return CenteredEditorArea(
-      layout: _centeredEditorLayout,
-      child: WorkbenchGrid(
-        layout: _layout,
-        builders: {
-          for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
-        },
-      ),
+    return WorkbenchGrid(
+      layout: _layout,
+      centeredEditorArea: _centeredEditorLayout,
+      builders: {
+        'sidebar': (_) => _buildSidebarBody(
+              primarySidebarViewLocation,
+              _sidebarView,
+            ),
+        secondarySidebarRegion: (_) => _buildSecondarySidebar(),
+        'panel': (_) => _buildPanel(),
+        for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
+      },
     );
   }
 

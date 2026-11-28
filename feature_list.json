@@ -5643,6 +5643,20 @@
       "evidence": "自绘标题栏的后退和前进沿用现有历史，并随可用路径更新。窄窗与 Zen 仍可点击导航。关闭全部编辑器后可以重开历史文件，恢复光标与焦点。Windows/Linux 原生回执通过。定向 136/136、组合 89/89、专题 439/439，Flutter 2,029 项通过、2 项跳过。产品 48957e8 的 CI 46175267344 四项及 Platform Availability 46175263915 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.392-title-navigation-controls.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-445",
+      "name": "P05.393 LAY-02 标题栏三区域可见性按钮",
+      "description": "自绘标题栏右侧增加主侧栏、面板与次侧栏的直接切换按钮，按主侧栏位置排列并同步状态。核对窄窗、快捷键、Zen 内临时可见性及退出恢复。",
+      "dependencies": [
+        "feat-061",
+        "feat-405",
+        "feat-444"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
