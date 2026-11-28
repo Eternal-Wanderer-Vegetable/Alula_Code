@@ -5303,6 +5303,19 @@
       "evidence": "滚动锁定生效时显示可点击的状态栏入口，点击关闭。Toggle 与 Hold 的显隐及会话开关通过。Windows 与 Linux 各通过 11 项，专题 183/183，Flutter 1,982 项通过、2 项跳过。产品 2b22642 的 CI 46094325305 四项及 Platform Availability 46094322690 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-420",
+      "name": "P05.368 LAY-15 辅助窗口滚动锁定状态与切换命令",
+      "description": "辅助窗口使用主工作台的有效锁定状态。普通模式显示活动状态栏入口，支持命令面板和点击切换，紧凑模式隐藏，打开和关闭时保持主窗状态。",
+      "dependencies": [
+        "feat-419",
+        "feat-151"
+      ],
+      "status": "in-progress",
+      "evidence": [],
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

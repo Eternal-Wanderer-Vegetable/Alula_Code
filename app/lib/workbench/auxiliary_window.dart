@@ -26,6 +26,9 @@ import 'commands.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
 import 'quick_input.dart';
+import 'status_bar.dart';
+
+const auxiliaryLockedScrollingMethod = 'alula_locked_scrolling_v1';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
@@ -163,6 +166,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       'workbench.action.enableCompactAuxiliaryWindow';
   static const _disableCompactCommand =
       'workbench.action.disableCompactAuxiliaryWindow';
+  static const _toggleLockedScrollingCommand =
+      'workbench.action.toggleLockedScrolling';
 
   AlulaDoc? _doc;
   RustTextInputWindow? _inputWindow;
@@ -188,6 +193,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   int _boundsReportSequence = 0;
   bool? _nativeWindowFocused;
   bool _focusContextConnected = false;
+  int _latestLockedScrollingRevision = -1;
+  bool _lockedScrolling = false;
   bool _boundsReportRunning = false;
   bool _boundsReportRequested = false;
   String? _lastCommittedTransferId;
@@ -219,6 +226,12 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         title: '退出紧凑模式',
         category: '查看',
         run: () async => _setCompactMode(false),
+      ))
+      ..register(Command(
+        id: _toggleLockedScrollingCommand,
+        title: '切换锁定滚动',
+        category: '查看',
+        run: () => _requestLockedScrolling(toggle: true),
       ));
     windowManager.addListener(this);
     unawaited(_preventNativeClose());
@@ -273,6 +286,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
           _acceptGlobalFocusSnapshot(call.arguments);
           return null;
         }
+        if (call.method == auxiliaryLockedScrollingMethod) {
+          _acceptLockedScrollingSnapshot(call.arguments);
+          return null;
+        }
         return _handleDocumentTransferMethod(call.method, call.arguments);
       });
 
@@ -307,6 +324,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptGlobalFocusSnapshot(initialSnapshot);
       if (!mounted) return;
       _focusContextConnected = true;
+      unawaited(_requestLockedScrolling(toggle: false));
       _requestBoundsReport();
       final observedFocus = _nativeWindowFocused;
       if (observedFocus != null) {
@@ -325,6 +343,40 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       }
     } on Object {
       // Main-window focus context is optional on platforms without the channel.
+    }
+  }
+
+  void _acceptLockedScrollingSnapshot(Object? value) {
+    if (!mounted || _closing || value is! Map) return;
+    final revision = value['revision'];
+    final active = value['active'];
+    if (revision is! int ||
+        revision <= _latestLockedScrollingRevision ||
+        active is! bool) {
+      return;
+    }
+    _latestLockedScrollingRevision = revision;
+    if (_lockedScrolling != active) setState(() => _lockedScrolling = active);
+  }
+
+  Future<void> _requestLockedScrolling({required bool toggle}) async {
+    final windowId = _windowController?.windowId;
+    final owner = _mainWindowController;
+    if (!mounted ||
+        _closing ||
+        !_focusContextConnected ||
+        windowId == null ||
+        owner == null) {
+      return;
+    }
+    try {
+      final snapshot = await owner.invokeMethod<Object?>(
+        auxiliaryLockedScrollingMethod,
+        {'windowId': windowId, 'toggle': toggle},
+      );
+      _acceptLockedScrollingSnapshot(snapshot);
+    } on Object {
+      // The main engine may already have shut down with a request in flight.
     }
   }
 
@@ -708,13 +760,18 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     if (context == null || Navigator.maybeOf(context)?.canPop() != false) {
       return;
     }
-    final command = _compactCommands.byId(_toggleCompactCommand)!;
+    final compact = _compactCommands.byId(_toggleCompactCommand)!;
+    final scrolling = _compactCommands.byId(_toggleLockedScrollingCommand)!;
     var accepted = false;
     await QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
       queryPrefix: '>',
-      items: [QuickItem(label: command.label, commandId: command.id)],
+      items: [
+        QuickItem(label: compact.label, commandId: compact.id),
+        if (_latestLockedScrollingRevision >= 0)
+          QuickItem(label: scrolling.label, commandId: scrolling.id),
+      ],
       commands: _compactCommands,
       onCommandExecuted: (_) => accepted = true,
     );
@@ -1321,6 +1378,17 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                       ),
                     ),
             ),
+            if (!_compactMode && _lockedScrolling)
+              Container(
+                height: 24,
+                color: const Color(0xFF1B1E24),
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: LockedScrollingStatusItem(
+                  onToggle: () =>
+                      unawaited(_requestLockedScrolling(toggle: true)),
+                ),
+              ),
           ],
         ),
       ),

@@ -223,28 +223,7 @@ class AlulaStatusBar extends StatelessWidget {
           ],
           if (lockedScrolling && onToggleLockedScrolling != null) ...[
             const SizedBox(width: 8),
-            Semantics(
-              container: true,
-              button: true,
-              child: InkWell(
-                key: const ValueKey('status-bar-locked-scrolling'),
-                onTap: onToggleLockedScrolling,
-                child: const Tooltip(
-                  message: '滚动锁定已开启',
-                  excludeFromSemantics: true,
-                  child: ColoredBox(
-                    color: Color(0xFF2B435A),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      child: Text(
-                        '滚动已锁定',
-                        style: TextStyle(color: Colors.white, fontSize: 11),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            LockedScrollingStatusItem(onToggle: onToggleLockedScrolling!),
           ],
           if (notificationButton != null && !notificationAtStart) ...[
             const SizedBox(width: 8),
@@ -332,4 +311,35 @@ class AlulaStatusBar extends StatelessWidget {
         return const Icon(Icons.error, size: 12, color: Colors.redAccent);
     }
   }
+}
+
+/// The same active-only status action is used by each workbench window.
+class LockedScrollingStatusItem extends StatelessWidget {
+  const LockedScrollingStatusItem({super.key, required this.onToggle});
+
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        container: true,
+        button: true,
+        child: InkWell(
+          key: const ValueKey('status-bar-locked-scrolling'),
+          onTap: onToggle,
+          child: const Tooltip(
+            message: '滚动锁定已开启',
+            excludeFromSemantics: true,
+            child: ColoredBox(
+              color: Color(0xFF2B435A),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Text(
+                  '滚动已锁定',
+                  style: TextStyle(color: Colors.white, fontSize: 11),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
 }

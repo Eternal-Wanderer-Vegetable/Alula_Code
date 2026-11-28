@@ -370,7 +370,7 @@ void main() {
 
   group('auxiliary active focus context', () {
     testWidgets(
-      'sends focus metadata without changing text, selection, savepoint, or payload',
+      'routes focus metadata and locked scrolling without changing the document',
       (tester) async {
         const body = 'dirty\r\nemoji 😀\n';
         const selection = TextSelection(baseOffset: 1, extentOffset: 4);
@@ -384,6 +384,9 @@ void main() {
         final originalArguments = payload.toArguments();
         final focusEvents = <Map<String, Object?>>[];
         var nativeFocused = false;
+        final lockRequests = <Map<String, Object?>>[];
+        var ownerRevision = 1;
+        var ownerLocked = false;
 
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
           const MethodChannel('mixin.one/desktop_multi_window'),
@@ -413,6 +416,17 @@ void main() {
               final request = Map<String, Object?>.from(
                 call.arguments as Map,
               );
+              if (request['method'] == auxiliaryLockedScrollingMethod) {
+                final args = Map<String, Object?>.from(
+                  request['arguments'] as Map,
+                );
+                lockRequests.add(args);
+                if (args['toggle'] == true) {
+                  ownerLocked = !ownerLocked;
+                  ownerRevision++;
+                }
+                return {'revision': ownerRevision, 'active': ownerLocked};
+              }
               if (request['method'] == auxiliaryFocusContextMethod) {
                 final event = Map<String, Object?>.from(
                   request['arguments'] as Map,
@@ -500,6 +514,54 @@ void main() {
         expect(field.widget.inputWindow.text, body);
         expect(document.resync().content, body);
         expect(field.editingValue.selection, selection);
+        expect(document.isDirty, savepointState);
+
+        final status = find.byKey(
+          const ValueKey('status-bar-locked-scrolling'),
+        );
+        expect(status, findsNothing);
+        expect(lockRequests, [
+          {'windowId': 'aux-1', 'toggle': false},
+        ]);
+        Future<void> publish(int revision, Object active) async {
+          await dispatchPlatformMethod(
+            tester,
+            'mixin.one/desktop_multi_window/channels',
+            MethodCall('methodCall', {
+              'channel': 'mixin.one/window_controller/aux-1',
+              'method': auxiliaryLockedScrollingMethod,
+              'arguments': {'revision': revision, 'active': active},
+            }),
+          );
+          await tester.pumpAndSettle();
+        }
+
+        ownerRevision = 3;
+        ownerLocked = true;
+        await publish(ownerRevision, ownerLocked);
+        expect(status, findsOneWidget);
+        await publish(2, false);
+        await publish(4, 'invalid');
+        expect(
+          status,
+          findsOneWidget,
+          reason: 'stale and malformed snapshots are ignored',
+        );
+
+        await tester.tap(status);
+        await tester.pumpAndSettle();
+        expect(lockRequests.last, {'windowId': 'aux-1', 'toggle': true});
+        expect(status, findsNothing);
+        field.widget.focusNode!.requestFocus();
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.f1);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('qi-查看: 切换锁定滚动')));
+        await tester.pumpAndSettle();
+        expect(lockRequests, hasLength(3));
+        expect(lockRequests.last, {'windowId': 'aux-1', 'toggle': true});
+        expect(status, findsOneWidget);
+        expect(document.resync().content, body);
         expect(document.isDirty, savepointState);
         expect(payload.toArguments(), originalArguments);
       },
@@ -1142,6 +1204,7 @@ void main() {
     late SessionStore sessionStore;
     final createdPayloads = <String>[];
     final auxiliarySnapshotMessages = <Map<String, Object?>>[];
+    final scrollSnapshots = <Map<String, Object?>>[];
     CommandService? commands;
 
     String baseOf() => temp.path.replaceAll(r'\', '/');
@@ -1153,6 +1216,7 @@ void main() {
       sessionStore = SessionStore(path: '${baseOf()}/session.json');
       createdPayloads.clear();
       auxiliarySnapshotMessages.clear();
+      scrollSnapshots.clear();
     });
 
     Future<void> mountWorkbench(WidgetTester tester) async {
@@ -1219,6 +1283,12 @@ void main() {
               final request = Map<String, Object?>.from(
                 call.arguments as Map,
               );
+              if (request['method'] == auxiliaryLockedScrollingMethod) {
+                expect(request['channel'], 'mixin.one/window_controller/aux-1');
+                scrollSnapshots.add(
+                  Map<String, Object?>.from(request['arguments'] as Map),
+                );
+              }
               if (request['method'] == auxiliaryFocusContextMethod) {
                 auxiliarySnapshotMessages.add(
                   Map<String, Object?>.from(request['arguments'] as Map),
@@ -1349,6 +1419,38 @@ void main() {
         expect(auxiliarySnapshotMessages.last['windowId'], 'main',
             reason: 'main native focus must reclaim the active owner');
 
+        Future<Object?> sendLockRequest(String windowId, Object toggle) =>
+            dispatchPlatformMethod(
+              tester,
+              'mixin.one/desktop_multi_window/channels',
+              MethodCall('methodCall', {
+                'channel': 'mixin.one/window_controller/main',
+                'method': auxiliaryLockedScrollingMethod,
+                'arguments': {'windowId': windowId, 'toggle': toggle},
+              }),
+            );
+
+        final status = find.byKey(
+          const ValueKey('status-bar-locked-scrolling'),
+        );
+        expect(await sendLockRequest('unknown', true), isNull);
+        expect(await sendLockRequest('aux-1', 'invalid'), isNull);
+        expect(await sendLockRequest('aux-1', false), {
+          'revision': 0,
+          'active': false,
+        });
+        expect(status, findsNothing);
+        await commands!.execute('workbench.action.toggleLockedScrolling');
+        await tester.pumpAndSettle();
+        expect(status, findsOneWidget);
+        expect(scrollSnapshots.single, {'revision': 1, 'active': true});
+        expect(await sendLockRequest('aux-1', true), {
+          'revision': 2,
+          'active': false,
+        });
+        await tester.pumpAndSettle();
+        expect(status, findsNothing);
+        expect(scrollSnapshots.last, {'revision': 2, 'active': false});
         await tester.pumpWidget(const SizedBox.shrink());
         expect(windowManager.listeners, isNot(contains(mainWindowState)),
             reason: 'the main focus listener must be removed on dispose');

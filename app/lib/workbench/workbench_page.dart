@@ -767,6 +767,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // LAY-15：会话只保存常驻开关，Hold 临时反转其有效状态。
   bool _lockedScrolling = false;
   bool _lockedScrollingHeld = false;
+  int _lockedScrollingRevision = 0;
+  bool _broadcastingLockedScrolling = false;
   bool get _isLockedScrolling => _lockedScrolling != _lockedScrollingHeld;
   final _lockedScrollAnchors = <OpenDoc, _LockedScrollOrigin>{};
   bool _lockedScrollAnchorRefreshScheduled = false;
@@ -15978,6 +15980,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _clearLockedScrollAnchors();
     }
     _syncCommandContext();
+    _lockedScrollingRevision++;
+    unawaited(_broadcastLockedScrollingSnapshot());
+  }
+
+  Map<String, Object?> get _lockedScrollingSnapshot =>
+      {'revision': _lockedScrollingRevision, 'active': _isLockedScrolling};
+
+  Map<String, Object?>? _handleAuxiliaryLockedScrollingRequest(Object? value) {
+    if (!mounted || _disposing || value is! Map) return null;
+    final windowId = value['windowId'];
+    final toggle = value['toggle'];
+    if (windowId is! String ||
+        toggle is! bool ||
+        !_auxiliaryWindowIds.contains(windowId) ||
+        _auxiliaryCloseReceipts.containsKey(windowId)) {
+      return null;
+    }
+    if (toggle) _toggleLockedScrolling();
+    return _lockedScrollingSnapshot;
+  }
+
+  Future<void> _broadcastLockedScrollingSnapshot() async {
+    if (_broadcastingLockedScrolling || _auxiliaryWindowIds.isEmpty) return;
+    _broadcastingLockedScrolling = true;
+    // Finish the current fan-out, then send the latest revision to live windows.
+    try {
+      int revision;
+      do {
+        revision = _lockedScrollingRevision;
+        final snapshot = _lockedScrollingSnapshot;
+        final targets = _auxiliaryWindowIds
+            .where((id) => !_auxiliaryCloseReceipts.containsKey(id))
+            .toList(growable: false);
+        await Future.wait(targets.map((id) async {
+          try {
+            await WindowController.fromWindowId(id)
+                .invokeMethod<void>(auxiliaryLockedScrollingMethod, snapshot);
+          } on Object {
+            // A closing engine can disappear from the channel before its event.
+          }
+        }));
+      } while (!_disposing && revision != _lockedScrollingRevision);
+    } finally {
+      _broadcastingLockedScrolling = false;
+    }
   }
 
   /// 为所有已打开文档的滚动控制器挂同步监听（幂等）。编辑器随打开动态创建，
@@ -16128,6 +16175,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
       );
       await self.setWindowMethodHandler((call) async {
+        if (call.method == auxiliaryLockedScrollingMethod) {
+          return _handleAuxiliaryLockedScrollingRequest(call.arguments);
+        }
         if (call.method == auxiliaryWindowBoundsMethod) {
           final bounds = AuxiliaryWindowBounds.tryParse(call.arguments);
           if (bounds != null &&
