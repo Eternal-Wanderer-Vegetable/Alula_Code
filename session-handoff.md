@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.367 / feat-419 完成。滚动锁定生效时显示可点击的状态栏入口，点击关闭。Toggle 与 Hold 的显隐及会话开关通过。Windows 与 Linux 各通过 11 项，专题 183/183，Flutter 1,982 项通过、2 项跳过。产品 2b22642 的 CI 46094325305 四项及 Platform Availability 46094322690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md。
 - P05.366 / feat-418 完成。修复大文件混合字体时行号逐行漂移。12,500 行样本在跳转、深滚动和窗口切换后逐行对齐。Windows 247 行最大差 0.4 逻辑像素，Linux 246 行坐标重合。专题 162/162，Flutter 1,982 项通过、2 项跳过。产品 9ad4d7f 的 CI 46091528730 四项和 Platform Availability 46091525632 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md。
 - P05.365 / feat-417 完成。自定义 Hold 键位可临时反转同窗锁定，释放和原生失焦后恢复常驻开关。Windows 单键 19 项、Linux 单键 19 项和组合键 22 项通过，专题 363/363，Flutter 1,981 项通过、2 项跳过。产品 d1efa17 的 CI 46088579317 四项及 Platform Availability 46088576279 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.365-locked-scroll-hold.md。
 - P05.364 / feat-416 完成。锁定后按各可见视图起始位置同步横纵两轴，拆分、合并和范围回转通过。Windows 与 Linux 各通过 17 项原生检查，专题 272/272，Flutter 1,978 项通过、2 项跳过。产品 d7c8dfe 的 CI 46085021722 四项和 Platform Availability 46085017863 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.364-locked-scroll-horizontal.md。
@@ -392,6 +393,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.364 同窗横向锁定滚动位移](docs/diagnostics/2026-11-28-p05/p05.364-locked-scroll-horizontal.md)。
 [P05.365 同窗 Hold 锁定滚动](docs/diagnostics/2026-11-28-p05/p05.365-locked-scroll-hold.md)。
 [P05.366 长文件行号与正文对齐](docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md)。
+[P05.367 同窗滚动锁定状态栏入口](docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -657,4 +659,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.366 收尾 CI。长文件行号问题已记录原生证据。按 docs/03 核对 LAY-15 的状态栏入口和跨窗归属，选择一项依赖已满足的子项。继续记录 macOS 托管结果，实机暂缓。PR #3 保持草稿。
+核对 P05.367 收尾 CI。按 docs/03 核对 LAY-15 跨窗命令归属、状态栏与可见编辑视图，选一个依赖已满足的子项。继续记录 macOS 托管结果，实机暂缓。PR #3 保持草稿。

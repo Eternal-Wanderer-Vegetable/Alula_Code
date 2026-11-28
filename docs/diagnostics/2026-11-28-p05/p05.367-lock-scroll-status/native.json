@@ -1,0 +1,241 @@
+{
+  "product": "2b22642ca802747f62a318850b0afd3869068abd",
+  "tree": "a036e95cd9133286457bc00415c85c32c24f0be8",
+  "abi": 51,
+  "windowsSourceFiles": 67,
+  "fixtureSha256": "9f04d9b8e9e9a9fe1fa3ea2f5c7cdf62248996ae3284d5d5adc1eb3fd68fbf11",
+  "reference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+    "lines": [
+      161,
+      181
+    ],
+    "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803"
+  },
+  "sharedAcceptanceSha256": "650e9c8e45a3dc7ba4209760f06263985eac21e39e0cd19968857a7de3ad163c",
+  "windows": {
+    "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+    "aotSha256": "d7ef812b7c898ddc12f388bf7f35774037650f7083bcd9da556275193082c93f",
+    "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+    "windowEnvironment": 120,
+    "rawReportSha256": "ca4ca874ca9642ab16f20b0e4986565788f0c57194f5c7124d23c26adcae01bb",
+    "driverSha256": "f8512243b2e5e25b8a7943cab9ad79f9c584dffc54061bfb66220fd850b013ac",
+    "checks": [
+      "startup-shows-no-inactive-status-entry",
+      "native-editor-focus-accepts-the-configured-binding",
+      "toggle-shows-the-labeled-status-and-persists",
+      "clicking-the-visible-entry-unlocks-and-hides-it",
+      "pressing-hold-displays-the-effective-state",
+      "releasing-hold-removes-the-temporary-entry",
+      "the-latched-toggle-shows-the-indicator-again",
+      "inverse-hold-temporarily-hides-the-indicator",
+      "inverse-hold-release-restores-the-latched-entry",
+      "second-status-click-restores-the-off-session",
+      "opened-source-bytes-preserved"
+    ],
+    "renderedStatus": {
+      "startup-shows-no-inactive-status-entry": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "native-editor-focus-accepts-the-configured-binding": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "toggle-shows-the-labeled-status-and-persists": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            814.551171875,
+            790.8,
+            882.801171875,
+            810.8
+          ]
+        },
+        "persistedToggle": true
+      },
+      "clicking-the-visible-entry-unlocks-and-hides-it": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "pressing-hold-displays-the-effective-state": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            814.551171875,
+            790.8,
+            882.801171875,
+            810.8
+          ]
+        },
+        "persistedToggle": false
+      },
+      "releasing-hold-removes-the-temporary-entry": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "the-latched-toggle-shows-the-indicator-again": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            814.551171875,
+            790.8,
+            882.801171875,
+            810.8
+          ]
+        },
+        "persistedToggle": true
+      },
+      "inverse-hold-temporarily-hides-the-indicator": {
+        "status": null,
+        "persistedToggle": true
+      },
+      "inverse-hold-release-restores-the-latched-entry": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            814.551171875,
+            790.8,
+            882.801171875,
+            810.8
+          ]
+        },
+        "persistedToggle": true
+      },
+      "second-status-click-restores-the-off-session": {
+        "status": null,
+        "persistedToggle": false
+      }
+    },
+    "filesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "exitCode": 0
+  },
+  "linux": {
+    "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+    "aotSha256": "cab84e30dcd8188ce1de7ef50831a83682bc7ba2445bfa35935eeb43b330f2f9",
+    "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+    "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+    "rawReportSha256": "3e731f802fd3df3cd5078b0ad629c0df774d59534d19984107f4e7e1aad7acd1",
+    "driverSha256": "9c90545ea6b6730337b24a4ac6dc385ebd8dde0fcaa05ba1852ed95cf8842521",
+    "checks": [
+      "startup-shows-no-inactive-status-entry",
+      "native-editor-focus-accepts-the-configured-binding",
+      "toggle-shows-the-labeled-status-and-persists",
+      "clicking-the-visible-entry-unlocks-and-hides-it",
+      "pressing-hold-displays-the-effective-state",
+      "releasing-hold-removes-the-temporary-entry",
+      "the-latched-toggle-shows-the-indicator-again",
+      "inverse-hold-temporarily-hides-the-indicator",
+      "inverse-hold-release-restores-the-latched-entry",
+      "second-status-click-restores-the-off-session",
+      "opened-source-bytes-preserved"
+    ],
+    "renderedStatus": {
+      "startup-shows-no-inactive-status-entry": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "native-editor-focus-accepts-the-configured-binding": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "toggle-shows-the-labeled-status-and-persists": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            683.9653930664062,
+            790.0,
+            752.2153930664062,
+            810.0
+          ]
+        },
+        "persistedToggle": true
+      },
+      "clicking-the-visible-entry-unlocks-and-hides-it": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "pressing-hold-displays-the-effective-state": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            683.9653930664062,
+            790.0,
+            752.2153930664062,
+            810.0
+          ]
+        },
+        "persistedToggle": false
+      },
+      "releasing-hold-removes-the-temporary-entry": {
+        "status": null,
+        "persistedToggle": false
+      },
+      "the-latched-toggle-shows-the-indicator-again": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            683.9653930664062,
+            790.0,
+            752.2153930664062,
+            810.0
+          ]
+        },
+        "persistedToggle": true
+      },
+      "inverse-hold-temporarily-hides-the-indicator": {
+        "status": null,
+        "persistedToggle": true
+      },
+      "inverse-hold-release-restores-the-latched-entry": {
+        "status": {
+          "labels": [
+            "滚动已锁定"
+          ],
+          "tooltip": "滚动锁定已开启",
+          "bounds": [
+            683.9653930664062,
+            790.0,
+            752.2153930664062,
+            810.0
+          ]
+        },
+        "persistedToggle": true
+      },
+      "second-status-click-restores-the-off-session": {
+        "status": null,
+        "persistedToggle": false
+      }
+    },
+    "filesSha256": {
+      "alpha.txt": "cf466a0f9a049b1bbdff3dcd1373e833000603fcb29f5335f0663181fb2b5d3d",
+      "beta.txt": "ae3f9c1d03e5a2b30d4d6143fe570da556428bc8d2264e7b1c9651f20a67fc33"
+    },
+    "exitCode": 0
+  }
+}
