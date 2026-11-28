@@ -28,6 +28,8 @@ P05.373 已登记 LAY-15 滚动锁定状态栏固定版对照。Windows 125% DPI
 
 P05.374 已登记 LAY-13 模态文档编辑一致性和三个关闭入口。固定版行为与 Windows/Linux 发布构建通过，移回标签保留同一 Rust 文档。[原生和托管证据](../diagnostics/2026-11-28-p05/p05.374-dirty-modal-close.md)。
 
+P05.375 已登记 LAY-13 主窗退出后继续编辑模态草稿。Windows/Linux 原生关闭、恢复以及在会话写入失败后重试。[原生和托管证据](../diagnostics/2026-11-28-p05/p05.375-modal-window-recovery.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。

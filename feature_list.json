@@ -5405,8 +5405,8 @@
         "feat-424",
         "feat-426"
       ],
-      "status": "in-progress",
-      "evidence": "Windows 和 Linux 原生基线退出 0 但会话未含模态草稿。固定版原生退出和同一配置目录重启已读回草稿。",
+      "status": "done",
+      "evidence": "Windows 和 Linux 的正常关停及会话写入失败重试均通过。模态草稿重启后精确恢复，原件保留 BOM、CRLF 和全部字节。定向 15/15，专题 121/121，Flutter 1,996 项通过、2 项跳过。产品 ba15b29 的 CI 46121692160 四项及 Platform Availability 46121689464 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.375-modal-window-recovery.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
