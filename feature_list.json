@@ -5529,8 +5529,8 @@
         "feat-185",
         "feat-435"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "默认组更多操作可以锁定点击组，以及最大化和还原该组。锁定保留原活动组，最大化激活目标组，还原位置与尺寸偏差为 0 逻辑像素。Windows 发布构建验证菜单路由，Linux 验证真实键鼠，两端关窗正常且文件字节一致。定向 10/10，专题 280/280，Flutter 2,019 项通过、2 项跳过。产品 ff7457f 的 CI 46148779284 四项及 Platform Availability 46148776325 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.384-group-menu-state.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

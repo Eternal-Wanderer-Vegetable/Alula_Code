@@ -1,0 +1,227 @@
+{
+  "product": "ff7457f0967cd165887331e9e5928e7392ad3624",
+  "tree": "461dfef2d95cef447edfd5908cf896aecb4cb564",
+  "ci": {
+    "id": 46148779284,
+    "sha": "ff7457f0967cd165887331e9e5928e7392ad3624",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46148779284",
+    "jobs": [
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140990528036,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140990528310,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140990528353,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140990528360,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "platformAvailability": {
+    "id": 46148776325,
+    "sha": "ff7457f0967cd165887331e9e5928e7392ad3624",
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": "",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46148776325",
+    "jobs": [
+      {
+        "name": "Windows x64 build and launch smoke",
+        "databaseId": 140990518243,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "macOS build, launch smoke, and app package",
+        "databaseId": 140990518470,
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "name": "Linux x64 build and launch smoke",
+        "databaseId": 140990518509,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "previousEvidenceCi": {
+    "id": 46147205203,
+    "sha": "65c64e65ce4092a8ae7925f4e4954fea7b45576a",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/46147205203",
+    "jobs": [
+      {
+        "name": "Rust (windows-latest)",
+        "databaseId": 140985777376,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Flutter (analyze + test)",
+        "databaseId": 140985777508,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Harness 文档结构校验",
+        "databaseId": 140985777535,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rust (ubuntu-latest)",
+        "databaseId": 140985777571,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "physicalMacOS": "deferred",
+  "graph": {
+    "changed_count": 6,
+    "affected_count": 0,
+    "changed_files": 4,
+    "risk_level": "low"
+  },
+  "preEditImpact": {
+    "tab-strip": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 1,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_buildEditorArea"
+      ],
+      "processes": [
+        "build"
+      ]
+    },
+    "maximize": {
+      "risk": "LOW",
+      "summary": {
+        "direct": 1,
+        "processes_affected": 2,
+        "modules_affected": 1
+      },
+      "direct": [
+        "_registerCommands"
+      ],
+      "processes": [
+        "initState",
+        "_registerCommands"
+      ]
+    },
+    "lock": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 2,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_buildTabStrip",
+        "_registerCommands"
+      ],
+      "processes": [
+        "initState",
+        "build",
+        "_registerCommands"
+      ]
+    },
+    "activation": {
+      "risk": "HIGH",
+      "summary": {
+        "direct": 3,
+        "processes_affected": 3,
+        "modules_affected": 2
+      },
+      "direct": [
+        "_buildTab",
+        "_buildTabStrip",
+        "_showRecentEditorPicker"
+      ],
+      "processes": [
+        "initState",
+        "build",
+        "_registerCommands"
+      ]
+    },
+    "state": {
+      "risk": "CRITICAL",
+      "summary": {
+        "direct": 50,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [
+        "main.dart",
+        "auxiliary_tab_split_drop_test.dart",
+        "auxiliary_window_test.dart",
+        "breadcrumb_keyboard_test.dart",
+        "breadcrumb_overflow_test.dart",
+        "breadcrumb_picker_test.dart",
+        "breadcrumb_reveal_test.dart",
+        "editor_group_area_drop_test.dart",
+        "editor_group_close_lifetime_test.dart",
+        "editor_group_mru_close_test.dart",
+        "editor_split_drop_test.dart",
+        "editor_tab_cross_group_copy_test.dart",
+        "editor_tab_cross_group_move_test.dart",
+        "editor_tab_overflow_test.dart",
+        "editor_tab_preview_test.dart",
+        "editor_tab_tear_out_test.dart",
+        "explorer_type_ahead_test.dart",
+        "file_link_command_test.dart",
+        "file_link_hint_test.dart",
+        "file_link_hover_test.dart",
+        "file_link_location_integration_test.dart",
+        "file_link_pointer_test.dart",
+        "locked_scrolling_test.dart",
+        "modal_editor_test.dart",
+        "open_editors_close_group_test.dart",
+        "open_editors_group_close_test.dart",
+        "open_editors_view_test.dart",
+        "relative_file_link_integration_test.dart",
+        "walkthrough_test.dart",
+        "widget_test.dart",
+        "workbench_bulk_edit_review_test.dart",
+        "workbench_clear_command_history_test.dart"
+      ],
+      "processes": []
+    },
+    "tests": {
+      "risk": "UNKNOWN",
+      "riskNote": "No callers resolved. Absence of edges is not evidence the symbol is unused: a caller reaching it through a reference class this index does not record — plain-object property access, a bare-identifier read of a module-scope const — produces no edge to find. Confirm with a text search before treating the change as safe.",
+      "summary": {
+        "direct": 0,
+        "processes_affected": 0,
+        "modules_affected": 0
+      },
+      "direct": [],
+      "processes": []
+    }
+  }
+}
