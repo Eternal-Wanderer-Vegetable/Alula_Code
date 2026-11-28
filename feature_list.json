@@ -5316,6 +5316,19 @@
       "evidence": "主辅窗口共用滚动锁定状态。辅助窗支持状态栏点击和命令面板切换，紧凑模式隐藏状态项。Windows 与 Linux 各通过 16 项，专题 214/214，Flutter 1,982 项通过、2 项跳过。产品 4bf59e4 的 CI 46097220975 四项及 Platform Availability 46097215444 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-421",
+      "name": "P05.369 LAY-15 主辅窗口横纵滚动锁定",
+      "description": "以每个可见编辑器的起始位置为基准，在主窗和辅助窗之间传播相对横纵位移。覆盖较短文档的限位与回转、窗口加入与退出、解除锁定后的独立滚动。",
+      "dependencies": [
+        "feat-416",
+        "feat-420"
+      ],
+      "status": "in-progress",
+      "evidence": [],
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

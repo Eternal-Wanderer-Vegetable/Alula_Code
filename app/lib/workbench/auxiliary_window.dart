@@ -25,6 +25,7 @@ import 'auxiliary_window_transfer.dart';
 import 'commands.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
+import 'locked_scroll_motion.dart';
 import 'quick_input.dart';
 import 'status_bar.dart';
 
@@ -158,6 +159,12 @@ class _PreparedAuxiliaryDocumentTransfer {
   final Map<String, Object?> previousDocument;
 }
 
+typedef _AuxiliaryScrollView = ({
+  AlulaDoc document,
+  ScrollPosition vertical,
+  ScrollPosition? horizontal,
+});
+
 class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     with WindowListener {
   static const _toggleCompactCommand =
@@ -183,6 +190,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   late final CommandService _compactCommands;
   String? _windowStateError;
   late final ScrollController _scrollController;
+  final _editorInputKey = GlobalKey<RustTextInputFieldState>();
   final FocusNode _editorFocus = FocusNode(debugLabel: 'auxiliary editor');
   WindowController? _windowController;
   WindowController? _mainWindowController;
@@ -195,6 +203,17 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   bool _focusContextConnected = false;
   int _latestLockedScrollingRevision = -1;
   bool _lockedScrolling = false;
+  _AuxiliaryScrollView? _lockedScrollView;
+  LockedScrollDelta? _lockedScrollOrigin;
+  int? _minimumLockedScrollAnchor;
+  int? _capturedLockedScrollAnchor;
+  LockedScrollMotion? _latestOwnerScrollMotion;
+  int _appliedScrollMotionSequence = -1;
+  int _localScrollMotionSequence = 0;
+  bool _lockedScrollViewScheduled = false;
+  bool _applyingLockedScrollMotion = false;
+  late final _scrollMotionRelay =
+      LockedScrollMotionRelay(_sendAuxiliaryScrollMotion);
   bool _boundsReportRunning = false;
   bool _boundsReportRequested = false;
   String? _lastCommittedTransferId;
@@ -245,6 +264,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     windowManager.removeListener(this);
     _tabDrag?.deadline?.cancel();
     _tabDrag = null;
+    _detachLockedScrollView();
     _releaseDocuments();
     final windowController = _windowController;
     if (windowController != null) {
@@ -290,6 +310,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
           _acceptLockedScrollingSnapshot(call.arguments);
           return null;
         }
+        if (call.method == lockedScrollMotionMethod) {
+          _acceptOwnerScrollMotion(call.arguments);
+          return null;
+        }
         return _handleDocumentTransferMethod(call.method, call.arguments);
       });
 
@@ -324,6 +348,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptGlobalFocusSnapshot(initialSnapshot);
       if (!mounted) return;
       _focusContextConnected = true;
+      _scheduleLockedScrollView();
       unawaited(_requestLockedScrolling(toggle: false));
       _requestBoundsReport();
       final observedFocus = _nativeWindowFocused;
@@ -357,6 +382,12 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
     _latestLockedScrollingRevision = revision;
     if (_lockedScrolling != active) setState(() => _lockedScrolling = active);
+    if (active) {
+      _scheduleLockedScrollView();
+      _applyOwnerScrollMotion();
+    } else {
+      _detachLockedScrollView();
+    }
   }
 
   Future<void> _requestLockedScrolling({required bool toggle}) async {
@@ -377,6 +408,191 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptLockedScrollingSnapshot(snapshot);
     } on Object {
       // The main engine may already have shut down with a request in flight.
+    }
+  }
+
+  void _scheduleLockedScrollView() {
+    if (!_lockedScrolling ||
+        !_focusContextConnected ||
+        _closing ||
+        _lockedScrollViewScheduled) {
+      return;
+    }
+    _lockedScrollViewScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _lockedScrollViewScheduled = false;
+      if (mounted && _lockedScrolling && !_closing) _attachLockedScrollView();
+    });
+  }
+
+  void _attachLockedScrollView() {
+    final doc = _doc;
+    final vertical = _scrollController.positions.singleOrNull;
+    if (doc == null ||
+        vertical == null ||
+        !vertical.hasPixels ||
+        !vertical.hasContentDimensions) {
+      _detachLockedScrollView();
+      return;
+    }
+    final view = (
+      document: doc,
+      vertical: vertical,
+      horizontal: _editorInputKey.currentState?.horizontalScrollPosition,
+    );
+    if (_lockedScrollView == view) return;
+    _detachLockedScrollView();
+    _lockedScrollView = view;
+    view.vertical.addListener(_publishAuxiliaryScrollMotion);
+    view.horizontal?.addListener(_publishAuxiliaryScrollMotion);
+    unawaited(_requestLockedScrollAnchor(view));
+  }
+
+  void _detachLockedScrollView() {
+    final view = _lockedScrollView;
+    view?.vertical.removeListener(_publishAuxiliaryScrollMotion);
+    view?.horizontal?.removeListener(_publishAuxiliaryScrollMotion);
+    _lockedScrollView = null;
+    _lockedScrollOrigin = null;
+    _minimumLockedScrollAnchor = null;
+    _capturedLockedScrollAnchor = null;
+    _scrollMotionRelay.clear();
+  }
+
+  Future<void> _requestLockedScrollAnchor(_AuxiliaryScrollView view) async {
+    final owner = _mainWindowController;
+    final windowId = _windowController?.windowId;
+    if (owner == null || windowId == null) return;
+    final lockRevision = _latestLockedScrollingRevision;
+    try {
+      final anchor = await owner.invokeMethod<int>(
+        lockedScrollMotionMethod,
+        {'windowId': windowId, 'ready': true, 'lockRevision': lockRevision},
+      );
+      if (!mounted ||
+          _closing ||
+          !_lockedScrolling ||
+          lockRevision != _latestLockedScrollingRevision ||
+          _lockedScrollView != view) {
+        return;
+      }
+      _minimumLockedScrollAnchor = anchor;
+      _applyOwnerScrollMotion();
+    } on Object {
+      // The main engine can close while the editor is attaching.
+    }
+  }
+
+  void _acceptOwnerScrollMotion(Object? value) {
+    if (!mounted || _closing) return;
+    final motion = LockedScrollMotion.tryParse(value);
+    if (motion == null ||
+        motion.lockRevision < _latestLockedScrollingRevision ||
+        motion.sequence <= (_latestOwnerScrollMotion?.sequence ?? -1)) {
+      return;
+    }
+    _latestOwnerScrollMotion = motion;
+    _applyOwnerScrollMotion();
+  }
+
+  void _applyOwnerScrollMotion() {
+    final view = _lockedScrollView;
+    final motion = _latestOwnerScrollMotion;
+    final minimum = _minimumLockedScrollAnchor;
+    if (!_lockedScrolling ||
+        view == null ||
+        view.document != _doc ||
+        motion == null ||
+        minimum == null ||
+        motion.lockRevision != _latestLockedScrollingRevision ||
+        motion.anchorRevision < minimum ||
+        motion.sequence <= _appliedScrollMotionSequence) {
+      return;
+    }
+    if (_capturedLockedScrollAnchor != motion.anchorRevision) {
+      _capturedLockedScrollAnchor = motion.anchorRevision;
+      _lockedScrollOrigin = (
+        top: view.vertical.pixels,
+        left: view.horizontal?.pixels,
+      );
+    }
+    _appliedScrollMotionSequence = motion.sequence;
+    final delta = motion.delta;
+    final origin = _lockedScrollOrigin;
+    if (delta == null || origin == null) return;
+    final source = motion.source;
+    if (source != null &&
+        source.windowId == _windowController?.windowId &&
+        source.sequence < _localScrollMotionSequence) {
+      return;
+    }
+    _applyingLockedScrollMotion = true;
+    try {
+      _jumpAuxiliaryScrollPosition(view.vertical, origin.top + delta.top);
+      final target = view.horizontal;
+      final left = delta.left;
+      final start = origin.left;
+      if (target != null && start != null && left != null) {
+        _jumpAuxiliaryScrollPosition(target, start + left);
+      }
+    } finally {
+      _applyingLockedScrollMotion = false;
+    }
+  }
+
+  void _jumpAuxiliaryScrollPosition(ScrollPosition position, double pixels) {
+    if (!position.hasPixels || !position.hasContentDimensions) return;
+    final target = pixels
+        .clamp(position.minScrollExtent, position.maxScrollExtent)
+        .toDouble();
+    if (position.pixels != target) position.jumpTo(target);
+  }
+
+  void _publishAuxiliaryScrollMotion() {
+    final view = _lockedScrollView;
+    final origin = _lockedScrollOrigin;
+    final anchor = _capturedLockedScrollAnchor;
+    if (!_lockedScrolling ||
+        _closing ||
+        _applyingLockedScrollMotion ||
+        view == null ||
+        view.document != _doc ||
+        origin == null ||
+        anchor == null) {
+      return;
+    }
+    final horizontal = view.horizontal?.pixels;
+    final start = origin.left;
+    _scrollMotionRelay.offer(LockedScrollMotion(
+      lockRevision: _latestLockedScrollingRevision,
+      anchorRevision: anchor,
+      sequence: ++_localScrollMotionSequence,
+      delta: (
+        top: view.vertical.pixels - origin.top,
+        left: horizontal != null && start != null ? horizontal - start : null,
+      ),
+    ));
+  }
+
+  Future<void> _sendAuxiliaryScrollMotion(LockedScrollMotion motion) async {
+    final owner = _mainWindowController;
+    final windowId = _windowController?.windowId;
+    if (!mounted ||
+        _closing ||
+        !_lockedScrolling ||
+        owner == null ||
+        windowId == null ||
+        motion.lockRevision != _latestLockedScrollingRevision ||
+        motion.anchorRevision != _capturedLockedScrollAnchor) {
+      return;
+    }
+    try {
+      await owner.invokeMethod<void>(
+        lockedScrollMotionMethod,
+        {'windowId': windowId, ...motion.toMap()},
+      );
+    } on Object {
+      // Closed engines no longer participate in locked scrolling.
     }
   }
 
@@ -1203,6 +1419,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     final doc = _doc;
     final inputWindow = _inputWindow;
     final inputLocked = _closing || _pendingTransfer != null || _returningTab;
+    _scheduleLockedScrollView();
     final titleHeight = _compactMode ? 30.0 : 35.0;
     final titleActionConstraints = BoxConstraints.tightFor(
       width: 30,
@@ -1347,7 +1564,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                         child: AbsorbPointer(
                           absorbing: inputLocked,
                           child: RustTextInputField(
-                            key: const ValueKey('auxiliary-editor-input'),
+                            key: _editorInputKey,
                             inputWindow: inputWindow,
                             focusNode: _editorFocus,
                             scrollController: _scrollController,

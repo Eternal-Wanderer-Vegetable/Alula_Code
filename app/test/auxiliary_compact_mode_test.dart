@@ -49,7 +49,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final inputFinder = find.byKey(const ValueKey('auxiliary-editor-input'));
+      final inputFinder = find.byType(RustTextInputField);
       expect(inputFinder, findsOneWidget);
       final inputState = tester.state<RustTextInputFieldState>(inputFinder);
       final inputWindow = inputState.widget.inputWindow;
@@ -228,7 +228,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final field = tester.state<RustTextInputFieldState>(
-        find.byKey(const ValueKey('auxiliary-editor-input')),
+        find.byType(RustTextInputField),
       );
       final focus = field.widget.focusNode!;
       focus.requestFocus();

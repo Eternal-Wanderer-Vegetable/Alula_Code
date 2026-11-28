@@ -127,6 +127,7 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'locked_scroll_motion.dart';
 import 'notification_widgets.dart';
 import 'notifications.dart';
 import 'panel_alignment.dart';
@@ -769,6 +770,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _lockedScrollingHeld = false;
   int _lockedScrollingRevision = 0;
   bool _broadcastingLockedScrolling = false;
+  int _lockedScrollAnchorRevision = 0;
+  int _lockedScrollMotionSequence = 0;
+  late final _lockedScrollMotionRelay =
+      LockedScrollMotionRelay(_sendLockedScrollMotion);
   bool get _isLockedScrolling => _lockedScrolling != _lockedScrollingHeld;
   final _lockedScrollAnchors = <OpenDoc, _LockedScrollOrigin>{};
   bool _lockedScrollAnchorRefreshScheduled = false;
@@ -15973,14 +15978,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _refreshLockedScrollingState() {
+    _lockedScrollingRevision++;
     if (_isLockedScrolling) {
       _ensureScrollSyncListeners();
-      _refreshLockedScrollAnchors();
+      _refreshLockedScrollAnchors(force: true);
     } else {
       _clearLockedScrollAnchors();
     }
     _syncCommandContext();
-    _lockedScrollingRevision++;
     unawaited(_broadcastLockedScrollingSnapshot());
   }
 
@@ -16071,9 +16076,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return visible;
   }
 
-  void _refreshLockedScrollAnchors() {
+  void _refreshLockedScrollAnchors({bool force = false}) {
     final visible = _visibleLockedScrollPositions();
-    if (_hasLockedScrollAnchors(visible)) return;
+    if (!force && _hasLockedScrollAnchors(visible)) return;
     _clearLockedScrollAnchors();
     for (final entry in visible.entries) {
       final view = entry.key;
@@ -16095,9 +16100,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         horizontal: horizontalOrigin,
       );
     }
+    _lockedScrollAnchorRevision++;
+    _queueLockedScrollMotion();
   }
 
   void _clearLockedScrollAnchors() {
+    _lockedScrollMotionRelay.clear();
     for (final anchor in _lockedScrollAnchors.values) {
       final horizontal = anchor.horizontal;
       if (horizontal != null) {
@@ -16124,28 +16132,104 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !_hasLockedScrollAnchors(_visibleLockedScrollPositions())) {
       return;
     }
-    final topDelta = origin.vertical.pixels - origin.top;
     final horizontal = origin.horizontal;
-    final leftDelta = horizontal == null
-        ? null
-        : horizontal.position.pixels - horizontal.pixels;
+    final delta = (
+      top: origin.vertical.pixels - origin.top,
+      left: horizontal == null
+          ? null
+          : horizontal.position.pixels - horizontal.pixels,
+    );
+    _applyLockedScrollDelta(delta, source: source);
+    _queueLockedScrollMotion(delta: delta);
+  }
+
+  void _applyLockedScrollDelta(LockedScrollDelta delta, {OpenDoc? source}) {
     _scrollSyncInProgress = true;
     try {
       for (final entry in _lockedScrollAnchors.entries) {
         if (identical(entry.key, source)) continue;
         final target = entry.value;
-        _jumpLockedScrollPosition(target.vertical, target.top + topDelta);
+        _jumpLockedScrollPosition(target.vertical, target.top + delta.top);
         final targetHorizontal = target.horizontal;
-        if (leftDelta != null && targetHorizontal != null) {
+        final left = delta.left;
+        if (left != null && targetHorizontal != null) {
           _jumpLockedScrollPosition(
             targetHorizontal.position,
-            targetHorizontal.pixels + leftDelta,
+            targetHorizontal.pixels + left,
           );
         }
       }
     } finally {
       _scrollSyncInProgress = false;
     }
+  }
+
+  void _queueLockedScrollMotion({
+    LockedScrollDelta? delta,
+    LockedScrollSource? source,
+  }) {
+    if (_disposing || !_isLockedScrolling || _auxiliaryWindowIds.isEmpty) return;
+    _lockedScrollMotionRelay.offer(LockedScrollMotion(
+      lockRevision: _lockedScrollingRevision,
+      anchorRevision: _lockedScrollAnchorRevision,
+      sequence: ++_lockedScrollMotionSequence,
+      delta: delta,
+      source: source,
+    ));
+  }
+
+  Future<void> _sendLockedScrollMotion(LockedScrollMotion motion) async {
+    if (_disposing ||
+        !_isLockedScrolling ||
+        motion.lockRevision != _lockedScrollingRevision ||
+        motion.anchorRevision != _lockedScrollAnchorRevision) {
+      return;
+    }
+    final snapshot = motion.toMap();
+    final targets = _auxiliaryWindowIds
+        .where((id) => !_auxiliaryCloseReceipts.containsKey(id))
+        .toList(growable: false);
+    await Future.wait(targets.map((id) async {
+      try {
+        await WindowController.fromWindowId(id)
+            .invokeMethod<void>(lockedScrollMotionMethod, snapshot);
+      } on Object {
+        // Windows can close between taking the target list and sending.
+      }
+    }));
+  }
+
+  int? _handleAuxiliaryScrollMotion(Object? value) {
+    if (_disposing || !_isLockedScrolling || value is! Map) return null;
+    final windowId = value['windowId'];
+    if (windowId is! String ||
+        !_auxiliaryWindowIds.contains(windowId) ||
+        _auxiliaryCloseReceipts.containsKey(windowId)) {
+      return null;
+    }
+    if (value['ready'] == true) {
+      if (value['lockRevision'] != _lockedScrollingRevision) return null;
+      _refreshLockedScrollAnchors(force: true);
+      return _lockedScrollAnchorRevision;
+    }
+    final motion = LockedScrollMotion.tryParse(value);
+    final delta = motion?.delta;
+    if (motion == null ||
+        delta == null ||
+        motion.lockRevision != _lockedScrollingRevision ||
+        motion.anchorRevision != _lockedScrollAnchorRevision) {
+      return null;
+    }
+    if (!_hasLockedScrollAnchors(_visibleLockedScrollPositions())) {
+      _refreshLockedScrollAnchors();
+      return null;
+    }
+    _applyLockedScrollDelta(delta);
+    _queueLockedScrollMotion(
+      delta: delta,
+      source: (windowId: windowId, sequence: motion.sequence),
+    );
+    return null;
   }
 
   void _jumpLockedScrollPosition(ScrollPosition target, double requested) {
@@ -16175,6 +16259,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
       );
       await self.setWindowMethodHandler((call) async {
+        if (call.method == lockedScrollMotionMethod) {
+          return _handleAuxiliaryScrollMotion(call.arguments);
+        }
         if (call.method == auxiliaryLockedScrollingMethod) {
           return _handleAuxiliaryLockedScrollingRequest(call.arguments);
         }
@@ -16258,15 +16345,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           .map((controller) => controller.windowId)
           .toSet();
       var snapshotChanged = false;
+      var removedWindow = false;
       for (final windowId in _auxiliaryWindowIds.toList(growable: false)) {
         if (liveIds.contains(windowId)) continue;
         _auxiliaryWindowIds.remove(windowId);
+        removedWindow = true;
         _auxiliaryWindowBounds.remove(windowId);
         _auxiliaryCloseReceipts.remove(windowId);
         snapshotChanged = _auxiliaryFocusRegistry
                 .removeAuxiliaryWindow(windowId)
                 .snapshotChanged ||
             snapshotChanged;
+      }
+      if (removedWindow && _isLockedScrolling) {
+        _refreshLockedScrollAnchors(force: true);
       }
       if (snapshotChanged) {
         _notifyAuxiliaryFocusContextChanged();
