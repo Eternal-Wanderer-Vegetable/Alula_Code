@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.379 / feat-431 完成。主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md。
 - P05.378 / feat-430 完成。活动栏、两侧栏和面板各自恢复进入前的显隐。正常关停并重启后仍可还原。双端四个场景和八次原生退出通过，可见区域几何最大偏差 0 逻辑像素。定向 18/18，专题 170/170，Flutter 2,011 项通过、2 项跳过。产品 2f3778e 的 CI 46132042681 四项及 Platform Availability 46132039692 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.378-zen-layout.md。
 - P05.377 / feat-429 完成。默认两次 Escape 退出。重复按键可完成组合，按错键或超时可重试。查找与快速打开先关闭，焦点回到原编辑器。Windows 和 Linux 发布构建各通过 23 个阶段，原文件字节一致。定向 60/60，专题 187/187，Flutter 2,006 项通过、2 项跳过。产品 39c6989 的 CI 46129408987 四项及 Platform Availability 46129403126 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.377-zen-escape.md。
 - P05.376 / feat-428 完成。默认 Zen 进入原生全屏，退出恢复原生窗口范围，已有全屏保留。外部离开 Zen 触发的全屏时恢复普通工作台。Windows 和 Linux 的 Zen 内正常关停及重启读回均通过。定向 8/8，专题 135/135，Flutter 2,001 项通过、2 项跳过。产品 b9f33e6 的 CI 46125295425 四项及 Platform Availability 46125289981 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.376-native-zen.md。
@@ -2406,7 +2407,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- Zen 四个布局区域已完成限定验收。继续对照 Zen 默认编辑器行号及退出恢复。
+- Zen 主窗普通文本编辑器行号已完成限定验收。继续对照命令面板位置与退出恢复。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)
