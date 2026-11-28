@@ -44,6 +44,8 @@ P05.381 已登记 LAY-14 Zen 默认标题栏和命令中心。[原生和托管�
 
 P05.382 已登记 LAY-14 默认编辑器组拆分工具条的显隐和方向。[原生与托管证据](../diagnostics/2026-11-28-p05/p05.382-group-split-toolbar.md)。
 
+P05.383 已登记 LAY-14 默认编辑器组更多操作中的列表与关闭入口。[原生与托管证据](../diagnostics/2026-11-28-p05/p05.383-group-more-actions.md)。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。
