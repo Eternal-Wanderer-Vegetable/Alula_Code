@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.370 / feat-422 完成限定验收。辅助窗限定键位可临时反转共享锁定，键释放、失焦和关闭均恢复。Windows 与 Linux 的单键和组合键各通过 19 项，专题 218/218，Flutter 1,986 项通过、2 项跳过。产品 ff52992 的 CI 46105313832 四项及 Platform Availability 46105312940 Windows/Linux 通过。X11 切换到同样绑定 Hold 的窗口时会重触发，保留复现并继续处理。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.370-auxiliary-scroll-hold.md。
 - P05.369 / feat-421 完成。按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md。
 - P05.368 / feat-420 完成。主辅窗口共用滚动锁定状态。辅助窗支持状态栏点击和命令面板切换，紧凑模式隐藏状态项。Windows 与 Linux 各通过 16 项，专题 214/214，Flutter 1,982 项通过、2 项跳过。产品 4bf59e4 的 CI 46097220975 四项及 Platform Availability 46097215444 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md。
 - P05.367 / feat-419 完成。滚动锁定生效时显示可点击的状态栏入口，点击关闭。Toggle 与 Hold 的显隐及会话开关通过。Windows 与 Linux 各通过 11 项，专题 183/183，Flutter 1,982 项通过、2 项跳过。产品 2b22642 的 CI 46094325305 四项及 Platform Availability 46094322690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md。
@@ -2396,7 +2397,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 ## Next（下一步，按 docs/03）
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
-- LAY-15 同窗 Hold、主辅窗口状态和三窗滚动位移已完成。继续复验辅助窗口 Hold。
+- LAY-15 辅助窗限定键位 Hold 通过。P05.371 继续修复 X11 主辅窗共享键位时，已有按键跨引擎重复触发。
 - 核对 Windows 主窗在辅助窗仍打开时的退出。P05.369 的夹具中断后曾出现退出码 3221226525，正常依次关闭的复验通过。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)

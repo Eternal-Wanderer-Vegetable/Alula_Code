@@ -1,0 +1,810 @@
+{
+  "product": "ff52992883555f0f59ee56a7cbedcc7f4229303b",
+  "tree": "fd7044cf9a9406dffa6466e4d5b39702d887e99c",
+  "abi": 51,
+  "windowsSourceFiles": 68,
+  "fixtureSha256": "cef738e449822aa17a47ad4b59c836970b0aef278fa005f9ddc4cb807bddc758",
+  "reference": {
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "path": "src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts",
+    "lines": [
+      210,
+      232
+    ],
+    "sha256": "e3fcffde0a12229227bae7c4c801bccdca29c42443ccbfd1e12f221df9d61803"
+  },
+  "sharedAcceptanceSha256": "71a9610b19d7892fe9df2add605ddff3cdccd538c659d078ff269eeebdc595dc",
+  "baseline": {
+    "source": "2dde4d5aea2284ebca02c2b376e4952e7c483de0",
+    "fixtureSha256": "a5d5ecdba9e7300c2d362faebcf3a17526f375b0e1ae47fa075f88b6836994ed",
+    "rawReportSha256": "693b73cf8a11572d8d0a257ae438d4cb46ea3b431109c3d45295cc2d742a6edf",
+    "observed": "hold key did not activate in auxiliary"
+  },
+  "openX11SameBindingHandoff": {
+    "tree": "fd7044cf9a9406dffa6466e4d5b39702d887e99c",
+    "rawReportSha256": "b144576dcc2592260eb5d3d8eb48a422bf9e8b17ac53f0186f3fe4f2f1b697c7",
+    "fixtureSha256": "026edeb2c6db12589db13b64221c49caa3621aa42b435b8d26839584074ec3f8",
+    "mainEvent": "f8-KeyDownEvent-synth=false",
+    "subsequentRepeat": true,
+    "auxiliaryBlur": true,
+    "persistedToggle": true,
+    "effectiveAfterSwitch": false,
+    "next": "P05.371"
+  },
+  "windows": {
+    "single": {
+      "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "6c97037b1032c95f378913f719303c751185255eff1a449eeb27ab8a7e35a66b",
+      "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "fixtureScope": {
+        "key": "f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && isAuxiliaryWindow && !quickInputVisible"
+      },
+      "windowEnvironment": "Win32",
+      "dpi": 120,
+      "rawReportSha256": "6e982e6b6f042e124fdff3d0762396e93d407387ba1c7e7d17a305ca937f3618",
+      "checks": [
+        "auxiliary-spawn-unlocked",
+        "initial-editor-has-focus-and-unlocked",
+        "auxiliary-hold-applied",
+        "hold-keeps-both-windows-active-during-wheel",
+        "an-unrelated-key-up-restores-unlocked",
+        "original-key-release-leaves-unlocked",
+        "Alt-alone-is-unbound",
+        "latched-toggle-enabled",
+        "hold-inverts-the-latched-toggle",
+        "inverse-hold-keeps-main-wheel-independent",
+        "native-blur-restores-latched-before-key-up",
+        "pick-list-uses-shared-latched-state",
+        "editor-text-condition-blocks-hold-in-picker",
+        "picker-dismiss-restores-editor",
+        "second-inversion-held",
+        "closing-held-auxiliary-restores-owner",
+        "explicit-unlock-after-hold",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "auxiliary-spawn-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "initial-editor-has-focus-and-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "auxiliary-hold-applied": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "hold-keeps-both-windows-active-during-wheel": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 160.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "an-unrelated-key-up-restores-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "original-key-release-leaves-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "Alt-alone-is-unbound": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "latched-toggle-enabled": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "hold-inverts-the-latched-toggle": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "inverse-hold-keeps-main-wheel-independent": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "native-blur-restores-latched-before-key-up": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "pick-list-uses-shared-latched-state": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "editor-text-condition-blocks-hold-in-picker": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "picker-dismiss-restores-editor": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "second-inversion-held": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "closing-held-auxiliary-restores-owner": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        },
+        "explicit-unlock-after-hold": {
+          "active": false,
+          "durable": false,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        }
+      },
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "lockedWheelDelta": 160.0,
+      "exitCode": 0
+    },
+    "chord": {
+      "executableSha256": "32c75dca74e1d6d4f6755989a8843964d001d4a0a1bb2da310390205c0241436",
+      "aotSha256": "6c97037b1032c95f378913f719303c751185255eff1a449eeb27ab8a7e35a66b",
+      "nativeSha256": "4d79c7a8a7bb717310cd59f055b741e501529d8a461d08a03d7c43ac65c89127",
+      "fixtureScope": {
+        "key": "ctrl+k f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && isAuxiliaryWindow && !quickInputVisible"
+      },
+      "windowEnvironment": "Win32",
+      "dpi": 120,
+      "rawReportSha256": "3748e62d2ebc1f29b06e2cfa953bf31016df500e10a32d6ae3d4e4534207f9e5",
+      "checks": [
+        "auxiliary-spawn-unlocked",
+        "initial-editor-has-focus-and-unlocked",
+        "auxiliary-hold-applied",
+        "hold-keeps-both-windows-active-during-wheel",
+        "an-unrelated-key-up-restores-unlocked",
+        "original-key-release-leaves-unlocked",
+        "Alt-alone-is-unbound",
+        "latched-toggle-enabled",
+        "hold-inverts-the-latched-toggle",
+        "inverse-hold-keeps-main-wheel-independent",
+        "native-blur-restores-latched-before-key-up",
+        "pick-list-uses-shared-latched-state",
+        "editor-text-condition-blocks-hold-in-picker",
+        "picker-dismiss-restores-editor",
+        "second-inversion-held",
+        "closing-held-auxiliary-restores-owner",
+        "explicit-unlock-after-hold",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "auxiliary-spawn-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "initial-editor-has-focus-and-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "auxiliary-hold-applied": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "hold-keeps-both-windows-active-during-wheel": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 160.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "an-unrelated-key-up-restores-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 160.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "original-key-release-leaves-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 160.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "Alt-alone-is-unbound": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 160.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "latched-toggle-enabled": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "hold-inverts-the-latched-toggle": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 160.0
+          }
+        },
+        "inverse-hold-keeps-main-wheel-independent": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "native-blur-restores-latched-before-key-up": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "pick-list-uses-shared-latched-state": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "editor-text-condition-blocks-hold-in-picker": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "picker-dismiss-restores-editor": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "second-inversion-held": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 320.0
+          }
+        },
+        "closing-held-auxiliary-restores-owner": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        },
+        "explicit-unlock-after-hold": {
+          "active": false,
+          "durable": false,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        }
+      },
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "lockedWheelDelta": 160.0,
+      "exitCode": 0
+    }
+  },
+  "linux": {
+    "single": {
+      "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "aotSha256": "9b703823d04cb0e33f0159eb9c30c4fb38186cc855779a8c9292e21e813ed950",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "fixtureScope": {
+        "key": "f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && isAuxiliaryWindow && !quickInputVisible"
+      },
+      "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "dpi": null,
+      "rawReportSha256": "28a035341a19a200c5919e7f599fa81ceeb312f916ffb2ac25531329039bfb37",
+      "checks": [
+        "auxiliary-spawn-unlocked",
+        "initial-editor-has-focus-and-unlocked",
+        "auxiliary-hold-applied",
+        "hold-keeps-both-windows-active-during-wheel",
+        "an-unrelated-key-up-restores-unlocked",
+        "original-key-release-leaves-unlocked",
+        "Alt-alone-is-unbound",
+        "latched-toggle-enabled",
+        "hold-inverts-the-latched-toggle",
+        "inverse-hold-keeps-main-wheel-independent",
+        "native-blur-restores-latched-before-key-up",
+        "pick-list-uses-shared-latched-state",
+        "editor-text-condition-blocks-hold-in-picker",
+        "picker-dismiss-restores-editor",
+        "second-inversion-held",
+        "closing-held-auxiliary-restores-owner",
+        "explicit-unlock-after-hold",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "auxiliary-spawn-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "initial-editor-has-focus-and-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "auxiliary-hold-applied": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "hold-keeps-both-windows-active-during-wheel": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "an-unrelated-key-up-restores-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "original-key-release-leaves-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "Alt-alone-is-unbound": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "latched-toggle-enabled": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "hold-inverts-the-latched-toggle": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "inverse-hold-keeps-main-wheel-independent": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "native-blur-restores-latched-before-key-up": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "pick-list-uses-shared-latched-state": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "editor-text-condition-blocks-hold-in-picker": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "picker-dismiss-restores-editor": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "second-inversion-held": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "closing-held-auxiliary-restores-owner": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        },
+        "explicit-unlock-after-hold": {
+          "active": false,
+          "durable": false,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        }
+      },
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "lockedWheelDelta": 106.0,
+      "exitCode": 0
+    },
+    "chord": {
+      "executableSha256": "2eb9dc9c02da0e68ec775224df48b8a346810245f480da6bf9241a4f6123ff89",
+      "aotSha256": "9b703823d04cb0e33f0159eb9c30c4fb38186cc855779a8c9292e21e813ed950",
+      "nativeSha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "fixtureScope": {
+        "key": "ctrl+k f8",
+        "command": "workbench.action.holdLockedScrolling",
+        "when": "editorTextFocus && isAuxiliaryWindow && !quickInputVisible"
+      },
+      "windowEnvironment": "_NET_WM_NAME(UTF8_STRING) = \"Xfwm4\"",
+      "dpi": null,
+      "rawReportSha256": "b2ee5b49f39504ee1abb9a006aa2bb009693a839d7a849f8095a0dc7d9250b5d",
+      "checks": [
+        "auxiliary-spawn-unlocked",
+        "initial-editor-has-focus-and-unlocked",
+        "auxiliary-hold-applied",
+        "hold-keeps-both-windows-active-during-wheel",
+        "an-unrelated-key-up-restores-unlocked",
+        "original-key-release-leaves-unlocked",
+        "Alt-alone-is-unbound",
+        "latched-toggle-enabled",
+        "hold-inverts-the-latched-toggle",
+        "inverse-hold-keeps-main-wheel-independent",
+        "native-blur-restores-latched-before-key-up",
+        "pick-list-uses-shared-latched-state",
+        "editor-text-condition-blocks-hold-in-picker",
+        "picker-dismiss-restores-editor",
+        "second-inversion-held",
+        "closing-held-auxiliary-restores-owner",
+        "explicit-unlock-after-hold",
+        "locked-alpha.txt bytes preserved",
+        "locked-beta.txt bytes preserved"
+      ],
+      "observations": {
+        "auxiliary-spawn-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "initial-editor-has-focus-and-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "auxiliary-hold-applied": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 0.0,
+            "child-locked-alpha.txt": 0.0
+          }
+        },
+        "hold-keeps-both-windows-active-during-wheel": {
+          "active": true,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "an-unrelated-key-up-restores-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "original-key-release-leaves-unlocked": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "Alt-alone-is-unbound": {
+          "active": false,
+          "durable": false,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 106.0,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "latched-toggle-enabled": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "hold-inverts-the-latched-toggle": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 106.0
+          }
+        },
+        "inverse-hold-keeps-main-wheel-independent": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "native-blur-restores-latched-before-key-up": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "pick-list-uses-shared-latched-state": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "editor-text-condition-blocks-hold-in-picker": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "picker-dismiss-restores-editor": {
+          "active": true,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "second-inversion-held": {
+          "active": false,
+          "durable": true,
+          "foreground": "child-locked-alpha.txt",
+          "verticalOffsets": {
+            "main": 1.7513894140720367,
+            "child-locked-alpha.txt": 212.0
+          }
+        },
+        "closing-held-auxiliary-restores-owner": {
+          "active": true,
+          "durable": true,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        },
+        "explicit-unlock-after-hold": {
+          "active": false,
+          "durable": false,
+          "foreground": "main",
+          "verticalOffsets": {
+            "main": 0.0
+          }
+        }
+      },
+      "filesSha256": {
+        "locked-alpha.txt": "aa0fe0343bdf8f74fb49fd4787778a2f71ce9fe7d791e81c425477d3c65c8e4c",
+        "locked-beta.txt": "ca4475be4ce8bea097c429362edb57cd3411538a422f242eaa6ee538c89345b6"
+      },
+      "lockedWheelDelta": 106.0,
+      "exitCode": 0
+    }
+  }
+}
