@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.380 / feat-432 完成。默认主窗命令面板在普通、Zen 和退出后三阶段距顶部 6 逻辑像素，水平居中且输入可聚焦。Windows 和 Linux 原生复验通过，两次系统关窗退出码为 0。定向 20/20，专题 201/201，Flutter 2,013 项通过、2 项跳过。产品 3b670fc 的 CI 46137056796 四项及 Platform Availability 46137053375 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md。
 - P05.379 / feat-431 完成。主窗普通文本编辑器在 Zen 隐藏行号，含两个编辑组与 Zen 中新建的编辑器。退出后行号恢复，Rust 折叠标记继续显示。Windows 与 Linux 的原生四阶段和系统退出通过。定向 19/19，专题 103/103，Flutter 2,012 项通过、2 项跳过。产品 21398aa 的 CI 46134495861 四项及 Platform Availability 46134490616 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.379-zen-line-numbers.md。
 - P05.378 / feat-430 完成。活动栏、两侧栏和面板各自恢复进入前的显隐。正常关停并重启后仍可还原。双端四个场景和八次原生退出通过，可见区域几何最大偏差 0 逻辑像素。定向 18/18，专题 170/170，Flutter 2,011 项通过、2 项跳过。产品 2f3778e 的 CI 46132042681 四项及 Platform Availability 46132039692 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.378-zen-layout.md。
 - P05.377 / feat-429 完成。默认两次 Escape 退出。重复按键可完成组合，按错键或超时可重试。查找与快速打开先关闭，焦点回到原编辑器。Windows 和 Linux 发布构建各通过 23 个阶段，原文件字节一致。定向 60/60，专题 187/187，Flutter 2,006 项通过、2 项跳过。产品 39c6989 的 CI 46129408987 四项及 Platform Availability 46129403126 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.377-zen-escape.md。
@@ -2407,7 +2408,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
 - LAY-15 Windows 和 X11 共用 Hold 键的切窗恢复、继续按住和真实重新按下均通过。
-- Zen 主窗普通文本编辑器行号已完成限定验收。继续对照命令面板位置与退出恢复。
+- 默认命令面板位置已完成限定验收。继续对照 Zen 内默认标题栏、命令中心和编辑器工具条。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)

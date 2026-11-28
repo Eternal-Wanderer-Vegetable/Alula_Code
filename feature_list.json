@@ -5472,8 +5472,8 @@
         "feat-124",
         "feat-431"
       ],
-      "status": "in-progress",
-      "evidence": "",
+      "status": "done",
+      "evidence": "默认主窗命令面板在普通、Zen 和退出后三阶段距顶部 6 逻辑像素，水平居中且输入可聚焦。Windows 和 Linux 原生复验通过，两次系统关窗退出码为 0。定向 20/20，专题 201/201，Flutter 2,013 项通过、2 项跳过。产品 3b670fc 的 CI 46137056796 四项及 Platform Availability 46137053375 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.380-zen-command-palette.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
