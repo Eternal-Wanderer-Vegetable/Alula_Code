@@ -1,0 +1,5658 @@
+{
+  "product": "ff351a439ec8260fef8cdb92544fa35f0d94ca6e",
+  "tree": "bf85084fa7655d288bba675ce272470ef8d45676",
+  "fixtureSha256": "49574627020020b9a935ba6213fadc43d6ee1dd6baeff100a19265a8c67c6e1c",
+  "reference": {
+    "": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "Non-AI Command Center width and placement across window sizes",
+      "referenceSettings": {
+        "chat.agentsControl.enabled": "hidden",
+        "chat.disableAIFeatures": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "narrow": {
+        "viewport": [
+          636,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          636,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          93.5,
+          35
+        ],
+        "center": [
+          103.5,
+          0,
+          280.5,
+          35
+        ],
+        "right": [
+          394,
+          0,
+          242,
+          35
+        ],
+        "commandCenter": [
+          103.5,
+          5.700000286102295,
+          280.5,
+          23.600000381469727
+        ],
+        "centralAction": [
+          161.5,
+          5.700000286102295,
+          216.5,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              161.5,
+              5.700000286102295,
+              216.5,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              230.78750610351562,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          230.78750610351562,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "214.9px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "medium": {
+        "viewport": [
+          1206,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1206,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "center": [
+          340.9875183105469,
+          0,
+          524.0250244140625,
+          35
+        ],
+        "right": [
+          875.0125122070312,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "commandCenter": [
+          340.9875183105469,
+          5.700000286102295,
+          524.0250244140625,
+          23.600000381469727
+        ],
+        "centralAction": [
+          398.9875183105469,
+          5.700000286102295,
+          460.0249938964844,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              398.9875183105469,
+              5.700000286102295,
+              460.0249938964844,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              590.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          590.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "458.425px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1244,
+          836
+        ]
+      },
+      "wide": {
+        "viewport": [
+          1766,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1766,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "center": [
+          550.2000122070312,
+          0,
+          665.6000366210938,
+          35
+        ],
+        "right": [
+          1225.800048828125,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "commandCenter": [
+          550.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ],
+        "centralAction": [
+          608.2000122070312,
+          5.700000286102295,
+          601.6000366210938,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              608.2000122070312,
+              5.700000286102295,
+              601.6000366210938,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              870.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          870.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "600px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "keyboardQuickOpen": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "keyboardEditorRestored": true,
+      "initial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "firstEditorRestored": true,
+      "commands": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": ">",
+        "placeholder": "Type the name of a command to run.",
+        "rows": [
+          "Accounts: Manage Accounts",
+          "Accounts: Manage Extension Account Preferences...",
+          "Accounts: Manage Trusted Extensions For Account",
+          "Add Cursor Above\nCtrl\n+\nAlt\n+\nUpArrow",
+          "Add Cursor Below\nCtrl\n+\nAlt\n+\nDownArrow",
+          "Add Cursors to Bottom",
+          "Add Cursors to Line Ends\nShift\n+\nAlt\n+\nI",
+          "Add Cursors to Top",
+          "Add Data Breakpoint at Address",
+          "Add Function Breakpoint",
+          "Add Line Comment\nCtrl\n+\nK\nCtrl\n+\nC",
+          "Add Selection to Next Find Match\nCtrl\n+\nD",
+          "Add Selection to Previous Find Match",
+          "Announce Cursor Position\nCtrl\n+\nShift\n+\nAlt\n+\nG"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Accounts: Manage Accounts"
+        ],
+        "editorFocused": false
+      },
+      "commandsEditorRestored": true,
+      "symbols": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "@",
+        "placeholder": "Type the name of a symbol to go to.",
+        "rows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "editorFocused": false
+      },
+      "symbolsEditorRestored": true,
+      "more": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "?",
+        "placeholder": "Type '?' to get help on the actions you can take from here.",
+        "rows": [
+          "…Go to File\nCtrl\n+\nP",
+          ":Go to Line/Column\nCtrl\n+\nG",
+          "::Go to Offset",
+          "@Go to Symbol in Editor\nCtrl\n+\nShift\n+\nO",
+          "@:Go to Symbol in Editor by Category",
+          "#Go to Symbol in Workspace\nCtrl\n+\nT",
+          "%Search for Text",
+          ">Show and Run Commands\nCtrl\n+\nShift\n+\nP",
+          "debug Start Debugging",
+          "debug consoles Show All Debug Consoles",
+          "edt Show All Opened Editors By Appearance\nCtrl\n+\nK\nCtrl\n+\nP",
+          "edt active Show Editors in Active Group by Most Recently Used",
+          "edt mru Show All Opened Editors By Most Recently Used",
+          "ext Manage Extensions"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "…Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "moreEditorRestored": true,
+      "beforeGoToFile": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "goToFile": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "fileEditorRestored": true,
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zenInitial": {
+        "bounds": {
+          "x": 731.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "zenEditorRestored": true,
+      "normalRestored": [
+        24,
+        36,
+        1804,
+        836
+      ],
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "-return": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "Non-AI Command Center width and placement across window sizes",
+      "referenceSettings": {
+        "chat.agentsControl.enabled": "hidden",
+        "chat.disableAIFeatures": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "narrow": {
+        "viewport": [
+          636,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          636,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          93.5,
+          35
+        ],
+        "center": [
+          103.5,
+          0,
+          280.5,
+          35
+        ],
+        "right": [
+          394,
+          0,
+          242,
+          35
+        ],
+        "commandCenter": [
+          103.5,
+          5.700000286102295,
+          280.5,
+          23.600000381469727
+        ],
+        "centralAction": [
+          161.5,
+          5.700000286102295,
+          216.5,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              161.5,
+              5.700000286102295,
+              216.5,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              230.78750610351562,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          230.78750610351562,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "214.9px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "medium": {
+        "viewport": [
+          1206,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1206,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "center": [
+          340.9875183105469,
+          0,
+          524.0250244140625,
+          35
+        ],
+        "right": [
+          875.0125122070312,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "commandCenter": [
+          340.9875183105469,
+          5.700000286102295,
+          524.0250244140625,
+          23.600000381469727
+        ],
+        "centralAction": [
+          398.9875183105469,
+          5.700000286102295,
+          460.0249938964844,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              398.9875183105469,
+              5.700000286102295,
+              460.0249938964844,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              590.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          590.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "458.425px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1244,
+          836
+        ]
+      },
+      "wide": {
+        "viewport": [
+          1766,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1766,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "center": [
+          550.2000122070312,
+          0,
+          665.6000366210938,
+          35
+        ],
+        "right": [
+          1225.800048828125,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "commandCenter": [
+          550.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ],
+        "centralAction": [
+          608.2000122070312,
+          5.700000286102295,
+          601.6000366210938,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              608.2000122070312,
+              5.700000286102295,
+              601.6000366210938,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              870.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          870.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "600px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "keyboardQuickOpen": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "keyboardEditorRestored": true,
+      "initial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "firstEditorRestored": true,
+      "typedCommandsInitial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedCommandsProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": ">",
+        "placeholder": "Type the name of a command to run.",
+        "rows": [
+          "Accounts: Manage Accounts",
+          "Accounts: Manage Extension Account Preferences...",
+          "Accounts: Manage Trusted Extensions For Account",
+          "Add Cursor Above\nCtrl\n+\nAlt\n+\nUpArrow",
+          "Add Cursor Below\nCtrl\n+\nAlt\n+\nDownArrow",
+          "Add Cursors to Bottom",
+          "Add Cursors to Line Ends\nShift\n+\nAlt\n+\nI",
+          "Add Cursors to Top",
+          "Add Data Breakpoint at Address",
+          "Add Function Breakpoint",
+          "Add Line Comment\nCtrl\n+\nK\nCtrl\n+\nC",
+          "Add Selection to Next Find Match\nCtrl\n+\nD",
+          "Add Selection to Previous Find Match",
+          "Announce Cursor Position\nCtrl\n+\nShift\n+\nAlt\n+\nG"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Accounts: Manage Accounts"
+        ],
+        "editorFocused": false
+      },
+      "typedCommandsReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedCommandsEditorRestored": true,
+      "typedSymbolsInitial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedSymbolsProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "@",
+        "placeholder": "Type the name of a symbol to go to.",
+        "rows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "editorFocused": false
+      },
+      "typedSymbolsReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedSymbolsEditorRestored": true,
+      "typedMoreInitial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedMoreProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "?",
+        "placeholder": "Type '?' to get help on the actions you can take from here.",
+        "rows": [
+          "…Go to File\nCtrl\n+\nP",
+          ":Go to Line/Column\nCtrl\n+\nG",
+          "::Go to Offset",
+          "@Go to Symbol in Editor\nCtrl\n+\nShift\n+\nO",
+          "@:Go to Symbol in Editor by Category",
+          "#Go to Symbol in Workspace\nCtrl\n+\nT",
+          "%Search for Text",
+          ">Show and Run Commands\nCtrl\n+\nShift\n+\nP",
+          "debug Start Debugging",
+          "debug consoles Show All Debug Consoles",
+          "edt Show All Opened Editors By Appearance\nCtrl\n+\nK\nCtrl\n+\nP",
+          "edt active Show Editors in Active Group by Most Recently Used",
+          "edt mru Show All Opened Editors By Most Recently Used",
+          "ext Manage Extensions"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "…Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedMoreReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedMoreEditorRestored": true,
+      "typedFilesInitial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedFilesProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "one",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "typedFilesReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedFilesEditorRestored": true,
+      "typedSpacesInitial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedSpacesProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "  ",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedSpacesReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "typedSpacesEditorRestored": true,
+      "choseCommandsProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": ">",
+        "placeholder": "Type the name of a command to run.",
+        "rows": [
+          "Accounts: Manage Accounts",
+          "Accounts: Manage Extension Account Preferences...",
+          "Accounts: Manage Trusted Extensions For Account",
+          "Add Cursor Above\nCtrl\n+\nAlt\n+\nUpArrow",
+          "Add Cursor Below\nCtrl\n+\nAlt\n+\nDownArrow",
+          "Add Cursors to Bottom",
+          "Add Cursors to Line Ends\nShift\n+\nAlt\n+\nI",
+          "Add Cursors to Top",
+          "Add Data Breakpoint at Address",
+          "Add Function Breakpoint",
+          "Add Line Comment\nCtrl\n+\nK\nCtrl\n+\nC",
+          "Add Selection to Next Find Match\nCtrl\n+\nD",
+          "Add Selection to Previous Find Match",
+          "Announce Cursor Position\nCtrl\n+\nShift\n+\nAlt\n+\nG"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Accounts: Manage Accounts"
+        ],
+        "editorFocused": false
+      },
+      "choseCommandsReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "choseCommandsEditorRestored": true,
+      "choseSymbolsProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "@",
+        "placeholder": "Type the name of a symbol to go to.",
+        "rows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "The active text editor does not provide symbol information."
+        ],
+        "editorFocused": false
+      },
+      "choseSymbolsReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "choseSymbolsEditorRestored": true,
+      "choseMoreProvider": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "?",
+        "placeholder": "Type '?' to get help on the actions you can take from here.",
+        "rows": [
+          "…Go to File\nCtrl\n+\nP",
+          ":Go to Line/Column\nCtrl\n+\nG",
+          "::Go to Offset",
+          "@Go to Symbol in Editor\nCtrl\n+\nShift\n+\nO",
+          "@:Go to Symbol in Editor by Category",
+          "#Go to Symbol in Workspace\nCtrl\n+\nT",
+          "%Search for Text",
+          ">Show and Run Commands\nCtrl\n+\nShift\n+\nP",
+          "debug Start Debugging",
+          "debug consoles Show All Debug Consoles",
+          "edt Show All Opened Editors By Appearance\nCtrl\n+\nK\nCtrl\n+\nP",
+          "edt active Show Editors in Active Group by Most Recently Used",
+          "edt mru Show All Opened Editors By Most Recently Used",
+          "ext Manage Extensions"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "…Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "choseMoreReturned": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "choseMoreEditorRestored": true,
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zenInitial": {
+        "bounds": {
+          "x": 731.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "zenEditorRestored": true,
+      "normalRestored": [
+        24,
+        36,
+        1804,
+        836
+      ],
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "-nested": {
+      "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "exeSha256": "24c9da29867c5547214addbc7ac3fbf5d4ce3b04867a26ba5ac6cb18919bd126",
+      "separateDesktop": true,
+      "operatingSystemKeyboardOrPointerEvents": 0,
+      "case": "Non-AI Command Center width and placement across window sizes",
+      "referenceSettings": {
+        "chat.agentsControl.enabled": "hidden",
+        "chat.disableAIFeatures": true
+      },
+      "normalBounds": [
+        297,
+        126,
+        1755,
+        1040
+      ],
+      "monitorBounds": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "DPI": 1.25,
+      "narrow": {
+        "viewport": [
+          636,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          636,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          93.5,
+          35
+        ],
+        "center": [
+          103.5,
+          0,
+          280.5,
+          35
+        ],
+        "right": [
+          394,
+          0,
+          242,
+          35
+        ],
+        "commandCenter": [
+          103.5,
+          5.700000286102295,
+          280.5,
+          23.600000381469727
+        ],
+        "centralAction": [
+          161.5,
+          5.700000286102295,
+          216.5,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              103.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              129.5,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              161.5,
+              5.700000286102295,
+              216.5,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              230.78750610351562,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          230.78750610351562,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "214.9px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          674,
+          836
+        ]
+      },
+      "medium": {
+        "viewport": [
+          1206,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1206,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "center": [
+          340.9875183105469,
+          0,
+          524.0250244140625,
+          35
+        ],
+        "right": [
+          875.0125122070312,
+          0,
+          330.9875183105469,
+          35
+        ],
+        "commandCenter": [
+          340.9875183105469,
+          5.700000286102295,
+          524.0250244140625,
+          23.600000381469727
+        ],
+        "centralAction": [
+          398.9875183105469,
+          5.700000286102295,
+          460.0249938964844,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              340.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              366.9875183105469,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              398.9875183105469,
+              5.700000286102295,
+              460.0249938964844,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              590.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          590.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "458.425px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1244,
+          836
+        ]
+      },
+      "wide": {
+        "viewport": [
+          1766,
+          794
+        ],
+        "titlebar": [
+          0,
+          0,
+          1766,
+          35
+        ],
+        "left": [
+          0,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "center": [
+          550.2000122070312,
+          0,
+          665.6000366210938,
+          35
+        ],
+        "right": [
+          1225.800048828125,
+          0,
+          540.2000122070312,
+          35
+        ],
+        "commandCenter": [
+          550.2000122070312,
+          5.700000286102295,
+          665.6000366210938,
+          23.600000381469727
+        ],
+        "centralAction": [
+          608.2000122070312,
+          5.700000286102295,
+          601.6000366210938,
+          23.600000381469727
+        ],
+        "centerActions": [
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-left",
+            "title": "Go Back (Alt+LeftArrow)",
+            "bounds": [
+              550.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item disabled menu-entry",
+            "title": null,
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-label disabled codicon codicon-arrow-right",
+            "title": "Go Forward (Alt+RightArrow)",
+            "bounds": [
+              576.2000122070312,
+              6.5,
+              22,
+              22
+            ]
+          },
+          {
+            "className": "action-item command-center-center",
+            "title": null,
+            "bounds": [
+              608.2000122070312,
+              5.700000286102295,
+              601.6000366210938,
+              23.600000381469727
+            ]
+          },
+          {
+            "className": "action-item command-center-quick-pick",
+            "title": null,
+            "bounds": [
+              870.0375366210938,
+              6.5,
+              77.9124984741211,
+              22
+            ]
+          }
+        ],
+        "button": [
+          870.0375366210938,
+          6.5,
+          77.9124984741211,
+          22
+        ],
+        "css": {
+          "width": "600px",
+          "maxWidth": "600px",
+          "height": "22px",
+          "border": "0.8px",
+          "boxSizing": "content-box"
+        },
+        "nativeWindowBounds": [
+          24,
+          36,
+          1804,
+          836
+        ]
+      },
+      "keyboardQuickOpen": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "keyboardEditorRestored": true,
+      "initial": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "firstEditorRestored": true,
+      "beforeMore": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "more": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "?",
+        "placeholder": "Type '?' to get help on the actions you can take from here.",
+        "rows": [
+          "…Go to File\nCtrl\n+\nP",
+          ":Go to Line/Column\nCtrl\n+\nG",
+          "::Go to Offset",
+          "@Go to Symbol in Editor\nCtrl\n+\nShift\n+\nO",
+          "@:Go to Symbol in Editor by Category",
+          "#Go to Symbol in Workspace\nCtrl\n+\nT",
+          "%Search for Text",
+          ">Show and Run Commands\nCtrl\n+\nShift\n+\nP",
+          "debug Start Debugging",
+          "debug consoles Show All Debug Consoles",
+          "edt Show All Opened Editors By Appearance\nCtrl\n+\nK\nCtrl\n+\nP",
+          "edt active Show Editors in Active Group by Most Recently Used",
+          "edt mru Show All Opened Editors By Most Recently Used",
+          "ext Manage Extensions"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "…Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "afterMoreGoToFile": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "moreEditorRestored": true,
+      "beforeKeyboardAccept": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "afterKeyboardAccept": {
+        "bounds": {
+          "x": 590.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "one.txt\nrecently opened"
+        ],
+        "editorFocused": false
+      },
+      "keyboardAcceptEditorRestored": true,
+      "zenFullscreen": [
+        0,
+        0,
+        2048,
+        1152
+      ],
+      "zenInitial": {
+        "bounds": {
+          "x": 731.6000366210938,
+          "y": 13.600000381469727,
+          "width": 586.3999633789062,
+          "height": 25.600000381469727
+        },
+        "query": "",
+        "placeholder": "Search files by name (append : to go to line or @ to go to symbol), or paste a link",
+        "rows": [
+          "Go to File\nCtrl\n+\nP",
+          "Show and Run Commands>\nCtrl\n+\nShift\n+\nP",
+          "Search for Text%",
+          "Go to Symbol in Editor@\nCtrl\n+\nShift\n+\nO",
+          "Start Debuggingdebug ",
+          "Run Tasktask ",
+          "More?",
+          "one.txt\nrecently opened"
+        ],
+        "active": "list_id_2_0",
+        "focusedRows": [
+          "Go to File\nCtrl\n+\nP"
+        ],
+        "editorFocused": false
+      },
+      "zenEditorRestored": true,
+      "normalRestored": [
+        24,
+        36,
+        1804,
+        836
+      ],
+      "normalExit": true,
+      "exitCode": 0,
+      "inputDesktopStayedOutsideFixture": true
+    }
+  },
+  "cases": {
+    "windows": {
+      "platform": "windows",
+      "sourceTree": "bf85084fa7655d288bba675ce272470ef8d45676",
+      "build": {
+        "abi": 51,
+        "releaseAppSha256": "cffb2fe21977ac2a4f3468746e3db937d1034a0fae411370e34fd656ceee54f7",
+        "fixtureSha256": "49574627020020b9a935ba6213fadc43d6ee1dd6baeff100a19265a8c67c6e1c",
+        "fontSha256": "4b4440320a2ec5f6682aa4d7ad19311df7e94f1e4bf8e76a7915cd8c50113acb",
+        "aotSha256": "bf2314c0d712d0aa3920c16e21d8dba2a00204c75fb154a805c67c96088ab5ff",
+        "librarySha256": "4b6bdbb43917ac6ad2aecfd75f2251a1e7e45630b5c724f9f3524e3a324d628b",
+        "tree": "bf85084fa7655d288bba675ce272470ef8d45676"
+      },
+      "testDesktop": "inactive WinSta0",
+      "transport": "rendered titlebar activation and picker input, owned Win32 Escape and fullscreen/close",
+      "normal": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "historySeedResult": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-文件结果",
+          "one.txt",
+          "button-one.txt-0"
+        ],
+        "rowBounds": {
+          "separator-文件结果": [
+            302.0,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            868.0,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "historySeedAccepted": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "directFiles": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            302.0,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            846.0,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            868.0,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "directEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "titleInitial": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "firstModeAccept": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            302.0,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            846.0,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            868.0,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "fileEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "reopened": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "fileFilter": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            302.0,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            846.0,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            868.0,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "fileFilterCleared": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "commandsMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": ">",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "文件: 新建文本文件",
+          "查看: 切换面包屑",
+          "面包屑: 聚焦面包屑",
+          "面包屑: 聚焦并选择面包屑",
+          "面包屑: 聚焦下一段",
+          "面包屑: 聚焦上一段",
+          "面包屑: 聚焦下一段并保持选择器",
+          "面包屑: 聚焦上一段并保持选择器",
+          "面包屑: 选择面包屑",
+          "面包屑: 打开面包屑位置",
+          "面包屑: 返回编辑器",
+          "文件: 打开文件夹…",
+          "文件: 打开最近项目",
+          "Merge Editor: Open Merge Editor",
+          "文件: 保存",
+          "编辑器: 固定编辑器",
+          "编辑器: 取消固定编辑器",
+          "编辑器: 切换编辑器固定状态",
+          "编辑器: 关闭活动编辑器",
+          "文件: 明确关闭活动编辑器",
+          "视图: 按最近使用顺序显示活动组编辑器",
+          "视图: 按最近使用顺序显示所有编辑器",
+          "视图: 快速打开组内上一个最近使用的编辑器",
+          "视图: 快速打开组内最早使用的编辑器",
+          "视图: 快速打开上一个最近使用的编辑器",
+          "视图: 快速打开最早使用的编辑器"
+        ],
+        "rowBounds": {
+          "文件: 新建文本文件": [
+            302.0,
+            47.0,
+            600.0,
+            22.0
+          ],
+          "查看: 切换面包屑": [
+            302.0,
+            69.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦面包屑": [
+            302.0,
+            91.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦并选择面包屑": [
+            302.0,
+            113.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦下一段": [
+            302.0,
+            135.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦上一段": [
+            302.0,
+            157.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦下一段并保持选择器": [
+            302.0,
+            179.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦上一段并保持选择器": [
+            302.0,
+            201.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 选择面包屑": [
+            302.0,
+            223.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 打开面包屑位置": [
+            302.0,
+            245.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 返回编辑器": [
+            302.0,
+            267.0,
+            600.0,
+            22.0
+          ],
+          "文件: 打开文件夹…": [
+            302.0,
+            289.0,
+            600.0,
+            22.0
+          ],
+          "文件: 打开最近项目": [
+            302.0,
+            311.0,
+            600.0,
+            22.0
+          ],
+          "Merge Editor: Open Merge Editor": [
+            302.0,
+            333.0,
+            600.0,
+            22.0
+          ],
+          "文件: 保存": [
+            302.0,
+            355.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 固定编辑器": [
+            302.0,
+            377.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 取消固定编辑器": [
+            302.0,
+            399.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 切换编辑器固定状态": [
+            302.0,
+            421.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 关闭活动编辑器": [
+            302.0,
+            443.0,
+            600.0,
+            22.0
+          ],
+          "文件: 明确关闭活动编辑器": [
+            302.0,
+            465.0,
+            600.0,
+            22.0
+          ],
+          "视图: 按最近使用顺序显示活动组编辑器": [
+            302.0,
+            487.0,
+            600.0,
+            22.0
+          ],
+          "视图: 按最近使用顺序显示所有编辑器": [
+            302.0,
+            509.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开组内上一个最近使用的编辑器": [
+            302.0,
+            531.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开组内最早使用的编辑器": [
+            302.0,
+            553.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开上一个最近使用的编辑器": [
+            302.0,
+            575.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开最早使用的编辑器": [
+            302.0,
+            597.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "文件: 新建文本文件"
+      },
+      "backFromCommands": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "symbolsMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "@",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "backFromSymbols": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "moreMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "?",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "…",
+          ":",
+          "::",
+          ">",
+          "@",
+          "@:",
+          "#"
+        ],
+        "rowBounds": {
+          "…": [
+            302.0,
+            97.0,
+            600.0,
+            44.0
+          ],
+          ":": [
+            302.0,
+            141.0,
+            600.0,
+            44.0
+          ],
+          "::": [
+            302.0,
+            185.0,
+            600.0,
+            22.0
+          ],
+          ">": [
+            302.0,
+            207.0,
+            600.0,
+            44.0
+          ],
+          "@": [
+            302.0,
+            251.0,
+            600.0,
+            44.0
+          ],
+          "@:": [
+            302.0,
+            295.0,
+            600.0,
+            22.0
+          ],
+          "#": [
+            302.0,
+            317.0,
+            600.0,
+            44.0
+          ]
+        },
+        "selectedRow": "…"
+      },
+      "backFromMore": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            302.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            302.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            302.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            302.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            302.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            302.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "normalEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "nativeFullscreen": {
+        "hwndBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ],
+        "monitorBounds": [
+          0,
+          0,
+          2048,
+          1152
+        ]
+      },
+      "zenInitial": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            724.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            724.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            724.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            724.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            724.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            724.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "zenEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          2048.0,
+          35.0
+        ],
+        "center": [
+          723.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 2048.0,
+        "dpr": 1.25,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          2048.0,
+          1152.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "restored": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1204.0,
+          35.0
+        ],
+        "center": [
+          372.24,
+          5.5,
+          459.52,
+          24.0
+        ],
+        "viewportWidth": 1204.0,
+        "dpr": 1.25,
+        "fullscreen": false,
+        "nativeBounds": [
+          9.6,
+          9.6,
+          1226.3999999999999,
+          813.6
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true,
+      "inputDesktopStayedOutsideFixture": true
+    },
+    "linux": {
+      "platform": "linux",
+      "sourceTree": "bf85084fa7655d288bba675ce272470ef8d45676",
+      "display": "isolated Xvfb with Xfwm4",
+      "transport": "X11 pointer, text, Escape and native fullscreen/close",
+      "fixtureSha256": "49574627020020b9a935ba6213fadc43d6ee1dd6baeff100a19265a8c67c6e1c",
+      "exeSha256": "62766897a5b03fd574f194e97423a6af06bfca9e443c615ba80f0bea1aee945e",
+      "aotSha256": "cb76f9d5e7ec7f8d769a05fbae97b3b9e8b985f11a9acdb23a8fef5375fd3353",
+      "librarySha256": "fdda3537262031eeaf80106d747529946b4fb62ccdfe7d257ce09c5707d2f2d0",
+      "normal": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "historySeedResult": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-文件结果",
+          "one.txt",
+          "button-one.txt-0"
+        ],
+        "rowBounds": {
+          "separator-文件结果": [
+            308.5,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            874.5,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "historySeedAccepted": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "directFiles": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            308.5,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            852.5,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            874.5,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "directEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "titleInitial": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "firstModeAccept": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            308.5,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            852.5,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            874.5,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "fileEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "reopened": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "fileFilter": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "one",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "separator-最近打开",
+          "one.txt",
+          "button-one.txt-0",
+          "button-one.txt-1"
+        ],
+        "rowBounds": {
+          "separator-最近打开": [
+            308.5,
+            97.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            123.0,
+            600.0,
+            22.0
+          ],
+          "button-one.txt-0": [
+            852.5,
+            123.0,
+            22.0,
+            22.0
+          ],
+          "button-one.txt-1": [
+            874.5,
+            123.0,
+            22.0,
+            22.0
+          ]
+        },
+        "selectedRow": "one.txt"
+      },
+      "fileFilterCleared": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "commandsMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": ">",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "文件: 新建文本文件",
+          "查看: 切换面包屑",
+          "面包屑: 聚焦面包屑",
+          "面包屑: 聚焦并选择面包屑",
+          "面包屑: 聚焦下一段",
+          "面包屑: 聚焦上一段",
+          "面包屑: 聚焦下一段并保持选择器",
+          "面包屑: 聚焦上一段并保持选择器",
+          "面包屑: 选择面包屑",
+          "面包屑: 打开面包屑位置",
+          "面包屑: 返回编辑器",
+          "文件: 打开文件夹…",
+          "文件: 打开最近项目",
+          "Merge Editor: Open Merge Editor",
+          "文件: 保存",
+          "编辑器: 固定编辑器",
+          "编辑器: 取消固定编辑器",
+          "编辑器: 切换编辑器固定状态",
+          "编辑器: 关闭活动编辑器",
+          "文件: 明确关闭活动编辑器",
+          "视图: 按最近使用顺序显示活动组编辑器",
+          "视图: 按最近使用顺序显示所有编辑器",
+          "视图: 快速打开组内上一个最近使用的编辑器",
+          "视图: 快速打开组内最早使用的编辑器",
+          "视图: 快速打开上一个最近使用的编辑器",
+          "视图: 快速打开最早使用的编辑器"
+        ],
+        "rowBounds": {
+          "文件: 新建文本文件": [
+            308.5,
+            47.0,
+            600.0,
+            22.0
+          ],
+          "查看: 切换面包屑": [
+            308.5,
+            69.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦面包屑": [
+            308.5,
+            91.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦并选择面包屑": [
+            308.5,
+            113.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦下一段": [
+            308.5,
+            135.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦上一段": [
+            308.5,
+            157.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦下一段并保持选择器": [
+            308.5,
+            179.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 聚焦上一段并保持选择器": [
+            308.5,
+            201.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 选择面包屑": [
+            308.5,
+            223.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 打开面包屑位置": [
+            308.5,
+            245.0,
+            600.0,
+            22.0
+          ],
+          "面包屑: 返回编辑器": [
+            308.5,
+            267.0,
+            600.0,
+            22.0
+          ],
+          "文件: 打开文件夹…": [
+            308.5,
+            289.0,
+            600.0,
+            22.0
+          ],
+          "文件: 打开最近项目": [
+            308.5,
+            311.0,
+            600.0,
+            22.0
+          ],
+          "Merge Editor: Open Merge Editor": [
+            308.5,
+            333.0,
+            600.0,
+            22.0
+          ],
+          "文件: 保存": [
+            308.5,
+            355.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 固定编辑器": [
+            308.5,
+            377.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 取消固定编辑器": [
+            308.5,
+            399.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 切换编辑器固定状态": [
+            308.5,
+            421.0,
+            600.0,
+            22.0
+          ],
+          "编辑器: 关闭活动编辑器": [
+            308.5,
+            443.0,
+            600.0,
+            22.0
+          ],
+          "文件: 明确关闭活动编辑器": [
+            308.5,
+            465.0,
+            600.0,
+            22.0
+          ],
+          "视图: 按最近使用顺序显示活动组编辑器": [
+            308.5,
+            487.0,
+            600.0,
+            22.0
+          ],
+          "视图: 按最近使用顺序显示所有编辑器": [
+            308.5,
+            509.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开组内上一个最近使用的编辑器": [
+            308.5,
+            531.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开组内最早使用的编辑器": [
+            308.5,
+            553.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开上一个最近使用的编辑器": [
+            308.5,
+            575.0,
+            600.0,
+            22.0
+          ],
+          "视图: 快速打开最早使用的编辑器": [
+            308.5,
+            597.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "文件: 新建文本文件"
+      },
+      "backFromCommands": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "symbolsMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "@",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "backFromSymbols": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "moreMode": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "?",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "…",
+          ":",
+          "::",
+          ">",
+          "@",
+          "@:",
+          "#"
+        ],
+        "rowBounds": {
+          "…": [
+            308.5,
+            97.0,
+            600.0,
+            44.0
+          ],
+          ":": [
+            308.5,
+            141.0,
+            600.0,
+            44.0
+          ],
+          "::": [
+            308.5,
+            185.0,
+            600.0,
+            22.0
+          ],
+          ">": [
+            308.5,
+            207.0,
+            600.0,
+            44.0
+          ],
+          "@": [
+            308.5,
+            251.0,
+            600.0,
+            44.0
+          ],
+          "@:": [
+            308.5,
+            295.0,
+            600.0,
+            22.0
+          ],
+          "#": [
+            308.5,
+            317.0,
+            600.0,
+            44.0
+          ]
+        },
+        "selectedRow": "…"
+      },
+      "backFromMore": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            308.5,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            308.5,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            308.5,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            308.5,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            308.5,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            308.5,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "normalEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "zen": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "nativeFullscreen": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_FULLSCREEN, _NET_WM_STATE_FOCUSED",
+      "zenInitial": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "query": "",
+        "picker": true,
+        "focusHistory": [
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false"
+        ],
+        "pickerFocused": true,
+        "editorFocused": false,
+        "rows": [
+          "转到文件",
+          "显示并运行命令",
+          "转到编辑器中的符号",
+          "更多",
+          "separator-最近打开",
+          "one.txt"
+        ],
+        "rowBounds": {
+          "转到文件": [
+            660.0,
+            97.0,
+            600.0,
+            22.0
+          ],
+          "显示并运行命令": [
+            660.0,
+            119.0,
+            600.0,
+            22.0
+          ],
+          "转到编辑器中的符号": [
+            660.0,
+            141.0,
+            600.0,
+            22.0
+          ],
+          "更多": [
+            660.0,
+            163.0,
+            600.0,
+            22.0
+          ],
+          "separator-最近打开": [
+            660.0,
+            185.0,
+            600.0,
+            26.0
+          ],
+          "one.txt": [
+            660.0,
+            211.0,
+            600.0,
+            22.0
+          ]
+        },
+        "selectedRow": "转到文件"
+      },
+      "zenEscape": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1920.0,
+          35.0
+        ],
+        "center": [
+          659.0,
+          5.5,
+          602.0,
+          24.0
+        ],
+        "viewportWidth": 1920.0,
+        "dpr": 1.0,
+        "fullscreen": true,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1920.0,
+          960.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "restored": {
+        "titlebar": [
+          0.0,
+          0.0,
+          1217.0,
+          35.0
+        ],
+        "center": [
+          376.27,
+          5.5,
+          464.46,
+          24.0
+        ],
+        "viewportWidth": 1217.0,
+        "dpr": 1.0,
+        "fullscreen": false,
+        "nativeBounds": [
+          0.0,
+          0.0,
+          1217.0,
+          804.0
+        ],
+        "picker": false,
+        "focusHistory": [
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true",
+          "null: _FocusScopeWithExternalFocusNode: false",
+          "null: Focus: true",
+          "null: Focus: false",
+          "null: Focus: true"
+        ],
+        "pickerFocused": false,
+        "editorFocused": true,
+        "rows": [],
+        "rowBounds": {},
+        "selectedRow": null
+      },
+      "sourceSha256": "698ade3931b31643a944a744ebf3b7d07566a6efbc8b1628d9a8d54e1da013e0",
+      "exitCode": 0,
+      "diskBytesStable": true
+    }
+  },
+  "overlay": {
+    "sourceTree": "bf85084fa7655d288bba675ce272470ef8d45676",
+    "exactTrackedRuntimeFiles": 274,
+    "comparedAreas": [
+      "app/lib",
+      "app/windows",
+      "app/packages",
+      "app/assets",
+      "crates",
+      "scripts",
+      "Cargo.toml",
+      "Cargo.lock",
+      "app/pubspec.yaml",
+      "app/pubspec.lock"
+    ],
+    "changedContentFiles": 0,
+    "updatedToCandidate": [
+      "app/lib/workbench/commands.dart",
+      "app/lib/workbench/title_bar.dart",
+      "app/lib/workbench/workbench_page.dart"
+    ]
+  }
+}

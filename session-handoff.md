@@ -8,6 +8,7 @@ Last Updated: 2026-11-29
 
 ## Current State
 
+- P05.389 / feat-441 完成。标题栏打开快速访问时展示文件、命令、文档符号与更多模式，转到文件默认聚焦。清空查询和提供程序前缀恢复模式。键盘普通文件入口与显式转到文件使用文件列表。Windows/Linux 验证选择、文件历史、Zen 和退出焦点。定向 106/106、组合 87/87、专题 437/437，Flutter 2,027 项通过、2 项跳过。产品 ff351a4 的 CI 46166442816 四项及 Platform Availability 46166438782 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md。
 - P05.388 / feat-440 完成。普通拖动调整两侧，Alt 在可用空间内调整单侧，保留编辑器焦点。任一分隔线双击复位。边距比例随窗口宽度变换，同一配置档重开与切换工作区可恢复。两端各四次发布构建启动及文件字节通过。定向 54/54，组合 86/86，专题 436/436，Flutter 2,026 项通过、2 项跳过。产品 7dcdd2a 的 CI 46163462719 四项及 Platform Availability 46163458838 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md。
 - P05.387 / feat-439 完成。普通窗口可通过外观菜单或命令请求居中，工作区独立保存。横向分组临时展开，单组、纵向组和最大化组恢复留白。Windows/Linux 各验证四次进程启动、全屏恢复和文件字节。定向 84/84，专题 433/433，Flutter 2,023 项通过、2 项跳过。产品 85d0114 的 CI 46160334534 四项及 Platform Availability 46160330690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md。
 - P05.386 / feat-438 完成。自绘标题栏的命令中心随窗口布置，窄窗保留菜单、控件和拖动区。点击、Enter 和 Space 触发现有快速文件搜索，保留前缀模式及焦点恢复。两端发布构建验证正常、窄窗和 Zen，源文件字节一致。定向 82/82，专题 371/371，Flutter 2,021 项通过、2 项跳过。产品 636d2d6 的 CI 46156839204 四项及 Platform Availability 46156834958 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.386-command-center.md。
@@ -436,6 +437,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.386 自绘标题栏命令中心与文件搜索](docs/diagnostics/2026-11-28-p05/p05.386-command-center.md)。
 [P05.387 工作区独立居中布局](docs/diagnostics/2026-11-28-p05/p05.387-centered-layout.md)。
 [P05.388 居中编辑区边距分隔线](docs/diagnostics/2026-11-29-p05/p05.388-centered-margin-sashes.md)。
+[P05.389 命令中心初始快速访问模式](docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -701,4 +703,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.388 收尾 CI 和本地基线，继续对照 LAY-02/LAY-17 命令中心初始帮助。PR #3 保持草稿，macOS 实机暂缓。
+核对 P05.389 收尾 CI 和本地基线，继续对照 LAY-02/LAY-17 快速访问弹出位置、窗口尺寸与 Zen 的路由状态。PR #3 保持草稿，macOS 实机暂缓。

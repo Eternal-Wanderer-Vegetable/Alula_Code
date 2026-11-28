@@ -5599,8 +5599,8 @@
         "feat-251",
         "feat-438"
       ],
-      "status": "in-progress",
-      "evidence": "固定版 Windows 125% DPI 隔离对照确认初始模式、选择 Go to File、前缀往返与普通窗口和 Zen 焦点。",
+      "status": "done",
+      "evidence": "标题栏打开快速访问时展示文件、命令、文档符号与更多模式，转到文件默认聚焦。清空查询和提供程序前缀恢复模式。键盘普通文件入口与显式转到文件使用文件列表。Windows/Linux 验证选择、文件历史、Zen 和退出焦点。定向 106/106、组合 87/87、专题 437/437，Flutter 2,027 项通过、2 项跳过。产品 ff351a4 的 CI 46166442816 四项及 Platform Availability 46166438782 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-29-p05/p05.389-command-center-help.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
