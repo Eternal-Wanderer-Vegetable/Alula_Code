@@ -5,6 +5,7 @@
 
 ## Current State（当前状态，2026-11-28 更新）
 
+- P05.369 / feat-421 完成。按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md。
 - P05.368 / feat-420 完成。主辅窗口共用滚动锁定状态。辅助窗支持状态栏点击和命令面板切换，紧凑模式隐藏状态项。Windows 与 Linux 各通过 16 项，专题 214/214，Flutter 1,982 项通过、2 项跳过。产品 4bf59e4 的 CI 46097220975 四项及 Platform Availability 46097215444 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md。
 - P05.367 / feat-419 完成。滚动锁定生效时显示可点击的状态栏入口，点击关闭。Toggle 与 Hold 的显隐及会话开关通过。Windows 与 Linux 各通过 11 项，专题 183/183，Flutter 1,982 项通过、2 项跳过。产品 2b22642 的 CI 46094325305 四项及 Platform Availability 46094322690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md。
 - P05.366 / feat-418 完成。修复大文件混合字体时行号逐行漂移。12,500 行样本在跳转、深滚动和窗口切换后逐行对齐。Windows 247 行最大差 0.4 逻辑像素，Linux 246 行坐标重合。专题 162/162，Flutter 1,982 项通过、2 项跳过。产品 9ad4d7f 的 CI 46091528730 四项和 Platform Availability 46091525632 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md。
@@ -2395,7 +2396,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 ## Next（下一步，按 docs/03）
 
 - P05.366 已复验长文件行号与正文对齐和输入窗口切换。
-- LAY-15 同窗横纵位移、Hold 和主辅窗口锁定状态已完成。继续复验跨窗滚动位移。
+- LAY-15 同窗 Hold、主辅窗口状态和三窗滚动位移已完成。继续复验辅助窗口 Hold。
+- 核对 Windows 主窗在辅助窗仍打开时的退出。P05.369 的夹具中断后曾出现退出码 3221226525，正常依次关闭的复验通过。
 
 - CMD-02 连续键入跨提供程序丢字已在 P05.214 修复，Windows 和 Linux 均验证 12 和 60 毫秒输入节奏。[证据](docs/diagnostics/2026-11-23-p05/p05.214-quick-access-stream.md)
 - CMD-04 待复验：Windows 系统 Ctrl+Shift+O 仍待在终键可送达的环境复验，应用定向组合键与原生前缀入口已通过。[P05.213 记录](docs/diagnostics/2026-11-23-p05/p05.213-symbol-guidance.md)

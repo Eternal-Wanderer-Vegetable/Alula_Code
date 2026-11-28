@@ -8,6 +8,7 @@ Last Updated: 2026-11-28
 
 ## Current State
 
+- P05.369 / feat-421 完成。按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md。
 - P05.368 / feat-420 完成。主辅窗口共用滚动锁定状态。辅助窗支持状态栏点击和命令面板切换，紧凑模式隐藏状态项。Windows 与 Linux 各通过 16 项，专题 214/214，Flutter 1,982 项通过、2 项跳过。产品 4bf59e4 的 CI 46097220975 四项及 Platform Availability 46097215444 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md。
 - P05.367 / feat-419 完成。滚动锁定生效时显示可点击的状态栏入口，点击关闭。Toggle 与 Hold 的显隐及会话开关通过。Windows 与 Linux 各通过 11 项，专题 183/183，Flutter 1,982 项通过、2 项跳过。产品 2b22642 的 CI 46094325305 四项及 Platform Availability 46094322690 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md。
 - P05.366 / feat-418 完成。修复大文件混合字体时行号逐行漂移。12,500 行样本在跳转、深滚动和窗口切换后逐行对齐。Windows 247 行最大差 0.4 逻辑像素，Linux 246 行坐标重合。专题 162/162，Flutter 1,982 项通过、2 项跳过。产品 9ad4d7f 的 CI 46091528730 四项和 Platform Availability 46091525632 Windows/Linux 通过。macOS 实机暂缓。 详见 docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md。
@@ -396,6 +397,7 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 [P05.366 长文件行号与正文对齐](docs/diagnostics/2026-11-28-p05/p05.366-long-gutter-alignment.md)。
 [P05.367 同窗滚动锁定状态栏入口](docs/diagnostics/2026-11-28-p05/p05.367-lock-scroll-status.md)。
 [P05.368 辅助窗口滚动锁定状态与切换命令](docs/diagnostics/2026-11-28-p05/p05.368-auxiliary-lock-status.md)。
+[P05.369 主辅窗口横纵滚动锁定](docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md)。
 [P05.358 本地链接修饰键悬停反馈](docs/diagnostics/2026-11-28-p05/p05.358-link-hover.md)。
 [P05.357 本地链接修饰键点击与侧开](docs/diagnostics/2026-11-28-p05/p05.357-link-pointer.md)。
 [P05.356 光标下本地文件链接](docs/diagnostics/2026-11-28-p05/p05.356-local-file-link.md)。
@@ -661,4 +663,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.368 收尾 CI。按 docs/03 核对 LAY-15 跨窗滚动位移、可见视图与锚点，选一个依赖已满足的子项。记录 macOS 托管结果，实机暂缓。PR #3 保持草稿。
+核对 P05.369 收尾 CI。按 docs/03 核对 LAY-15 辅助窗口 Hold 键位、释放和失焦恢复，选一个依赖已满足的子项。记录 macOS 托管结果，实机暂缓。PR #3 保持草稿。

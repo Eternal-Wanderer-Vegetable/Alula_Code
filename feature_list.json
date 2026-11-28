@@ -5325,8 +5325,8 @@
         "feat-416",
         "feat-420"
       ],
-      "status": "in-progress",
-      "evidence": [],
+      "status": "done",
+      "evidence": "按各编辑器起点同步主辅窗口两轴位移，覆盖三窗传递、短文档限位和回转、解除锁定。Windows 与 Linux 各通过 18 项，专题 216/216，Flutter 1,984 项通过、2 项跳过。产品 7ac8499 的 CI 46100774360 四项及 Platform Availability 46100770432 Windows/Linux 通过。macOS 实机暂缓。 docs/diagnostics/2026-11-28-p05/p05.369-cross-window-scroll.md",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
